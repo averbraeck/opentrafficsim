@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 
 /**
- * Color by GTU type.
+ * Color by GTU type, based on the GTUType id or the enum id from the defaults.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -29,7 +29,7 @@ public class GTUTypeColorer implements GTUColorer, Serializable
     private static final long serialVersionUID = 20180117L;
 
     /** The colors per GTU Type. */
-    private final Map<GTUType, Color> map = new LinkedHashMap<>();
+    private final Map<String, Color> map = new LinkedHashMap<>();
 
     /** Index for next default color. */
     private int nextDefault = 0;
@@ -50,17 +50,34 @@ public class GTUTypeColorer implements GTUColorer, Serializable
     }
 
     /** Default instance with colors for common GTUTypes. */
-    public static final GTUTypeColorer DEFAULT = new GTUTypeColorer().add(GTUType.CAR, Color.BLUE).add(GTUType.TRUCK, Color.RED)
-            .add(GTUType.VEHICLE, Color.GRAY).add(GTUType.PEDESTRIAN, Color.YELLOW).add(GTUType.BICYCLE, Color.GREEN);
+    public static final GTUTypeColorer DEFAULT = new GTUTypeColorer().add(GTUType.DEFAULTS.CAR, Color.BLUE)
+            .add(GTUType.DEFAULTS.TRUCK, Color.RED).add(GTUType.DEFAULTS.VEHICLE, Color.GRAY)
+            .add(GTUType.DEFAULTS.PEDESTRIAN, Color.YELLOW).add(GTUType.DEFAULTS.BICYCLE, Color.GREEN);
 
     /**
-     * Adds a GTU type to the list with color from a default list.
+     * Adds a GTU type to the list with color from the default list.
+     * @param gtuTypeEnum GTUType; GTU type
+     * @return this GTUTypeColorer
+     */
+    public GTUTypeColorer add(final GTUType.DEFAULTS gtuTypeEnum)
+    {
+        this.map.put(gtuTypeEnum.getId(), standardColors[this.nextDefault]);
+        this.nextDefault++;
+        if (this.nextDefault == standardColors.length)
+        {
+            this.nextDefault = 0;
+        }
+        return this;
+    }
+
+    /**
+     * Adds a GTU type to the list with color based on the type.
      * @param gtuType GTUType; GTU type
      * @return this GTUTypeColorer
      */
     public GTUTypeColorer add(final GTUType gtuType)
     {
-        this.map.put(gtuType, standardColors[this.nextDefault]);
+        this.map.put(gtuType.getId(), standardColors[this.nextDefault]);
         this.nextDefault++;
         if (this.nextDefault == standardColors.length)
         {
@@ -77,7 +94,19 @@ public class GTUTypeColorer implements GTUColorer, Serializable
      */
     public GTUTypeColorer add(final GTUType gtuType, final Color color)
     {
-        this.map.put(gtuType, color);
+        this.map.put(gtuType.getId(), color);
+        return this;
+    }
+
+    /**
+     * Adds a GTU type based on its enum to the list with given color.
+     * @param gtuTypeEnum GTUType.DEFAULTS; GTU type default enum
+     * @param color Color; color
+     * @return this GTUTypeColorer
+     */
+    public GTUTypeColorer add(final GTUType.DEFAULTS gtuTypeEnum, final Color color)
+    {
+        this.map.put(gtuTypeEnum.getId(), color);
         return this;
     }
 
@@ -86,11 +115,11 @@ public class GTUTypeColorer implements GTUColorer, Serializable
     public Color getColor(final GTU gtu)
     {
         GTUType gtuType = gtu.getGTUType();
-        Color color = this.map.get(gtuType);
+        Color color = this.map.get(gtuType.getId());
         while (gtuType != null && color == null)
         {
             gtuType = gtuType.getParent();
-            color = this.map.get(gtuType);
+            color = this.map.get(gtuType.getId());
         }
         if (color == null)
         {
@@ -104,11 +133,10 @@ public class GTUTypeColorer implements GTUColorer, Serializable
     public List<LegendEntry> getLegend()
     {
         List<LegendEntry> legend = new ArrayList<>();
-        for (GTUType gtuType : this.map.keySet())
+        for (String name : this.map.keySet())
         {
-            String name = gtuType.getId();
             name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-            legend.add(new LegendEntry(this.map.get(gtuType), name, name));
+            legend.add(new LegendEntry(this.map.get(name), name, name));
         }
         return legend;
     }

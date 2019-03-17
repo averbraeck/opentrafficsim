@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -20,6 +19,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.GTUStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 /**
  * Test the HeadwayGTU class and the EnumType in the Headway interface.
@@ -34,6 +34,8 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
  */
 public class HeadwayGTUTest
 {
+    /** The network. */
+    private OTSRoadNetwork network = new OTSRoadNetwork("test network", true);
 
     /**
      * Test the constructor and the getters.
@@ -44,10 +46,10 @@ public class HeadwayGTUTest
     {
         // Make two headway GTUs with different values to prove that HeadwayGTUs do not share static fields.
         String id1 = "id1";
-        GTUType gtuType1 = new GTUType("type1", CAR);
+        GTUType gtuType1 = new GTUType("type1", this.network.getGtuType(GTUType.DEFAULTS.CAR));
         Length distance1 = new Length(123, LengthUnit.METER);
         String id2 = "id2";
-        GTUType gtuType2 = new GTUType("type2", CAR);
+        GTUType gtuType2 = new GTUType("type2", this.network.getGtuType(GTUType.DEFAULTS.CAR));
         Length distance2 = new Length(234, LengthUnit.METER);
         HeadwayGTUSimple hg1 = new HeadwayGTUSimple(id1, gtuType1, distance1, Length.ZERO, Length.ZERO, (Speed) null,
                 (Acceleration) null, null);

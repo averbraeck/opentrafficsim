@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
@@ -26,7 +27,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Network extends EventProducerInterface, Identifiable
+public interface Network extends Definitions, EventProducerInterface, Identifiable
 {
     /** @return String; the id */
     @Override
@@ -163,7 +164,7 @@ public interface Network extends EventProducerInterface, Identifiable
 
     /**
      * Return object of given type with given id.
-     * @param objectType Class&lt;T&gt;; object type class
+     * @param objectType T; object type class
      * @param objectId String; id of object
      * @param <T> object type
      * @return T; object of given type with given id, {@code null} if no such object

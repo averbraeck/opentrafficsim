@@ -43,7 +43,6 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
@@ -58,6 +57,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Neighbor
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -170,11 +171,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param id String; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param simulator OTSSimulatorInterface; to initialize the move method and to get the current time
-     * @param network OTSNetwork; the network that the GTU is initially registered in
+     * @param network OTSRoadNetwork; the network that the GTU is initially registered in
      * @throws GTUException when initial values are not correct
      */
     public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
-            final OTSNetwork network) throws GTUException
+            final OTSRoadNetwork network) throws GTUException
     {
         super(id, gtuType, simulator, network);
         HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
@@ -1542,6 +1543,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public final LaneBasedStrategicalPlanner getStrategicalPlanner(final Time time)
     {
         return (LaneBasedStrategicalPlanner) super.getStrategicalPlanner(time);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RoadNetwork getNetwork()
+    {
+        return (RoadNetwork) super.getPerceivableContext();
     }
 
     /** {@inheritDoc} */

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedHashMap;
@@ -33,10 +32,9 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
@@ -63,7 +61,7 @@ public class LaneTest implements UNITS
     public void laneConstructorTest() throws Exception
     {
         // First we need two Nodes
-        Network network = new OTSNetwork("lane test network");
+        OTSRoadNetwork network = new OTSRoadNetwork("lane test network", true);
         OTSNode nodeFrom = new OTSNode(network, "A", new OTSPoint3D(0, 0, 0));
         OTSNode nodeTo = new OTSNode(network, "B", new OTSPoint3D(1000, 0, 0));
         // Now we can make a Link
@@ -73,19 +71,20 @@ public class LaneTest implements UNITS
         OTSSimulatorInterface simulator = new OTSSimulator();
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, LinkType.ROAD,
-                new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link =
+                new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.ROAD),
+                        new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
         Length endWidth = new Length(4, METER);
-        GTUType gtuTypeCar = CAR;
+        GTUType gtuTypeCar = network.getGtuType(GTUType.DEFAULTS.CAR);
 
         GTUCompatibility<LaneType> gtuCompatibility = new GTUCompatibility<>((LaneType) null);
-        gtuCompatibility.addAllowedGTUType(GTUType.VEHICLE, LongitudinalDirectionality.DIR_PLUS);
-        LaneType laneType = new LaneType("One way", LaneType.FREEWAY, gtuCompatibility);
+        gtuCompatibility.addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+        LaneType laneType = new LaneType("One way", network.getLaneType(LaneType.DEFAULTS.FREEWAY), gtuCompatibility, network);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.VEHICLE, new Speed(100, KM_PER_HOUR));
+        speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
         // FIXME what overtaking conditions do we want to test in this unit test?
         Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap,
@@ -98,9 +97,9 @@ public class LaneTest implements UNITS
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
                 lane.getContour().getLengthSI(), 0.1);
         assertEquals("Directionality should be " + LongitudinalDirectionality.DIR_PLUS, LongitudinalDirectionality.DIR_PLUS,
-                lane.getLaneType().getDirectionality(GTUType.VEHICLE));
+                lane.getLaneType().getDirectionality(network.getGtuType(GTUType.DEFAULTS.VEHICLE)));
         assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
-                lane.getSpeedLimit(GTUType.VEHICLE));
+                lane.getSpeedLimit(network.getGtuType(GTUType.DEFAULTS.VEHICLE)));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // TODO: This test for expectedLateralCenterOffset fails
@@ -139,8 +138,8 @@ public class LaneTest implements UNITS
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(200, 100);
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, LinkType.ROAD, new OTSLine3D(coordinates),
-                simulator, LaneKeepingPolicy.KEEPRIGHT);
+        link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.ROAD),
+                new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
         // FIXME what overtaking conditions do we ant to test in this unit test?
         lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap,
                 new OvertakingConditions.LeftAndRight());
@@ -181,11 +180,6 @@ public class LaneTest implements UNITS
         final int[] startPositions = {0, 1, -1, 20, -20};
         final double[] angles = {0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
                 Math.PI * 1.01, Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2)};
-        LaneType laneType = LaneType.TWO_WAY_LANE;
-        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(GTUType.VEHICLE, LongitudinalDirectionality.DIR_PLUS);
-        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.VEHICLE, new Speed(50, KM_PER_HOUR));
         int laneNum = 0;
         for (int xStart : startPositions)
         {
@@ -193,7 +187,12 @@ public class LaneTest implements UNITS
             {
                 for (double angle : angles)
                 {
-                    Network network = new OTSNetwork("contour test network");
+                    OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true);
+                    LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+                    Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
+                    directionalityMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+                    Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
+                    speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
                     OTSNode start = new OTSNode(network, "start", new OTSPoint3D(xStart, yStart));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
@@ -206,8 +205,8 @@ public class LaneTest implements UNITS
                     OTSSimulatorInterface simulator = new OTSSimulator();
                     Model model = new Model(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-                    CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, LinkType.ROAD, line, simulator,
-                            LaneKeepingPolicy.KEEPRIGHT);
+                    CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end,
+                            network.getLinkType(LinkType.DEFAULTS.ROAD), line, simulator, LaneKeepingPolicy.KEEPRIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {
@@ -391,7 +390,7 @@ public class LaneTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OTSNetwork getNetwork()
+        public final OTSRoadNetwork getNetwork()
         {
             return null;
         }

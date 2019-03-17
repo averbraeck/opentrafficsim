@@ -21,8 +21,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -110,7 +110,7 @@ public class NetworkTest extends OTSSimulationApplication<OTSModelInterface>
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSNetwork network = null;
+        private OTSRoadNetwork network = null;
 
         /**
          * @param simulator the simulator
@@ -139,7 +139,7 @@ public class NetworkTest extends OTSSimulationApplication<OTSModelInterface>
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

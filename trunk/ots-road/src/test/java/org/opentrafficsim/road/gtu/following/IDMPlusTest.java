@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.following;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +24,6 @@ import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -38,6 +36,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -56,7 +55,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class IDMPlusTest implements UNITS
 {
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("IDMPlus test network");
+    private OTSRoadNetwork network = new OTSRoadNetwork("IDMPlus test network", true);
 
     /**
      * Test IDMPlus.
@@ -74,8 +73,8 @@ public class IDMPlusTest implements UNITS
         Length s0 = new Length(2, METER);
         GTUFollowingModelOld carFollowingModel = new IDMPlusOld(new Acceleration(1.25, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), s0, new Duration(1, SECOND), 1d);
-        GTUType gtuType = CAR;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
+        GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Lane lane = CarTest.makeLane(this.network, laneType, simulator);
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         Length initialPosition = new Length(123.456, METER);
@@ -388,7 +387,7 @@ class IDMPlusTestModel extends AbstractOTSModel
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public OTSRoadNetwork getNetwork()
     {
         return null;
     }

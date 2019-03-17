@@ -39,6 +39,7 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -156,7 +157,7 @@ public class A58IMB extends OTSSimulationApplication<A58Model>
         private static final long serialVersionUID = 20141121L;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
-        private final OTSNetwork network = new OTSNetwork("network");
+        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
         /** the GIS map. */
         private GisRenderable2D gisMap;

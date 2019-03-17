@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo.conflictAndControl;
 
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URL;
@@ -23,12 +21,13 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.conflictAndControl.DemoTrafcodAndTurbo.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
@@ -129,7 +128,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
         private static final long serialVersionUID = 20161020L;
 
         /** The network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /** The TrafCOD controller. */
         private TrafCOD trafCOD;
@@ -159,7 +158,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                 ((CrossSectionLink) this.network.getLink("NBWA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("WBSA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("SBEA")).setPriority(Priority.PRIORITY);
-                ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 // CrossSectionLink csLink = ((CrossSectionLink)
@@ -283,7 +282,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
 
         /** {@inheritDoc} */
         @Override
-        public final OTSNetwork getNetwork()
+        public final OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

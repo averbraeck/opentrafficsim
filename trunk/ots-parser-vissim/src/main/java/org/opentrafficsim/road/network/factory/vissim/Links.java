@@ -178,8 +178,9 @@ final class Links
         OTSLine3D designLine = OTSLine3D.createAndCleanOTSLine3D(coordinates);
 
         // Directionality has to be added later when the lanes and their direction are known.
-        CrossSectionLink link = new CrossSectionLink(parser.getNetwork(), linkTag.name, linkTag.nodeStartTag.node,
-                linkTag.nodeEndTag.node, LinkType.ROAD, designLine, simulator, linkTag.laneKeepingPolicy);
+        CrossSectionLink link =
+                new CrossSectionLink(parser.getNetwork(), linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node,
+                        parser.network.getLinkType(LinkType.DEFAULTS.ROAD), designLine, simulator, linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 
@@ -243,7 +244,7 @@ final class Links
                 Double negativeOffset = -(0.5 * roadWidth - totalLaneWidth - laneWidth / 2);
                 Length lateralOffset = new Length(negativeOffset, LengthUnit.METER);
 
-                LaneType laneType = LaneType.FREEWAY;
+                LaneType laneType = parser.network.getLaneType(LaneType.DEFAULTS.FREEWAY);
                 Speed speedLimit = new Speed(Double.parseDouble(linkTag.legalSpeed), SpeedUnit.KM_PER_HOUR);
                 // OvertakingConditions overtakingConditions; TODO (not clear yet)
                 Lane lane = new Lane(csl, name, lateralOffset, thisLaneWidth, laneType, speedLimit, null);
@@ -340,7 +341,7 @@ final class Links
         }
 
         // some generic definitions necessary to create a Lane object
-        LaneType laneType = LaneType.FREEWAY;
+        LaneType laneType = parser.network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(Double.parseDouble(linkTag.legalSpeed), SpeedUnit.KM_PER_HOUR);
 
         // The lanes are ordered from the outside to the inner side of the road

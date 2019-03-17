@@ -40,7 +40,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.demo.conflict.BusStreetDemo.BusStreetModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -70,6 +69,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -111,7 +111,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             throws OTSDrawingException
     {
         super(model, panel);
-        OTSNetwork network = model.getNetwork();
+        OTSRoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
 
@@ -155,7 +155,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         private static final long serialVersionUID = 20161211L;
 
         /** The network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -177,7 +177,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                 URL url = URLResource.getResource("/conflict/BusStreet.xml");
                 XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
                 this.network = nlp.build(url, false);
-                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 // Add bus stops
@@ -229,7 +229,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }
@@ -343,16 +343,20 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         /** Long dwell time. */
         private final Duration longDwellTime = new Duration(60.0, DurationUnit.SI);
 
+        /** The network. */
+        private OTSRoadNetwork network;
+
         /**
          * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
          * @param probabilities double[]; probabilities
-         * @param network OTSNetwork; network
+         * @param network OTSRoadNetwork; network
          */
         public CharacteristicsGenerator(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final double[] probabilities,
-                final OTSNetwork network)
+                final OTSRoadNetwork network)
         {
             this.simulator = simulator;
             this.probabilities = probabilities;
+            this.network = network;
             List<Node> carNodesN = new ArrayList<>();
             carNodesN.add(network.getNode("A"));
             carNodesN.add(network.getNode("B"));
@@ -421,7 +425,6 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         @Override
         public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
         {
-
             double r = this.simulator.getReplication().getStream("generation").nextDouble();
             int classNum = r < this.probabilities[0] ? 0 : r < this.probabilities[0] + this.probabilities[1] ? 1 : 2;
             r = this.simulator.getReplication().getStream("generation").nextDouble();
@@ -434,7 +437,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             {
                 case 0:
                 {
-                    gtuType = new GTUType("CAR", GTUType.CAR);
+                    gtuType = new GTUType("CAR", this.network.getGtuType(GTUType.DEFAULTS.CAR));
                     length = new Length(4.0, LengthUnit.SI);
                     width = new Length(1.8, LengthUnit.SI);
                     maximumSpeed = new Speed(200.0, SpeedUnit.KM_PER_HOUR);
@@ -443,7 +446,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                 }
                 case 1:
                 {
-                    gtuType = new GTUType("BUS1", GTUType.SCHEDULED_BUS);
+                    gtuType = new GTUType("BUS1", this.network.getGtuType(GTUType.DEFAULTS.SCHEDULED_BUS));
                     length = new Length(8.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
@@ -463,7 +466,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                 }
                 case 2:
                 {
-                    gtuType = new GTUType("BUS2", GTUType.SCHEDULED_BUS);
+                    gtuType = new GTUType("BUS2", this.network.getGtuType(GTUType.DEFAULTS.SCHEDULED_BUS));
                     length = new Length(12.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
@@ -532,7 +535,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
                     GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.setDefaultIncentives();
-            if (gtu.getGTUType().isOfType(GTUType.SCHEDULED_BUS))
+            if (gtu.getGTUType().isOfType(GTUType.DEFAULTS.SCHEDULED_BUS))
             {
                 lmrs.addMandatoryIncentive(new IncentiveBusStop());
                 lmrs.addAccelerationIncentive(new AccelerationBusStop());
@@ -568,11 +571,11 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         {
 
             parameters.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
-            if (gtuType.isOfType(GTUType.CAR))
+            if (gtuType.isOfType(GTUType.DEFAULTS.CAR))
             {
                 parameters.setParameter(LmrsParameters.VGAIN, new Speed(3.0, SpeedUnit.METER_PER_SECOND));
             }
-            else if (gtuType.isOfType(GTUType.SCHEDULED_BUS))
+            else if (gtuType.isOfType(GTUType.DEFAULTS.SCHEDULED_BUS))
             {
                 parameters.setParameter(ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.METER_PER_SECOND_2));
             }

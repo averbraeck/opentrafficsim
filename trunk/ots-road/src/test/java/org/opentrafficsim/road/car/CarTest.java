@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.car;
 
 import static org.junit.Assert.assertEquals;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -28,9 +27,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -41,6 +38,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -75,9 +74,9 @@ public class CarTest implements UNITS
             throws NetworkException, SimRuntimeException, NamingException, GTUException, OTSGeometryException
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
-        GTUType gtuType = CAR;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
-        OTSNetwork network = new OTSNetwork("network");
+        OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         OTSSimulatorInterface simulator = makeSimulator();
         Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
@@ -134,7 +133,7 @@ public class CarTest implements UNITS
      */
     public static LaneBasedIndividualGTU makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OTSSimulatorInterface simulator,
-            final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSNetwork network)
+            final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         Length length = new Length(5.0, METER);
@@ -154,21 +153,21 @@ public class CarTest implements UNITS
     }
 
     /**
-     * @param network Network; the network
+     * @param network RoadNetwork; the network
      * @param laneType LaneType&lt;String&gt;; the type of the lane
      * @param simulator OTSSimulatorInterface; simulator
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane makeLane(final Network network, final LaneType laneType, final OTSSimulatorInterface simulator)
+    public static Lane makeLane(final RoadNetwork network, final LaneType laneType, final OTSSimulatorInterface simulator)
             throws NetworkException, OTSGeometryException
     {
         OTSNode n1 = new OTSNode(network, "n1", new OTSPoint3D(0, 0));
         OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
-        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, LinkType.ROAD, new OTSLine3D(coordinates),
-                simulator, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, network.getLinkType(LinkType.DEFAULTS.ROAD),
+                new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, new Speed(100, KM_PER_HOUR),
@@ -198,7 +197,7 @@ public class CarTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OTSNetwork getNetwork()
+        public final OTSRoadNetwork getNetwork()
         {
             return null;
         }

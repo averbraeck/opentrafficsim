@@ -125,14 +125,14 @@ public class DefaultAnimationFactory implements EventListenerInterface
                             {
                                 Stripe stripe = (Stripe) element;
                                 TYPE type;
-                                if (stripe.isPermeable(GTUType.CAR, LateralDirectionality.LEFT))
+                                if (stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR), LateralDirectionality.LEFT))
                                 {
-                                    type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.DASHED
+                                    type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR), LateralDirectionality.RIGHT) ? TYPE.DASHED
                                             : TYPE.LEFTONLY;
                                 }
                                 else
                                 {
-                                    type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY
+                                    type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR), LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY
                                             : TYPE.SOLID;
                                 }
                                 new StripeAnimation((Stripe) element, simulator, type);

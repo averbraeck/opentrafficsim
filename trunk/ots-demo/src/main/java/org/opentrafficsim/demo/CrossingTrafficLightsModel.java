@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -28,7 +26,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -40,6 +37,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -71,7 +69,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OTSNetwork network = new OTSNetwork("network");
+    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
     /** the random stream for this demo. */
     private StreamInterface stream = new MersenneTwister(555);
@@ -86,9 +84,6 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
 
     /** Number of cars created. */
     private int carsCreated = 0;
-
-    /** Type of all GTUs. */
-    private GTUType gtuType = CAR;
 
     /** the tactical planner factory for this model. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory;
@@ -144,7 +139,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
             nodes[3][2] = new OTSNode(this.network, "ew3", new OTSPoint3D(-20, 10));
             nodes[3][3] = new OTSNode(this.network, "ew4", new OTSPoint3D(-5000, 10));
 
-            LaneType laneType = LaneType.TWO_WAY_LANE;
+            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 
             Map<Lane, SimpleTrafficLight> trafficLights = new HashMap<>();
 
@@ -242,9 +237,9 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
         {
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length vehicleLength = new Length(4, METER);
-            LaneBasedIndividualGTU gtu =
-                    new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8, METER),
-                            this.speedDistribution.draw(), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
+            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
+                    this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
+                    this.speedDistribution.draw(), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
             gtu.setParameters(this.parametersCar);
             gtu.setNoLaneChangeDistance(Length.ZERO);
             gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
@@ -262,7 +257,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public OTSRoadNetwork getNetwork()
     {
         return this.network;
     }

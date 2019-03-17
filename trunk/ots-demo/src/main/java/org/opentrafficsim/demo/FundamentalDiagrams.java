@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
@@ -30,7 +28,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.demo.FundamentalDiagrams.FundamentalDiagramPlotsModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -44,6 +41,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -91,7 +89,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             throws OTSDrawingException, OTSSimulationException
     {
         super(model, panel);
-        OTSNetwork network = model.getNetwork();
+        OTSRoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
 
@@ -196,16 +194,13 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         private static final long serialVersionUID = 20140820L;
 
         /** The network. */
-        private OTSNetwork network = new OTSNetwork("network");
+        private OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
         /** The headway (inter-vehicle time). */
         private Duration headway;
 
         /** Number of cars created. */
         private int carsCreated = 0;
-
-        /** Type of all GTUs. */
-        private GTUType gtuType = CAR;
 
         /** Strategical planner generator for cars. */
         private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
@@ -258,7 +253,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
                 OTSNode to = new OTSNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
                 OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
-                LaneType laneType = LaneType.TWO_WAY_LANE;
+                LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
                 this.lane =
                         LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
                 CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, this.simulator);
@@ -324,9 +319,9 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             {
                 boolean generateTruck = this.stream.nextDouble() > this.carProbability;
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                        new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator,
-                        this.network);
+                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
+                        this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
+                        new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
                 gtu.setNoLaneChangeDistance(Length.ZERO);
                 gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
@@ -352,7 +347,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

@@ -26,8 +26,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -41,6 +39,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -518,7 +517,7 @@ public interface Synchronization extends LmrsParameters
         try
         {
             out = new SortedSetPerceptionIterable<HeadwayGTU>(
-                    (OTSNetwork) perception.getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
+                    (OTSRoadNetwork) perception.getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
         }
         catch (GTUException exception)
         {

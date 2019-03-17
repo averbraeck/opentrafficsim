@@ -24,9 +24,9 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.network.factory.OTSNetworkUtils;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.factory.OTSRoadNetworkUtils;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -115,7 +115,7 @@ public class TestXMLParserWriteXstream extends OTSSimulationApplication<OTSModel
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /**
          * @param simulator the simulator
@@ -139,7 +139,7 @@ public class TestXMLParserWriteXstream extends OTSSimulationApplication<OTSModel
                 System.out.println("parsing took : " + (System.currentTimeMillis() - millis) + " ms");
 
                 millis = System.currentTimeMillis();
-                String xml = OTSNetworkUtils.toXml(this.network);
+                String xml = OTSRoadNetworkUtils.toXml(this.network);
                 System.out.println("making XML took : " + (System.currentTimeMillis() - millis) + " ms");
                 millis = System.currentTimeMillis();
                 Files.write(Paths.get("e://temp/network.txt"), xml.getBytes());
@@ -159,7 +159,7 @@ public class TestXMLParserWriteXstream extends OTSSimulationApplication<OTSModel
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

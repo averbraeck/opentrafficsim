@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.Serializable;
@@ -32,7 +30,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -43,6 +40,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.xml.test.TestGMParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -137,7 +135,7 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /**
          * @param simulator the simulator
@@ -169,7 +167,7 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
             new GisRenderable2D(this.simulator, gisURL, rdto0);
 
             // make the GTU generators.
-            GTUType carType = CAR;
+            GTUType carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
             StreamInterface stream = new MersenneTwister(1);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.METER_PER_SECOND);
@@ -216,7 +214,7 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

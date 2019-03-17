@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo.conflict;
 
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
-
 import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -17,9 +15,10 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.demo.conflict.TestNetworkDemo.TestNetworkModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -99,7 +98,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
         private static final long serialVersionUID = 20161211L;
 
         /** The network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -137,7 +136,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
                         (CrossSectionLink) this.network.getLink("L_F3a-E3b"));
                 permittedList.addLinkCombination((CrossSectionLink) this.network.getLink("L_E3a-H3a"),
                         (CrossSectionLink) this.network.getLink("L_G3b-F3b"));
-                ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)), ignoreList, permittedList);
                 // new ConflictBuilder.FixedWidthGenerator(new Length(1.0, LengthUnit.SI))
                 // ConflictBuilder.DEFAULT_WIDTH_GENERATOR
@@ -151,7 +150,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

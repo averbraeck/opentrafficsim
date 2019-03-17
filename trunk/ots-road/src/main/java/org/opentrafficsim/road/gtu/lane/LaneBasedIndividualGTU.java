@@ -20,10 +20,10 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -65,12 +65,12 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param front Length; front distance relative to the reference position
      * @param simulator OTSSimulatorInterface; the simulator
-     * @param network OTSNetwork; the network that the GTU is initially registered in
+     * @param network OTSRoadNetwork; the network that the GTU is initially registered in
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final Length front, final OTSSimulatorInterface simulator, final OTSNetwork network)
+            final Speed maximumSpeed, final Length front, final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
             throws GTUException
     {
         this(id, gtuType, length, width, maximumSpeed, front, Length.ZERO, simulator, network);
@@ -86,13 +86,13 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param front Length; front distance relative to the reference position
      * @param centerOfGravity Length; distance from the center of gravity to the reference position
      * @param simulator OTSSimulatorInterface; the simulator
-     * @param network OTSNetwork; the network that the GTU is initially registered in
+     * @param network OTSRoadNetwork; the network that the GTU is initially registered in
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final Length front, final Length centerOfGravity, final OTSSimulatorInterface simulator,
-            final OTSNetwork network) throws GTUException
+            final OTSRoadNetwork network) throws GTUException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
@@ -226,7 +226,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         private OTSSimulatorInterface simulator = null;
 
         /** Network. */
-        private OTSNetwork network = null;
+        private OTSRoadNetwork network = null;
 
         /**
          * @param id String; set id
@@ -340,10 +340,10 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param network OTSNetwork; set network
+         * @param network OTSRoadNetwork; set network
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setNetwork(final OTSNetwork network)
+        public final LaneBasedIndividualCarBuilder setNetwork(final OTSRoadNetwork network)
         {
             this.network = network;
             return this;
@@ -416,7 +416,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /**
          * @return network
          */
-        public final OTSNetwork getNetwork()
+        public final OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

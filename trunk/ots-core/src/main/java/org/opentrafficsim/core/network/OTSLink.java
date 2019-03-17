@@ -155,7 +155,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final Network getNetwork()
+    public Network getNetwork()
     {
         return this.network;
     }

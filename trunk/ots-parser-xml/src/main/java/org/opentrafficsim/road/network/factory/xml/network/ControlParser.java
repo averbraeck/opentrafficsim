@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 import org.opentrafficsim.xml.generated.CONTROL;
@@ -35,11 +35,11 @@ public final class ControlParser
 
     /**
      * Creates control objects.
-     * @param otsNetwork OTSNetwork; network
+     * @param otsNetwork OTSRoadNetwork; network
      * @param simulator OTSSimulatorInterface; simulator
      * @param ots OTS; XSD objects in the OTS tag
      */
-    public static void parseControl(final OTSNetwork otsNetwork, final OTSSimulatorInterface simulator, final OTS ots)
+    public static void parseControl(final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator, final OTS ots)
     {
         for (CONTROL control : ots.getCONTROL())
         {

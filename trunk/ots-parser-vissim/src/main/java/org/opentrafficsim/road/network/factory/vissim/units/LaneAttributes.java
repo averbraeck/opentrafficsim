@@ -190,7 +190,7 @@ public final class LaneAttributes
     {
         if (!parser.getGtuTypes().containsKey(typeName))
         {
-            GTUType gtuType = new GTUType(typeName, GTUType.VEHICLE);
+            GTUType gtuType = new GTUType(typeName, parser.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE));
             parser.getGtuTypes().put(typeName, gtuType);
         }
         return parser.getGtuTypes().get(typeName);

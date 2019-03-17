@@ -71,10 +71,11 @@ public abstract class ExpansionNetwork extends OTSNetwork
 
     /**
      * @param id String; the network id.
+     * @param addDefaultTypes add the default GTUTypes and LinkTypes, or not
      */
-    public ExpansionNetwork(final String id)
+    public ExpansionNetwork(final String id, final boolean addDefaultTypes)
     {
-        super(id);
+        super(id, addDefaultTypes);
     }
 
 }

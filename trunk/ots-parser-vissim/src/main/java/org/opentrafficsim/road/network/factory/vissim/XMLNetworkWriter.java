@@ -189,7 +189,8 @@ public class XMLNetworkWriter
                 try
                 {
                     speedLimit.setLEGALSPEEDLIMIT(
-                            inputLane.getSpeedLimit(GTUType.VEHICLE).getInUnit(SpeedUnit.KM_PER_HOUR) + " km/h");
+                            inputLane.getSpeedLimit(inputLane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE))
+                                    .getInUnit(SpeedUnit.KM_PER_HOUR) + " km/h");
                 }
                 catch (Exception exception)
                 {

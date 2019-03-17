@@ -29,7 +29,6 @@ import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -44,6 +43,7 @@ import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -108,7 +108,7 @@ public final class ODApplier
      * <th>0.0m</th>
      * </tr>
      * </table>
-     * @param network OTSNetwork; network
+     * @param network OTSRoadNetwork; network
      * @param od ODMatrix; OD matrix
      * @param simulator OTSSimulatorInterface; simulator
      * @param odOptions ODOptions; options for vehicle generation
@@ -116,7 +116,8 @@ public final class ODApplier
      * @throws ParameterException if a parameter is missing
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
-    public static Map<String, GeneratorObjects> applyOD(final OTSNetwork network, final ODMatrix od,
+    @SuppressWarnings("checkstyle:methodlength")
+    public static Map<String, GeneratorObjects> applyOD(final OTSRoadNetwork network, final ODMatrix od,
             final OTSSimulatorInterface simulator, final ODOptions odOptions) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
@@ -344,7 +345,7 @@ public final class ODApplier
                         simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType), stream);
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
-                LaneBiases biases = odOptions.get(ODOptions.LANE_BIAS, lane, o, linkType);
+                LaneBiases biases = odOptions.get(ODOptions.laneBias(network), lane, o, linkType);
                 // and finally, the generator
                 try
                 {

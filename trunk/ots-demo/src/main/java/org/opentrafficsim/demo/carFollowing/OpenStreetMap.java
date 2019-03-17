@@ -25,8 +25,8 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.osm.OSMLink;
 import org.opentrafficsim.road.network.factory.osm.OSMNetwork;
 import org.opentrafficsim.road.network.factory.osm.OSMNode;
@@ -176,7 +176,7 @@ class OSMModel extends AbstractOTSModel
     private List<Lane> lanes = new ArrayList<>();
 
     /** The OTS network. */
-    private OTSNetwork otsNetwork = new OTSNetwork("network");
+    private OTSRoadNetwork otsNetwork = new OTSRoadNetwork("network", true);
 
     /** The ProgressListener. */
     private ProgressListener progressListener;
@@ -243,7 +243,7 @@ class OSMModel extends AbstractOTSModel
             OSMNetwork net = osmf.getNetwork();
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
             this.osmNetwork = net; // new OSMNetwork(net); // Why would you make a copy?
-            this.otsNetwork = new OTSNetwork(this.osmNetwork.getName());
+            this.otsNetwork = new OTSRoadNetwork(this.osmNetwork.getName(), true);
             for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
                 try
@@ -285,7 +285,7 @@ class OSMModel extends AbstractOTSModel
         }
         this.rectangle = area;
 
-        this.otsNetwork = new OTSNetwork(this.osmNetwork.getName());
+        this.otsNetwork = new OTSRoadNetwork(this.osmNetwork.getName(), true);
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
             try
@@ -340,7 +340,7 @@ class OSMModel extends AbstractOTSModel
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public OTSRoadNetwork getNetwork()
     {
         return this.otsNetwork;
     }

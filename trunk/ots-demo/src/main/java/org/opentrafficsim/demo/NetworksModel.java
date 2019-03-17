@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,7 +37,6 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
@@ -57,6 +54,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -106,10 +104,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OTSNetwork network = new OTSNetwork("network");
-
-    /** Type of all GTUs. */
-    private GTUType gtuType = CAR;
+    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
     /** Strategical planner generator for cars. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
@@ -196,6 +191,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
         this.network.addListener(this, Network.GTU_REMOVE_EVENT);
         try
         {
+            GTUType car = this.network.getGtuType(GTUType.DEFAULTS.CAR);
             this.carProbability = (double) getInputParameter("generic.carProbability");
 
             ParameterFactory params = new InputParameterHelper(getInputParameterMap());
@@ -226,7 +222,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             this.headwayGenerator =
                     new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(averageHeadway, minimumHeadway).getSI());
 
-            LaneType laneType = LaneType.TWO_WAY_LANE;
+            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             if (merge)
             {
                 // provide a route -- at the merge point, the GTU can otherwise decide to "go back"
@@ -310,19 +306,19 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
                 this.paths.add(new ArrayList<Lane>());
                 Lane lane = common[index];
                 // Follow back
-                while (lane.prevLanes(this.gtuType).size() > 0)
+                while (lane.prevLanes(car).size() > 0)
                 {
-                    if (lane.prevLanes(this.gtuType).size() > 1)
+                    if (lane.prevLanes(car).size() > 1)
                     {
                         throw new NetworkException("This network should not have lane merge points");
                     }
-                    lane = lane.prevLanes(this.gtuType).keySet().iterator().next();
+                    lane = lane.prevLanes(car).keySet().iterator().next();
                 }
                 // Follow forward
                 while (true)
                 {
                     this.paths.get(index).add(lane);
-                    int branching = lane.nextLanes(this.gtuType).size();
+                    int branching = lane.nextLanes(car).size();
                     if (branching == 0)
                     {
                         break;
@@ -331,7 +327,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
                     {
                         throw new NetworkException("This network should not have lane split points");
                     }
-                    lane = lane.nextLanes(this.gtuType).keySet().iterator().next();
+                    lane = lane.nextLanes(car).keySet().iterator().next();
                 }
             }
         }
@@ -426,7 +422,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             final Set<DirectedLanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GTUException
     {
-        return new LaneBasedTemplateGTUType(this.gtuType, new Generator<Length>()
+        return new LaneBasedTemplateGTUType(this.network.getGtuType(GTUType.DEFAULTS.CAR), new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -503,7 +499,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public OTSRoadNetwork getNetwork()
     {
         return this.network;
     }

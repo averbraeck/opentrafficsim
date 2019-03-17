@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -24,9 +22,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -35,6 +31,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPl
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
@@ -63,14 +60,14 @@ public class SensorTest implements UNITS
     @Test
     public final void sensorTest() throws Exception
     {
-        Network network = new OTSNetwork("sensor test network");
+        OTSRoadNetwork network = new OTSRoadNetwork("sensor test network", true);
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
         OTSNode nodeAFrom = new OTSNode(network, "AFrom", new OTSPoint3D(0, 0, 0));
         OTSNode nodeATo = new OTSNode(network, "ATo", new OTSPoint3D(1000, 0, 0));
         OTSNode nodeBTo = new OTSNode(network, "BTo", new OTSPoint3D(20000, 0, 0)); // so car won't run off lane B in 100 s.
-        GTUType gtuType = CAR;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
+        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSSimulatorInterface simulator = new OTSSimulator();
         OTSModelInterface model = new DummyModelForSensorTest(simulator);
@@ -111,7 +108,7 @@ public class SensorTest implements UNITS
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(fas, null);
         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed,
-                carLength.multiplyBy(0.5), simulator, (OTSNetwork) network);
+                carLength.multiplyBy(0.5), simulator, (OTSRoadNetwork) network);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);
@@ -224,7 +221,7 @@ class DummyModelForSensorTest extends AbstractOTSModel
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNetwork getNetwork()
+    public final OTSRoadNetwork getNetwork()
     {
         return null;
     }

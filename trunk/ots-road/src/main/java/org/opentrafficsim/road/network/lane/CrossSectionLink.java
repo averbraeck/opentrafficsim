@@ -12,6 +12,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.event.EventType;
@@ -65,7 +66,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /**
      * Construction of a cross section link.
-     * @param network Network; the network
+     * @param network RoadNetwork; the network
      * @param id String; the link id.
      * @param startNode Node; the start node (directional).
      * @param endNode Node; the end node (directional).
@@ -77,7 +78,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CrossSectionLink(final Network network, final String id, final Node startNode, final Node endNode,
+    public CrossSectionLink(final RoadNetwork network, final String id, final Node startNode, final Node endNode,
             final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
@@ -93,8 +94,8 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CrossSectionLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final CrossSectionLink link)
-            throws NetworkException
+    protected CrossSectionLink(final RoadNetwork newNetwork, final OTSSimulatorInterface newSimulator,
+            final CrossSectionLink link) throws NetworkException
     {
         super(newNetwork, newSimulator, link);
         this.laneKeepingPolicy = link.laneKeepingPolicy;
@@ -105,6 +106,12 @@ public class CrossSectionLink extends OTSLink implements Serializable
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public RoadNetwork getNetwork()
+    {
+        return (RoadNetwork) super.getNetwork();
+    }
     /**
      * Add a cross section element at the end of the list. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
@@ -224,7 +231,9 @@ public class CrossSectionLink extends OTSLink implements Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public CrossSectionLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
-        return new CrossSectionLink(newNetwork, newSimulator, this);
+        Throw.when(!(newNetwork instanceof RoadNetwork), NetworkException.class,
+                "CrossSectionLink.clone. newNetwork not of the type Roadnetwork");
+        return new CrossSectionLink((RoadNetwork) newNetwork, newSimulator, this);
     }
 
     /**

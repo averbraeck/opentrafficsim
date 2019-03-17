@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.old;
 
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -192,7 +190,7 @@ public final class LaneAttributes
     {
         if (!parser.gtuTypes.containsKey(typeName))
         {
-            GTUType gtuType = new GTUType(typeName, VEHICLE);
+            GTUType gtuType = new GTUType(typeName, parser.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
             parser.gtuTypes.put(typeName, gtuType);
         }
         return parser.gtuTypes.get(typeName);

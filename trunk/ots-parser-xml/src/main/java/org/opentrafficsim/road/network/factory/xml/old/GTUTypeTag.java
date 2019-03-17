@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.old;
 
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
-
 import java.io.Serializable;
 
 import org.opentrafficsim.core.gtu.GTUException;
@@ -65,7 +63,7 @@ class GTUTypeTag implements Serializable
             if (parser.gtuTypes.keySet().contains(gtuTypeTag.name))
                 throw new SAXException("GTUTYPE: NAME " + gtuTypeTag.name + " defined twice");
             // TODO super type (car, bus, truck) in xml definition
-            GTUType gtuType = new GTUType(gtuTypeTag.name, VEHICLE);
+            GTUType gtuType = new GTUType(gtuTypeTag.name, parser.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
             parser.gtuTypes.put(gtuTypeTag.name, gtuType);
         }
     }

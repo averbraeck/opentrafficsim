@@ -171,7 +171,8 @@ public final class Conflict extends AbstractLaneBasedObject
 
         // Lane record for GTU provision
         this.rootPosition = direction.isPlus() ? longitudinalPosition : lane.getLength().minus(longitudinalPosition);
-        this.root = new LaneDirectionRecord(lane, direction, this.rootPosition.neg(), GTUType.VEHICLE);
+        this.root = new LaneDirectionRecord(lane, direction, this.rootPosition.neg(),
+                lane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE));
     }
 
     /**

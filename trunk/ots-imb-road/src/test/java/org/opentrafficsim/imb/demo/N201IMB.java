@@ -42,6 +42,7 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
 import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -160,7 +161,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
         private static final long serialVersionUID = 20141121L;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
-        private final OTSNetwork network = new OTSNetwork("network");
+        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;

@@ -45,6 +45,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.pmw.tinylog.Level;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -123,7 +124,7 @@ public class TestShapeParser extends DSOLApplication
         private static final long serialVersionUID = 20141121L;
 
         /** The network. */
-        private final OTSNetwork network = new OTSNetwork("test network");
+        private final OTSRoadNetwork network = new OTSRoadNetwork("test network", true);
 
         /**
          * Create the test model.
@@ -376,7 +377,7 @@ public class TestShapeParser extends DSOLApplication
                     System.out.println(startNode);
                     new NodeAnimation(startNode, this.simulator);
                     new NodeAnimation(endNode, this.simulator);
-                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, LinkType.ROAD,
+                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OTSLine3D(coordinates), this.simulator);
                     new LinkAnimation(link, this.simulator, 2.0f);
                 }
@@ -437,7 +438,7 @@ public class TestShapeParser extends DSOLApplication
                 {
                     new NodeAnimation(startNode, this.simulator);
                     new NodeAnimation(endNode, this.simulator);
-                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, LinkType.ROAD,
+                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OTSLine3D(coordinates), this.simulator);
                     new LinkAnimation(link, this.simulator, 1.0f);
                 }
@@ -500,7 +501,7 @@ public class TestShapeParser extends DSOLApplication
                 {
                     new NodeAnimation(startNode, this.simulator);
                     new NodeAnimation(endNode, this.simulator);
-                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, LinkType.ROAD,
+                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OTSLine3D(coordinates), this.simulator);
                     new LinkAnimation(link, this.simulator, 1.0f);
                 }

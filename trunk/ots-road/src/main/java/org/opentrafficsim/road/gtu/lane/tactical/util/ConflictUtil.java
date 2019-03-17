@@ -41,6 +41,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
@@ -184,7 +185,7 @@ public final class ConflictUtil
             }
 
             // indicator if bus
-            if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getGTUType().isOfType(GTUType.BUS)
+            if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getGTUType().isOfType(GTUType.DEFAULTS.BUS)
                     && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
             {
                 BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
@@ -565,7 +566,7 @@ public final class ConflictUtil
      * @return whether to stop for this conflict
      * @throws ParameterException if a parameter is not defined
      */
-    @SuppressWarnings("checkstyle:parameternumber")
+    @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
     public static boolean stopForGiveWayConflict(final HeadwayConflict conflict,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Acceleration acceleration,
             final Length vehicleLength, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
@@ -625,9 +626,11 @@ public final class ConflictUtil
                 // none within visibility, assume a conflicting vehicle just outside of visibility driving at speed limit
                 try
                 {
-                    HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(), GTUType.CAR,
-                            conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                            conflict.getConflictingSpeedLimit(), Acceleration.ZERO, Speed.ZERO);
+                    RoadNetwork network = conflict.getConflictingLink().getNetwork();
+                    HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(),
+                            network.getGtuType(GTUType.DEFAULTS.CAR), conflict.getConflictingVisibility(),
+                            new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), conflict.getConflictingSpeedLimit(),
+                            Acceleration.ZERO, Speed.ZERO);
                     List<HeadwayGTU> conflictingVehiclesList = new ArrayList<>();
                     conflictingVehiclesList.add(conflictGtu);
                     conflictingVehicles = conflictingVehiclesList;

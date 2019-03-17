@@ -310,7 +310,8 @@ class RoadTag implements Serializable
                         OTSLine3D designLine = new OTSLine3D(points);
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
                         CrossSectionLink sublink = new CrossSectionLink(openDriveNetworkLaneParser.network, sublinkId,
-                                from.node, to.node, LinkType.ROAD, designLine, simulator, LaneKeepingPolicy.KEEPLANE);
+                                from.node, to.node, openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD),
+                                designLine, simulator, LaneKeepingPolicy.KEEPLANE);
 
                         roadTag.subLinks.add(sublink);
 
@@ -378,7 +379,8 @@ class RoadTag implements Serializable
             OTSLine3D designLine = new OTSLine3D(points);
             String sublinkId = roadTag.id + "." + Integer.toString(roadTag.lanesTag.laneSectionTags.size());
             CrossSectionLink sublink = new CrossSectionLink(openDriveNetworkLaneParser.network, sublinkId, from.node, to.node,
-                    LinkType.ROAD, designLine, simulator, LaneKeepingPolicy.KEEPLANE);
+                    openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD), designLine, simulator,
+                    LaneKeepingPolicy.KEEPLANE);
 
             roadTag.subLinks.add(sublink);
 
@@ -443,7 +445,7 @@ class RoadTag implements Serializable
             Stripe centerStripe = new Stripe(currentLink, centerOffset, centerOffset, laneWidth);
             try
             {
-                Renderable2D animation = new StripeAnimation(centerStripe, simulator, StripeAnimation.TYPE.SOLID);
+                Renderable2D<Stripe> animation = new StripeAnimation(centerStripe, simulator, StripeAnimation.TYPE.SOLID);
                 openDriveNetworkLaneParser.animationMap.put(centerStripe, animation);
             }
             catch (RemoteException exception)
@@ -537,7 +539,7 @@ class RoadTag implements Serializable
                 }
 
                 Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
-                speedLimit.put(GTUType.VEHICLE, speed);
+                speedLimit.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), speed);
 
                 if (leftLane.type.equals("driving"))
                 {
@@ -549,7 +551,8 @@ class RoadTag implements Serializable
                      * laneWidth_start, laneWidth_end, LANETYPE_ALL, directionality, speedLimit, overtakingConditions);
                      */
 
-                    Lane lane = new Lane(currentLink, leftLane.id.toString(), crossSectionSlices, LaneType.FREEWAY, speedLimit,
+                    Lane lane = new Lane(currentLink, leftLane.id.toString(), crossSectionSlices,
+                            openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit,
                             overtakingConditions);
                     currentLaneSec.lanes.put(leftLane.id, lane);
 
@@ -741,7 +744,7 @@ class RoadTag implements Serializable
                 }
 
                 Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
-                speedLimit.put(GTUType.VEHICLE, speed);
+                speedLimit.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), speed);
 
                 if (rightLane.type.equals("driving"))
                 {
@@ -749,7 +752,7 @@ class RoadTag implements Serializable
                     // if(roadTag.link.getEndNode().getLinksOut().size() == 0)
                     // direction = LongitudinalDirectionality.BACKWARD;
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
-                    directionality.put(GTUType.VEHICLE, direction);
+                    directionality.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), direction);
                     Color color = Color.gray;
 
                     try
@@ -757,8 +760,9 @@ class RoadTag implements Serializable
                         // if(roadTag.id.equals("385351")||roadTag.id.equals("385359"))
                         // System.out.println();
 
-                        Lane lane = new Lane(currentLink, rightLane.id.toString(), crossSectionSlices, LaneType.FREEWAY,
-                                speedLimit, overtakingConditions);
+                        Lane lane = new Lane(currentLink, rightLane.id.toString(), crossSectionSlices,
+                                openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit,
+                                overtakingConditions);
 
                         currentLaneSec.lanes.put(rightLane.id, lane);
 
@@ -888,7 +892,8 @@ class RoadTag implements Serializable
             roadTag.endNode = to;
 
             CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
-                    LinkType.ROAD, roadTag.designLine, openDriveNetworkLaneParser.simulator, LaneKeepingPolicy.KEEPLANE);
+                    openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD), roadTag.designLine,
+                    openDriveNetworkLaneParser.simulator, LaneKeepingPolicy.KEEPLANE);
             roadTag.link = newlink;
 
             roadTag.link = newlink;
@@ -899,7 +904,8 @@ class RoadTag implements Serializable
             OTSNode from = roadTag.startNode;
             OTSNode to = roadTag.endNode;
             CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
-                    LinkType.ROAD, roadTag.designLine, openDriveNetworkLaneParser.simulator, LaneKeepingPolicy.KEEPLANE);
+                    openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD), roadTag.designLine,
+                    openDriveNetworkLaneParser.simulator, LaneKeepingPolicy.KEEPLANE);
 
             roadTag.link = newlink;
         }

@@ -2,9 +2,9 @@ package org.opentrafficsim.core.gtu;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import org.junit.Test;
+import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
  * Test the methods and fields in the GTUType class.
@@ -25,12 +25,13 @@ public class GTUTypeTest
     @Test
     public final void constructorTest()
     {
-        GTUType t = new GTUType("abc", VEHICLE);
+        OTSNetwork network = new OTSNetwork("network", true);
+        GTUType t = new GTUType("abc", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
-        GTUType t2 = new GTUType("pqr", VEHICLE);
+        GTUType t2 = new GTUType("pqr", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         assertTrue("Id is stored in the newly created GTUType", "pqr".equals(t2.getId()));
         // prove that the two are really distinct (do not use the same storage for the type string
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
-        assertEquals("parent can be retrieved", VEHICLE, t.getParent());
+        assertEquals("parent can be retrieved", network.getGtuType(GTUType.DEFAULTS.VEHICLE), t.getParent());
     }
 }

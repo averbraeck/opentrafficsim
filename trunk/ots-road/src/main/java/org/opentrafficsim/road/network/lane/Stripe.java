@@ -90,8 +90,8 @@ public class Stripe extends RoadMarkerAlong
             final Permeable permeable) throws OTSGeometryException, NetworkException
     {
         super(parentLink, crossSectionSlices);
-        addPermeability(GTUType.VEHICLE, permeable);
-        addPermeability(GTUType.PEDESTRIAN, permeable);
+        addPermeability(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), permeable);
+        addPermeability(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.PEDESTRIAN), permeable);
     }
 
     /**

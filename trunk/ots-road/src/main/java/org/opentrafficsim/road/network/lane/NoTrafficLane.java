@@ -10,6 +10,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 /**
@@ -27,19 +28,31 @@ public class NoTrafficLane extends Lane
     /** */
     private static final long serialVersionUID = 20150228L;
 
-    /** Map that tells that directionality is NONE for all GTU types. */
-    private static final Map<GTUType, LongitudinalDirectionality> DIRECTIONALITY_NONE = new HashMap<>();
-
-    /** Map that tells that speed is 0.0 for all GTU Types. */
-    private static final Map<GTUType, Speed> SPEED_NULL = new HashMap<>();
-
     /** The overtaking rules for a no-traffic lane. */
     private static final OvertakingConditions NO_OVERTAKING = new OvertakingConditions.None();
 
-    static
+    /**
+     * Return a Map that tells that directionality is NONE for all vehicles.
+     * @param network RoadNetwork; the network for which to define the directionality
+     * @return Map&lt;GTUType, LongitudinalDirectionality&gt;; a Map that tells that directionality is NONE for all vehicles
+     */
+    private static Map<GTUType, LongitudinalDirectionality> directionalityNone(final RoadNetwork network)
     {
-        DIRECTIONALITY_NONE.put(GTUType.VEHICLE, LongitudinalDirectionality.DIR_NONE);
-        SPEED_NULL.put(GTUType.VEHICLE, Speed.ZERO);
+        Map<GTUType, LongitudinalDirectionality> dirNone = new HashMap<>();
+        dirNone.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_NONE);
+        return dirNone;
+    }
+
+    /**
+     * Map that tells that speed is 0.0 for all vehicles.
+     * @param network RoadNetwork; the network for which to define the speeds
+     * @return Map&lt;GTUType, Speed&gt;; Map that tells that speed is 0.0 for all vehicles
+     */
+    private static Map<GTUType, Speed> speedNull(final RoadNetwork network)
+    {
+        Map<GTUType, Speed> speedMap = new HashMap<>();
+        speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Speed.ZERO);
+        return speedMap;
     }
 
     /**
@@ -59,8 +72,8 @@ public class NoTrafficLane extends Lane
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth)
             throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE, SPEED_NULL,
-                NO_OVERTAKING);
+        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
+                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), speedNull(parentLink.getNetwork()), NO_OVERTAKING);
     }
 
     /**
@@ -76,7 +89,8 @@ public class NoTrafficLane extends Lane
     public NoTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width)
             throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, lateralOffset, width, LaneType.NONE, SPEED_NULL, NO_OVERTAKING);
+        super(parentLink, id, lateralOffset, width, parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE),
+                speedNull(parentLink.getNetwork()), NO_OVERTAKING);
     }
 
     /**
@@ -93,7 +107,8 @@ public class NoTrafficLane extends Lane
     public NoTrafficLane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices)
             throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, crossSectionSlices, LaneType.NONE, SPEED_NULL, NO_OVERTAKING);
+        super(parentLink, id, crossSectionSlices, parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE),
+                speedNull(parentLink.getNetwork()), NO_OVERTAKING);
     }
 
     /** {@inheritDoc} */

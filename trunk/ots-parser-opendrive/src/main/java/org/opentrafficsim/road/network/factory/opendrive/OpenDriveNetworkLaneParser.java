@@ -20,6 +20,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.w3c.dom.Document;
@@ -74,7 +75,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
 
     /** OTS network */
     @SuppressWarnings("visibilitymodifier")
-    protected OTSNetwork network = null;
+    protected OTSRoadNetwork network = null;
 
     /** The signalTags that have been created. */
     @SuppressWarnings("visibilitymodifier")
@@ -90,7 +91,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
 
     /** The generated animation per object. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    public Map<Object, Renderable2D> animationMap = new HashMap<>();
+    public Map<Object, Renderable2D<?>> animationMap = new HashMap<>();
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator for creating the animation. Null if no animation needed.
@@ -113,7 +114,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
+    public final OTSRoadNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
             IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
         if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
@@ -130,7 +131,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
             throw new SAXException("OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
                     + document.getDocumentElement().getNodeName() + " instead");
 
-        this.network = new OTSNetwork(url.toString());
+        this.network = new OTSRoadNetwork(url.toString(), true);
 
         // there should be a header tag
         List<Node> headerNodes = XMLParser.getNodes(networkNodeList, "header");
@@ -213,10 +214,10 @@ public class OpenDriveNetworkLaneParser implements Serializable
      * @return the OTSNetwork with the static information about the network
      * @throws NetworkException if items cannot be added to the Network
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unused"})
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
-        this.network = new OTSNetwork(name);
+        this.network = new OTSRoadNetwork(name, true);
         return this.network;
     }
 

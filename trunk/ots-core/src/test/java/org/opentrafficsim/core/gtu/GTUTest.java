@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.rmi.RemoteException;
 
@@ -32,6 +31,7 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -74,7 +74,7 @@ public class GTUTest
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
-        OTSNetwork perceivableContext = new OTSNetwork("network");
+        OTSNetwork perceivableContext = new OTSNetwork("network", true);
         OTSSimulatorInterface simulator = new OTSSimulator();
         GTUModel model = new GTUModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model);
@@ -148,8 +148,8 @@ public class GTUTest
         Parameters parameters = new ParameterSet();
         DirectedPoint initialLocation =
                 new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
-        GTUType gtuType1 = new GTUType("gtu type 1", VEHICLE);
-        GTUType gtuType2 = new GTUType("gtu type 2", VEHICLE);
+        GTUType gtuType1 = new GTUType("gtu type 1", perceivableContext.getGtuType(GTUType.DEFAULTS.VEHICLE));
+        GTUType gtuType2 = new GTUType("gtu type 2", perceivableContext.getGtuType(GTUType.DEFAULTS.VEHICLE));
         for (String id : new String[] {"id1", "id2"})
         {
             for (GTUType gtuType : new GTUType[] {gtuType1, gtuType2})
@@ -360,7 +360,6 @@ public class GTUTest
          * @throws GTUException when something goes wrong during GTU instantiation
          */
         TestGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
-
                 final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
         {
             super(id, gtuType, simulator, perceivableContext);

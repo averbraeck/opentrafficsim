@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -30,7 +28,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.demo.SequentialLanes.SequentialModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -51,6 +48,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -97,7 +95,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             throws OTSDrawingException
     {
         super(model, panel);
-        OTSNetwork network = model.getNetwork();
+        OTSRoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
 
@@ -205,7 +203,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
         private static final long serialVersionUID = 20150130L;
 
         /** The network. */
-        private final OTSNetwork network = new OTSNetwork("network");
+        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
         /** The nodes of our network in the order that all GTUs will visit them. */
         private List<OTSNode> nodes = new ArrayList<>();
@@ -230,9 +228,6 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
 
         /** Number of cars created. */
         private int carsCreated = 0;
-
-        /** Type of all GTUs. */
-        private GTUType gtuType = CAR;
 
         /** Minimum distance. */
         private Length minimumDistance = new Length(0, METER);
@@ -289,7 +284,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 OTSNode n5 = new OTSNode(this.network, "Node(2200,200)", new OTSPoint3D(2200, 200));
                 this.nodes.addAll(Arrays.asList(new OTSNode[] {n0, n1, n2, n3, n4, n5}));
 
-                LaneType laneType = LaneType.TWO_WAY_LANE;
+                LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 
                 // Now we can build a series of Links with one Lane on them
                 ArrayList<CrossSectionLink> links = new ArrayList<>();
@@ -347,7 +342,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }
@@ -377,9 +372,9 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             {
                 boolean generateTruck = this.stream.nextDouble() > this.carProbability;
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                        new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator,
-                        this.network);
+                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
+                        this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
+                        new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
                 gtu.setNoLaneChangeDistance(Length.ZERO);
                 gtu.setMaximumAcceleration(Acceleration.createSI(3.0));

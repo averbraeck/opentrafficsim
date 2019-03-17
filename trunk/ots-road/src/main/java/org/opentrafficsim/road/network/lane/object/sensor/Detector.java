@@ -26,8 +26,8 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -65,7 +65,7 @@ public class Detector extends AbstractSensor
         @Override
         public boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
         {
-            return gtuType.isOfType(GTUType.VEHICLE);
+            return gtuType.isOfType(gtuType.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE));
         }
     };
 
@@ -553,18 +553,18 @@ public class Detector extends AbstractSensor
 
     /**
      * Write the contents of all detectors in to a file.
-     * @param network OTSNetwork; network
+     * @param network OTSRoadNetwork; network
      * @param file String; file
      * @param periodic boolean; periodic data
      */
-    public static final void writeToFile(final OTSNetwork network, final String file, final boolean periodic)
+    public static final void writeToFile(final OTSRoadNetwork network, final String file, final boolean periodic)
     {
         writeToFile(network, file, periodic, "%.3f", CompressionMethod.ZIP);
     }
 
     /**
      * Write the contents of all detectors in to a file.
-     * @param network OTSNetwork; network
+     * @param network OTSRoadNetwork; network
      * @param file String; file
      * @param periodic boolean; periodic data
      * @param format String; number format, as used in {@code String.format()}
@@ -572,7 +572,7 @@ public class Detector extends AbstractSensor
      * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
-    public static final <C> void writeToFile(final OTSNetwork network, final String file, final boolean periodic,
+    public static final <C> void writeToFile(final OTSRoadNetwork network, final String file, final boolean periodic,
             final String format, final CompressionMethod compression)
     {
         BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP));

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory.rti.test;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
@@ -43,7 +41,6 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
@@ -55,6 +52,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.opendrive.LaneAnimationOD;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.rti.communication.ReceiverThread;
@@ -159,7 +157,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
         private static final long serialVersionUID = 20150811L;
 
         /** the network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         private List<LaneBasedIndividualGTU> rtiCars;
 
@@ -205,7 +203,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                     SpeedUnit.MILE_PER_HOUR);
             this.initialPosDist =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 0.0, 1.0), LengthUnit.METER);
-            this.carType = CAR;
+            this.carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
         }
 
         /** {@inheritDoc} */
@@ -248,17 +246,17 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 destroyLink(nlp, this.network, "3766111");
 
                 Lane lane109 = makeLane(this.network, "3766068.1", "3766068.0", "3", "3766059.7", "3766059.150", "2", "3766109",
-                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEPLANE);
+                        "-1", network.getLinkType(LinkType.DEFAULTS.ROAD), LaneKeepingPolicy.KEEPLANE);
                 Renderable2D animation109 = new LaneAnimationOD(lane109, this.simulator, Color.gray);
                 nlp.animationMap.put(lane109, animation109);
 
                 Lane lane110 = makeLane(this.network, "3766068.1", "3766068.0", "4", "3766059.7", "3766059.150", "3", "3766110",
-                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEPLANE);
+                        "-1", network.getLinkType(LinkType.DEFAULTS.ROAD), LaneKeepingPolicy.KEEPLANE);
                 Renderable2D animation110 = new LaneAnimationOD(lane110, this.simulator, Color.gray);
                 nlp.animationMap.put(lane110, animation110);
 
                 Lane lane111 = makeLane(this.network, "3766068.1", "3766068.0", "5", "3766059.7", "3766059.150", "4", "3766111",
-                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEPLANE);
+                        "-1", network.getLinkType(LinkType.DEFAULTS.ROAD), LaneKeepingPolicy.KEEPLANE);
                 Renderable2D animation111 = new LaneAnimationOD(lane111, this.simulator, Color.gray);
                 nlp.animationMap.put(lane111, animation111);
 
@@ -267,22 +265,22 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 destroyLink(nlp, this.network, "3766177");
 
                 Lane lane175 = makeLane(this.network, "3766059.1", "3766059.0", "3", "3766054.5", "3766054.191", "2", "3766175",
-                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEPLANE);
+                        "-1", network.getLinkType(LinkType.DEFAULTS.ROAD), LaneKeepingPolicy.KEEPLANE);
                 Renderable2D animation175 = new LaneAnimationOD(lane175, this.simulator, Color.gray);
                 nlp.animationMap.put(lane175, animation175);
 
                 Lane lane176 = makeLane(this.network, "3766059.1", "3766059.0", "4", "3766054.5", "3766054.191", "3", "3766176",
-                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEPLANE);
+                        "-1", network.getLinkType(LinkType.DEFAULTS.ROAD), LaneKeepingPolicy.KEEPLANE);
                 Renderable2D animation176 = new LaneAnimationOD(lane176, this.simulator, Color.gray);
                 nlp.animationMap.put(lane176, animation176);
 
                 Lane lane177 = makeLane(this.network, "3766059.1", "3766059.0", "5", "3766054.5", "3766054.191", "4", "3766177",
-                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEPLANE);
+                        "-1", network.getLinkType(LinkType.DEFAULTS.ROAD), LaneKeepingPolicy.KEEPLANE);
                 Renderable2D animation177 = new LaneAnimationOD(lane177, this.simulator, Color.gray);
                 nlp.animationMap.put(lane177, animation177);
 
                 Lane lane191x = makeLane(this.network, "3766054.5", "3766054.191", "-6", "3766059.1", "3766059.0", "-4",
-                        "3766191x", "-1", LinkType.ROAD, LaneKeepingPolicy.KEEPLANE);
+                        "3766191x", "-1", network.getLinkType(LinkType.DEFAULTS.ROAD), LaneKeepingPolicy.KEEPLANE);
                 Renderable2D animation191x = new LaneAnimationOD(lane191x, this.simulator, Color.gray);
                 nlp.animationMap.put(lane191x, animation191x);
 
@@ -661,7 +659,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
             return lanes.get(this.stream.nextInt(0, lanes.size() - 1));
         }
 
-        private final void putCar(final Lane lane, final Route route, final OTSNetwork network, final GTUDirectionality dir,
+        private final void putCar(final Lane lane, final Route route, final OTSRoadNetwork network, final GTUDirectionality dir,
                 final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory)
                 throws GTUException, NamingException, NetworkException, SimRuntimeException, OTSGeometryException
         {
@@ -691,12 +689,12 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
         /**
          * Destroy the animation of the link and underlying cross section elements.
          * @param nlp OpenDriveNetworkLaneParser; the parser with the animation map
-         * @param network OTSNetwork; the network in which the link is registered
+         * @param network OTSRoadNetwork; the network in which the link is registered
          * @param linkId String; the link to destroy
          * @throws NamingException in case destroying fails
          * @throws NetworkException in case link cannot be found in the network
          */
-        private void destroyLink(final OpenDriveNetworkLaneParser nlp, final OTSNetwork network, final String linkId)
+        private void destroyLink(final OpenDriveNetworkLaneParser nlp, final OTSRoadNetwork network, final String linkId)
                 throws NamingException, NetworkException
         {
             try
@@ -728,7 +726,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
 
         /**
          * Create an extra link to "repair" the network.
-         * @param network OTSNetwork; network
+         * @param network OTSRoadNetwork; network
          * @param sLinkStr String; start link id
          * @param sNodeStr String; start node id
          * @param sLaneStr String; start lane id
@@ -743,7 +741,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
          * @throws OTSGeometryException when points cannot be found or line cannot be constructed
          * @throws NetworkException when lane cannot be constructed
          */
-        private Lane makeLane(final OTSNetwork network, final String sLinkStr, final String sNodeStr, final String sLaneStr,
+        private Lane makeLane(final OTSRoadNetwork network, final String sLinkStr, final String sNodeStr, final String sLaneStr,
                 final String eLinkStr, final String eNodeStr, final String eLaneStr, final String linkId, final String laneId,
                 final LinkType linkType, final LaneKeepingPolicy laneKeepingPolicy)
                 throws OTSGeometryException, NetworkException
@@ -790,7 +788,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 CrossSectionLink newLink = new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine,
                         this.simulator, laneKeepingPolicy);
                 Lane newLane = new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
-                        sLane.getSpeedLimit(GTUType.VEHICLE), sLane.getOvertakingConditions());
+                        sLane.getSpeedLimit(network.getGtuType(GTUType.DEFAULTS.VEHICLE)), sLane.getOvertakingConditions());
                 return newLane;
             }
             catch (Exception e)
@@ -802,7 +800,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
 
         /** {@inheritDoc} */
         @Override
-        public final OTSNetwork getNetwork()
+        public final OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

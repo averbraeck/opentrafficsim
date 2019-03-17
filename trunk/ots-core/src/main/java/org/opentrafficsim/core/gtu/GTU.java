@@ -16,6 +16,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.event.EventProducerInterface;
@@ -47,6 +48,9 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     @Override
     String getId();
 
+    /** @return the context to which the GTU belongs*/
+    PerceivableContext getPerceivableContext();
+    
     /** @return the maximum length of the GTU (parallel with driving direction). */
     Length getLength();
 

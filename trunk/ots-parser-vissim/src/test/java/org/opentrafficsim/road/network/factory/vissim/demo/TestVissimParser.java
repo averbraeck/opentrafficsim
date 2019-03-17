@@ -20,8 +20,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.vissim.VissimNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -106,7 +106,7 @@ public class TestVissimParser extends OTSSimulationApplication<OTSModelInterface
         private static final long serialVersionUID = 20141121L;
 
         /** The network. */
-        private OTSNetwork network = new OTSNetwork("test Vissim network");
+        private OTSRoadNetwork network = new OTSRoadNetwork("test Vissim network", true);
 
         /**
          * @param simulator the simulator
@@ -164,7 +164,7 @@ public class TestVissimParser extends OTSSimulationApplication<OTSModelInterface
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

@@ -40,7 +40,6 @@ import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.GTUCharacteristicsGeneratorOD;
@@ -49,6 +48,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.demand.XmlOdParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -142,7 +142,7 @@ public class XmlNetworkLaneParserOld implements Serializable
 
     /** The network to register the nodes, links, roads, lanes, and GTUs in. */
     @SuppressWarnings("visibilitymodifier")
-    protected OTSNetwork network;
+    protected OTSRoadNetwork network;
 
     /** The network to register the drawing information for the network in. */
     @SuppressWarnings("visibilitymodifier")
@@ -192,11 +192,11 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final URL url, boolean interpretXMLComments)
+    public final OTSRoadNetwork build(final URL url, boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
-        return build(url, new OTSNetwork(url.toString()), interpretXMLComments);
+        return build(url, new OTSRoadNetwork(url.toString(), true), interpretXMLComments);
     }
 
     /**
@@ -216,16 +216,16 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final InputStream stream, boolean interpretXMLComments)
+    public final OTSRoadNetwork build(final InputStream stream, boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
-        return build(stream, new OTSNetwork(stream.toString()), interpretXMLComments);
+        return build(stream, new OTSRoadNetwork(stream.toString(), true), interpretXMLComments);
     }
 
     /**
      * @param url URL; the file with the network in the agreed xml-grammar.
-     * @param otsNetwork OTSNetwork; the network
+     * @param otsNetwork OTSRoadNetwork; the network
      * @param interpretXMLComments boolean; if true; interpret specifically formatted XML comments and modify the network
      *            accordingly
      * @return the network with Nodes, Links, and Lanes.
@@ -241,7 +241,7 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final URL url, final OTSNetwork otsNetwork, boolean interpretXMLComments)
+    public final OTSRoadNetwork build(final URL url, final OTSRoadNetwork otsNetwork, boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
@@ -250,7 +250,7 @@ public class XmlNetworkLaneParserOld implements Serializable
 
     /**
      * @param stream InputStream; the input stream with the network in the agreed xml-grammar.
-     * @param otsNetwork OTSNetwork; the network
+     * @param otsNetwork OTSRoadNetwork; the network
      * @param interpretXMLComments boolean; if true; interpret specifically formatted XML comments and modify the network
      *            accordingly
      * @return the network with Nodes, Links, and Lanes.
@@ -266,7 +266,7 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final InputStream stream, final OTSNetwork otsNetwork, boolean interpretXMLComments)
+    public final OTSRoadNetwork build(final InputStream stream, final OTSRoadNetwork otsNetwork, boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
@@ -311,7 +311,7 @@ public class XmlNetworkLaneParserOld implements Serializable
             throw new SAXException("XmlNetworkLaneParser.build: XML document does not have a DEFINITIONS tag");
 
         // make the GTUTypes ALL and NONE to get started
-        this.gtuTypes.put("ALL", GTUType.VEHICLE);
+        this.gtuTypes.put("ALL", otsNetwork.getGtuType(GTUType.DEFAULTS.VEHICLE));
         // this.gtuTypes.put("NONE", GTUType.NONE);
 
         // parse the DEFINITIONS tags
@@ -394,7 +394,7 @@ public class XmlNetworkLaneParserOld implements Serializable
 
     /**
      * Retrieve the OD info from the XML comments and apply it to the network.
-     * @param otsNetwork OTSNetwork; the network
+     * @param otsNetwork OTSRoadNetwork; the network
      * @throws NetworkException should never happen (of course)
      * @throws OTSGeometryException might happen if a centroid is positioned on top of the entry exit point of a link
      * @throws NamingException on error
@@ -403,7 +403,7 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    private void fixOD(final OTSNetwork otsNetwork) throws NetworkException, OTSGeometryException, RemoteException,
+    private void fixOD(final OTSRoadNetwork otsNetwork) throws NetworkException, OTSGeometryException, RemoteException,
             NamingException, ValueException, ParameterException, SimRuntimeException
     {
         // Reduce the list to only OD comments and strip the OD header and parse each into a key-value map.
@@ -421,7 +421,7 @@ public class XmlNetworkLaneParserOld implements Serializable
         List<GTUType> odGTUTypes = new ArrayList<>(this.gtuTypes.values());
         for (GTUType gtuType : odGTUTypes)
         {
-            if (GTUType.VEHICLE.equals(gtuType))
+            if (otsNetwork.getGtuType(GTUType.DEFAULTS.VEHICLE).equals(gtuType))
             {
                 odGTUTypes.remove(gtuType);
                 break;
@@ -508,8 +508,9 @@ public class XmlNetworkLaneParserOld implements Serializable
             if (null == connectorLink)
             {
                 System.out.println("Constructing connector link " + linkName);
-                connectorLink = new CrossSectionLink(otsNetwork, linkName, from, to, LinkType.CONNECTOR, designLine,
-                        this.simulator, LaneKeepingPolicy.KEEPRIGHT);
+                connectorLink = new CrossSectionLink(otsNetwork, linkName, from, to,
+                        otsNetwork.getLinkType(LinkType.DEFAULTS.CONNECTOR), designLine, this.simulator,
+                        LaneKeepingPolicy.KEEPRIGHT);
             }
         }
         if (startTimeStrings.size() > 1)
@@ -607,7 +608,7 @@ public class XmlNetworkLaneParserOld implements Serializable
         {
             // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
             // TODO Automate addition of Routes to network
-            this.network.addRoute(GTUType.VEHICLE, routeTag.route);
+            this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), routeTag.route);
         }
     }
 

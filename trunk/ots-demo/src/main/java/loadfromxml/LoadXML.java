@@ -37,7 +37,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.gtu.colorer.BlockingColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
@@ -45,6 +44,7 @@ import org.opentrafficsim.road.gtu.colorer.FixedColor;
 import org.opentrafficsim.road.gtu.colorer.GTUTypeColorer;
 import org.opentrafficsim.road.gtu.colorer.SplitColorer;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -158,7 +158,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         private static final long serialVersionUID = 20170421L;
 
         /** The network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /** the xml file. */
         private String xml;
@@ -190,7 +190,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             try
             {
                 this.network = nlp.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), false);
-                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
+                ConflictBuilder.buildConflicts(this.network, network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
@@ -205,7 +205,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
@@ -19,14 +17,13 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -61,11 +58,11 @@ public class CurveTest
             throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
     {
         final int laneCount = 1;
-        GTUType gtuType = CAR;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
+        OTSRoadNetwork network = new OTSRoadNetwork("curve test network", true);
+        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         OTSSimulatorInterface simulator = CarTest.makeSimulator();
-        Network network = new OTSNetwork("curve test network");
         OTSNode origin = new OTSNode(network, "origin", new OTSPoint3D(10, 10, 0));
         OTSNode curveStart = new OTSNode(network, "curveStart", new OTSPoint3D(100, 10, 0));
         OTSNode curveEnd = new OTSNode(network, "curveEnd", new OTSPoint3D(150, 60, 0));
@@ -94,7 +91,7 @@ public class CurveTest
             LaneBasedIndividualGTU car = CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
                     simulator,
                     new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(25, DurationUnit.SI)),
-                    new FixedLaneChangeModel(null), (OTSNetwork) network);
+                    new FixedLaneChangeModel(null), (OTSRoadNetwork) network);
             printEventList(simulator);
             System.out.println("STEP");
             simulator.step();

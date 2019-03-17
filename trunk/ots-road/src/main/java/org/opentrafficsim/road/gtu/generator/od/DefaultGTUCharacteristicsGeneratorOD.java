@@ -212,7 +212,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
         }
         else
         {
-            gtuType = GTUType.CAR;
+            gtuType = origin.getNetwork().getGtuType(GTUType.DEFAULTS.CAR);
         }
         GTUCharacteristics gtuCharacteristics;
         if (this.templates.containsKey(gtuType))
@@ -222,7 +222,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
         }
         else
         {
-            gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType, randomStream),
+            gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream),
                     "Exception while applying default GTU characteristics.");
         }
         // strategical factory

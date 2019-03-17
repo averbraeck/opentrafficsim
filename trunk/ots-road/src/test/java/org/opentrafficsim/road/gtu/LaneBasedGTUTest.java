@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +29,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -45,6 +42,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChange
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -68,7 +66,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class LaneBasedGTUTest implements UNITS
 {
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("leader follower parallel gtu test network");
+    private OTSRoadNetwork network = new OTSRoadNetwork("leader follower parallel gtu test network", true);
 
     /** Id generator. */
     private IdGenerator idGenerator = new IdGenerator("id");
@@ -97,9 +95,9 @@ public class LaneBasedGTUTest implements UNITS
         OTSSimulatorInterface simulator = new OTSSimulator();
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        GTUType carType = CAR;
-        GTUType truckType = TRUCK;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
+        GTUType carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        GTUType truckType = this.network.getGtuType(GTUType.DEFAULTS.TRUCK);
+        LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // Create a series of Nodes (some closely bunched together)
         ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
@@ -368,7 +366,7 @@ public class LaneBasedGTUTest implements UNITS
     {
         for (int a = 1; a >= -1; a--)
         {
-            this.network = new OTSNetwork("test"); // new network every time, otherwise nodes cannot be added again
+            this.network = new OTSRoadNetwork("test", true); // new network every time, otherwise nodes cannot be added again
             // Create a car with constant acceleration
             OTSSimulatorInterface simulator = new OTSSimulator();
             Model model = new Model(simulator);
@@ -386,8 +384,8 @@ public class LaneBasedGTUTest implements UNITS
                     ie = null; // ignore
                 }
             }
-            GTUType carType = CAR;
-            LaneType laneType = LaneType.TWO_WAY_LANE;
+            GTUType carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             OTSNode fromNode = new OTSNode(this.network, "Node A", new OTSPoint3D(0, 0, 0));
             OTSNode toNode = new OTSNode(this.network, "Node B", new OTSPoint3D(1000, 0, 0));
             String linkName = "AB";
@@ -542,7 +540,7 @@ public class LaneBasedGTUTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OTSNetwork getNetwork()
+        public final OTSRoadNetwork getNetwork()
         {
             return null;
         }
