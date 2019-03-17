@@ -1,8 +1,7 @@
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 999 TO PREVENT MESING UP THIS FILE -->
-    <!-- THIS ONLY HAS TO BE DONE FOR THE ots PROJECT, NOT FOR ALL PROJECTS. PRESS RIGHT MOUSE - PROPERTIES IN THIS FILE -->
+    <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 999 TO PREVENT MESSING UP THIS FILE -->
     
     <release version="1.01.02" date="2019-03-XX" description="GTUType, LinkType, LaneType in Defaults">
       <action dev="averbraeck" type="update">
