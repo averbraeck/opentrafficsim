@@ -18,7 +18,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -52,13 +52,13 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on network.
-     * @param network OTSNetwork; network
+     * @param network OTSRoadNetwork; network
      * @param gtuType GTUType; gtu type
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @throws OTSGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
+    public static void buildConflicts(final OTSRoadNetwork network, final GTUType gtuType,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
             throws OTSGeometryException
     {
@@ -67,7 +67,7 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on network.
-     * @param network OTSNetwork; network
+     * @param network OTSRoadNetwork; network
      * @param gtuType GTUType; gtu type
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param widthGenerator WidthGenerator; width generator
@@ -75,7 +75,7 @@ public final class ConflictBuilder
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OTSGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
+    public static void buildConflicts(final OTSRoadNetwork network, final GTUType gtuType,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
             final LaneCombinationList ignoreList, final LaneCombinationList permittedList) throws OTSGeometryException
     {

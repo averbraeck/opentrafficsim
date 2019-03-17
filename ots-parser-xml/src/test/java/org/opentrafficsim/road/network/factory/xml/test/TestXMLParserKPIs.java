@@ -30,7 +30,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
@@ -42,6 +41,7 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
 import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
@@ -132,7 +132,7 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /**
          * @param simulator the simulator
@@ -177,7 +177,7 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

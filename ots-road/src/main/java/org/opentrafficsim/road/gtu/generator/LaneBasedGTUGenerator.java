@@ -34,7 +34,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
@@ -42,6 +41,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -99,7 +99,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     private final GeneratorPositions generatorPositions;
 
     /** Network. */
-    private final OTSNetwork network;
+    private final OTSRoadNetwork network;
 
     /** Simulator. */
     private final OTSSimulatorInterface simulator;
@@ -123,7 +123,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * @param laneBasedGTUCharacteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of the characteristics of
      *            each GTU
      * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
-     * @param network OTSNetwork; the OTS network that owns the generated GTUs
+     * @param network OTSRoadNetwork; the OTS network that owns the generated GTUs
      * @param simulator OTSSimulatorInterface; simulator
      * @param roomChecker RoomChecker; the way that this generator checks that there is sufficient room to place a new GTU
      * @param idGenerator IdGenerator; id generator
@@ -134,7 +134,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     @SuppressWarnings("parameternumber")
     public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
-            final GeneratorPositions generatorPositions, final OTSNetwork network, final OTSSimulatorInterface simulator,
+            final GeneratorPositions generatorPositions, final OTSRoadNetwork network, final OTSSimulatorInterface simulator,
             final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {
@@ -392,7 +392,8 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
             }
             return;
         }
-        Map<Lane, GTUDirectionality> downstreamLanes = lane.getLane().downstreamLanes(lane.getDirection(), GTUType.VEHICLE);
+        Map<Lane, GTUDirectionality> downstreamLanes =
+                lane.getLane().downstreamLanes(lane.getDirection(), network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         for (Lane downstreamLane : downstreamLanes.keySet())
         {
             Length startDistanceDownstream = startDistance.plus(lane.getLane().getLength());

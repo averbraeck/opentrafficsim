@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.changing;
 
 import static org.junit.Assert.assertEquals;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -33,9 +32,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -50,6 +47,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -75,7 +74,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     private static final long serialVersionUID = 20150313;
 
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("lane change model test network");
+    private OTSRoadNetwork network = new OTSRoadNetwork("lane change model test network", true);
 
     /**
      */
@@ -86,7 +85,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
 
     /**
      * Create a Link.
-     * @param network Network; the network
+     * @param network RoadNetwork; the network
      * @param name String; name of the new Link
      * @param from Node; start node of the new Link
      * @param to Node; end node of the new Link
@@ -97,7 +96,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network
      */
-    private static CrossSectionLink makeLink(final Network network, final String name, final OTSNode from, final OTSNode to,
+    private static CrossSectionLink makeLink(final RoadNetwork network, final String name, final OTSNode from, final OTSNode to,
             final Length width, final OTSSimulatorInterface simulator) throws OTSGeometryException, NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
@@ -106,7 +105,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OTSLine3D line = new OTSLine3D(coordinates);
         CrossSectionLink link =
-                new CrossSectionLink(network, name, from, to, LinkType.ROAD, line, simulator, LaneKeepingPolicy.KEEPRIGHT);
+                new CrossSectionLink(network, name, from, to, network.getLinkType(LinkType.DEFAULTS.ROAD), line, simulator, LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 
@@ -126,7 +125,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
             final Length width) throws NamingException, NetworkException, OTSGeometryException
     {
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.VEHICLE, new Speed(100, KM_PER_HOUR));
+        speedMap.put(link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // XXX Decide what type of overtaking conditions we want in this test
         Lane result =
                 new Lane(link, id, latPos, latPos, width, width, laneType, speedMap, new OvertakingConditions.LeftAndRight());
@@ -135,7 +134,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
 
     /**
      * Create a simple straight road with the specified number of Lanes.
-     * @param network Network; the network
+     * @param network RoadNetwork; the network
      * @param name String; name of the Link
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
@@ -145,7 +144,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static Lane[] makeMultiLane(final Network network, final String name, final OTSNode from, final OTSNode to,
+    public static Lane[] makeMultiLane(final RoadNetwork network, final String name, final OTSNode from, final OTSNode to,
             final LaneType laneType, final int laneCount, final OTSSimulatorInterface simulator) throws Exception
     {
         Length width = new Length(laneCount * 4.0, METER);
@@ -168,8 +167,8 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     @Test
     public final void changeRight() throws Exception
     {
-        GTUType gtuType = CAR;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
+        GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         int laneCount = 2;
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
         Lane[] lanes =
@@ -317,7 +316,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNetwork getNetwork()
+    public final OTSRoadNetwork getNetwork()
     {
         return this.network;
     }

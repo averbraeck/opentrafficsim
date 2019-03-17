@@ -20,6 +20,7 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -70,16 +71,28 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /** Graphs to calculate shortest paths per GTUType. */
     private Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new HashMap<>();
 
+    /** GTUTypes registered for this network. */
+    private Map<String, GTUType> gtuTypeMap = new HashMap<>();
+
+    /** LinkTypes registered for this network. */
+    private Map<String, LinkType> linkTypeMap = new HashMap<>();
+
     /** GTUs registered in this network. */
     private Map<String, GTU> gtuMap = new HashMap<>();
 
     /**
      * Construction of an empty network.
      * @param id String; the network id.
+     * @param addDefaultTypes add the default GTUTypes and LinkTypes, or not
      */
-    public OTSNetwork(final String id)
+    public OTSNetwork(final String id, final boolean addDefaultTypes)
     {
         this.id = id;
+        if (addDefaultTypes)
+        {
+            addDefaultGtuTypes();
+            addDefaultLinkTypes();
+        }
     }
 
     /** {@inheritDoc} */
@@ -765,7 +778,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * @param newRouteMap Map&lt;GTUType,Map&lt;String,Route&gt;&gt;; the routeMap to set, only to be used in the 'network'
      *            package for cloning.
      */
-    final void setRawRouteMap(final Map<GTUType, Map<String, Route>> newRouteMap)
+    public final void setRawRouteMap(final Map<GTUType, Map<String, Route>> newRouteMap)
     {
         this.routeMap = newRouteMap;
     }
@@ -773,7 +786,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * @return linkGraphs; only to be used in the 'network' package for cloning.
      */
-    final ImmutableMap<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getLinkGraphs()
+    public final ImmutableMap<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getLinkGraphs()
     {
         return new ImmutableHashMap<>(this.linkGraphs, Immutable.WRAP);
     }
@@ -784,6 +797,126 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     final Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getRawLinkGraphs()
     {
         return this.linkGraphs;
+    }
+
+    /***************************************************************************************/
+    /************************************** LinkTypes **************************************/
+    /***************************************************************************************/
+
+    /** {@inheritDoc} */
+    @Override
+    public void addDefaultLinkTypes()
+    {
+        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
+        new LinkType("NONE", null, compatibility, this);
+        //
+        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_BOTH);
+        LinkType road = new LinkType("ROAD", null, compatibility, this);
+        //
+        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.PEDESTRIAN), LongitudinalDirectionality.DIR_NONE);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.BICYCLE), LongitudinalDirectionality.DIR_NONE);
+        new LinkType("FREEWAY", road, compatibility, this);
+        //
+        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_BOTH);
+        new LinkType("WATERWAY", null, compatibility, this);
+        //
+        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_BOTH);
+        new LinkType("RAILWAY", null, compatibility, this);
+        //
+        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_PLUS);
+        new LinkType("CONNECTOR", null, compatibility, this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addLinkType(final LinkType linkType)
+    {
+        this.linkTypeMap.put(linkType.getId(), linkType);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinkType getLinkType(final String linkId)
+    {
+        return this.linkTypeMap.get(linkId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinkType getLinkType(final LinkType.DEFAULTS linkEnum)
+    {
+        return this.linkTypeMap.get(linkEnum.getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ImmutableMap<String, LinkType> getLinkTypes()
+    {
+        return new ImmutableHashMap<>(this.linkTypeMap, Immutable.WRAP);
+    }
+
+    /***************************************************************************************/
+    /************************************** GTUTypes ***************************************/
+    /***************************************************************************************/
+
+    /** {@inheritDoc} */
+    @Override
+    public void addDefaultGtuTypes()
+    {
+        GTUType roadUser = new GTUType("ROAD_USER", this);
+        GTUType waterwayUser = new GTUType("WATERWAY_USER", this);
+        GTUType railwayUser = new GTUType("RAILWAY_USER", this);
+
+        new GTUType("SHIP", waterwayUser);
+        new GTUType("TRAIN", railwayUser);
+        new GTUType("PEDESTRIAN", roadUser);
+        GTUType bicycle = new GTUType("BICYCLE", roadUser);
+
+        new GTUType("MOPED", bicycle);
+
+        GTUType vehicle = new GTUType("VEHICLE", roadUser);
+        new GTUType("EMERGENCY_VEHICLE", vehicle);
+        new GTUType("CAR", vehicle);
+        new GTUType("VAN", vehicle);
+        GTUType bus = new GTUType("BUS", vehicle);
+        new GTUType("TRUCK", vehicle);
+        new GTUType("SCHEDULED_BUS", bus);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addGtuType(final GTUType gtuType)
+    {
+        this.gtuTypeMap.put(gtuType.getId(), gtuType);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTUType getGtuType(final String gtuId)
+    {
+        return this.gtuTypeMap.get(gtuId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTUType getGtuType(final GTUType.DEFAULTS gtuEnum)
+    {
+        return this.gtuTypeMap.get(gtuEnum.getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ImmutableMap<String, GTUType> getGtuTypes()
+    {
+        return new ImmutableHashMap<>(this.gtuTypeMap, Immutable.WRAP);
     }
 
     /***************************************************************************************/

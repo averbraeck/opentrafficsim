@@ -21,8 +21,8 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParserN201.TestXMLModelN201;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -121,7 +121,7 @@ public class TestXMLParserN201 extends OTSSimulationApplication<TestXMLModelN201
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /** the GIS map. */
         private GisRenderable2D gisMap;
@@ -171,7 +171,7 @@ public class TestXMLParserN201 extends OTSSimulationApplication<TestXMLModelN201
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

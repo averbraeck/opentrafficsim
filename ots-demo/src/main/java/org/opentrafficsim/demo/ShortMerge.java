@@ -1,8 +1,5 @@
 package org.opentrafficsim.demo;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
-
 import java.awt.Dimension;
 import java.io.InputStream;
 import java.rmi.RemoteException;
@@ -49,7 +46,6 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -89,6 +85,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -216,7 +213,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         private static final long serialVersionUID = 20170407L;
 
         /** The network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator
@@ -227,9 +224,9 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         }
 
         /**
-         * @param network OTSNetwork; set network.
+         * @param network OTSRoadNetwork; set network.
          */
-        public void setNetwork(final OTSNetwork network)
+        public void setNetwork(final OTSRoadNetwork network)
         {
             this.network = network;
         }
@@ -242,7 +239,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             {
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
                 XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
-                this.network = new OTSNetwork("ShortMerge");
+                this.network = new OTSRoadNetwork("ShortMerge", true);
                 nlp.build(stream, this.network, false);
 
                 addGenerator();
@@ -256,7 +253,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }
@@ -310,8 +307,8 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
                     new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION, COOPERATION, GapAcceptance.INFORMED, Tailgating.NONE,
                     mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
-            GTUType car = new GTUType("car", CAR);
-            GTUType truck = new GTUType("truck", TRUCK);
+            GTUType car = new GTUType("car", this.network.getGtuType(GTUType.DEFAULTS.CAR));
+            GTUType truck = new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
             Route routeAE = this.network.getShortestRouteBetween(car, this.network.getNode("A"), this.network.getNode("E"));
             Route routeAG = !NETWORK.equals("shortWeave") ? null
                     : this.network.getShortestRouteBetween(car, this.network.getNode("A"), this.network.getNode("G"));
@@ -357,17 +354,21 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
                     new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
             // vehicle templates, with routes
             LaneBasedTemplateGTUType carA =
-                    new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
-                            new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, routeGeneratorA);
+                    new LaneBasedTemplateGTUType(new GTUType("car", this.network.getGtuType(GTUType.DEFAULTS.CAR)),
+                            new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
+                            speedCar, strategicalFactory, routeGeneratorA);
             LaneBasedTemplateGTUType carF =
-                    new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
-                            new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, routeGeneratorF);
+                    new LaneBasedTemplateGTUType(new GTUType("car", this.network.getGtuType(GTUType.DEFAULTS.CAR)),
+                            new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
+                            speedCar, strategicalFactory, routeGeneratorF);
             LaneBasedTemplateGTUType truckA =
-                    new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK), new ConstantGenerator<>(Length.createSI(15.0)),
-                            new ConstantGenerator<>(Length.createSI(2.5)), speedTruck, strategicalFactory, routeGeneratorA);
+                    new LaneBasedTemplateGTUType(new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+                            new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                            speedTruck, strategicalFactory, routeGeneratorA);
             LaneBasedTemplateGTUType truckF =
-                    new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK), new ConstantGenerator<>(Length.createSI(15.0)),
-                            new ConstantGenerator<>(Length.createSI(2.5)), speedTruck, strategicalFactory, routeGeneratorF);
+                    new LaneBasedTemplateGTUType(new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+                            new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                            speedTruck, strategicalFactory, routeGeneratorF);
             //
             Distribution<LaneBasedTemplateGTUType> gtuTypeAllCarA = new Distribution<>(streams.get("gtuClass"));
             gtuTypeAllCarA.add(new FrequencyAndObject<>(1.0, carA));

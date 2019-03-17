@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +30,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -46,6 +44,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -65,7 +64,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class GTUFollowingModelTest implements UNITS
 {
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("gtu following test network");
+    private OTSRoadNetwork network = new OTSRoadNetwork("gtu following test network", true);
 
     /** Generate unique names for the GTUs. */
     private IdGenerator gtuIdGenerator = new IdGenerator("GTU");
@@ -109,8 +108,8 @@ public class GTUFollowingModelTest implements UNITS
         assertNotNull("minimum headway at speed 0 should be non null", minimumHeadway);
         assertTrue("minimum headway at speed 0 hould have value >= 0", 0 <= minimumHeadway.getSI());
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
-        GTUType carType = CAR;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
+        GTUType carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Lane lane = CarTest.makeLane(this.network, laneType, simulator);
         Length initialPosition = new Length(1234.567, METER);
         Length length = new Length(5.0, METER);
@@ -354,13 +353,13 @@ public class GTUFollowingModelTest implements UNITS
         private static final long serialVersionUID = 20141027L;
 
         /** */
-        private final OTSNetwork network;
+        private final OTSRoadNetwork network;
 
         /**
          * @param simulator the simulator to use
          * @param network the network
          */
-        public Model(final OTSSimulatorInterface simulator, final OTSNetwork network)
+        public Model(final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
         {
             super(simulator);
             this.network = network;
@@ -375,7 +374,7 @@ public class GTUFollowingModelTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final OTSNetwork getNetwork()
+        public final OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

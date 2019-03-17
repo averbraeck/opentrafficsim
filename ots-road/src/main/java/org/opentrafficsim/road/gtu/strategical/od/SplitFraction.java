@@ -73,7 +73,7 @@ public class SplitFraction
      */
     public void addFraction(final Link link, final double fraction)
     {
-        addFraction(link, GTUType.VEHICLE, fraction);
+        addFraction(link, link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), fraction);
     }
 
     /**
@@ -110,7 +110,7 @@ public class SplitFraction
      */
     public void addFraction(final Link link, final DurationVector time, final double[] fraction)
     {
-        addFraction(link, GTUType.VEHICLE, time, fraction);
+        addFraction(link, link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), time, fraction);
     }
 
     /**

@@ -16,6 +16,7 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -31,7 +32,6 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public class ODOptions
 {
-
     /** Headway randomization option. */
     public static final Option<HeadwayDistribution> HEADWAY_DIST =
             new Option<>("headway distribution", HeadwayDistribution.EXPONENTIAL);
@@ -49,10 +49,6 @@ public class ODOptions
     /** Markov chain for GTU type option. */
     public static final Option<MarkovCorrelation<GTUType, Frequency>> MARKOV = new Option<>("markov", null);
 
-    /** Lane bias. Default is Truck: truck right (strong right, max 2 lanes), Vehicle (other): weak left. */
-    public static final Option<LaneBiases> LANE_BIAS = new Option<>("lane bias",
-            new LaneBiases().addBias(GTUType.TRUCK, LaneBias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, LaneBias.WEAK_LEFT));
-
     /** Initial distance over which lane changes shouldn't be performed option. */
     public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", null);
 
@@ -67,6 +63,18 @@ public class ODOptions
 
     /** Options per road type. */
     private OptionSet<LinkType> linkTypeOptions = new OptionSet<>();
+
+    /**
+     * Lane bias. Default is Truck: truck right (strong right, max 2 lanes), Vehicle (other): weak left.
+     * @param network the network for which to return the lane bias
+     * @return the lane bias
+     */
+    public static final Option<LaneBiases> laneBias(final RoadNetwork network)
+    {
+        return new Option<>("lane bias",
+                new LaneBiases().addBias(network.getGtuType(GTUType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT)
+                        .addBias(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LaneBias.WEAK_LEFT));
+    }
 
     /**
      * Set option value.

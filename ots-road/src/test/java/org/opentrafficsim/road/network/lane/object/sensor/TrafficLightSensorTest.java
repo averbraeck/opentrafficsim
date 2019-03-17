@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
 import static org.junit.Assert.assertEquals;
-import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
@@ -48,6 +46,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -84,10 +83,10 @@ public class TrafficLightSensorTest implements EventListenerInterface
     private static Lane[] buildNetwork(final double[] lengths, final OTSSimulatorInterface simulator)
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException
     {
-        OTSNetwork network = new OTSNetwork("network");
+        OTSRoadNetwork network = new OTSRoadNetwork("network", true);
         OTSNode prevNode = null;
         Lane[] result = new Lane[lengths.length];
-        LaneType laneType = LaneType.FREEWAY;
+        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
@@ -168,7 +167,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 Model model = new Model(simulator);
                 simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                 Lane[] lanes = buildNetwork(lengthList, simulator);
-                OTSNetwork network = (OTSNetwork) lanes[0].getParentLink().getNetwork();
+                OTSRoadNetwork network = (OTSRoadNetwork) lanes[0].getParentLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);
                 Length b = new Length(120, LengthUnit.METER);
                 DirectedLanePosition pA = findLaneAndPosition(lanes, a);
@@ -207,7 +206,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
                 assertEquals("event list is empty", 0, this.loggedEvents.size());
 
-                GTUType gtuType = TRUCK;
+                GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.TRUCK);
                 Length gtuLength = new Length(17, LengthUnit.METER);
                 Length gtuWidth = new Length(2, LengthUnit.METER);
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
@@ -297,7 +296,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public final OTSNetwork getNetwork()
+        public final OTSRoadNetwork getNetwork()
         {
             return null;
         }

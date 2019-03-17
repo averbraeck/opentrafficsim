@@ -28,13 +28,13 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.sampling.GtuData;
@@ -412,7 +412,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
         private static final long serialVersionUID = 20170228L;
 
         /** The network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /** Replication. */
         private final Integer replication;
@@ -495,7 +495,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
             {
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
                 XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
-                this.network = new OTSNetwork("AHFE");
+                this.network = new OTSRoadNetwork("AHFE", true);
                 nlp.build(stream, this.network, true);
 
                 // Space-time regions for sampler
@@ -542,7 +542,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

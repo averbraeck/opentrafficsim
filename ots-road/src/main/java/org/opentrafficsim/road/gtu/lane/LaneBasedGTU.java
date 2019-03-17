@@ -14,6 +14,7 @@ import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -35,7 +36,9 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public interface LaneBasedGTU extends GTU
 {
-
+    /** @return the road network to which the LaneBasedGTU belongs*/
+    RoadNetwork getNetwork();
+    
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();

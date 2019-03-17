@@ -31,7 +31,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
@@ -64,6 +63,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -95,7 +95,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class SdmSimulation extends AbstractSimulationScript
 {
     /** Network. */
-    private OTSNetwork network;
+    private OTSRoadNetwork network;
 
     /** Sampler for statistics. */
     private RoadSampler sampler;
@@ -184,14 +184,14 @@ public class SdmSimulation extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         // manager of historic information to allow a reaction time
         sim.getReplication().setHistoryManager(
                 new HistoryManagerDEVS(sim, AdaptationSituationalAwareness.TR_MAX.getDefaultValue(), Duration.createSI(10.0)));
 
         // Network
-        this.network = new OTSNetwork("SDM");
+        this.network = new OTSRoadNetwork("SDM", true);
         OTSPoint3D pointA = new OTSPoint3D(0.0, 0.0);
         OTSPoint3D pointB = new OTSPoint3D(0.0, -20.0);
         OTSPoint3D pointC = new OTSPoint3D(1600.0, -20.0);
@@ -204,10 +204,10 @@ public class SdmSimulation extends AbstractSimulationScript
         OTSNode nodeD = new OTSNode(this.network, "D", pointD);
         OTSNode nodeE = new OTSNode(this.network, "E", pointE);
         OTSNode nodeF = new OTSNode(this.network, "F", pointF);
-        LinkType type = LinkType.FREEWAY;
+        LinkType type = this.network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.createSI(3.5);
-        LaneType laneType = LaneType.FREEWAY;
+        LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
         List<Lane> allLanes = new ArrayList<>();
         allLanes.addAll(new LaneFactory(this.network, nodeA, nodeD, type, sim, policy)
@@ -240,8 +240,8 @@ public class SdmSimulation extends AbstractSimulationScript
         Interpolation interpolation = Interpolation.LINEAR;
         Categorization categorization = new Categorization("GTU categorization", GTUType.class);
         ODMatrix odMatrix = new ODMatrix("OD", origins, destinations, categorization, timeVector, interpolation);
-        Category carCategory = new Category(categorization, GTUType.CAR);
-        Category truCategory = new Category(categorization, GTUType.TRUCK);
+        Category carCategory = new Category(categorization, this.network.getGtuType(GTUType.DEFAULTS.CAR));
+        Category truCategory = new Category(categorization, this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
         double f1 = getDoubleProperty("truckFraction");
         double f2 = 1.0 - f1;
         double left2 = getDoubleProperty("leftDemand");
@@ -255,7 +255,7 @@ public class SdmSimulation extends AbstractSimulationScript
         odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] {f1 * right1, f1 * right1, f1 * right2, 0.0}));
         ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.createSI(200)).set(ODOptions.GTU_TYPE,
                 new DefaultGTUCharacteristicsGeneratorOD(
-                        new SdmStrategicalPlannerFactory(sim.getReplication().getStream("generation"), this)));
+                        new SdmStrategicalPlannerFactory(this.network, sim.getReplication().getStream("generation"), this)));
         ODApplier.applyOD(this.network, odMatrix, sim, odOptions);
 
         // setup the SDM

@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
-import static org.opentrafficsim.core.gtu.GTUType.BUS;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +27,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -51,6 +47,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.GtuTypeData;
@@ -136,7 +133,7 @@ public class N201ODfactory
      * @param matrix origin-destination matrix
      * @param simulator simulator
      */
-    public static void makeGeneratorsFromOD(final OTSNetwork network, final ODMatrix matrix,
+    public static void makeGeneratorsFromOD(final OTSRoadNetwork network, final ODMatrix matrix,
             final OTSSimulatorInterface simulator)
     {
 
@@ -145,7 +142,7 @@ public class N201ODfactory
         Time startTime = Time.ZERO;
         Time endTime = new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
         Length position = new Length(1.0, LengthUnit.SI);
-        GTUType gtuType = CAR;
+        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(30, SpeedUnit.KM_PER_HOUR);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
@@ -169,7 +166,8 @@ public class N201ODfactory
                     Route route = new Route(origin + "->" + destination);
                     try
                     {
-                        route = network.getShortestRouteBetween(GTUType.VEHICLE, origin, destination);
+                        route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), origin,
+                                destination);
                     }
                     catch (NetworkException exception)
                     {
@@ -224,7 +222,7 @@ public class N201ODfactory
      * @param sampling sampling
      * @return query covering the entire N201
      */
-    public static Query getQuery(final OTSNetwork network, final Sampler sampling)
+    public static Query getQuery(final OTSRoadNetwork network, final Sampler sampling)
     {
         // String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a",
         // "L13a14a",
@@ -238,8 +236,8 @@ public class N201ODfactory
                 "L6b", "L5b", "L4b3b", "L2b", "L1b"};
         MetaDataSet metaDataSet = new MetaDataSet();
         Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
-        gtuTypes.add(new GtuTypeData(CAR));
-        gtuTypes.add(new GtuTypeData(BUS));
+        gtuTypes.add(new GtuTypeData(network.getGtuType(GTUType.DEFAULTS.CAR)));
+        gtuTypes.add(new GtuTypeData(network.getGtuType(GTUType.DEFAULTS.BUS)));
         metaDataSet.put(new MetaDataGtuType(), gtuTypes);
         Query query = new Query(sampling, "N201 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
@@ -252,7 +250,7 @@ public class N201ODfactory
      * @param network network
      * @param links link names
      */
-    private static void addSpaceTimeRegions(final Query query, final OTSNetwork network, final String[] links)
+    private static void addSpaceTimeRegions(final Query query, final OTSRoadNetwork network, final String[] links)
     {
         for (String link : links)
         {

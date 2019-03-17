@@ -8,16 +8,15 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.mock.MockSimulator;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 /**
  * Test the LaneBasedStrategicalRoutePlanner class.
@@ -41,13 +40,13 @@ public class LaneBasedStrategicalRoutePlannerTest
     @Test
     public final void nextLinkDirectionTest() throws GTUException, NetworkException, OTSGeometryException
     {
-        Network network = new OTSNetwork("next link direction test");
+        OTSRoadNetwork network = new OTSRoadNetwork("next link direction test", true);
         // Build a really simple network
         OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));
         OTSNode toNode = new OTSNode(network, "to", new OTSPoint3D(100, 0, 0));
         OTSLine3D designLine = new OTSLine3D(fromNode.getPoint(), toNode.getPoint());
         OTSSimulatorInterface simulator = MockSimulator.createMock();
-        OTSLink link = new OTSLink(network, "link", fromNode, toNode, LinkType.ROAD, designLine, simulator);
+        OTSLink link = new OTSLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine, simulator);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
         Parameters params = DefaultTestParameters.create();

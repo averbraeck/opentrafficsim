@@ -25,7 +25,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistMass;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
@@ -51,6 +50,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -111,12 +111,12 @@ public class SteeringSimulation extends AbstractSimulationScript
      * Sets up the simulation based on provided properties. Properties can be obtained with {@code getProperty()}. Setting up a
      * simulation should at least create a network and some demand. Additionally this may setup traffic control, sampling, etc.
      * @param sim OTSSimulatorInterface; simulator
-     * @return OTSNetwork; network
+     * @return OTSRoadNetwork; network
      * @throws Exception on any exception
      */
-    protected OTSNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
-        OTSNetwork network = new OTSNetwork("Steering network");
+        OTSRoadNetwork network = new OTSRoadNetwork("Steering network", true);
         Length laneWidth = Length.createSI(3.5);
         Length stripeWidth = Length.createSI(0.2);
 
@@ -135,14 +135,18 @@ public class SteeringSimulation extends AbstractSimulationScript
         OTSNode nodeE = new OTSNode(network, "E", pointE);
 
         // links
-        CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, LinkType.FREEWAY,
-                new OTSLine3D(pointA, pointB), sim, LaneKeepingPolicy.KEEPRIGHT);
-        CrossSectionLink linkBC = new CrossSectionLink(network, "BC", nodeB, nodeC, LinkType.FREEWAY,
-                new OTSLine3D(pointB, pointC), sim, LaneKeepingPolicy.KEEPRIGHT);
-        CrossSectionLink linkCD = new CrossSectionLink(network, "CD", nodeC, nodeD, LinkType.FREEWAY,
-                new OTSLine3D(pointC, pointD), sim, LaneKeepingPolicy.KEEPRIGHT);
-        CrossSectionLink linkEB = new CrossSectionLink(network, "EB", nodeE, nodeB, LinkType.FREEWAY,
-                Bezier.cubic(nodeE.getLocation(), nodeB.getLocation()), sim, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink linkAB =
+                new CrossSectionLink(network, "AB", nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        new OTSLine3D(pointA, pointB), sim, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink linkBC =
+                new CrossSectionLink(network, "BC", nodeB, nodeC, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        new OTSLine3D(pointB, pointC), sim, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink linkCD =
+                new CrossSectionLink(network, "CD", nodeC, nodeD, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        new OTSLine3D(pointC, pointD), sim, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink linkEB =
+                new CrossSectionLink(network, "EB", nodeE, nodeB, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
+                        Bezier.cubic(nodeE.getLocation(), nodeB.getLocation()), sim, LaneKeepingPolicy.KEEPRIGHT);
 
         // lanes and stripes
         int n = getIntegerProperty("numberOfLanes");
@@ -151,13 +155,13 @@ public class SteeringSimulation extends AbstractSimulationScript
         {
             for (CrossSectionLink link : new CrossSectionLink[] {linkAB, linkBC, linkCD})
             {
-                Lane lane = new Lane(link, "Lane " + (i + 1), laneWidth.multiplyBy((0.5 + i)), laneWidth, LaneType.FREEWAY,
-                        new Speed(120, SpeedUnit.KM_PER_HOUR), null);
+                Lane lane = new Lane(link, "Lane " + (i + 1), laneWidth.multiplyBy((0.5 + i)), laneWidth,
+                        network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR), null);
                 Length offset = laneWidth.multiplyBy(i + 1.0);
                 Stripe stripe = new Stripe(link, offset, offset, stripeWidth);
                 if (i < n - 1)
                 {
-                    stripe.addPermeability(GTUType.VEHICLE, Permeable.BOTH);
+                    stripe.addPermeability(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.BOTH);
                 }
                 // sink sensors
                 if (lane.getParentLink().getId().equals("CD"))
@@ -174,11 +178,11 @@ public class SteeringSimulation extends AbstractSimulationScript
         }
         new Stripe(linkAB, Length.ZERO, Length.ZERO, stripeWidth);
         Stripe stripe = new Stripe(linkBC, Length.ZERO, Length.ZERO, stripeWidth);
-        stripe.addPermeability(GTUType.VEHICLE, Permeable.LEFT);
+        stripe.addPermeability(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.LEFT);
         new Stripe(linkCD, Length.ZERO, Length.ZERO, stripeWidth);
-        new Lane(linkBC, "Acceleration lane", laneWidth.multiplyBy(-0.5), laneWidth, LaneType.FREEWAY,
-                new Speed(120, SpeedUnit.KM_PER_HOUR), null);
-        new Lane(linkEB, "Onramp", laneWidth.multiplyBy(-0.5), laneWidth, LaneType.FREEWAY,
+        new Lane(linkBC, "Acceleration lane", laneWidth.multiplyBy(-0.5), laneWidth,
+                network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR), null);
+        new Lane(linkEB, "Onramp", laneWidth.multiplyBy(-0.5), laneWidth, network.getLaneType(LaneType.DEFAULTS.FREEWAY),
                 new Speed(120, SpeedUnit.KM_PER_HOUR), null);
         new Stripe(linkEB, Length.ZERO, Length.ZERO, stripeWidth);
         new Stripe(linkEB, laneWidth.neg(), laneWidth.neg(), stripeWidth);
@@ -193,8 +197,8 @@ public class SteeringSimulation extends AbstractSimulationScript
         TimeVector timeVector = new TimeVector(new double[] {0.0, 0.5, 1.0}, TimeUnit.BASE_HOUR, StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR; // or STEPWISE
         Categorization categorization = new Categorization("GTU type", GTUType.class);
-        Category carCategory = new Category(categorization, GTUType.CAR);
-        Category truCategory = new Category(categorization, GTUType.TRUCK);
+        Category carCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
+        Category truCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.TRUCK));
         ODMatrix odMatrix = new ODMatrix("Steering OD", origins, destinations, categorization, timeVector, interpolation);
 
         odMatrix.putDemandVector(nodeA, nodeD, carCategory, freq(new double[] {1000.0, 2000.0, 0.0}));
@@ -229,7 +233,7 @@ public class SteeringSimulation extends AbstractSimulationScript
                     final Category category, final StreamInterface randomStream)
             {
                 GTUType gtuType = category.get(GTUType.class);
-                if (gtuType.equals(GTUType.CAR))
+                if (gtuType.equals(network.getGtuType(GTUType.DEFAULTS.CAR)))
                 {
                     return car;
                 }
@@ -252,7 +256,8 @@ public class SteeringSimulation extends AbstractSimulationScript
             @Override
             public VehicleModel create(final GTUType gtuType)
             {
-                Mass mass = gtuType.isOfType(GTUType.CAR) ? massDistCar.draw() : massDistTruck.draw();
+                Mass mass =
+                        gtuType.isOfType(network.getGtuType(GTUType.DEFAULTS.CAR)) ? massDistCar.draw() : massDistTruck.draw();
                 return new VehicleModel.MassBased(mass, momentOfInertiaAboutZ);
             }
         };

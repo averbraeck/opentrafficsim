@@ -597,18 +597,16 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         }
     }
 
-    /**
-     * @return whether the GTU is destroyed, for the animation.
-     */
+    /** {@inheritDoc} */
+    @Override
     public final boolean isDestroyed()
     {
         return this.destroyed;
     }
 
-    /**
-     * @return perceivableContext
-     */
-    public final PerceivableContext getPerceivableContext()
+    /** {@inheritDoc} */
+    @Override
+    public PerceivableContext getPerceivableContext()
     {
         return this.perceivableContext;
     }

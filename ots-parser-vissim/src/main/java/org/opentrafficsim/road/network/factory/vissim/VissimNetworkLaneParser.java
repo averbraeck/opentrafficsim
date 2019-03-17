@@ -20,7 +20,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -102,7 +102,7 @@ public class VissimNetworkLaneParser implements Serializable
 
     /** The network to register the GTUs in. */
     @SuppressWarnings("visibilitymodifier")
-    protected OTSNetwork network;
+    protected OTSRoadNetwork network;
 
     /*****
      * Variables, typically for Vissim network import
@@ -125,7 +125,7 @@ public class VissimNetworkLaneParser implements Serializable
     /**
      * @param inputUrl URL; input
      * @param outputFile File; output file
-     * @param network OTSNetwork; network
+     * @param network OTSRoadNetwork; network
      * @param sinkKillClassName String; name of the sink-sensor class
      * @param sensorClassName String; name of the sensor class
      * @param trafficLightName String; name of the trafficLight class
@@ -140,9 +140,10 @@ public class VissimNetworkLaneParser implements Serializable
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public OTSNetwork build(final URL inputUrl, final File outputFile, final OTSNetwork network, final String sinkKillClassName,
-            final String sensorClassName, final String trafficLightName) throws NetworkException, ParserConfigurationException,
-            SAXException, IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
+    public OTSRoadNetwork build(final URL inputUrl, final File outputFile, final OTSRoadNetwork network,
+            final String sinkKillClassName, final String sensorClassName, final String trafficLightName)
+            throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
+            OTSGeometryException, SimRuntimeException
     {
         if (inputUrl.getFile().length() > 0 && !(new File(inputUrl.getFile()).exists()))
         {
@@ -168,7 +169,7 @@ public class VissimNetworkLaneParser implements Serializable
         }
 
         // make the GTUTypes ALL and NONE to get started
-        this.gtuTypes.put("ALL", GTUType.VEHICLE);
+        this.gtuTypes.put("ALL", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         // this.gtuTypes.put("NONE", GTUType.NONE);
 
         // Read the link (and connector) tags and ...
@@ -554,10 +555,10 @@ public class VissimNetworkLaneParser implements Serializable
     }
 
     /**
-     * @return the OTSNetwork with the static information about the network
+     * @return the OTSRoadNetwork with the static information about the network
      * @throws NetworkException if items cannot be added to the Network
      */
-    private OTSNetwork makeNetwork() throws NetworkException
+    private OTSRoadNetwork makeNetwork() throws NetworkException
     {
         // for (RouteTag routeTag : this.routeTags.values()) {
         // // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
@@ -764,12 +765,12 @@ public class VissimNetworkLaneParser implements Serializable
         this.simulator = simulator;
     }
 
-    public OTSNetwork getNetwork()
+    public OTSRoadNetwork getNetwork()
     {
         return network;
     }
 
-    public void setNetwork(OTSNetwork network)
+    public void setNetwork(OTSRoadNetwork network)
     {
         this.network = network;
     }

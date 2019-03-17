@@ -30,7 +30,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
@@ -38,6 +37,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -68,7 +68,7 @@ public class XmlOdParser implements Serializable
     private final OTSSimulatorInterface simulator;
 
     /** Network. */
-    final OTSNetwork network;
+    final OTSRoadNetwork network;
 
     /** GTU types. */
     private final Map<String, GTUType> gtuTypes = new HashMap<>();
@@ -92,10 +92,10 @@ public class XmlOdParser implements Serializable
     /**
      * Constructor.
      * @param simulator OTSSimulatorInterface; simulator
-     * @param network OTSNetwork; network
+     * @param network OTSRoadNetwork; network
      * @param gtuTypes Set&lt;GTUType&gt;; set of GTU types
      */
-    public XmlOdParser(final OTSSimulatorInterface simulator, final OTSNetwork network, final Set<GTUType> gtuTypes)
+    public XmlOdParser(final OTSSimulatorInterface simulator, final OTSRoadNetwork network, final Set<GTUType> gtuTypes)
     {
         Throw.whenNull(simulator, "Simulator should not be null.");
         Throw.whenNull(network, "Network should not be null.");

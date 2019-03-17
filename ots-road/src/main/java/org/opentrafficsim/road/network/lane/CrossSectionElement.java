@@ -17,6 +17,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.geometry.OTSShape;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.RoadNetwork;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -80,6 +81,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         Throw.when(parentLink == null, NetworkException.class,
                 "Constructor of CrossSectionElement for id %s, parentLink cannot be null", id);
         Throw.when(id == null, NetworkException.class, "Constructor of CrossSectionElement -- id cannot be null");
+        Throw.when(!(parentLink.getNetwork() instanceof RoadNetwork), NetworkException.class,
+                "Network of CrossSectionElement not a RoadNetwork");
         for (CrossSectionElement cse : parentLink.getCrossSectionElementList())
         {
             Throw.when(cse.getId().equals(id), NetworkException.class,
@@ -228,6 +231,14 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         return this.parentLink;
     }
 
+    /**
+     * @return the road network to which the lane belongs
+     */
+    public final RoadNetwork getNetwork()
+    {
+        return (RoadNetwork) this.parentLink.getNetwork();
+    }
+    
     /**
      * Calculate the slice the fractional position is in.
      * @param fractionalPosition double; the fractional position between 0 and 1 compared to the design line

@@ -124,6 +124,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.object.Distraction;
@@ -246,7 +247,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         AbstractGTU.ALIGNED = false;
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
@@ -254,7 +255,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         // Network
         InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
         XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(sim);
-        OTSNetwork network = new OTSNetwork("Distraction");
+        OTSRoadNetwork network = new OTSRoadNetwork("Distraction", true);
         try
         {
             nlp.build(stream, network, false);
@@ -277,8 +278,8 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         TimeVector globalTime =
                 new TimeVector(new double[] {0, 360, 1560, 2160, 3960}, TimeUnit.BASE_SECOND, StorageType.DENSE);
         ODMatrix od = new ODMatrix("Distraction", origins, destinations, categorization, globalTime, Interpolation.LINEAR);
-        Category carCategory = new Category(categorization, GTUType.CAR);
-        Category truckCategory = new Category(categorization, GTUType.TRUCK);
+        Category carCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
+        Category truckCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.TRUCK));
         double fTruck = getDoubleProperty("fTruck");
         double demandLeft = getDoubleProperty("leftDemand");
         double demandRight = getDoubleProperty("rightDemand");
@@ -394,6 +395,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
                 final Category category, final StreamInterface randomStream) throws GTUException
         {
+            OTSRoadNetwork network = (OTSRoadNetwork) origin.getNetwork();
             if (this.factoryCar == null)
             {
                 boolean strategies = getBooleanProperty("strategies");
@@ -441,17 +443,19 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
                 // parameter factory
                 ParameterFactoryByType params = new ParameterFactoryByType();
-                params.addParameter(GTUType.CAR, ParameterTypes.FSPEED,
+                params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.FSPEED,
                         new DistNormal(randomStream, 123.7 / 120.0, 12.0 / 120.0));
-                params.addParameter(GTUType.TRUCK, ParameterTypes.A, Acceleration.createSI(0.4));
+                params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A, Acceleration.createSI(0.4));
                 if (strategies)
                 {
                     params.addParameter(Tailgating.RHO, 0.0);
-                    params.addParameter(GTUType.CAR, LmrsParameters.SOCIO, new DistTriangular(randomStream, 0.0, 0.25, 1.0));
-                    params.addParameter(GTUType.TRUCK, LmrsParameters.SOCIO, 1.0);
-                    params.addParameter(GTUType.CAR, LmrsParameters.VGAIN,
+                    params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.SOCIO,
+                            new DistTriangular(randomStream, 0.0, 0.25, 1.0));
+                    params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.SOCIO, 1.0);
+                    params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.VGAIN,
                             new ContinuousDistSpeed(new DistLogNormal(randomStream, 3.3789, 0.4), SpeedUnit.KM_PER_HOUR));
-                    params.addParameter(GTUType.TRUCK, LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
+                    params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.VGAIN,
+                            new Speed(50.0, SpeedUnit.KM_PER_HOUR));
                     params.addParameter(ParameterTypes.TMAX, Duration.createSI(1.6));
                 }
 
@@ -463,7 +467,8 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                         perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tailgating,
                         mandatoryIncentives, voluntaryIncentivesTruck, accelerationIncentives), params);
             }
-            return category.get(GTUType.class).isOfType(GTUType.TRUCK) ? this.factoryTruck : this.factoryCar;
+            return category.get(GTUType.class).isOfType(network.getGtuType(GTUType.DEFAULTS.TRUCK)) ? this.factoryTruck
+                    : this.factoryCar;
         }
     }
 

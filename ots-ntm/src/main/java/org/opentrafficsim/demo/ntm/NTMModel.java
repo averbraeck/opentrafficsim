@@ -131,7 +131,7 @@ public class NTMModel extends AbstractOTSModel
     private LinkedHashMap<String, NTMLink> debugLinkList;
 
     /** TODO: make sure network is used... It's empty now... */
-    private OTSNetwork network = new OTSNetwork("ntm");
+    private OTSNetwork network = new OTSNetwork("ntm", true);
 
     /**
      * Constructor to make the graphs with the right type.

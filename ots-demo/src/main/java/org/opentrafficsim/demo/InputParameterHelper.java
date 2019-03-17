@@ -46,11 +46,11 @@ public final class InputParameterHelper implements ParameterFactory
     {
         try
         {
-            if (gtuType.isOfType(GTUType.CAR))
+            if (gtuType.isOfType(GTUType.DEFAULTS.CAR))
             {
                 getParametersCar(this.rootMap).setAllIn(parameters);
             }
-            else if (gtuType.isOfType(GTUType.TRUCK))
+            else if (gtuType.isOfType(GTUType.DEFAULTS.TRUCK))
             {
                 getParametersTruck(this.rootMap).setAllIn(parameters);
             }

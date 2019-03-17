@@ -12,11 +12,11 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -72,7 +72,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
      * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends LaneBasedStrategicalPlanner&gt;; the
      *            lane-based strategical planner factory to use
      * @param routeGenerator RouteGenerator; route generator
-     * @param network OTSNetwork; the network to register the GTU into
+     * @param network OTSRoadNetwork; the network to register the GTU into
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -84,7 +84,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs, final Time startTime,
             final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
-            final RouteGenerator routeGenerator, final OTSNetwork network) throws SimRuntimeException
+            final RouteGenerator routeGenerator, final OTSRoadNetwork network) throws SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime, lane,
                 position, direction, strategicalPlannerFactory, routeGenerator, network);

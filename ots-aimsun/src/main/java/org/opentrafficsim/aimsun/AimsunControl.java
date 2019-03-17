@@ -14,14 +14,6 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
@@ -46,6 +38,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -53,6 +46,14 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.pmw.tinylog.Level;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -445,7 +446,7 @@ public class AimsunControl
         private static final long serialVersionUID = 20170419L;
 
         /** The network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /** {@inheritDoc} */
         @Override
@@ -467,7 +468,7 @@ public class AimsunControl
             try
             {
                 this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), false);
-                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException

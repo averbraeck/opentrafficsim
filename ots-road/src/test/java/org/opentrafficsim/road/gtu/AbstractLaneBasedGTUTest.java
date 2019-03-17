@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -32,7 +31,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.DefaultTestParameters;
@@ -44,6 +42,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChange
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -66,7 +65,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class AbstractLaneBasedGTUTest implements UNITS
 {
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("lane base gtu test network");
+    private OTSRoadNetwork network = new OTSRoadNetwork("lane base gtu test network", true);
 
     /**
      * Test that the constructor puts the supplied values in the correct fields, then check the motion of the GTU.
@@ -80,8 +79,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // To create Lanes we need Nodes and a LaneType
         OTSNode nodeAFrom = new OTSNode(this.network, "AFrom", new OTSPoint3D(0, 0, 0));
         OTSNode nodeATo = new OTSNode(this.network, "ATo", new OTSPoint3D(1000, 0, 0));
-        GTUType gtuType = CAR;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
+        GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSSimulatorInterface simulator = new OTSSimulator();
         OTSModelInterface model = new DummyModel(simulator);
@@ -417,7 +416,7 @@ class DummyModel extends AbstractOTSModel
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNetwork getNetwork()
+    public final OTSRoadNetwork getNetwork()
     {
         return null;
     }

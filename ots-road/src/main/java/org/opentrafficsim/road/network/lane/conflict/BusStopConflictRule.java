@@ -77,7 +77,8 @@ public class BusStopConflictRule implements ConflictRule
                 gtu = lane.getGtuBehind(pos, dir, RelativePosition.FRONT, this.simulator.getSimulatorTime());
                 if (gtu == null)
                 {
-                    Map<Lane, GTUDirectionality> map = lane.upstreamLanes(dir, GTUType.BUS);
+                    Map<Lane, GTUDirectionality> map =
+                            lane.upstreamLanes(dir, lane.getNetwork().getGtuType(GTUType.DEFAULTS.BUS));
                     if (map.size() == 1)
                     {
                         lane = map.keySet().iterator().next();
@@ -103,7 +104,8 @@ public class BusStopConflictRule implements ConflictRule
         {
             throw new RuntimeException("Error while looking for GTU upstream of merge at bus stop.", exception);
         }
-        boolean busHasPriority = gtu != null && gtu.getGTUType().isOfType(GTUType.BUS) && gtu.getTurnIndicatorStatus().isLeft();
+        boolean busHasPriority =
+                gtu != null && gtu.getGTUType().isOfType(GTUType.DEFAULTS.BUS) && gtu.getTurnIndicatorStatus().isLeft();
 
         // if bus has priority and bus is asking, PRIORITY
         // if bus has no priority and bus is not asking (i.e. car is asking), PRIORITY

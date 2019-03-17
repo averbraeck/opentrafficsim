@@ -1,8 +1,6 @@
 package org.opentrafficsim.imb.demo;
 
 import static org.djunits.value.StorageType.DENSE;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -42,7 +40,6 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.imb.demo.generators.IDMPlusOldFactory;
@@ -58,6 +55,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedCh
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -117,7 +115,7 @@ public class A58OdUtil
      * @param penetrationRate double; the penetration rate parameter
      * @throws ProbabilityException on error with the lane-based distributions
      */
-    public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
+    public static void createDemand(final OTSRoadNetwork network, final GTUColorer gtuColorer,
             final OTSSimulatorInterface simulator, double penetrationRate) throws ProbabilityException
     {
 
@@ -149,14 +147,14 @@ public class A58OdUtil
         Length lookAheadStdev = new Length(250.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
         Acceleration b = new Acceleration(2.09, AccelerationUnit.SI);
-        GTUType gtuType = new GTUType("car", CAR);
+        GTUType gtuType = new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR));
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED,
                 new DistNormal(streams.get("gtuClass"), 123.7 / 120, 12.0 / 120));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, new ContinuousDistDoubleScalar.Rel<>(
                 new DistNormal(streams.get("gtuClass"), lookAhead.si, lookAheadStdev.si), LengthUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
-        gtuType = new GTUType("car_equipped", CAR);
+        gtuType = new GTUType("car_equipped", network.getGtuType(GTUType.DEFAULTS.CAR));
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED,
                 new DistNormal(streams.get("gtuClass"), 123.7 / 120, 12.0 / 120));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
@@ -166,14 +164,14 @@ public class A58OdUtil
         bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, new ContinuousDistDoubleScalar.Rel<>(
                 new DistNormal(streams.get("gtuClass"), lookAhead.si, lookAheadStdev.si), LengthUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
-        gtuType = new GTUType("truck", TRUCK);
+        gtuType = new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.4, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, new ContinuousDistDoubleScalar.Rel<>(
                 new DistNormal(streams.get("gtuClass"), lookAhead.si, lookAheadStdev.si), LengthUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
-        gtuType = new GTUType("truck_equipped", TRUCK);
+        gtuType = new GTUType("truck_equipped", network.getGtuType(GTUType.DEFAULTS.TRUCK));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.4, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, DurationUnit.SI));
@@ -246,18 +244,21 @@ public class A58OdUtil
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck = new ContinuousDistDoubleScalar.Rel<>(
                     new DistUniform(streams.get("gtuClass"), 80, 95), SpeedUnit.KM_PER_HOUR);
 
-            LaneBasedTemplateGTUType car =
-                    new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
-                            new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, routeGenerator);
-            LaneBasedTemplateGTUType carEquipped = new LaneBasedTemplateGTUType(new GTUType("car_equipped", CAR),
-                    new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)), speedCar,
-                    strategicalFactory, routeGenerator);
+            LaneBasedTemplateGTUType car = new LaneBasedTemplateGTUType(
+                    new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)), new ConstantGenerator<>(Length.createSI(4.0)),
+                    new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, routeGenerator);
+            LaneBasedTemplateGTUType carEquipped =
+                    new LaneBasedTemplateGTUType(new GTUType("car_equipped", network.getGtuType(GTUType.DEFAULTS.CAR)),
+                            new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
+                            speedCar, strategicalFactory, routeGenerator);
             LaneBasedTemplateGTUType truck =
-                    new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK), new ConstantGenerator<>(Length.createSI(15.0)),
-                            new ConstantGenerator<>(Length.createSI(2.5)), speedTruck, strategicalFactory, routeGenerator);
-            LaneBasedTemplateGTUType truckEquipped = new LaneBasedTemplateGTUType(new GTUType("truck_equipped", TRUCK),
-                    new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)), speedTruck,
-                    strategicalFactory, routeGenerator);
+                    new LaneBasedTemplateGTUType(new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+                            new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                            speedTruck, strategicalFactory, routeGenerator);
+            LaneBasedTemplateGTUType truckEquipped =
+                    new LaneBasedTemplateGTUType(new GTUType("truck_equipped", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+                            new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                            speedTruck, strategicalFactory, routeGenerator);
 
             Distribution<LaneBasedTemplateGTUType> gtuTypeLeft = new Distribution<>(streams.get("gtuClass"));
             gtuTypeLeft.add(new FrequencyAndObject<>(1.0 - penetrationRate, car));
@@ -349,7 +350,7 @@ public class A58OdUtil
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-            final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSNetwork network,
+            final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSRoadNetwork network,
             final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final StreamInterface stream)

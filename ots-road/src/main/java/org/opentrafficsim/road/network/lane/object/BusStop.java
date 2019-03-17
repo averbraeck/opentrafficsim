@@ -117,7 +117,8 @@ public class BusStop extends AbstractLaneBasedObject
                     }
                     objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition(), dir);
                 }
-                Map<Lane, GTUDirectionality> downstreamLanes = lane.downstreamLanes(dir, GTUType.BUS);
+                Map<Lane, GTUDirectionality> downstreamLanes =
+                        lane.downstreamLanes(dir, lane.getNetwork().getGtuType(GTUType.DEFAULTS.BUS));
                 int numLanes = 0;
                 for (Lane nextLane : downstreamLanes.keySet())
                 {

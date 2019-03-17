@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo.lanechange;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.geom.Line2D;
@@ -49,7 +47,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -65,6 +62,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -112,7 +110,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     private static LaneChangeGraph lcs;
 
     /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
+    private OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
     /**
      * Create a Lane Change Graph.
@@ -281,8 +279,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), this);
 
         // Set up the network
-        GTUType gtuType = CAR;
-        LaneType laneType = LaneType.TWO_WAY_LANE;
+        GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
         Lane[] lanes = LaneFactory.makeMultiLane(this.network, "Road with two lanes",
@@ -449,7 +447,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNetwork getNetwork()
+    public final OTSRoadNetwork getNetwork()
     {
         return this.network;
     }

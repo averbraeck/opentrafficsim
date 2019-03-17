@@ -81,7 +81,8 @@ final class Links
         OTSLine3D designLine =
                 new OTSLine3D(connectorTag.nodeStartTag.node.getPoint(), connectorTag.nodeEndTag.node.getPoint());
         CrossSectionLink connector = new CrossSectionLink(parser.network, connectorTag.name, connectorTag.nodeStartTag.node,
-                connectorTag.nodeEndTag.node, LinkType.CONNECTOR, designLine, simulator, null);
+                connectorTag.nodeEndTag.node, parser.network.getLinkType(LinkType.DEFAULTS.CONNECTOR), designLine, simulator,
+                null);
         if (connectorTag.demandWeight != null)
         {
             connector.setDemandWeight(connectorTag.demandWeight);
@@ -252,7 +253,8 @@ final class Links
 
         // TODO: Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
-                linkTag.nodeEndTag.node, LinkType.FREEWAY, designLine, simulator, linkTag.laneKeepingPolicy);
+                linkTag.nodeEndTag.node, parser.network.getLinkType(LinkType.DEFAULTS.FREEWAY), designLine, simulator,
+                linkTag.laneKeepingPolicy);
 
         if (linkTag.priority != null)
         {
@@ -301,7 +303,7 @@ final class Links
                         case BLOCKED:
                         case DASHED:
                             Stripe dashedLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
-                            dashedLine.addPermeability(GTUType.VEHICLE, Permeable.BOTH);
+                            dashedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.BOTH);
                             parser.networkAnimation.addDrawingInfoBase(dashedLine,
                                     new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.DASHED));
                             cseList.add(dashedLine);
@@ -316,7 +318,8 @@ final class Links
 
                         case LEFTONLY:
                             Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
-                            leftOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.LEFT); // TODO correct?
+                            leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.LEFT);
+                            // TODO correct?
                             parser.networkAnimation.addDrawingInfoBase(leftOnlyLine,
                                     new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.LEFTONLY));
                             cseList.add(leftOnlyLine);
@@ -324,7 +327,9 @@ final class Links
 
                         case RIGHTONLY:
                             Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
-                            rightOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.RIGHT); // TODO correct?
+                            rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE),
+                                    Permeable.RIGHT);
+                            // TODO correct?
                             parser.networkAnimation.addDrawingInfoBase(rightOnlyLine,
                                     new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.RIGHTONLY));
                             cseList.add(rightOnlyLine);
@@ -376,8 +381,9 @@ final class Links
                     }
 
                     // XXX: LaneTypes with compatibilities might have to be defined in a new way -- LaneType.FREEWAY for now...
-                    Lane lane = new Lane(csl, cseTag.name, startOffset, endOffset, cseTag.width, cseTag.width, LaneType.FREEWAY,
-                            cseTag.legalSpeedLimits, overtakingConditions);
+                    Lane lane = new Lane(csl, cseTag.name, startOffset, endOffset, cseTag.width, cseTag.width,
+                            csl.getNetwork().getLaneType(LaneType.DEFAULTS.FREEWAY), cseTag.legalSpeedLimits,
+                            overtakingConditions);
                     // System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#",
                     // lane.getParentLink().getDesignLine(), "\n "));
                     // System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(),

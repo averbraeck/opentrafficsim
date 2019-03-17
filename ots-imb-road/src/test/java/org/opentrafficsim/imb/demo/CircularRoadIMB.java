@@ -1,7 +1,5 @@
 package org.opentrafficsim.imb.demo;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
@@ -71,6 +69,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -307,7 +306,7 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
     /** the network as created by the AbstractWrappableIMBAnimation. */
-    private final OTSNetwork network = new OTSNetwork("network");
+    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
     /** The random number generator used to decide what kind of GTU to generate etc. */
     private StreamInterface stream = new MersenneTwister(12345);
@@ -404,8 +403,8 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
-            GTUType gtuType = CAR;
-            LaneType laneType = LaneType.TWO_WAY_LANE;
+            GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+            LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             OTSNode start = new OTSNode(this.network, "Start", new OTSPoint3D(radius, 0, 0));
             OTSNode halfway = new OTSNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0));
 

@@ -48,7 +48,6 @@ import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -86,6 +85,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -114,7 +114,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class StrategiesDemo extends AbstractSimulationScript
 {
-
     /** Factories. */
     private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new HashMap<>();
 
@@ -140,16 +139,16 @@ public class StrategiesDemo extends AbstractSimulationScript
     private GTUType nextGtuType;
 
     /** Truck length. */
-    private final Length truckLength;
+    private Length truckLength;
 
     /** Truck mid. */
-    private final Length truckMid;
+    private Length truckMid;
 
     /** Car length. */
-    private final Length carLength;
+    private Length carLength;
 
     /** Car mid. */
-    private final Length carMid;
+    private Length carMid;
 
     /**
      * Constructor.
@@ -164,19 +163,6 @@ public class StrategiesDemo extends AbstractSimulationScript
                 .addActiveColorer(new SocialPressureColorer())
                 .addColorer(new DesiredHeadwayColorer(Duration.createSI(0.5), Duration.createSI(1.6)))
                 .addColorer(new IncentiveColorer(IncentiveSocioSpeed.class)).build());
-        try
-        {
-            GTUCharacteristics truck = GTUType.defaultCharacteristics(GTUType.TRUCK, this.stream);
-            GTUCharacteristics car = GTUType.defaultCharacteristics(GTUType.CAR, this.stream);
-            this.truckLength = truck.getLength();
-            this.truckMid = truck.getLength().multiplyBy(0.5).minus(truck.getFront());
-            this.carLength = car.getLength();
-            this.carMid = car.getLength().multiplyBy(0.5).minus(car.getFront());
-        }
-        catch (GTUException exception)
-        {
-            throw new RuntimeException(exception);
-        }
     }
 
     /**
@@ -198,7 +184,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void setupDemo(final OTSAnimationPanel animation, final OTSNetwork net)
+    protected void setupDemo(final OTSAnimationPanel animation, final OTSRoadNetwork network)
     {
         // text
         JLabel textLabel = new JLabel("<html><p align=\"justify\">"
@@ -269,7 +255,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 Speed vGain = new Speed(v, SpeedUnit.KM_PER_HOUR);
                 for (GTU gtu : getNetwork().getGTUs())
                 {
-                    if (gtu.getGTUType().isOfType(GTUType.CAR))
+                    if (gtu.getGTUType().isOfType(GTUType.DEFAULTS.CAR))
                     {
                         Try.execute(() -> gtu.getParameters().setParameter(LmrsParameters.VGAIN, vGain),
                                 "Exception while setting vGain");
@@ -309,7 +295,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 double sigma = ((double) slider.getValue()) / slider.getMaximum();
                 for (GTU gtu : getNetwork().getGTUs())
                 {
-                    if (gtu.getGTUType().isOfType(GTUType.CAR))
+                    if (gtu.getGTUType().isOfType(GTUType.DEFAULTS.CAR))
                     {
                         Try.execute(() -> gtu.getParameters().setParameter(LmrsParameters.SOCIO, sigma),
                                 "Exception while setting vGain");
@@ -324,8 +310,8 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         // km/lc
         JLabel kmplcLabel = new JLabel("Km between lane changes (last 0): -");
-        this.kmplcListener = new KmplcListener(kmplcLabel, net);
-        for (GTU gtu : net.getGTUs())
+        this.kmplcListener = new KmplcListener(kmplcLabel, network);
+        for (GTU gtu : network.getGTUs())
         {
             Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGTU.LANE_CHANGE_EVENT),
                     "Exception while adding lane change listener");
@@ -384,7 +370,8 @@ public class StrategiesDemo extends AbstractSimulationScript
                         }
                         else
                         {
-                            Lane nextLane = l.nextLanes(GTUType.VEHICLE).keySet().iterator().next();
+                            Lane nextLane =
+                                    l.nextLanes(getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE)).keySet().iterator().next();
                             if (nextLane.numberOfGtus() == 0)
                             {
                                 continue;
@@ -392,8 +379,9 @@ public class StrategiesDemo extends AbstractSimulationScript
                             gtu2 = nextLane.getGtu(0);
                             down = l.getLength().plus(Try.assign(() -> gtu2.position(nextLane, gtu2.getRear()), ""));
                         }
-                        Length tentativeGap = down.minus(up)
-                                .minus(this.nextGtuType.isOfType(GTUType.TRUCK) ? this.truckLength : this.carLength);
+                        Length tentativeGap =
+                                down.minus(up).minus(this.nextGtuType.isOfType(getNetwork().getGtuType(GTUType.DEFAULTS.TRUCK))
+                                        ? this.truckLength : this.carLength);
                         if (tentativeGap.gt(gap))
                         {
                             // check reasonable gap (0.3s)
@@ -403,11 +391,13 @@ public class StrategiesDemo extends AbstractSimulationScript
                                 gap = tentativeGap;
                                 initialSpeed = Speed.interpolate(gtu1.getSpeed(), gtu2.getSpeed(), 0.5);
                                 pos = up.plus(tentativeGap.multiplyBy(0.5))
-                                        .minus(this.nextGtuType.isOfType(GTUType.TRUCK) ? this.truckMid : this.carMid);
+                                        .minus(this.nextGtuType.isOfType(getNetwork().getGtuType(GTUType.DEFAULTS.TRUCK))
+                                                ? this.truckMid : this.carMid);
                                 if (pos.gt(l.getLength()))
                                 {
                                     pos = pos.minus(l.getLength());
-                                    lane = l.nextLanes(GTUType.VEHICLE).keySet().iterator().next();
+                                    lane = l.nextLanes(getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE)).keySet().iterator()
+                                            .next();
                                 }
                                 else
                                 {
@@ -428,7 +418,8 @@ public class StrategiesDemo extends AbstractSimulationScript
                 {
                     throw new RuntimeException(exception);
                 }
-                this.nextGtuType = this.stream.nextDouble() < this.truckFraction ? GTUType.TRUCK : GTUType.CAR;
+                this.nextGtuType = this.stream.nextDouble() < this.truckFraction
+                        ? getNetwork().getGtuType(GTUType.DEFAULTS.TRUCK) : getNetwork().getGtuType(GTUType.DEFAULTS.CAR);
                 this.queue.clear();
             }
         }
@@ -443,15 +434,15 @@ public class StrategiesDemo extends AbstractSimulationScript
         private final JLabel label;
 
         /** Network. */
-        private final OTSNetwork network;
+        private final OTSRoadNetwork network;
 
         /**
          * Constructor.
          * @param label JLabel; label
-         * @param network OTSNetwork; network
+         * @param network OTSRoadNetwork; network
          */
         @SuppressWarnings("synthetic-access")
-        KmplcListener(final JLabel label, final OTSNetwork network)
+        KmplcListener(final JLabel label, final OTSRoadNetwork network)
         {
             this.label = label;
             this.network = network;
@@ -487,15 +478,24 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
+    protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 
-        OTSNetwork net = new OTSNetwork("Strategies demo");
+        OTSRoadNetwork network = new OTSRoadNetwork("Strategies demo", true);
+
+        GTUCharacteristics truck =
+                GTUType.defaultCharacteristics(network.getGtuType(GTUType.DEFAULTS.TRUCK), network, this.stream);
+        GTUCharacteristics car = GTUType.defaultCharacteristics(network.getGtuType(GTUType.DEFAULTS.CAR), network, this.stream);
+        this.truckLength = truck.getLength();
+        this.truckMid = truck.getLength().multiplyBy(0.5).minus(truck.getFront());
+        this.carLength = car.getLength();
+        this.carMid = car.getLength().multiplyBy(0.5).minus(car.getFront());
+
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
-        OTSNode nodeA = new OTSNode(net, "A", new OTSPoint3D(-radius, 0, 0));
-        OTSNode nodeB = new OTSNode(net, "B", new OTSPoint3D(radius, 0, 0));
+        OTSNode nodeA = new OTSNode(network, "A", new OTSPoint3D(-radius, 0, 0));
+        OTSNode nodeB = new OTSNode(network, "B", new OTSPoint3D(radius, 0, 0));
 
         OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
         for (int i = 0; i < coordsHalf1.length; i++)
@@ -503,8 +503,9 @@ public class StrategiesDemo extends AbstractSimulationScript
             double angle = Math.PI * (i) / (coordsHalf1.length - 1);
             coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
-        List<Lane> lanes1 = new LaneFactory(net, nodeB, nodeA, LinkType.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
-                new OTSLine3D(coordsHalf1)).leftToRight(0.0, Length.createSI(3.5), LaneType.FREEWAY, speedLimit)
+        List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, network.getLinkType(LinkType.DEFAULTS.FREEWAY), sim,
+                LaneKeepingPolicy.KEEPLEFT, new OTSLine3D(coordsHalf1))
+                        .leftToRight(0.0, Length.createSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
                         .addLanes(Permeable.BOTH).getLanes();
         OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
         for (int i = 0; i < coordsHalf2.length; i++)
@@ -512,8 +513,9 @@ public class StrategiesDemo extends AbstractSimulationScript
             double angle = Math.PI + Math.PI * (i) / (coordsHalf2.length - 1);
             coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
-        List<Lane> lanes2 = new LaneFactory(net, nodeA, nodeB, LinkType.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
-                new OTSLine3D(coordsHalf2)).leftToRight(0.0, Length.createSI(3.5), LaneType.FREEWAY, speedLimit)
+        List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.FREEWAY), sim,
+                LaneKeepingPolicy.KEEPLEFT, new OTSLine3D(coordsHalf2))
+                        .leftToRight(0.0, Length.createSI(3.5), network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit)
                         .addLanes(Permeable.BOTH).getLanes();
 
         // Strategical factories
@@ -521,16 +523,19 @@ public class StrategiesDemo extends AbstractSimulationScript
         // random parameters
         ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
         parameterFactory.addParameter(Tailgating.RHO, 0.0);
-        parameterFactory.addParameter(GTUType.CAR, LmrsParameters.SOCIO, 0.5);
-        parameterFactory.addParameter(GTUType.TRUCK, LmrsParameters.SOCIO, 1.0);
-        parameterFactory.addParameter(GTUType.CAR, LmrsParameters.VGAIN, new Speed(35.0, SpeedUnit.KM_PER_HOUR));
-        parameterFactory.addParameter(GTUType.TRUCK, LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
+        parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.SOCIO, 0.5);
+        parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.SOCIO, 1.0);
+        parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.VGAIN,
+                new Speed(35.0, SpeedUnit.KM_PER_HOUR));
+        parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.VGAIN,
+                new Speed(50.0, SpeedUnit.KM_PER_HOUR));
         parameterFactory.addParameter(ParameterTypes.TMAX, Duration.createSI(1.6));
-        parameterFactory.addParameter(GTUType.CAR, ParameterTypes.FSPEED,
+        parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.FSPEED,
                 new DistNormal(this.stream, 123.7 / 120.0, 12.0 / 120.0));
-        parameterFactory.addParameter(GTUType.TRUCK, ParameterTypes.A, Acceleration.createSI(0.4));
-        parameterFactory.addParameter(GTUType.TRUCK, ParameterTypes.FSPEED, 1.0);
-        for (GTUType gtuType : new GTUType[] {GTUType.CAR, GTUType.TRUCK})
+        parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A, Acceleration.createSI(0.4));
+        parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.FSPEED, 1.0);
+        for (GTUType gtuType : new GTUType[] {network.getGtuType(GTUType.DEFAULTS.CAR),
+                network.getGtuType(GTUType.DEFAULTS.TRUCK)})
         {
             // incentives
             Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -540,13 +545,14 @@ public class StrategiesDemo extends AbstractSimulationScript
             voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
             voluntaryIncentives.add(new IncentiveKeep());
             voluntaryIncentives.add(new IncentiveSocioSpeed());
-            if (gtuType.equals(GTUType.TRUCK))
+            if (gtuType.equals(network.getGtuType(GTUType.DEFAULTS.TRUCK)))
             {
                 voluntaryIncentives.add(new IncentiveStayRight());
             }
             // car-following factory
             CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
-                    gtuType.equals(GTUType.CAR) ? new SocioIDMFactory() : new IDMPlusFactory(this.stream);
+                    gtuType.equals(network.getGtuType(GTUType.DEFAULTS.CAR)) ? new SocioIDMFactory()
+                            : new IDMPlusFactory(this.stream);
             // tailgating
             Tailgating tlgt = Tailgating.PRESSURE;
             // strategical and tactical factory
@@ -568,16 +574,17 @@ public class StrategiesDemo extends AbstractSimulationScript
                     GTUType gtuType;
                     if (i == 0)
                     {
-                        gtuType = GTUType.CAR;
+                        gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
                     }
                     else
                     {
-                        gtuType = this.stream.nextDouble() < 2 * this.truckFraction ? GTUType.TRUCK : GTUType.CAR;
+                        gtuType = this.stream.nextDouble() < 2 * this.truckFraction ? network.getGtuType(GTUType.DEFAULTS.TRUCK)
+                                : network.getGtuType(GTUType.DEFAULTS.CAR);
                     }
 
                     Speed initialSpeed = Speed.ZERO;
 
-                    createGtu(lane, pos, gtuType, initialSpeed, net);
+                    createGtu(lane, pos, gtuType, initialSpeed, network);
 
                     pos = pos.plus(gap);
                     if (pos.si > lane.getLength().si)
@@ -589,10 +596,11 @@ public class StrategiesDemo extends AbstractSimulationScript
             }
         }
 
-        this.nextGtuType = this.stream.nextDouble() < this.truckFraction ? GTUType.TRUCK : GTUType.CAR;
+        this.nextGtuType = this.stream.nextDouble() < this.truckFraction ? network.getGtuType(GTUType.DEFAULTS.TRUCK)
+                : network.getGtuType(GTUType.DEFAULTS.CAR);
         sim.scheduleEventNow(this, this, "checkVehicleNumber", new Object[] {});
 
-        return net;
+        return network;
     }
 
     /**
@@ -601,7 +609,7 @@ public class StrategiesDemo extends AbstractSimulationScript
      * @param pos Length; position
      * @param gtuType GTUType; GTU type
      * @param initialSpeed Speed; initial speed
-     * @param net OTSNetwork; network
+     * @param net OTSRoadNetwork; network
      * @throws NamingException on exception
      * @throws GTUException on exception
      * @throws NetworkException on exception
@@ -609,10 +617,10 @@ public class StrategiesDemo extends AbstractSimulationScript
      * @throws OTSGeometryException on exception
      */
     public void createGtu(final Lane lane, final Length pos, final GTUType gtuType, final Speed initialSpeed,
-            final OTSNetwork net)
+            final OTSRoadNetwork net)
             throws NamingException, GTUException, NetworkException, SimRuntimeException, OTSGeometryException
     {
-        GTUCharacteristics gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType, this.stream),
+        GTUCharacteristics gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType, net, this.stream),
                 "Exception while applying default GTU characteristics.");
 
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.gtuIdNum), gtuType, gtuCharacteristics.getLength(),

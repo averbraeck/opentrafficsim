@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
@@ -13,6 +10,9 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Embedded sensors used by a TrafficLightSensor.

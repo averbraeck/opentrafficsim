@@ -7,8 +7,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -34,7 +34,7 @@ public class ShapeModel extends AbstractOTSModel
     private Map<String, Link> shpLinks;
 
     /** the network. */
-    private OTSNetwork network = new OTSNetwork("shape model network");
+    private OTSRoadNetwork network = new OTSRoadNetwork("shape model network", true);
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator
@@ -65,7 +65,7 @@ public class ShapeModel extends AbstractOTSModel
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNetwork getNetwork()
+    public final OTSRoadNetwork getNetwork()
     {
         return this.network;
     }

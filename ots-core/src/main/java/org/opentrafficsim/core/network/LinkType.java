@@ -33,52 +33,47 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     /** Reversed link type. */
     private LinkType reversed = null;
 
-    /** The link type that does not allow any vehicles, or pedestrians. */
-    public static final LinkType NONE;
+    /** the network to which the LinkType belongs. */
+    private final Network network;
 
-    /** Two-directional road, accessible to all road GTU types (including PEDESTRIAN). */
-    public static final LinkType ROAD;
-
-    /** One-directional road, accessible to all road GTU types (excluding PEDESTRIAN and BICYCLE). */
-    public static final LinkType FREEWAY;
-
-    /** Two-directional water way. */
-    public static final LinkType WATERWAY;
-
-    /** Two-directional rail link. */
-    public static final LinkType RAILWAY;
-
-    /** Virtual connection between nodes, e.g. to distribute demand. */
-    public static final LinkType CONNECTOR;
-
-    static
+    /** Default types with their name. */
+    public enum DEFAULTS
     {
-        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
-        NONE = new LinkType("NONE", null, compatibility);
-        //
-        compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
-        ROAD = new LinkType("ROAD", null, compatibility);
-        //
-        compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGTUType(GTUType.PEDESTRIAN, LongitudinalDirectionality.DIR_NONE);
-        compatibility.addAllowedGTUType(GTUType.BICYCLE, LongitudinalDirectionality.DIR_NONE);
-        FREEWAY = new LinkType("FREEWAY", ROAD, compatibility);
-        //
-        compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.WATERWAY_USER, LongitudinalDirectionality.DIR_BOTH);
-        WATERWAY = new LinkType("WATERWAY", null, compatibility);
-        //
-        compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.RAILWAY_USER, LongitudinalDirectionality.DIR_BOTH);
-        RAILWAY = new LinkType("RAILWAY", null, compatibility);
-        //
-        compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGTUType(GTUType.WATERWAY_USER, LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGTUType(GTUType.RAILWAY_USER, LongitudinalDirectionality.DIR_PLUS);
-        CONNECTOR = new LinkType("CONNECTOR", null, compatibility);
+        /** The link type that does not allow any vehicles, or pedestrians. */
+        NONE("NONE"),
+
+        /** Two-directional road, accessible to all road GTU types (including PEDESTRIAN). */
+        ROAD("ROAD"),
+
+        /** One-directional road, accessible to all road GTU types (excluding PEDESTRIAN and BICYCLE). */
+        FREEWAY("FREEWAY"),
+
+        /** Two-directional water way. */
+        WATERWAY("WATERWAY"),
+
+        /** Two-directional rail link. */
+        RAILWAY("RAILWAY"),
+
+        /** Virtual connection between nodes, e.g. to distribute demand. */
+        CONNECTOR("CONNECTOR");
+
+        /** The name. */
+        private final String id;
+
+        /**
+         * Construct the enum.
+         * @param id String; the id
+         */
+        DEFAULTS(final String id)
+        {
+            this.id = id;
+        }
+
+        /** @return the id */
+        public String getId()
+        {
+            return this.id;
+        }
     }
 
     /**
@@ -87,11 +82,33 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      * @param parent LinkType; the parent type (may be null)
      * @param compatibility the collection of compatible GTUTypes for this LinkType; can be null (resulting in a LinkType that
      *            is inaccessible to all GTU types). This constructor makes a deep copy of the <code>compatibility</code>.
+     * @param network Network; The network to which the LinkType belongs
      */
-    public LinkType(final String id, final LinkType parent, final GTUCompatibility<LinkType> compatibility)
+    public LinkType(final String id, final LinkType parent, final GTUCompatibility<LinkType> compatibility,
+            final Network network)
     {
         super(id, parent);
         this.compatibility = new GTUCompatibility<>(compatibility);
+        this.network = network;
+        this.network.addLinkType(this);
+    }
+
+    /**
+     * Whether this, or any of the parent types, equals the given type.
+     * @param type DEFAULTS; type
+     * @return whether this, or any of the parent types, equals the given type
+     */
+    public boolean isOfType(final DEFAULTS type)
+    {
+        if (this.getId().equals(type.getId()))
+        {
+            return true;
+        }
+        if (getParent() != null)
+        {
+            return getParent().isOfType(type);
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -101,6 +118,14 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         return this.compatibility.isCompatible(gtuType, directionality);
     }
 
+    /**
+     * @return the gtu compatibility for this LinkType
+     */
+    public GTUCompatibility<LinkType> getCompatibility()
+    {
+        return this.compatibility;
+    }
+    
     /**
      * Returns a link type with directionality reversed.
      * @return LinkType; link type with directionality reversed
@@ -119,7 +144,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      */
     public final boolean isNone()
     {
-        return this.equals(NONE);
+        return this.getId().equals(DEFAULTS.NONE.getId());
     }
 
     /**
@@ -127,7 +152,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      */
     public final boolean isRoad()
     {
-        return this.equals(ROAD);
+        return this.getId().equals(DEFAULTS.ROAD.getId());
     }
 
     /**
@@ -135,7 +160,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      */
     public final boolean isWaterWay()
     {
-        return this.equals(WATERWAY);
+        return this.getId().equals(DEFAULTS.WATERWAY.getId());
     }
 
     /**
@@ -143,7 +168,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      */
     public final boolean isRailWay()
     {
-        return this.equals(RAILWAY);
+        return this.getId().equals(DEFAULTS.RAILWAY.getId());
     }
 
     /**
@@ -151,7 +176,15 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      */
     public final boolean isConnector()
     {
-        return this.equals(CONNECTOR);
+        return this.getId().equals(DEFAULTS.CONNECTOR.getId());
+    }
+
+    /**
+     * @return the network to which the LinkType belongs
+     */
+    public Network getNetwork()
+    {
+        return this.network;
     }
 
     /** {@inheritDoc} */
@@ -196,7 +229,8 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
          */
         ReversedLinkType(final LinkType original)
         {
-            super(original.getId() + "_rev", original.getParent().reverse(), new GTUCompatibility<>((LinkType) null));
+            super(original.getId() + "_rev", original.getParent().reverse(), new GTUCompatibility<>((LinkType) null),
+                    original.getNetwork());
             this.original = original;
         }
 

@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -41,7 +42,7 @@ public final class OTSNetworkUtils
             final SimulatorInterface.TimeDoubleUnit oldSimulator, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
-        OTSNetwork newNetwork = new OTSNetwork(newId);
+        OTSNetwork newNetwork = new OTSNetwork(newId, false);
 
         // clone the nodes
         for (Node node : network.getNodeMap().values())
@@ -88,6 +89,32 @@ public final class OTSNetworkUtils
         }
 
         // TODO clone the visible objects
+
+        // clone the GTUTypes
+        for (GTUType gtuType : network.getGtuTypes().values())
+        {
+            if (gtuType.getParent() == null)
+            {
+                new GTUType(gtuType.getId(), newNetwork);
+            }
+        }
+        for (GTUType gtuType : network.getGtuTypes().values())
+        {
+            if (gtuType.getParent() != null)
+            {
+                new GTUType(gtuType.getId(), gtuType.getParent());
+            }
+        }
+
+        // clone the LinkTypes
+        for (LinkType linkType : network.getLinkTypes().values())
+        {
+            if (linkType.getParent() != null)
+            {
+                new LinkType(linkType.getId(), linkType.getParent(), new GTUCompatibility<>(linkType.getCompatibility()),
+                        newNetwork);
+            }
+        }
 
         return newNetwork;
     }

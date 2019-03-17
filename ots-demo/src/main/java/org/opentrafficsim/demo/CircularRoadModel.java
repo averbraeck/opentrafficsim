@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,7 +20,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -32,6 +29,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -91,8 +89,8 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     /** Truck parameters. */
     private Parameters parametersTruck;
 
-    /** The OTSNetwork. */
-    private final OTSNetwork network = new OTSNetwork("network");
+    /** The OTSRoadNetwork. */
+    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -172,8 +170,8 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
-            GTUType gtuType = CAR;
-            LaneType laneType = LaneType.TWO_WAY_LANE;
+            GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             OTSNode start = new OTSNode(this.network, "Start", new OTSPoint3D(radius, 0, 0));
             OTSNode halfway = new OTSNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0));
 
@@ -270,7 +268,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public OTSRoadNetwork getNetwork()
     {
         return this.network;
     }

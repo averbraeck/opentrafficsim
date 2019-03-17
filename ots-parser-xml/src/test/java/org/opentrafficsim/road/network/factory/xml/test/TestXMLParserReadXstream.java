@@ -19,8 +19,8 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
@@ -110,7 +110,7 @@ public class TestXMLParserReadXstream extends OTSSimulationApplication<OTSModelI
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /**
          * @param simulator the simulator
@@ -138,7 +138,7 @@ public class TestXMLParserReadXstream extends OTSSimulationApplication<OTSModelI
 
             millis = System.currentTimeMillis();
             XStream xstream = new XStream();
-            this.network = (OTSNetwork) xstream.fromXML(xml);
+            this.network = (OTSRoadNetwork) xstream.fromXML(xml);
             System.out.println(this.network.getNodeMap());
             System.out.println(this.network.getLinkMap());
             System.out.println("building took : " + (System.currentTimeMillis() - millis) + " ms");
@@ -151,7 +151,7 @@ public class TestXMLParserReadXstream extends OTSSimulationApplication<OTSModelI
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public OTSRoadNetwork getNetwork()
         {
             return this.network;
         }

@@ -1,7 +1,5 @@
 package org.opentrafficsim.demo;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,7 +20,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -32,6 +29,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -63,9 +61,6 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
 
     /** Number of cars created. */
     private int carsCreated = 0;
-
-    /** Type of all GTUs. */
-    private GTUType gtuType = CAR;
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -100,8 +95,8 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
     /** Truck parameters. */
     private Parameters parametersTruck;
 
-    /** The OTSNetwork. */
-    private final OTSNetwork network = new OTSNetwork("network");
+    /** The OTSRoadNetwork. */
+    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -156,7 +151,7 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
-            LaneType laneType = LaneType.TWO_WAY_LANE;
+            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             OTSNode start = new OTSNode(this.network, "Start", new OTSPoint3D(radius, 0, 0));
             OTSNode halfway = new OTSNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0));
 
@@ -223,9 +218,9 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-        LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8, METER),
-                        new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
+        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
+                this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
+                new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
         gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
@@ -267,7 +262,7 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public OTSRoadNetwork getNetwork()
     {
         return this.network;
     }

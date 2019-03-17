@@ -47,6 +47,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -73,11 +74,12 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
 
     /**
      * Constructor.
+     * @param network the network
      * @param stream StreamInterface; random number stream
      * @param simulation SdmSimulation; simulation to obtain properties from
      */
     @SuppressWarnings("synthetic-access")
-    SdmStrategicalPlannerFactory(final StreamInterface stream, final SdmSimulation simulation)
+    SdmStrategicalPlannerFactory(final OTSRoadNetwork network, final StreamInterface stream, final SdmSimulation simulation)
     {
         ParameterFactoryByType paramFactory = new ParameterFactoryByType();
 
@@ -95,8 +97,9 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
         paramFactory.addParameter(ParameterTypes.TMIN, simulation.getDurationProperty("TMIN"));
         paramFactory.addParameter(ParameterTypes.TMAX, simulation.getDurationProperty("TMAX"));
         paramFactory.addParameter(ParameterTypes.T, simulation.getDurationProperty("TMAX"));
-        paramFactory.addParameter(GTUType.CAR, ParameterTypes.A, Acceleration.createSI(simulation.getDoubleProperty("A_CAR")));
-        paramFactory.addParameter(GTUType.TRUCK, ParameterTypes.A,
+        paramFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.A,
+                Acceleration.createSI(simulation.getDoubleProperty("A_CAR")));
+        paramFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A,
                 Acceleration.createSI(simulation.getDoubleProperty("A_TRUCK")));
         paramFactory.addParameter(ParameterTypes.B, Acceleration.createSI(simulation.getDoubleProperty("B")));
 
@@ -124,7 +127,7 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
     public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination, final Category category,
             final StreamInterface randomStream) throws GTUException
     {
-        if (category.get(GTUType.class).isOfType(GTUType.TRUCK))
+        if (category.get(GTUType.class).isOfType(GTUType.DEFAULTS.TRUCK))
         {
             return this.truckFactory;
         }

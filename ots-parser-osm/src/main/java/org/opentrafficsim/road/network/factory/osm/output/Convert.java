@@ -1,10 +1,5 @@
 package org.opentrafficsim.road.network.factory.osm.output;
 
-import static org.opentrafficsim.core.gtu.GTUType.BICYCLE;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-import static org.opentrafficsim.core.gtu.GTUType.PEDESTRIAN;
-import static org.opentrafficsim.core.gtu.GTUType.SHIP;
-
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,9 +28,9 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.osm.OSMLink;
 import org.opentrafficsim.road.network.factory.osm.OSMNetwork;
 import org.opentrafficsim.road.network.factory.osm.OSMNode;
@@ -111,7 +106,7 @@ public final class Convert
 
     /**
      * This method converts an OSM link to an OTS link.
-     * @param network Network; the network
+     * @param network OTSRoadNetwork; the network
      * @param link OSMLink; OSM Link to be converted
      * @param simulator OTSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to be an
      *            instance of AnimatorInterface)
@@ -120,7 +115,7 @@ public final class Convert
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public CrossSectionLink convertLink(final Network network, final OSMLink link, final OTSSimulatorInterface simulator)
+    public CrossSectionLink convertLink(final OTSRoadNetwork network, final OSMLink link, final OTSSimulatorInterface simulator)
             throws OTSGeometryException, NetworkException
     {
         if (null == link.getStart().getOtsNode())
@@ -154,20 +149,20 @@ public final class Convert
             {
                 continue;
             }
-            result = new CrossSectionLink(network, linkId, start, end, LinkType.ROAD, designLine, simulator,
-                    LaneKeepingPolicy.KEEPRIGHT);
+            result = new CrossSectionLink(network, linkId, start, end, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine,
+                    simulator, LaneKeepingPolicy.KEEPRIGHT);
             return result;
         }
     }
 
     /**
      * This method converts an OSM node to an OTS node.
-     * @param network Network; the network
+     * @param network OTSRoadNetwork; the network
      * @param node OSMNode; OSM Node to be converted
      * @return OTS Node
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique
      */
-    public OTSNode convertNode(final Network network, final OSMNode node) throws NetworkException
+    public OTSNode convertNode(final OTSRoadNetwork network, final OSMNode node) throws NetworkException
     {
         OSMTag tag = node.getTag("ele");
         if (null != tag)
@@ -234,13 +229,14 @@ public final class Convert
 
     /**
      * Determine the positions of the various lanes on an OSMLink.
+     * @param network the network
      * @param osmLink OSMLink; - The OSM Link on which the conversion is based.
      * @param warningListener WarningListener; the warning listener that receives warning events
      * @return Map&lt;Double, LaneAttributes&gt;; the lane structure
      * @throws NetworkException on failure
      */
-    private static Map<Double, LaneAttributes> makeStructure(final OSMLink osmLink, final WarningListener warningListener)
-            throws NetworkException
+    private static Map<Double, LaneAttributes> makeStructure(final OTSRoadNetwork network, final OSMLink osmLink,
+            final WarningListener warningListener) throws NetworkException
     {
         SortedMap<Integer, LaneAttributes> structure = new TreeMap<Integer, LaneAttributes>();
         int forwards = osmLink.getForwardLanes();
@@ -254,16 +250,16 @@ public final class Convert
                 switch (tag.getValue())
                 {
                     case "river":
-                        laneType = makeLaneType(SHIP);
+                        laneType = makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.SHIP));
                         break;
                     case "canal":
-                        laneType = makeLaneType(SHIP);
+                        laneType = makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.SHIP));
                         break;
                     default:
-                        laneType = makeLaneType(GTUType.WATERWAY_USER);
+                        laneType = makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.WATERWAY_USER));
                         break;
                 }
-                laneAttributes = new LaneAttributes(laneType, Color.CYAN, LongitudinalDirectionality.DIR_BOTH);
+                laneAttributes = new LaneAttributes(network, laneType, Color.CYAN, LongitudinalDirectionality.DIR_BOTH);
                 structure.put(0, laneAttributes);
             }
         }
@@ -278,10 +274,11 @@ public final class Convert
                     || tag.getValue().equals("road") || tag.getValue().equals("track")
                     || tag.getValue().equals("living_street")))
             {
-                laneType = makeLaneType(CAR);
+                laneType = makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.CAR));
                 if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                 {
-                    laneAttributes = new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_BOTH);
+                    laneAttributes =
+                            new LaneAttributes(network, laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_BOTH);
                     structure.put(0, laneAttributes);
                 }
                 else
@@ -290,14 +287,14 @@ public final class Convert
                     {
                         if (i < 0)
                         {
-                            laneAttributes =
-                                    new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_MINUS);
+                            laneAttributes = new LaneAttributes(network, laneType, Color.LIGHT_GRAY,
+                                    LongitudinalDirectionality.DIR_MINUS);
                             structure.put(i, laneAttributes);
                         }
                         if (i >= 0)
                         {
-                            laneAttributes =
-                                    new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_PLUS);
+                            laneAttributes = new LaneAttributes(network, laneType, Color.LIGHT_GRAY,
+                                    LongitudinalDirectionality.DIR_PLUS);
                             structure.put(i, laneAttributes);
                         }
                     }
@@ -310,20 +307,21 @@ public final class Convert
                 {
                     if (t2.getKey().equals("bicycle"))
                     {
-                        types.add(BICYCLE);
+                        types.add(network.getGtuType(GTUType.DEFAULTS.BICYCLE));
                     }
                     /*
                      * if (t2.getKey().equals("foot")) {
                      * types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian); }
                      */
                 }
-                laneType = makeLaneType(types);
-                types.add(PEDESTRIAN);
+                laneType = makeLaneType(network, types);
+                types.add(network.getGtuType(GTUType.DEFAULTS.PEDESTRIAN));
                 if (!types.isEmpty())
                 {
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
-                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0, laneAttributes);
                     }
                     else
@@ -332,13 +330,14 @@ public final class Convert
                         {
                             if (i < 0)
                             {
-                                laneAttributes =
-                                        new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_MINUS);
+                                laneAttributes = new LaneAttributes(network, laneType, Color.GREEN,
+                                        LongitudinalDirectionality.DIR_MINUS);
                                 structure.put(i, laneAttributes);
                             }
                             if (i >= 0)
                             {
-                                laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
+                                laneAttributes =
+                                        new LaneAttributes(network, laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
                                 structure.put(i, laneAttributes);
                             }
                         }
@@ -351,33 +350,39 @@ public final class Convert
         {
             if (tag.getKey().equals("cycleway"))
             {
-                laneType = makeLaneType(BICYCLE);
+                laneType = makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.BICYCLE));
                 switch (tag.getValue())
                 {
                     case "lane": // cycleway:lane is directly adjacent to the highway.
                         forwards++;
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "track": // cycleway:track is separated by a gap from the highway.
                         forwards++;
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "shared_lane": // cycleway:shared_lane is embedded into the highway.
                         List<GTUType> types = new ArrayList<GTUType>();
-                        types.add(BICYCLE);
-                        types.add(CAR);
-                        laneType = makeLaneType(types);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
+                        types.add(network.getGtuType(GTUType.DEFAULTS.BICYCLE));
+                        types.add(network.getGtuType(GTUType.DEFAULTS.CAR));
+                        laneType = makeLaneType(network, types);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     default:
@@ -389,25 +394,29 @@ public final class Convert
         {
             if (tag.getKey().equals("sidewalk"))
             {
-                laneType = makeLaneType(PEDESTRIAN);
+                laneType = makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.PEDESTRIAN));
                 switch (tag.getValue())
                 {
                     case "both":
                         forwards++;
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_MINUS);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.YELLOW, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_PLUS);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.YELLOW, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "left":
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0 - backwards, laneAttributes);
                         break;
                     case "right":
                         forwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     default:
@@ -422,10 +431,11 @@ public final class Convert
             {
                 if (tag.getValue().equals("footway") || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps"))
                 {
-                    laneType = makeLaneType(PEDESTRIAN);
+                    laneType = makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.PEDESTRIAN));
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
-                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0, laneAttributes);
                     }
                     else
@@ -434,13 +444,14 @@ public final class Convert
                         {
                             if (i < 0)
                             {
-                                laneAttributes =
-                                        new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_MINUS);
+                                laneAttributes = new LaneAttributes(network, laneType, Color.GREEN,
+                                        LongitudinalDirectionality.DIR_MINUS);
                                 structure.put(i, laneAttributes);
                             }
                             if (i >= 0)
                             {
-                                laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
+                                laneAttributes =
+                                        new LaneAttributes(network, laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
                                 structure.put(i, laneAttributes);
                             }
                         }
@@ -448,33 +459,37 @@ public final class Convert
                 }
                 if (tag.getValue().equals("cycleway"))
                 {
-                    laneType = makeLaneType(BICYCLE);
+                    laneType = makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.BICYCLE));
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
-                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
+                        laneAttributes =
+                                new LaneAttributes(network, laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0, laneAttributes);
                     }
                     for (int i = 0 - backwards; i < forwards; i++)
                     {
                         if (i < 0)
                         {
-                            laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_MINUS);
+                            laneAttributes =
+                                    new LaneAttributes(network, laneType, Color.GREEN, LongitudinalDirectionality.DIR_MINUS);
                             structure.put(i, laneAttributes);
                         }
                         if (i >= 0)
                         {
-                            laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
+                            laneAttributes =
+                                    new LaneAttributes(network, laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
                             structure.put(i, laneAttributes);
                         }
                     }
                 }
             }
         }
-        return calculateOffsets(structure, osmLink, forwards, backwards, warningListener);
+        return calculateOffsets(network, structure, osmLink, forwards, backwards, warningListener);
     }
 
     /**
      * Calculates the actual offsets of the individual lanes.
+     * @param network the network
      * @param structure SortedMap&lt;Integer,LaneAttributes&gt;; - Sorted Map of Lane Positions and Attributes
      * @param osmLink OSMLink; - The osmLink on which the conversion is based.
      * @param forwards Integer; - Number of forwards oriented lanes.
@@ -483,9 +498,9 @@ public final class Convert
      * @return Map containing the lane structure with offsets.
      * @throws NetworkException on failure
      */
-    private static Map<Double, LaneAttributes> calculateOffsets(final SortedMap<Integer, LaneAttributes> structure,
-            final OSMLink osmLink, final Integer forwards, final Integer backwards, final WarningListener warningListener)
-            throws NetworkException
+    private static Map<Double, LaneAttributes> calculateOffsets(final OTSRoadNetwork network,
+            final SortedMap<Integer, LaneAttributes> structure, final OSMLink osmLink, final Integer forwards,
+            final Integer backwards, final WarningListener warningListener) throws NetworkException
     {
         HashMap<Double, LaneAttributes> structurewithOffset = new HashMap<Double, LaneAttributes>();
         LaneAttributes laneAttributes;
@@ -503,7 +518,7 @@ public final class Convert
                 {
                     break;
                 }
-                double useWidth = laneWidth(laneAttributes, osmLink, warningListener);
+                double useWidth = laneWidth(network, laneAttributes, osmLink, warningListener);
                 laneAttributes.setWidth(useWidth);
                 structurewithOffset.put(currentOffset, laneAttributes);
                 currentOffset += useWidth;
@@ -532,7 +547,7 @@ public final class Convert
                 {
                     throw new NetworkException("reverse lane without main lane?");
                 }
-                double useWidth = laneWidth(laneAttributes, osmLink, warningListener);
+                double useWidth = laneWidth(network, laneAttributes, osmLink, warningListener);
                 laneAttributes.setWidth(useWidth);
                 currentOffset -= previousLaneAttributes.getWidth().getSI();
                 structurewithOffset.put(currentOffset, laneAttributes);
@@ -543,12 +558,14 @@ public final class Convert
 
     /**
      * Figure out a reasonable width for a lane.
+     * @param network the network
      * @param laneAttributes LaneAttributes; the attributes of the lane
      * @param link OSMLink; the link that owns the lane
      * @param warningListener WarningListener; the warning listener that receives warning events
      * @return double; the width (in meters) of the lane
      */
-    static double laneWidth(final LaneAttributes laneAttributes, final OSMLink link, final WarningListener warningListener)
+    static double laneWidth(final OTSRoadNetwork network, final LaneAttributes laneAttributes, final OSMLink link,
+            final WarningListener warningListener)
     {
         Double defaultLaneWidth = 3.05d; // TODO This is the German standard car lane width
         boolean widthOverride = false;
@@ -572,22 +589,23 @@ public final class Convert
             }
         }
         LaneType laneType = laneAttributes.getLaneType();
-        if (laneType.isCompatible(CAR, GTUDirectionality.DIR_PLUS) || laneType.isCompatible(CAR, GTUDirectionality.DIR_MINUS))
+        if (laneType.isCompatible(network.getGtuType(GTUType.DEFAULTS.CAR), GTUDirectionality.DIR_PLUS)
+                || laneType.isCompatible(network.getGtuType(GTUType.DEFAULTS.CAR), GTUDirectionality.DIR_MINUS))
         {
             return defaultLaneWidth;
         }
-        else if (laneType.isCompatible(BICYCLE, GTUDirectionality.DIR_PLUS)
-                || laneType.isCompatible(BICYCLE, GTUDirectionality.DIR_MINUS))
+        else if (laneType.isCompatible(network.getGtuType(GTUType.DEFAULTS.BICYCLE), GTUDirectionality.DIR_PLUS)
+                || laneType.isCompatible(network.getGtuType(GTUType.DEFAULTS.BICYCLE), GTUDirectionality.DIR_MINUS))
         {
             return 0.8d; // TODO German default bikepath width
         }
-        else if (laneType.isCompatible(PEDESTRIAN, GTUDirectionality.DIR_PLUS)
-                || laneType.isCompatible(PEDESTRIAN, GTUDirectionality.DIR_MINUS))
+        else if (laneType.isCompatible(network.getGtuType(GTUType.DEFAULTS.PEDESTRIAN), GTUDirectionality.DIR_PLUS)
+                || laneType.isCompatible(network.getGtuType(GTUType.DEFAULTS.PEDESTRIAN), GTUDirectionality.DIR_MINUS))
         {
             return 0.95d; // TODO German default footpath width
         }
-        else if (laneType.isCompatible(SHIP, GTUDirectionality.DIR_PLUS)
-                || laneType.isCompatible(SHIP, GTUDirectionality.DIR_MINUS))
+        else if (laneType.isCompatible(network.getGtuType(GTUType.DEFAULTS.SHIP), GTUDirectionality.DIR_PLUS)
+                || laneType.isCompatible(network.getGtuType(GTUType.DEFAULTS.SHIP), GTUDirectionality.DIR_MINUS))
         {
             for (OSMTag tag : link.getTags())
             {
@@ -618,7 +636,7 @@ public final class Convert
      * This method creates lanes out of an OSM link LaneTypes are not yet extensive and can be further increased through Tags
      * provided by OSM. The standard lane width of 3.05 is an estimation based on the European width limitation for vehicles
      * (2.55m) + 25cm each side.
-     * @param network Network; the network
+     * @param network OTSRoadNetwork; the network
      * @param osmlink Link OSMLink; the OSM link to make lanes for
      * @param simulator OTSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to be an
      *            instance of AnimatorInterface)
@@ -628,12 +646,12 @@ public final class Convert
      * @throws NamingException on naming problems (in the animator)
      * @throws OTSGeometryException when lane contour or center line cannot be instantiated
      */
-    public List<Lane> makeLanes(final Network network, final OSMLink osmlink, final OTSSimulatorInterface simulator,
+    public List<Lane> makeLanes(final OTSRoadNetwork network, final OSMLink osmlink, final OTSSimulatorInterface simulator,
             final WarningListener warningListener) throws NetworkException, NamingException, OTSGeometryException
     {
         CrossSectionLink otslink = convertLink(network, osmlink, simulator);
         List<Lane> lanes = new ArrayList<Lane>();
-        Map<Double, LaneAttributes> structure = makeStructure(osmlink, warningListener);
+        Map<Double, LaneAttributes> structure = makeStructure(network, osmlink, warningListener);
 
         int laneNum = 0;
         for (Double offset : structure.keySet())
@@ -648,7 +666,7 @@ public final class Convert
             LaneType laneType = laneAttributes.getLaneType();
             Length latPos = new Length(offset, LengthUnit.METER);
             Map<GTUType, Speed> speedLimit = new HashMap<>();
-            speedLimit.put(GTUType.VEHICLE, new Speed(100, SpeedUnit.KM_PER_HOUR));
+            speedLimit.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, SpeedUnit.KM_PER_HOUR));
             Lane newLane = null;
             // FIXME the following code assumes right-hand-side driving.
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
@@ -683,10 +701,11 @@ public final class Convert
 
     /**
      * This method creates a LaneType which supports all GTUTypes that have been specified in the GTUType List "GTUs".
+     * @param network the network
      * @param gtuTypes List&lt;GTUType&gt;; list of GTUTypes
      * @return LaneType permeable for all of the specific GTUTypes
      */
-    public static LaneType makeLaneType(final List<GTUType> gtuTypes)
+    public static LaneType makeLaneType(final OTSRoadNetwork network, final List<GTUType> gtuTypes)
     {
         StringBuilder name = new StringBuilder();
         for (GTUType gtu : gtuTypes)
@@ -698,20 +717,21 @@ public final class Convert
             name.append(gtu.getId());
         }
         GTUCompatibility<LaneType> compatibility = new GTUCompatibility<>((LaneType) null);
-        LaneType result = new LaneType(name.toString(), null, compatibility);
+        LaneType result = new LaneType(name.toString(), compatibility, network);
         return result;
     }
 
     /**
      * This method creates a LaneType which supports the specified GTUType.
+     * @param network the network
      * @param gtuType GTUType; the type of GTU that can travel on the new LaneType
      * @return LaneType
      */
-    public static LaneType makeLaneType(final GTUType gtuType)
+    public static LaneType makeLaneType(final OTSRoadNetwork network, final GTUType gtuType)
     {
         List<GTUType> gtuTypes = new ArrayList<GTUType>(1);
         gtuTypes.add(gtuType);
-        return makeLaneType(gtuTypes);
+        return makeLaneType(network, gtuTypes);
         // String name = gtuType.getId();
         // LaneType result = new LaneType(name);
         // result.addPermeability(gtuType);
@@ -834,15 +854,16 @@ class LaneAttributes implements Serializable
     private Length width;
 
     /**
+     * @param network the network
      * @param lt LaneType; - LaneType
      * @param c Color; - Color
      * @param d LongitudinalDirectionality; - LongitudinalDIrectionality
      */
-    LaneAttributes(final LaneType lt, final Color c, final LongitudinalDirectionality d)
+    LaneAttributes(final OTSRoadNetwork network, final LaneType lt, final Color c, final LongitudinalDirectionality d)
     {
         if (lt == null)
         {
-            this.laneType = Convert.makeLaneType(GTUType.VEHICLE);
+            this.laneType = Convert.makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         }
         else
         {
@@ -853,17 +874,18 @@ class LaneAttributes implements Serializable
     }
 
     /**
+     * @param network the network
      * @param laneType LaneType; - LaneType
      * @param color Color; - Color
      * @param directionality LongitudinalDirectionality; - LongitudinalDIrectionality
      * @param width Double; - width
      */
-    LaneAttributes(final LaneType laneType, final Color color, final LongitudinalDirectionality directionality,
-            final Double width)
+    LaneAttributes(final OTSRoadNetwork network, final LaneType laneType, final Color color,
+            final LongitudinalDirectionality directionality, final Double width)
     {
         if (laneType == null)
         {
-            this.laneType = Convert.makeLaneType(GTUType.VEHICLE);
+            this.laneType = Convert.makeLaneType(network, network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         }
         else
         {

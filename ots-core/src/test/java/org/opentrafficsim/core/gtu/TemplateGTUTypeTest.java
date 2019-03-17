@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.util.List;
 
@@ -50,8 +49,9 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     public final void templateGTUTypeTest()
             throws SimRuntimeException, NamingException, GTUException, ProbabilityException, ParameterException
     {
-        GTUType gtuTypeA = new GTUType("type name A", VEHICLE);
-        GTUType gtuTypeB = new GTUType("type name B", VEHICLE);
+        OTSNetwork network = new OTSNetwork("network", true);
+        GTUType gtuTypeA = new GTUType("type name A", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
+        GTUType gtuTypeB = new GTUType("type name B", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         Generator<Length> lengthGeneratorA = new Generator<Length>()
         {
 

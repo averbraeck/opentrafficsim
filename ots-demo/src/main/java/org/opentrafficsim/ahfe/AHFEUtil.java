@@ -1,8 +1,5 @@
 package org.opentrafficsim.ahfe;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
-
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +46,6 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
@@ -87,6 +83,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -121,7 +118,7 @@ public final class AHFEUtil
     }
 
     /**
-     * @param network OTSNetwork; the network
+     * @param network OTSRoadNetwork; the network
      * @param gtuColorer GTUColorer; the GTU colorer
      * @param simulator OTSSimulatorInterface; the simulator
      * @param replication int; replication number
@@ -143,7 +140,7 @@ public final class AHFEUtil
      * @throws SimRuntimeException on sim runtime error
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
+    public static void createDemand(final OTSRoadNetwork network, final GTUColorer gtuColorer,
             final OTSSimulatorInterface simulator, final int replication, final String anticipationStrategy,
             final Duration reactionTime, final Duration anticipationTime, final double truckFraction, final Time simulationTime,
             final Frequency leftDemand, final Frequency rightDemand, final double leftFraction, final double distanceError,
@@ -182,14 +179,14 @@ public final class AHFEUtil
         // Length lookAheadStdev = new Length(250.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
         Acceleration b = new Acceleration(2.09, AccelerationUnit.SI);
-        GTUType gtuType = new GTUType("car", CAR);
+        GTUType gtuType = new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR));
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED,
                 new DistNormal(streams.get("gtuClass"), 123.7 / 120, 12.0 / 120));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         // bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev,
         // streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
-        gtuType = new GTUType("truck", TRUCK);
+        gtuType = new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         // bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev,
@@ -227,18 +224,20 @@ public final class AHFEUtil
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
                 new ContinuousDistDoubleScalar.Rel<>(new DistNormal(streams.get("gtuClass"), 80, 2.5), SpeedUnit.KM_PER_HOUR);
 
-        LaneBasedTemplateGTUType carLeft =
-                new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
-                        new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, fixedRouteGeneratorLeft);
+        LaneBasedTemplateGTUType carLeft = new LaneBasedTemplateGTUType(
+                new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)), new ConstantGenerator<>(Length.createSI(4.0)),
+                new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, fixedRouteGeneratorLeft);
         LaneBasedTemplateGTUType truckLeft =
-                new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK), new ConstantGenerator<>(Length.createSI(15.0)),
-                        new ConstantGenerator<>(Length.createSI(2.5)), speedTruck, strategicalFactory, fixedRouteGeneratorLeft);
-        LaneBasedTemplateGTUType carRight =
-                new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
-                        new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, fixedRouteGeneratorRight);
-        LaneBasedTemplateGTUType truckRight = new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK),
-                new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)), speedTruck,
-                strategicalFactory, fixedRouteGeneratorRight);
+                new LaneBasedTemplateGTUType(new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+                        new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                        speedTruck, strategicalFactory, fixedRouteGeneratorLeft);
+        LaneBasedTemplateGTUType carRight = new LaneBasedTemplateGTUType(
+                new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)), new ConstantGenerator<>(Length.createSI(4.0)),
+                new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, fixedRouteGeneratorRight);
+        LaneBasedTemplateGTUType truckRight =
+                new LaneBasedTemplateGTUType(new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+                        new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                        speedTruck, strategicalFactory, fixedRouteGeneratorRight);
 
         // GTUTypeGenerator gtuTypeGeneratorLeft = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
         // GTUTypeGenerator gtuTypeGeneratorRight = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
@@ -336,7 +335,7 @@ public final class AHFEUtil
      * @param id String; the id of the generator itself
      * @param idGenerator IdGenerator; the generator for the ID
      * @param simulator OTSSimulatorInterface; the simulator
-     * @param network OTSNetwork; the network
+     * @param network OTSRoadNetwork; the network
      * @param distribution Distribution&lt;LaneBasedTemplateGTUType&gt;; the type generator for the GTU
      * @param headwayGenerator HeadwayGeneratorDemand; the headway generator for the GTU
      * @param gtuColorer GTUColorer; the GTU colorer for animation
@@ -351,7 +350,7 @@ public final class AHFEUtil
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-            final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSNetwork network,
+            final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSRoadNetwork network,
             final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)

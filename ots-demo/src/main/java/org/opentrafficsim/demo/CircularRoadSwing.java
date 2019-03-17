@@ -15,7 +15,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.DirectedLinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.graphs.AbstractPlot;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
@@ -30,6 +29,7 @@ import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -68,7 +68,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
 
         // NetworkAnimation networkAnimation = new NetworkAnimation(model.getNetwork());
         // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));
-        OTSNetwork network = model.getNetwork();
+        OTSRoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
 

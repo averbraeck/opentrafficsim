@@ -41,6 +41,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.ShoulderAnimation;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
@@ -168,14 +169,14 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param network Network; the network
+     * @param network OTSRoadNetwork; the network
      * @param shapeFileName String; the nodes shapefile to read
      * @param links Map&lt;String,Link&gt;; : returns the file with real links
      * @param nodes Map&lt;String,OTSNode&gt;; the map of nodes to retrieve start and end node
      * @param simulator OTSSimulatorInterface; simulator for the animation registration
      * @throws IOException on error
      */
-    public static void readLinks(final Network network, final String shapeFileName, final Map<String, Link> links,
+    public static void readLinks(final OTSRoadNetwork network, final String shapeFileName, final Map<String, Link> links,
             final Map<String, OTSNode> nodes, final OTSSimulatorInterface simulator) throws IOException
     {
         /*-
@@ -247,11 +248,11 @@ public final class ShapeFileReader implements UNITS
                 {
                     CrossSectionLink linkAB = null;
                     CrossSectionLink linkBA = null;
-                    linkAB = new CrossSectionLink(network, nr, nodeA, nodeB, LinkType.ROAD,
+                    linkAB = new CrossSectionLink(network, nr, nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OTSLine3D(new OTSPoint3D[] {nodeA.getPoint(), nodeB.getPoint()}), simulator,
                             LaneKeepingPolicy.KEEPRIGHT);
                     animate(linkAB, typeWegVak, simulator);
-                    linkBA = new CrossSectionLink(network, nrBA, nodeB, nodeA, LinkType.ROAD,
+                    linkBA = new CrossSectionLink(network, nrBA, nodeB, nodeA, network.getLinkType(LinkType.DEFAULTS.ROAD),
                             new OTSLine3D(new OTSPoint3D[] {nodeB.getPoint(), nodeA.getPoint()}), simulator,
                             LaneKeepingPolicy.KEEPRIGHT);
                     animate(linkBA, typeWegVak, simulator);

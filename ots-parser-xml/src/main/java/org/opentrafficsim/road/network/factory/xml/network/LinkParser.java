@@ -28,8 +28,8 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -76,14 +76,14 @@ public final class LinkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param network NETWORK; the NETWORK tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OTSGeometryException when the design line is invalid
      */
-    static void parseLinks(final OTSNetwork otsNetwork, final NETWORK network, Map<String, Direction> nodeDirections,
+    static void parseLinks(final OTSRoadNetwork otsNetwork, final NETWORK network, Map<String, Direction> nodeDirections,
             OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
         for (LINK xmlLink : network.getLINK())
@@ -231,8 +231,8 @@ public final class LinkParser
 
             // TODO: Directionality has to be added later when the lanes and their direction are known.
             LaneKeepingPolicy laneKeepingPolicy = LaneKeepingPolicy.valueOf(xmlLink.getLANEKEEPING().name());
-            CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getNAME(), startNode, endNode, LinkType.FREEWAY,
-                    designLine, simulator, laneKeepingPolicy);
+            CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getNAME(), startNode, endNode,
+                    otsNetwork.getLinkType(LinkType.DEFAULTS.FREEWAY), designLine, simulator, laneKeepingPolicy);
 
             if (xmlLink.getPRIORITY() != null)
             {
@@ -247,14 +247,14 @@ public final class LinkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param network NETWORK; the NETWORK tag
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OTSGeometryException when the design line is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      */
-    static void applyRoadTypes(final OTSNetwork otsNetwork, final NETWORK network, OTSSimulatorInterface simulator)
+    static void applyRoadTypes(final OTSRoadNetwork otsNetwork, final NETWORK network, OTSSimulatorInterface simulator)
             throws NetworkException, OTSGeometryException, XmlParserException
     {
         for (LINK xmlLink : network.getLINK())
@@ -298,7 +298,7 @@ public final class LinkParser
                     // TODO: The LaneType should be defined in the XML...
                     // TODO: how to handle cseLane.getSPEEDLIMIT()? GTUType specific...
                     Lane lane = new Lane(csl, cseLane.getNAME(), startOffset, endOffset, cseLane.getWIDTH(), cseLane.getWIDTH(),
-                            LaneType.FREEWAY, new Speed(100.0, SpeedUnit.KM_PER_HOUR),
+                            otsNetwork.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(100.0, SpeedUnit.KM_PER_HOUR),
                             parseOvertakingConditions(cseLane.getOVERTAKING()));
                     cseList.add(lane);
                     lanes.put(lane.getId(), lane);
@@ -425,7 +425,7 @@ public final class LinkParser
             case BLOCKED:
             case DASHED:
                 Stripe dashedLine = new Stripe(csl, startOffset, endOffset, cse.getWIDTH());
-                dashedLine.addPermeability(GTUType.VEHICLE, Permeable.BOTH);
+                dashedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.BOTH);
                 // TODO: parser.networkAnimation.addDrawingInfoBase(dashedLine,
                 // TODO: new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.DASHED));
                 cseList.add(dashedLine);
@@ -440,7 +440,8 @@ public final class LinkParser
 
             case LEFTONLY:
                 Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, cse.getWIDTH());
-                leftOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.LEFT); // TODO correct?
+                leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.LEFT);
+                // TODO: correct?
                 // TODO: parser.networkAnimation.addDrawingInfoBase(leftOnlyLine,
                 // TODO: new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.LEFTONLY));
                 cseList.add(leftOnlyLine);
@@ -448,7 +449,8 @@ public final class LinkParser
 
             case RIGHTONLY:
                 Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, cse.getWIDTH());
-                rightOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.RIGHT); // TODO correct?
+                rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.RIGHT);
+                // TODO: correct?
                 // TODO: parser.networkAnimation.addDrawingInfoBase(rightOnlyLine,
                 // TODO: new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.RIGHTONLY));
                 cseList.add(rightOnlyLine);

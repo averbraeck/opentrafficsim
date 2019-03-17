@@ -104,7 +104,8 @@ public class SpeedSign extends AbstractLaneBasedObject
             final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed,
             final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
-        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.VEHICLE, startTimeOfDay, endTimeOfDay);
+        this(id, lane, direction, longitudinalPosition, simulator, speed,
+                lane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), startTimeOfDay, endTimeOfDay);
     }
 
     /**
@@ -121,7 +122,8 @@ public class SpeedSign extends AbstractLaneBasedObject
             final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed)
             throws NetworkException
     {
-        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.VEHICLE, Duration.ZERO, ENDOFDAY);
+        this(id, lane, direction, longitudinalPosition, simulator, speed,
+                lane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Duration.ZERO, ENDOFDAY);
     }
 
     /**

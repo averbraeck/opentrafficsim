@@ -19,7 +19,7 @@ import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
@@ -49,7 +49,7 @@ public class XmlNetworkLaneParser implements Serializable
     /**
      * Parse the XML file and build the network.
      * @param filename String; the name of the file to parse
-     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param simulator OTSSimulatorInterface; the simulator
      * @return the network that contains the parsed objects
      * @throws JAXBException when the parsing fails
@@ -58,7 +58,7 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws OTSGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      */
-    public static OTSNetwork build(final String filename, final OTSNetwork otsNetwork, final OTSSimulatorInterface simulator)
+    public static OTSRoadNetwork build(final String filename, final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException
     {
         File xml = new File(URLResource.getResource(filename).toURI().getPath());
@@ -77,7 +77,7 @@ public class XmlNetworkLaneParser implements Serializable
     /**
      * Parse the XML file and build the network.
      * @param xmlStream InputStream; the xml input stream
-     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param simulator OTSSimulatorInterface; the simulator
      * @return the network that contains the parsed objects
      * @throws JAXBException when the parsing fails
@@ -86,7 +86,7 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws OTSGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      */
-    public static OTSNetwork build(final InputStream xmlStream, final OTSNetwork otsNetwork,
+    public static OTSRoadNetwork build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
             final OTSSimulatorInterface simulator)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException
     {
@@ -121,7 +121,7 @@ public class XmlNetworkLaneParser implements Serializable
     public static void main(final String[] args) throws Exception
     {
         OTSSimulatorInterface simulator = new OTSSimulator();
-        build("/N201v8.xml", new OTSNetwork(""), simulator);
+        build("/N201v8.xml", new OTSRoadNetwork("", true), simulator);
         System.exit(0);
     }
 }
