@@ -64,16 +64,25 @@ public class ODOptions
     /** Options per road type. */
     private OptionSet<LinkType> linkTypeOptions = new OptionSet<>();
 
+    /** cache for lane biases per network. */
+    private static final Map<RoadNetwork, Option<LaneBiases>> LANE_BIAS_CACHE = new HashMap<>();
+
     /**
      * Lane bias. Default is Truck: truck right (strong right, max 2 lanes), Vehicle (other): weak left.
      * @param network the network for which to return the lane bias
      * @return the lane bias
      */
-    public static final Option<LaneBiases> laneBias(final RoadNetwork network)
+    public static final Option<LaneBiases> getDefaultLaneBias(final RoadNetwork network)
     {
-        return new Option<>("lane bias",
-                new LaneBiases().addBias(network.getGtuType(GTUType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT)
-                        .addBias(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LaneBias.WEAK_LEFT));
+        Option<LaneBiases> laneBiases = LANE_BIAS_CACHE.get(network);
+        if (laneBiases == null)
+        {
+            laneBiases = new Option<>("lane bias",
+                    new LaneBiases().addBias(network.getGtuType(GTUType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT)
+                            .addBias(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LaneBias.WEAK_LEFT));
+            LANE_BIAS_CACHE.put(network, laneBiases);
+        }
+        return laneBiases;
     }
 
     /**
