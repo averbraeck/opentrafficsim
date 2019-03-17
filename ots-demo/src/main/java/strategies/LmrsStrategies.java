@@ -586,14 +586,14 @@ public class LmrsStrategies implements EventListenerInterface
                 {
                     GTUType gtuType = category.get(GTUType.class);
                     GTUCharacteristics gtuCharacteristics =
-                            Try.assign(() -> GTUType.defaultCharacteristics(gtuType, network, randomStream),
+                            Try.assign(() -> GTUType.defaultCharacteristics(gtuType, LmrsStrategies.this.network, randomStream),
                                     "Exception while applying default GTU characteristics.");
-                    if (gtuType.equals(network.getGtuType(GTUType.DEFAULTS.TRUCK)))
+                    if (gtuType.equals(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK)))
                     {
-                        gtuCharacteristics = new GTUCharacteristics(network.getGtuType(GTUType.DEFAULTS.TRUCK),
-                                gtuCharacteristics.getLength(), gtuCharacteristics.getWidth(), this.vTruck.draw(),
-                                gtuCharacteristics.getMaximumAcceleration(), gtuCharacteristics.getMaximumDeceleration(),
-                                gtuCharacteristics.getFront());
+                        gtuCharacteristics = new GTUCharacteristics(
+                                LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), gtuCharacteristics.getLength(),
+                                gtuCharacteristics.getWidth(), this.vTruck.draw(), gtuCharacteristics.getMaximumAcceleration(),
+                                gtuCharacteristics.getMaximumDeceleration(), gtuCharacteristics.getFront());
                     }
                     return new LaneBasedGTUCharacteristics(gtuCharacteristics, LmrsStrategies.this.factories.get(gtuType), null,
                             origin, destination, VehicleModel.NONE);
@@ -648,35 +648,37 @@ public class LmrsStrategies implements EventListenerInterface
             parameterFactory.addParameter(Tailgating.RHO, 0.0);
             if (!LmrsStrategies.this.baseLMRS)
             {
-                parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.SOCIO,
-                        new DistTriangular(stream, 0.0, LmrsStrategies.this.sigma, 1.0));
-                parameterFactory.addCorrelation(network.getGtuType(GTUType.DEFAULTS.CAR), null, LmrsParameters.SOCIO,
-                        (first, then) -> then <= 1.0 ? then : 1.0);
-                parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.SOCIO, 1.0);
-                parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.VGAIN,
-                        new ContinuousDistSpeed(new DistLogNormal(stream, LmrsStrategies.this.vGain, 0.4),
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR),
+                        LmrsParameters.SOCIO, new DistTriangular(stream, 0.0, LmrsStrategies.this.sigma, 1.0));
+                parameterFactory.addCorrelation(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR), null,
+                        LmrsParameters.SOCIO, (first, then) -> then <= 1.0 ? then : 1.0);
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK),
+                        LmrsParameters.SOCIO, 1.0);
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR),
+                        LmrsParameters.VGAIN, new ContinuousDistSpeed(new DistLogNormal(stream, LmrsStrategies.this.vGain, 0.4),
                                 SpeedUnit.KM_PER_HOUR));
-                parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.VGAIN,
-                        new Speed(50.0, SpeedUnit.KM_PER_HOUR));
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK),
+                        LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
                 parameterFactory.addParameter(ParameterTypes.TMAX, Duration.createSI(LmrsStrategies.this.tMax));
             }
             else
             {
                 // overrule for sensitivity analysis
-                parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.VGAIN,
-                        new Speed(LmrsStrategies.this.vGain, SpeedUnit.KM_PER_HOUR));
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR),
+                        LmrsParameters.VGAIN, new Speed(LmrsStrategies.this.vGain, SpeedUnit.KM_PER_HOUR));
             }
-            parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.FSPEED,
+            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.FSPEED,
                     new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0));
-            parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A,
+            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A,
                     Acceleration.createSI(0.4));
-            parameterFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.FSPEED, 1.0);
+            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.FSPEED,
+                    1.0);
 
             try
             {
                 // Strategical factories
-                for (GTUType gtuType : new GTUType[] {network.getGtuType(GTUType.DEFAULTS.CAR),
-                        network.getGtuType(GTUType.DEFAULTS.TRUCK)})
+                for (GTUType gtuType : new GTUType[] {LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR),
+                        LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK)})
                 {
                     // incentives
                     Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -690,14 +692,14 @@ public class LmrsStrategies implements EventListenerInterface
                         voluntaryIncentives.add(new IncentiveSocioSpeed());
                     }
                     // accelerationIncentives.add(new AccelerationNoRightOvertake());
-                    if (gtuType.equals(network.getGtuType(GTUType.DEFAULTS.TRUCK)))
+                    if (gtuType.equals(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK)))
                     {
                         voluntaryIncentives.add(new IncentiveStayRight());
                     }
                     // car-following factory
                     CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
-                            gtuType.equals(network.getGtuType(GTUType.DEFAULTS.CAR)) && !LmrsStrategies.this.baseLMRS
-                                    ? new SocioIDMFactory() : new IDMPlusFactory(stream);
+                            gtuType.equals(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR))
+                                    && !LmrsStrategies.this.baseLMRS ? new SocioIDMFactory() : new IDMPlusFactory(stream);
                     // tailgating
                     Tailgating tlgt = LmrsStrategies.this.baseLMRS ? Tailgating.NONE : LmrsStrategies.this.tailgating;
                     // strategical and tactical factory
@@ -716,29 +718,29 @@ public class LmrsStrategies implements EventListenerInterface
                 OTSNode nodeA = new OTSNode(net, "A", pointA);
                 OTSNode nodeB = new OTSNode(net, "B", pointB);
                 OTSNode nodeC = new OTSNode(net, "C", pointC);
-                CrossSectionLink linkAB =
-                        new CrossSectionLink(net, "AB", nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                                new OTSLine3D(pointA, pointB), getSimulator(), LaneKeepingPolicy.KEEPRIGHT);
-                CrossSectionLink linkBC =
-                        new CrossSectionLink(net, "BC", nodeB, nodeC, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                                new OTSLine3D(pointB, pointC), getSimulator(), LaneKeepingPolicy.KEEPRIGHT);
+                CrossSectionLink linkAB = new CrossSectionLink(net, "AB", nodeA, nodeB,
+                        LmrsStrategies.this.network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(pointA, pointB),
+                        getSimulator(), LaneKeepingPolicy.KEEPRIGHT);
+                CrossSectionLink linkBC = new CrossSectionLink(net, "BC", nodeB, nodeC,
+                        LmrsStrategies.this.network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(pointB, pointC),
+                        getSimulator(), LaneKeepingPolicy.KEEPRIGHT);
                 Lane laneAB1 = new Lane(linkAB, "laneAB1", Length.createSI(0.0), Length.createSI(3.5),
-                        network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR),
-                        new OvertakingConditions.LeftOnly());
+                        LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
+                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Lane laneAB2 = new Lane(linkAB, "laneAB2", Length.createSI(3.5), Length.createSI(3.5),
-                        network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR),
-                        new OvertakingConditions.LeftOnly());
+                        LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
+                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Lane laneAB3 = new Lane(linkAB, "laneAB3", Length.createSI(7.0), Length.createSI(3.5),
-                        network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR),
-                        new OvertakingConditions.LeftOnly());
+                        LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
+                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Lane laneBC1 = new Lane(linkBC, "laneBC1", Length.createSI(0.0), Length.createSI(3.5),
-                        network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR),
-                        new OvertakingConditions.LeftOnly());
+                        LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
+                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Lane laneBC2 = new Lane(linkBC, "laneBC2", Length.createSI(3.5), Length.createSI(3.5),
-                        network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR),
-                        new OvertakingConditions.LeftOnly());
+                        LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
+                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Set<GTUType> gtuTypes = new HashSet<>();
-                gtuTypes.add(network.getGtuType(GTUType.DEFAULTS.VEHICLE));
+                gtuTypes.add(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
                 Stripe stripeAB1 = new Stripe(linkAB, Length.createSI(-1.75), Length.createSI(-1.75), Length.createSI(0.2));
                 Stripe stripeAB2 = new Stripe(linkAB, Length.createSI(1.75), Length.createSI(1.75), Length.createSI(0.2),
                         gtuTypes, Permeable.BOTH);
@@ -810,19 +812,20 @@ public class LmrsStrategies implements EventListenerInterface
                 double q = LmrsStrategies.this.qMax;
                 FrequencyVector demand =
                         new FrequencyVector(new double[] {q * .6, q * .6, q, 0.0}, FrequencyUnit.PER_HOUR, StorageType.DENSE);
-                Category category = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
+                Category category = new Category(categorization, LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR));
                 od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR,
                         1.0 - LmrsStrategies.this.fTruck);
-                category = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.TRUCK));
+                category = new Category(categorization, LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
                 od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR,
                         LmrsStrategies.this.fTruck);
                 // options
                 MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
-                markov.addState(network.getGtuType(GTUType.DEFAULTS.TRUCK), 0.4);
-                LaneBiases biases =
-                        new LaneBiases().addBias(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LaneBias.bySpeed(140, 100))
-                                .addBias(network.getGtuType(GTUType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT);
-                ODOptions odOptions = new ODOptions().set(ODOptions.MARKOV, markov).set(ODOptions.laneBias(network), biases)
+                markov.addState(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), 0.4);
+                LaneBiases biases = new LaneBiases()
+                        .addBias(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), LaneBias.bySpeed(140, 100))
+                        .addBias(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT);
+                ODOptions odOptions = new ODOptions().set(ODOptions.MARKOV, markov)
+                        .set(ODOptions.getLaneBiasOption(LmrsStrategies.this.network), biases)
                         .set(ODOptions.NO_LC_DIST, Length.createSI(100.0))
                         .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
                         .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
