@@ -345,7 +345,7 @@ public final class ODApplier
                         simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType), stream);
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
-                LaneBiases biases = odOptions.get(ODOptions.laneBias(network), lane, o, linkType);
+                LaneBiases biases = odOptions.get(ODOptions.getDefaultLaneBias(network), lane, o, linkType);
                 // and finally, the generator
                 try
                 {
