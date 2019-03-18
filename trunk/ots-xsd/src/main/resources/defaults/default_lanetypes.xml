@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 <LANETYPES xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions-1-00-02.xsd
-  http://www.opentrafficsim.org/ots https://opentrafficsim.org/xsd/ots-definitions-1-00-02.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions-1-01-02.xsd
+  http://www.opentrafficsim.org/ots https://opentrafficsim.org/xsd/ots-definitions-1-01-02.xsd">
 
 <!--
         GTUCompatibility<LaneType> noTrafficCompatibility = new GTUCompatibility<>((LaneType) null);

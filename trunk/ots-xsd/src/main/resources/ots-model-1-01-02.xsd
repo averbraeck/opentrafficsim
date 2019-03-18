@@ -3,19 +3,27 @@
   xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
-  <xsd:include schemaLocation="ots-types-1-00-02.xsd" />
-
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
   <!-- http://www.w3.org/2001/xinclude.xsd -->
   <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
 
-  <xsd:element name="SCENARIO">
+  <xsd:include schemaLocation="ots-types-1-01-02.xsd" />
+  
+  <xsd:complexType name="MODELPARAMETERTYPE">
+    <xsd:complexContent>
+      <xsd:extension base="PARAMETERTYPE">
+        <xsd:attribute name="GTUTYPE" type="xsd:string" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:element name="MODEL">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="PARAMETER" type="PARAMETERTYPE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="MODELPARAMETER" type="MODELPARAMETERTYPE" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
-
+  
 </xsd:schema>
