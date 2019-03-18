@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 <GTUTYPES xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions-1-00-01.xsd
-  http://www.opentrafficsim.org/ots https://opentrafficsim.org/xsd/ots-definitions-1-00-01.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions-1-00-02.xsd
+  http://www.opentrafficsim.org/ots https://opentrafficsim.org/xsd/ots-definitions-1-00-02.xsd">
 
 <!--
         ROAD_USER = new GTUType("ROAD_USER", null);

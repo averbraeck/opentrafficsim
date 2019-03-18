@@ -51,7 +51,7 @@
       xmlType="ots:GTUPOSITIONTYPE" adapter="org.opentrafficsim.xml.bindings.GTUPositionAdapter" />
   </jaxb:globalBindings>
 
-  <jaxb:bindings schemaLocation="ots-network-1-00-01.xsd">
+  <jaxb:bindings schemaLocation="ots-network-1-00-02.xsd">
     <jaxb:bindings node="xsd:element[@name='LINK']//xsd:attribute[@name='NODESTART']">
       <jaxb:property>
         <jaxb:baseType name="org.opentrafficsim.xml.generated.NODE" />
