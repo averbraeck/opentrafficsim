@@ -210,6 +210,12 @@
       <xsd:pattern value="(0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
+  
+  <xsd:simpleType name="POSITIVEDOUBLE">
+    <xsd:restriction base="xsd:decimal">
+      <xsd:minExclusive value="0" />
+    </xsd:restriction>
+  </xsd:simpleType>
 
   <xsd:simpleType name="SIGNEDLENGTHTYPE">
     <xsd:restriction base="xsd:string">
