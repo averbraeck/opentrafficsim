@@ -247,9 +247,9 @@
   <xsd:element name="NETWORK">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="DEFINITIONS" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="NODE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="CONNECTOR" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="LINK" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
