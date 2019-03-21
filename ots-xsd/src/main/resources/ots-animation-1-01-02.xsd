@@ -12,9 +12,9 @@
 
   <xsd:complexType name="GTUCOLORERTYPE">
     <xsd:sequence>
-      <xsd:element name="PARAMETER" type="PARAMETERTYPE" minOccurs="1" maxOccurs="unbounded" />
+      <xsd:element name="PARAMETER" type="PARAMETERTYPE" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
-    <xsd:attribute name="NAME" default="DEFAULT">
+    <xsd:attribute name="NAME" default="DEFAULT" use="optional">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">
           <xsd:pattern
@@ -23,7 +23,7 @@
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>
-    <xsd:attribute name="CLASS" type="CLASSNAMETYPE" />
+    <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="optional"/>
   </xsd:complexType>
 
   <xsd:element name="ANIMATION">
