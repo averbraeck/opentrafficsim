@@ -59,10 +59,10 @@
       <xsd:field xpath="@NAME" />
     </xsd:key>
 
-    <!-- define the DEFINITIONS.ROADTYPE.NAME key -->
+    <!-- define the DEFINITIONS.LINKTYPES.LINKTYPE.NAME key -->
 
-    <xsd:key name="roadTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADTYPE" />
+    <xsd:key name="linkTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:LINKTYPES/ots:LINKTYPE" />
       <xsd:field xpath="@NAME" />
     </xsd:key>
 
@@ -150,9 +150,9 @@
       <xsd:field xpath="@NAME" />
     </xsd:keyref>
 
-    <!-- DEFINITIONS.ROADLAYOUT.ROADTYPE defined by DEFINITIONS.ROADTYPE.NAME -->
+    <!-- DEFINITIONS.ROADLAYOUT.ROADTYPE defined by DEFINITIONS.LINKTYPES.LINKTYPE.NAME -->
 
-    <xsd:keyref name="roadLayoutRoadTypeRef" refer="ots:roadTypeKey">
+    <xsd:keyref name="roadLayoutRoadTypeRef" refer="ots:linkTypeKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:ROADLAYOUT" />
       <xsd:field xpath="@ROADTYPE" />
     </xsd:keyref>
@@ -241,9 +241,9 @@
       <xsd:field xpath="@ROUTE" />
     </xsd:keyref>
 
-    <!-- NETWORK.LINK.ROADTYPE defined by DEFINITIONS.ROADTYPE.NAME -->
+    <!-- NETWORK.LINK.ROADTYPE defined by DEFINITIONS.LINKTYPE.NAME -->
 
-    <xsd:keyref name="linkRoadTypeRef" refer="ots:roadTypeKey">
+    <xsd:keyref name="linkRoadTypeRef" refer="ots:linkTypeKey">
       <xsd:selector xpath="ots:NETWORK/ots:LINK" />
       <xsd:field xpath="@ROADTYPE" />
     </xsd:keyref>
