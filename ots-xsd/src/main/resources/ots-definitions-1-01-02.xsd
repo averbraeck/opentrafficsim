@@ -103,7 +103,9 @@
   
   <xsd:complexType name="CROSSSECTIONELEMENT">
     <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-    <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+    <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
+    <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
+    <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" />
     <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
   </xsd:complexType>
 
