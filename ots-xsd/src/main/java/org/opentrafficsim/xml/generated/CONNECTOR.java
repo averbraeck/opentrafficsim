@@ -12,28 +12,25 @@ import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opentrafficsim.xml.bindings.ClassNameAdapter;
-import org.opentrafficsim.xml.bindings.LengthBeginEndAdapter;
-import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
+import org.opentrafficsim.xml.bindings.FractionAdapter;
 
 
 /**
- * <p>Java class for TRAFFICLIGHTTYPE complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TRAFFICLIGHTTYPE"&gt;
+ * &lt;complexType&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="LANE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="POSITION" use="required" type="{http://www.opentrafficsim.org/ots}LENGTHBEGINENDTYPE" /&gt;
- *       &lt;attribute name="CLASS" use="required" type="{http://www.opentrafficsim.org/ots}CLASSNAMETYPE" /&gt;
- *       &lt;attribute name="CONTROLLER" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="NODESTART" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="NODEEND" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="DEMANDWEIGHT" type="{http://www.opentrafficsim.org/ots}FRACTIONTYPE" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -42,30 +39,24 @@ import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TRAFFICLIGHTTYPE")
-@XmlSeeAlso({
-    SIGNALGROUPTRAFFICLIGHTTYPE.class
-})
+@XmlType(name = "")
+@XmlRootElement(name = "CONNECTOR")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-public class TRAFFICLIGHTTYPE {
+public class CONNECTOR {
 
     @XmlAttribute(name = "NAME", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
     protected String name;
-    @XmlAttribute(name = "LANE", required = true)
+    @XmlAttribute(name = "NODESTART", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    protected String lane;
-    @XmlAttribute(name = "POSITION", required = true)
-    @XmlJavaTypeAdapter(LengthBeginEndAdapter.class)
+    protected org.opentrafficsim.xml.generated.NODE nodestart;
+    @XmlAttribute(name = "NODEEND", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    protected LengthBeginEnd position;
-    @XmlAttribute(name = "CLASS", required = true)
-    @XmlJavaTypeAdapter(ClassNameAdapter.class)
+    protected org.opentrafficsim.xml.generated.NODE nodeend;
+    @XmlAttribute(name = "DEMANDWEIGHT")
+    @XmlJavaTypeAdapter(FractionAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    protected Class _class;
-    @XmlAttribute(name = "CONTROLLER", required = true)
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    protected String controller;
+    protected Double demandweight;
 
     /**
      * Gets the value of the name property.
@@ -94,7 +85,7 @@ public class TRAFFICLIGHTTYPE {
     }
 
     /**
-     * Gets the value of the lane property.
+     * Gets the value of the nodestart property.
      * 
      * @return
      *     possible object is
@@ -102,12 +93,12 @@ public class TRAFFICLIGHTTYPE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    public String getLANE() {
-        return lane;
+    public org.opentrafficsim.xml.generated.NODE getNODESTART() {
+        return nodestart;
     }
 
     /**
-     * Sets the value of the lane property.
+     * Sets the value of the nodestart property.
      * 
      * @param value
      *     allowed object is
@@ -115,12 +106,12 @@ public class TRAFFICLIGHTTYPE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    public void setLANE(String value) {
-        this.lane = value;
+    public void setNODESTART(org.opentrafficsim.xml.generated.NODE value) {
+        this.nodestart = value;
     }
 
     /**
-     * Gets the value of the position property.
+     * Gets the value of the nodeend property.
      * 
      * @return
      *     possible object is
@@ -128,12 +119,12 @@ public class TRAFFICLIGHTTYPE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    public LengthBeginEnd getPOSITION() {
-        return position;
+    public org.opentrafficsim.xml.generated.NODE getNODEEND() {
+        return nodeend;
     }
 
     /**
-     * Sets the value of the position property.
+     * Sets the value of the nodeend property.
      * 
      * @param value
      *     allowed object is
@@ -141,12 +132,12 @@ public class TRAFFICLIGHTTYPE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    public void setPOSITION(LengthBeginEnd value) {
-        this.position = value;
+    public void setNODEEND(org.opentrafficsim.xml.generated.NODE value) {
+        this.nodeend = value;
     }
 
     /**
-     * Gets the value of the class property.
+     * Gets the value of the demandweight property.
      * 
      * @return
      *     possible object is
@@ -154,12 +145,12 @@ public class TRAFFICLIGHTTYPE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    public Class getCLASS() {
-        return _class;
+    public Double getDEMANDWEIGHT() {
+        return demandweight;
     }
 
     /**
-     * Sets the value of the class property.
+     * Sets the value of the demandweight property.
      * 
      * @param value
      *     allowed object is
@@ -167,34 +158,8 @@ public class TRAFFICLIGHTTYPE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    public void setCLASS(Class value) {
-        this._class = value;
-    }
-
-    /**
-     * Gets the value of the controller property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    public String getCONTROLLER() {
-        return controller;
-    }
-
-    /**
-     * Sets the value of the controller property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-23T01:31:45+01:00", comments = "JAXB RI v2.3.0")
-    public void setCONTROLLER(String value) {
-        this.controller = value;
+    public void setDEMANDWEIGHT(Double value) {
+        this.demandweight = value;
     }
 
 }
