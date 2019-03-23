@@ -29,8 +29,8 @@
   <xsd:element name="CONNECTOR">
     <xsd:complexType>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
-      <xsd:attribute name="NODESTART" type="xsd:string" use="required" />
-      <xsd:attribute name="NODEEND" type="xsd:string" use="required" />
+      <xsd:attribute name="NODESTART" type="xsd:IDREF" use="required" />
+      <xsd:attribute name="NODEEND" type="xsd:IDREF" use="required" />
       <xsd:attribute name="DEMANDWEIGHT" type="FRACTIONTYPE" />
     </xsd:complexType>
   </xsd:element>
