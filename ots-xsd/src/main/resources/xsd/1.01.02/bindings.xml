@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE xml>
+
 <jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ots="http://www.opentrafficsim.org/ots" 
   xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:version="2.0" jaxb:extensionBindingPrefixes="xjc">

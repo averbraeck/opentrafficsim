@@ -9,8 +9,10 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -19,11 +21,13 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParserAimsun.TestXMLModelAimsun;
+import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
@@ -132,6 +136,8 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<TestXMLModelAi
             try
             {
                 this.network = nlp.build(url, true);
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
+                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
                     | OTSGeometryException | ValueException | ParameterException exception)
