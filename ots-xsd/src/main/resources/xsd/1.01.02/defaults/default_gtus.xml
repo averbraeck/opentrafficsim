@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GTUS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd
+  http://www.opentrafficsim.org/ots https://opentrafficsim.org/xsd/ots-definitions.xsd">
+
+<!--
+      // GTUType.CAR
+      // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
+      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(4.19)),
+              new ConstantGenerator<>(Length.createSI(1.7)),
+              new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+
+      // GTUType.TRUCK
+      // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
+      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(12.0)),
+              new ConstantGenerator<>(Length.createSI(2.55)),
+              new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
+            
+      // GTUType.BUS
+      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(12.0)),
+              new ConstantGenerator<>(Length.createSI(2.55)),
+              new ConstantGenerator<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
+
+      // GTUType.VAN
+      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(5.0)),
+              new ConstantGenerator<>(Length.createSI(2.4)),
+              new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+
+      // EMERGENCY_VEHICLE
+      template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(5.0)),
+              new ConstantGenerator<>(Length.createSI(2.55)),
+              new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+ -->
+
+  <GTU NAME="CAR" GTUTYPE="CAR" DEFAULT="true" LENGTH="CONST(4.19) m" WIDTH="CONST(1.7) m"
+    MAXSPEED="CONST(180) km/h" />
+  <GTU NAME="TRUCK" GTUTYPE="TRUCK" DEFAULT="true" LENGTH="CONST(12.0) m" WIDTH="CONST(2.55) m"
+    MAXSPEED="NORMAL(85.0, 2.5) km/h" />
+  <GTU NAME="BUS" GTUTYPE="BUS" DEFAULT="true" LENGTH="CONST(12.0) m" WIDTH="CONST(2.55) m"
+    MAXSPEED="CONST(90) km/h" />
+  <GTU NAME="VAN" GTUTYPE="VAN" DEFAULT="true" LENGTH="CONST(5.0) m" WIDTH="CONST(2.4) m" MAXSPEED="CONST(180) km/h" />
+  <GTU NAME="EMERGENCY_VEHICLE" GTUTYPE="EMERGENCY_VEHICLE" DEFAULT="true" LENGTH="CONST(5.0) m"
+    WIDTH="CONST(2.55) m" MAXSPEED="CONST(180) km/h" />
+
+</GTUS>
