@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  elementFormDefault="qualified">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots" 
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" 
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fn="http://www.w3.org/2005/xpath-functions" elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
   <!-- http://www.w3.org/2001/xinclude.xsd -->
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="../ref/xinclude.xsd" />
 
-  <xsd:include schemaLocation="ots-types-1-01-02.xsd" />
+  <xsd:include schemaLocation="ots-types.xsd" />
 
   <!-- ================================================================================================== -->
   <!-- =============================================== ELEMENTS ========================================= -->
@@ -28,6 +27,7 @@
       <xsd:sequence>
         <xsd:element ref="GTUTYPE" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
+      <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
 
@@ -48,9 +48,10 @@
       <xsd:sequence>
         <xsd:element ref="GTUTEMPLATE" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
+      <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
-  
+
   <xsd:element name="LANETYPE">
     <xsd:complexType>
       <xsd:sequence>
@@ -73,9 +74,10 @@
       <xsd:sequence>
         <xsd:element ref="LANETYPE" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
+      <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
-  
+
   <xsd:element name="LINKTYPE">
     <xsd:complexType>
       <xsd:sequence>
@@ -98,9 +100,10 @@
       <xsd:sequence>
         <xsd:element ref="LINKTYPE" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
+      <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
-  
+
   <xsd:complexType name="CROSSSECTIONELEMENT">
     <xsd:attribute name="NAME" type="xsd:string" use="optional" />
     <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
@@ -151,25 +154,22 @@
 
   <xsd:element name="ROADLAYOUT">
     <xsd:complexType>
-      <xsd:sequence>
-
-        <xsd:element name="SPEEDLIMIT" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-            <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
-          </xsd:complexType>
-        </xsd:element>
-
-        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+      <xsd:choice>
+        <xsd:sequence>
+          <xsd:element name="SPEEDLIMIT" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+              <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="LANE" type="CSELANE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="NOTRAFFICLANE" type="CSENOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="SHOULDER" type="CSESHOULDER" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="STRIPE" type="CSESTRIPE" minOccurs="0" maxOccurs="unbounded" />
-        </xsd:choice>
-
-      </xsd:sequence>
+        </xsd:sequence>
+      </xsd:choice>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
-      <xsd:attribute name="ROADTYPE" type="xsd:string" use="required" />
+      <xsd:attribute name="LINKTYPE" type="xsd:string" use="required" />
       <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
       <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
