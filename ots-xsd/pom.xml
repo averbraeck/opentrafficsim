@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>opentrafficsim</groupId>
@@ -11,6 +10,10 @@
   <artifactId>ots-xsd</artifactId>
   <name>OTS XSD schema definitions</name>
   <description>OTS XSD schema definitions for XML files</description>
+
+  <properties>
+    <xsd.version>1.01.02</xsd.version>
+  </properties>
 
   <build>
     <plugins>
@@ -26,7 +29,7 @@
               <goal>upload</goal>
             </goals>
             <configuration>
-              <fromDir>${basedir}/src/main/resources</fromDir>
+              <fromDir>${basedir}/src/main/resources/xsd</fromDir>
               <includes>**/*</includes>
               <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
               <toDir>xsd</toDir>
@@ -48,7 +51,7 @@
           </execution>
         </executions>
         <configuration>
-          <schemaDirectory>src/main/resources</schemaDirectory>
+          <schemaDirectory>src/main/resources/xsd/${xsd.version}</schemaDirectory>
           <generateDirectory>src/main/java</generateDirectory>
           <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
           <markGenerated>true</markGenerated>
@@ -58,7 +61,7 @@
           <specVersion>2.3</specVersion>
           <verbose>true</verbose>
           <extension>true</extension>
-          <bindingDirectory>src/main/resources</bindingDirectory>
+          <bindingDirectory>src/main/resources/xsd/${xsd.version}</bindingDirectory>
           <bindingIncludes>
             <bindingInclude>bindings.xml</bindingInclude>
           </bindingIncludes>
