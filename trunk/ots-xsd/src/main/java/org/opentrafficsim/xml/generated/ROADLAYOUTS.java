@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element ref="{http://www.opentrafficsim.org/ots}LINKTYPE" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.opentrafficsim.org/ots}ROADLAYOUT" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
  *     &lt;/restriction&gt;
@@ -42,48 +42,48 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "linktype"
+    "roadlayout"
 })
-@XmlRootElement(name = "LINKTYPES")
+@XmlRootElement(name = "ROADLAYOUTS")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-24T05:22:54+01:00", comments = "JAXB RI v2.3.0")
-public class LINKTYPES {
+public class ROADLAYOUTS {
 
-    @XmlElement(name = "LINKTYPE")
+    @XmlElement(name = "ROADLAYOUT")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-24T05:22:54+01:00", comments = "JAXB RI v2.3.0")
-    protected List<LINKTYPE> linktype;
+    protected List<ROADLAYOUT> roadlayout;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-24T05:22:54+01:00", comments = "JAXB RI v2.3.0")
     protected String base;
 
     /**
-     * Gets the value of the linktype property.
+     * Gets the value of the roadlayout property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the linktype property.
+     * This is why there is not a <CODE>set</CODE> method for the roadlayout property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getLINKTYPE().add(newItem);
+     *    getROADLAYOUT().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link LINKTYPE }
+     * {@link ROADLAYOUT }
      * 
      * 
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-24T05:22:54+01:00", comments = "JAXB RI v2.3.0")
-    public List<LINKTYPE> getLINKTYPE() {
-        if (linktype == null) {
-            linktype = new ArrayList<LINKTYPE>();
+    public List<ROADLAYOUT> getROADLAYOUT() {
+        if (roadlayout == null) {
+            roadlayout = new ArrayList<ROADLAYOUT>();
         }
-        return this.linktype;
+        return this.roadlayout;
     }
 
     /**

@@ -398,6 +398,26 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="ACCELERATIONDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="TIMEDISTTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern

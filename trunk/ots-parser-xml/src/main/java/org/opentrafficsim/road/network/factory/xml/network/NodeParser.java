@@ -64,8 +64,8 @@ public final class NodeParser
         {
             if (xmlLink.getSTRAIGHT() != null)
             {
-                Node startNode = otsNetwork.getNode(xmlLink.getNODESTART().getNAME());
-                Node endNode = otsNetwork.getNode(xmlLink.getNODEEND().getNAME());
+                Node startNode = otsNetwork.getNode(xmlLink.getNODESTART());
+                Node endNode = otsNetwork.getNode(xmlLink.getNODEEND());
                 double direction = Math.atan2(endNode.getPoint().y - startNode.getPoint().y,
                         endNode.getPoint().x - startNode.getPoint().x);
                 if (!nodeDirections.containsKey(startNode.getId()))

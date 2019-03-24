@@ -74,7 +74,7 @@
           </xsd:element>
         </xsd:choice>
 
-        <!-- xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="1" / -->
+        <xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="1" />
 
         <xsd:element name="LANEOVERRIDE" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
@@ -164,7 +164,7 @@
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="NODESTART" type="xsd:string" use="required" />
       <xsd:attribute name="NODEEND" type="xsd:string" use="required" />
-      <xsd:attribute name="ROADLAYOUT" type="xsd:string" use="optional" />
+      <xsd:attribute name="DEFINEDROADLAYOUT" type="xsd:string" use="optional" />
       <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" default="0.0 m" />
       <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" default="0.0 m" />
       <xsd:attribute name="ROTATIONSTART" type="DIRECTIONTYPE" use="optional" />

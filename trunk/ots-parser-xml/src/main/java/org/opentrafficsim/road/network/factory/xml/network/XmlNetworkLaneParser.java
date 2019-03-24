@@ -6,15 +6,21 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.io.URLResource;
+import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -23,13 +29,16 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
-import org.opentrafficsim.xml.generated.DEFINITIONS;
 import org.opentrafficsim.xml.generated.MODEL;
 import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NETWORKDEMAND;
 import org.opentrafficsim.xml.generated.OTS;
 import org.opentrafficsim.xml.generated.RUN;
 import org.opentrafficsim.xml.generated.SCENARIO;
+import org.pmw.tinylog.Level;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  * Parse an XML file for an OTS network, based on the ots-network.xsd definition.
@@ -57,9 +66,11 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OTSGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws SAXException on error creating SAX parser
      */
     public static OTSRoadNetwork build(final String filename, final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator)
-            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException
+            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException, ParserConfigurationException
     {
         File xml = new File(URLResource.getResource(filename).toURI().getPath());
         try
@@ -85,17 +96,29 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OTSGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws SAXException on error creating SAX parser
      */
     public static OTSRoadNetwork build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
             final OTSSimulatorInterface simulator)
-            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException
+            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException, ParserConfigurationException
     {
         JAXBContext jc = JAXBContext.newInstance(OTS.class);
-
         Unmarshaller unmarshaller = jc.createUnmarshaller();
-        OTS ots = (OTS) unmarshaller.unmarshal(xmlStream);
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setXIncludeAware(true);
+        spf.setNamespaceAware(true);
+        spf.setValidating(false);
+        XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+        SAXSource saxSource = new SAXSource(xmlReader, new InputSource(xmlStream));
+        OTS ots = (OTS) unmarshaller.unmarshal(saxSource);
 
-        DEFINITIONS definitions = ots.getDEFINITIONS();
+        CategoryLogger.setLogCategories(Cat.PARSER);
+        CategoryLogger.setAllLogLevel(Level.TRACE);
+        
+        List<RoadLayout> roadLayoutList = new ArrayList<>();
+        DefinitionsParser.parseDefinitions(ots.getDEFINITIONS(), otsNetwork, true, roadLayoutList);
+        
         NETWORK network = ots.getNETWORK();
         List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
         List<CONTROL> controls = ots.getCONTROL();
@@ -121,7 +144,7 @@ public class XmlNetworkLaneParser implements Serializable
     public static void main(final String[] args) throws Exception
     {
         OTSSimulatorInterface simulator = new OTSSimulator();
-        build("/N201v8.xml", new OTSRoadNetwork("", true), simulator);
+        build("/example.xml", new OTSRoadNetwork("", true), simulator);
         System.exit(0);
     }
 }
