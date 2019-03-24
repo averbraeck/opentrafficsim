@@ -88,8 +88,8 @@ public final class LinkParser
     {
         for (LINK xmlLink : network.getLINK())
         {
-            Node startNode = otsNetwork.getNode(xmlLink.getNODESTART().getNAME());
-            Node endNode = otsNetwork.getNode(xmlLink.getNODEEND().getNAME());
+            Node startNode = otsNetwork.getNode(xmlLink.getNODESTART());
+            Node endNode = otsNetwork.getNode(xmlLink.getNODEEND());
             double startDirection =
                     nodeDirections.containsKey(startNode.getId()) ? nodeDirections.get(startNode.getId()).getInUnit() : 0.0;
             double endDirection =
@@ -257,6 +257,7 @@ public final class LinkParser
     static void applyRoadTypes(final OTSRoadNetwork otsNetwork, final NETWORK network, OTSSimulatorInterface simulator)
             throws NetworkException, OTSGeometryException, XmlParserException
     {
+        /*-
         for (LINK xmlLink : network.getLINK())
         {
             CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getNAME());
@@ -403,6 +404,7 @@ public final class LinkParser
                 // TODO: parseFill(fill, xmlLink, simulator);
             }
         }
+        */
     }
 
     /**

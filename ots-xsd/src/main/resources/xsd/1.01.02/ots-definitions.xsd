@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots" 
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" 
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fn="http://www.w3.org/2005/xpath-functions" elementFormDefault="qualified">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots" xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fn="http://www.w3.org/2005/xpath-functions" elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
@@ -35,9 +33,11 @@
     <xsd:complexType>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-      <xsd:attribute name="LENGTH" type="LENGTHDISTTYPE" use="required" />
-      <xsd:attribute name="WIDTH" type="LENGTHDISTTYPE" use="required" />
-      <xsd:attribute name="MAXSPEED" type="SPEEDDISTTYPE" use="required" />
+      <xsd:attribute name="LENGTHDIST" type="LENGTHDISTTYPE" use="required" />
+      <xsd:attribute name="WIDTHDIST" type="LENGTHDISTTYPE" use="required" />
+      <xsd:attribute name="MAXSPEEDDIST" type="SPEEDDISTTYPE" use="required" />
+      <xsd:attribute name="MAXACCELERATIONDIST" type="ACCELERATIONDISTTYPE" use="optional" default="CONST(3.0) m/s^2" />
+      <xsd:attribute name="MAXDECELERATIONDIST" type="ACCELERATIONDISTTYPE" use="optional" default="CONST(8.0) m/s^2" />
       <xsd:attribute name="DEFAULT" type="xsd:boolean" use="optional" default="false" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -52,15 +52,17 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="COMPATIBILITY">
+    <xsd:complexType>
+      <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+      <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="LANETYPE">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-            <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
-          </xsd:complexType>
-        </xsd:element>
+        <xsd:element ref="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="PARENT" type="xsd:string" use="optional" />
@@ -81,12 +83,7 @@
   <xsd:element name="LINKTYPE">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-            <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
-          </xsd:complexType>
-        </xsd:element>
+        <xsd:element ref="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="PARENT" type="xsd:string" use="optional" />
@@ -152,6 +149,15 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <xsd:element name="ROADLAYOUTS">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="ROADLAYOUT">
     <xsd:complexType>
       <xsd:choice>
@@ -183,15 +189,13 @@
 
   <xsd:element name="DEFINITIONS">
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:choice minOccurs="1" maxOccurs="unbounded">
-          <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="GTUTYPES" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="GTUTEMPLATES" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="LANETYPES" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="LINKTYPES" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="unbounded" />
-        </xsd:choice>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="GTUTYPES" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="GTUTEMPLATES" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="LINKTYPES" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="LANETYPES" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ROADLAYOUTS" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>

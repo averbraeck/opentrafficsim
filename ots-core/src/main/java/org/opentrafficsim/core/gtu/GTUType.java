@@ -128,7 +128,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     private final Network network;
 
     /** Templates for GTU characteristics within a network. */
-    private static final Map<Network, Map<GTUType, TemplateGTUType>> TEMPLATES = new HashMap<>();
+    public static final Map<Network, Map<GTUType, TemplateGTUType>> TEMPLATES = new HashMap<>();
 
     /**
      * @param id String; The id of the GTUType to make it identifiable.
