@@ -34,17 +34,17 @@ public interface RoadDefinitions extends Definitions
 
     /**
      * Retrieve a defined LaneType based on its id.
-     * @param laneId the id to search for
+     * @param laneTypeId the id to search for
      * @return the LaneType or null in case it could not be found
      */
-    LaneType getLaneType(String laneId);
+    LaneType getLaneType(String laneTypeId);
 
     /**
      * Retrieve a defined default LaneType based on its enum.
-     * @param laneEnum the enum to search for
+     * @param laneTypeEnum the enum to search for
      * @return the LaneType or null in case it could not be found
      */
-    LaneType getLaneType(LaneType.DEFAULTS laneEnum);
+    LaneType getLaneType(LaneType.DEFAULTS laneTypeEnum);
 
     /**
      * Retrieve a safe copy of the map of defined LaneTypes in this network.

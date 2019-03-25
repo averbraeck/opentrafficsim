@@ -89,16 +89,16 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
 
     /** {@inheritDoc} */
     @Override
-    public LaneType getLaneType(final String laneId)
+    public LaneType getLaneType(final String laneTypeId)
     {
-        return this.laneTypeMap.get(laneId);
+        return this.laneTypeMap.get(laneTypeId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public LaneType getLaneType(final LaneType.DEFAULTS laneEnum)
+    public LaneType getLaneType(final LaneType.DEFAULTS laneTypeEnum)
     {
-        return this.laneTypeMap.get(laneEnum.getId());
+        return this.laneTypeMap.get(laneTypeEnum.getId());
     }
 
     /** {@inheritDoc} */

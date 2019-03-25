@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.network;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -55,17 +55,17 @@ public final class DefinitionsParser
      * @param definitions the DEFINTIONS tag
      * @param otsNetwork the network
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
-     * @param roadLayoutList temporary storage for the road layouts
+     * @param roadLayoutMap temporary storage for the road layouts
      * @throws XmlParserException on parsing error
      */
     public static void parseDefinitions(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
-            final boolean overwriteDefaults, final List<RoadLayout> roadLayoutList) throws XmlParserException
+            final boolean overwriteDefaults, final Map<String, ROADLAYOUT> roadLayoutMap) throws XmlParserException
     {
         parseGtuTypes(definitions, otsNetwork, overwriteDefaults);
         parseLinkTypes(definitions, otsNetwork, overwriteDefaults);
         parseLaneTypes(definitions, otsNetwork, overwriteDefaults);
         parseGtuTemplates(definitions, otsNetwork, overwriteDefaults);
-        parseRoadLayouts(definitions, otsNetwork, roadLayoutList);
+        parseRoadLayouts(definitions, otsNetwork, roadLayoutMap);
     }
 
     /**
@@ -78,36 +78,33 @@ public final class DefinitionsParser
     public static void parseGtuTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
             final boolean overwriteDefaults) throws XmlParserException
     {
-        for (Object object : definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES())
+        for (GTUTYPES gtuTypes : Parser.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(), GTUTYPES.class))
         {
-            if (object instanceof GTUTYPES)
+            for (GTUTYPE gtuTag : gtuTypes.getGTUTYPE())
             {
-                for (GTUTYPE gtuTag : ((GTUTYPES) object).getGTUTYPE())
+                GTUType networkGtuType = otsNetwork.getGtuTypes().get(gtuTag.getNAME());
+                if (networkGtuType == null || (networkGtuType != null && !gtuTag.isDEFAULT())
+                        || (networkGtuType != null && gtuTag.isDEFAULT() && overwriteDefaults))
                 {
-                    GTUType networkGtuType = otsNetwork.getGtuTypes().get(gtuTag.getNAME());
-                    if (networkGtuType == null || (networkGtuType != null && !gtuTag.isDEFAULT())
-                            || (networkGtuType != null && gtuTag.isDEFAULT() && overwriteDefaults))
+                    if (gtuTag.getPARENT() != null)
                     {
-                        if (gtuTag.getPARENT() != null)
+                        GTUType parent = otsNetwork.getGtuType(gtuTag.getPARENT());
+                        if (parent == null)
                         {
-                            GTUType parent = otsNetwork.getGtuType(gtuTag.getPARENT());
-                            if (parent == null)
-                            {
-                                throw new XmlParserException(
-                                        "GTUType " + gtuTag.getNAME() + " parent " + gtuTag.getPARENT() + " not found");
-                            }
-                            GTUType gtuType = new GTUType(gtuTag.getNAME(), parent);
-                            CategoryLogger.filter(Cat.PARSER).trace("Added GTUType {}", gtuType);
+                            throw new XmlParserException(
+                                    "GTUType " + gtuTag.getNAME() + " parent " + gtuTag.getPARENT() + " not found");
                         }
-                        else
-                        {
-                            GTUType gtuType = new GTUType(gtuTag.getNAME(), otsNetwork);
-                            CategoryLogger.filter(Cat.PARSER).trace("Added GTUType {}", gtuType);
-                        }
+                        GTUType gtuType = new GTUType(gtuTag.getNAME(), parent);
+                        CategoryLogger.filter(Cat.PARSER).trace("Added GTUType {}", gtuType);
                     }
                     else
-                        CategoryLogger.filter(Cat.PARSER).trace("Did NOT add GTUType {}", gtuTag.getNAME());
+                    {
+                        GTUType gtuType = new GTUType(gtuTag.getNAME(), otsNetwork);
+                        CategoryLogger.filter(Cat.PARSER).trace("Added GTUType {}", gtuType);
+                    }
                 }
+                else
+                    CategoryLogger.filter(Cat.PARSER).trace("Did NOT add GTUType {}", gtuTag.getNAME());
             }
         }
     }
@@ -122,35 +119,32 @@ public final class DefinitionsParser
     public static void parseLinkTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
             final boolean overwriteDefaults) throws XmlParserException
     {
-        for (Object object : definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES())
+        for (LINKTYPES linkTypes : Parser.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(), LINKTYPES.class))
         {
-            if (object instanceof LINKTYPES)
+            for (LINKTYPE linkTag : linkTypes.getLINKTYPE())
             {
-                for (LINKTYPE linkTag : ((LINKTYPES) object).getLINKTYPE())
+                LinkType networkLinkType = otsNetwork.getLinkTypes().get(linkTag.getNAME());
+                if (networkLinkType == null || (networkLinkType != null && !linkTag.isDEFAULT())
+                        || (networkLinkType != null && linkTag.isDEFAULT() && overwriteDefaults))
                 {
-                    LinkType networkLinkType = otsNetwork.getLinkTypes().get(linkTag.getNAME());
-                    if (networkLinkType == null || (networkLinkType != null && !linkTag.isDEFAULT())
-                            || (networkLinkType != null && linkTag.isDEFAULT() && overwriteDefaults))
+                    GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
+                    for (COMPATIBILITY compTag : linkTag.getCOMPATIBILITY())
                     {
-                        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
-                        for (COMPATIBILITY compTag : linkTag.getCOMPATIBILITY())
+                        GTUType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
+                        if (gtuType == null)
                         {
-                            GTUType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
-                            if (gtuType == null)
-                            {
-                                throw new XmlParserException("LinkType " + linkTag.getNAME() + ".compatibility: GTUType "
-                                        + compTag.getGTUTYPE() + " not found");
-                            }
-                            compatibility.addAllowedGTUType(gtuType,
-                                    LongitudinalDirectionality.valueOf(compTag.getDIRECTION().toString()));
+                            throw new XmlParserException("LinkType " + linkTag.getNAME() + ".compatibility: GTUType "
+                                    + compTag.getGTUTYPE() + " not found");
                         }
-                        LinkType parent = otsNetwork.getLinkType(linkTag.getPARENT());
-                        LinkType linkType = new LinkType(linkTag.getNAME(), parent, compatibility, otsNetwork);
-                        CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
+                        compatibility.addAllowedGTUType(gtuType,
+                                LongitudinalDirectionality.valueOf(compTag.getDIRECTION().toString()));
                     }
-                    else
-                        CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LinkType {}", linkTag.getNAME());
+                    LinkType parent = otsNetwork.getLinkType(linkTag.getPARENT());
+                    LinkType linkType = new LinkType(linkTag.getNAME(), parent, compatibility, otsNetwork);
+                    CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
                 }
+                else
+                    CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LinkType {}", linkTag.getNAME());
             }
         }
     }
@@ -165,48 +159,45 @@ public final class DefinitionsParser
     public static void parseLaneTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
             final boolean overwriteDefaults) throws XmlParserException
     {
-        for (Object object : definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES())
+        for (LANETYPES laneTypes : Parser.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(), LANETYPES.class))
         {
-            if (object instanceof LANETYPES)
+            for (LANETYPE laneTag : laneTypes.getLANETYPE())
             {
-                for (LANETYPE laneTag : ((LANETYPES) object).getLANETYPE())
+                LaneType networkLaneType = otsNetwork.getLaneTypes().get(laneTag.getNAME());
+                if (networkLaneType == null || (networkLaneType != null && !laneTag.isDEFAULT())
+                        || (networkLaneType != null && laneTag.isDEFAULT() && overwriteDefaults))
                 {
-                    LaneType networkLaneType = otsNetwork.getLaneTypes().get(laneTag.getNAME());
-                    if (networkLaneType == null || (networkLaneType != null && !laneTag.isDEFAULT())
-                            || (networkLaneType != null && laneTag.isDEFAULT() && overwriteDefaults))
+                    GTUCompatibility<LaneType> compatibility = new GTUCompatibility<>((LaneType) null);
+                    for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
                     {
-                        GTUCompatibility<LaneType> compatibility = new GTUCompatibility<>((LaneType) null);
-                        for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
+                        GTUType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
+                        if (gtuType == null)
                         {
-                            GTUType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
-                            if (gtuType == null)
-                            {
-                                throw new XmlParserException("LaneType " + laneTag.getNAME() + ".compatibility: GTUType "
-                                        + compTag.getGTUTYPE() + " not found");
-                            }
-                            compatibility.addAllowedGTUType(gtuType,
-                                    LongitudinalDirectionality.valueOf(compTag.getDIRECTION().toString()));
+                            throw new XmlParserException("LaneType " + laneTag.getNAME() + ".compatibility: GTUType "
+                                    + compTag.getGTUTYPE() + " not found");
                         }
-                        if (laneTag.getPARENT() != null)
+                        compatibility.addAllowedGTUType(gtuType,
+                                LongitudinalDirectionality.valueOf(compTag.getDIRECTION().toString()));
+                    }
+                    if (laneTag.getPARENT() != null)
+                    {
+                        LaneType parent = otsNetwork.getLaneType(laneTag.getPARENT());
+                        if (parent == null)
                         {
-                            LaneType parent = otsNetwork.getLaneType(laneTag.getPARENT());
-                            if (parent == null)
-                            {
-                                throw new XmlParserException(
-                                        "LaneType " + laneTag.getNAME() + " parent " + laneTag.getPARENT() + " not found");
-                            }
-                            LaneType laneType = new LaneType(laneTag.getNAME(), parent, compatibility, otsNetwork);
-                            CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
+                            throw new XmlParserException(
+                                    "LaneType " + laneTag.getNAME() + " parent " + laneTag.getPARENT() + " not found");
                         }
-                        else
-                        {
-                            LaneType laneType = new LaneType(laneTag.getNAME(), compatibility, otsNetwork);
-                            CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
-                        }
+                        LaneType laneType = new LaneType(laneTag.getNAME(), parent, compatibility, otsNetwork);
+                        CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                     }
                     else
-                        CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LaneType {}", laneTag.getNAME());
+                    {
+                        LaneType laneType = new LaneType(laneTag.getNAME(), compatibility, otsNetwork);
+                        CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
+                    }
                 }
+                else
+                    CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LaneType {}", laneTag.getNAME());
             }
         }
     }
@@ -221,44 +212,42 @@ public final class DefinitionsParser
     public static void parseGtuTemplates(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
             final boolean overwriteDefaults) throws XmlParserException
     {
-        for (Object object : definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES())
+        // TODO: define random streams in GLOBAL tag, and access and parse them in the distributions
+        StreamInterface stream = new MersenneTwister(2L);
+        for (GTUTEMPLATES templateTypes : Parser.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
+                GTUTEMPLATES.class))
         {
-            // TODO: define random streams in GLOBAL tag, and access and parse them in the distributions
-            StreamInterface stream = new MersenneTwister(2L);
-            if (object instanceof GTUTEMPLATES)
+            for (GTUTEMPLATE templateTag : templateTypes.getGTUTEMPLATE())
             {
-                for (GTUTEMPLATE templateTag : ((GTUTEMPLATES) object).getGTUTEMPLATE())
+                GTUType gtuType = otsNetwork.getGtuType(templateTag.getGTUTYPE());
+                if (gtuType == null)
                 {
-                    GTUType gtuType = otsNetwork.getGtuType(templateTag.getGTUTYPE());
-                    if (gtuType == null)
-                    {
-                        throw new XmlParserException(
-                                "GTUTemplate " + templateTag.getNAME() + " GTUType " + templateTag.getGTUTYPE() + " not found");
-                    }
-                    if (GTUType.TEMPLATES.get(otsNetwork) == null)
-                    {
-                        GTUType.TEMPLATES.put(otsNetwork, new HashMap<>());
-                    }
-                    TemplateGTUType existingTemplate = GTUType.TEMPLATES.get(otsNetwork).get(gtuType);
-                    if (existingTemplate == null || (existingTemplate != null && !templateTag.isDEFAULT())
-                            || (existingTemplate != null && templateTag.isDEFAULT() && overwriteDefaults))
-                    {
-                        Generator<Length> lengthGenerator = Generators.makeLengthGenerator(stream, templateTag.getLENGTHDIST());
-                        Generator<Length> widthGenerator = Generators.makeLengthGenerator(stream, templateTag.getWIDTHDIST());
-                        Generator<Speed> maximumSpeedGenerator =
-                                Generators.makeSpeedGenerator(stream, templateTag.getMAXSPEEDDIST());
-                        Generator<Acceleration> maximumAccelerationGenerator =
-                                Generators.makeAccelerationGenerator(stream, templateTag.getMAXACCELERATIONDIST());
-                        Generator<Acceleration> maximumDecelerationGenerator =
-                                Generators.makeDecelerationGenerator(stream, templateTag.getMAXDECELERATIONDIST());
-                        TemplateGTUType templateGTUType = new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
-                                maximumSpeedGenerator, maximumAccelerationGenerator, maximumDecelerationGenerator);
-                        GTUType.TEMPLATES.get(otsNetwork).put(gtuType, templateGTUType);
-                        CategoryLogger.filter(Cat.PARSER).trace("Added TemplateGTUType {}", templateGTUType);
-                    }
-                    else
-                        CategoryLogger.filter(Cat.PARSER).trace("Did NOT add TemplateGTUType {}", templateTag.getNAME());
+                    throw new XmlParserException(
+                            "GTUTemplate " + templateTag.getNAME() + " GTUType " + templateTag.getGTUTYPE() + " not found");
                 }
+                if (GTUType.TEMPLATES.get(otsNetwork) == null)
+                {
+                    GTUType.TEMPLATES.put(otsNetwork, new HashMap<>());
+                }
+                TemplateGTUType existingTemplate = GTUType.TEMPLATES.get(otsNetwork).get(gtuType);
+                if (existingTemplate == null || (existingTemplate != null && !templateTag.isDEFAULT())
+                        || (existingTemplate != null && templateTag.isDEFAULT() && overwriteDefaults))
+                {
+                    Generator<Length> lengthGenerator = Generators.makeLengthGenerator(stream, templateTag.getLENGTHDIST());
+                    Generator<Length> widthGenerator = Generators.makeLengthGenerator(stream, templateTag.getWIDTHDIST());
+                    Generator<Speed> maximumSpeedGenerator =
+                            Generators.makeSpeedGenerator(stream, templateTag.getMAXSPEEDDIST());
+                    Generator<Acceleration> maximumAccelerationGenerator =
+                            Generators.makeAccelerationGenerator(stream, templateTag.getMAXACCELERATIONDIST());
+                    Generator<Acceleration> maximumDecelerationGenerator =
+                            Generators.makeDecelerationGenerator(stream, templateTag.getMAXDECELERATIONDIST());
+                    TemplateGTUType templateGTUType = new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
+                            maximumSpeedGenerator, maximumAccelerationGenerator, maximumDecelerationGenerator);
+                    GTUType.TEMPLATES.get(otsNetwork).put(gtuType, templateGTUType);
+                    CategoryLogger.filter(Cat.PARSER).trace("Added TemplateGTUType {}", templateGTUType);
+                }
+                else
+                    CategoryLogger.filter(Cat.PARSER).trace("Did NOT add TemplateGTUType {}", templateTag.getNAME());
             }
         }
     }
@@ -267,19 +256,18 @@ public final class DefinitionsParser
      * Parse the ROADLAYOUTS tag in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param otsNetwork the network
-     * @param roadLayoutList temporary storage for the road layouts
+     * @param roadLayoutMap temporary storage for the road layouts
      * @throws XmlParserException on parsing error
      */
     public static void parseRoadLayouts(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
-            final List<RoadLayout> roadLayoutList) throws XmlParserException
+            final Map<String, ROADLAYOUT> roadLayoutMap) throws XmlParserException
     {
-        for (Object object : definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES())
+        for (ROADLAYOUTS roadLayoutTypes : Parser.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
+                ROADLAYOUTS.class))
         {
-            if (object instanceof ROADLAYOUTS)
+            for (ROADLAYOUT layoutTag : roadLayoutTypes.getROADLAYOUT())
             {
-                for (ROADLAYOUT layoutTag : ((ROADLAYOUTS) object).getROADLAYOUT())
-                {
-                }
+                roadLayoutMap.put(layoutTag.getNAME(), layoutTag);
             }
         }
     }
