@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.01.02/ots.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <DEFINITIONS>
+
+    <xi:include href="xsd/1.01.02/defaults/default_gtutypes.xml">
+      <xi:fallback>
+        <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_gtutypes.xml" />
+      </xi:fallback>
+    </xi:include>
+
+    <GTUTYPES>
+      <GTUTYPE NAME="AUTOMATED_CAR" PARENT="VEHICLE" />
+    </GTUTYPES>
+
+    <xi:include href="xsd/1.01.02/defaults/default_linktypes.xml">
+      <xi:fallback>
+        <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_linktypes.xml" />
+      </xi:fallback>
+    </xi:include>
+
+    <LINKTYPES>
+      <LINKTYPE NAME="HIGHWAY2x2" DEFAULT="false" PARENT="HIGHWAY">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="BOTH" />
+        <COMPATIBILITY GTUTYPE="AUTOMATED_CAR" DIRECTION="BOTH" />
+        <COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="NONE" />
+        <COMPATIBILITY GTUTYPE="BICYCLE" DIRECTION="NONE" />
+      </LINKTYPE>
+    </LINKTYPES>
+
+    <xi:include href="xsd/1.01.02/defaults/default_lanetypes.xml">
+      <xi:fallback>
+        <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_lanetypes.xml" />
+      </xi:fallback>
+    </xi:include>
+
+    <LANETYPES>
+      <LANETYPE NAME="HIGHWAYLANE2x2" DEFAULT="false" PARENT="HIGHWAY">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
+        <COMPATIBILITY GTUTYPE="AUTOMATED_CAR" DIRECTION="FORWARD" />
+        <COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="NONE" />
+        <COMPATIBILITY GTUTYPE="BICYCLE" DIRECTION="NONE" />
+      </LANETYPE>
+    </LANETYPES>
+
+    <xi:include href="xsd/1.01.02/defaults/default_gtutemplates.xml">
+      <xi:fallback>
+        <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_gtutemplates.xml" />
+      </xi:fallback>
+    </xi:include>
+
+    <GTUTEMPLATES>
+      <GTUTEMPLATE NAME="AUTOCAR" GTUTYPE="AUTOMATED_CAR" LENGTHDIST="UNIF(4,5) m"
+        WIDTHDIST="TRIA(1.5,1.6,1.7) m" MAXSPEEDDIST="UNIF(90, 110) km/h" />
+    </GTUTEMPLATES>
+
+    <!--
+    _______________ -6m
+    shoulder center -5m
+    _______________ -4m
+    lane center L1  -3m  <== driving direction
+    - - - - - - - - -2m
+    lane center L2  -1m  <== driving direction
+    ===============  0m
+    lane center R2  +1m  ==> driving direction
+    - - - - - - - - +2m
+    lane center R1  +3m  ==> driving direction
+    _______________ +4m
+    shoulder center +5m
+    _______________ +6m
+    -->
+
+    <ROADLAYOUTS>
+      <ROADLAYOUT LINKTYPE="HIGHWAY2x2" NAME="HW22">
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>-6m</CENTEROFFSET>
+          <WIDTH>10cm</WIDTH>
+        </STRIPE>
+        <SHOULDER>
+          <CENTEROFFSET>-5m</CENTEROFFSET>
+          <WIDTH>2m</WIDTH>
+        </SHOULDER>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>-4m</CENTEROFFSET>
+        </STRIPE>
+        <LANE NAME="L1" DIRECTION="BACKWARD" LANETYPE="HIGHWAYLANE2x2">
+          <CENTEROFFSET>-3m</CENTEROFFSET>
+          <WIDTH>2m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>-2m</CENTEROFFSET>
+        </STRIPE>
+        <LANE NAME="L2" DIRECTION="BACKWARD" LANETYPE="HIGHWAYLANE2x2">
+          <CENTEROFFSET>-1m</CENTEROFFSET>
+          <WIDTH>2m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DOUBLE">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE NAME="R2" DIRECTION="FORWARD" LANETYPE="HIGHWAYLANE2x2">
+          <CENTEROFFSET>1m</CENTEROFFSET>
+          <WIDTH>2m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>2m</CENTEROFFSET>
+        </STRIPE>
+        <LANE NAME="R1" DIRECTION="FORWARD" LANETYPE="HIGHWAYLANE2x2">
+          <CENTEROFFSET>3m</CENTEROFFSET>
+          <WIDTH>2m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>4m</CENTEROFFSET>
+        </STRIPE>
+        <SHOULDER>
+          <CENTEROFFSET>5m</CENTEROFFSET>
+          <WIDTH>2m</WIDTH>
+        </SHOULDER>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>6m</CENTEROFFSET>
+        </STRIPE>
+      </ROADLAYOUT>
+    </ROADLAYOUTS>
+
+  </DEFINITIONS>
+
+  <NETWORK>
+  
+    <NODE COORDINATE="(0,0)" NAME="N1"/>
+    <NODE COORDINATE="(100,0)" NAME="N2"/>
+    <NODE COORDINATE="(300,100)" NAME="N3"/>
+    <NODE COORDINATE="(400,100)" NAME="N4"/>
+    
+    <LINK NODESTART="N1" NODEEND="N2" NAME="L12" DEFINEDROADLAYOUT="HW22">
+      <STRAIGHT />
+      <GENERATOR LANE="R1" IAT="EXPO(10) s" INITIALSPEED="CONST(20) km/h" GTU="CAR" ROUTE="A" POSITION="10m"/>
+      <GENERATOR LANE="R2" IAT="EXPO(10) s" INITIALSPEED="CONST(20) km/h" GTU="CAR" ROUTE="A" POSITION="10m"/>
+    </LINK>
+      
+    <LINK NODESTART="N2" NODEEND="N3" NAME="L23" DEFINEDROADLAYOUT="HW22">
+      <BEZIER NUMSEGMENTS="128"/>
+    </LINK>
+
+    <LINK NODESTART="N3" NODEEND="N4" NAME="L34" DEFINEDROADLAYOUT="HW22">
+      <STRAIGHT />
+    </LINK>
+
+    <ROUTE NAME="A">
+      <NODE>N1</NODE>
+      <NODE>N2</NODE>
+      <NODE>N3</NODE>
+      <NODE>N4</NODE>
+    </ROUTE>
+    
+  </NETWORK>
+
+  <RUN RUNLENGTH="1h"></RUN>
+
+</OTS>

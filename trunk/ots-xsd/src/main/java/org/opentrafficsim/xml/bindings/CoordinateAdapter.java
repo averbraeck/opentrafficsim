@@ -26,7 +26,7 @@ public class CoordinateAdapter extends XmlAdapter<String, Point3d>
             String clean = field.replaceAll("\\s", "");
             Throw.when(!clean.startsWith("("), IllegalArgumentException.class, "Coordinate must start with '(': " + field);
             Throw.when(!clean.endsWith(")"), IllegalArgumentException.class, "Coordinate must end with ')': " + field);
-            clean = clean.substring(1, clean.length() - 2);
+            clean = clean.substring(1, clean.length() - 1);
             String[] digits = clean.split(",");
             Throw.when(digits.length < 2, IllegalArgumentException.class, "Coordinate must have at least x and y: " + field);
             Throw.when(digits.length > 3, IllegalArgumentException.class,

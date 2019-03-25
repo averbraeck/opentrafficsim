@@ -1,9 +1,16 @@
-<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 changes.xsd" xml:space="preserve">
+  
   <body>
 
-    <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 999 TO PREVENT MESSING UP THIS FILE -->
+    <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 120 -->
     
     <release version="1.01.02" date="2019-03-XX" description="GTUType, LinkType, LaneType in Defaults">
+      <action dev="averbraeck" type="update">
+        ots.xsd and this changes file got an xml:space="preserve" tag to indicate that the formatter
+        should not mess with text strings. A changed xsd=file is therefore included in the changes folder.
+      </action>
       <action dev="averbraeck" type="update">
         The GTUType does not have static definitions anymore, to allow alternative GTUTypes for different situations.
         An enum called GTUType.DEFAULTS has been added that indicates the names of the GTUTypes that are defined by default.
@@ -134,7 +141,8 @@
       </action>
     </release>
 
-    <release version="1.01.00" date="2019-01-19" description="Update to ots 1.01.00, djutils, animation, major refactoring">
+    <release version="1.01.00" date="2019-01-19"
+  description="Update to ots 1.01.00, djutils, animation, major refactoring">
       <action dev="averbraeck" type="update">
         All demos and tests have been updated and repaired to be in line with DSOL version 3.03.
       </action>
@@ -968,8 +976,7 @@ if (simulator instanceof AnimatorInterface)
         ots-core: OperationalPlan, TacticalPlanner, and StrategicalPlanner added.
       </action>
       <action dev="averbraeck" type="add">
-        ots-core, ots-road: All GTUs are free ranging; Lane-based behavior is just a
-        constraint.
+        ots-core, ots-road: All GTUs are free ranging; Lane-based behavior is just a constraint.
       </action>
     </release>
 

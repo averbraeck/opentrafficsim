@@ -9,16 +9,15 @@
 package org.opentrafficsim.xml.generated;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.xml.bindings.SpeedAdapter;
 
 
 /**
@@ -30,10 +29,8 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element ref="{http://www.opentrafficsim.org/ots}GTUTEMPLATE" maxOccurs="unbounded" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
+ *       &lt;attribute name="GTUTYPE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="LEGALSPEEDLIMIT" type="{http://www.opentrafficsim.org/ots}SPEEDTYPE" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -42,56 +39,25 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "gtutemplate"
-})
-@XmlRootElement(name = "GTUTEMPLATES")
+@XmlType(name = "")
+@XmlRootElement(name = "SPEEDLIMIT")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
-public class GTUTEMPLATES implements Serializable
+public class SPEEDLIMIT
+    implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlElement(name = "GTUTEMPLATE")
+    @XmlAttribute(name = "GTUTYPE", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
-    protected List<GTUTEMPLATE> gtutemplate;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
+    protected String gtutype;
+    @XmlAttribute(name = "LEGALSPEEDLIMIT")
+    @XmlJavaTypeAdapter(SpeedAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
-    protected String base;
+    protected Speed legalspeedlimit;
 
     /**
-     * Gets the value of the gtutemplate property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the gtutemplate property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGTUTEMPLATE().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link GTUTEMPLATE }
-     * 
-     * 
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
-    public List<GTUTEMPLATE> getGTUTEMPLATE() {
-        if (gtutemplate == null) {
-            gtutemplate = new ArrayList<GTUTEMPLATE>();
-        }
-        return this.gtutemplate;
-    }
-
-    /**
-     * Gets the value of the base property.
+     * Gets the value of the gtutype property.
      * 
      * @return
      *     possible object is
@@ -99,12 +65,12 @@ public class GTUTEMPLATES implements Serializable
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
+    public String getGTUTYPE() {
+        return gtutype;
     }
 
     /**
-     * Sets the value of the base property.
+     * Sets the value of the gtutype property.
      * 
      * @param value
      *     allowed object is
@@ -112,8 +78,34 @@ public class GTUTEMPLATES implements Serializable
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+    public void setGTUTYPE(String value) {
+        this.gtutype = value;
+    }
+
+    /**
+     * Gets the value of the legalspeedlimit property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
+    public Speed getLEGALSPEEDLIMIT() {
+        return legalspeedlimit;
+    }
+
+    /**
+     * Sets the value of the legalspeedlimit property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-25T01:50:01+01:00", comments = "JAXB RI v2.3.0")
+    public void setLEGALSPEEDLIMIT(Speed value) {
+        this.legalspeedlimit = value;
     }
 
 }
