@@ -48,7 +48,6 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -214,8 +213,8 @@ public final class AHFEUtil
         {
             exception.printStackTrace();
         }
-        RouteGenerator fixedRouteGeneratorLeft = new FixedRouteGenerator(leftRoute);
-        RouteGenerator fixedRouteGeneratorRight = new FixedRouteGenerator(rightRoute);
+        Generator<Route> fixedRouteGeneratorLeft = new FixedRouteGenerator(leftRoute);
+        Generator<Route> fixedRouteGeneratorRight = new FixedRouteGenerator(rightRoute);
 
         LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);

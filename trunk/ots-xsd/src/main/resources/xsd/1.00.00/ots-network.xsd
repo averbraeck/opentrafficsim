@@ -15,7 +15,7 @@
 
   <xsd:element name="NODE">
     <xsd:complexType>
-      <xsd:attribute name="NAME" type="xsd:ID" use="required" />
+      <xsd:attribute name="ID" type="xsd:ID" use="required" />
       <xsd:attribute name="COORDINATE" type="COORDINATETYPE" use="optional" />
       <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="optional" />
       <xsd:attribute ref="xml:base" />
@@ -130,7 +130,7 @@
 
             <xsd:element name="SENSOR" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
-                <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+                <xsd:attribute name="ID" type="xsd:string" use="optional" />
                 <xsd:attribute name="LANE" type="xsd:string" use="required" />
                 <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
                 <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required" />
@@ -140,7 +140,7 @@
 
             <xsd:element name="TRAFFICLIGHT" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
-                <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+                <xsd:attribute name="ID" type="xsd:string" use="optional" />
                 <xsd:attribute name="LANE" type="xsd:string" use="required" />
                 <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
                 <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required" />
@@ -157,7 +157,7 @@
         </xsd:sequence>
       </xsd:sequence>
 
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="NODESTART" type="xsd:IDREF" use="required" />
       <xsd:attribute name="NODEEND" type="xsd:IDREF" use="required" />
       <xsd:attribute name="ROADLAYOUT" type="xsd:string" use="optional" />
@@ -173,7 +173,7 @@
 
   <xsd:element name="ROUTE">
     <xsd:complexType>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="NODELIST" type="xsd:IDREFS" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -181,7 +181,7 @@
 
   <xsd:element name="SHORTESTROUTE">
     <xsd:complexType>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="FROM" type="xsd:IDREF" use="required" />
       <xsd:attribute name="TO" type="xsd:IDREF" use="required" />
       <xsd:attribute name="VIA" type="xsd:IDREFS" use="optional" />
@@ -196,12 +196,12 @@
       <xsd:sequence>
         <xsd:element name="ROUTE" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
             <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -211,12 +211,12 @@
       <xsd:sequence>
         <xsd:element name="SHORTESTROUTE" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
             <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>

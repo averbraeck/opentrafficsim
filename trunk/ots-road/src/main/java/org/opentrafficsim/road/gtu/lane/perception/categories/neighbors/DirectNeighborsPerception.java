@@ -191,7 +191,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                     : pos.minus(getGtu().getFront().getDx());
             boolean ignoreIfUpstream = true;
             return new DownstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
-                    getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, getGtu(), lane,
+                    getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, lane,
                     ignoreIfUpstream);
         }
         catch (ParameterException | GTUException exception)

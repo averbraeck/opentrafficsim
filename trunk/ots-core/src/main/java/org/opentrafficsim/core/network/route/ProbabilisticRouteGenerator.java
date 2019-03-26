@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -19,7 +20,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ProbabilisticRouteGenerator implements RouteGenerator, Serializable
+public class ProbabilisticRouteGenerator implements Generator<Route>, Serializable
 {
 
     /** */

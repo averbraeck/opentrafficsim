@@ -1,14 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.canBeAhead;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.removeAllUpstreamOfConflicts;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -230,6 +221,7 @@ public interface Synchronization extends LmrsParameters
                 params.resetParameter(ParameterTypes.B);
             }
             // never stop before we can actually merge
+            // TODO: this ignores the front it seems!
             Length xMerge = getMergeDistance(perception, lat);
             if (xMerge.gt0())
             {

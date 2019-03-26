@@ -104,8 +104,6 @@ public final class LmrsUtil implements LmrsParameters
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
 
-        // TODO: make LMRS available for lane change only with controlled car-following, e.g. ACC.
-
         // obtain objects to get info
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         SpeedLimitProspect slp = infra.getSpeedLimitProspect(RelativeLane.CURRENT);

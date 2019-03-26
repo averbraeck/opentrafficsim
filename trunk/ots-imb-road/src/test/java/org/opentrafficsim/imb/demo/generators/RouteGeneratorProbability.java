@@ -7,13 +7,13 @@ import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class RouteGeneratorProbability implements RouteGenerator
+public class RouteGeneratorProbability implements Generator<Route>
 {
 
     /** Network. */

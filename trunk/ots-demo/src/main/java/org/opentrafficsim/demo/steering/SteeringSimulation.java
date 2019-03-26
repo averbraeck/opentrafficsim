@@ -96,7 +96,14 @@ public class SteeringSimulation extends AbstractSimulationScript
      */
     public static void main(final String... args)
     {
-        new SteeringSimulation(args).start();
+        try
+        {
+            new SteeringSimulation(args).start();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /**

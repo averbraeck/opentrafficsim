@@ -38,14 +38,14 @@
 
   <xsd:element name="GTUTYPE">
     <xsd:complexType>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
 
   <xsd:element name="GTU">
     <xsd:complexType>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
       <xsd:attribute name="LENGTH" type="LENGTHDISTTYPE" use="required" />
       <xsd:attribute name="WIDTH" type="LENGTHDISTTYPE" use="required" />
@@ -59,12 +59,12 @@
       <xsd:sequence>
         <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
             <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -79,7 +79,7 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="required" />
       <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="required" />
       <xsd:attribute name="DEFAULTOVERTAKING" type="OVERTAKINGTYPE" use="required" />
@@ -97,7 +97,7 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="optional" />
       <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
       <xsd:attribute ref="xml:base" />
@@ -127,7 +127,7 @@
                   </xsd:complexType>
                 </xsd:element>
               </xsd:sequence>
-              <xsd:attribute name="NAME" type="xsd:string" use="required" />
+              <xsd:attribute name="ID" type="xsd:string" use="required" />
               <xsd:attribute name="LANETYPE" type="xsd:string" use="optional" />
               <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
               <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
@@ -142,7 +142,7 @@
 
           <xsd:element name="NOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
-              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+              <xsd:attribute name="ID" type="xsd:string" use="optional" />
               <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
               <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
               <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
@@ -154,7 +154,7 @@
 
           <xsd:element name="SHOULDER" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
-              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+              <xsd:attribute name="ID" type="xsd:string" use="optional" />
               <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
               <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
               <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
@@ -166,7 +166,7 @@
 
           <xsd:element name="STRIPE" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
-              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+              <xsd:attribute name="ID" type="xsd:string" use="optional" />
               <xsd:attribute name="TYPE" type="STRIPETYPE" use="required" />
               <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
@@ -176,7 +176,7 @@
 
         </xsd:choice>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="ROADTYPE" type="xsd:string" use="required" />
       <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />

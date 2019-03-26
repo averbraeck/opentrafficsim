@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.util.Iterator;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -45,6 +46,12 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
     <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator,
             PerceptionFinalizer<C, I> finalizer);
 
+    /**
+     * Returns an iterator over the underlying objects.
+     * @return Iterator&lt;U&gt;; iterator
+     */
+    Iterator<U> underlying();
+    
     /**
      * Combination of an accumulator and a finalizer.
      * <p>

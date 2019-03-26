@@ -105,6 +105,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** */
     private static final long serialVersionUID = 20140822L;
 
+    /** Collision detector. */
+    private final CollisionDetector collisionDetector;
+
     /**
      * Fractional longitudinal positions of the reference point of the GTU on one or more links at the start of the current
      * operational plan. Because the reference point of the GTU might not be on all the links the GTU is registered on, the
@@ -182,6 +185,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(historyManager);
         this.currentLanes = new HistoricalLinkedHashMap<>(historyManager);
         this.turnIndicatorStatus = new HistoricalValue<>(historyManager, TurnIndicatorStatus.NOTPRESENT);
+        this.collisionDetector = new CollisionDetector(id);
     }
 
     /**
@@ -1600,6 +1604,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
             Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
             PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+            // check collision
+            if (!leaders.isEmpty())
+            {
+                leaders.collect(this.collisionDetector);
+            }
             // obtain
             this.cachedCarFollowingAcceleration =
                     Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(), speed,

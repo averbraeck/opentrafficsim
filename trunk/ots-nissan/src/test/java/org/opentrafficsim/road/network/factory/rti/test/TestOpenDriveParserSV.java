@@ -42,7 +42,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividualOld;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -249,7 +249,7 @@ public class TestOpenDriveParserSV extends OTSSimulationApplication<OTSModelInte
                                 Time endTime = new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
                                 Length position = lane.getLength().lt(m25) ? m0 : m25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
-                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
+                                new GTUGeneratorIndividualOld(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
                                         strategicalPlannerFactory, null, this.network);
@@ -293,7 +293,7 @@ public class TestOpenDriveParserSV extends OTSSimulationApplication<OTSModelInte
                                 Time endTime = new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
                                 Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
-                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
+                                new GTUGeneratorIndividualOld(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
                                         strategicalPlannerFactory, null, this.network);

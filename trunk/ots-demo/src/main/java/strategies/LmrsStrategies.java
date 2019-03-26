@@ -69,7 +69,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.gtu.GTUGeneratorAnimation;
+import org.opentrafficsim.draw.gtu.GtuGeneratorQueueAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
@@ -91,7 +91,7 @@ import org.opentrafficsim.road.gtu.colorer.IncentiveColorer;
 import org.opentrafficsim.road.gtu.colorer.SocialPressureColorer;
 import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.colorer.TotalDesireColorer;
-import org.opentrafficsim.road.gtu.generator.GTUGenerator;
+import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
@@ -507,7 +507,7 @@ public class LmrsStrategies implements EventListenerInterface
             AnimationToggles.setIconAnimationTogglesFull(getAnimationPanel());
             getAnimationPanel().getAnimationPanel().toggleClass(OTSLink.class);
             getAnimationPanel().getAnimationPanel().toggleClass(OTSNode.class);
-            getAnimationPanel().getAnimationPanel().toggleClass(GTUGenerator.class);
+            getAnimationPanel().getAnimationPanel().toggleClass(GtuGeneratorQueue.class);
             getAnimationPanel().getAnimationPanel().showClass(SpeedSign.class);
         }
 
@@ -832,7 +832,7 @@ public class LmrsStrategies implements EventListenerInterface
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, getSimulator(), odOptions);
                 for (String str : generatedObjects.keySet())
                 {
-                    new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), getSimulator());
+                    new GtuGeneratorQueueAnimation(generatedObjects.get(str).getGenerator(), getSimulator());
                 }
 
                 // Sampler

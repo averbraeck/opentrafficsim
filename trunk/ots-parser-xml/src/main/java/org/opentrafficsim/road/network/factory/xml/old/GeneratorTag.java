@@ -25,7 +25,7 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividualOld;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -359,8 +359,8 @@ class GeneratorTag implements Serializable
                 makeTacticalPlannerFactory(generatorTag, simulator.getReplication().getStream("GENERAL"));
         LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory);
-        GTUGeneratorIndividual generator = new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator,
-                generatorTag.gtuTag.gtuType, gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist,
+        GTUGeneratorIndividualOld generator = new GTUGeneratorIndividualOld(linkTag.name + "." + generatorTag.laneName,
+                simulator, generatorTag.gtuTag.gtuType, gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist,
                 generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist,
                 generatorTag.maxGTUs, startTime, endTime, lane, position, generatorTag.gtuDirection, strategicalPlannerFactory,
                 routeGenerator, parser.network);

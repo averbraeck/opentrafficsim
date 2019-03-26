@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -20,9 +21,8 @@ import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividualOld;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -358,7 +358,7 @@ class GeneratorTag implements Serializable
         {
             nodeList.add(parser.getNodeTags().get(nodeTag.name).node);
         }
-        RouteGenerator routeGenerator = new FixedRouteGenerator(new Route(generatorTag.laneName, nodeList));
+        Generator<Route> routeGenerator = new FixedRouteGenerator(new Route(generatorTag.laneName, nodeList));
         Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
         Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
         Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
@@ -367,11 +367,12 @@ class GeneratorTag implements Serializable
                 makeTacticalPlannerFactory(generatorTag, simulator.getReplication().getStream("default"));
         LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory);
-        new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
-                generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
+        new GTUGeneratorIndividualOld(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType,
+                gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
                 generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane,
                 position, generatorTag.gtuDirection, strategicalPlannerFactory, routeGenerator, parser.network);
 
+        // TODO Use LaneBasedGTUGenerator
         // TODO GTUMix
         // TODO RouteMix
         // TODO ShortestRoute

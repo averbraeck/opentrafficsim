@@ -27,16 +27,16 @@
                   <xsd:attribute name="ORIGIN" type="xsd:string" use="required" />
                   <xsd:attribute name="DESTINATION" type="xsd:string" use="required" />
                   <xsd:attribute name="CATEGORY" type="xsd:string" use="optional" />
-                  <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
-                  <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" />
+                  <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" default="LINEAR" />
+                  <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" default="1.0" />
                   <xsd:attribute ref="xml:base" />
                 </xsd:complexType>
               </xsd:element>
             </xsd:sequence>
-            <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-            <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
-            <xsd:attribute name="START" type="xsd:dateTime" use="optional" />
-            <xsd:attribute name="GLOBALFACTOR" type="POSITIVEFACTOR" use="optional" />
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
+            <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" default="LINEAR" />
+            <xsd:attribute name="GLOBALFACTOR" type="POSITIVEFACTOR" use="optional" default="1.0" />
+            <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="generator" />
             <xsd:attribute ref="xml:base" />
           </xsd:complexType>
         </xsd:element>
@@ -49,13 +49,61 @@
       <xsd:sequence>
         <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
             <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GENERATOR">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice>
+          <xsd:element name="GTU" type="xsd:string" />
+          <xsd:element name="GTUMIX" type="xsd:string" />
+        </xsd:choice>
+        <xsd:choice>
+          <xsd:element name="ROUTE" type="xsd:string" />
+          <xsd:element name="ROUTEMIX" type="xsd:string" />
+          <xsd:element name="SHORTESTROUTE" type="xsd:string" />
+          <xsd:element name="SHORTESTROUTEMIX" type="xsd:string" />
+        </xsd:choice>
+        <xsd:element name="IAT" type="TIMEDISTTYPE" />
+        <xsd:element name="STARTTIME" type="TIMETYPE" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="ENDTIME" type="TIMETYPE" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="ROOMCHECKER" type="ROOMCHECKERTYPE" minOccurs="0" maxOccurs="1" default="CF" />
+      </xsd:sequence>
+      <xsd:attribute name="LINK" type="xsd:string" use="required" />
+      <xsd:attribute name="LANE" type="xsd:string" use="required" />
+      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
+      <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LISTGENERATOR">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice>
+          <xsd:element name="GTU" type="xsd:string" />
+          <xsd:element name="GTUMIX" type="xsd:string" />
+        </xsd:choice>
+        <xsd:choice>
+          <xsd:element name="ROUTE" type="xsd:string" />
+          <xsd:element name="ROUTEMIX" type="xsd:string" />
+          <xsd:element name="SHORTESTROUTE" type="xsd:string" />
+          <xsd:element name="SHORTESTROUTEMIX" type="xsd:string" />
+        </xsd:choice>
+        <xsd:element name="ROOMCHECKER" type="ROOMCHECKERTYPE" minOccurs="0" maxOccurs="1" default="CF" />
+      </xsd:sequence>
+      <xsd:attribute name="LINK" type="xsd:string" use="required" />
+      <xsd:attribute name="LANE" type="xsd:string" use="required" />
+      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
+      <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
+      <xsd:attribute name="URI" type="xsd:anyURI" use="required" />
     </xsd:complexType>
   </xsd:element>
 
@@ -63,45 +111,45 @@
   <!-- ================================================= TYPES ========================================== -->
   <!-- ================================================================================================== -->
 
-  <xsd:element name="GLOBALTIME">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="TIME" minOccurs="2" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="VALUE" type="TIMETYPE" use="required" />
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
-  <xsd:element name="TIME">
-    <xsd:complexType>
-      <xsd:attribute name="VALUE" type="TIMETYPE" use="required" />
-      <xsd:attribute ref="xml:base" />
-    </xsd:complexType>
-  </xsd:element>
+  <xsd:simpleType name="ROOMCHECKERTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="CF|CFBA|TTC" />
+    </xsd:restriction>
+  </xsd:simpleType>
 
-  <xsd:element name="CATEGORY">
-    <xsd:complexType>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
-      <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
-      <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
-      <xsd:attribute name="LANE" type="xsd:string" use="optional" />
-      <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" />
-      <xsd:attribute ref="xml:base" />
-    </xsd:complexType>
-  </xsd:element>
+  <xsd:complexType name="GLOBALTIME">
+    <xsd:sequence>
+      <xsd:element name="TIME" minOccurs="2" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:attribute name="VALUE" type="TIMETYPE" use="required" />
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="TIME">
+    <xsd:attribute name="VALUE" type="TIMETYPE" use="required" />
+    <xsd:attribute ref="xml:base" />
+  </xsd:complexType>
+
+  <xsd:complexType name="CATEGORY">
+    <xsd:attribute name="ID" type="xsd:string" use="required" />
+    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+    <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
+    <xsd:attribute name="LANE" type="xsd:string" use="optional" />
+    <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" default="1.0" />
+    <xsd:attribute ref="xml:base" />
+  </xsd:complexType>
 
   <!-- Either a factor, or veh per time unit. -->
-  <xsd:element name="LEVEL">
-    <xsd:complexType>
-      <xsd:simpleContent>
-        <xsd:extension base="LEVELTYPE">
-          <xsd:attribute name="TIME" type="TIMETYPE" use="optional" />
-        </xsd:extension>
-      </xsd:simpleContent>
-    </xsd:complexType>
-  </xsd:element>
+  <xsd:complexType name="LEVEL">
+    <xsd:simpleContent>
+      <xsd:extension base="LEVELTYPE">
+        <xsd:attribute name="TIME" type="TIMETYPE" use="optional" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
   <xsd:simpleType name="LEVELTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(\d*(\.\d\d*)?\%?)|\d+\.?\d*\s*veh(\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week))?" />

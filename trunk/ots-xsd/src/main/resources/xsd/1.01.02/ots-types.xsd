@@ -285,23 +285,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="OVERTAKINGTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="LEFTONLY|RIGHTONLY|NONE|BOTH|SAMELANELEFT|SAMELANERIGHT|SAMELANEBOTH|LEFTALWAYS\s+RIGHTJAM|RIGHTALWAYS\s+LEFTJAM|(\
-{0})LEFTALWAYS\s+RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
-{0})RIGHTALWAYS\s+LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
-{0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
-{0})LEFTSETRIGHTJAM\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
-{0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
-{0})\s*RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
-{0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
-{0})RIGHTSETLEFTJAM\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
-{0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
-{0})\s*LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
   <xsd:simpleType name="GTUPOSITIONTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="FRONT|REAR|REFERENCE"></xsd:pattern>
@@ -317,6 +300,12 @@
   <xsd:simpleType name="DRIVINGDIRECTIONTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="FORWARD|BACKWARD|BOTH|NONE"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <xsd:simpleType name="GTUDIRECTIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="DIR_PLUS|DIR_MIN"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -470,7 +459,7 @@
       </xsd:simpleType>
     </xsd:attribute>
     <xsd:attribute name="VALUE" type="xsd:string" use="required" />
-    <xsd:attribute name="NAME" type="xsd:string" use="required" />
+    <xsd:attribute name="ID" type="xsd:string" use="required" />
     <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="optional" />
   </xsd:complexType>
 

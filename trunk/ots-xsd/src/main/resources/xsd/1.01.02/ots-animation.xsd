@@ -14,7 +14,7 @@
     <xsd:sequence>
       <xsd:element name="PARAMETER" type="PARAMETERTYPE" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
-    <xsd:attribute name="NAME" default="DEFAULT" use="optional">
+    <xsd:attribute name="ID" default="DEFAULT" use="optional">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">
           <xsd:pattern
