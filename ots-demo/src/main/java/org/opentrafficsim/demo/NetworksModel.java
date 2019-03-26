@@ -41,7 +41,6 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
@@ -125,10 +124,10 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     private StreamInterface stream = new MersenneTwister(12345);
 
     /** The route generator for the main line. */
-    private RouteGenerator routeGeneratorMain;
+    private Generator<Route> routeGeneratorMain;
 
     /** The route generator for the onramp. */
-    private RouteGenerator routeGeneratorRamp;
+    private Generator<Route> routeGeneratorRamp;
 
     /** The speed limit. */
     private Speed speedLimit = new Speed(60, KM_PER_HOUR);

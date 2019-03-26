@@ -173,6 +173,41 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
         return finalizer.collect(intermediate.getObject());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Iterator<U> underlying()
+    {
+        assureFirst();
+        SecondaryIteratorEntry firstInContext = this.first;
+        return new Iterator<U>()
+        {
+            /** Last returned iterator entry. */
+            private SecondaryIteratorEntry lastReturned = null;
+            
+            /** Next iterator entry. */
+            private SecondaryIteratorEntry next = firstInContext;
+            
+            /** {@inheritDoc} */
+            @Override
+            public boolean hasNext()
+            {
+                this.next = assureNext(this.next, this.lastReturned);
+                return this.next != null;
+            }
+
+            /** {@inheritDoc} */
+            @SuppressWarnings("synthetic-access")
+            @Override
+            public U next()
+            {
+                this.lastReturned = this.next;
+                this.next = this.lastReturned.next;
+                this.next = assureNext(this.next, this.lastReturned);
+                return this.lastReturned.object;
+            }
+        };
+    }
+
     /**
      * This iterator is returned to callers of the {@code iterator()} method. Multiple instances may be returned which use the
      * same linked list of {@code SecondaryIteratorEntry}. Whenever an iterator runs to the end of this list, the primary

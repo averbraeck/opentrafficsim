@@ -36,7 +36,7 @@ import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividualOld;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
@@ -202,7 +202,7 @@ public class N201ODfactory
             {
                 try
                 {
-                    new GTUGeneratorIndividual(origin + "." + link.getLanes().indexOf(lane), simulator, gtuType, gtuClass,
+                    new GTUGeneratorIndividualOld(origin + "." + link.getLanes().indexOf(lane), simulator, gtuType, gtuClass,
                             initSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime, endTime,
                             lane, position, dir, strategicalPlannerFactory, routeGenerator, network);
                 }

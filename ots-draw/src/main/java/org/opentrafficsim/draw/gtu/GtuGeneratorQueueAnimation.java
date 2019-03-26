@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
-import org.opentrafficsim.road.gtu.generator.GTUGenerator;
+import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -29,7 +29,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUGeneratorAnimation extends TextAnimation
+public class GtuGeneratorQueueAnimation extends TextAnimation
 {
 
     /** */
@@ -45,7 +45,7 @@ public class GTUGeneratorAnimation extends TextAnimation
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public GTUGeneratorAnimation(final GTUGenerator source, final SimulatorInterface.TimeDoubleUnit simulator)
+    public GtuGeneratorQueueAnimation(final GtuGeneratorQueue source, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NamingException, RemoteException
     {
         super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
@@ -58,7 +58,7 @@ public class GTUGeneratorAnimation extends TextAnimation
         graphics.setColor(Color.BLACK);
         graphics.setFont(FONT);
         DirectedPoint p = getSource().getLocation();
-        Map<DirectedPoint, Integer> map = ((GTUGenerator) getSource()).getQueueLengths();
+        Map<DirectedPoint, Integer> map = ((GtuGeneratorQueue) getSource()).getQueueLengths();
         for (DirectedPoint lanePosition : map.keySet())
         {
             setText(map.get(lanePosition).toString());
@@ -72,7 +72,7 @@ public class GTUGeneratorAnimation extends TextAnimation
     public TextAnimation clone(final Locatable newSource, final TimeDoubleUnit newSimulator)
             throws RemoteException, NamingException
     {
-        return new GTUGeneratorAnimation((GTUGenerator) newSource, newSimulator);
+        return new GtuGeneratorQueueAnimation((GtuGeneratorQueue) newSource, newSimulator);
     }
 
 }

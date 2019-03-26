@@ -9,6 +9,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.TaskHeadwayCollector;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 
 /**

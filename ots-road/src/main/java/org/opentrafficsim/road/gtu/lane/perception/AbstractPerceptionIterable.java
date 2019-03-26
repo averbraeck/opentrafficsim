@@ -418,6 +418,24 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         {
             return this.set != null;
         }
+        
+        /**
+         * Returns the underlying object. Use {@code !isSet()} to check whether there is an object.
+         * @return U; underlying set
+         */
+        public U getObject()
+        {
+            return this.object;
+        }
+        
+        /**
+         * Returns the underlying set. Use {@code isSet()} to check whether there is a set.
+         * @return Set&lt;U&gt;; underlying set
+         */
+        public Set<U> getSet()
+        {
+            return this.set;
+        }
 
     }
 

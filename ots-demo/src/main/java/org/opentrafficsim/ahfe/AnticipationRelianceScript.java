@@ -1,6 +1,7 @@
 package org.opentrafficsim.ahfe;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -59,6 +61,7 @@ import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeNumber;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -73,6 +76,7 @@ import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGenerat
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
+import org.opentrafficsim.road.gtu.lane.CollisionException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -86,6 +90,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNe
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType.PerceivedHeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.TaskHeadwayCollector;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
@@ -129,8 +134,10 @@ import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.object.Distraction;
 import org.opentrafficsim.road.network.lane.object.Distraction.TrapezoidProfile;
+import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
+import org.opentrafficsim.road.network.sampling.data.LeaderId;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 import org.xml.sax.SAXException;
@@ -140,8 +147,6 @@ import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
-// TODO: network is not colored correctly; missing links and stripes
 
 /**
  * Distraction simulation.
@@ -182,14 +187,60 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
      * Main method.
      * @param args String[]; command line arguments
      */
-    public static void main(final String[] args)
+    public static void main(final String... args)
     {
         // Long start = System.currentTimeMillis();
         AnticipationRelianceScript script = new AnticipationRelianceScript(args);
+        if (script.getBooleanProperty("autorun"))
+        {
+            System.out.println("Running " + script.getProperty("scenario") + "_" + script.getProperty("seed"));
+        }
+        // script.setProperty("sampler", true);
         // script.setProperty("autorun", true);
-        script.start();
-        // Long end = System.currentTimeMillis();
-        // System.out.println("That took " + (end - start) / 1000 + "s.");
+        // script.setProperty("tasks", true);
+        // script.setProperty("strategies", false);
+        // script.setProperty("adaptation", false);
+        // script.setProperty("alpha", 0.0);
+        // script.setProperty("beta", 0.0);
+        try
+        {
+            script.start();
+        }
+        catch (Throwable throwable)
+        {
+            while (throwable != null)
+            {
+                if (throwable instanceof CollisionException)
+                {
+                    double tCollision = script.getSimulator().getSimulatorTime().si;
+                    script.onSimulationEnd();
+                    String file = script.getOutputFileStart() + "_collision.txt";
+                    BufferedWriter writer = CompressedFileWriter.create(file, false);
+                    try
+                    {
+                        writer.write(String.format("Collision at: %.6f", tCollision));
+                        writer.newLine();
+                        writer.write(throwable.getMessage());
+                        writer.close();
+                    }
+                    catch (IOException ex)
+                    {
+                        System.err.println("Unable to write to file.");
+                    }
+                    System.exit(0);
+                }
+                throwable = throwable.getCause();
+            }
+        }
+    }
+
+    /**
+     * Returns the start for output files, which can be amended with some name of contained data and extension.
+     * @return String; start for output files, which can be amended with some name of contained data and extension
+     */
+    private String getOutputFileStart()
+    {
+        return getProperty("outputDir") + getProperty("scenario") + "_" + getProperty("seed");
     }
 
     /**
@@ -223,12 +274,14 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         setProperty("fTruck", 0.05);
         setProperty("leftDemand", 3500);
         setProperty("rightDemand", 3200);
-        setProperty("sampler", true);
+        setProperty("sampler", false);
         setProperty("warmupTime", 360);
         setProperty("simulationTime", 3960);
         setProperty("scenario", "test");
+        setProperty("outputDir", "");
 
-        setProperty("strategies", true);
+        setProperty("tasks", false);
+        setProperty("strategies", false);
         setProperty("adaptation", false);
         setProperty("alpha", 0.8); // max. lane-change reduction
         setProperty("beta", 0.6); // max. car-following reduction
@@ -241,7 +294,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     {
         if (this.sampler != null)
         {
-            this.sampler.writeToFile(getProperty("outputDir") + getProperty("scenario") + ".csv");
+            this.sampler.writeToFile(getOutputFileStart() + ".csv");
         }
     }
 
@@ -249,7 +302,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
-        AbstractGTU.ALIGNED = false;
+        AbstractGTU.ALIGNED = true;
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 
         // Network
@@ -301,6 +354,9 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         // Sampler
         this.sampler = new RoadSampler(sim);
         this.sampler.registerExtendedDataType(new TimeToCollision());
+        this.sampler.registerExtendedDataType(new TaskSaturationDataType());
+        this.sampler.registerExtendedDataType(new LeaderId());
+        // TODO: add SA, AR_per_task, TD_per_task and Tr in trajectories
         LinkData linkData = new LinkData((CrossSectionLink) network.getLink("LEFTIN"));
         registerLinkToSampler(linkData, ignoreStart, linkData.getLength());
         linkData = new LinkData((CrossSectionLink) network.getLink("RIGHTIN"));
@@ -458,6 +514,10 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                             new Speed(50.0, SpeedUnit.KM_PER_HOUR));
                     params.addParameter(ParameterTypes.TMAX, Duration.createSI(1.6));
                 }
+                if (getBooleanProperty("adaptation"))
+                {
+                    params.addParameter(AdaptationHeadway.BETA_T, 1.0); // T := T * (1.0 + this value)
+                }
 
                 // factories
                 this.factoryCar = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(cfFactoryCar, perceptionFactory,
@@ -494,8 +554,8 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             {
                 NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
                 PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
-                return leaders.isEmpty() ? 0.0 : Math.exp(-leaders.first().getDistance().si
-                        / (perception.getGtu().getSpeed().si * parameters.getParameter(HEXP).si));
+                Duration headway = leaders.collect(new TaskHeadwayCollector(gtuCF.getSpeed()));
+                return headway == null ? 0.0 : Math.exp(-headway.si / parameters.getParameter(HEXP).si);
             }
             catch (OperationalPlanException ex)
             {
@@ -543,18 +603,29 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         public LanePerception generatePerception(final LaneBasedGTU gtu)
         {
             Set<Task> tasks = new LinkedHashSet<>();
-            tasks.add(new CarFollowingTaskAR());
-            tasks.add(new LaneChangeTaskAR());
+            if (getBooleanProperty("tasks"))
+            {
+                tasks.add(new CarFollowingTaskAR());
+                tasks.add(new LaneChangeTaskAR());
+            }
 
             Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
             behavioralAdapatations.add(new AdaptationSituationalAwareness());
             if (getBooleanProperty("adaptation"))
             {
-                // TODO: weak anticipation / behavioral adaptation
+                behavioralAdapatations.add(new AdaptationHeadway());
             }
-            @SuppressWarnings("synthetic-access")
-            Fuller fuller = new Fuller(tasks, behavioralAdapatations, new TaskManagerAR());
-            LanePerception perception = new CategoricalLanePerception(gtu, fuller);
+            LanePerception perception;
+            if (getBooleanProperty("tasks"))
+            {
+                @SuppressWarnings("synthetic-access")
+                Fuller fuller = new Fuller(tasks, behavioralAdapatations, new TaskManagerAR());
+                perception = new CategoricalLanePerception(gtu, fuller);
+            }
+            else
+            {
+                perception = new CategoricalLanePerception(gtu);
+            }
             perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
             Estimation est = Try.assign(() -> this.estimation.draw(), "Probability exception while drawing estimation.");
@@ -654,6 +725,32 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             return new IDMPlus(AbstractIDM.HEADWAY,
                     Try.assign(() -> this.desiredSpeedModelGenerator.draw(), "Unexpected exception."));
         }
+    }
+    
+    /** Task saturation trajectory data. */
+    private class TaskSaturationDataType extends ExtendedDataTypeNumber<GtuData>
+    {
+
+        /**
+         * Constructor.
+         */
+        TaskSaturationDataType()
+        {
+            super("TS");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Float getValue(final GtuData gtu)
+        {
+            Double ts = gtu.getGtu().getParameters().getParameterOrNull(Fuller.TS);
+            if (ts != null)
+            {
+                return (float) (double) ts;
+            }
+            return Float.NaN;
+        }
+        
     }
 
 }

@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network.route;
 import java.io.Serializable;
 
 import org.opentrafficsim.core.distributions.ConstantGenerator;
+import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.network.Node;
 
 /**
@@ -15,7 +16,7 @@ import org.opentrafficsim.core.network.Node;
  * initial version 20 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixedRouteGenerator extends ConstantGenerator<Route> implements RouteGenerator, Serializable
+public class FixedRouteGenerator extends ConstantGenerator<Route> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;

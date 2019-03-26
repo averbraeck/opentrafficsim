@@ -34,7 +34,7 @@ public abstract class ExtendedDataTypeList<T, G extends GtuDataInterface> extend
 
     /** {@inheritDoc} */
     @Override
-    public T getOutputValue(List<T> output, int i) throws SamplingException
+    public T getOutputValue(final List<T> output, final int i) throws SamplingException
     {
         Throw.when(i < 0 || i >= output.size(), SamplingException.class, "Index %d out of range.", i);
         return output.get(i);
@@ -42,10 +42,25 @@ public abstract class ExtendedDataTypeList<T, G extends GtuDataInterface> extend
 
     /** {@inheritDoc} */
     @Override
-    public T getStorageValue(List<T> output, int i) throws SamplingException
+    public T getStorageValue(final List<T> output, final int i) throws SamplingException
     {
         // same format for lists
         return getOutputValue(output, i);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<T> setValue(final List<T> storage, final int index, final T value)
+    {
+        if (index == storage.size())
+        {
+            storage.add(value);
+        }
+        else
+        {
+            storage.set(index, value);
+        }
+        return storage;
     }
 
     /** {@inheritDoc} */

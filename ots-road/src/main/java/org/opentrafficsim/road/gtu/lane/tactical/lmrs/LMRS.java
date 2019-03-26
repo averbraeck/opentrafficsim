@@ -15,7 +15,6 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -168,8 +167,6 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
-        Break.on(getGtu(), "WWP.LANE:4", 41, true);
-
         // obtain objects to get info
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
                 .getSpeedLimitProspect(RelativeLane.CURRENT);

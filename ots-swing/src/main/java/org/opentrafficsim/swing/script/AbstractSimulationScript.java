@@ -20,7 +20,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.gtu.generator.GTUGenerator;
+import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AnimationToggles;
@@ -193,80 +193,67 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /**
      * Starts the simulation.
+     * @throws Exception on any exception
      */
-    public final void start()
+    public final void start() throws Exception
     {
         Time startTime = getTimeProperty("startTime");
         Duration warmupTime = getDurationProperty("warmupTime");
         Duration simulationTime = getDurationProperty("simulationTime");
         if (getBooleanProperty("autorun"))
         {
-            try
+            this.simulator = new OTSSimulator();
+            final ScriptModel scriptModel = new ScriptModel(this.simulator);
+            this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
+            this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
+            double tReport = 60.0;
+            Time t = this.simulator.getSimulatorTime();
+            while (t.si < simulationTime.si)
             {
-                this.simulator = new OTSSimulator();
-                final ScriptModel scriptModel = new ScriptModel(this.simulator);
-                this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
-                this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
-                double tReport = 60.0;
-                Time t = this.simulator.getSimulatorTime();
-                while (t.si < simulationTime.si)
+                this.simulator.step();
+                t = this.simulator.getSimulatorTime();
+                if (t.si >= tReport)
                 {
-                    this.simulator.step();
-                    t = this.simulator.getSimulatorTime();
-                    if (t.si >= tReport)
-                    {
-                        System.out.println("Simulation time is " + t);
-                        tReport += 60.0;
-                    }
+                    System.out.println("Simulation time is " + t);
+                    tReport += 60.0;
                 }
-                // sim.stop(); // end of simulation event
-                onSimulationEnd(); // TODO this is temporary for as long as stop() gives an exception
             }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
+            // sim.stop(); // end of simulation event
+            onSimulationEnd(); // TODO this is temporary for as long as stop() gives an exception
+            System.exit(0);
         }
         else
         {
-            try
+            this.simulator = new OTSAnimator();
+            final ScriptModel scriptModel = new ScriptModel(this.simulator);
+            this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
+            OTSAnimationPanel animationPanel =
+                    new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
+                            (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
+            setAnimationToggles(animationPanel);
+            animateNetwork(scriptModel.getNetwork());
+            setupDemo(animationPanel, scriptModel.getNetwork());
+            OTSSimulationApplication<ScriptModel> app = new OTSSimulationApplication<ScriptModel>(scriptModel, animationPanel)
             {
-                this.simulator = new OTSAnimator();
-                final ScriptModel scriptModel = new ScriptModel(this.simulator);
-                this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
-                OTSAnimationPanel animationPanel =
-                        new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
-                                (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
-                setAnimationToggles(animationPanel);
-                animateNetwork(scriptModel.getNetwork());
-                setupDemo(animationPanel, scriptModel.getNetwork());
-                OTSSimulationApplication<ScriptModel> app =
-                        new OTSSimulationApplication<ScriptModel>(scriptModel, animationPanel)
-                        {
-                            /** */
-                            private static final long serialVersionUID = 20190130L;
+                /** */
+                private static final long serialVersionUID = 20190130L;
 
-                            /** {@inheritDoc} */
-                            @Override
-                            protected void animateNetwork() throws OTSDrawingException
-                            {
-                                // override with nothing to prevent double toggles
-                            }
+                /** {@inheritDoc} */
+                @Override
+                protected void animateNetwork() throws OTSDrawingException
+                {
+                    // override with nothing to prevent double toggles
+                }
 
-                            /** {@inheritDoc} */
-                            @Override
-                            protected void setAnimationToggles()
-                            {
-                                // override with nothing to prevent double toggles
-                            }
-                        };
-                addTabs(this.simulator, app);
-                app.setExitOnClose(true);
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
+                /** {@inheritDoc} */
+                @Override
+                protected void setAnimationToggles()
+                {
+                    // override with nothing to prevent double toggles
+                }
+            };
+            addTabs(this.simulator, app);
+            app.setExitOnClose(true);
         }
     }
 
@@ -364,7 +351,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         AnimationToggles.setIconAnimationTogglesFull(animation);
         animation.getAnimationPanel().toggleClass(OTSLink.class);
         animation.getAnimationPanel().toggleClass(OTSNode.class);
-        animation.getAnimationPanel().toggleClass(GTUGenerator.class);
+        animation.getAnimationPanel().toggleClass(GtuGeneratorQueue.class);
         animation.getAnimationPanel().showClass(SpeedSign.class);
     }
 

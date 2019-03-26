@@ -27,7 +27,7 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+      <xsd:attribute name="ID" type="xsd:string" use="optional" />
       <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
       <xsd:attribute name="START" type="xsd:dateTime" use="optional" />
       <xsd:attribute name="GLOBALFACTOR" type="POSITIVEFACTOR" use="optional" />
@@ -59,7 +59,7 @@
 
   <xsd:element name="CATEGORY">
     <xsd:complexType>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
       <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
       <xsd:attribute name="LANE" type="xsd:string" use="optional" />

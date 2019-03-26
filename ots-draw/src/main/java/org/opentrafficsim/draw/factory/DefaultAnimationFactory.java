@@ -12,6 +12,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuGenerator;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
@@ -20,7 +21,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
-import org.opentrafficsim.draw.gtu.GTUGeneratorAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation;
@@ -32,7 +32,6 @@ import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.gtu.generator.AbstractGTUGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -44,7 +43,6 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -127,13 +125,13 @@ public class DefaultAnimationFactory implements EventListenerInterface
                                 TYPE type;
                                 if (stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR), LateralDirectionality.LEFT))
                                 {
-                                    type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR), LateralDirectionality.RIGHT) ? TYPE.DASHED
-                                            : TYPE.LEFTONLY;
+                                    type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR),
+                                            LateralDirectionality.RIGHT) ? TYPE.DASHED : TYPE.LEFTONLY;
                                 }
                                 else
                                 {
-                                    type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR), LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY
-                                            : TYPE.SOLID;
+                                    type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR),
+                                            LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY : TYPE.SOLID;
                                 }
                                 new StripeAnimation((Stripe) element, simulator, type);
                             }
@@ -204,7 +202,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
             {
                 // schedule the addition of the GTU to prevent it from not having an operational plan
                 LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
-                this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] {gtu});
+                this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] { gtu });
             }
             else if (event.getType().equals(Network.ANIMATION_GTU_REMOVE_EVENT))
             {
@@ -231,12 +229,12 @@ public class DefaultAnimationFactory implements EventListenerInterface
             }
             else if (event.getType().equals(Network.ANIMATION_GENERATOR_ADD_EVENT))
             {
-                AbstractGTUGenerator gtuGenerator = (AbstractGTUGenerator) event.getContent();
+                GtuGenerator gtuGenerator = (GtuGenerator) event.getContent();
                 animateGTUGenerator(gtuGenerator);
             }
             else if (event.getType().equals(Network.ANIMATION_GENERATOR_REMOVE_EVENT))
             {
-                // TODO change the way generators are animated
+                // TODO: change the way generators are animated
             }
         }
         catch (NamingException | SimRuntimeException exception)
@@ -304,18 +302,11 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
     /**
      * Draw the GTUGenerator.
-     * @param gtuGenerator AbstractGTUGenerator; the GTUGenerator to draw
+     * @param gtuGenerator GtuGenerator; the GTUGenerator to draw
      */
-    protected void animateGTUGenerator(final AbstractGTUGenerator gtuGenerator)
+    protected void animateGTUGenerator(final GtuGenerator gtuGenerator)
     {
-        try
-        {
-            new GTUGeneratorAnimation(gtuGenerator, this.simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            SimLogger.always().error(exception, "Exception while drawing GTUGenerator.");
-        }
+        // TODO: default animation of GTU generator
     }
 
 }

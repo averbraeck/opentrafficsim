@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -29,7 +30,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.route.RouteGenerator;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -65,7 +66,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractGTUGenerator extends EventProducer implements Serializable, GTUGenerator
+public abstract class AbstractGTUGeneratorOld extends EventProducer implements Serializable, GtuGeneratorQueue
 {
     /** */
     private static final long serialVersionUID = 20150202L;
@@ -110,7 +111,7 @@ public abstract class AbstractGTUGenerator extends EventProducer implements Seri
     private final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory;
 
     /** Route generator. */
-    private final RouteGenerator routeGenerator;
+    private final Generator<Route> routeGenerator;
 
     /** The network. */
     private final OTSRoadNetwork network;
@@ -143,17 +144,18 @@ public abstract class AbstractGTUGenerator extends EventProducer implements Seri
      *            DIR_MINUS)
      * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends LaneBasedStrategicalPlanner&gt;; the
      *            lane-based strategical planner factory to use
-     * @param routeGenerator RouteGenerator; route generator
+     * @param routeGenerator Generator&lt;Route&gt;; route generator
      * @param network OTSRoadNetwork; the network to register the generated GTUs into
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTUGenerator(final String name, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final GTUType gtuType,
-            final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
+    public AbstractGTUGeneratorOld(final String name, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final GTUType gtuType, final Class<?> gtuClass,
+            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
-            final RouteGenerator routeGenerator, final OTSRoadNetwork network) throws SimRuntimeException
+            final Generator<Route> routeGenerator, final OTSRoadNetwork network) throws SimRuntimeException
     {
         super();
         this.name = name;

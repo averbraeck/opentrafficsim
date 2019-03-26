@@ -172,7 +172,14 @@ public class StrategiesDemo extends AbstractSimulationScript
     public static void main(final String[] args)
     {
         StrategiesDemo demo = new StrategiesDemo(args);
-        demo.start();
+        try
+        {
+            demo.start();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /** {@inheritDoc} */

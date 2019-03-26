@@ -49,7 +49,6 @@ import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.ShortMerge.ShortMergeModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -323,8 +322,8 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             List<FrequencyAndObject<Route>> routesF = new ArrayList<>();
             routesF.add(new FrequencyAndObject<>(1.0 - leftFraction, routeFE));
             routesF.add(new FrequencyAndObject<>(leftFraction, routeFG));
-            RouteGenerator routeGeneratorA = new ProbabilisticRouteGenerator(routesA, stream);
-            RouteGenerator routeGeneratorF = new ProbabilisticRouteGenerator(routesF, stream);
+            Generator<Route> routeGeneratorA = new ProbabilisticRouteGenerator(routesA, stream);
+            Generator<Route> routeGeneratorF = new ProbabilisticRouteGenerator(routesF, stream);
 
             Speed speedA = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
             Speed speedF = new Speed(20.0, SpeedUnit.KM_PER_HOUR);

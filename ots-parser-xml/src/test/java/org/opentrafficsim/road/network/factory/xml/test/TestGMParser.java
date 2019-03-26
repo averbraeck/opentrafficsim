@@ -33,7 +33,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividualOld;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
@@ -190,11 +190,11 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
             CrossSectionLink L2a = (CrossSectionLink) this.network.getLink("L2a");
             Lane L2a_A2 = (Lane) L2a.getCrossSectionElement("A2");
             Lane L2a_A3 = (Lane) L2a.getCrossSectionElement("A3");
-            new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
+            new GTUGeneratorIndividualOld("L2a_A2", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
                     interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L2a_A2,
                     new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, strategicalPlannerFactory,
                     new FixedRouteGenerator(null), this.network);
-            new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
+            new GTUGeneratorIndividualOld("L2a_A3", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
                     interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L2a_A3,
                     new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, strategicalPlannerFactory,
                     new FixedRouteGenerator(null), this.network);
@@ -202,11 +202,11 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
             CrossSectionLink L49b = (CrossSectionLink) this.network.getLink("L49b");
             Lane L49b_A1 = (Lane) L49b.getCrossSectionElement("A1");
             Lane L49b_A2 = (Lane) L49b.getCrossSectionElement("A2");
-            new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
+            new GTUGeneratorIndividualOld("L49b_A1", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
                     interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L49b_A1,
                     new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, strategicalPlannerFactory,
                     new FixedRouteGenerator(null), this.network);
-            new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
+            new GTUGeneratorIndividualOld("L49b_A2", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
                     interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L49b_A2,
                     new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, strategicalPlannerFactory,
                     new FixedRouteGenerator(null), this.network);
@@ -257,7 +257,7 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
         public float[] floatTransform(double x, double y)
         {
             double[] d = doubleTransform(x, y);
-            return new float[] {(float) d[0], (float) d[1]};
+            return new float[] { (float) d[0], (float) d[1] };
         }
 
         /** {@inheritDoc} */
@@ -267,12 +267,12 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
             try
             {
                 Coords c = WGS84ToRDNewTransform.ellipswgs842rd(x, y);
-                return new double[] {c.x - this.dx, c.y - this.dy};
+                return new double[] { c.x - this.dx, c.y - this.dy };
             }
             catch (Exception exception)
             {
                 exception.printStackTrace();
-                return new double[] {0, 0};
+                return new double[] { 0, 0 };
             }
         }
 

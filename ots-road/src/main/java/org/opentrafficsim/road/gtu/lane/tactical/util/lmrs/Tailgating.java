@@ -12,6 +12,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -132,7 +133,7 @@ public interface Tailgating
             final Speed vGain, final Length headway, final Length x0)
     {
         double dv = desiredSpeed.si - leaderSpeed.si;
-        if (dv < 0)
+        if (dv < 0 || headway.gt(x0)) // larger headway may happen due to perception errors
         {
             return 0.0;
         }

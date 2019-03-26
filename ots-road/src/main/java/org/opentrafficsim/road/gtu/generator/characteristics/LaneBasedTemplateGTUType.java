@@ -8,7 +8,7 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
-import org.opentrafficsim.core.network.route.RouteGenerator;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 
@@ -32,7 +32,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     private final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
 
     /** Route Generator. */
-    private final RouteGenerator routeGenerator;
+    private final Generator<Route> routeGenerator;
 
     /** Generator for the initial speed of the next GTU. */
     private Generator<Speed> initialSpeedGenerator;
@@ -47,13 +47,13 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
      *            direction).
      * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; Factory for the strategical planner (e.g.,
      *            route determination)
-     * @param routeGenerator RouteGenerator; route generator
+     * @param routeGenerator Generator&lt;Route&gt;; route generator
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedTemplateGTUType(final GTUType gtuType, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
-            final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final RouteGenerator routeGenerator)
+            final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final Generator<Route> routeGenerator)
             throws NullPointerException
     {
         super(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator);

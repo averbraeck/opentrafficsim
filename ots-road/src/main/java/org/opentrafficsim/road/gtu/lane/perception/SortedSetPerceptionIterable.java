@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 
@@ -55,6 +56,29 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
             intermediate.step();
         }
         return finalizer.collect(intermediate.getObject());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterator<LaneBasedGTU> underlying()
+    {
+        return new Iterator<LaneBasedGTU>()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public boolean hasNext()
+            {
+                return false;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public LaneBasedGTU next()
+            {
+                throw new NoSuchElementException();
+            }
+
+        };
     }
 
 }

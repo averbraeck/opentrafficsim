@@ -33,6 +33,7 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.demo.steering.SteeringSimulation;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphPath;
@@ -130,7 +131,14 @@ public class SdmSimulation extends AbstractSimulationScript
      */
     public static void main(final String... args)
     {
-        new SdmSimulation(args).start();
+        try
+        {
+            new SdmSimulation(args).start();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     /** {@inheritDoc} */

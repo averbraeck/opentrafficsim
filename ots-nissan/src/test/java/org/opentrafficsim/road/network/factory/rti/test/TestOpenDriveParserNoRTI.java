@@ -40,7 +40,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividualOld;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -243,7 +243,7 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
                                 Length position = lane.getLength().lt(m25) ? m0 : m25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
 
-                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
+                                new GTUGeneratorIndividualOld(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
                                         strategicalPlannerFactory, null, this.network);
@@ -287,7 +287,7 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
                                 Time endTime = new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
                                 Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
-                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
+                                new GTUGeneratorIndividualOld(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
                                         strategicalPlannerFactory, null, this.network);
@@ -338,11 +338,11 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
             nodesVia1.add(link8.getStartNode());
             try
             {
-                cr1 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link1.getStartNode(), link1.getStartNode(),
-                        nodesVia1);
+                cr1 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link1.getStartNode(),
+                        link1.getStartNode(), nodesVia1);
                 Collections.reverse(nodesVia1);
-                cr2 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link1.getStartNode(), link1.getStartNode(),
-                        nodesVia1);
+                cr2 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link1.getStartNode(),
+                        link1.getStartNode(), nodesVia1);
             }
             catch (NetworkException exception)
             {
@@ -354,11 +354,11 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
             nodesVia2.add(link5.getEndNode());
             try
             {
-                cr3 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link3.getStartNode(), link3.getStartNode(),
-                        nodesVia2);
+                cr3 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link3.getStartNode(),
+                        link3.getStartNode(), nodesVia2);
                 Collections.reverse(nodesVia2);
-                cr4 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link3.getStartNode(), link3.getStartNode(),
-                        nodesVia2);
+                cr4 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link3.getStartNode(),
+                        link3.getStartNode(), nodesVia2);
             }
             catch (NetworkException exception)
             {
@@ -370,11 +370,11 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
             nodesVia3.add(link8.getEndNode());
             try
             {
-                cr5 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link6.getStartNode(), link6.getStartNode(),
-                        nodesVia3);
+                cr5 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link6.getStartNode(),
+                        link6.getStartNode(), nodesVia3);
                 Collections.reverse(nodesVia3);
-                cr6 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link6.getStartNode(), link6.getStartNode(),
-                        nodesVia3);
+                cr6 = this.network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), link6.getStartNode(),
+                        link6.getStartNode(), nodesVia3);
             }
             catch (NetworkException exception)
             {

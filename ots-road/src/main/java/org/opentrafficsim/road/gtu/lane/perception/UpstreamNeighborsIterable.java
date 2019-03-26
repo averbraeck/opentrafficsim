@@ -101,7 +101,6 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
             next = record.getLane().getGtu(n);
             pos = next.position(record.getLane(), next.getFront());
         }
-        Break.on(next, "44", 4 * 60 + 0.99, record.getLane().getFullId().equals("BB1.LANE"));
         return new Entry(next, n, pos);
     }
 

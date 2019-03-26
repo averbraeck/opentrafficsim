@@ -39,6 +39,7 @@ public class ListHeadways implements Generator<Duration>
     {
         try
         {
+            // TODO: from URI as defined in xsd
             this.reader = new BufferedReader(new FileReader(new File(fileName)));
         }
         catch (FileNotFoundException exception)

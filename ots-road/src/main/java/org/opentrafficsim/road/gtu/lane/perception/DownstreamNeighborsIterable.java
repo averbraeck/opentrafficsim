@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -73,21 +72,17 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
      * @param maxDistance Length; maximum distance to search
      * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
      * @param headwayGtuType HeadwayGtuType; type of HeadwayGTU to return
-     * @param gtu GTU; the GTU, may be {@code null}
      * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
      * @param ignoreIfUpstream boolean; whether to ignore GTU that are partially upstream of a record
      */
     public DownstreamNeighborsIterable(final LaneBasedGTU perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
             final Length maxDistance, final RelativePosition relativePosition, final HeadwayGtuType headwayGtuType,
-            final GTU gtu, final RelativeLane lane, final boolean ignoreIfUpstream)
+            final RelativeLane lane, final boolean ignoreIfUpstream)
     {
         super(perceivingGtu, root, initialPosition, true, maxDistance, relativePosition, null);
         this.headwayGtuType = headwayGtuType;
         this.margin = lane.getLateralDirectionality().isLeft() ? LEFT : RIGHT;
-        if (gtu != null)
-        {
-            this.ids.add(gtu.getId());
-        }
+        this.ids.add(perceivingGtu.getId());
         this.ignoreIfUpstream = ignoreIfUpstream;
     }
 
