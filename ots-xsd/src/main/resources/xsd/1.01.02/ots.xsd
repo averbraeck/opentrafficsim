@@ -23,7 +23,7 @@
       <xsd:sequence>
         <xsd:element ref="DEFINITIONS" minOccurs="1" maxOccurs="1" />
         <xsd:element ref="NETWORK" minOccurs="1" maxOccurs="1" />
-        <xsd:element ref="NETWORKDEMAND" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="DEMAND" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="CONTROL" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="MODEL" minOccurs="0" maxOccurs="1" />
         <xsd:element ref="SCENARIO" minOccurs="0" maxOccurs="1" />
@@ -38,84 +38,84 @@
 
     <xsd:key name="gtuTypeKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:GTUTYPE" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the DEFINITIONS.GTUMIX.NAME key -->
 
     <xsd:key name="gtuMixKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:GTUMIX" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the DEFINITIONS.GTU.NAME key -->
 
     <xsd:key name="gtuKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:GTU" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the DEFINITIONS.ROADLAYOUT.NAME key -->
 
     <xsd:key name="roadLayoutKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:ROADLAYOUT" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the DEFINITIONS.LINKTYPES.LINKTYPE.NAME key -->
 
     <xsd:key name="linkTypeKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:LINKTYPES/ots:LINKTYPE" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the DEFINITIONS.LANETYPE.NAME key -->
 
     <xsd:key name="laneTypeKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:LANETYPE" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the NODE.NAME key -->
 
     <xsd:key name="nodeKey">
       <xsd:selector xpath="ots:NETWORK/ots:NODE" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the LINK.NAME key -->
 
     <xsd:key name="linkKey">
       <xsd:selector xpath="ots:NETWORK/ots:LINK" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the ROUTE.NAME key -->
 
     <xsd:key name="routeKey">
       <xsd:selector xpath="ots:NETWORK/ots:ROUTE" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the ROUTEMIX.NAME key -->
 
     <xsd:key name="routeMixKey">
       <xsd:selector xpath="ots:NETWORK/ots:ROUTEMIX" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the SHORTESTROUTE.NAME key -->
 
     <xsd:key name="shortestRouteKey">
       <xsd:selector xpath="ots:NETWORK/ots:SHORTESTROUTE" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the SHORTESTROUTEMIX.NAME key -->
 
     <xsd:key name="shortestRouteMixKey">
       <xsd:selector xpath="ots:NETWORK/ots:SHORTESTROUTEMIX" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- define the SIGNALGROUP.ID key -->
@@ -136,7 +136,7 @@
 
     <xsd:keyref name="gtuMixGtuRef" refer="ots:gtuKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:GTUMIX/ots:GTU" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:keyref>
 
     <!-- DEFINITIONS.ROADTYPE.SPEEDLIMITS.GTUTYPE defined by DEFINITIONS.GTUTYPE.NAME -->
@@ -150,7 +150,7 @@
 
     <xsd:keyref name="laneTypeGtuTypeRef" refer="ots:gtuTypeKey">
       <xsd:selector xpath="ots:DEFINITIONS/ots:LANETYPE/ots:GTUTYPE" />
-      <xsd:field xpath="@NAME" />
+      <xsd:field xpath="@ID" />
     </xsd:keyref>
 
     <!-- DEFINITIONS.ROADLAYOUT.ROADTYPE defined by DEFINITIONS.LINKTYPES.LINKTYPE.NAME -->
