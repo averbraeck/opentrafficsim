@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
@@ -11,36 +12,30 @@
   <xsd:include schemaLocation="ots-definitions.xsd" />
   <xsd:include schemaLocation="ots-types.xsd" />
 
-  <xsd:element name="NETWORKDEMAND">
+  <xsd:element name="OD">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="OD">
+        <xsd:element name="GLOBALTIME" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="CATEGORY" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="DEMAND" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="GLOBALTIME" minOccurs="0" maxOccurs="1" />
-              <xsd:element name="CATEGORY" minOccurs="0" maxOccurs="unbounded" />
-              <xsd:element name="DEMAND" minOccurs="0" maxOccurs="unbounded">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="LEVEL" minOccurs="0" maxOccurs="unbounded" />
-                  </xsd:sequence>
-                  <xsd:attribute name="ORIGIN" type="xsd:string" use="required" />
-                  <xsd:attribute name="DESTINATION" type="xsd:string" use="required" />
-                  <xsd:attribute name="CATEGORY" type="xsd:string" use="optional" />
-                  <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" default="LINEAR" />
-                  <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" default="1.0" />
-                  <xsd:attribute ref="xml:base" />
-                </xsd:complexType>
-              </xsd:element>
+              <xsd:element name="LEVEL" minOccurs="0" maxOccurs="unbounded" />
             </xsd:sequence>
-            <xsd:attribute name="ID" type="xsd:string" use="required" />
-            <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" default="LINEAR" />
-            <xsd:attribute name="GLOBALFACTOR" type="POSITIVEFACTOR" use="optional" default="1.0" />
-            <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="generator" />
+            <xsd:attribute name="ORIGIN" type="xsd:string" use="required" />
+            <xsd:attribute name="DESTINATION" type="xsd:string" use="required" />
+            <xsd:attribute name="CATEGORY" type="xsd:string" use="optional" />
+            <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" default="LINEAR" />
+            <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" default="1.0" />
             <xsd:attribute ref="xml:base" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" default="LINEAR" />
+      <xsd:attribute name="GLOBALFACTOR" type="POSITIVEFACTOR" use="optional" default="1.0" />
+      <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="generator" />
+      <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
 
@@ -104,6 +99,17 @@
       <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
       <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
       <xsd:attribute name="URI" type="xsd:anyURI" use="required" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="DEMAND">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="GTUMIX" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="OD" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="GENERATOR" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
 
