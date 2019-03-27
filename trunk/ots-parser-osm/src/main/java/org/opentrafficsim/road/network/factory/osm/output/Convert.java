@@ -43,7 +43,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -674,7 +673,7 @@ public final class Convert
                 color = Color.RED;
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
+                        laneAttributes.getWidth(), laneType, speedLimit);
                 new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
@@ -682,14 +681,14 @@ public final class Convert
                 color = Color.BLUE;
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
+                        laneAttributes.getWidth(), laneType, speedLimit);
             }
             else
             {
                 color = laneAttributes.getColor();
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
+                        laneAttributes.getWidth(), laneType, speedLimit);
             }
 
             // TODO: network.addDrawingInfoBase(newLane, new DrawingInfoShape<Lane>(color));

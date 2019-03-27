@@ -65,8 +65,7 @@ public final class Cloner
         rl.setBase(in.getBase());
         rl.setLANEKEEPING(in.getLANEKEEPING());
         rl.setLINKTYPE(in.getBase());
-        rl.setNAME(in.getNAME());
-        rl.setOVERTAKING(in.getOVERTAKING());
+        rl.setID(in.getID());
         rl.getSPEEDLIMIT().addAll(in.getSPEEDLIMIT());
 
         for (CSELANE lane : Parser.getObjectsOfType(in.getLANEOrNOTRAFFICLANEOrSHOULDER(), CSELANE.class))
@@ -75,10 +74,15 @@ public final class Cloner
             lc.setCENTEROFFSET(lane.getCENTEROFFSET());
             lc.setCENTEROFFSETEND(lane.getCENTEROFFSETEND());
             lc.setCENTEROFFSETSTART(lane.getCENTEROFFSETSTART());
-            lc.setDIRECTION(lane.getDIRECTION());
+            lc.setLEFTOFFSET(lane.getLEFTOFFSET());
+            lc.setLEFTOFFSETEND(lane.getLEFTOFFSETEND());
+            lc.setLEFTOFFSETSTART(lane.getLEFTOFFSETSTART());
+            lc.setRIGHTOFFSET(lane.getRIGHTOFFSET());
+            lc.setRIGHTOFFSETEND(lane.getRIGHTOFFSETEND());
+            lc.setRIGHTOFFSETSTART(lane.getRIGHTOFFSETSTART());
+            lc.setDESIGNDIRECTION(lane.isDESIGNDIRECTION());
             lc.setLANETYPE(lane.getLANETYPE());
-            lc.setNAME(lane.getNAME());
-            lc.setOVERTAKING(lane.getOVERTAKING());
+            lc.setID(lane.getID());
             lc.setWIDTH(lane.getWIDTH());
             lc.setWIDTHEND(lane.getWIDTHEND());
             lc.setWIDTHSTART(lane.getWIDTHSTART());
@@ -92,7 +96,13 @@ public final class Cloner
             ntlc.setCENTEROFFSET(ntl.getCENTEROFFSET());
             ntlc.setCENTEROFFSETEND(ntl.getCENTEROFFSETEND());
             ntlc.setCENTEROFFSETSTART(ntl.getCENTEROFFSETSTART());
-            ntlc.setNAME(ntl.getNAME());
+            ntlc.setLEFTOFFSET(ntl.getLEFTOFFSET());
+            ntlc.setLEFTOFFSETEND(ntl.getLEFTOFFSETEND());
+            ntlc.setLEFTOFFSETSTART(ntl.getLEFTOFFSETSTART());
+            ntlc.setRIGHTOFFSET(ntl.getRIGHTOFFSET());
+            ntlc.setRIGHTOFFSETEND(ntl.getRIGHTOFFSETEND());
+            ntlc.setRIGHTOFFSETSTART(ntl.getRIGHTOFFSETSTART());
+            ntlc.setID(ntl.getID());
             ntlc.setWIDTH(ntl.getWIDTH());
             ntlc.setWIDTHEND(ntl.getWIDTHEND());
             ntlc.setWIDTHSTART(ntl.getWIDTHSTART());
@@ -105,7 +115,13 @@ public final class Cloner
             sc.setCENTEROFFSET(shoulder.getCENTEROFFSET());
             sc.setCENTEROFFSETEND(shoulder.getCENTEROFFSETEND());
             sc.setCENTEROFFSETSTART(shoulder.getCENTEROFFSETSTART());
-            sc.setNAME(shoulder.getNAME());
+            sc.setLEFTOFFSET(shoulder.getLEFTOFFSET());
+            sc.setLEFTOFFSETEND(shoulder.getLEFTOFFSETEND());
+            sc.setLEFTOFFSETSTART(shoulder.getLEFTOFFSETSTART());
+            sc.setRIGHTOFFSET(shoulder.getRIGHTOFFSET());
+            sc.setRIGHTOFFSETEND(shoulder.getRIGHTOFFSETEND());
+            sc.setRIGHTOFFSETSTART(shoulder.getRIGHTOFFSETSTART());
+            sc.setID(shoulder.getID());
             sc.setWIDTH(shoulder.getWIDTH());
             sc.setWIDTHEND(shoulder.getWIDTHEND());
             sc.setWIDTHSTART(shoulder.getWIDTHSTART());
@@ -118,7 +134,7 @@ public final class Cloner
             sc.setCENTEROFFSET(stripe.getCENTEROFFSET());
             sc.setCENTEROFFSETEND(stripe.getCENTEROFFSETEND());
             sc.setCENTEROFFSETSTART(stripe.getCENTEROFFSETSTART());
-            sc.setNAME(stripe.getNAME());
+            sc.setID(stripe.getID());
             sc.setWIDTH(stripe.getWIDTH());
             sc.setTYPE(stripe.getTYPE());
             rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(sc);

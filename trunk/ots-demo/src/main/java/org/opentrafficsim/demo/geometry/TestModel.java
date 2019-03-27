@@ -24,7 +24,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -167,19 +166,15 @@ public class TestModel extends AbstractOTSModel implements UNITS
         Shoulder sL = new Shoulder(link, "sL", new Length(9.0, METER), m10);
 
         Lane laneELL = new NoTrafficLane(link, "ELL", new Length(8.25, METER), new Length(8.25, METER), m05, m05);
-        Lane laneL1 = new Lane(link, "L1", new Length(6.25, METER), new Length(6.25, METER), m35, m35, null, speedLimit,
-                new OvertakingConditions.LeftAndRight());
-        Lane laneL2 = new Lane(link, "L2", new Length(2.75, METER), new Length(2.75, METER), m35, m35, null, speedLimit,
-                new OvertakingConditions.LeftAndRight());
+        Lane laneL1 = new Lane(link, "L1", new Length(6.25, METER), new Length(6.25, METER), m35, m35, null, speedLimit);
+        Lane laneL2 = new Lane(link, "L2", new Length(2.75, METER), new Length(2.75, METER), m35, m35, null, speedLimit);
         Lane laneELM = new NoTrafficLane(link, "ELM", new Length(0.75, METER), new Length(0.75, METER), m05, m05);
 
         Shoulder sM = new Shoulder(link, "sM", new Length(0.0, METER), m10);
 
         Lane laneERM = new NoTrafficLane(link, "ERM", new Length(-0.75, METER), new Length(-0.75, METER), m05, m05);
-        Lane laneR2 = new Lane(link, "R2", new Length(-2.75, METER), new Length(-2.75, METER), m35, m35, null, speedLimit,
-                new OvertakingConditions.LeftAndRight());
-        Lane laneR1 = new Lane(link, "R1", new Length(-6.25, METER), new Length(-6.25, METER), m35, m35, null, speedLimit,
-                new OvertakingConditions.LeftAndRight());
+        Lane laneR2 = new Lane(link, "R2", new Length(-2.75, METER), new Length(-2.75, METER), m35, m35, null, speedLimit);
+        Lane laneR1 = new Lane(link, "R1", new Length(-6.25, METER), new Length(-6.25, METER), m35, m35, null, speedLimit);
         Lane laneERR = new NoTrafficLane(link, "ERR", new Length(-8.25, METER), new Length(-8.25, METER), m05, m05);
 
         Shoulder sR = new Shoulder(link, "sR", new Length(-9.0, METER), m10);

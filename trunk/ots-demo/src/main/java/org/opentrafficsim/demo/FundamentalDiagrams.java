@@ -47,7 +47,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -260,7 +259,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 // No overtaking, single lane
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                         this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                        this.speedLimit, new OvertakingConditions.None());
+                        this.speedLimit);
                 new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
 
                 this.carProbability = (double) getInputParameter("generic.carProbability");

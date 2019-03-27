@@ -247,7 +247,7 @@ final class Links
                 LaneType laneType = parser.network.getLaneType(LaneType.DEFAULTS.FREEWAY);
                 Speed speedLimit = new Speed(Double.parseDouble(linkTag.legalSpeed), SpeedUnit.KM_PER_HOUR);
                 // OvertakingConditions overtakingConditions; TODO (not clear yet)
-                Lane lane = new Lane(csl, name, lateralOffset, thisLaneWidth, laneType, speedLimit, null);
+                Lane lane = new Lane(csl, name, lateralOffset, thisLaneWidth, laneType, speedLimit);
                 if (!linkTag.sensors.isEmpty())
                 {
                     for (SensorTag sensorTag : linkTag.sensors)
@@ -386,7 +386,7 @@ final class Links
                 // the road offset is negative if the lanes are at the right side of the median (for right hand rule)
                 // OvertakingConditions overtakingConditions; TODO (not clear yet)
                 Lane lane = new Lane(csl, name, lateralOffsetStart, lateralOffsetEnd, thisLaneWidth, thisLaneWidth, laneType,
-                        speedLimit, null);
+                        speedLimit);
                 cseList.add(lane);
                 lanes.add(lane);
                 linkTag.lanes.put(name, lane);

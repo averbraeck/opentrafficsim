@@ -36,7 +36,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -87,8 +86,7 @@ public class LaneTest implements UNITS
         speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
         // FIXME what overtaking conditions do we want to test in this unit test?
-        Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap,
-                new OvertakingConditions.LeftAndRight());
+        Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
@@ -141,8 +139,7 @@ public class LaneTest implements UNITS
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.ROAD),
                 new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
         // FIXME what overtaking conditions do we ant to test in this unit test?
-        lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap,
-                new OvertakingConditions.LeftAndRight());
+        lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
@@ -156,8 +153,7 @@ public class LaneTest implements UNITS
         Length startLateralPos2 = new Length(-8, METER);
         Length endLateralPos2 = new Length(-5, METER);
         // FIXME what overtaking conditions do we ant to test in this unit test?
-        Lane lane2 = new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, speedMap,
-                new OvertakingConditions.LeftAndRight());
+        Lane lane2 = new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane2.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane2.nextLanes(gtuTypeCar).size());
@@ -219,8 +215,7 @@ public class LaneTest implements UNITS
                                 // FIXME what overtaking conditions do we want to test in this unit test?
                                 Lane lane = new Lane(link, "lane." + ++laneNum, new Length(startLateralOffset, METER),
                                         new Length(endLateralOffset, METER), new Length(startWidth, METER),
-                                        new Length(endWidth, METER), laneType, speedMap,
-                                        new OvertakingConditions.LeftAndRight());
+                                        new Length(endWidth, METER), laneType, speedMap);
                                 final Geometry geometry = lane.getContour().getLineString();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane

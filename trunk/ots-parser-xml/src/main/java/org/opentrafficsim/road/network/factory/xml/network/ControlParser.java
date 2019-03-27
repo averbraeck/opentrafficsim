@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.factory.xml.network;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -12,8 +11,6 @@ import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.CONTROL.FIXEDTIME;
 import org.opentrafficsim.xml.generated.OTS;
-import org.opentrafficsim.xml.generated.SIGNALGROUP;
-import org.opentrafficsim.xml.generated.TRAFFICLIGHTTYPE;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -57,26 +54,15 @@ public final class ControlParser
                     Duration preGreen = signalGroup.getPREGREEN() == null ? Duration.ZERO : signalGroup.getPREGREEN();
                     Duration green = signalGroup.getGREEN();
                     Duration yellow = signalGroup.getYELLOW();
-
-                    // TODO: is there a better way to obtain a referenced object?
-                    SIGNALGROUP referencedSignalGroup =
-                            Parser.findObject(ots.getNETWORK().getSIGNALGROUP(), new Predicate<SIGNALGROUP>()
-                            {
-                                /** {@inheritDoc} */
-                                @Override
-                                public boolean test(final SIGNALGROUP t)
-                                {
-                                    return t.getID().equals(signalGroupId);
-                                }
-                            });
-
+                    /*- TODO: TrafficLights / SignalGroups
                     Set<String> trafficLightIds = new LinkedHashSet<>();
                     for (TRAFFICLIGHTTYPE trafficLight : referencedSignalGroup.getTRAFFICLIGHT())
                     {
-                        trafficLightIds.add(trafficLight.getNAME());
+                        trafficLightIds.add(trafficLight.getID());
                     }
                     signalGroups
                             .add(new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, preGreen, green, yellow));
+                     */
                 }
                 try
                 {

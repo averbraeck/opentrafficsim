@@ -36,7 +36,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -119,8 +118,7 @@ public class XmlOdParserTest
         CrossSectionLink AB =
                 new CrossSectionLink(this.network, "AB", A, B, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
                         new OTSLine3D(A.getPoint(), B.getPoint()), this.simulator, LaneKeepingPolicy.KEEPRIGHT);
-        new Lane(AB, "left", Length.ZERO, Length.ZERO, this.network.getLaneType(LaneType.DEFAULTS.FREEWAY), new HashMap<>(),
-                new OvertakingConditions.LeftOnly());
+        new Lane(AB, "left", Length.ZERO, Length.ZERO, this.network.getLaneType(LaneType.DEFAULTS.FREEWAY), new HashMap<>());
     }
 
     /**

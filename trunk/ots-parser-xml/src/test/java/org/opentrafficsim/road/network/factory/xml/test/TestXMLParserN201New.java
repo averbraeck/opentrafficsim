@@ -2,11 +2,13 @@ package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.ValueException;
@@ -23,6 +25,8 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.network.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParserN201New.TestXMLModelN201;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -138,14 +142,14 @@ public class TestXMLParserN201New extends OTSSimulationApplication<TestXMLModelN
         @Override
         public final void constructModel() throws SimRuntimeException
         {
-            URL url = URLResource.getResource("/N201v8.xml");
-            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
+            URL url = URLResource.getResource("/N201v10102.xml");
+            this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                this.network = nlp.build(url, true);
+                XmlNetworkLaneParser.build(url.getPath(), this.network, getSimulator());
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
+                    | URISyntaxException | XmlParserException | GTUException exception)
             {
                 exception.printStackTrace();
             }

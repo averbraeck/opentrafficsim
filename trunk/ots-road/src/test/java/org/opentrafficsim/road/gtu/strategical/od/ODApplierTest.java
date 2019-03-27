@@ -54,7 +54,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -160,14 +159,10 @@ public class ODApplierTest
         CrossSectionLink linkAB =
                 new CrossSectionLink(this.network, "AB", nodeA, nodeB, this.network.getLinkType(LinkType.DEFAULTS.ROAD),
                         new OTSLine3D(pointA, pointB), this.simulator, LaneKeepingPolicy.KEEPRIGHT);
-        this.lanes.put("lane1",
-                new Lane(linkAB, "lane1", Length.createSI(1.75), Length.createSI(3.5),
-                        this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR),
-                        new OvertakingConditions.LeftOnly()));
-        this.lanes.put("lane2",
-                new Lane(linkAB, "lane2", Length.createSI(-1.75), Length.createSI(3.5),
-                        this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR),
-                        new OvertakingConditions.LeftOnly()));
+        this.lanes.put("lane1", new Lane(linkAB, "lane1", Length.createSI(1.75), Length.createSI(3.5),
+                this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR)));
+        this.lanes.put("lane2", new Lane(linkAB, "lane2", Length.createSI(-1.75), Length.createSI(3.5),
+                this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR)));
         Set<GTUType> gtuTypes = new HashSet<>();
         gtuTypes.add(network.getGtuType(GTUType.DEFAULTS.VEHICLE));
     }

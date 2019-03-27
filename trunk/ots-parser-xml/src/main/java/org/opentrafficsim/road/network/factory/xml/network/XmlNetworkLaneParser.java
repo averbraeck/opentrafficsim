@@ -25,14 +25,16 @@ import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
+import org.opentrafficsim.xml.generated.DEMAND;
 import org.opentrafficsim.xml.generated.MODEL;
 import org.opentrafficsim.xml.generated.NETWORK;
-import org.opentrafficsim.xml.generated.NETWORKDEMAND;
 import org.opentrafficsim.xml.generated.OTS;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
 import org.opentrafficsim.xml.generated.RUN;
@@ -132,7 +134,8 @@ public final class XmlNetworkLaneParser implements Serializable
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
         Map<String, ROADLAYOUT> roadLayoutMap = new HashMap<>();
-        DefinitionsParser.parseDefinitions(ots.getDEFINITIONS(), otsNetwork, true, roadLayoutMap);
+        Map<GTUType, TemplateGTUType> gtuTemplates = new HashMap<>();
+        DefinitionsParser.parseDefinitions(ots.getDEFINITIONS(), otsNetwork, true, roadLayoutMap, gtuTemplates);
 
         NETWORK network = ots.getNETWORK();
         NetworkParser.parseNodes(otsNetwork, network);
@@ -140,7 +143,7 @@ public final class XmlNetworkLaneParser implements Serializable
         NetworkParser.parseLinks(otsNetwork, network, nodeDirections, simulator);
         NetworkParser.applyRoadLayout(otsNetwork, network, simulator, roadLayoutMap);
         
-        List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
+        List<DEMAND> demands = ots.getDEMAND();
         List<CONTROL> controls = ots.getCONTROL();
         MODEL modelParameters = ots.getMODEL();
         SCENARIO scenario = ots.getSCENARIO();
