@@ -39,7 +39,6 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
@@ -175,10 +174,6 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     private NestedCache<Map<Lane, GTUDirectionality>> upLanes = new NestedCache<>(GTUType.class, GTUDirectionality.class);
 
-    /** The conditions for overtaking another GTU, viewed from this lane. */
-    // TODO allow for direction-dependent overtaking conditions
-    private final OvertakingConditions overtakingConditions;
-
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
@@ -227,21 +222,18 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GTUType, Speed&gt;; speed limit on this lane, specified per GTU Type
-     * @param overtakingConditions OvertakingConditions; the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Map<GTUType, Speed> speedLimitMap, final OvertakingConditions overtakingConditions)
-            throws OTSGeometryException, NetworkException
+            final Map<GTUType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
-        this.overtakingConditions = overtakingConditions;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -257,22 +249,19 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimit Speed; speed limit on this lane
-     * @param overtakingConditions OvertakingConditions; the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Speed speedLimit, final OvertakingConditions overtakingConditions)
-            throws OTSGeometryException, NetworkException
+            final Speed speedLimit) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
         checkDirectionality();
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.CAR), speedLimit);
-        this.overtakingConditions = overtakingConditions;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -285,20 +274,17 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GTUType, Speed&gt;; the speed limit on this lane, specified per GTU Type
-     * @param overtakingConditions OvertakingConditions; the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width,
-            final LaneType laneType, final Map<GTUType, Speed> speedLimitMap, final OvertakingConditions overtakingConditions)
-            throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Map<GTUType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffset, width);
         this.laneType = laneType;
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
-        this.overtakingConditions = overtakingConditions;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -311,21 +297,18 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimit Speed; the speed limit on this lane
-     * @param overtakingConditions OvertakingConditions; the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width,
-            final LaneType laneType, final Speed speedLimit, final OvertakingConditions overtakingConditions)
-            throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Speed speedLimit) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffset, width);
         this.laneType = laneType;
         checkDirectionality();
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), speedLimit);
-        this.overtakingConditions = overtakingConditions;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -339,20 +322,17 @@ public class Lane extends CrossSectionElement implements Serializable
      *            If not, a NetworkException is thrown.
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GTUType, Speed&gt;; the speed limit on this lane, specified per GTU Type
-     * @param overtakingConditions OvertakingConditions; the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
-            final LaneType laneType, final Map<GTUType, Speed> speedLimitMap, final OvertakingConditions overtakingConditions)
-            throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Map<GTUType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, crossSectionSlices);
         this.laneType = laneType;
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
-        this.overtakingConditions = overtakingConditions;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -366,21 +346,18 @@ public class Lane extends CrossSectionElement implements Serializable
      *            If not, a NetworkException is thrown.
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimit Speed; the speed limit on this lane
-     * @param overtakingConditions OvertakingConditions; the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
-            final LaneType laneType, final Speed speedLimit, final OvertakingConditions overtakingConditions)
-            throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Speed speedLimit) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, crossSectionSlices);
         this.laneType = laneType;
         checkDirectionality();
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.CAR), speedLimit);
-        this.overtakingConditions = overtakingConditions;
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -398,7 +375,6 @@ public class Lane extends CrossSectionElement implements Serializable
         super(newParentLink, newSimulator, cse);
         this.laneType = cse.laneType;
         this.speedLimitMap = new HashMap<>(cse.speedLimitMap);
-        this.overtakingConditions = cse.overtakingConditions;
         this.gtuList = new HistoricalArrayList<>(getManager(newParentLink));
     }
 
@@ -1831,14 +1807,6 @@ public class Lane extends CrossSectionElement implements Serializable
     protected double getZ()
     {
         return 0.0;
-    }
-
-    /**
-     * @return overtakingConditions
-     */
-    public final OvertakingConditions getOvertakingConditions()
-    {
-        return this.overtakingConditions;
     }
 
     /** {@inheritDoc} */

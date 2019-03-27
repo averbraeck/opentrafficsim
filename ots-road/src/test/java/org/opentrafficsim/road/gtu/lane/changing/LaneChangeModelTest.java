@@ -54,7 +54,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -104,8 +103,8 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OTSLine3D line = new OTSLine3D(coordinates);
-        CrossSectionLink link =
-                new CrossSectionLink(network, name, from, to, network.getLinkType(LinkType.DEFAULTS.ROAD), line, simulator, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link = new CrossSectionLink(network, name, from, to, network.getLinkType(LinkType.DEFAULTS.ROAD), line,
+                simulator, LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 
@@ -127,8 +126,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // XXX Decide what type of overtaking conditions we want in this test
-        Lane result =
-                new Lane(link, id, latPos, latPos, width, width, laneType, speedMap, new OvertakingConditions.LeftAndRight());
+        Lane result = new Lane(link, id, latPos, latPos, width, width, laneType, speedMap);
         return result;
     }
 

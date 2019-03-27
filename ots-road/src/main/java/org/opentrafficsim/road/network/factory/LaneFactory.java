@@ -33,7 +33,6 @@ import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -194,8 +193,8 @@ public final class LaneFactory
         for (Permeable perm : list)
         {
             this.lanes.add(Try.assign(() -> new Lane(this.link, "Lane " + (this.lanes.size() + 1),
-                    this.offset.plus(this.laneWidth0.multiplyBy(0.5)), this.laneWidth0.abs(), this.laneType0, this.speedLimit0,
-                    null), "Unexpected exception while building link."));
+                    this.offset.plus(this.laneWidth0.multiplyBy(0.5)), this.laneWidth0.abs(), this.laneType0, this.speedLimit0),
+                    "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
             Stripe stripe = Try.assign(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH),
                     "Unexpected exception while building link.");
@@ -358,8 +357,7 @@ public final class LaneFactory
     {
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), speedLimit);
-        Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, speedMap,
-                new OvertakingConditions.LeftAndRight());
+        Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, speedMap);
         return result;
     }
 

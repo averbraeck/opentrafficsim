@@ -47,7 +47,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -449,7 +448,7 @@ public final class ShapeFileReader implements UNITS
                 {
                     lat += i * 1.75;
                     Lane lane = new Lane(link, "lane." + lr + "." + j, new Length(lat, METER), new Length(lat, METER), m35, m35,
-                            null, speedLimit, new OvertakingConditions.LeftAndRight());
+                            null, speedLimit);
                     new LaneAnimation(lane, simulator, Color.GRAY, false);
                     lat += i * 1.75;
                 }
@@ -510,7 +509,7 @@ public final class ShapeFileReader implements UNITS
                     lat += i * 1.5;
                     String lr = i < 0 ? "L" : "R";
                     Lane lane = new Lane(link, "lane." + lr + "." + j, new Length(lat, METER), new Length(lat, METER), m30, m30,
-                            null, speedLimit, new OvertakingConditions.LeftAndRight());
+                            null, speedLimit);
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
                     lat += i * 1.5;
                 }
@@ -535,8 +534,7 @@ public final class ShapeFileReader implements UNITS
 
         try
         {
-            Lane lane = new Lane(link, "lane", new Length(0.0, METER), new Length(0.0, METER), m60, m60, null, speedLimit,
-                    new OvertakingConditions.LeftAndRight());
+            Lane lane = new Lane(link, "lane", new Length(0.0, METER), new Length(0.0, METER), m60, m60, null, speedLimit);
             new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)

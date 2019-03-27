@@ -11,7 +11,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 /**
  * Lane without traffic, e.g. emergency lane next to highway.
@@ -27,9 +26,6 @@ public class NoTrafficLane extends Lane
 {
     /** */
     private static final long serialVersionUID = 20150228L;
-
-    /** The overtaking rules for a no-traffic lane. */
-    private static final OvertakingConditions NO_OVERTAKING = new OvertakingConditions.None();
 
     /**
      * Return a Map that tells that directionality is NONE for all vehicles.
@@ -73,7 +69,7 @@ public class NoTrafficLane extends Lane
             throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth,
-                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), speedNull(parentLink.getNetwork()), NO_OVERTAKING);
+                parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE), speedNull(parentLink.getNetwork()));
     }
 
     /**
@@ -90,7 +86,7 @@ public class NoTrafficLane extends Lane
             throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffset, width, parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE),
-                speedNull(parentLink.getNetwork()), NO_OVERTAKING);
+                speedNull(parentLink.getNetwork()));
     }
 
     /**
@@ -108,7 +104,7 @@ public class NoTrafficLane extends Lane
             throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, crossSectionSlices, parentLink.getNetwork().getLaneType(LaneType.DEFAULTS.NONE),
-                speedNull(parentLink.getNetwork()), NO_OVERTAKING);
+                speedNull(parentLink.getNetwork()));
     }
 
     /** {@inheritDoc} */

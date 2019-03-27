@@ -354,8 +354,6 @@ final class Links
                     OvertakingConditions overtakingConditions = cseTag.overtakingConditions;
                     if (laneOverrideTag != null)
                     {
-                        if (laneOverrideTag.overtakingConditions != null)
-                            overtakingConditions = laneOverrideTag.overtakingConditions;
                         if (laneOverrideTag.color != null)
                             color = laneOverrideTag.color;
                         if (laneOverrideTag.direction != null)
@@ -382,8 +380,7 @@ final class Links
 
                     // XXX: LaneTypes with compatibilities might have to be defined in a new way -- LaneType.FREEWAY for now...
                     Lane lane = new Lane(csl, cseTag.name, startOffset, endOffset, cseTag.width, cseTag.width,
-                            csl.getNetwork().getLaneType(LaneType.DEFAULTS.FREEWAY), cseTag.legalSpeedLimits,
-                            overtakingConditions);
+                            csl.getNetwork().getLaneType(LaneType.DEFAULTS.FREEWAY), cseTag.legalSpeedLimits);
                     // System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#",
                     // lane.getParentLink().getDesignLine(), "\n "));
                     // System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(),

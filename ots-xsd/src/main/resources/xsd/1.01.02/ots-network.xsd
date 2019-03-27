@@ -86,7 +86,6 @@
                   <xsd:element ref="SPEEDLIMIT" minOccurs="0" maxOccurs="unbounded" />
                 </xsd:sequence>
                 <xsd:attribute name="LANE" type="xsd:string" use="required" />
-                <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
               </xsd:complexType>
             </xsd:element>
           </xsd:sequence>

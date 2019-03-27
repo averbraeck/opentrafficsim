@@ -44,7 +44,6 @@ import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -527,8 +526,6 @@ class RoadTag implements Serializable
                     }
                 }
 
-                OvertakingConditions overtakingConditions = null;
-
                 Speed speed = null;
                 if (leftLane.speedTags.size() > 0)
                     speed = leftLane.speedTags.get(0).max;
@@ -552,8 +549,7 @@ class RoadTag implements Serializable
                      */
 
                     Lane lane = new Lane(currentLink, leftLane.id.toString(), crossSectionSlices,
-                            openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit,
-                            overtakingConditions);
+                            openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit);
                     currentLaneSec.lanes.put(leftLane.id, lane);
 
                     lastLane = lane;
@@ -732,8 +728,6 @@ class RoadTag implements Serializable
                     }
                 }
 
-                OvertakingConditions overtakingConditions = null;
-
                 Speed speed = null;
                 if (rightLane.speedTags.size() > 0)
                     speed = rightLane.speedTags.get(0).max;
@@ -761,8 +755,7 @@ class RoadTag implements Serializable
                         // System.out.println();
 
                         Lane lane = new Lane(currentLink, rightLane.id.toString(), crossSectionSlices,
-                                openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit,
-                                overtakingConditions);
+                                openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit);
 
                         currentLaneSec.lanes.put(rightLane.id, lane);
 

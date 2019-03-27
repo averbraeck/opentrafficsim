@@ -8,12 +8,13 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
-import org.opentrafficsim.core.network.route.RouteGenerator;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.factory.xml.old.CrossSectionElementTag.ElementType;
@@ -219,7 +220,7 @@ class FillTag implements Serializable
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        RouteGenerator rg = new FixedRouteGenerator(
+        Generator<Route> rg = new FixedRouteGenerator(
                 new CompleteRoute("fixed route", lane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), nodeList));
 
         // TODO create a FILL

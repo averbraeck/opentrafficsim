@@ -91,9 +91,9 @@ import org.opentrafficsim.road.gtu.colorer.IncentiveColorer;
 import org.opentrafficsim.road.gtu.colorer.SocialPressureColorer;
 import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.colorer.TotalDesireColorer;
-import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
+import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
@@ -147,7 +147,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.road.network.lane.object.sensor.Detector;
 import org.opentrafficsim.road.network.lane.object.sensor.Detector.CompressionMethod;
@@ -726,19 +725,19 @@ public class LmrsStrategies implements EventListenerInterface
                         getSimulator(), LaneKeepingPolicy.KEEPRIGHT);
                 Lane laneAB1 = new Lane(linkAB, "laneAB1", Length.createSI(0.0), Length.createSI(3.5),
                         LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
-                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
+                        new Speed(120, SpeedUnit.KM_PER_HOUR));
                 Lane laneAB2 = new Lane(linkAB, "laneAB2", Length.createSI(3.5), Length.createSI(3.5),
                         LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
-                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
+                        new Speed(120, SpeedUnit.KM_PER_HOUR));
                 Lane laneAB3 = new Lane(linkAB, "laneAB3", Length.createSI(7.0), Length.createSI(3.5),
                         LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
-                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
+                        new Speed(120, SpeedUnit.KM_PER_HOUR));
                 Lane laneBC1 = new Lane(linkBC, "laneBC1", Length.createSI(0.0), Length.createSI(3.5),
                         LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
-                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
+                        new Speed(120, SpeedUnit.KM_PER_HOUR));
                 Lane laneBC2 = new Lane(linkBC, "laneBC2", Length.createSI(3.5), Length.createSI(3.5),
                         LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
-                        new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
+                        new Speed(120, SpeedUnit.KM_PER_HOUR));
                 Set<GTUType> gtuTypes = new HashSet<>();
                 gtuTypes.add(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
                 Stripe stripeAB1 = new Stripe(linkAB, Length.createSI(-1.75), Length.createSI(-1.75), Length.createSI(0.2));

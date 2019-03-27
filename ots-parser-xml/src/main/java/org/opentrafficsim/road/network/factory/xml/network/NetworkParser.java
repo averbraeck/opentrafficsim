@@ -4,63 +4,34 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.base.logger.Cat;
-import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.TemplateGTUType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.FixedRouteGenerator;
-import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
-import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
@@ -76,7 +47,6 @@ import org.opentrafficsim.xml.generated.CSENOTRAFFICLANE;
 import org.opentrafficsim.xml.generated.CSESHOULDER;
 import org.opentrafficsim.xml.generated.CSESTRIPE;
 import org.opentrafficsim.xml.generated.LINK;
-import org.opentrafficsim.xml.generated.LINK.GENERATOR;
 import org.opentrafficsim.xml.generated.LINK.LANEOVERRIDE;
 import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NODE;
@@ -86,7 +56,6 @@ import org.opentrafficsim.xml.generated.TRAFFICLIGHTTYPE;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -114,7 +83,7 @@ public final class NetworkParser
     public static void parseNodes(final OTSRoadNetwork otsNetwork, final NETWORK network) throws NetworkException
     {
         for (NODE xmlNode : network.getNODE())
-            new OTSNode(otsNetwork, xmlNode.getNAME(), new OTSPoint3D(xmlNode.getCOORDINATE()));
+            new OTSNode(otsNetwork, xmlNode.getID(), new OTSPoint3D(xmlNode.getCOORDINATE()));
     }
 
     /**
@@ -131,7 +100,7 @@ public final class NetworkParser
         {
             if (xmlNode.getDIRECTION() != null)
             {
-                nodeDirections.put(xmlNode.getNAME(), xmlNode.getDIRECTION());
+                nodeDirections.put(xmlNode.getID(), xmlNode.getDIRECTION());
             }
         }
 
@@ -156,9 +125,9 @@ public final class NetworkParser
 
         for (NODE xmlNode : network.getNODE())
         {
-            if (!nodeDirections.containsKey(xmlNode.getNAME()))
+            if (!nodeDirections.containsKey(xmlNode.getID()))
             {
-                System.err.println("Warning: Node " + xmlNode.getNAME() + " does not have a (calculated) direction");
+                System.err.println("Warning: Node " + xmlNode.getID() + " does not have a (calculated) direction");
             }
         }
 
@@ -313,7 +282,7 @@ public final class NetworkParser
 
             else
             {
-                throw new NetworkException("Making link, but link " + xmlLink.getNAME()
+                throw new NetworkException("Making link, but link " + xmlLink.getID()
                         + " has no filled straight, arc, bezier, polyline, or clothoid definition");
             }
 
@@ -321,7 +290,7 @@ public final class NetworkParser
 
             // TODO: Directionality has to be added later when the lanes and their direction are known.
             LaneKeepingPolicy laneKeepingPolicy = LaneKeepingPolicy.valueOf(xmlLink.getLANEKEEPING().name());
-            CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getNAME(), startNode, endNode,
+            CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getID(), startNode, endNode,
                     otsNetwork.getLinkType(LinkType.DEFAULTS.FREEWAY), designLine, simulator, laneKeepingPolicy);
 
             if (xmlLink.getPRIORITY() != null)
@@ -329,9 +298,6 @@ public final class NetworkParser
                 Priority priority = Priority.valueOf(xmlLink.getPRIORITY());
                 link.setPriority(priority);
             }
-
-            // TODO: rotationstart and rotationend of a link, or leave out of xsd?
-            // TODO: networkAnimation.addDrawingInfoBase(link, new DrawingInfoLine<CrossSectionLink>(Color.BLACK, 0.5f));
         }
     }
 
@@ -348,30 +314,31 @@ public final class NetworkParser
      * @throws GTUException when construction of the Strategical Planner failed
      */
     static void applyRoadLayout(final OTSRoadNetwork otsNetwork, final NETWORK network, OTSSimulatorInterface simulator,
-            Map<String, ROADLAYOUT> roadLayoutMap) throws NetworkException, OTSGeometryException, XmlParserException, SimRuntimeException, GTUException
+            Map<String, ROADLAYOUT> roadLayoutMap)
+            throws NetworkException, OTSGeometryException, XmlParserException, SimRuntimeException, GTUException
     {
         for (LINK xmlLink : network.getLINK())
         {
-            CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getNAME());
+            CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getID());
             List<CrossSectionElement> cseList = new ArrayList<>();
             Map<String, Lane> lanes = new HashMap<>();
 
-            CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getNAME());
+            CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
 
             // Get the ROADLAYOUT (wither defined here, or via pointer to DEFINITIONS)
             ROADLAYOUT roadLayoutTagBase;
-            if (xmlLink.getDEFINEDROADLAYOUT() != null)
+            if (xmlLink.getLAYOUT() != null)
             {
                 if (xmlLink.getROADLAYOUT() != null)
                 {
-                    throw new XmlParserException("Link " + xmlLink.getNAME()
-                            + " Ambiguous RoadLayout; both DEFINEDROADLAYOUT and ROADLAYOUT defined");
+                    throw new XmlParserException(
+                            "Link " + xmlLink.getID() + " Ambiguous RoadLayout; both DEFINEDROADLAYOUT and ROADLAYOUT defined");
                 }
-                roadLayoutTagBase = roadLayoutMap.get(xmlLink.getDEFINEDROADLAYOUT());
+                roadLayoutTagBase = roadLayoutMap.get(xmlLink.getLAYOUT());
                 if (roadLayoutTagBase == null)
                 {
-                    throw new XmlParserException("Link " + xmlLink.getNAME() + " Could not find defined RoadLayout "
-                            + xmlLink.getDEFINEDROADLAYOUT());
+                    throw new XmlParserException(
+                            "Link " + xmlLink.getID() + " Could not find defined RoadLayout " + xmlLink.getLAYOUT());
                 }
             }
             else
@@ -379,7 +346,7 @@ public final class NetworkParser
                 roadLayoutTagBase = xmlLink.getROADLAYOUT();
                 if (roadLayoutTagBase == null)
                 {
-                    throw new XmlParserException("Link " + xmlLink.getNAME() + " No RoadLayout defined");
+                    throw new XmlParserException("Link " + xmlLink.getID() + " No RoadLayout defined");
                 }
             }
 
@@ -389,12 +356,8 @@ public final class NetworkParser
             {
                 for (CSELANE lane : Parser.getObjectsOfType(roadLayoutTag.getLANEOrNOTRAFFICLANEOrSHOULDER(), CSELANE.class))
                 {
-                    if (lane.getNAME().equals(laneOverride.getLANE()))
+                    if (lane.getID().equals(laneOverride.getLANE()))
                     {
-                        if (laneOverride.getDIRECTION() != null)
-                            lane.setDIRECTION(laneOverride.getDIRECTION());
-                        if (laneOverride.getOVERTAKING() != null)
-                            lane.setOVERTAKING(laneOverride.getOVERTAKING());
                         if (laneOverride.getSPEEDLIMIT().size() > 0)
                         {
                             lane.getSPEEDLIMIT().clear();
@@ -430,16 +393,17 @@ public final class NetworkParser
                 if (cseTag instanceof CSELANE)
                 {
                     CSELANE laneTag = (CSELANE) cseTag;
-                    LongitudinalDirectionality direction = LongitudinalDirectionality.valueOf(laneTag.getDIRECTION().name());
+                    boolean direction = laneTag.isDESIGNDIRECTION();
                     LaneType laneType = otsNetwork.getLaneType(laneTag.getLANETYPE());
+                    // TODO: Use the DESIGNDIRECTION
                     Map<GTUType, Speed> speedLimitMap = new HashMap<>();
                     List<SPEEDLIMIT> speedLimitTag = new ArrayList<>();
                     if (laneTag.getSPEEDLIMIT().size() > 0)
                         speedLimitTag.addAll(laneTag.getSPEEDLIMIT());
                     else if (roadLayoutTag.getSPEEDLIMIT().size() > 0)
                         speedLimitTag.addAll(roadLayoutTag.getSPEEDLIMIT());
-                    Lane lane = new Lane(csl, laneTag.getNAME(), startOffset, endOffset, startWidth, endWidth, laneType,
-                            speedLimitMap, Transformer.parseOvertakingConditions(laneTag.getOVERTAKING()));
+                    Lane lane = new Lane(csl, laneTag.getID(), startOffset, endOffset, startWidth, endWidth, laneType,
+                            speedLimitMap);
                     cseList.add(lane);
                     lanes.put(lane.getId(), lane);
                 }
@@ -448,7 +412,7 @@ public final class NetworkParser
                 else if (cseTag instanceof CSENOTRAFFICLANE)
                 {
                     CSENOTRAFFICLANE ntlTag = (CSENOTRAFFICLANE) cseTag;
-                    String id = ntlTag.getNAME() != null ? ntlTag.getNAME() : UUID.randomUUID().toString();
+                    String id = ntlTag.getID() != null ? ntlTag.getID() : UUID.randomUUID().toString();
                     Lane lane = new NoTrafficLane(csl, id, startOffset, endOffset, startWidth, endWidth);
                     cseList.add(lane);
                 }
@@ -457,7 +421,7 @@ public final class NetworkParser
                 else if (cseTag instanceof CSESHOULDER)
                 {
                     CSESHOULDER shoulderTag = (CSESHOULDER) cseTag;
-                    String id = shoulderTag.getNAME() != null ? shoulderTag.getNAME() : UUID.randomUUID().toString();
+                    String id = shoulderTag.getID() != null ? shoulderTag.getID() : UUID.randomUUID().toString();
                     Shoulder shoulder = new Shoulder(csl, id, startOffset, endOffset, startWidth, endWidth);
                     cseList.add(shoulder);
                 }
@@ -468,7 +432,7 @@ public final class NetworkParser
             {
                 if (!lanes.containsKey(sink.getLANE()))
                     throw new NetworkException(
-                            "LINK: " + xmlLink.getNAME() + ", Sink on Lane " + sink.getLANE() + " - Lane not found");
+                            "LINK: " + xmlLink.getID() + ", Sink on Lane " + sink.getLANE() + " - Lane not found");
                 Lane lane = lanes.get(sink.getLANE());
                 Length position = Transformer.parseLengthBeginEnd(sink.getPOSITION(), lane.getLength());
                 new SinkSensor(lane, position, simulator);
@@ -478,7 +442,7 @@ public final class NetworkParser
             for (TRAFFICLIGHTTYPE trafficLight : xmlLink.getTRAFFICLIGHT())
             {
                 if (!lanes.containsKey(trafficLight.getLANE()))
-                    throw new NetworkException("LINK: " + xmlLink.getNAME() + ", TrafficLight with id " + trafficLight.getNAME()
+                    throw new NetworkException("LINK: " + xmlLink.getID() + ", TrafficLight with id " + trafficLight.getID()
                             + " on Lane " + trafficLight.getLANE() + " - Lane not found");
                 Lane lane = lanes.get(trafficLight.getLANE());
                 Length position = Transformer.parseLengthBeginEnd(trafficLight.getPOSITION(), lane.getLength());
@@ -486,64 +450,15 @@ public final class NetworkParser
                 {
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(),
                             new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
-                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getNAME(), lane, position, simulator});
+                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getID(), lane, position, simulator});
                 }
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException exception)
                 {
                     throw new NetworkException("TRAFFICLIGHT: CLASS NAME " + trafficLight.getCLASS().getName()
-                            + " for traffic light " + trafficLight.getNAME() + " on lane " + lane.toString()
+                            + " for traffic light " + trafficLight.getID() + " on lane " + lane.toString()
                             + " -- class not found or constructor not right", exception);
                 }
-            }
-
-            // GENERATOR
-            for (LINK.GENERATOR generator : xmlLink.getGENERATOR())
-            {
-                if (!lanes.containsKey(generator.getLANE()))
-                    throw new NetworkException(
-                            "LINK: " + xmlLink.getNAME() + ", Generator on Lane " + generator.getLANE() + " - Lane not found");
-                Lane lane = lanes.get(generator.getLANE());
-                makeGenerator(generator, lane, otsNetwork, simulator);
-            }
-
-            // TODO: LISTGENERATOR
-
-            // SENSOR
-            for (LINK.SENSOR sensor : xmlLink.getSENSOR())
-            {
-                if (!lanes.containsKey(sensor.getLANE()))
-                    throw new NetworkException("LINK: " + xmlLink.getNAME() + ", Sensor with id " + sensor.getNAME()
-                            + "  on Lane " + sensor.getLANE() + " - Lane not found");
-                Lane lane = lanes.get(sensor.getLANE());
-                Length position = Transformer.parseLengthBeginEnd(sensor.getPOSITION(), lane.getLength());
-                try
-                {
-                    Constructor<?> sensorConstructor = ClassUtil.resolveConstructor(sensor.getCLASS(),
-                            new Class[] {String.class, Lane.class, Length.class, RelativePosition.TYPE.class,
-                                    DEVSSimulatorInterface.TimeDoubleUnit.class, Compatible.class});
-                    sensorConstructor.newInstance(new Object[] {sensor.getNAME(), lane, position,
-                            Transformer.parseTriggerPosition(sensor.getTRIGGER()), simulator, Compatible.EVERYTHING});
-                }
-                catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                        | InvocationTargetException exception)
-                {
-                    throw new NetworkException(
-                            "SENSOR: CLASS NAME " + sensor.getCLASS().getName() + " for sensor " + sensor.getNAME()
-                                    + " on lane " + lane.toString() + " -- class not found or constructor not right",
-                            exception);
-                }
-            }
-
-            // FILL
-            for (LINK.FILL fill : xmlLink.getFILL())
-            {
-                if (!lanes.containsKey(fill.getLANE()))
-                    throw new NetworkException(
-                            "LINK: " + xmlLink.getNAME() + ", Fill on Lane " + fill.getLANE() + " - Lane not found");
-                Lane lane = lanes.get(fill.getLANE());
-
-                // TODO: parseFill(fill, xmlLink, simulator);
             }
         }
     }
@@ -604,96 +519,6 @@ public final class NetworkParser
             default:
                 throw new XmlParserException("Unknown Stripe type: " + stripeTag.getTYPE().toString());
         }
-    }
-
-    /**
-     * Make a generator.
-     * @param generatorTag GENERATOR; XML tag for the generator to build
-     * @param lane the lane on which the generator will be placed
-     * @param otsNetwork the road network
-     * @param simulator OTSSimulatorInterface; the simulator to schedule GTU generation
-     * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws NetworkException when route generator cannot be instantiated
-     * @throws GTUException when construction of the Strategical Planner failed
-     */
-    static void makeGenerator(final GENERATOR generatorTag, final Lane lane, final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
-    {
-        Class<?> gtuClass = LaneBasedIndividualGTU.class;
-
-        RouteGenerator routeGenerator;
-        if (generatorTag.getROUTEMIX() == null)
-        {
-            // List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
-            // for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags)
-            // {
-            // nodeList.add(parser.nodeTags.get(nodeTag.name).node);
-            // }
-            // routeGenerator = new FixedRouteGenerator(new Route(generatorTag.laneName, nodeList));
-        }
-        else
-        {
-            /*-
-            List<FrequencyAndObject<Route>> probRoutes = new ArrayList<>();
-            for (int i = 0; i < generatorTag.routeMixTag.weights.size(); i++)
-            {
-                List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
-                for (NodeTag nodeTag : generatorTag.routeMixTag.routes.get(i).routeNodeTags)
-                {
-                    nodeList.add(parser.nodeTags.get(nodeTag.name).node);
-                }
-                probRoutes.add(new FrequencyAndObject<>(generatorTag.routeMixTag.weights.get(i),
-                        new Route(generatorTag.routeMixTag.routes.get(i).name, nodeList)));
-            }
-            try
-            {
-                if (simulator.getReplication().getStream("GENERAL") == null)
-                {
-                    simulator.getReplication().getStreams().put("GENERAL", new MersenneTwister(1L));
-                }
-                routeGenerator = new ProbabilisticRouteGenerator(probRoutes, simulator.getReplication().getStream("GENERAL"));
-            }
-            catch (ProbabilityException exception)
-            {
-                throw new RuntimeException("Could not generate route mix.");
-            }
-            */
-        }
-        StreamInterface stream = simulator.getReplication().getStream("GENERAL");
-        Time startTime = generatorTag.getSTARTTIME() != null ? generatorTag.getSTARTTIME() : Time.ZERO;
-        Time endTime = generatorTag.getENDTIME() != null ? generatorTag.getENDTIME()
-                : new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
-        Length position = Transformer.parseLengthBeginEnd(generatorTag.getPOSITION(), lane.getLength());
-        LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory =
-                new LMRSFactory(new IDMPlusFactory(stream), new DefaultLMRSPerceptionFactory());
-        // makeTacticalPlannerFactory(generatorTag, simulator.getReplication().getStream("GENERAL"));
-        LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
-                new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory);
-        Set<DirectedLanePosition> positions = new HashSet<>();
-        positions.add(new DirectedLanePosition(lane, position, GTUDirectionality.DIR_PLUS));
-        GeneratorPositions generatorPositions = GeneratorPositions.create(positions, stream);
-        TemplateGTUType templateGtu = GTUType.TEMPLATES.get(otsNetwork).get(generatorTag.getGTU());
-        Generator<Duration> interarrivelTimeGenerator = new Generator<Duration>()
-        {
-            @Override
-            public Duration draw() throws ProbabilityException, ParameterException
-            {
-                return null;
-            }
-        };
-        // LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator("G." + lane.getFullId(), interarrivelTimeGenerator,
-        //        templateGtu, generatorPositions, otsNetwork, simulator, new CFRoomChecker(), new IdGenerator(lane.getFullId()));
-        /*-
-        GTUGeneratorIndividual generator = new GTUGeneratorIndividual(lane.getFullId(), simulator, generatorTag.getGTU(),
-                gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist, templateGtu.getLengthGenerator(),
-                generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.getMAXGTU(), startTime, endTime, lane,
-                position, generatorTag.gtuDirection, strategicalPlannerFactory, routeGenerator, otsNetwork);
-        */
-
-        // TODO GTUMix
-        // TODO RouteMix
-        // TODO ShortestRoute
-        // TODO ShortestRouteMix
     }
 
 }

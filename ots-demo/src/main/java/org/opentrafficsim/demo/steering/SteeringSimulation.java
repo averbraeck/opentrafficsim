@@ -163,7 +163,7 @@ public class SteeringSimulation extends AbstractSimulationScript
             for (CrossSectionLink link : new CrossSectionLink[] {linkAB, linkBC, linkCD})
             {
                 Lane lane = new Lane(link, "Lane " + (i + 1), laneWidth.multiplyBy((0.5 + i)), laneWidth,
-                        network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR), null);
+                        network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR));
                 Length offset = laneWidth.multiplyBy(i + 1.0);
                 Stripe stripe = new Stripe(link, offset, offset, stripeWidth);
                 if (i < n - 1)
@@ -188,9 +188,9 @@ public class SteeringSimulation extends AbstractSimulationScript
         stripe.addPermeability(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.LEFT);
         new Stripe(linkCD, Length.ZERO, Length.ZERO, stripeWidth);
         new Lane(linkBC, "Acceleration lane", laneWidth.multiplyBy(-0.5), laneWidth,
-                network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR), null);
+                network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR));
         new Lane(linkEB, "Onramp", laneWidth.multiplyBy(-0.5), laneWidth, network.getLaneType(LaneType.DEFAULTS.FREEWAY),
-                new Speed(120, SpeedUnit.KM_PER_HOUR), null);
+                new Speed(120, SpeedUnit.KM_PER_HOUR));
         new Stripe(linkEB, Length.ZERO, Length.ZERO, stripeWidth);
         new Stripe(linkEB, laneWidth.neg(), laneWidth.neg(), stripeWidth);
         new Stripe(linkBC, laneWidth.neg(), laneWidth.neg(), stripeWidth);
