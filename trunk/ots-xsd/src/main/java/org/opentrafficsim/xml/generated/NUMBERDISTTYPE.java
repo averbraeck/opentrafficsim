@@ -12,21 +12,29 @@ import java.io.Serializable;
 import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for MODELPARAMETERTYPE complex type.
+ * <p>Java class for NUMBERDISTTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="MODELPARAMETERTYPE"&gt;
+ * &lt;complexType name="NUMBERDISTTYPE"&gt;
  *   &lt;complexContent&gt;
- *     &lt;extension base="{http://www.opentrafficsim.org/ots}PARAMETERTYPE"&gt;
- *       &lt;attribute name="GTUTYPE" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *     &lt;/extension&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;element name="DIST"&gt;
+ *           &lt;simpleType&gt;
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *               &lt;pattern value="(\ {0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)(\ {0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)(\ {0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\ {0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\ {0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\ {0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)(\ {0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\ {0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\ {0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\ {0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\ {0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\ {0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)"/&gt;
+ *             &lt;/restriction&gt;
+ *           &lt;/simpleType&gt;
+ *         &lt;/element&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -34,21 +42,22 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "MODELPARAMETERTYPE")
+@XmlType(name = "NUMBERDISTTYPE", propOrder = {
+    "dist"
+})
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-public class MODELPARAMETERTYPE
-    extends PARAMETERTYPE
+public class NUMBERDISTTYPE
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlAttribute(name = "GTUTYPE")
+    @XmlElement(name = "DIST")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    protected String gtutype;
+    protected String dist;
 
     /**
-     * Gets the value of the gtutype property.
+     * Gets the value of the dist property.
      * 
      * @return
      *     possible object is
@@ -56,12 +65,12 @@ public class MODELPARAMETERTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public String getGTUTYPE() {
-        return gtutype;
+    public String getDIST() {
+        return dist;
     }
 
     /**
-     * Sets the value of the gtutype property.
+     * Sets the value of the dist property.
      * 
      * @param value
      *     allowed object is
@@ -69,8 +78,8 @@ public class MODELPARAMETERTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public void setGTUTYPE(String value) {
-        this.gtutype = value;
+    public void setDIST(String value) {
+        this.dist = value;
     }
 
 }

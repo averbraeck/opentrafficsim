@@ -9,16 +9,15 @@
 package org.opentrafficsim.xml.generated;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.opentrafficsim.xml.bindings.LengthBeginEndAdapter;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
 
 
 /**
@@ -30,13 +29,10 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element ref="{http://www.opentrafficsim.org/ots}COMPATIBILITY" maxOccurs="unbounded" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *       &lt;attribute name="ID" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="PARENT" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="DEFAULT" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
+ *       &lt;attribute name="LINK" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="LANE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="DIRECTION" use="required" type="{http://www.opentrafficsim.org/ots}GTUDIRECTIONTYPE" /&gt;
+ *       &lt;attribute name="POSITION" use="required" type="{http://www.opentrafficsim.org/ots}LENGTHBEGINENDTYPE" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -45,66 +41,31 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "compatibility"
-})
-@XmlRootElement(name = "LANETYPE")
+@XmlType(name = "")
+@XmlRootElement(name = "SINK")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-public class LANETYPE
+public class SINK
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlElement(name = "COMPATIBILITY")
+    @XmlAttribute(name = "LINK", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    protected List<COMPATIBILITY> compatibility;
-    @XmlAttribute(name = "ID", required = true)
+    protected String link;
+    @XmlAttribute(name = "LANE", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    protected String id;
-    @XmlAttribute(name = "PARENT")
+    protected String lane;
+    @XmlAttribute(name = "DIRECTION", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    protected String parent;
-    @XmlAttribute(name = "DEFAULT")
+    protected String direction;
+    @XmlAttribute(name = "POSITION", required = true)
+    @XmlJavaTypeAdapter(LengthBeginEndAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    protected Boolean _default;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    protected String base;
+    protected LengthBeginEnd position;
 
     /**
-     * Gets the value of the compatibility property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the compatibility property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCOMPATIBILITY().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link COMPATIBILITY }
-     * 
-     * 
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public List<COMPATIBILITY> getCOMPATIBILITY() {
-        if (compatibility == null) {
-            compatibility = new ArrayList<COMPATIBILITY>();
-        }
-        return this.compatibility;
-    }
-
-    /**
-     * Gets the value of the id property.
+     * Gets the value of the link property.
      * 
      * @return
      *     possible object is
@@ -112,12 +73,12 @@ public class LANETYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public String getID() {
-        return id;
+    public String getLINK() {
+        return link;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the link property.
      * 
      * @param value
      *     allowed object is
@@ -125,12 +86,12 @@ public class LANETYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public void setID(String value) {
-        this.id = value;
+    public void setLINK(String value) {
+        this.link = value;
     }
 
     /**
-     * Gets the value of the parent property.
+     * Gets the value of the lane property.
      * 
      * @return
      *     possible object is
@@ -138,12 +99,12 @@ public class LANETYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public String getPARENT() {
-        return parent;
+    public String getLANE() {
+        return lane;
     }
 
     /**
-     * Sets the value of the parent property.
+     * Sets the value of the lane property.
      * 
      * @param value
      *     allowed object is
@@ -151,42 +112,12 @@ public class LANETYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public void setPARENT(String value) {
-        this.parent = value;
+    public void setLANE(String value) {
+        this.lane = value;
     }
 
     /**
-     * Gets the value of the default property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public boolean isDEFAULT() {
-        if (_default == null) {
-            return false;
-        } else {
-            return _default;
-        }
-    }
-
-    /**
-     * Sets the value of the default property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public void setDEFAULT(Boolean value) {
-        this._default = value;
-    }
-
-    /**
-     * Gets the value of the base property.
+     * Gets the value of the direction property.
      * 
      * @return
      *     possible object is
@@ -194,12 +125,12 @@ public class LANETYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
+    public String getDIRECTION() {
+        return direction;
     }
 
     /**
-     * Sets the value of the base property.
+     * Sets the value of the direction property.
      * 
      * @param value
      *     allowed object is
@@ -207,8 +138,34 @@ public class LANETYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+    public void setDIRECTION(String value) {
+        this.direction = value;
+    }
+
+    /**
+     * Gets the value of the position property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
+    public LengthBeginEnd getPOSITION() {
+        return position;
+    }
+
+    /**
+     * Sets the value of the position property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T02:17:09+01:00", comments = "JAXB RI v2.3.0")
+    public void setPOSITION(LengthBeginEnd value) {
+        this.position = value;
     }
 
 }
