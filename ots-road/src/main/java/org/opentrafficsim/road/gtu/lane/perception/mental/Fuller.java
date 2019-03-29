@@ -3,7 +3,9 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVE;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVEZERO;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -97,6 +99,12 @@ public class Fuller implements Mental
     /** Task manager. */
     private final TaskManager taskManager;
 
+    /** Stored anticipation reliance per task. */
+    private Map<String, Double> anticipationReliances = new LinkedHashMap<>();
+
+    /** Stored task demand per task. */
+    private Map<String, Double> taskDemands = new LinkedHashMap<>();
+
     /**
      * Constructor with custom situational awareness.
      * @param tasks Set&lt;? extends Task&gt;; tasks
@@ -161,9 +169,15 @@ public class Fuller implements Mental
         // a) the fundamental diagrams of task workload are defined in the tasks
         // b) sum task demand
         this.taskManager.manage(this.tasks, perception, gtu, parameters);
+        this.anticipationReliances.clear();
+        this.taskDemands.clear();
         for (Task task : this.tasks)
         {
-            taskDemand += (task.getTaskDemand() - task.getAnticipationReliance());
+            double ar = task.getAnticipationReliance();
+            double td = task.getTaskDemand();
+            this.anticipationReliances.put(task.getId(), ar);
+            this.taskDemands.put(task.getId(), td);
+            taskDemand += (td - ar);
         }
         double taskSaturation = taskDemand / parameters.getParameter(TC);
         parameters.setParameter(TS, taskSaturation);
@@ -175,6 +189,26 @@ public class Fuller implements Mental
         // d) situational awareness can be implemented by one of the behavioral responses
         // e) perception errors from situational awareness are included in the perception step
         // f) reaction time from situational awareness are included in the perception step
+    }
+    
+    /**
+     * Returns the anticipation reliance of the given task id.
+     * @param taskId taskId; task id to return the anticipation reliance for.
+     * @return double; anticipation reliance of given task id, {@code NaN if not present}
+     */
+    public double getAnticipationReliance(final String taskId)
+    {
+         return this.anticipationReliances.getOrDefault(taskId, Double.NaN);
+    }
+    
+    /**
+     * Returns the demand of the given task id.
+     * @param taskId taskId; task id to return the demand for.
+     * @return double; demand of given task id, {@code NaN if not present}
+     */
+    public double getTaskDemand(final String taskId)
+    {
+         return this.taskDemands.getOrDefault(taskId, Double.NaN);
     }
 
     /** {@inheritDoc} */
