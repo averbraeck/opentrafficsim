@@ -79,6 +79,16 @@
     </xsd:complexType>
   </xsd:element>
 
+
+  <xsd:element name="SINK">
+    <xsd:complexType>
+      <xsd:attribute name="LINK" type="xsd:string" use="required" />
+      <xsd:attribute name="LANE" type="xsd:string" use="required" />
+      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
+      <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="LISTGENERATOR">
     <xsd:complexType>
       <xsd:sequence>
@@ -99,6 +109,7 @@
       <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
       <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
       <xsd:attribute name="URI" type="xsd:anyURI" use="required" />
+      <!-- TODO: Add inline list. -->
     </xsd:complexType>
   </xsd:element>
 
@@ -109,6 +120,7 @@
         <xsd:element ref="OD" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="GENERATOR" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="SINK" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
