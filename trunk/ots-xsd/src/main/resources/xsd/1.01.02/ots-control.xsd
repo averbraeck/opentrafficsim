@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
@@ -20,7 +21,12 @@
               <xsd:element name="SIGNALGROUP" minOccurs="1" maxOccurs="unbounded">
                 <xsd:complexType>
                   <xsd:sequence>
-                    <xsd:element name="TRAFFICLIGHT" type="xsd:string" minOccurs="1" maxOccurs="unbounded" />
+                    <xsd:element name="TRAFFICLIGHT" minOccurs="1" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:attribute name="LINK" type="xsd:string" />
+                        <xsd:attribute name="TRAFFICLIGHTID" type="xsd:string" />
+                      </xsd:complexType>
+                    </xsd:element>
                   </xsd:sequence>
                   <xsd:attribute name="ID" type="xsd:string" use="required" />
                   <xsd:attribute name="OFFSET" type="DURATIONTYPE" use="required" />
