@@ -113,7 +113,7 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="DEMAND">
+  <xsd:element name="NETWORKDEMAND">
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="GTUMIX" minOccurs="0" maxOccurs="unbounded" />

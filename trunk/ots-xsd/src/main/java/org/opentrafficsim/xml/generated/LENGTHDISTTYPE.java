@@ -17,15 +17,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for CSESHOULDER complex type.
+ * <p>Java class for LENGTHDISTTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CSESHOULDER"&gt;
+ * &lt;complexType name="LENGTHDISTTYPE"&gt;
  *   &lt;complexContent&gt;
- *     &lt;extension base="{http://www.opentrafficsim.org/ots}CROSSSECTIONELEMENT"&gt;
- *       &lt;attribute name="ID" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;extension base="{http://www.opentrafficsim.org/ots}CONTDISTTYPE"&gt;
+ *       &lt;attribute name="LENGTHUNIT" type="{http://www.opentrafficsim.org/ots}LENGTHUNITTYPE" /&gt;
  *     &lt;/extension&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -34,21 +34,21 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CSESHOULDER")
+@XmlType(name = "LENGTHDISTTYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
-public class CSESHOULDER
-    extends CROSSSECTIONELEMENT
+public class LENGTHDISTTYPE
+    extends CONTDISTTYPE
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlAttribute(name = "ID")
+    @XmlAttribute(name = "LENGTHUNIT")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
-    protected String id;
+    protected String lengthunit;
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the lengthunit property.
      * 
      * @return
      *     possible object is
@@ -56,12 +56,12 @@ public class CSESHOULDER
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
-    public String getID() {
-        return id;
+    public String getLENGTHUNIT() {
+        return lengthunit;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the lengthunit property.
      * 
      * @param value
      *     allowed object is
@@ -69,8 +69,8 @@ public class CSESHOULDER
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
-    public void setID(String value) {
-        this.id = value;
+    public void setLENGTHUNIT(String value) {
+        this.lengthunit = value;
     }
 
 }
