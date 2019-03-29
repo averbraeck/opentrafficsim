@@ -813,12 +813,12 @@
 
     <LINK ID="L1a" NODESTART="N1a" NODEEND="N2a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L2a" NODESTART="N2a" NODEEND="N3a">
       <BEZIER />
-      <LAYOUT>RT4ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref1</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T225_01.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T225_02.1" LANE="A2" POSITION="END-6.55m"
@@ -831,22 +831,22 @@
 
     <LINK ID="L3a4a" NODESTART="N3a" NODEEND="N5a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L5a" NODESTART="N5a" NODEEND="N6a">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L6a" NODESTART="N6a" NODEEND="N7a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L7a" NODESTART="N7a" NODEEND="N8a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref1</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T231_01.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T231_02.1" LANE="A2" POSITION="END-6.55m"
@@ -857,17 +857,17 @@
 
     <LINK ID="L8a9a" NODESTART="N8a" NODEEND="N10a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L10a11a" NODESTART="N10a" NODEEND="N12a">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L12a" NODESTART="N12a" NODEEND="N13a">
       <STRAIGHT />
-      <LAYOUT>RT4ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref0</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T234_02.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T234_02.2" LANE="A2" POSITION="END-6.55m"
@@ -880,17 +880,17 @@
 
     <LINK ID="L13a14a" NODESTART="N13a" NODEEND="N15a">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L15a16a" NODESTART="N15a" NODEEND="N17a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L17a" NODESTART="N17a" NODEEND="N18a">
       <BEZIER />
-      <LAYOUT>RT4ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref1</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T239_01.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T239_02.1" LANE="A2" POSITION="END-6.55m"
@@ -903,17 +903,17 @@
 
     <LINK ID="L18a19a" NODESTART="N18a" NODEEND="N20a">
       <STRAIGHT />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L20a21a" NODESTART="N20a" NODEEND="N22a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L22a" NODESTART="N22a" NODEEND="N23a">
       <STRAIGHT />
-      <LAYOUT>RT4ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref1</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T245_01.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T245_02.1" LANE="A2" POSITION="END-6.55m"
@@ -926,22 +926,22 @@
 
     <LINK ID="L23a24a" NODESTART="N23a" NODEEND="N25a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L25a" NODESTART="N25a" NODEEND="N26a">
       <STRAIGHT />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L26a" NODESTART="N26a" NODEEND="N27a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L27a" NODESTART="N27a" NODEEND="N28a">
       <BEZIER />
-      <LAYOUT>RT5ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT5ln_ref1</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T249_01.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T249_02.1" LANE="A2" POSITION="END-6.55m"
@@ -956,92 +956,92 @@
 
     <LINK ID="L28a29a" NODESTART="N28a" NODEEND="N30a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L30a" NODESTART="N30a" NODEEND="N31a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L31a" NODESTART="N31a" NODEEND="N32a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L32a" NODESTART="N32a" NODEEND="N33a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L33a" NODESTART="N33a" NODEEND="N34a">
       <BEZIER />
-      <LAYOUT></LAYOUT>
+      <DEFINEDLAYOUT></DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L34a" NODESTART="N34a" NODEEND="N35a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L35a" NODESTART="N35a" NODEEND="N36a">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L36a" NODESTART="N36a" NODEEND="N37a">
       <STRAIGHT />
-      <LAYOUT>RT3ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref1</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L37a" NODESTART="N37a" NODEEND="N38a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref1</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L38a" NODESTART="N38a" NODEEND="N39a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L39a" NODESTART="N39a" NODEEND="N40a">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L40a" NODESTART="N40a" NODEEND="N41a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L41a" NODESTART="N41a" NODEEND="N42a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref1</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L42a" NODESTART="N42a" NODEEND="N43a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L43a" NODESTART="N43a" NODEEND="N44a">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L44a" NODESTART="N44a" NODEEND="N45a">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L45a" NODESTART="N45a" NODEEND="N46a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L46a" NODESTART="N46a" NODEEND="N47a">
       <BEZIER />
-      <LAYOUT>RT4ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref1</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T291_01.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T291_02.1" LANE="A2" POSITION="END-6.55m"
@@ -1054,22 +1054,19 @@
 
     <LINK ID="L47a48a" NODESTART="N47a" NODEEND="N49a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L49a" NODESTART="N49a" NODEEND="N50a">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
-      <SINK LANE="A1" POSITION="END-20m" />
-      <SINK LANE="A2" POSITION="END-20m" />
-      <SINK LANE="A3" POSITION="END-20m" />
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <!-- ================ OTHER DIRECTION ================ -->
 
     <LINK ID="L49b" NODESTART="N50b" NODEEND="N49b">
       <BEZIER />
-      <LAYOUT>RT4ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref0</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T291_08.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T291_08.2" LANE="A2" POSITION="END-6.55m"
@@ -1082,92 +1079,92 @@
 
     <LINK ID="L48b47b" NODESTART="N49b" NODEEND="N47b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L46b" NODESTART="N47b" NODEEND="N46b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L45b" NODESTART="N46b" NODEEND="N45b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L44b" NODESTART="N45b" NODEEND="N44b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L43b" NODESTART="N44b" NODEEND="N43b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L42b" NODESTART="N43b" NODEEND="N42b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L41b" NODESTART="N42b" NODEEND="N41b">
       <BEZIER />
-      <LAYOUT>RT3ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref1</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L40b" NODESTART="N41b" NODEEND="N40b">
       <STRAIGHT />
-      <LAYOUT>RT3ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref1</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L39b" NODESTART="N40b" NODEEND="N39b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L38b" NODESTART="N39b" NODEEND="N38b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L37b" NODESTART="N38b" NODEEND="N37b">
       <BEZIER />
-      <LAYOUT>v</LAYOUT>
+      <DEFINEDLAYOUT>v</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L36b" NODESTART="N37b" NODEEND="N36b">
       <STRAIGHT />
-      <LAYOUT>RT3ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref1</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L35b" NODESTART="N36b" NODEEND="N35b">
       <BEZIER />
-      <LAYOUT>RT3ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref1</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L34b" NODESTART="N35b" NODEEND="N34b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L33b" NODESTART="N34b" NODEEND="N33b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L32b" NODESTART="N33b" NODEEND="N32b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L31b" NODESTART="N32b" NODEEND="N31b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L30b" NODESTART="N31b" NODEEND="N30b">
       <BEZIER />
-      <LAYOUT>RT5ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT5ln_ref1</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T249_07.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T249_08.1" LANE="A2" POSITION="END-6.55m"
@@ -1182,22 +1179,22 @@
 
     <LINK ID="L29b28b" NODESTART="N30b" NODEEND="N28b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L27b" NODESTART="N28b" NODEEND="N27b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L26b" NODESTART="N27b" NODEEND="N26b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L25b" NODESTART="N26b" NODEEND="N25b">
       <BEZIER />
-      <LAYOUT>RT3ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT3ln_ref0</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T245_08.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T245_08.2" LANE="A2" POSITION="END-6.55m"
@@ -1208,17 +1205,17 @@
 
     <LINK ID="L24b23b" NODESTART="N25b" NODEEND="N23b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L22b21b" NODESTART="N23b" NODEEND="N21b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L20b" NODESTART="N21b" NODEEND="N20b">
       <STRAIGHT />
-      <LAYOUT>RT4ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref0</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T239_08.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T239_08.2" LANE="A2" POSITION="END-6.55m"
@@ -1231,17 +1228,17 @@
 
     <LINK ID="L19b18b" NODESTART="N20b" NODEEND="N18b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L17b16b" NODESTART="N18b" NODEEND="N16b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L15b" NODESTART="N16b" NODEEND="N15b">
       <BEZIER />
-      <LAYOUT>RT4ln_ref2</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref2</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T234_07.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T234_07.2" LANE="A2" POSITION="END-6.55m"
@@ -1254,22 +1251,22 @@
 
     <LINK ID="L14b13b" NODESTART="N15b" NODEEND="N13b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L12b" NODESTART="N13b" NODEEND="N12b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L11b" NODESTART="N12b" NODEEND="N11b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L10b" NODESTART="N11b" NODEEND="N10b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T231_08.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T231_08.2" LANE="A2" POSITION="END-6.55m"
@@ -1282,22 +1279,22 @@
 
     <LINK ID="L9b8b" NODESTART="N10b" NODEEND="N8b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L7b" NODESTART="N8b" NODEEND="N7b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L6b" NODESTART="N7b" NODEEND="N6b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L5b" NODESTART="N6b" NODEEND="N5b">
       <BEZIER />
-      <LAYOUT>RT4ln_ref1</LAYOUT>
+      <DEFINEDLAYOUT>RT4ln_ref1</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T225_07.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T225_08.1" LANE="A2" POSITION="END-6.55m"
@@ -1310,147 +1307,145 @@
 
     <LINK ID="L4b3b" NODESTART="N5b" NODEEND="N3b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L2b" NODESTART="N3b" NODEEND="N2b">
       <BEZIER />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L1b" NODESTART="N2b" NODEEND="N1b">
       <STRAIGHT />
-      <LAYOUT>RT2ln_ref0</LAYOUT>
-      <SINK LANE="A1" POSITION="END-20m" />
-      <SINK LANE="A2" POSITION="END-20m" />
+      <DEFINEDLAYOUT>RT2ln_ref0</DEFINEDLAYOUT>
     </LINK>
 
     <!-- =============== SIDE LANES ================ -->
 
     <LINK ID="L225_01.1" NODESTART="N3a" NODEEND="N225a_uit" OFFSETSTART="-16.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_uit_a" NODESTART="N225a_uit" NODEEND="N225a_uit2">
       <STRAIGHT />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_03.1" NODESTART="N3a" NODEEND="N225b_uit" OFFSETSTART="-7.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L231_01" NODESTART="N8a" NODEEND="N231a_uit" OFFSETSTART="-16.5m" OFFSETEND="-3m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L234_03" NODESTART="N13a" NODEEND="N234b_uit" OFFSETSTART="-4.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L239_01" NODESTART="N18a" NODEEND="N239a_uit" OFFSETSTART="-16.5m" OFFSETEND="-3m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L245_01" NODESTART="N23a" NODEEND="N245a_uit" OFFSETSTART="-16.5m" OFFSETEND="0m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_01" NODESTART="N28a" NODEEND="N249a_uit" OFFSETSTART="-16.5m" OFFSETEND="-6m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_03" NODESTART="N28a" NODEEND="N249b_uit" OFFSETSTART="-4.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_uit_b" NODESTART="N249b_uit" NODEEND="N249b_uit2">
       <STRAIGHT />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L291_01" NODESTART="N47a" NODEEND="N291a_uit" OFFSETSTART="-16.5m" OFFSETEND="-3m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L291_09" NODESTART="N49b" NODEEND="N291a_uit" OFFSETSTART="-4.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L291_uit_a" NODESTART="N291a_uit" NODEEND="N291a_uit2">
       <STRAIGHT />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_07" NODESTART="N30b" NODEEND="N249b_uit" OFFSETSTART="-16.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_09" NODESTART="N30b" NODEEND="N249a_uit" OFFSETSTART="-4.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_uit_a" NODESTART="N249a_uit" NODEEND="N249a_uit2">
       <BEZIER />
-      <LAYOUT>RT_3ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_3ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L245_09" NODESTART="N25b" NODEEND="N245a_uit" OFFSETSTART="-7.5m" OFFSETEND="0m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L245_uit_a" NODESTART="N245a_uit" NODEEND="N245a_uit2" OFFSETSTART="0m">
       <STRAIGHT />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L239_09" NODESTART="N20b" NODEEND="N239a_uit" OFFSETSTART="-4.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L239_uit_b" NODESTART="N239a_uit" NODEEND="N239a_uit2">
       <STRAIGHT />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L234_07" NODESTART="N15b" NODEEND="N234b_uit" OFFSETSTART="-16.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L234_uit_b" NODESTART="N234b_uit" NODEEND="N234b_uit2">
       <STRAIGHT />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L231_09" NODESTART="N10b" NODEEND="N231a_uit" OFFSETSTART="-4.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L231_uit_a" NODESTART="N231a_uit" NODEEND="N231a_uit2">
       <STRAIGHT />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_07.1" NODESTART="N5b" NODEEND="N225b_uit" OFFSETSTART="-16.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_uit_b" NODESTART="N225b_uit" NODEEND="N225b_uit2">
       <STRAIGHT />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_09.1" NODESTART="N5b" NODEEND="N225a_uit" OFFSETSTART="-7.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_10.1" NODESTART="N225a_in" NODEEND="N5a" OFFSETSTART="-6m" OFFSETEND="-13.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_11.1" NODESTART="N225a_in" NODEEND="N225b_uit" OFFSETSTART="-3m">
       <BEZIER />
-      <LAYOUT></LAYOUT>
+      <DEFINEDLAYOUT></DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_11.2" NODESTART="N225a_in" NODEEND="N3b" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_in_a" NODESTART="N225a_in2" NODEEND="N225a_in">
       <STRAIGHT />
-      <LAYOUT>RT_3ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_3ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T225_10.1" LANE="A3" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T225_11.1" LANE="A2" POSITION="END-6.55m"
@@ -1461,15 +1456,15 @@
 
     <LINK ID="L231_10" NODESTART="N231a_in" NODEEND="N10a" OFFSETSTART="-3m" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L231_12" NODESTART="N231a_in" NODEEND="N8b" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L231_in_a" NODESTART="N231a_in2" NODEEND="N231a_in">
       <STRAIGHT />
-      <LAYOUT>RT_3ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_3ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T231_10.1" LANE="A3" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T231_10.2" LANE="A2" POSITION="END-6.55m"
@@ -1479,11 +1474,11 @@
     </LINK>
     <LINK ID="L234_06" NODESTART="N234b_in" NODEEND="N15a" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L234_in_b" NODESTART="N234b_in2" NODEEND="N234b_in">
       <STRAIGHT />
-      <LAYOUT>RT_3ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_3ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T234_04.1" LANE="A3" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T234_06.1" LANE="A2" POSITION="END-6.55m"
@@ -1493,15 +1488,15 @@
     </LINK>
     <LINK ID="L239_10" NODESTART="N239a_in" NODEEND="N20a" OFFSETSTART="-6m" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_10" NODESTART="N249a_in" NODEEND="N30a" OFFSETSTART="-9m" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_in_a" NODESTART="N249a_in2" NODEEND="N249a_in">
       <BEZIER />
-      <LAYOUT>RT_5ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_5ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T249_10.1" LANE="A5" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T249_10.2" LANE="A4" POSITION="END-6.55m"
@@ -1515,15 +1510,15 @@
     </LINK>
     <LINK ID="L249_12" NODESTART="N249a_in" NODEEND="N28b" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L291_10" NODESTART="N291a_in" NODEEND="N49a" OFFSETSTART="-6m" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L291_in_a" NODESTART="N291a_in2" NODEEND="N291a_in">
       <STRAIGHT />
-      <LAYOUT>RT_4ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_4ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T291_10.1" LANE="A4" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T291_10.2" LANE="A3" POSITION="END-6.55m"
@@ -1535,34 +1530,34 @@
     </LINK>
     <LINK ID="L291_11" NODESTART="N291a_in" NODEEND="N47b" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L291_04" NODESTART="N291b_in" NODEEND="N47b" OFFSETEND="-13.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L291_in_b" NODESTART="N291b_in2" NODEEND="N291b_in">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T291_04.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     </LINK>
     <LINK ID="L249_05" NODESTART="N249b_in" NODEEND="N249a_uit">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_05r" NODESTART="N249b_in" NODEEND="N28b" OFFSETEND="-13.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_05l" NODESTART="N249b_in" NODEEND="N30a" OFFSETEND="-7.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_in_b" NODESTART="N249b_in2" NODEEND="N249b_in">
       <STRAIGHT />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T249_05.1" LANE="A2" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T249_05.2" LANE="A1" POSITION="END-6.55m"
@@ -1570,11 +1565,11 @@
     </LINK>
     <LINK ID="L239_12" NODESTART="N239a_in" NODEEND="N18b" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L239_in_a" NODESTART="N239a_in2" NODEEND="N239a_in">
       <STRAIGHT />
-      <LAYOUT>RT_4ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_4ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T239_10.1" LANE="A4" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T239_10.2" LANE="A3" POSITION="END-6.55m"
@@ -1586,11 +1581,11 @@
     </LINK>
     <LINK ID="L234_04" NODESTART="N234b_in" NODEEND="N13b" OFFSETSTART="-6m" OFFSETEND="-13.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_in_b" NODESTART="N225b_in2" NODEEND="N225b_in">
       <STRAIGHT />
-      <LAYOUT>RT_2ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_2ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T225_04.1" LANE="A2" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
       <TRAFFICLIGHT ID="T225_05.1" LANE="A1" POSITION="END-6.55m"
@@ -1598,51 +1593,51 @@
     </LINK>
     <LINK ID="L225_04.1" NODESTART="N225b_in" NODEEND="N3b" OFFSETSTART="-3m" OFFSETEND="-13.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_05.1" NODESTART="N225b_in" NODEEND="N225a_uit">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L225_06.1" NODESTART="N225b_in" NODEEND="N5a" OFFSETEND="-10.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L249_11" NODESTART="N249a_in" NODEEND="N249b_uit" OFFSETSTART="-6m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L245_in_a" NODESTART="N245a_in2" NODEEND="N245a_in" OFFSETSTART="-9m" OFFSETEND="-9m">
       <STRAIGHT />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T245_11.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     </LINK>
 
     <LINK ID="L245_in_b" NODESTART="N245b_in2" NODEEND="N245b_in">
       <STRAIGHT />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
       <TRAFFICLIGHT ID="T245_05.1" LANE="A1" POSITION="END-6.55m"
         CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
     </LINK>
 
     <LINK ID="L245b_inR" NODESTART="N245b_in" NODEEND="N23b" OFFSETEND="-13.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="L245_11r" NODESTART="N245a_in" NODEEND="N25a" OFFSETSTART="-9m" OFFSETEND="-13.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L245_11l" NODESTART="N245a_in" NODEEND="N23b" OFFSETSTART="-9m" OFFSETEND="-13.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
     <LINK ID="L245b_inL" NODESTART="N245b_in" NODEEND="N25a" OFFSETEND="-7.5m">
       <BEZIER />
-      <LAYOUT>RT_1ln_3m_79km/h</LAYOUT>
+      <DEFINEDLAYOUT>RT_1ln_3m_79km/h</DEFINEDLAYOUT>
     </LINK>
 
     <ROUTE ID="A">
@@ -1734,37 +1729,53 @@
   </NETWORK>
 
 
-  <DEMAND>
+  <NETWORKDEMAND>
 
     <GENERATOR LINK="L49b" DIRECTION="DIR_PLUS" LANE="A1" POSITION="10m">
       <GTU>CAR</GTU>
       <ROUTE>B</ROUTE>
-      <IAT>EXPO(20) s</IAT>
+      <IAT DURATIONUNIT="s">
+        <EXPONENTIAL LAMBDA="20" />
+      </IAT>
       <ROOMCHECKER>CF</ROOMCHECKER>
     </GENERATOR>
     <GENERATOR LINK="L49b" DIRECTION="DIR_PLUS" LANE="A2" POSITION="10m">
       <GTU>CAR</GTU>
       <ROUTE>B</ROUTE>
-      <IAT>EXPO(20) s</IAT>
+      <IAT DURATIONUNIT="s">
+        <EXPONENTIAL LAMBDA="20" />
+      </IAT>
       <ROOMCHECKER>CF</ROOMCHECKER>
     </GENERATOR>
 
     <GENERATOR LINK="L1a" DIRECTION="DIR_MINUS" LANE="A1" POSITION="10m">
       <GTU>CAR</GTU>
       <ROUTE>A</ROUTE>
-      <IAT>EXPO(20) s</IAT>
+      <IAT DURATIONUNIT="s">
+        <EXPONENTIAL LAMBDA="20" />
+      </IAT>
       <ROOMCHECKER>CF</ROOMCHECKER>
     </GENERATOR>
     <GENERATOR LINK="L1a" DIRECTION="DIR_MINUS" LANE="A2" POSITION="10m">
       <GTU>CAR</GTU>
       <ROUTE>A</ROUTE>
-      <IAT>EXPO(20) s</IAT>
+      <IAT DURATIONUNIT="s">
+        <EXPONENTIAL LAMBDA="20" />
+      </IAT>
       <ROOMCHECKER>CF</ROOMCHECKER>
     </GENERATOR>
 
-  </DEMAND>
+    <SINK LINK="L49a" LANE="A1" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+    <SINK LINK="L49a" LANE="A2" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+    <SINK LINK="L49a" LANE="A3" DIRECTION="DIR_PLUS" POSITION="END-20m" />
 
-  <RUN RUNLENGTH="1h">
+    <SINK LINK="L1b" LANE="A1" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+    <SINK LINK="L1b" LANE="A2" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+
+  </NETWORKDEMAND>
+
+  <RUN>
+    <RUNLENGTH>1h</RUNLENGTH>
   </RUN>
-  
+
 </OTS>
