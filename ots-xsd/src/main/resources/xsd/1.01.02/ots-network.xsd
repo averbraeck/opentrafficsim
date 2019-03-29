@@ -72,7 +72,9 @@
           </xsd:element>
           <xsd:element name="POLYLINE">
             <xsd:complexType>
-              <xsd:attribute name="INTERMEDIATEPOINTS" type="COORDINATELISTTYPE" use="required" />
+              <xsd:sequence minOccurs="3" maxOccurs="unbounded">
+                <xsd:element name="COORDINATE" type="COORDINATETYPE" />
+              </xsd:sequence>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -139,10 +141,10 @@
         <xsd:element name="FROM" type="xsd:string" minOccurs="1" maxOccurs="1" />
         <xsd:element name="TO" type="xsd:string" minOccurs="1" maxOccurs="1" />
         <xsd:element name="VIA" minOccurs="2" maxOccurs="unbounded" />
+        <xsd:element name="DISTANCECOST" type="DISTANCECOSTTYPE" minOccurs="1" />
+        <xsd:element name="TIMECOST" type="TIMECOSTTYPE" minOccurs="1" />
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
-      <xsd:attribute name="DISTANCECOST" type="DISTANCECOSTTYPE" use="required" />
-      <xsd:attribute name="TIMECOST" type="TIMECOSTTYPE" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
