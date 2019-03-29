@@ -138,6 +138,7 @@ import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.LeaderId;
+import org.opentrafficsim.road.network.sampling.data.ReactionTime;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 import org.xml.sax.SAXException;
@@ -329,7 +330,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         destinations.add(network.getNode("EXIT"));
         Categorization categorization = new Categorization("Distraction", GTUType.class);
         TimeVector globalTime =
-                new TimeVector(new double[] {0, 360, 1560, 2160, 3960}, TimeUnit.BASE_SECOND, StorageType.DENSE);
+                new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
         ODMatrix od = new ODMatrix("Distraction", origins, destinations, categorization, globalTime, Interpolation.LINEAR);
         Category carCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
         Category truckCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.TRUCK));
@@ -352,11 +353,23 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim, Duration.createSI(2.0), Duration.createSI(1.0)));
 
         // Sampler
-        this.sampler = new RoadSampler(sim);
-        this.sampler.registerExtendedDataType(new TimeToCollision());
-        this.sampler.registerExtendedDataType(new TaskSaturationDataType());
-        this.sampler.registerExtendedDataType(new LeaderId());
-        // TODO: add SA, AR_per_task, TD_per_task and Tr in trajectories
+        if (getBooleanProperty("sampler"))
+        {
+            this.sampler = new RoadSampler(sim);
+            this.sampler.registerExtendedDataType(new TimeToCollision());
+            this.sampler.registerExtendedDataType(new TaskSaturationDataType());
+            this.sampler.registerExtendedDataType(new LeaderId());
+            this.sampler.registerExtendedDataType(new ReactionTime());
+            this.sampler.registerExtendedDataType(new SituationalAwarenessDataType());
+            if (getBooleanProperty("tasks"))
+            {
+                this.sampler.registerExtendedDataType(new TaskAnticipationRelianceDataType("car-following"));
+                this.sampler.registerExtendedDataType(new TaskDemandDataType("car-following"));
+                this.sampler.registerExtendedDataType(new TaskAnticipationRelianceDataType("lane-changing"));
+                this.sampler.registerExtendedDataType(new TaskDemandDataType("lane-changing"));
+            }
+        }
+
         LinkData linkData = new LinkData((CrossSectionLink) network.getLink("LEFTIN"));
         registerLinkToSampler(linkData, ignoreStart, linkData.getLength());
         linkData = new LinkData((CrossSectionLink) network.getLink("RIGHTIN"));
@@ -398,7 +411,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
      */
     private static FrequencyVector getDemand(final double demand) throws ValueException
     {
-        return new FrequencyVector(new double[] {demand * 0.5, demand * 0.5, demand, demand, 0.0}, FrequencyUnit.PER_HOUR,
+        return new FrequencyVector(new double[] { demand * 0.5, demand * 0.5, demand, demand, 0.0 }, FrequencyUnit.PER_HOUR,
                 StorageType.DENSE);
     }
 
@@ -726,7 +739,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                     Try.assign(() -> this.desiredSpeedModelGenerator.draw(), "Unexpected exception."));
         }
     }
-    
+
     /** Task saturation trajectory data. */
     private class TaskSaturationDataType extends ExtendedDataTypeNumber<GtuData>
     {
@@ -750,7 +763,86 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             }
             return Float.NaN;
         }
-        
+
+    }
+
+    /** Task adaptation reliance trajectory data. */
+    private class TaskAnticipationRelianceDataType extends ExtendedDataTypeNumber<GtuData>
+    {
+
+        /** Task id. */
+        private String taskId;
+
+        /**
+         * Constructor.
+         * @param taskId String; task id
+         */
+        TaskAnticipationRelianceDataType(final String taskId)
+        {
+            super(taskId + "_AR");
+            this.taskId = taskId;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Float getValue(final GtuData gtu)
+        {
+            return (float) ((Fuller) gtu.getGtu().getTacticalPlanner().getPerception().getMental())
+                    .getAnticipationReliance(this.taskId);
+        }
+
+    }
+
+    /** Task demand trajectory data. */
+    private class TaskDemandDataType extends ExtendedDataTypeNumber<GtuData>
+    {
+
+        /** Task id. */
+        private String taskId;
+
+        /**
+         * Constructor.
+         * @param taskId String; task id
+         */
+        TaskDemandDataType(final String taskId)
+        {
+            super(taskId + "_TD");
+            this.taskId = taskId;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Float getValue(final GtuData gtu)
+        {
+            return (float) ((Fuller) gtu.getGtu().getTacticalPlanner().getPerception().getMental()).getTaskDemand(this.taskId);
+        }
+
+    }
+
+    /** Situational awareness trajectory data. */
+    private class SituationalAwarenessDataType extends ExtendedDataTypeNumber<GtuData>
+    {
+
+        /**
+         * Constructor.
+         */
+        SituationalAwarenessDataType()
+        {
+            super("SA");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Float getValue(final GtuData gtu)
+        {
+            Double ts = gtu.getGtu().getParameters().getParameterOrNull(AdaptationSituationalAwareness.SA);
+            if (ts != null)
+            {
+                return (float) (double) ts;
+            }
+            return Float.NaN;
+        }
+
     }
 
 }
