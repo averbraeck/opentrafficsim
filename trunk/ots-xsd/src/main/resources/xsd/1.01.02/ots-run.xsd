@@ -14,18 +14,20 @@
   <xsd:element name="RUN">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="RANDOMSTREAM" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <!-- TODO: REPLICATION NUMBER! -->
-            <xsd:attribute name="ID" type="xsd:string" use="required" />
-            <xsd:attribute name="SEED" type="xsd:integer" use="required" />
-          </xsd:complexType>
-        </xsd:element>
+        <xsd:element name="STARTTIME" type="TIMETYPE" minOccurs="0" default="0s" />
+        <xsd:element name="WARMUPPERIOD" type="DURATIONTYPE" minOccurs="0" default="0s" />
+        <xsd:element name="RUNLENGTH" type="DURATIONTYPE" minOccurs="1" />
+        <xsd:element name="NUMBERREPLICATIONS" type="xsd:unsignedInt" minOccurs="0" default="1" />
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="REPLICATION" type="xsd:integer" minOccurs="1" maxOccurs="1" />
+          <xsd:element name="RANDOMSTREAM" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="ID" type="xsd:string" use="required" />
+              <xsd:attribute name="SEED" type="xsd:integer" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
       </xsd:sequence>
-      <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional" default="0s" />
-      <xsd:attribute name="WARMUPPERIOD" type="DURATIONTYPE" use="optional" default="0s" />
-      <xsd:attribute name="RUNLENGTH" type="DURATIONTYPE" use="required" />
-      <xsd:attribute name="NUMBERREPLICATIONS" type="xsd:unsignedInt" use="optional" default="1" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
