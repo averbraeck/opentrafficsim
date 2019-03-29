@@ -17,15 +17,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for CSESHOULDER complex type.
+ * <p>Java class for SPEEDDISTTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CSESHOULDER"&gt;
+ * &lt;complexType name="SPEEDDISTTYPE"&gt;
  *   &lt;complexContent&gt;
- *     &lt;extension base="{http://www.opentrafficsim.org/ots}CROSSSECTIONELEMENT"&gt;
- *       &lt;attribute name="ID" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;extension base="{http://www.opentrafficsim.org/ots}CONTDISTTYPE"&gt;
+ *       &lt;attribute name="SPEEDUNIT" type="{http://www.opentrafficsim.org/ots}SPEEDUNITTYPE" /&gt;
  *     &lt;/extension&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -34,21 +34,21 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CSESHOULDER")
+@XmlType(name = "SPEEDDISTTYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
-public class CSESHOULDER
-    extends CROSSSECTIONELEMENT
+public class SPEEDDISTTYPE
+    extends CONTDISTTYPE
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlAttribute(name = "ID")
+    @XmlAttribute(name = "SPEEDUNIT")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
-    protected String id;
+    protected String speedunit;
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the speedunit property.
      * 
      * @return
      *     possible object is
@@ -56,12 +56,12 @@ public class CSESHOULDER
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
-    public String getID() {
-        return id;
+    public String getSPEEDUNIT() {
+        return speedunit;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the speedunit property.
      * 
      * @param value
      *     allowed object is
@@ -69,8 +69,8 @@ public class CSESHOULDER
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-29T03:57:34+01:00", comments = "JAXB RI v2.3.0")
-    public void setID(String value) {
-        this.id = value;
+    public void setSPEEDUNIT(String value) {
+        this.speedunit = value;
     }
 
 }

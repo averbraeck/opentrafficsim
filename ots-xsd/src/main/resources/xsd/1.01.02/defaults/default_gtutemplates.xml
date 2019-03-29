@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GTUTEMPLATES xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<GTUTEMPLATES xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd
   http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.01.02/ots-definitions.xsd">
 
@@ -32,15 +33,64 @@
               new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
  -->
 
-  <GTUTEMPLATE ID="CAR" GTUTYPE="CAR" DEFAULT="true" LENGTHDIST="CONST(4.19) m" WIDTHDIST="CONST(1.7) m"
-    MAXSPEEDDIST="CONST(180) km/h" />
-  <GTUTEMPLATE ID="TRUCK" GTUTYPE="TRUCK" DEFAULT="true" LENGTHDIST="CONST(12.0) m" WIDTHDIST="CONST(2.55) m"
-    MAXSPEEDDIST="NORMAL(85.0, 2.5) km/h" />
-  <GTUTEMPLATE ID="BUS" GTUTYPE="BUS" DEFAULT="true" LENGTHDIST="CONST(12.0) m" WIDTHDIST="CONST(2.55) m"
-    MAXSPEEDDIST="CONST(90) km/h" />
-  <GTUTEMPLATE ID="VAN" GTUTYPE="VAN" DEFAULT="true" LENGTHDIST="CONST(5.0) m" WIDTHDIST="CONST(2.4) m" 
-    MAXSPEEDDIST="CONST(180) km/h" />
-  <GTUTEMPLATE ID="EMERGENCY_VEHICLE" GTUTYPE="EMERGENCY_VEHICLE" DEFAULT="true" LENGTHDIST="CONST(5.0) m"
-    WIDTHDIST="CONST(2.55) m" MAXSPEEDDIST="CONST(180) km/h" />
+  <GTUTEMPLATE ID="CAR" GTUTYPE="CAR" DEFAULT="true">
+    <LENGTHDIST LENGTHUNIT="m">
+      <CONSTANT C="4.19" />
+    </LENGTHDIST>
+    <WIDTHDIST LENGTHUNIT="m">
+      <CONSTANT C="1.7" />
+    </WIDTHDIST>
+    <MAXSPEEDDIST SPEEDUNIT="km/h">
+      <CONSTANT C="180" />
+    </MAXSPEEDDIST>
+  </GTUTEMPLATE>
+
+  <GTUTEMPLATE ID="TRUCK" GTUTYPE="TRUCK" DEFAULT="true">
+    <LENGTHDIST LENGTHUNIT="m">
+      <CONSTANT C="12.0" />
+    </LENGTHDIST>
+    <WIDTHDIST LENGTHUNIT="m">
+      <CONSTANT C="2.55" />
+    </WIDTHDIST>
+    <MAXSPEEDDIST SPEEDUNIT="km/h">
+      <NORMAL MU="85.0" SIGMA="2.5" />
+    </MAXSPEEDDIST>
+  </GTUTEMPLATE>
+
+  <GTUTEMPLATE ID="BUS" GTUTYPE="BUS" DEFAULT="true">
+    <LENGTHDIST LENGTHUNIT="m">
+      <CONSTANT C="12.0" />
+    </LENGTHDIST>
+    <WIDTHDIST LENGTHUNIT="m">
+      <CONSTANT C="2.55" />
+    </WIDTHDIST>
+    <MAXSPEEDDIST SPEEDUNIT="km/h">
+      <CONSTANT C="90" />
+    </MAXSPEEDDIST>
+  </GTUTEMPLATE>
+
+  <GTUTEMPLATE ID="VAN" GTUTYPE="VAN" DEFAULT="true">
+    <LENGTHDIST LENGTHUNIT="m">
+      <CONSTANT C="5.0" />
+    </LENGTHDIST>
+    <WIDTHDIST LENGTHUNIT="m">
+      <CONSTANT C="2.4" />
+    </WIDTHDIST>
+    <MAXSPEEDDIST SPEEDUNIT="km/h">
+      <CONSTANT C="180" />
+    </MAXSPEEDDIST>
+  </GTUTEMPLATE>
+
+  <GTUTEMPLATE ID="EMERGENCY_VEHICLE" GTUTYPE="EMERGENCY_VEHICLE" DEFAULT="true">
+    <LENGTHDIST LENGTHUNIT="m">
+      <CONSTANT C="5.0" />
+    </LENGTHDIST>
+    <WIDTHDIST LENGTHUNIT="m">
+      <CONSTANT C="2.4" />
+    </WIDTHDIST>
+    <MAXSPEEDDIST SPEEDUNIT="km/h">
+      <CONSTANT C="180" />
+    </MAXSPEEDDIST>
+  </GTUTEMPLATE>
 
 </GTUTEMPLATES>

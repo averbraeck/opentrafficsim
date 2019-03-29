@@ -522,150 +522,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-<!--
-  <xsd:group name="CONTDISTTYPE">
-    <xsd:choice>
-        <element name="CONSTANT">
-          
-        </element>        
-      </xsd:sequence>
-    </xsd:choice>
-  </xsd:group>
--->
-
-  <xsd:complexType name="NUMBERDISTTYPE">
-    <xsd:choice>
-      <xsd:element name="DIST">
-        <xsd:simpleType>
-          <xsd:restriction base="xsd:string">
-            <xsd:pattern
-              value="(\
-{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
-{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
-{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)(\
-{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
-{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
-{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)">
-            </xsd:pattern>
-          </xsd:restriction>
-        </xsd:simpleType>
-      </xsd:element>
-      <!--
-      <xsd:sequence>
-        <xsd:element name="DISTRIBUTION" type="CONTDISTTYPE" />
-        <xsd:element name="RANDOMSTREAM" type="xsd:string" />
-        <xsd:sequence name="RANDOMSTREAM" type="xsd:string" />
-      </xsd:sequence>
-      -->
-    </xsd:choice>
-  </xsd:complexType>
-
-  <xsd:simpleType name="LENGTHDISTTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="(\
-{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)">
-      </xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="SPEEDDISTTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="(\
-{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)">
-      </xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="ACCELERATIONDISTTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="(\
-{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)">
-      </xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="TIMEDISTTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="(\
-{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)">
-      </xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="DURATIONDISTTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="(\
-{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)(\
-{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|min|h|day|wk)">
-      </xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
   <xsd:complexType name="PARAMETERTYPE">
     <xsd:attribute name="TYPE" use="required">
       <xsd:simpleType>
@@ -681,6 +537,151 @@
     <xsd:attribute name="VALUE" type="xsd:string" use="required" />
     <xsd:attribute name="ID" type="xsd:string" use="required" />
     <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="optional" />
+  </xsd:complexType>
+
+  <!-- ========================================================================================= -->
+  <!-- ==================================== DISTRIBUTION TYPES ================================= -->
+  <!-- ========================================================================================= -->
+
+  <xsd:simpleType name="DOUBLEPOSITIVEZERO">
+    <xsd:restriction base="xsd:double">
+      <xsd:minInclusive value="0.0"></xsd:minInclusive>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DOUBLEPOSITIVE">
+    <xsd:restriction base="xsd:double">
+      <xsd:minExclusive value="0.0"></xsd:minExclusive>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="CONTDISTTYPE">
+    <xsd:choice>
+      <xsd:element name="CONSTANT">
+        <xsd:complexType>
+          <xsd:attribute name="C" type="xsd:double" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="EXPONENTIAL">
+        <xsd:complexType>
+          <xsd:attribute name="LAMBDA" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="TRIANGULAR">
+        <xsd:complexType>
+          <xsd:attribute name="MIN" type="xsd:double" use="required" />
+          <xsd:attribute name="MODE" type="xsd:double" use="required" />
+          <xsd:attribute name="MAX" type="xsd:double" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="NORMAL">
+        <xsd:complexType>
+          <xsd:attribute name="MU" type="xsd:double" use="required" />
+          <xsd:attribute name="SIGMA" type="DOUBLEPOSITIVEZERO" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="BETA">
+        <xsd:complexType>
+          <xsd:attribute name="ALPHA1" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="ALPHA2" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ERLANG">
+        <xsd:complexType>
+          <xsd:attribute name="MEAN" type="xsd:double" use="required" />
+          <xsd:attribute name="K" type="xsd:positiveInteger" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GAMMA">
+        <xsd:complexType>
+          <xsd:attribute name="ALPHA" type="xsd:double" use="required" />
+          <xsd:attribute name="BETA" type="xsd:double" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="LOGNORMAL">
+        <xsd:complexType>
+          <xsd:attribute name="MU" type="xsd:double" use="required" />
+          <xsd:attribute name="SIGMA" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="PEARSON5">
+        <xsd:complexType>
+          <xsd:attribute name="ALPHA" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="BETA" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="PEARSON6">
+        <xsd:complexType>
+          <xsd:attribute name="ALPHA1" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="ALPHA2" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="BETA" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="UNIFORM">
+        <xsd:complexType>
+          <xsd:attribute name="MIN" type="xsd:double" use="required" />
+          <xsd:attribute name="MAX" type="xsd:double" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="WEIBULL">
+        <xsd:complexType>
+          <xsd:attribute name="ALPHA" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="BETA" type="DOUBLEPOSITIVE" use="required" />
+          <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:complexType name="LENGTHDISTTYPE">
+    <xsd:complexContent>
+      <xsd:extension base="CONTDISTTYPE">
+        <xsd:attribute name="LENGTHUNIT" type="LENGTHUNITTYPE" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="SPEEDDISTTYPE">
+    <xsd:complexContent>
+      <xsd:extension base="CONTDISTTYPE">
+        <xsd:attribute name="SPEEDUNIT" type="SPEEDUNITTYPE" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="ACCELERATIONDISTTYPE">
+    <xsd:complexContent>
+      <xsd:extension base="CONTDISTTYPE">
+        <xsd:attribute name="ACCELERATIONUNIT" type="ACCELERATIONUNITTYPE" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="TIMEDISTTYPE">
+    <xsd:complexContent>
+      <xsd:extension base="CONTDISTTYPE">
+        <xsd:attribute name="TIMEUNIT" type="TIMEUNITTYPE" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="DURATIONDISTTYPE">
+    <xsd:complexContent>
+      <xsd:extension base="CONTDISTTYPE">
+        <xsd:attribute name="DURATIONUNIT" type="DURATIONUNITTYPE" />
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
 </xsd:schema>

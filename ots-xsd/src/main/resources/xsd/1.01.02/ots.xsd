@@ -23,7 +23,7 @@
       <xsd:sequence>
         <xsd:element ref="DEFINITIONS" minOccurs="1" maxOccurs="1" />
         <xsd:element ref="NETWORK" minOccurs="1" maxOccurs="1" />
-        <xsd:element ref="DEMAND" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="NETWORKDEMAND" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="CONTROL" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="MODEL" minOccurs="0" maxOccurs="1" />
         <xsd:element ref="SCENARIO" minOccurs="0" maxOccurs="1" />
