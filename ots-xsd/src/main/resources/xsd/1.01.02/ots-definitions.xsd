@@ -206,23 +206,30 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:complexType name="BASICROADLAYOUT">
+    <xsd:sequence>
+      <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+        <xsd:choice>
+          <xsd:element name="LANE" type="CSELANE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="NOTRAFFICLANE" type="CSENOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="SHOULDER" type="CSESHOULDER" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="STRIPE" type="CSESTRIPE" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:element ref="SPEEDLIMIT" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
+    <xsd:attribute ref="xml:base" />
+  </xsd:complexType>
+
   <xsd:element name="ROADLAYOUT">
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:sequence minOccurs="1" maxOccurs="unbounded">
-          <xsd:choice>
-            <xsd:element name="LANE" type="CSELANE" minOccurs="0" maxOccurs="unbounded" />
-            <xsd:element name="NOTRAFFICLANE" type="CSENOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded" />
-            <xsd:element name="SHOULDER" type="CSESHOULDER" minOccurs="0" maxOccurs="unbounded" />
-            <xsd:element name="STRIPE" type="CSESTRIPE" minOccurs="0" maxOccurs="unbounded" />
-          </xsd:choice>
-        </xsd:sequence>
-        <xsd:element ref="SPEEDLIMIT" minOccurs="0" maxOccurs="unbounded" />
-      </xsd:sequence>
-      <xsd:attribute name="ID" type="xsd:string" use="required" />
-      <xsd:attribute name="LINKTYPE" type="xsd:string" use="required" />
-      <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
-      <xsd:attribute ref="xml:base" />
+      <xsd:complexContent>
+        <xsd:extension base="BASICROADLAYOUT">
+          <xsd:attribute name="ID" type="xsd:string" use="required" />
+          <xsd:attribute name="LINKTYPE" type="xsd:string" use="required" />
+        </xsd:extension>
+      </xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
 
