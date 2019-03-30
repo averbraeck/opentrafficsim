@@ -16,27 +16,36 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.opentrafficsim.xml.bindings.LaneKeepingAdapter;
+import org.opentrafficsim.xml.bindings.types.LaneKeepingType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for BASICROADLAYOUT complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
+ * &lt;complexType name="BASICROADLAYOUT"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element ref="{http://www.opentrafficsim.org/ots}COMPATIBILITY" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;sequence maxOccurs="unbounded"&gt;
+ *           &lt;choice&gt;
+ *             &lt;element name="LANE" type="{http://www.opentrafficsim.org/ots}CSELANE" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *             &lt;element name="NOTRAFFICLANE" type="{http://www.opentrafficsim.org/ots}CSENOTRAFFICLANE" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *             &lt;element name="SHOULDER" type="{http://www.opentrafficsim.org/ots}CSESHOULDER" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *             &lt;element name="STRIPE" type="{http://www.opentrafficsim.org/ots}CSESTRIPE" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *           &lt;/choice&gt;
+ *         &lt;/sequence&gt;
  *         &lt;element ref="{http://www.opentrafficsim.org/ots}SPEEDLIMIT" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
- *       &lt;attribute name="ID" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="PARENT" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="DEFAULT" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="LANEKEEPING" type="{http://www.opentrafficsim.org/ots}LANEKEEPINGTYPE" /&gt;
  *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -46,66 +55,72 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "compatibility",
+@XmlType(name = "BASICROADLAYOUT", propOrder = {
+    "laneOrNOTRAFFICLANEOrSHOULDER",
     "speedlimit"
 })
-@XmlRootElement(name = "LINKTYPE")
+@XmlSeeAlso({
+    org.opentrafficsim.xml.generated.LINK.ROADLAYOUT.class,
+    org.opentrafficsim.xml.generated.ROADLAYOUT.class
+})
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-public class LINKTYPE
+public class BASICROADLAYOUT
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlElement(name = "COMPATIBILITY")
+    @XmlElements({
+        @XmlElement(name = "LANE", type = CSELANE.class),
+        @XmlElement(name = "NOTRAFFICLANE", type = CSENOTRAFFICLANE.class),
+        @XmlElement(name = "SHOULDER", type = CSESHOULDER.class),
+        @XmlElement(name = "STRIPE", type = CSESTRIPE.class)
+    })
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    protected List<COMPATIBILITY> compatibility;
+    protected List<Serializable> laneOrNOTRAFFICLANEOrSHOULDER;
     @XmlElement(name = "SPEEDLIMIT")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
     protected List<SPEEDLIMIT> speedlimit;
-    @XmlAttribute(name = "ID", required = true)
+    @XmlAttribute(name = "LANEKEEPING")
+    @XmlJavaTypeAdapter(LaneKeepingAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    protected String id;
-    @XmlAttribute(name = "PARENT")
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    protected String parent;
-    @XmlAttribute(name = "DEFAULT")
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    protected Boolean _default;
+    protected LaneKeepingType lanekeeping;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
     protected String base;
 
     /**
-     * Gets the value of the compatibility property.
+     * Gets the value of the laneOrNOTRAFFICLANEOrSHOULDER property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the compatibility property.
+     * This is why there is not a <CODE>set</CODE> method for the laneOrNOTRAFFICLANEOrSHOULDER property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getCOMPATIBILITY().add(newItem);
+     *    getLANEOrNOTRAFFICLANEOrSHOULDER().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link COMPATIBILITY }
+     * {@link CSELANE }
+     * {@link CSENOTRAFFICLANE }
+     * {@link CSESHOULDER }
+     * {@link CSESTRIPE }
      * 
      * 
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    public List<COMPATIBILITY> getCOMPATIBILITY() {
-        if (compatibility == null) {
-            compatibility = new ArrayList<COMPATIBILITY>();
+    public List<Serializable> getLANEOrNOTRAFFICLANEOrSHOULDER() {
+        if (laneOrNOTRAFFICLANEOrSHOULDER == null) {
+            laneOrNOTRAFFICLANEOrSHOULDER = new ArrayList<Serializable>();
         }
-        return this.compatibility;
+        return this.laneOrNOTRAFFICLANEOrSHOULDER;
     }
 
     /**
@@ -139,7 +154,7 @@ public class LINKTYPE
     }
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the lanekeeping property.
      * 
      * @return
      *     possible object is
@@ -147,12 +162,12 @@ public class LINKTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    public String getID() {
-        return id;
+    public LaneKeepingType getLANEKEEPING() {
+        return lanekeeping;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the lanekeeping property.
      * 
      * @param value
      *     allowed object is
@@ -160,64 +175,8 @@ public class LINKTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    public void setID(String value) {
-        this.id = value;
-    }
-
-    /**
-     * Gets the value of the parent property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    public String getPARENT() {
-        return parent;
-    }
-
-    /**
-     * Sets the value of the parent property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    public void setPARENT(String value) {
-        this.parent = value;
-    }
-
-    /**
-     * Gets the value of the default property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    public boolean isDEFAULT() {
-        if (_default == null) {
-            return false;
-        } else {
-            return _default;
-        }
-    }
-
-    /**
-     * Sets the value of the default property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T01:39:59+01:00", comments = "JAXB RI v2.3.0")
-    public void setDEFAULT(Boolean value) {
-        this._default = value;
+    public void setLANEKEEPING(LaneKeepingType value) {
+        this.lanekeeping = value;
     }
 
     /**
