@@ -652,6 +652,14 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <xsd:complexType name="POSITIONDISTTYPE">
+    <xsd:complexContent>
+      <xsd:extension base="CONTDISTTYPE">
+        <xsd:attribute name="POSITIONUNIT" type="POSITIONUNITTYPE" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <xsd:complexType name="SPEEDDISTTYPE">
     <xsd:complexContent>
       <xsd:extension base="CONTDISTTYPE">

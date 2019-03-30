@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element ref="{http://www.opentrafficsim.org/ots}ROADLAYOUT" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.opentrafficsim.org/ots}RANDOMSTREAM" maxOccurs="unbounded"/&gt;
  *       &lt;/sequence&gt;
  *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
  *     &lt;/restriction&gt;
@@ -43,51 +43,52 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "roadlayout"
+    "randomstream"
 })
-@XmlRootElement(name = "ROADLAYOUTS")
+@XmlRootElement(name = "RANDOMSTREAMS")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
-public class ROADLAYOUTS implements Serializable
+public class RANDOMSTREAMS
+    implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlElement(name = "ROADLAYOUT")
+    @XmlElement(name = "RANDOMSTREAM", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
-    protected List<ROADLAYOUT> roadlayout;
+    protected List<RANDOMSTREAM> randomstream;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
     protected String base;
 
     /**
-     * Gets the value of the roadlayout property.
+     * Gets the value of the randomstream property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the roadlayout property.
+     * This is why there is not a <CODE>set</CODE> method for the randomstream property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getROADLAYOUT().add(newItem);
+     *    getRANDOMSTREAM().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ROADLAYOUT }
+     * {@link RANDOMSTREAM }
      * 
      * 
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
-    public List<ROADLAYOUT> getROADLAYOUT() {
-        if (roadlayout == null) {
-            roadlayout = new ArrayList<ROADLAYOUT>();
+    public List<RANDOMSTREAM> getRANDOMSTREAM() {
+        if (randomstream == null) {
+            randomstream = new ArrayList<RANDOMSTREAM>();
         }
-        return this.roadlayout;
+        return this.randomstream;
     }
 
     /**

@@ -17,15 +17,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for LENGTHDISTTYPE complex type.
+ * <p>Java class for POSITIONDISTTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="LENGTHDISTTYPE"&gt;
+ * &lt;complexType name="POSITIONDISTTYPE"&gt;
  *   &lt;complexContent&gt;
  *     &lt;extension base="{http://www.opentrafficsim.org/ots}CONTDISTTYPE"&gt;
- *       &lt;attribute name="LENGTHUNIT" type="{http://www.opentrafficsim.org/ots}LENGTHUNITTYPE" /&gt;
+ *       &lt;attribute name="POSITIONUNIT" type="{http://www.opentrafficsim.org/ots}POSITIONUNITTYPE" /&gt;
  *     &lt;/extension&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -34,21 +34,21 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "LENGTHDISTTYPE")
+@XmlType(name = "POSITIONDISTTYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
-public class LENGTHDISTTYPE
+public class POSITIONDISTTYPE
     extends CONTDISTTYPE
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlAttribute(name = "LENGTHUNIT")
+    @XmlAttribute(name = "POSITIONUNIT")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
-    protected String lengthunit;
+    protected String positionunit;
 
     /**
-     * Gets the value of the lengthunit property.
+     * Gets the value of the positionunit property.
      * 
      * @return
      *     possible object is
@@ -56,12 +56,12 @@ public class LENGTHDISTTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
-    public String getLENGTHUNIT() {
-        return lengthunit;
+    public String getPOSITIONUNIT() {
+        return positionunit;
     }
 
     /**
-     * Sets the value of the lengthunit property.
+     * Sets the value of the positionunit property.
      * 
      * @param value
      *     allowed object is
@@ -69,8 +69,8 @@ public class LENGTHDISTTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-30T11:23:29+01:00", comments = "JAXB RI v2.3.0")
-    public void setLENGTHUNIT(String value) {
-        this.lengthunit = value;
+    public void setPOSITIONUNIT(String value) {
+        this.positionunit = value;
     }
 
 }
