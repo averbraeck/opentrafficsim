@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.xml.generated.BASICROADLAYOUT;
 import org.opentrafficsim.xml.generated.CSELANE;
 import org.opentrafficsim.xml.generated.CSENOTRAFFICLANE;
 import org.opentrafficsim.xml.generated.CSESHOULDER;
@@ -55,17 +56,16 @@ public final class Cloner
     }
     
     /**
-     * Clone the ROADLAYOUT, as not all DJUNIT types are serializable...
+     * Clone the BASICROADLAYOUT, as not all DJUNIT types are serializable...
      * @param in the object to clone
      * @return the cloned object
      */
-    public static ROADLAYOUT cloneRoadLayout(ROADLAYOUT in)
+    public static ROADLAYOUT cloneRoadLayout(BASICROADLAYOUT in)
     {
         ROADLAYOUT rl = new ROADLAYOUT();
         rl.setBase(in.getBase());
         rl.setLANEKEEPING(in.getLANEKEEPING());
         rl.setLINKTYPE(in.getBase());
-        rl.setID(in.getID());
         rl.getSPEEDLIMIT().addAll(in.getSPEEDLIMIT());
 
         for (CSELANE lane : ParseUtil.getObjectsOfType(in.getLANEOrNOTRAFFICLANEOrSHOULDER(), CSELANE.class))
@@ -135,7 +135,7 @@ public final class Cloner
             sc.setCENTEROFFSETEND(stripe.getCENTEROFFSETEND());
             sc.setCENTEROFFSETSTART(stripe.getCENTEROFFSETSTART());
             sc.setID(stripe.getID());
-            sc.setWIDTH(stripe.getWIDTH());
+            sc.setDRAWINGWIDTH(stripe.getDRAWINGWIDTH());
             sc.setTYPE(stripe.getTYPE());
             rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(sc);
         }

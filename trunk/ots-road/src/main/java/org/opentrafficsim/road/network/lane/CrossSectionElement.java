@@ -162,10 +162,6 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     private static List<CrossSectionSlice> fixGradualLateraloffset(final CrossSectionLink parentLink,
             final Length lateralOffsetAtBegin, final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth)
     {
-        if ("1021_J23".equals(parentLink.getId()))
-        {
-            System.out.println("Adding cross section to link " + parentLink.getId());
-        }
         List<CrossSectionSlice> result = new ArrayList<>();
         int numPoints = lateralOffsetAtBegin.equals(lateralOffsetAtEnd) ? 2 : 8;
         Length parentLength = parentLink.getLength();

@@ -18,11 +18,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
@@ -46,7 +48,7 @@ import org.opentrafficsim.road.gtu.colorer.SplitColorer;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.road.network.factory.xml.network.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -190,13 +192,14 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             // XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator, this.colorer);
             try
             {
-                this.network = XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)),
-                        new OTSRoadNetwork("XML network", true), this.simulator);
+                this.network = new XmlNetworkLaneParserOld(this.simulator).build(
+                        new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)),
+                        new OTSRoadNetwork("XML network", true), true);
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
-            catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
-                    | SAXException | ParserConfigurationException | GTUException exception)
+            catch (NetworkException | OTSGeometryException | SAXException | ParserConfigurationException | GTUException
+                    | IOException | NamingException | ValueException | ParameterException exception)
             {
                 exception.printStackTrace();
                 // Abusing the SimRuntimeException to propagate the message to the main method (the problem could actually be a
