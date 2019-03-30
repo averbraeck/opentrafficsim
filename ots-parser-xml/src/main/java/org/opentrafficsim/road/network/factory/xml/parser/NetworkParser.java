@@ -42,8 +42,8 @@ import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.xml.bindings.types.ArcDirection;
+import org.opentrafficsim.xml.generated.BASICROADLAYOUT;
 import org.opentrafficsim.xml.generated.CROSSSECTIONELEMENT;
 import org.opentrafficsim.xml.generated.CSELANE;
 import org.opentrafficsim.xml.generated.CSENOTRAFFICLANE;
@@ -191,13 +191,13 @@ public final class NetworkParser
 
             else if (xmlLink.getPOLYLINE() != null)
             {
-                int intermediatePoints = xmlLink.getPOLYLINE().getINTERMEDIATEPOINTS().size();
+                int intermediatePoints = xmlLink.getPOLYLINE().getCOORDINATE().size();
                 coordinates = new OTSPoint3D[intermediatePoints + 2];
                 coordinates[0] = startPoint;
                 coordinates[intermediatePoints + 1] = endPoint;
                 for (int p = 0; p < intermediatePoints; p++)
                 {
-                    coordinates[p + 1] = new OTSPoint3D(xmlLink.getPOLYLINE().getINTERMEDIATEPOINTS().get(p));
+                    coordinates[p + 1] = new OTSPoint3D(xmlLink.getPOLYLINE().getCOORDINATE().get(p));
                 }
 
             }
@@ -278,7 +278,7 @@ public final class NetworkParser
 
             else if (xmlLink.getCLOTHOID() != null)
             {
-                int numSegments = xmlLink.getCLOTHOID().getNUMSEGMENTS().intValue();
+                // int numSegments = xmlLink.getCLOTHOID().getNUMSEGMENTS().intValue();
 
                 // TODO: Clothoid parsing
             }
@@ -328,20 +328,20 @@ public final class NetworkParser
 
             CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
 
-            // Get the ROADLAYOUT (wither defined here, or via pointer to DEFINITIONS)
-            ROADLAYOUT roadLayoutTagBase;
-            if (xmlLink.getLAYOUT() != null)
+            // Get the ROADLAYOUT (either defined here, or via pointer to DEFINITIONS)
+            BASICROADLAYOUT roadLayoutTagBase;
+            if (xmlLink.getDEFINEDLAYOUT() != null)
             {
                 if (xmlLink.getROADLAYOUT() != null)
                 {
                     throw new XmlParserException(
                             "Link " + xmlLink.getID() + " Ambiguous RoadLayout; both DEFINEDROADLAYOUT and ROADLAYOUT defined");
                 }
-                roadLayoutTagBase = roadLayoutMap.get(xmlLink.getLAYOUT());
+                roadLayoutTagBase = roadLayoutMap.get(xmlLink.getDEFINEDLAYOUT());
                 if (roadLayoutTagBase == null)
                 {
                     throw new XmlParserException(
-                            "Link " + xmlLink.getID() + " Could not find defined RoadLayout " + xmlLink.getLAYOUT());
+                            "Link " + xmlLink.getID() + " Could not find defined RoadLayout " + xmlLink.getDEFINEDLAYOUT());
                 }
             }
             else
@@ -354,7 +354,7 @@ public final class NetworkParser
             }
 
             // Process LANEOVERRIDEs
-            ROADLAYOUT roadLayoutTag = Cloner.cloneRoadLayout(roadLayoutTagBase);
+            BASICROADLAYOUT roadLayoutTag = Cloner.cloneRoadLayout(roadLayoutTagBase);
             for (LANEOVERRIDE laneOverride : xmlLink.getLANEOVERRIDE())
             {
                 for (CSELANE lane : ParseUtil.getObjectsOfType(roadLayoutTag.getLANEOrNOTRAFFICLANEOrSHOULDER(), CSELANE.class))
@@ -370,27 +370,24 @@ public final class NetworkParser
                 }
             }
 
+            // calculate for each lane and stripe what the start and end offset is
+            List<CSEData> cseDataList = new ArrayList<>();
+            Map<Object, Integer> cseTagMap = new HashMap<>();
+            calculateOffsets(roadLayoutTag, xmlLink, cseDataList, cseTagMap);
+
             // STRIPE
             for (CSESTRIPE stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getLANEOrNOTRAFFICLANEOrSHOULDER(),
                     CSESTRIPE.class))
             {
-                Length startOffset = (stripeTag.getCENTEROFFSETSTART() != null) ? stripeTag.getCENTEROFFSETSTART()
-                        : stripeTag.getCENTEROFFSET();
-                Length endOffset =
-                        (stripeTag.getCENTEROFFSETEND() != null) ? stripeTag.getCENTEROFFSETEND() : stripeTag.getCENTEROFFSET();
-                makeStripe(csl, startOffset, endOffset, stripeTag, cseList);
+                CSEData cseData = cseDataList.get(cseTagMap.get(stripeTag));
+                makeStripe(csl, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList);
             }
 
             // Other CROSSECTIONELEMENT
             for (CROSSSECTIONELEMENT cseTag : ParseUtil.getObjectsOfType(roadLayoutTag.getLANEOrNOTRAFFICLANEOrSHOULDER(),
                     CROSSSECTIONELEMENT.class))
             {
-                Length startOffset =
-                        (cseTag.getCENTEROFFSETSTART() != null) ? cseTag.getCENTEROFFSETSTART() : cseTag.getCENTEROFFSET();
-                Length endOffset =
-                        (cseTag.getCENTEROFFSETEND() != null) ? cseTag.getCENTEROFFSETEND() : cseTag.getCENTEROFFSET();
-                Length startWidth = (cseTag.getWIDTHSTART() != null) ? cseTag.getWIDTHSTART() : cseTag.getWIDTH();
-                Length endWidth = (cseTag.getWIDTHEND() != null) ? cseTag.getWIDTHEND() : cseTag.getWIDTH();
+                CSEData cseData = cseDataList.get(cseTagMap.get(cseTag));
 
                 // LANE
                 if (cseTag instanceof CSELANE)
@@ -405,8 +402,8 @@ public final class NetworkParser
                         speedLimitTag.addAll(laneTag.getSPEEDLIMIT());
                     else if (roadLayoutTag.getSPEEDLIMIT().size() > 0)
                         speedLimitTag.addAll(roadLayoutTag.getSPEEDLIMIT());
-                    Lane lane = new Lane(csl, laneTag.getID(), startOffset, endOffset, startWidth, endWidth, laneType,
-                            speedLimitMap);
+                    Lane lane = new Lane(csl, laneTag.getID(), cseData.centerOffsetStart, cseData.centerOffsetEnd,
+                            cseData.widthStart, cseData.widthEnd, laneType, speedLimitMap);
                     cseList.add(lane);
                     lanes.put(lane.getId(), lane);
                 }
@@ -416,7 +413,8 @@ public final class NetworkParser
                 {
                     CSENOTRAFFICLANE ntlTag = (CSENOTRAFFICLANE) cseTag;
                     String id = ntlTag.getID() != null ? ntlTag.getID() : UUID.randomUUID().toString();
-                    Lane lane = new NoTrafficLane(csl, id, startOffset, endOffset, startWidth, endWidth);
+                    Lane lane = new NoTrafficLane(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
+                            cseData.widthStart, cseData.widthEnd);
                     cseList.add(lane);
                 }
 
@@ -425,20 +423,10 @@ public final class NetworkParser
                 {
                     CSESHOULDER shoulderTag = (CSESHOULDER) cseTag;
                     String id = shoulderTag.getID() != null ? shoulderTag.getID() : UUID.randomUUID().toString();
-                    Shoulder shoulder = new Shoulder(csl, id, startOffset, endOffset, startWidth, endWidth);
+                    Shoulder shoulder = new Shoulder(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
+                            cseData.widthStart, cseData.widthEnd);
                     cseList.add(shoulder);
                 }
-            }
-
-            // SINK
-            for (LINK.SINK sink : xmlLink.getSINK())
-            {
-                if (!lanes.containsKey(sink.getLANE()))
-                    throw new NetworkException(
-                            "LINK: " + xmlLink.getID() + ", Sink on Lane " + sink.getLANE() + " - Lane not found");
-                Lane lane = lanes.get(sink.getLANE());
-                Length position = Transformer.parseLengthBeginEnd(sink.getPOSITION(), lane.getLength());
-                new SinkSensor(lane, position, simulator);
             }
 
             // TRAFFICLIGHT
@@ -467,6 +455,190 @@ public final class NetworkParser
     }
 
     /**
+     * Calculate the offsets for the RoadLlayout. Note that offsets can be different for begin and end, and that they can be
+     * specified from the right, left or center of the lane/stripe. Start width and end width can be different. The overall Link
+     * can have an additional start offset and end offset that has to be added to the already calculated offsets.
+     * @param roadLayoutTag the tag for the road layout containing all lanes and stripes
+     * @param xmlLink the LINK tag containing the overall offsets
+     * @param cseDataList the list of offsets and widths for each tag, in order of definition in the ROADLAYOUT tag
+     * @param cseTagMap the map of the tags to the index in the list, to be able to find them quickly
+     */
+    private static void calculateOffsets(BASICROADLAYOUT roadLayoutTag, LINK xmlLink, List<CSEData> cseDataList,
+            Map<Object, Integer> cseTagMap)
+    {
+        int nr = 0;
+        Length totalWidthStart = Length.ZERO;
+        Length totalWidthEnd = Length.ZERO;
+        boolean startOffset = false;
+        boolean endOffset = false;
+        for (Object o : roadLayoutTag.getLANEOrNOTRAFFICLANEOrSHOULDER())
+        {
+            if (o instanceof CSESTRIPE)
+            {
+                CSESTRIPE stripe = (CSESTRIPE) o;
+                CSEData cseData = new CSEData();
+                cseData.widthStart = Length.ZERO;
+                cseData.widthEnd = Length.ZERO;
+                if (stripe.getCENTEROFFSET() != null)
+                {
+                    cseData.centerOffsetStart = stripe.getCENTEROFFSET();
+                    cseData.centerOffsetEnd = stripe.getCENTEROFFSET();
+                }
+                else
+                {
+                    cseData.centerOffsetStart = stripe.getCENTEROFFSETSTART();
+                    cseData.centerOffsetEnd = stripe.getCENTEROFFSETEND();
+                }
+                cseDataList.add(cseData);
+            }
+            else
+            {
+                CROSSSECTIONELEMENT cse = (CROSSSECTIONELEMENT) o;
+                CSEData cseData = new CSEData();
+                cseData.widthStart = cse.getWIDTH() == null ? cse.getWIDTHSTART() : cse.getWIDTH();
+                Length halfWidthStart = cseData.widthStart.multiplyBy(0.5);
+                totalWidthStart = totalWidthStart.plus(cseData.widthStart);
+                cseData.widthEnd = cse.getWIDTH() == null ? cse.getWIDTHEND() : cse.getWIDTH();
+                Length halfWidthEnd = cseData.widthEnd.multiplyBy(0.5);
+                totalWidthEnd = totalWidthEnd.plus(cseData.widthStart);
+
+                if (cse.getCENTEROFFSET() != null)
+                {
+                    cseData.centerOffsetStart = cse.getCENTEROFFSET();
+                    cseData.centerOffsetEnd = cse.getCENTEROFFSET();
+                    startOffset = true;
+                    endOffset = true;
+                }
+                else if (cse.getLEFTOFFSET() != null)
+                {
+                    cseData.centerOffsetStart = cse.getLEFTOFFSET().plus(halfWidthStart);
+                    cseData.centerOffsetEnd = cse.getLEFTOFFSET().plus(halfWidthEnd);
+                    startOffset = true;
+                    endOffset = true;
+                }
+                else if (cse.getRIGHTOFFSET() != null)
+                {
+                    cseData.centerOffsetStart = cse.getRIGHTOFFSET().minus(halfWidthStart);
+                    cseData.centerOffsetEnd = cse.getRIGHTOFFSET().minus(halfWidthEnd);
+                    startOffset = true;
+                    endOffset = true;
+                }
+
+                if (cse.getCENTEROFFSETSTART() != null)
+                {
+                    cseData.centerOffsetStart = cse.getCENTEROFFSETSTART();
+                    startOffset = true;
+                }
+                else if (cse.getLEFTOFFSETSTART() != null)
+                {
+                    cseData.centerOffsetStart = cse.getLEFTOFFSETSTART().plus(halfWidthStart);
+                    startOffset = true;
+                }
+                else if (cse.getRIGHTOFFSETSTART() != null)
+                {
+                    cseData.centerOffsetStart = cse.getRIGHTOFFSETSTART().minus(halfWidthStart);
+                    startOffset = true;
+                }
+
+                if (cse.getCENTEROFFSETEND() != null)
+                {
+                    cseData.centerOffsetEnd = cse.getCENTEROFFSET();
+                    endOffset = true;
+                }
+                else if (cse.getLEFTOFFSETEND() != null)
+                {
+                    cseData.centerOffsetEnd = cse.getLEFTOFFSET().plus(halfWidthEnd);
+                    endOffset = true;
+                }
+                else if (cse.getRIGHTOFFSETEND() != null)
+                {
+                    cseData.centerOffsetEnd = cse.getRIGHTOFFSET().minus(halfWidthEnd);
+                    endOffset = true;
+                }
+
+                cseDataList.add(cseData);
+
+            }
+            cseTagMap.put(o, nr);
+            nr++;
+        }
+
+        if (!startOffset)
+        {
+            cseDataList.get(0).centerOffsetStart =
+                    totalWidthStart.multiplyBy(0.5).minus(cseDataList.get(0).widthStart.multiplyBy(0.5));
+        }
+        if (!endOffset)
+        {
+            cseDataList.get(0).centerOffsetEnd =
+                    totalWidthEnd.multiplyBy(0.5).minus(cseDataList.get(0).widthEnd.multiplyBy(0.5));
+        }
+
+        // forward pass
+        Length cs = null;
+        Length es = null;
+        for (CSEData cseData : cseDataList)
+        {
+            if (cseData.centerOffsetStart != null)
+            {
+                cs = cseData.centerOffsetStart;
+            }
+            else
+            {
+                if (cs != null)
+                {
+                    cseData.centerOffsetStart = cs.plus(cseData.widthStart.multiplyBy(0.5));
+                    cs = cs.plus(cseData.widthStart);
+                }
+            }
+            if (cseData.centerOffsetEnd != null)
+            {
+                es = cseData.centerOffsetEnd;
+            }
+            else
+            {
+                if (es != null)
+                {
+                    cseData.centerOffsetEnd = es.plus(cseData.widthEnd.multiplyBy(0.5));
+                    es = es.plus(cseData.widthEnd);
+                }
+            }
+        }
+        
+        // backward pass
+        cs = null;
+        es = null;
+        for (int i=cseDataList.size() - 1; i>=0; i--)
+        {
+            CSEData cseData = cseDataList.get(i);
+            if (cseData.centerOffsetStart != null)
+            {
+                cs = cseData.centerOffsetStart;
+            }
+            else
+            {
+                if (cs != null)
+                {
+                    cseData.centerOffsetStart = cs.minus(cseData.widthStart.multiplyBy(0.5));
+                    cs = cs.minus(cseData.widthStart);
+                }
+            }
+            if (cseData.centerOffsetEnd != null)
+            {
+                es = cseData.centerOffsetEnd;
+            }
+            else
+            {
+                if (es != null)
+                {
+                    cseData.centerOffsetEnd = es.minus(cseData.widthEnd.multiplyBy(0.5));
+                    es = es.minus(cseData.widthEnd);
+                }
+            }
+        }
+    }
+
+    /**
      * Parse a stripe on a road.
      * @param csl CrossSectionLink; the CrossSectionLine
      * @param startOffset Length; the offset of the start node
@@ -481,12 +653,13 @@ public final class NetworkParser
             final CSESTRIPE stripeTag, final List<CrossSectionElement> cseList)
             throws OTSGeometryException, NetworkException, XmlParserException
     {
-        Length width = stripeTag.getWIDTH() != null ? stripeTag.getWIDTH() : new Length(20.0, LengthUnit.CENTIMETER);
+        Length width =
+                stripeTag.getDRAWINGWIDTH() != null ? stripeTag.getDRAWINGWIDTH() : new Length(20.0, LengthUnit.CENTIMETER);
         switch (stripeTag.getTYPE())
         {
             case BLOCKED:
-                Stripe blockedLine = new Stripe(csl, startOffset, endOffset,
-                        stripeTag.getWIDTH() != null ? stripeTag.getWIDTH() : new Length(40.0, LengthUnit.CENTIMETER));
+                Stripe blockedLine = new Stripe(csl, startOffset, endOffset, stripeTag.getDRAWINGWIDTH() != null
+                        ? stripeTag.getDRAWINGWIDTH() : new Length(40.0, LengthUnit.CENTIMETER));
                 blockedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.BOTH);
                 cseList.add(blockedLine);
                 break;
@@ -524,4 +697,23 @@ public final class NetworkParser
         }
     }
 
+    /** contains information about the lanes and stripes to calculate the offset. */
+    protected static class CSEData
+    {
+        /** the start width of the element (stripes are defined as 0). */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public Length widthStart;
+
+        /** the end width of the element (stripes are defined as 0). */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public Length widthEnd;
+
+        /** the start offset of the element. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public Length centerOffsetStart;
+
+        /** the end offset of the element. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public Length centerOffsetEnd;
+    }
 }

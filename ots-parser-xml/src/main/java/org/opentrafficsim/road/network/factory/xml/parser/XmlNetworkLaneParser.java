@@ -30,6 +30,7 @@ import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.MODEL;
@@ -37,7 +38,6 @@ import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NETWORKDEMAND;
 import org.opentrafficsim.xml.generated.OTS;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
-import org.opentrafficsim.xml.generated.RUN;
 import org.opentrafficsim.xml.generated.SCENARIO;
 import org.pmw.tinylog.Level;
 import org.xml.sax.InputSource;
@@ -45,6 +45,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.Experiment;
 
 /**
  * Parse an XML file for an OTS network, based on the ots-network.xsd definition.
@@ -66,7 +67,7 @@ public final class XmlNetworkLaneParser implements Serializable
     {
         // utility class
     }
-    
+
     /**
      * Parse the XML file and build the network.
      * @param filename String; the name of the file to parse
@@ -84,8 +85,9 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     public static OTSRoadNetwork build(final String filename, final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator) throws JAXBException, URISyntaxException, NetworkException,
-            OTSGeometryException, XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException
+            final OTSSimulatorInterface simulator)
+            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
+            ParserConfigurationException, SimRuntimeException, GTUException
     {
         File xml = new File(URLResource.getResource(filename).toURI().getPath());
         try
@@ -105,7 +107,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @param xmlStream InputStream; the xml input stream
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param simulator OTSSimulatorInterface; the simulator
-     * @return the network that contains the parsed objects
+     * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -116,9 +118,10 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GTUException when construction of the Strategical Planner failed
      */
-    public static OTSRoadNetwork build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator) throws JAXBException, URISyntaxException, NetworkException,
-            OTSGeometryException, XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException
+    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final InputStream xmlStream,
+            final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator)
+            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
+            ParserConfigurationException, SimRuntimeException, GTUException
     {
         JAXBContext jc = JAXBContext.newInstance(OTS.class);
         Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -133,9 +136,13 @@ public final class XmlNetworkLaneParser implements Serializable
         CategoryLogger.setLogCategories(Cat.PARSER);
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
+        Map<String, StreamInformation> streamMap = new HashMap<>();
+        Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment =
+                RunParser.parseRun(otsNetwork, ots.getRUN(), streamMap, simulator);
+
         Map<String, ROADLAYOUT> roadLayoutMap = new HashMap<>();
         Map<GTUType, TemplateGTUType> gtuTemplates = new HashMap<>();
-        DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates);
+        DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates, streamMap);
 
         NETWORK network = ots.getNETWORK();
         NetworkParser.parseNodes(otsNetwork, network);
@@ -143,8 +150,6 @@ public final class XmlNetworkLaneParser implements Serializable
         NetworkParser.parseLinks(otsNetwork, network, nodeDirections, simulator);
         NetworkParser.applyRoadLayout(otsNetwork, network, simulator, roadLayoutMap);
 
-        RunParser.parseRun(otsNetwork, ots.getRUN());
-        
         List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
         List<CONTROL> controls = ots.getCONTROL();
         MODEL modelParameters = ots.getMODEL();
@@ -153,7 +158,7 @@ public final class XmlNetworkLaneParser implements Serializable
 
         ControlParser.parseControl(otsNetwork, simulator, ots);
 
-        return otsNetwork;
+        return experiment;
     }
 
     /**

@@ -17,6 +17,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Generators;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
+import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.xml.generated.COMPATIBILITY;
 import org.opentrafficsim.xml.generated.DEFINITIONS;
@@ -30,9 +31,6 @@ import org.opentrafficsim.xml.generated.LINKTYPE;
 import org.opentrafficsim.xml.generated.LINKTYPES;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
 import org.opentrafficsim.xml.generated.ROADLAYOUTS;
-
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * DefinitionParser parses the XML nodes of the DEFINITIONS tag: GTUTYPE, GTUTEMPLATE, LINKTYPE, LANETYPE and ROADLAYOUT. <br>
@@ -57,16 +55,18 @@ public final class DefinitionsParser
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param roadLayoutMap temporary storage for the road layouts
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
+     * @param streamMap map with stream information
      * @throws XmlParserException on parsing error
      */
-    public static void parseDefinitions(final OTSRoadNetwork otsNetwork, final DEFINITIONS definitions, 
+    public static void parseDefinitions(final OTSRoadNetwork otsNetwork, final DEFINITIONS definitions,
             final boolean overwriteDefaults, final Map<String, ROADLAYOUT> roadLayoutMap,
-            final Map<GTUType, TemplateGTUType> gtuTemplates) throws XmlParserException
+            final Map<GTUType, TemplateGTUType> gtuTemplates, Map<String, StreamInformation> streamMap)
+            throws XmlParserException
     {
         parseGtuTypes(definitions, otsNetwork, overwriteDefaults);
         parseLinkTypes(definitions, otsNetwork, overwriteDefaults);
         parseLaneTypes(definitions, otsNetwork, overwriteDefaults);
-        parseGtuTemplates(definitions, otsNetwork, overwriteDefaults, gtuTemplates);
+        parseGtuTemplates(definitions, otsNetwork, overwriteDefaults, gtuTemplates, streamMap);
         parseRoadLayouts(definitions, otsNetwork, roadLayoutMap);
     }
 
@@ -121,7 +121,8 @@ public final class DefinitionsParser
     public static void parseLinkTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
             final boolean overwriteDefaults) throws XmlParserException
     {
-        for (LINKTYPES linkTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(), LINKTYPES.class))
+        for (LINKTYPES linkTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
+                LINKTYPES.class))
         {
             for (LINKTYPE linkTag : linkTypes.getLINKTYPE())
             {
@@ -161,7 +162,8 @@ public final class DefinitionsParser
     public static void parseLaneTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
             final boolean overwriteDefaults) throws XmlParserException
     {
-        for (LANETYPES laneTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(), LANETYPES.class))
+        for (LANETYPES laneTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
+                LANETYPES.class))
         {
             for (LANETYPE laneTag : laneTypes.getLANETYPE())
             {
@@ -210,13 +212,13 @@ public final class DefinitionsParser
      * @param otsNetwork the network
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param gtuTemplates the templates to be used in the OD/Generators
+     * @param streamMap map with stream information
      * @throws XmlParserException on parsing error
      */
     public static void parseGtuTemplates(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
-            final boolean overwriteDefaults, Map<GTUType, TemplateGTUType> gtuTemplates) throws XmlParserException
+            final boolean overwriteDefaults, Map<GTUType, TemplateGTUType> gtuTemplates,
+            Map<String, StreamInformation> streamMap) throws XmlParserException
     {
-        // TODO: use random streams from the RUN tag, and access and parse them in the distributions
-        StreamInterface stream = new MersenneTwister(2L);
         for (GTUTEMPLATES templateTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
                 GTUTEMPLATES.class))
         {
@@ -232,18 +234,28 @@ public final class DefinitionsParser
                 if (existingTemplate == null || (existingTemplate != null && !templateTag.isDEFAULT())
                         || (existingTemplate != null && templateTag.isDEFAULT() && overwriteDefaults))
                 {
-                    Generator<Length> lengthGenerator = Generators.makeLengthGenerator(stream, templateTag.getLENGTHDIST());
-                    Generator<Length> widthGenerator = Generators.makeLengthGenerator(stream, templateTag.getWIDTHDIST());
+                    Generator<Length> lengthGenerator = Generators.makeLengthGenerator(streamMap, templateTag.getLENGTHDIST());
+                    Generator<Length> widthGenerator = Generators.makeLengthGenerator(streamMap, templateTag.getWIDTHDIST());
                     Generator<Speed> maximumSpeedGenerator =
-                            Generators.makeSpeedGenerator(stream, templateTag.getMAXSPEEDDIST());
-                    Generator<Acceleration> maximumAccelerationGenerator =
-                            Generators.makeAccelerationGenerator(stream, templateTag.getMAXACCELERATIONDIST());
-                    Generator<Acceleration> maximumDecelerationGenerator =
-                            Generators.makeDecelerationGenerator(stream, templateTag.getMAXDECELERATIONDIST());
-                    TemplateGTUType templateGTUType = new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
-                            maximumSpeedGenerator, maximumAccelerationGenerator, maximumDecelerationGenerator);
-                    gtuTemplates.put(gtuType, templateGTUType);
-                    CategoryLogger.filter(Cat.PARSER).trace("Added TemplateGTUType {}", templateGTUType);
+                            Generators.makeSpeedGenerator(streamMap, templateTag.getMAXSPEEDDIST());
+                    if (templateTag.getMAXACCELERATIONDIST() == null)
+                    {
+                        TemplateGTUType templateGTUType =
+                                new TemplateGTUType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator);
+                        gtuTemplates.put(gtuType, templateGTUType);
+                        CategoryLogger.filter(Cat.PARSER).trace("Added TemplateGTUType {}", templateGTUType);
+                    }
+                    else
+                    {
+                        Generator<Acceleration> maximumAccelerationGenerator =
+                                Generators.makeAccelerationGenerator(streamMap, templateTag.getMAXACCELERATIONDIST());
+                        Generator<Acceleration> maximumDecelerationGenerator =
+                                Generators.makeDecelerationGenerator(streamMap, templateTag.getMAXDECELERATIONDIST());
+                        TemplateGTUType templateGTUType = new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
+                                maximumSpeedGenerator, maximumAccelerationGenerator, maximumDecelerationGenerator);
+                        gtuTemplates.put(gtuType, templateGTUType);
+                        CategoryLogger.filter(Cat.PARSER).trace("Added TemplateGTUType {}", templateGTUType);
+                    }
                 }
                 else
                     CategoryLogger.filter(Cat.PARSER).trace("Did NOT add TemplateGTUType {}", templateTag.getID());

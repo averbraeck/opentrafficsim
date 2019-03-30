@@ -60,7 +60,7 @@
   <xsd:element name="COMPATIBILITY">
     <xsd:complexType>
       <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-      <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
+      <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="required" />
     </xsd:complexType>
   </xsd:element>
 
@@ -176,22 +176,16 @@
     <xsd:sequence>
       <xsd:choice minOccurs="0">
         <xsd:element name="CENTEROFFSET" type="SIGNEDLENGTHTYPE" />
-        <xsd:element name="LEFTOFFSET" type="SIGNEDLENGTHTYPE" />
-        <xsd:element name="RIGHTOFFSET" type="SIGNEDLENGTHTYPE" />
         <xsd:sequence>
           <xsd:choice>
             <xsd:element name="CENTEROFFSETSTART" type="SIGNEDLENGTHTYPE" />
-            <xsd:element name="LEFTOFFSETSTART" type="SIGNEDLENGTHTYPE" />
-            <xsd:element name="RIGHTOFFSETSTART" type="SIGNEDLENGTHTYPE" />
           </xsd:choice>
           <xsd:choice>
             <xsd:element name="CENTEROFFSETEND" type="SIGNEDLENGTHTYPE" />
-            <xsd:element name="LEFTOFFSETEND" type="SIGNEDLENGTHTYPE" />
-            <xsd:element name="RIGHTOFFSETEND" type="SIGNEDLENGTHTYPE" />
           </xsd:choice>
         </xsd:sequence>
       </xsd:choice>
-      <xsd:element name="WIDTH" type="LENGTHTYPE" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="DRAWINGWIDTH" type="LENGTHTYPE" minOccurs="0" maxOccurs="1" />
     </xsd:sequence>
     <xsd:attribute name="ID" type="xsd:string" use="optional" />
     <xsd:attribute name="TYPE" type="STRIPETYPE" use="required" />
