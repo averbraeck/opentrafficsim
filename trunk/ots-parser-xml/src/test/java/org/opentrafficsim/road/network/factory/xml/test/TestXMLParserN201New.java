@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -11,11 +10,9 @@ import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -26,7 +23,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParserN201New.TestXMLModelN201;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;

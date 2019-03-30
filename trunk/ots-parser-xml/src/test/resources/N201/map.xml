@@ -12,10 +12,10 @@
 		<maxY>37.435</maxY>
 	</extent -->
   <extent>
-    <minX>0</minX>
-    <minY>0</minY>
-    <maxX>150000</maxX>
-    <maxY>500000</maxY>
+    <minX>4</minX>
+    <minY>51</minY>
+    <maxX>6</maxX>
+    <maxY>52</maxY>
   </extent>
   <gisbeans:image>
     <backgroundColor>
