@@ -34,270 +34,422 @@
       <xsd:attribute ref="xml:space" use="optional" default="preserve" />
     </xsd:complexType>
 
-    <!-- define the DEFINITIONS.GTUTYPE.NAME key -->
+    <!-- ================================================================================================== -->
+    <!-- ============================================ XPATH KEYS ========================================== -->
+    <!-- ================================================================================================== -->
+
+    <!-- ========================================= DEFINITIONS KEYS ======================================= -->
+    
+    <!-- define the GTUTYPE.ID key -->
 
     <xsd:key name="gtuTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:GTUTYPE" />
+      <xsd:selector xpath=".//ots:GTUTYPES/ots:GTUTYPE" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the DEFINITIONS.GTUMIX.NAME key -->
+    <!-- define the GTUTEMPLATE.ID key -->
 
-    <xsd:key name="gtuMixKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:GTUMIX" />
+    <xsd:key name="gtuTemplateKey">
+      <xsd:selector xpath=".//ots:GTUTEMPLATES/ots:GTUTEMPLATE" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the DEFINITIONS.GTU.NAME key -->
-
-    <xsd:key name="gtuKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:GTU" />
-      <xsd:field xpath="@ID" />
-    </xsd:key>
-
-    <!-- define the DEFINITIONS.ROADLAYOUT.NAME key -->
-
-    <xsd:key name="roadLayoutKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADLAYOUT" />
-      <xsd:field xpath="@ID" />
-    </xsd:key>
-
-    <!-- define the DEFINITIONS.LINKTYPES.LINKTYPE.NAME key -->
+    <!-- define the LINKTYPE.ID key -->
 
     <xsd:key name="linkTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:LINKTYPES/ots:LINKTYPE" />
+      <xsd:selector xpath=".//ots:LINKTYPES/ots:LINKTYPE" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the DEFINITIONS.LANETYPE.NAME key -->
+    <!-- define the LANETYPE.ID key -->
 
     <xsd:key name="laneTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:LANETYPE" />
+      <xsd:selector xpath=".//ots:LANETYPES/ots:LANETYPE" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the NODE.NAME key -->
+    <!-- define the ROADLAYOUT.ID key -->
+
+    <xsd:key name="roadLayoutKey">
+      <xsd:selector xpath=".//ots:ROADLAYOUTS/ots:ROADLAYOUT" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- TODO: Figure out if LANE.ID key can be forced to be unique within ROADLAYOUT -->
+     
+    <!-- =========================================== NETWORK KEYS ========================================= -->
+
+    <!-- define the NODE.ID key -->
 
     <xsd:key name="nodeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:NODE" />
+      <xsd:selector xpath=".//ots:NETWORK/ots:NODE" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the LINK.NAME key -->
+    <!-- define the CONNECTOR.ID key -->
+
+    <xsd:key name="connectorKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:CONNECTOR" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- define the LINK.ID key -->
 
     <xsd:key name="linkKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK" />
+      <xsd:selector xpath=".//ots:NETWORK/ots:LINK" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the ROUTE.NAME key -->
+    <!-- define the ROUTE.ID key -->
 
     <xsd:key name="routeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:ROUTE" />
+      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTE" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the ROUTEMIX.NAME key -->
-
-    <xsd:key name="routeMixKey">
-      <xsd:selector xpath="ots:NETWORK/ots:ROUTEMIX" />
-      <xsd:field xpath="@ID" />
-    </xsd:key>
-
-    <!-- define the SHORTESTROUTE.NAME key -->
+    <!-- define the SHORTESTROUTE.ID key -->
 
     <xsd:key name="shortestRouteKey">
-      <xsd:selector xpath="ots:NETWORK/ots:SHORTESTROUTE" />
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the SHORTESTROUTEMIX.NAME key -->
+    <!-- define the ROUTEMIX.ID key -->
+
+    <xsd:key name="routeMixKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- define the SHORTESTROUTEMIX.ID key -->
 
     <xsd:key name="shortestRouteMixKey">
-      <xsd:selector xpath="ots:NETWORK/ots:SHORTESTROUTEMIX" />
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the SIGNALGROUP.ID key -->
+    <!-- ======================================== NETWORKDEMAND KEYS ====================================== -->
+    
+    <!-- define the OD.ID key -->
 
-    <xsd:key name="signalGroupKey">
-      <xsd:selector xpath="ots:NETWORK/ots:SIGNALGROUP" />
+    <xsd:key name="odKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:OD" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- DEFINITIONS.GTU.GTUTYPE defined by DEFINITIONS.GTUTYPE.NAME -->
+    <!-- define the GTUTEMPLATEMIX.ID key -->
 
-    <xsd:keyref name="gtuTypeRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:GTU" />
+    <xsd:key name="gtuTemplateMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GTUTEMPLATEMIX" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- =========================================== CONTROL KEYS ========================================= -->
+
+    <!-- define the CONTROL.FIXEDTIME.ID key -->
+
+    <xsd:key name="controlFixedTimeKey">
+      <xsd:selector xpath=".//ots:CONTROL/ots:FIXEDTIME" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+    
+    <!-- ============================================= RUN KEYS =========================================== -->
+
+    <!-- define the RANDOMSTREAM.ID key -->
+
+    <xsd:key name="randomStreamKey">
+      <xsd:selector xpath=".//ots:RUN/ots:RANDOMSTREAMS/ots:RANDOMSTREAM" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- ================================================================================================== -->
+    <!-- =========================================== XPATH CHECKS ========================================= -->
+    <!-- ================================================================================================== -->
+
+    <!-- ======================================= CHECKS IN DEFINITIONS ==================================== -->
+
+    <!-- GTUTYPE.PARENT defined by GTUTYPE.ID -->
+
+    <xsd:keyref name="gtuTypeParentRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:GTUTYPES/ots:GTUTYPE" />
+      <xsd:field xpath="@PARENT" />
+    </xsd:keyref>
+
+    <!-- GTUTEMPLATE.GTUTYPE defined by GTUTYPE.ID -->
+
+    <xsd:keyref name="gtuTemplateTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:GTUTEMPLATES/ots:GTUTEMPLATE" />
       <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
-    <!-- DEFINITIONS.GTUMIX.GTU.NAME defined by DEFINITIONS.GTU.NAME -->
+    <!-- LANETYPE.PARENT defined by LANETYPE.ID -->
 
-    <xsd:keyref name="gtuMixGtuRef" refer="ots:gtuKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:GTUMIX/ots:GTU" />
-      <xsd:field xpath="@ID" />
+    <xsd:keyref name="laneTypeParentRef" refer="ots:laneTypeKey">
+      <xsd:selector xpath=".//ots:LANETYPES/ots:LANETYPE" />
+      <xsd:field xpath="@PARENT" />
     </xsd:keyref>
 
-    <!-- DEFINITIONS.ROADTYPE.SPEEDLIMITS.GTUTYPE defined by DEFINITIONS.GTUTYPE.NAME -->
+    <!-- LINKTYPE.PARENT defined by LINKTYPE.ID -->
 
-    <xsd:keyref name="roadTypeGtuTypeRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADTYPE/ots:SPEEDLIMITS" />
+    <xsd:keyref name="linkTypeParentRef" refer="ots:linkTypeKey">
+      <xsd:selector xpath=".//ots:LINKTYPES/ots:LINKTYPE" />
+      <xsd:field xpath="@PARENT" />
+    </xsd:keyref>
+
+    <!-- COMPATIBILITY.GTUTYPE defined by GTUTYPE.ID -->
+
+    <xsd:keyref name="compatibilityGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:COMPATIBILITY" />
       <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
+    
+    <!-- SPEEDLIMIT.GTUTYPE defined by GTUTYPE.ID -->
 
-    <!-- DEFINITIONS.LANETYPE.GTUTYPE.NAME defined by DEFINITIONS.GTUTYPE.NAME -->
-
-    <xsd:keyref name="laneTypeGtuTypeRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:LANETYPE/ots:GTUTYPE" />
-      <xsd:field xpath="@ID" />
+    <xsd:keyref name="speedlimitGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:SPEEDLIMIT" />
+      <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
+    
+    <!-- LANE.LANETYPE defined by LANETYPE.ID -->
 
-    <!-- DEFINITIONS.ROADLAYOUT.ROADTYPE defined by DEFINITIONS.LINKTYPES.LINKTYPE.NAME -->
-
-    <xsd:keyref name="roadLayoutRoadTypeRef" refer="ots:linkTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADLAYOUT" />
-      <xsd:field xpath="@ROADTYPE" />
-    </xsd:keyref>
-
-    <!-- DEFINITIONS.ROADLAYOUT.LANE.LANETYPE defined by DEFINITIONS.LANETYPE.NAME -->
-
-    <xsd:keyref name="RoadLayoutLanelaneTypeRef" refer="ots:laneTypeKey">
-      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADLAYOUT/ots:LANE" />
+    <xsd:keyref name="laneLaneTypeRef" refer="ots:laneTypeKey">
+      <xsd:selector xpath=".//ots:ROADLAYOUT/ots:LANE" />
       <xsd:field xpath="@LANETYPE" />
     </xsd:keyref>
 
-    <!-- NETWORK.CONNECTORTYPE.NODESTART defined by NODE.NAME -->
+    <!-- ROADLAYOUT.LINKTYPE defined by LINKTYPE.ID -->
 
-    <xsd:keyref name="linkNodeStartNodeRef" refer="ots:nodeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:CONNECTORTYPE" />
-      <xsd:field xpath="@NODESTART" />
+    <xsd:keyref name="roadlayoutLinkTypeRef" refer="ots:linkTypeKey">
+      <xsd:selector xpath=".//ots:ROADLAYOUT" />
+      <xsd:field xpath="@LINKTYPE" />
     </xsd:keyref>
 
-    <!-- NETWORK.CONNECTORTYPE.NODEEND defined by NODE.NAME -->
+    <!-- ========================================= CHECKS IN NETWORK ====================================== -->
 
-    <xsd:keyref name="linkNodeEndNodeRef" refer="ots:nodeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:CONNECTORTYPE" />
+    <!-- CONNECTOR.NODESTART defined by NODE.ID -->
+
+    <xsd:keyref name="connectorNodeStartNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:CONNECTOR" />
+      <xsd:field xpath="@NODESTART" />
+    </xsd:keyref>
+    
+    <!-- CONNECTOR.NODEEND defined by NODE.ID -->
+
+    <xsd:keyref name="connectorNodeEndNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:CONNECTOR" />
       <xsd:field xpath="@NODEEND" />
     </xsd:keyref>
     
-    <!-- NETWORK.LINK.GENERATOR.GTU defined by DEFINITIONS.GTU.NAME -->
+    <!-- LINK.NODESTART defined by NODE.ID -->
 
-    <xsd:keyref name="linkGeneratorGtuRef" refer="ots:gtuKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:GENERATOR" />
-      <xsd:field xpath="@GTU" />
+    <xsd:keyref name="linkNodeStartNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:LINK" />
+      <xsd:field xpath="@NODESTART" />
+    </xsd:keyref>
+    
+    <!-- LINK.NODEEND defined by NODE.ID -->
+
+    <xsd:keyref name="linkNodeEndNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:LINK" />
+      <xsd:field xpath="@NODEEND" />
     </xsd:keyref>
 
-    <!-- NETWORK.LINK.GENERATOR.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
+    <!-- LINK.DEFINEDROADLAYOUT defined by ROADLAYOUT.ID -->
 
-    <xsd:keyref name="linkGeneratorGtuMixRef" refer="ots:gtuMixKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:GENERATOR" />
-      <xsd:field xpath="@GTUMIX" />
+    <xsd:keyref name="definedroadlayoutRoadLayoutIdRef" refer="roadLayoutKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:LINK" />
+      <xsd:field xpath="DEFINEDROADLAYOUT" />
+    </xsd:keyref>
+    
+    <!-- ROUTE.NODE defined by NODE.ID -->
+
+    <xsd:keyref name="routeNodeNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTE" />
+      <xsd:field xpath="NODE" />
     </xsd:keyref>
 
-    <!-- NETWORK.LINK.GENERATOR.ROUTE defined by ROUTE.NAME -->
+    <!-- SHORTESTROUTE.FROM defined by NODE.ID -->
 
-    <xsd:keyref name="linkGeneratorRouteRef" refer="ots:routeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:GENERATOR" />
-      <xsd:field xpath="@ROUTE" />
+    <xsd:keyref name="shortestRouteFromNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
+      <xsd:field xpath="FROM" />
     </xsd:keyref>
 
-    <!-- NETWORK.LINK.LISTGENERATOR.GTU defined by DEFINITIONS.GTU.NAME -->
+    <!-- SHORTESTROUTE.TO defined by NODE.ID -->
 
-    <xsd:keyref name="linkListGeneratorGtuRef" refer="ots:gtuKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:LISTGENERATOR" />
-      <xsd:field xpath="@GTU" />
+    <xsd:keyref name="shortestRouteToNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
+      <xsd:field xpath="TO" />
     </xsd:keyref>
 
-    <!-- NETWORK.LINK.LISTGENERATOR.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
+    <!-- SHORTESTROUTE.VIA defined by NODE.ID -->
 
-    <xsd:keyref name="linkListGeneratorGtuMixRef" refer="ots:gtuMixKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:LISTGENERATOR" />
-      <xsd:field xpath="@GTUMIX" />
+    <xsd:keyref name="shortestRouteViaNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
+      <xsd:field xpath="VIA" />
     </xsd:keyref>
 
-    <!-- NETWORK.LINK.FILL.GTU defined by DEFINITIONS.GTU.NAME -->
+    <!-- ROUTEMIX.ROUTE.ID defined by ROUTE.ID -->
 
-    <xsd:keyref name="linkFillGtuRef" refer="ots:gtuKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:FILL" />
-      <xsd:field xpath="@GTU" />
-    </xsd:keyref>
-
-    <!-- NETWORK.LINK.LISTGENERATOR.ROUTE defined by ROUTE.NAME -->
-
-    <xsd:keyref name="linkListGeneratorRouteRef" refer="ots:routeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:LISTGENERATOR" />
-      <xsd:field xpath="@ROUTE" />
-    </xsd:keyref>
-
-    <!-- NETWORK.LINK.FILL.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
-
-    <xsd:keyref name="linkFillGtuMixRef" refer="ots:gtuMixKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:FILL" />
-      <xsd:field xpath="@GTUMIX" />
-    </xsd:keyref>
-
-    <!-- NETWORK.LINK.FILL.ROUTE defined by ROUTE.NAME -->
-
-    <xsd:keyref name="linkFillRouteRef" refer="ots:routeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK/ots:FILL" />
-      <xsd:field xpath="@ROUTE" />
-    </xsd:keyref>
-
-    <!-- NETWORK.LINK.ROADTYPE defined by DEFINITIONS.LINKTYPE.NAME -->
-
-    <xsd:keyref name="linkRoadTypeRef" refer="ots:linkTypeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:LINK" />
-      <xsd:field xpath="@ROADTYPE" />
-    </xsd:keyref>
-
-    <!-- NETWORK.SHORTESTROUTE.FROM defined by NODE.NAME -->
-
-    <xsd:keyref name="shortestRouteFromNodeRef" refer="ots:nodeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:SHORTESTROUTE" />
-      <xsd:field xpath="@FROM" />
-    </xsd:keyref>
-
-    <!-- NETWORK.SHORTESTROUTE.TO defined by NODE.NAME -->
-
-    <xsd:keyref name="shortestRouteToNodeRef" refer="ots:nodeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:SHORTESTROUTE" />
-      <xsd:field xpath="@TO" />
-    </xsd:keyref>
-
-    <!-- NETWORK.ROUTEMIX.ROUTE defined by ROUTE.NAME -->
-
-    <xsd:keyref name="RouteMixRouteRef" refer="ots:routeKey">
-      <xsd:selector xpath="ots:NETWORK/ots:ROUTEMIX" />
-      <xsd:field xpath="@ROUTE" />
-    </xsd:keyref>
-
-    <!-- NETWORK.SHORTESTROUTEMIX.SHORTESTROUTE defined by SHORTESTROUTE.NAME -->
-
-    <xsd:keyref name="shortestRouteMixShortestRouteRef" refer="ots:shortestRouteKey">
-      <xsd:selector xpath="ots:NETWORK/ots:SHORTESTROUTEMIX" />
-      <xsd:field xpath="@SHORTESTROUTE" />
-    </xsd:keyref>
-
-    <!-- CONTROL.FIXEDTIME.SIGNALGROUP.ID defined by SIGNALGROUP.ID -->
-
-    <xsd:keyref name="signalGroupFixedTimeRef" refer="ots:signalGroupKey">
-      <xsd:selector xpath="ots:CONTROL/ots:FIXEDTIME/ots:SIGNALGROUP" />
+    <xsd:keyref name="routeMixRouteIdRef" refer="ots:routeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX/ots:ROUTE" />
       <xsd:field xpath="@ID" />
     </xsd:keyref>
 
-    <!-- NETWORK.SIGNALGROUP.TRAFFICLIGHT.LINK defined by LINK.ID -->
+    <!-- SHORTESTROUTEMIX.ROUTE.ID defined by SHORTESTROUTE.ID -->
 
-    <xsd:keyref name="signalGroupTrafficLightLink" refer="ots:linkKey">
-      <xsd:selector xpath="ots:NETWORK/ots:SIGNALGROUP/ots:TRAFFICLIGHT" />
+    <xsd:keyref name="shortestRouteMixShortestRouteIdRef" refer="ots:shortestRouteKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX/ots:SHORTESTROUTE" />
+      <xsd:field xpath="@ID" />
+    </xsd:keyref>
+
+    <!-- ROUTEMIX.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
+
+    <xsd:keyref name="routeMixRandomStreamIdRef" refer="ots:randomStreamKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX" />
+      <xsd:field xpath="@RANDOMSTREAM" />
+    </xsd:keyref>
+
+    <!-- SHORTESTROUTEMIX.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
+
+    <xsd:keyref name="shortestRouteMixRandomStreamIdRef" refer="ots:randomStreamKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX" />
+      <xsd:field xpath="@RANDOMSTREAM" />
+    </xsd:keyref>
+
+    <!-- ====================================== CHECKS IN NETWORKDEMAND =================================== -->
+
+    <!-- GTUTEMPLATEMIX.GTUTEMPLATE.ID defined by GTUTEMPLATE.ID -->
+
+    <xsd:keyref name="gtuMixGtuTemplateIdRef" refer="ots:gtuTemplateKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GTUTEMPLATEMIX/ots:GTUTEMPLATE" />
+      <xsd:field xpath="@ID" />
+    </xsd:keyref>
+
+    <!-- GTUTEMPLATEMIX.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
+
+    <xsd:keyref name="gtuTemplateMixRandomStreamIdRef" refer="ots:randomStreamKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GTUTEMPLATEMIX" />
+      <xsd:field xpath="@RANDOMSTREAM" />
+    </xsd:keyref>
+
+    <!-- GENERATOR.LINK defined by LINK.ID -->
+
+    <xsd:keyref name="generatorLinkIdRef" refer="ots:linkKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
       <xsd:field xpath="@LINK" />
     </xsd:keyref>
-    
-    <!-- MODEL.MODELPARAMETER.GTUTYPE defined by DEFINITIONS.GTUTYPE -->
-    <xsd:keyref name="modelParameterGtuTypeLink" refer="ots:gtuKey">
-      <xsd:selector xpath="ots:MODEL/ots:MODELPARAMETER" />
-      <xsd:field xpath="@GTUTYPE" />
+
+    <!-- GENERATOR.GTUTEMPLATE defined by GTUTEMPLATE.ID -->
+
+    <xsd:keyref name="generatorGtuTemplateIdRef" refer="ots:gtuTemplateKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
+      <xsd:field xpath="GTUTEMPLATE" />
     </xsd:keyref>
+
+    <!-- GENERATOR.GTUTEMPLATEMIX defined by GTUTEMPLATEMIX.ID -->
+
+    <xsd:keyref name="generatorGtuTemplateMixIdRef" refer="ots:gtuTemplateMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
+      <xsd:field xpath="GTUTEMPLATEMIX" />
+    </xsd:keyref>
+
+    <!-- GENERATOR.ROUTE defined by ROUTE.ID -->
+
+    <xsd:keyref name="generatorRouteIdRef" refer="ots:routeKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
+      <xsd:field xpath="ROUTE" />
+    </xsd:keyref>
+
+    <!-- GENERATOR.ROUTEMIX defined by ROUTEMIX.ID -->
+
+    <xsd:keyref name="generatorRouteMixIdRef" refer="ots:routeMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
+      <xsd:field xpath="ROUTEMIX" />
+    </xsd:keyref>
+
+    <!-- GENERATOR.SHORTESTROUTE defined by ROUTE.ID -->
+
+    <xsd:keyref name="generatorShortestRouteouteIdRef" refer="ots:shortestRouteKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
+      <xsd:field xpath="SHORTESTROUTE" />
+    </xsd:keyref>
+
+    <!-- GENERATOR.SHORTESTROUTEMIX defined by ROUTEMIX.ID -->
+
+    <xsd:keyref name="generatorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
+      <xsd:field xpath="SHORTESTROUTEMIX" />
+    </xsd:keyref>
+
+    <!-- LISTGENERATOR.LINK defined by LINK.ID -->
+
+    <xsd:keyref name="listGeneratorLinkIdRef" refer="ots:linkKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
+      <xsd:field xpath="@LINK" />
+    </xsd:keyref>
+
+    <!-- LISTGENERATOR.GTUTEMPLATE defined by GTUTEMPLATE.ID -->
+
+    <xsd:keyref name="listGeneratorGtuTemplateIdRef" refer="ots:gtuTemplateKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
+      <xsd:field xpath="GTUTEMPLATE" />
+    </xsd:keyref>
+
+    <!-- LISTGENERATOR.GTUTEMPLATEMIX defined by GTUTEMPLATEMIX.ID -->
+
+    <xsd:keyref name="listGeneratorGtuTemplateMixIdRef" refer="ots:gtuTemplateMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
+      <xsd:field xpath="GTUTEMPLATEMIX" />
+    </xsd:keyref>
+
+    <!-- LISTGENERATOR.ROUTE defined by ROUTE.ID -->
+
+    <xsd:keyref name="listGeneratorRouteIdRef" refer="ots:routeKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
+      <xsd:field xpath="ROUTE" />
+    </xsd:keyref>
+
+    <!-- LISTGENERATOR.ROUTEMIX defined by ROUTEMIX.ID -->
+
+    <xsd:keyref name="listGeneratorRouteMixIdRef" refer="ots:routeMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
+      <xsd:field xpath="ROUTEMIX" />
+    </xsd:keyref>
+
+    <!-- LISTGENERATOR.SHORTESTROUTE defined by ROUTE.ID -->
+
+    <xsd:keyref name="listGeneratorShortestRouteouteIdRef" refer="ots:shortestRouteKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
+      <xsd:field xpath="SHORTESTROUTE" />
+    </xsd:keyref>
+
+    <!-- LISTGENERATOR.SHORTESTROUTEMIX defined by ROUTEMIX.ID -->
+
+    <xsd:keyref name="listGeneratorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
+      <xsd:field xpath="SHORTESTROUTEMIX" />
+    </xsd:keyref>
+
+    <!-- OD.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
+
+    <xsd:keyref name="odRandomStreamIdRef" refer="ots:randomStreamKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:OD" />
+      <xsd:field xpath="@RANDOMSTREAM" />
+    </xsd:keyref>
+
+    <!-- TODO: other XPath checks in OD --> 
+
+    <!-- ========================================= CHECKS IN CONTROL ====================================== -->
+
+    <!-- SIGNALGROUP.TRAFFICLIGHT.LINK defined by LINK.ID -->
+
+    <xsd:keyref name="signalGroupLinkIdRef" refer="ots:linkKey">
+      <xsd:selector xpath=".//ots:SIGNALGROUP/ots:TRAFFICLIGHT" />
+      <xsd:field xpath="@LINK" />
+    </xsd:keyref>
+
+    <!-- TODO: other XPath checks in CONTROL --> 
 
   </xsd:element>
 

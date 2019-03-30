@@ -18,8 +18,6 @@
   <!-- ================================================ NETWORK ========================================= -->
   <!-- ================================================================================================== -->
 
-  <!-- The node name is the only key used as an ID, to allow for easy route and intermediate point definition -->
-
   <xsd:element name="NODE">
     <xsd:complexType>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
@@ -161,6 +159,7 @@
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -176,6 +175,7 @@
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>

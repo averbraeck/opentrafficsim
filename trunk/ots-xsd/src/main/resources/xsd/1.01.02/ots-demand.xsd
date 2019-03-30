@@ -39,10 +39,10 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="GTUMIX">
+  <xsd:element name="GTUTEMPLATEMIX">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="GTUTEMPLATE" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="ID" type="xsd:string" use="required" />
             <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
@@ -50,6 +50,7 @@
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="generator" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -58,8 +59,8 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
-          <xsd:element name="GTU" type="xsd:string" />
-          <xsd:element name="GTUMIX" type="xsd:string" />
+          <xsd:element name="GTUTEMPLATE" type="xsd:string" />
+          <xsd:element name="GTUTEMPLATEMIX" type="xsd:string" />
         </xsd:choice>
         <xsd:choice>
           <xsd:element name="ROUTE" type="xsd:string" />
@@ -93,8 +94,8 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
-          <xsd:element name="GTU" type="xsd:string" />
-          <xsd:element name="GTUMIX" type="xsd:string" />
+          <xsd:element name="GTUTEMPLATE" type="xsd:string" />
+          <xsd:element name="GTUTEMPPLATEMIX" type="xsd:string" />
         </xsd:choice>
         <xsd:choice>
           <xsd:element name="ROUTE" type="xsd:string" />
@@ -116,7 +117,7 @@
   <xsd:element name="NETWORKDEMAND">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="GTUMIX" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="GTUTEMPLATEMIX" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="OD" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="GENERATOR" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded" />
