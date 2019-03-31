@@ -374,11 +374,6 @@
   <!-- ================================================================================================== -->
 
   <xsd:simpleType name="CLASSNAMETYPE">
-    <xsd:annotation>
-      <xsd:documentation source="description">
-        Fully specified classname including the package.
-      </xsd:documentation>
-    </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="([A-Za-z_0-9$]+\.)*[A-Za-z_0-9$]+"></xsd:pattern>
     </xsd:restriction>

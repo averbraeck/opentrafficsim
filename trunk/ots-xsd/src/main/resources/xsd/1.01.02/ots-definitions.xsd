@@ -217,6 +217,13 @@
   </xsd:complexType>
 
   <xsd:element name="ROADLAYOUT">
+    <xsd:annotation>
+      <xsd:documentation source="description">
+        Road layout. Lanes to the right of the design line have negative offset.
+        Those to the right have positive offset. When not specifying offsets, sequence
+        the lines from right (most negative) to left (most positive). 
+      </xsd:documentation>
+    </xsd:annotation>
     <xsd:complexType>
       <xsd:complexContent>
         <xsd:extension base="BASICROADLAYOUT">
