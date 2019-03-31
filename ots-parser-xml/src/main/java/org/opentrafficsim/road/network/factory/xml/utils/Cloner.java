@@ -54,7 +54,7 @@ public final class Cloner
             throw new XmlParserException(exception);
         }
     }
-    
+
     /**
      * Clone the BASICROADLAYOUT, as not all DJUNIT types are serializable...
      * @param in the object to clone
@@ -67,79 +67,84 @@ public final class Cloner
         rl.setLANEKEEPING(in.getLANEKEEPING());
         rl.setLINKTYPE(in.getBase());
         rl.getSPEEDLIMIT().addAll(in.getSPEEDLIMIT());
-
-        for (CSELANE lane : ParseUtil.getObjectsOfType(in.getLANEOrNOTRAFFICLANEOrSHOULDER(), CSELANE.class))
+        for (Object o : in.getLANEOrNOTRAFFICLANEOrSHOULDER())
         {
-            CSELANE lc = new CSELANE();
-            lc.setCENTEROFFSET(lane.getCENTEROFFSET());
-            lc.setCENTEROFFSETEND(lane.getCENTEROFFSETEND());
-            lc.setCENTEROFFSETSTART(lane.getCENTEROFFSETSTART());
-            lc.setLEFTOFFSET(lane.getLEFTOFFSET());
-            lc.setLEFTOFFSETEND(lane.getLEFTOFFSETEND());
-            lc.setLEFTOFFSETSTART(lane.getLEFTOFFSETSTART());
-            lc.setRIGHTOFFSET(lane.getRIGHTOFFSET());
-            lc.setRIGHTOFFSETEND(lane.getRIGHTOFFSETEND());
-            lc.setRIGHTOFFSETSTART(lane.getRIGHTOFFSETSTART());
-            lc.setDESIGNDIRECTION(lane.isDESIGNDIRECTION());
-            lc.setLANETYPE(lane.getLANETYPE());
-            lc.setID(lane.getID());
-            lc.setWIDTH(lane.getWIDTH());
-            lc.setWIDTHEND(lane.getWIDTHEND());
-            lc.setWIDTHSTART(lane.getWIDTHSTART());
-            lc.getSPEEDLIMIT().addAll(lane.getSPEEDLIMIT());
-            rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(lc);
-        }
-        
-        for (CSENOTRAFFICLANE ntl : ParseUtil.getObjectsOfType(in.getLANEOrNOTRAFFICLANEOrSHOULDER(), CSENOTRAFFICLANE.class))
-        {
-            CSENOTRAFFICLANE ntlc = new CSENOTRAFFICLANE();
-            ntlc.setCENTEROFFSET(ntl.getCENTEROFFSET());
-            ntlc.setCENTEROFFSETEND(ntl.getCENTEROFFSETEND());
-            ntlc.setCENTEROFFSETSTART(ntl.getCENTEROFFSETSTART());
-            ntlc.setLEFTOFFSET(ntl.getLEFTOFFSET());
-            ntlc.setLEFTOFFSETEND(ntl.getLEFTOFFSETEND());
-            ntlc.setLEFTOFFSETSTART(ntl.getLEFTOFFSETSTART());
-            ntlc.setRIGHTOFFSET(ntl.getRIGHTOFFSET());
-            ntlc.setRIGHTOFFSETEND(ntl.getRIGHTOFFSETEND());
-            ntlc.setRIGHTOFFSETSTART(ntl.getRIGHTOFFSETSTART());
-            ntlc.setID(ntl.getID());
-            ntlc.setWIDTH(ntl.getWIDTH());
-            ntlc.setWIDTHEND(ntl.getWIDTHEND());
-            ntlc.setWIDTHSTART(ntl.getWIDTHSTART());
-            rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(ntlc);
-        }
+            if (o instanceof CSELANE)
+            {
+                CSELANE lane = (CSELANE) o;
+                CSELANE lc = new CSELANE();
+                lc.setCENTEROFFSET(lane.getCENTEROFFSET());
+                lc.setCENTEROFFSETEND(lane.getCENTEROFFSETEND());
+                lc.setCENTEROFFSETSTART(lane.getCENTEROFFSETSTART());
+                lc.setLEFTOFFSET(lane.getLEFTOFFSET());
+                lc.setLEFTOFFSETEND(lane.getLEFTOFFSETEND());
+                lc.setLEFTOFFSETSTART(lane.getLEFTOFFSETSTART());
+                lc.setRIGHTOFFSET(lane.getRIGHTOFFSET());
+                lc.setRIGHTOFFSETEND(lane.getRIGHTOFFSETEND());
+                lc.setRIGHTOFFSETSTART(lane.getRIGHTOFFSETSTART());
+                lc.setDESIGNDIRECTION(lane.isDESIGNDIRECTION());
+                lc.setLANETYPE(lane.getLANETYPE());
+                lc.setID(lane.getID());
+                lc.setWIDTH(lane.getWIDTH());
+                lc.setWIDTHEND(lane.getWIDTHEND());
+                lc.setWIDTHSTART(lane.getWIDTHSTART());
+                lc.getSPEEDLIMIT().addAll(lane.getSPEEDLIMIT());
+                rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(lc);
+            }
 
-        for (CSESHOULDER shoulder : ParseUtil.getObjectsOfType(in.getLANEOrNOTRAFFICLANEOrSHOULDER(), CSESHOULDER.class))
-        {
-            CSESHOULDER sc = new CSESHOULDER();
-            sc.setCENTEROFFSET(shoulder.getCENTEROFFSET());
-            sc.setCENTEROFFSETEND(shoulder.getCENTEROFFSETEND());
-            sc.setCENTEROFFSETSTART(shoulder.getCENTEROFFSETSTART());
-            sc.setLEFTOFFSET(shoulder.getLEFTOFFSET());
-            sc.setLEFTOFFSETEND(shoulder.getLEFTOFFSETEND());
-            sc.setLEFTOFFSETSTART(shoulder.getLEFTOFFSETSTART());
-            sc.setRIGHTOFFSET(shoulder.getRIGHTOFFSET());
-            sc.setRIGHTOFFSETEND(shoulder.getRIGHTOFFSETEND());
-            sc.setRIGHTOFFSETSTART(shoulder.getRIGHTOFFSETSTART());
-            sc.setID(shoulder.getID());
-            sc.setWIDTH(shoulder.getWIDTH());
-            sc.setWIDTHEND(shoulder.getWIDTHEND());
-            sc.setWIDTHSTART(shoulder.getWIDTHSTART());
-            rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(sc);
-        }
+            else if (o instanceof CSENOTRAFFICLANE)
+            {
+                CSENOTRAFFICLANE ntl = (CSENOTRAFFICLANE) o;
+                CSENOTRAFFICLANE ntlc = new CSENOTRAFFICLANE();
+                ntlc.setCENTEROFFSET(ntl.getCENTEROFFSET());
+                ntlc.setCENTEROFFSETEND(ntl.getCENTEROFFSETEND());
+                ntlc.setCENTEROFFSETSTART(ntl.getCENTEROFFSETSTART());
+                ntlc.setLEFTOFFSET(ntl.getLEFTOFFSET());
+                ntlc.setLEFTOFFSETEND(ntl.getLEFTOFFSETEND());
+                ntlc.setLEFTOFFSETSTART(ntl.getLEFTOFFSETSTART());
+                ntlc.setRIGHTOFFSET(ntl.getRIGHTOFFSET());
+                ntlc.setRIGHTOFFSETEND(ntl.getRIGHTOFFSETEND());
+                ntlc.setRIGHTOFFSETSTART(ntl.getRIGHTOFFSETSTART());
+                ntlc.setID(ntl.getID());
+                ntlc.setWIDTH(ntl.getWIDTH());
+                ntlc.setWIDTHEND(ntl.getWIDTHEND());
+                ntlc.setWIDTHSTART(ntl.getWIDTHSTART());
+                rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(ntlc);
+            }
 
-        for (CSESTRIPE stripe : ParseUtil.getObjectsOfType(in.getLANEOrNOTRAFFICLANEOrSHOULDER(), CSESTRIPE.class))
-        {
-            CSESTRIPE sc = new CSESTRIPE();
-            sc.setCENTEROFFSET(stripe.getCENTEROFFSET());
-            sc.setCENTEROFFSETEND(stripe.getCENTEROFFSETEND());
-            sc.setCENTEROFFSETSTART(stripe.getCENTEROFFSETSTART());
-            sc.setID(stripe.getID());
-            sc.setDRAWINGWIDTH(stripe.getDRAWINGWIDTH());
-            sc.setTYPE(stripe.getTYPE());
-            rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(sc);
-        }
+            else if (o instanceof CSESHOULDER)
+            {
+                CSESHOULDER shoulder = (CSESHOULDER) o;
+                CSESHOULDER sc = new CSESHOULDER();
+                sc.setCENTEROFFSET(shoulder.getCENTEROFFSET());
+                sc.setCENTEROFFSETEND(shoulder.getCENTEROFFSETEND());
+                sc.setCENTEROFFSETSTART(shoulder.getCENTEROFFSETSTART());
+                sc.setLEFTOFFSET(shoulder.getLEFTOFFSET());
+                sc.setLEFTOFFSETEND(shoulder.getLEFTOFFSETEND());
+                sc.setLEFTOFFSETSTART(shoulder.getLEFTOFFSETSTART());
+                sc.setRIGHTOFFSET(shoulder.getRIGHTOFFSET());
+                sc.setRIGHTOFFSETEND(shoulder.getRIGHTOFFSETEND());
+                sc.setRIGHTOFFSETSTART(shoulder.getRIGHTOFFSETSTART());
+                sc.setID(shoulder.getID());
+                sc.setWIDTH(shoulder.getWIDTH());
+                sc.setWIDTHEND(shoulder.getWIDTHEND());
+                sc.setWIDTHSTART(shoulder.getWIDTHSTART());
+                rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(sc);
+            }
 
+            else if (o instanceof CSESTRIPE)
+            {
+                CSESTRIPE stripe = (CSESTRIPE) o;
+                CSESTRIPE sc = new CSESTRIPE();
+                sc.setCENTEROFFSET(stripe.getCENTEROFFSET());
+                sc.setCENTEROFFSETEND(stripe.getCENTEROFFSETEND());
+                sc.setCENTEROFFSETSTART(stripe.getCENTEROFFSETSTART());
+                sc.setID(stripe.getID());
+                sc.setDRAWINGWIDTH(stripe.getDRAWINGWIDTH());
+                sc.setTYPE(stripe.getTYPE());
+                rl.getLANEOrNOTRAFFICLANEOrSHOULDER().add(sc);
+            }
+        }
         return rl;
     }
 }
