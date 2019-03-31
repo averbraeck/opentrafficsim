@@ -636,6 +636,22 @@ public final class NetworkParser
                 }
             }
         }
+        
+        // add the link offset
+        if (xmlLink.getOFFSETSTART() != null && xmlLink.getOFFSETSTART().ne0())
+        {
+            for (CSEData cseData : cseDataList)
+            {
+                cseData.centerOffsetStart = cseData.centerOffsetStart.plus(xmlLink.getOFFSETSTART());
+            }
+        }
+        if (xmlLink.getOFFSETEND() != null && xmlLink.getOFFSETEND().ne0())
+        {
+            for (CSEData cseData : cseDataList)
+            {
+                cseData.centerOffsetEnd = cseData.centerOffsetEnd.plus(xmlLink.getOFFSETEND());
+            }
+        }
     }
 
     /**
