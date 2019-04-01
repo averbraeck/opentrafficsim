@@ -81,8 +81,6 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         Throw.when(parentLink == null, NetworkException.class,
                 "Constructor of CrossSectionElement for id %s, parentLink cannot be null", id);
         Throw.when(id == null, NetworkException.class, "Constructor of CrossSectionElement -- id cannot be null");
-        Throw.when(!(parentLink.getNetwork() instanceof RoadNetwork), NetworkException.class,
-                "Network of CrossSectionElement not a RoadNetwork");
         for (CrossSectionElement cse : parentLink.getCrossSectionElementList())
         {
             Throw.when(cse.getId().equals(id), NetworkException.class,
@@ -232,7 +230,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      */
     public final RoadNetwork getNetwork()
     {
-        return (RoadNetwork) this.parentLink.getNetwork();
+        return this.parentLink.getNetwork();
     }
     
     /**

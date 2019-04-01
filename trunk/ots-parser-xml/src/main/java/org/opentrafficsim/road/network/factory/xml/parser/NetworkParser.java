@@ -154,9 +154,9 @@ public final class NetworkParser
             Node startNode = otsNetwork.getNode(xmlLink.getNODESTART());
             Node endNode = otsNetwork.getNode(xmlLink.getNODEEND());
             double startDirection =
-                    nodeDirections.containsKey(startNode.getId()) ? nodeDirections.get(startNode.getId()).getInUnit() : 0.0;
+                    nodeDirections.containsKey(startNode.getId()) ? nodeDirections.get(startNode.getId()).getSI() : 0.0;
             double endDirection =
-                    nodeDirections.containsKey(endNode.getId()) ? nodeDirections.get(endNode.getId()).getInUnit() : 0.0;
+                    nodeDirections.containsKey(endNode.getId()) ? nodeDirections.get(endNode.getId()).getSI() : 0.0;
             OTSPoint3D startPoint = new OTSPoint3D(startNode.getPoint());
             OTSPoint3D endPoint = new OTSPoint3D(endNode.getPoint());
 
@@ -483,11 +483,21 @@ public final class NetworkParser
                 {
                     cseData.centerOffsetStart = stripe.getCENTEROFFSET();
                     cseData.centerOffsetEnd = stripe.getCENTEROFFSET();
+                    startOffset = true;
+                    endOffset = true;
                 }
                 else
                 {
-                    cseData.centerOffsetStart = stripe.getCENTEROFFSETSTART();
-                    cseData.centerOffsetEnd = stripe.getCENTEROFFSETEND();
+                    if (stripe.getCENTEROFFSETSTART() != null)
+                    {
+                        cseData.centerOffsetStart = stripe.getCENTEROFFSETSTART();
+                        startOffset = true;
+                    }
+                    if (stripe.getCENTEROFFSETEND() != null)
+                    {
+                        cseData.centerOffsetEnd = stripe.getCENTEROFFSETEND();
+                        endOffset = true;
+                    }
                 }
                 cseDataList.add(cseData);
             }
@@ -731,5 +741,13 @@ public final class NetworkParser
         /** the end offset of the element. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
         public Length centerOffsetEnd;
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "CSEData [widthStart=" + this.widthStart + ", widthEnd=" + this.widthEnd + ", centerOffsetStart="
+                    + this.centerOffsetStart + ", centerOffsetEnd=" + this.centerOffsetEnd + "]";
+        }
     }
 }
