@@ -19,24 +19,24 @@
     </GTUTYPES>
     <GTUTEMPLATES>
       <GTUTEMPLATE ID="Car.53" GTUTYPE="Car.53" DEFAULT="false">
-        <LENGTHDIST>
+        <LENGTHDIST LENGTHUNIT="m">
           <UNIFORM MIN="3.50" MAX="4.50" />
         </LENGTHDIST>
-        <WIDTHDIST>
+        <WIDTHDIST LENGTHUNIT="m">
           <CONSTANT C="2.00" />
         </WIDTHDIST>
-        <MAXSPEEDDIST>
+        <MAXSPEEDDIST SPEEDUNIT="km/h">
           <UNIFORM MIN="80.00" MAX="150.00" />
         </MAXSPEEDDIST>
       </GTUTEMPLATE>
       <GTUTEMPLATE ID="Truck.56" GTUTYPE="Truck.56" DEFAULT="false">
-        <LENGTHDIST>
+        <LENGTHDIST LENGTHUNIT="m">
           <UNIFORM MIN="6.00" MAX="10.00" />
         </LENGTHDIST>
-        <WIDTHDIST>
+        <WIDTHDIST LENGTHUNIT="m">
           <UNIFORM MIN="2.00" MAX="2.80" />
         </WIDTHDIST>
-        <MAXSPEEDDIST>
+        <MAXSPEEDDIST SPEEDUNIT="km/h">
           <UNIFORM MIN="70.00" MAX="100.00" />
         </MAXSPEEDDIST>
       </GTUTEMPLATE>
@@ -1500,7 +1500,7 @@
       </DEMAND>
     </OD>
   </NETWORKDEMAND>
-  <CONTROL>
+  <!-- CONTROL>
     <FIXEDTIME ID="SC1" CYCLETIME="90.00s">
       <SIGNALGROUP OFFSET="0.0s" ID="SG1" GREEN="40.00s" YELLOW="3.0s">
         <TRAFFICLIGHT TRAFFICLIGHTID="Signal 2" LINK="928_0" />
@@ -1525,7 +1525,7 @@
         <TRAFFICLIGHT TRAFFICLIGHTID="Signal 4" LINK="932_0" />
       </SIGNALGROUP>
     </FIXEDTIME>
-  </CONTROL>
+  </CONTROL -->
   <MODEL />
   <SCENARIO />
   <RUN>

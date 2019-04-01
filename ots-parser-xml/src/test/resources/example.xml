@@ -66,19 +66,23 @@
     </GTUTEMPLATES>
 
     <!--
-    _______________ -6m
-    shoulder center -5m
-    _______________ -4m
-    lane center L1  -3m  <== driving direction
-    - - - - - - - - -2m
-    lane center L2  -1m  <== driving direction
-    ===============  0m
-    lane center R2  +1m  ==> driving direction
-    - - - - - - - - +2m
-    lane center R1  +3m  ==> driving direction
-    _______________ +4m
-    shoulder center +5m
+    Design line goes from left to right.
+    
     _______________ +6m
+    shoulder center +5m                           A
+    _______________ +4m                          / \
+    lane center L1  +3m  <== driving direction    |
+    - - - - - - - - +2m                           |
+    lane center L2  +1m  <== driving direction    |
+    ==============>  0m                           | specification
+    lane center R2  -1m  ==> driving direction    | sequence
+    - - - - - - - - -2m                           |
+    lane center R1  -3m  ==> driving direction    |
+    _______________ -4m                           |
+    shoulder center -5m                           |
+    _______________ -6m
+    
+    Specification goes from bottom (negative offset) to top (positive offset). 
     -->
 
     <ROADLAYOUTS>
@@ -88,21 +92,21 @@
           <WIDTH>2m</WIDTH>
         </SHOULDER>
         <STRIPE TYPE="SOLID" />
-        <LANE ID="L1" DESIGNDIRECTION="false" LANETYPE="HIGHWAYLANE2x2">
+        <LANE ID="R1" DESIGNDIRECTION="false" LANETYPE="HIGHWAYLANE2x2">
           <WIDTH>2m</WIDTH>
         </LANE>
         <STRIPE TYPE="DASHED" />
-        <LANE ID="L2" DESIGNDIRECTION="false" LANETYPE="HIGHWAYLANE2x2">
+        <LANE ID="R2" DESIGNDIRECTION="false" LANETYPE="HIGHWAYLANE2x2">
           <WIDTH>2m</WIDTH>
         </LANE>
         <STRIPE TYPE="DOUBLE">
           <CENTEROFFSET>0m</CENTEROFFSET>
         </STRIPE>
-        <LANE ID="R2" DESIGNDIRECTION="true" LANETYPE="HIGHWAYLANE2x2">
+        <LANE ID="L2" DESIGNDIRECTION="true" LANETYPE="HIGHWAYLANE2x2">
           <WIDTH>2m</WIDTH>
         </LANE>
         <STRIPE TYPE="DASHED" />
-        <LANE ID="R1" DESIGNDIRECTION="true" LANETYPE="HIGHWAYLANE2x2">
+        <LANE ID="L1" DESIGNDIRECTION="true" LANETYPE="HIGHWAYLANE2x2">
           <WIDTH>2m</WIDTH>
         </LANE>
         <STRIPE TYPE="SOLID" />
@@ -117,13 +121,14 @@
 
   <NETWORK>
 
-    <NODE COORDINATE="(0,0)" ID="N1" />
+    <NODE COORDINATE="(0,0)" ID="N1" DIRECTION="10.0 East(deg)"/>
     <NODE COORDINATE="(100,0)" ID="N2" />
     <NODE COORDINATE="(300,100)" ID="N3" />
     <NODE COORDINATE="(400,100)" ID="N4" />
+    <NODE COORDINATE="(450,100)" ID="N5" />
 
-    <LINK NODESTART="N1" NODEEND="N2" ID="L12">
-      <STRAIGHT />
+    <LINK NODESTART="N1" NODEEND="N2" ID="L12"  OFFSETSTART="0.0 m" OFFSETEND="0.0 m">
+      <BEZIER NUMSEGMENTS="128"/>
       <DEFINEDLAYOUT>HW22</DEFINEDLAYOUT>
     </LINK>
 
@@ -134,10 +139,15 @@
 
     <LINK NODESTART="N3" NODEEND="N4" ID="L34">
       <POLYLINE>
+        <COORDINATE>(325,105)</COORDINATE>
         <COORDINATE>(350,100)</COORDINATE>
-        <COORDINATE>(360,100)</COORDINATE>
-        <COORDINATE>(370,100)</COORDINATE>
+        <COORDINATE>(375,95)</COORDINATE>
       </POLYLINE>
+      <DEFINEDLAYOUT>HW22</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK NODESTART="N4" NODEEND="N5" ID="L45">
+      <STRAIGHT />
       <DEFINEDLAYOUT>HW22</DEFINEDLAYOUT>
     </LINK>
 
