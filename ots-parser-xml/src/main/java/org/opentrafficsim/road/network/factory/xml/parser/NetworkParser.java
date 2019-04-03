@@ -439,16 +439,16 @@ public final class NetworkParser
                 Length position = Transformer.parseLengthBeginEnd(trafficLight.getPOSITION(), lane.getLength());
                 try
                 {
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(),
-                            new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
-                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getID(), lane, position, simulator});
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(), new Class[] {
+                            String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
+                    trafficLightConstructor.newInstance(new Object[] { trafficLight.getID(), lane, position, simulator });
                 }
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException exception)
                 {
                     throw new NetworkException("TRAFFICLIGHT: CLASS NAME " + trafficLight.getCLASS().getName()
-                            + " for traffic light " + trafficLight.getID() + " on lane " + lane.toString()
-                            + " -- class not found or constructor not right", exception);
+                            + " for traffic light " + trafficLight.getID() + " on lane " + lane.toString() + " at position "
+                            + position + " -- class not found or constructor not right", exception);
                 }
             }
         }
@@ -576,12 +576,12 @@ public final class NetworkParser
         if (!startOffset)
         {
             cseDataList.get(0).centerOffsetStart =
-                    totalWidthStart.multiplyBy(0.5).minus(cseDataList.get(0).widthStart.multiplyBy(0.5));
+                    totalWidthStart.multiplyBy(-0.5).minus(cseDataList.get(0).widthStart.multiplyBy(-0.5));
         }
         if (!endOffset)
         {
             cseDataList.get(0).centerOffsetEnd =
-                    totalWidthEnd.multiplyBy(0.5).minus(cseDataList.get(0).widthEnd.multiplyBy(0.5));
+                    totalWidthEnd.multiplyBy(-0.5).minus(cseDataList.get(0).widthEnd.multiplyBy(-0.5));
         }
 
         // forward pass
@@ -591,7 +591,7 @@ public final class NetworkParser
         {
             if (cseData.centerOffsetStart != null)
             {
-                cs = cseData.centerOffsetStart;
+                cs = cseData.centerOffsetStart.plus(cseData.widthStart.multiplyBy(0.5));
             }
             else
             {
@@ -603,7 +603,7 @@ public final class NetworkParser
             }
             if (cseData.centerOffsetEnd != null)
             {
-                es = cseData.centerOffsetEnd;
+                es = cseData.centerOffsetEnd.plus(cseData.widthEnd.multiplyBy(0.5));
             }
             else
             {
@@ -614,16 +614,16 @@ public final class NetworkParser
                 }
             }
         }
-        
+
         // backward pass
         cs = null;
         es = null;
-        for (int i=cseDataList.size() - 1; i>=0; i--)
+        for (int i = cseDataList.size() - 1; i >= 0; i--)
         {
             CSEData cseData = cseDataList.get(i);
             if (cseData.centerOffsetStart != null)
             {
-                cs = cseData.centerOffsetStart;
+                cs = cseData.centerOffsetStart.minus(cseData.widthStart.multiplyBy(0.5));
             }
             else
             {
@@ -635,7 +635,7 @@ public final class NetworkParser
             }
             if (cseData.centerOffsetEnd != null)
             {
-                es = cseData.centerOffsetEnd;
+                es = cseData.centerOffsetEnd.minus(cseData.widthEnd.multiplyBy(0.5));
             }
             else
             {
@@ -646,20 +646,20 @@ public final class NetworkParser
                 }
             }
         }
-        
+
         // add the link offset
         if (xmlLink.getOFFSETSTART() != null && xmlLink.getOFFSETSTART().ne0())
         {
             for (CSEData cseData : cseDataList)
             {
-                cseData.centerOffsetStart = cseData.centerOffsetStart.plus(xmlLink.getOFFSETSTART());
+                cseData.centerOffsetStart = cseData.centerOffsetStart.minus(xmlLink.getOFFSETSTART());
             }
         }
         if (xmlLink.getOFFSETEND() != null && xmlLink.getOFFSETEND().ne0())
         {
             for (CSEData cseData : cseDataList)
             {
-                cseData.centerOffsetEnd = cseData.centerOffsetEnd.plus(xmlLink.getOFFSETEND());
+                cseData.centerOffsetEnd = cseData.centerOffsetEnd.minus(xmlLink.getOFFSETEND());
             }
         }
     }
