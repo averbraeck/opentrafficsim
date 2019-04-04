@@ -8,10 +8,12 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.DurationUnit;
@@ -39,7 +41,8 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -67,9 +70,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class AimsunControl
 {
-    /** XML description of the network. */
-    private String networkXML = null;
-
     /** Currently active Aimsun model. */
     private AimsunModel model = null;
 
@@ -214,7 +214,8 @@ public class AimsunControl
         }
         try
         {
-            simulator.scheduleEventAbs(this.simulateUntil, this, this, "sendGTUPositionsToAimsun", new Object[] {outputStream});
+            simulator.scheduleEventAbs(this.simulateUntil, this, this, "sendGTUPositionsToAimsun",
+                    new Object[] { outputStream });
         }
         catch (SimRuntimeException exception)
         {
@@ -265,18 +266,18 @@ public class AimsunControl
                     case CREATESIMULATION:
                         System.out.println("Received CREATESIMULATION message");
                         AimsunControlProtoBuf.CreateSimulation createSimulation = message.getCreateSimulation();
-                        this.networkXML = createSimulation.getNetworkXML();
-                        try (PrintWriter pw = new PrintWriter("d:/AimsunOtsNetwork.xml"))
+                        String networkXML = createSimulation.getNetworkXML();
+                        try (PrintWriter pw = new PrintWriter("c:/Temp/AimsunOtsNetwork.xml"))
                         {
-                            pw.print(this.networkXML);
+                            pw.print(networkXML);
                         }
-                        Duration runDuration = new Duration(createSimulation.getRunTime(), DurationUnit.SECOND);
+                        Duration runDuration = new Duration(3600, DurationUnit.SECOND);
                         System.out.println("runDuration " + runDuration);
-                        Duration warmupDuration = new Duration(createSimulation.getWarmUpTime(), DurationUnit.SECOND);
+                        Duration warmupDuration = new Duration(0, DurationUnit.SECOND);
                         try
                         {
                             OTSAnimator animator = new OTSAnimator();
-                            this.model = new AimsunModel(animator, "", "");
+                            this.model = new AimsunModel(animator, "Aimsun generated model", "Aimsun model", networkXML);
                             animator.initialize(Time.ZERO, warmupDuration, runDuration, this.model);
                             OTSAnimationPanel animationPanel =
                                     new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(800, 600),
@@ -306,7 +307,7 @@ public class AimsunControl
                         {
                             simulatorStarted = true;
                             simulator.scheduleEventAbs(stopTime, this, this, "sendGTUPositionsToAimsun",
-                                    new Object[] {outputStream});
+                                    new Object[] { outputStream });
                             System.out.println("Starting simulator");
                             this.simulateUntil = stopTime;
                             simulator.start();
@@ -428,25 +429,30 @@ public class AimsunControl
     }
 
     /**
-     * The network.
+     * The Model.
      */
     class AimsunModel extends AbstractOTSModel implements EventListenerInterface
     {
-        /**
-         * @param simulator OTSSimulatorInterface; the simulator
-         * @param shortName String; the model name
-         * @param description String; the model description
-         */
-        public AimsunModel(OTSSimulatorInterface simulator, String shortName, String description)
-        {
-            super(simulator, shortName, description);
-        }
-
         /** */
         private static final long serialVersionUID = 20170419L;
 
         /** The network. */
         private OTSRoadNetwork network;
+
+        /** The XML. */
+        private final String xml;
+
+        /**
+         * @param simulator OTSSimulatorInterface; the simulator
+         * @param shortName String; the model name
+         * @param description String; the model description
+         * @param xml String; the XML description of the simulation model
+         */
+        public AimsunModel(OTSSimulatorInterface simulator, String shortName, String description, final String xml)
+        {
+            super(simulator, shortName, description);
+            this.xml = xml;
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -461,18 +467,16 @@ public class AimsunControl
             {
                 exception1.printStackTrace();
             }
-            // URL url = URLResource.getResource("/aimsun/singleRoad.xml");
-            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
-            @SuppressWarnings("synthetic-access")
-            String xml = AimsunControl.this.networkXML;
+            this.network = new OTSRoadNetwork("aimsun generated network", true);
             try
             {
-                this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), false);
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
+                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)),
+                        this.network, getSimulator());
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException | SimRuntimeException exception)
+            catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
+                    | SAXException | ParserConfigurationException | GTUException exception)
             {
                 exception.printStackTrace();
                 throw new SimRuntimeException(exception);
