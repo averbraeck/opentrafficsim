@@ -123,7 +123,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         try
         {
             OTSAnimator simulator = new OTSAnimator();
-            XMLModel xmlModel = new XMLModel(simulator, xml);
+            XMLModel xmlModel = new XMLModel(simulator, "XML model", "Model built from XML file " + fileName, xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
@@ -152,11 +152,13 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator
+         * @param shortName String; name of the model
+         * @param description String; description of the model
          * @param xml String; the XML string
          */
-        XMLModel(final OTSSimulatorInterface simulator, final String xml)
+        XMLModel(final OTSSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {
-            super(simulator);
+            super(simulator, shortName, description);
             this.xml = xml;
         }
 
@@ -164,12 +166,12 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OTSRoadNetwork("XML based network", true);
+            this.network = new OTSRoadNetwork(getShortName(), true);
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)),
                         this.network, getSimulator());
-                ConflictBuilder.buildConflicts(this.network, network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
@@ -177,7 +179,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             {
                 exception.printStackTrace();
                 // Abusing the SimRuntimeException to propagate the message to the main method (the problem could actually be a
-                // SAXException)
+                // parsing problem)
                 throw new SimRuntimeException(exception.getMessage());
             }
         }
@@ -188,5 +190,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         {
             return this.network;
         }
+        
     }
+    
 }

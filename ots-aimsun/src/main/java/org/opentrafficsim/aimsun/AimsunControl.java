@@ -456,6 +456,13 @@ public class AimsunControl
 
         /** {@inheritDoc} */
         @Override
+        public void notify(EventInterface event) throws RemoteException
+        {
+            System.out.println("Received event " + event);
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public void constructModel() throws SimRuntimeException
         {
             try
@@ -467,7 +474,7 @@ public class AimsunControl
             {
                 exception1.printStackTrace();
             }
-            this.network = new OTSRoadNetwork("aimsun generated network", true);
+            this.network = new OTSRoadNetwork(getShortName(), true);
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)),
@@ -479,15 +486,10 @@ public class AimsunControl
                     | SAXException | ParserConfigurationException | GTUException exception)
             {
                 exception.printStackTrace();
+                // Abusing the SimRuntimeException to propagate the message to the main method (the problem could actually be a
+                // parsing problem)
                 throw new SimRuntimeException(exception);
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void notify(EventInterface event) throws RemoteException
-        {
-            System.out.println("Received event " + event);
         }
 
         /** {@inheritDoc} */
