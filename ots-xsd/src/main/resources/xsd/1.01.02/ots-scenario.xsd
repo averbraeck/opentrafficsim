@@ -14,7 +14,28 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element name="PARAMETER" type="PARAMETERTYPE" minOccurs="0" maxOccurs="unbounded" />
+
+        <xsd:element name="OD" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="CONTROL" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="MODELIDREFERRAL" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="ID" type="xsd:string" />
+            <xsd:attribute name="MODELID" type="xsd:string" />
+          </xsd:complexType>
+        </xsd:element>
+
       </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:string" />
     </xsd:complexType>
   </xsd:element>
 
