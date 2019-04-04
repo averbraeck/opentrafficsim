@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
-import org.opentrafficsim.xml.generated.MODEL;
+import org.opentrafficsim.xml.generated.MODELTYPE;
 import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NETWORKDEMAND;
 import org.opentrafficsim.xml.generated.OTS;
@@ -152,8 +152,8 @@ public final class XmlNetworkLaneParser implements Serializable
 
         List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
         List<CONTROL> controls = ots.getCONTROL();
-        MODEL modelParameters = ots.getMODEL();
-        SCENARIO scenario = ots.getSCENARIO();
+        List<MODELTYPE> modelParameters = ots.getMODEL();
+        List<SCENARIO> scenario = ots.getSCENARIO();
         ANIMATION animation = ots.getANIMATION();
 
         ControlParser.parseControl(otsNetwork, simulator, ots);
