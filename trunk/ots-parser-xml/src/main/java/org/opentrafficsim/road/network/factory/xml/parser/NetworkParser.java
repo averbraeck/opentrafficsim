@@ -500,15 +500,15 @@ public final class NetworkParser
                 }
                 else if (cse.getLEFTOFFSET() != null)
                 {
-                    cseData.centerOffsetStart = cse.getLEFTOFFSET().plus(halfWidthStart);
-                    cseData.centerOffsetEnd = cse.getLEFTOFFSET().plus(halfWidthEnd);
+                    cseData.centerOffsetStart = cse.getLEFTOFFSET().minus(halfWidthStart);
+                    cseData.centerOffsetEnd = cse.getLEFTOFFSET().minus(halfWidthEnd);
                     startOffset = true;
                     endOffset = true;
                 }
                 else if (cse.getRIGHTOFFSET() != null)
                 {
-                    cseData.centerOffsetStart = cse.getRIGHTOFFSET().minus(halfWidthStart);
-                    cseData.centerOffsetEnd = cse.getRIGHTOFFSET().minus(halfWidthEnd);
+                    cseData.centerOffsetStart = cse.getRIGHTOFFSET().plus(halfWidthStart);
+                    cseData.centerOffsetEnd = cse.getRIGHTOFFSET().plus(halfWidthEnd);
                     startOffset = true;
                     endOffset = true;
                 }
@@ -520,33 +520,31 @@ public final class NetworkParser
                 }
                 else if (cse.getLEFTOFFSETSTART() != null)
                 {
-                    cseData.centerOffsetStart = cse.getLEFTOFFSETSTART().plus(halfWidthStart);
+                    cseData.centerOffsetStart = cse.getLEFTOFFSETSTART().minus(halfWidthStart);
                     startOffset = true;
                 }
                 else if (cse.getRIGHTOFFSETSTART() != null)
                 {
-                    cseData.centerOffsetStart = cse.getRIGHTOFFSETSTART().minus(halfWidthStart);
+                    cseData.centerOffsetStart = cse.getRIGHTOFFSETSTART().plus(halfWidthStart);
                     startOffset = true;
                 }
 
                 if (cse.getCENTEROFFSETEND() != null)
                 {
-                    cseData.centerOffsetEnd = cse.getCENTEROFFSET();
+                    cseData.centerOffsetEnd = cse.getCENTEROFFSETEND();
                     endOffset = true;
                 }
                 else if (cse.getLEFTOFFSETEND() != null)
                 {
-                    cseData.centerOffsetEnd = cse.getLEFTOFFSET().plus(halfWidthEnd);
+                    cseData.centerOffsetEnd = cse.getLEFTOFFSETEND().minus(halfWidthEnd);
                     endOffset = true;
                 }
                 else if (cse.getRIGHTOFFSETEND() != null)
                 {
-                    cseData.centerOffsetEnd = cse.getRIGHTOFFSET().minus(halfWidthEnd);
+                    cseData.centerOffsetEnd = cse.getRIGHTOFFSETEND().plus(halfWidthEnd);
                     endOffset = true;
                 }
-
                 cseDataList.add(cseData);
-
             }
             cseTagMap.put(o, nr);
             nr++;
@@ -631,14 +629,14 @@ public final class NetworkParser
         {
             for (CSEData cseData : cseDataList)
             {
-                cseData.centerOffsetStart = cseData.centerOffsetStart.minus(xmlLink.getOFFSETSTART());
+                cseData.centerOffsetStart = cseData.centerOffsetStart.plus(xmlLink.getOFFSETSTART());
             }
         }
         if (xmlLink.getOFFSETEND() != null && xmlLink.getOFFSETEND().ne0())
         {
             for (CSEData cseData : cseDataList)
             {
-                cseData.centerOffsetEnd = cseData.centerOffsetEnd.minus(xmlLink.getOFFSETEND());
+                cseData.centerOffsetEnd = cseData.centerOffsetEnd.plus(xmlLink.getOFFSETEND());
             }
         }
     }
