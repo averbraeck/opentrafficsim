@@ -159,27 +159,6 @@ public final class NetworkParser
                     nodeDirections.containsKey(endNode.getId()) ? nodeDirections.get(endNode.getId()).getSI() : 0.0;
             OTSPoint3D startPoint = new OTSPoint3D(startNode.getPoint());
             OTSPoint3D endPoint = new OTSPoint3D(endNode.getPoint());
-
-            if (!xmlLink.getOFFSETSTART().eq0())
-            {
-                // shift the start point perpendicular to the node direction or read from tag
-                double offset = xmlLink.getOFFSETSTART().si;
-                startPoint = new OTSPoint3D(startPoint.x + offset * Math.cos(startDirection + Math.PI / 2.0),
-                        startPoint.y + offset * Math.sin(startDirection + Math.PI / 2.0), startPoint.z);
-                CategoryLogger.filter(Cat.PARSER).debug("fc = " + startNode.getPoint() + ", sa = " + startDirection + ", so = "
-                        + offset + ", sp = " + startPoint);
-            }
-
-            if (!xmlLink.getOFFSETEND().eq0())
-            {
-                // shift the end point perpendicular to the node direction or read from tag
-                double offset = xmlLink.getOFFSETEND().si;
-                endPoint = new OTSPoint3D(endPoint.x + offset * Math.cos(endDirection + Math.PI / 2.0),
-                        endPoint.y + offset * Math.sin(endDirection + Math.PI / 2.0), endPoint.z);
-                CategoryLogger.filter(Cat.PARSER).debug(
-                        "tc = " + endNode.getPoint() + ", ea = " + endDirection + ", eo = " + offset + ", ep = " + endPoint);
-            }
-
             OTSPoint3D[] coordinates = null;
 
             if (xmlLink.getSTRAIGHT() != null)
