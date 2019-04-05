@@ -64,7 +64,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        Color color = getSource().getLinkType().isConnector() ? Color.BLUE : Color.RED;
+        Color color = getSource().getLinkType().isConnector() ? Color.PINK.darker() : Color.BLUE;
         OTSLine3D designLine = getSource().getDesignLine();
         PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
         // Accentuate the end points
@@ -100,7 +100,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         {
             OTSLine3D line = new OTSLine3D(new OTSPoint3D(endPoint.x - dy, endPoint.y + dx, endPoint.z),
                     new OTSPoint3D(endPoint.x + dy, endPoint.y - dx, endPoint.z));
-            PaintLine.paintLine(graphics, getSource().getLinkType().isConnector() ? Color.BLUE : Color.RED, this.width / 30,
+            PaintLine.paintLine(graphics, getSource().getLinkType().isConnector() ? Color.PINK.darker() : Color.BLUE, this.width / 30,
                     getSource().getLocation(), line);
         }
         catch (OTSGeometryException exception)
