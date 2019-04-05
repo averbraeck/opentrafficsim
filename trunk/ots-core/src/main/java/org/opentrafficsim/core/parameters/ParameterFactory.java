@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.core.parameters;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;

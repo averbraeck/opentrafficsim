@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.core.parameters;
 
 import java.io.Serializable;
 import java.util.HashMap;
