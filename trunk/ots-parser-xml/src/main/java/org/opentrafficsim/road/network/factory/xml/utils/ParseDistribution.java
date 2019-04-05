@@ -4,37 +4,52 @@ import java.util.Map;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Position;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.ACCELERATIONDISTTYPE;
 import org.opentrafficsim.xml.generated.CONTDISTTYPE;
+import org.opentrafficsim.xml.generated.DISCRETEDISTTYPE;
 import org.opentrafficsim.xml.generated.DURATIONDISTTYPE;
+import org.opentrafficsim.xml.generated.FREQUENCYDISTTYPE;
 import org.opentrafficsim.xml.generated.LENGTHDISTTYPE;
+import org.opentrafficsim.xml.generated.LINEARDENSITYDISTTYPE;
 import org.opentrafficsim.xml.generated.POSITIONDISTTYPE;
 import org.opentrafficsim.xml.generated.SPEEDDISTTYPE;
 import org.opentrafficsim.xml.generated.TIMEDISTTYPE;
 
+import nl.tudelft.simulation.jstats.distributions.DistBernoulli;
 import nl.tudelft.simulation.jstats.distributions.DistBeta;
+import nl.tudelft.simulation.jstats.distributions.DistBinomial;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
+import nl.tudelft.simulation.jstats.distributions.DistDiscreteConstant;
+import nl.tudelft.simulation.jstats.distributions.DistDiscreteUniform;
 import nl.tudelft.simulation.jstats.distributions.DistErlang;
 import nl.tudelft.simulation.jstats.distributions.DistExponential;
 import nl.tudelft.simulation.jstats.distributions.DistGamma;
+import nl.tudelft.simulation.jstats.distributions.DistGeometric;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
+import nl.tudelft.simulation.jstats.distributions.DistNegBinomial;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistPearson5;
 import nl.tudelft.simulation.jstats.distributions.DistPearson6;
+import nl.tudelft.simulation.jstats.distributions.DistPoisson;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.distributions.DistWeibull;
@@ -59,14 +74,62 @@ public final class ParseDistribution
     }
 
     /**
+     * Parse a discrete distribution.
+     * @param streamMap map with stream information
+     * @param distType the distribution to parse
+     * @return the generated distribution.
+     * @throws XmlParserException in case distribution unknown or parameter number does not match.
+     */
+    public static DistDiscrete makeDistDiscrete(final Map<String, StreamInformation> streamMap, final DISCRETEDISTTYPE distType)
+            throws XmlParserException
+    {
+        if (distType.getBERNOULLI() != null)
+        {
+            StreamInterface stream = findStream(streamMap, distType.getBERNOULLI().getRANDOMSTREAM());
+            return new DistBernoulli(stream, distType.getBERNOULLI().getP());
+        }
+        else if (distType.getBINOMIAL() != null)
+        {
+            StreamInterface stream = findStream(streamMap, distType.getBINOMIAL().getRANDOMSTREAM());
+            return new DistBinomial(stream, distType.getBINOMIAL().getN().longValue(), distType.getBINOMIAL().getP());
+        }
+        else if (distType.getCONSTANT() != null)
+        {
+            StreamInterface stream = findStream(streamMap, distType.getCONSTANT().getRANDOMSTREAM());
+            return new DistDiscreteConstant(stream, distType.getCONSTANT().getC());
+        }
+        else if (distType.getGEOMETRIC() != null)
+        {
+            StreamInterface stream = findStream(streamMap, distType.getGEOMETRIC().getRANDOMSTREAM());
+            return new DistGeometric(stream, distType.getGEOMETRIC().getP());
+        }
+        else if (distType.getNEGBINOMIAL() != null)
+        {
+            StreamInterface stream = findStream(streamMap, distType.getNEGBINOMIAL().getRANDOMSTREAM());
+            return new DistNegBinomial(stream, distType.getNEGBINOMIAL().getN().longValue(), distType.getGEOMETRIC().getP());
+        }
+        else if (distType.getPOISSON() != null)
+        {
+            StreamInterface stream = findStream(streamMap, distType.getPOISSON().getRANDOMSTREAM());
+            return new DistPoisson(stream, distType.getPOISSON().getLAMBDA());
+        }
+        else if (distType.getUNIFORM() != null)
+        {
+            StreamInterface stream = findStream(streamMap, distType.getUNIFORM().getRANDOMSTREAM());
+            return new DistDiscreteUniform(stream, distType.getUNIFORM().getMIN(), distType.getUNIFORM().getMAX());
+        }
+        throw new XmlParserException("makeDistDiscrete - unknown distribution function " + distType);
+    }
+
+    /**
      * Parse a continuous distribution.
      * @param streamMap map with stream information
      * @param distType the distribution to parse
      * @return the generated distribution.
-     * @throws NetworkException in case distribution unknown or parameter number does not match.
+     * @throws XmlParserException in case distribution unknown or parameter number does not match.
      */
-    private static DistContinuous makeDistContinuous(final Map<String, StreamInformation> streamMap,
-            final CONTDISTTYPE distType) throws NetworkException
+    public static DistContinuous makeDistContinuous(final Map<String, StreamInformation> streamMap, final CONTDISTTYPE distType)
+            throws XmlParserException
     {
         if (distType.getCONSTANT() != null)
         {
@@ -131,10 +194,7 @@ public final class ParseDistribution
             StreamInterface stream = findStream(streamMap, distType.getWEIBULL().getRANDOMSTREAM());
             return new DistWeibull(stream, distType.getWEIBULL().getALPHA(), distType.getWEIBULL().getBETA());
         }
-        else
-        {
-            throw new NetworkException("makeDistContinuous - unknown distribution function " + distType);
-        }
+        throw new XmlParserException("makeDistContinuous - unknown distribution function " + distType);
     }
 
     /**
@@ -142,15 +202,15 @@ public final class ParseDistribution
      * @param streamMap the map with streams from the RUN tag
      * @param streamId the id to search for
      * @return the stream belonging to te streamId
-     * @throws NetworkException when the stream could not be found
+     * @throws XmlParserException when the stream could not be found
      */
     private static StreamInterface findStream(final Map<String, StreamInformation> streamMap, final String streamId)
-            throws NetworkException
+            throws XmlParserException
     {
         StreamInformation streamInformation = streamMap.get(streamId);
         if (streamInformation == null)
         {
-            throw new NetworkException("Could not find stream with ID=" + streamId);
+            throw new XmlParserException("Could not find stream with ID=" + streamId);
         }
         return streamInformation.getStream();
     }
@@ -160,27 +220,21 @@ public final class ParseDistribution
      * @param streamMap the map with streams from the RUN tag
      * @param lengthDist the tag to parse
      * @return a typed continuous random distribution.
-     * @throws NetworkException in case of a parse error.
+     * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Length, LengthUnit> parseLengthDist(
-            final Map<String, StreamInformation> streamMap, final LENGTHDISTTYPE lengthDist) throws NetworkException
+            final Map<String, StreamInformation> streamMap, final LENGTHDISTTYPE lengthDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, lengthDist);
-        LengthUnit lengthUnit = null;
         for (LengthUnit unit : Unit.getUnits(LengthUnit.class))
         {
             if (unit.getDefaultLocaleTextualRepresentations().contains(lengthDist.getLENGTHUNIT()))
             {
-                lengthUnit = unit;
-                break;
+                return new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(dist, unit);
             }
         }
-        if (lengthUnit == null)
-        {
-            throw new NetworkException(
-                    "Could not find LengthUnit " + lengthDist.getLENGTHUNIT() + " in tag of type LENGTHDISTTYPE");
-        }
-        return new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(dist, lengthUnit);
+        throw new XmlParserException(
+                "Could not find LengthUnit " + lengthDist.getLENGTHUNIT() + " in tag of type LENGTHDISTTYPE");
     }
 
     /**
@@ -188,27 +242,21 @@ public final class ParseDistribution
      * @param streamMap the map with streams from the RUN tag
      * @param positionDist the tag to parse
      * @return a typed continuous random distribution.
-     * @throws NetworkException in case of a parse error.
+     * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit> parsePositionDist(
-            final Map<String, StreamInformation> streamMap, final POSITIONDISTTYPE positionDist) throws NetworkException
+            final Map<String, StreamInformation> streamMap, final POSITIONDISTTYPE positionDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, positionDist);
-        PositionUnit positionUnit = null;
         for (PositionUnit unit : Unit.getUnits(PositionUnit.class))
         {
             if (unit.getDefaultLocaleTextualRepresentations().contains(positionDist.getPOSITIONUNIT()))
             {
-                positionUnit = unit;
-                break;
+                return new ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit>(dist, unit);
             }
         }
-        if (positionUnit == null)
-        {
-            throw new NetworkException(
-                    "Could not find PositionUnit " + positionDist.getPOSITIONUNIT() + " in tag of type POSITIONDISTTYPE");
-        }
-        return new ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit>(dist, positionUnit);
+        throw new XmlParserException(
+                "Could not find PositionUnit " + positionDist.getPOSITIONUNIT() + " in tag of type POSITIONDISTTYPE");
     }
 
     /**
@@ -216,27 +264,21 @@ public final class ParseDistribution
      * @param streamMap the map with streams from the RUN tag
      * @param durationDist the tag to parse
      * @return a typed continuous random distribution.
-     * @throws NetworkException in case of a parse error.
+     * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> parseDurationDist(
-            final Map<String, StreamInformation> streamMap, final DURATIONDISTTYPE durationDist) throws NetworkException
+            final Map<String, StreamInformation> streamMap, final DURATIONDISTTYPE durationDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, durationDist);
-        DurationUnit durationUnit = null;
         for (DurationUnit unit : Unit.getUnits(DurationUnit.class))
         {
             if (unit.getDefaultLocaleTextualRepresentations().contains(durationDist.getDURATIONUNIT()))
             {
-                durationUnit = unit;
-                break;
+                return new ContinuousDistDoubleScalar.Rel<Duration, DurationUnit>(dist, unit);
             }
         }
-        if (durationUnit == null)
-        {
-            throw new NetworkException(
-                    "Could not find DurationUnit " + durationDist.getDURATIONUNIT() + " in tag of type DURATIONDISTTYPE");
-        }
-        return new ContinuousDistDoubleScalar.Rel<Duration, DurationUnit>(dist, durationUnit);
+        throw new XmlParserException(
+                "Could not find DurationUnit " + durationDist.getDURATIONUNIT() + " in tag of type DURATIONDISTTYPE");
     }
 
     /**
@@ -244,26 +286,20 @@ public final class ParseDistribution
      * @param streamMap the map with streams from the RUN tag
      * @param timeDist the tag to parse
      * @return a typed continuous random distribution.
-     * @throws NetworkException in case of a parse error.
+     * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit> parseTimeDist(
-            final Map<String, StreamInformation> streamMap, final TIMEDISTTYPE timeDist) throws NetworkException
+            final Map<String, StreamInformation> streamMap, final TIMEDISTTYPE timeDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, timeDist);
-        TimeUnit timeUnit = null;
         for (TimeUnit unit : Unit.getUnits(TimeUnit.class))
         {
             if (unit.getDefaultLocaleTextualRepresentations().contains(timeDist.getTIMEUNIT()))
             {
-                timeUnit = unit;
-                break;
+                return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit>(dist, unit);
             }
         }
-        if (timeUnit == null)
-        {
-            throw new NetworkException("Could not find TimeUnit " + timeDist.getTIMEUNIT() + " in tag of type TIMEDISTTYPE");
-        }
-        return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit>(dist, timeUnit);
+        throw new XmlParserException("Could not find TimeUnit " + timeDist.getTIMEUNIT() + " in tag of type TIMEDISTTYPE");
     }
 
     /**
@@ -271,27 +307,20 @@ public final class ParseDistribution
      * @param streamMap the map with streams from the RUN tag
      * @param speedDist the tag to parse
      * @return a typed continuous random distribution.
-     * @throws NetworkException in case of a parse error.
+     * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> parseSpeedDist(
-            final Map<String, StreamInformation> streamMap, final SPEEDDISTTYPE speedDist) throws NetworkException
+            final Map<String, StreamInformation> streamMap, final SPEEDDISTTYPE speedDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, speedDist);
-        SpeedUnit speedUnit = null;
         for (SpeedUnit unit : Unit.getUnits(SpeedUnit.class))
         {
             if (unit.getDefaultLocaleTextualRepresentations().contains(speedDist.getSPEEDUNIT()))
             {
-                speedUnit = unit;
-                break;
+                return new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(dist, unit);
             }
         }
-        if (speedUnit == null)
-        {
-            throw new NetworkException(
-                    "Could not find SpeedUnit " + speedDist.getSPEEDUNIT() + " in tag of type SPEEDDISTTYPE");
-        }
-        return new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(dist, speedUnit);
+        throw new XmlParserException("Could not find SpeedUnit " + speedDist.getSPEEDUNIT() + " in tag of type SPEEDDISTTYPE");
     }
 
     /**
@@ -299,27 +328,66 @@ public final class ParseDistribution
      * @param streamMap the map with streams from the RUN tag
      * @param accelerationDist the tag to parse
      * @return a typed continuous random distribution.
-     * @throws NetworkException in case of a parse error.
+     * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Acceleration, AccelerationUnit> parseAccelerationDist(
-            final Map<String, StreamInformation> streamMap, final ACCELERATIONDISTTYPE accelerationDist) throws NetworkException
+            final Map<String, StreamInformation> streamMap, final ACCELERATIONDISTTYPE accelerationDist)
+            throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, accelerationDist);
-        AccelerationUnit accelerationUnit = null;
         for (AccelerationUnit unit : Unit.getUnits(AccelerationUnit.class))
         {
             if (unit.getDefaultLocaleTextualRepresentations().contains(accelerationDist.getACCELERATIONUNIT()))
             {
-                accelerationUnit = unit;
-                break;
+                return new ContinuousDistDoubleScalar.Rel<Acceleration, AccelerationUnit>(dist, unit);
             }
         }
-        if (accelerationUnit == null)
+        throw new XmlParserException("Could not find AccelerationUnit " + accelerationDist.getACCELERATIONUNIT()
+                + " in tag of type ACCELERATIONDISTTYPE");
+    }
+
+    /**
+     * Parse a relative frequency distribution, e.g. <code>UNIFORM(1, 3) s</code>.
+     * @param streamMap the map with streams from the RUN tag
+     * @param frequencyDist the tag to parse
+     * @return a typed continuous random distribution.
+     * @throws XmlParserException in case of a parse error.
+     */
+    public static ContinuousDistDoubleScalar.Rel<Frequency, FrequencyUnit> parseFrequencyDist(
+            Map<String, StreamInformation> streamMap, FREQUENCYDISTTYPE frequencyDist) throws XmlParserException
+    {
+        DistContinuous dist = makeDistContinuous(streamMap, frequencyDist);
+        for (FrequencyUnit unit : Unit.getUnits(FrequencyUnit.class))
         {
-            throw new NetworkException("Could not find AccelerationUnit " + accelerationDist.getACCELERATIONUNIT()
-                    + " in tag of type ACCELERATIONDISTTYPE");
+            if (unit.getDefaultLocaleTextualRepresentations().contains(frequencyDist.getFREQUENCYUNIT()))
+            {
+                return new ContinuousDistDoubleScalar.Rel<Frequency, FrequencyUnit>(dist, unit);
+            }
         }
-        return new ContinuousDistDoubleScalar.Rel<Acceleration, AccelerationUnit>(dist, accelerationUnit);
+        throw new XmlParserException(
+                "Could not find FrequencyUnit " + frequencyDist.getFREQUENCYUNIT() + " in tag of type FREQUENCYDISTTYPE");
+    }
+
+    /**
+     * Parse a relative linear density distribution, e.g. <code>UNIFORM(1, 3) s</code>.
+     * @param streamMap the map with streams from the RUN tag
+     * @param linearDensityDist the tag to parse
+     * @return a typed continuous random distribution.
+     * @throws XmlParserException in case of a parse error.
+     */
+    public static ContinuousDistDoubleScalar.Rel<LinearDensity, LinearDensityUnit> parseLinearDensityDist(
+            Map<String, StreamInformation> streamMap, LINEARDENSITYDISTTYPE linearDensityDist) throws XmlParserException
+    {
+        DistContinuous dist = makeDistContinuous(streamMap, linearDensityDist);
+        for (LinearDensityUnit unit : Unit.getUnits(LinearDensityUnit.class))
+        {
+            if (unit.getDefaultLocaleTextualRepresentations().contains(linearDensityDist.getLINEARDENSITYUNIT()))
+            {
+                return new ContinuousDistDoubleScalar.Rel<LinearDensity, LinearDensityUnit>(dist, unit);
+            }
+        }
+        throw new XmlParserException("Could not find FrequencyUnit " + linearDensityDist.getLINEARDENSITYUNIT()
+                + " in tag of type FREQUENCYDISTTYPE");
     }
 
 }

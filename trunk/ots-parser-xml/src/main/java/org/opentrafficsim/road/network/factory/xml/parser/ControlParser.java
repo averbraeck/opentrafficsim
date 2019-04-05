@@ -1,15 +1,18 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.CONTROL.FIXEDTIME;
+import org.opentrafficsim.xml.generated.CONTROL.FIXEDTIME.SIGNALGROUP.TRAFFICLIGHT;
 import org.opentrafficsim.xml.generated.OTS;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -34,11 +37,12 @@ public final class ControlParser
      * Creates control objects.
      * @param otsNetwork OTSRoadNetwork; network
      * @param simulator OTSSimulatorInterface; simulator
-     * @param ots OTS; XSD objects in the OTS tag
+     * @param controls List&lt;CONTROL&gt;; control objects
      */
-    public static void parseControl(final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator, final OTS ots)
+    public static void parseControl(final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator,
+            final List<CONTROL> controls)
     {
-        for (CONTROL control : ots.getCONTROL())
+        for (CONTROL control : controls)
         {
             // Fixed time controllers
             for (FIXEDTIME fixedTime : control.getFIXEDTIME())
@@ -54,15 +58,18 @@ public final class ControlParser
                     Duration preGreen = signalGroup.getPREGREEN() == null ? Duration.ZERO : signalGroup.getPREGREEN();
                     Duration green = signalGroup.getGREEN();
                     Duration yellow = signalGroup.getYELLOW();
-                    /*- TODO: TrafficLights / SignalGroups
+
+                    List<TRAFFICLIGHT> trafficLights = signalGroup.getTRAFFICLIGHT();
                     Set<String> trafficLightIds = new LinkedHashSet<>();
-                    for (TRAFFICLIGHTTYPE trafficLight : referencedSignalGroup.getTRAFFICLIGHT())
+                    for (TRAFFICLIGHT trafficLight : trafficLights)
                     {
-                        trafficLightIds.add(trafficLight.getID());
+                        // TODO is linkId.trafficLight id as it is found in the network?
+                        String linkId = trafficLight.getLINK();
+                        String trafficLightId = trafficLight.getTRAFFICLIGHTID();
+                        trafficLightIds.add(linkId + "." + trafficLightId);
                     }
                     signalGroups
                             .add(new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, preGreen, green, yellow));
-                     */
                 }
                 try
                 {

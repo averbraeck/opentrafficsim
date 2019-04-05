@@ -156,7 +156,7 @@ public final class XmlNetworkLaneParser implements Serializable
         List<SCENARIO> scenario = ots.getSCENARIO();
         ANIMATION animation = ots.getANIMATION();
 
-        ControlParser.parseControl(otsNetwork, simulator, ots);
+        ControlParser.parseControl(otsNetwork, simulator, controls);
 
         return experiment;
     }
