@@ -91,7 +91,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
-            float maxFontSize, final SimulatorInterface.TimeDoubleUnit simulator) throws RemoteException, NamingException
+            final float maxFontSize, final SimulatorInterface.TimeDoubleUnit simulator) throws RemoteException, NamingException
     {
         this.source = source;
         this.text = text;
