@@ -62,6 +62,9 @@ public abstract class TextAnimation implements Locatable, Serializable
     /** Minimum font size to trigger scaling. */
     private final float minFontSize;
 
+    /** Maximum font size to trigger scaling. */
+    private final float maxFontSize;
+
     /** The animation implementation. */
     private final AnimationImpl animationImpl;
 
@@ -79,7 +82,8 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param textAlignment TextAlignment; where to place the text
      * @param color Color; the color of the text
      * @param fontSize float; the size of the font; default = 2.0 (meters)
-     * @param minFontSize float; minimum font size to trigger scaling
+     * @param minFontSize float; minimum font size resulting from scaling
+     * @param maxFontSize float; maximum font size resulting from scaling
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
@@ -87,7 +91,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
-            final SimulatorInterface.TimeDoubleUnit simulator) throws RemoteException, NamingException
+            float maxFontSize, final SimulatorInterface.TimeDoubleUnit simulator) throws RemoteException, NamingException
     {
         this.source = source;
         this.text = text;
@@ -97,6 +101,7 @@ public abstract class TextAnimation implements Locatable, Serializable
         this.color = color;
         this.fontSize = fontSize;
         this.minFontSize = minFontSize;
+        this.maxFontSize = maxFontSize;
 
         this.font = new Font("SansSerif", Font.PLAIN, 2);
         if (this.fontSize != 2.0f)
@@ -122,7 +127,7 @@ public abstract class TextAnimation implements Locatable, Serializable
             final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
             throws RemoteException, NamingException
     {
-        this(source, text, dx, dy, textAlignment, color, 2.0f, 12.0f, simulator);
+        this(source, text, dx, dy, textAlignment, color, 2.0f, 12.0f, 50f, simulator);
     }
 
     /** {@inheritDoc} */
@@ -155,9 +160,15 @@ public abstract class TextAnimation implements Locatable, Serializable
         Rectangle2D scaledFontRectangle;
         synchronized (this.font)
         {
-            if (scale < this.minFontSize)
+            if (scale < this.minFontSize / this.fontSize)
             {
                 graphics.setFont(this.font.deriveFont((float) (this.minFontSize / scale)));
+                FontMetrics fm = graphics.getFontMetrics();
+                scaledFontRectangle = fm.getStringBounds(this.text, graphics);
+            }
+            else if(scale > this.maxFontSize / this.fontSize)
+            {
+                graphics.setFont(this.font.deriveFont((float) (this.maxFontSize / scale)));
                 FontMetrics fm = graphics.getFontMetrics();
                 scaledFontRectangle = fm.getStringBounds(this.text, graphics);
             }
