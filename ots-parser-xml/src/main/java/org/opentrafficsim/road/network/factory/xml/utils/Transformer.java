@@ -1,8 +1,17 @@
 package org.opentrafficsim.road.network.factory.xml.utils;
 
+import java.lang.reflect.Field;
+
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
+import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
+import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.xml.bindings.types.GTUPositionType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
@@ -86,5 +95,47 @@ public final class Transformer
             return LaneKeepingPolicy.KEEPLANE;
         }
         throw new NetworkException("Unknown lane keeping policy string: " + lkpStr);
+    }
+    
+    /**
+     * @param v String; XML string value
+     * @return RoomChecker; parsed room checker
+     */
+    public static RoomChecker parseRoomChecker(final String v)
+    {
+        if (v == null)
+        {
+            return null;
+        }
+        if (v.equals("CF"))
+        {
+            return new CFRoomChecker();
+        }
+        else if (v.equals("CFBA"))
+        {
+            return new CFBARoomChecker();
+        }
+        else if (v.equals("TTC"))
+        {
+            return new TTCRoomChecker(Duration.createSI(10));
+        }
+        return new TTCRoomChecker(Duration.valueOf(v.substring(4, v.length() - 1)));
+    }
+
+    /**
+     * @param v String; XML string value
+     * @return RoomChecker; parsed room checker
+     * @throws NoSuchFieldException if {@code HeadwayDistribution} does not have specified field
+     * @throws IllegalAccessException if the field is not accessible
+     */
+    public static HeadwayDistribution parseHeadwayDistribution(final String v)
+            throws NoSuchFieldException, IllegalAccessException
+    {
+        if (v == null)
+        {
+            return null;
+        }
+        Field field = ClassUtil.resolveField(HeadwayDistribution.class, v);
+        return (HeadwayDistribution) field.get(null);
     }
 }
