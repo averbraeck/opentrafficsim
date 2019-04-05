@@ -428,6 +428,7 @@ public final class NetworkParser
                     throw new NetworkException("TRAFFICLIGHT: CLASS NAME " + trafficLight.getCLASS().getName()
                             + " for traffic light " + trafficLight.getID() + " on lane " + lane.toString() + " at position "
                             + position + " -- class not found or constructor not right", exception);
+                    // TODO: this discards too much information; e.g. Network already contains an object with the name ...
                 }
             }
         }
