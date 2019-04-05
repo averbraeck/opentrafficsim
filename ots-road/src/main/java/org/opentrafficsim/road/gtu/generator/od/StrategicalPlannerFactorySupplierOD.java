@@ -3,8 +3,9 @@ package org.opentrafficsim.road.gtu.generator.od;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
+import org.opentrafficsim.core.gtu.GTUType.DEFAULTS;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
@@ -57,7 +58,8 @@ public interface StrategicalPlannerFactorySupplierOD
                     final Category category, final StreamInterface randomStream) throws GTUException
             {
                 ParameterFactoryByType params = new ParameterFactoryByType();
-                params.addParameter(ParameterTypes.A, Acceleration.createSI(0.4));
+                params.addParameter(origin.getNetwork().getGtuType(DEFAULTS.TRUCK), ParameterTypes.A,
+                        Acceleration.createSI(0.4));
                 return new LaneBasedStrategicalRoutePlannerFactory(
                         new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()), params,
                         RouteGeneratorOD.getDefaultRouteSupplier(randomStream));

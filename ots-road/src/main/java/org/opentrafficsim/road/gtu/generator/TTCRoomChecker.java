@@ -75,6 +75,15 @@ public class TTCRoomChecker implements RoomChecker
         }
         return Placement.NO;
     }
+    
+    /**
+     * Returns the TTC value.
+     * @return Duration; TTC value
+     */
+    public final Duration getTtc()
+    {
+        return this.ttc;
+    }
 
     /** {@inheritDoc} */
     @Override

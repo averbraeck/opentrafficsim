@@ -30,6 +30,7 @@ public class IncentiveSpeed implements VoluntaryIncentive
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
             throws ParameterException
     {
+        // TODO: SpeedWithCourtesy now uses TrafficPerception, which embeds the courtesy part. How to do this?
         return new Desire(0, 0);
     }
 
