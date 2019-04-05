@@ -14,6 +14,8 @@
       adapter="org.opentrafficsim.xml.bindings.DirectionAdapter" />
     <xjc:javaType name="java.lang.Class" xmlType="ots:CLASSNAMETYPE"
       adapter="org.opentrafficsim.xml.bindings.ClassNameAdapter" />
+    <xjc:javaType name="java.lang.Object" xmlType="ots:STATICFIELDNAMETYPE"
+      adapter="org.opentrafficsim.xml.bindings.StaticFieldNameAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:LENGTHTYPE"
       adapter="org.opentrafficsim.xml.bindings.LengthAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:PERLENGTHTYPE"
