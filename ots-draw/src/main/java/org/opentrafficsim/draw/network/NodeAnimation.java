@@ -53,7 +53,7 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(Color.BLACK);
-        graphics.draw(new Ellipse2D.Double(-1.0, -1.0, 2.0, 2.0));
+        graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
     }
 
     /** {@inheritDoc} */

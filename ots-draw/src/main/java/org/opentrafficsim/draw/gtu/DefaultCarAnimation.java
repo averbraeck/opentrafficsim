@@ -292,7 +292,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
                 final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
                 throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, simulator);
+            super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, simulator);
         }
 
         /** {@inheritDoc} */
