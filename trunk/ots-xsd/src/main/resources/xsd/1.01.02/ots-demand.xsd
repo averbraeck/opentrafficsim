@@ -80,7 +80,7 @@
             <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
           </xsd:complexType>
         </xsd:element>
-        <xsd:element name="NOLANECHANGE" type="LENGTHUNITTYPE" minOccurs="0">
+        <xsd:element name="NOLANECHANGE" type="LENGTHTYPE" minOccurs="0">
           <xsd:annotation>
             <xsd:documentation source="description">
               Initial distance over which GTUs are not allowed to change lane,
@@ -150,8 +150,8 @@
                 <xsd:complexType>
                   <xsd:choice>
                     <xsd:sequence>
-                      <xsd:element name="LEFTSPEED" type="SPEEDUNITTYPE" />
-                      <xsd:element name="RIGHTSPEED" type="SPEEDUNITTYPE" />
+                      <xsd:element name="LEFTSPEED" type="SPEEDTYPE" />
+                      <xsd:element name="RIGHTSPEED" type="SPEEDTYPE" />
                     </xsd:sequence>
                     <xsd:element name="FROMLEFT" type="DOUBLEUNITINTERVAL" />
                     <xsd:element name="FROMRIGHT" type="DOUBLEUNITINTERVAL" />
@@ -271,7 +271,7 @@
     <xsd:sequence>
       <xsd:element name="TIME" minOccurs="2" maxOccurs="unbounded">
         <xsd:complexType>
-          <xsd:attribute name="VALUE" type="TIMEUNITTYPE" use="required" />
+          <xsd:attribute name="VALUE" type="TIMETYPE" use="required" />
         </xsd:complexType>
       </xsd:element>
     </xsd:sequence>
@@ -302,7 +302,7 @@
   <xsd:complexType name="LEVELTIMETYPE">
     <xsd:simpleContent>
       <xsd:extension base="LEVELTYPE">
-        <xsd:attribute name="TIME" type="TIMEUNITTYPE" use="optional" />
+        <xsd:attribute name="TIME" type="TIMETYPE" use="optional" />
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
