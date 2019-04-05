@@ -52,7 +52,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
     private final GapAcceptance gapAcceptance;
 
     /** Type of tail gating. */
-    private final Tailgating tailGating;
+    private final Tailgating tailgating;
 
     /** Mandatory incentives. */
     private final Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -77,7 +77,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
         this.synchronization = Synchronization.PASSIVE;
         this.cooperation = Cooperation.PASSIVE;
         this.gapAcceptance = GapAcceptance.INFORMED;
-        this.tailGating = Tailgating.NONE;
+        this.tailgating = Tailgating.NONE;
     }
 
     /**
@@ -88,21 +88,21 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
      * @param synchronization Synchronization; type of synchronization
      * @param cooperation Cooperation; type of cooperation
      * @param gapAcceptance GapAcceptance; gap-acceptance
-     * @param tailGating Tailgating; tail gating
+     * @param tailgating Tailgating; tail gating
      * @param mandatoryIncentives mandatory incentives; note that order may matter
      * @param voluntaryIncentives voluntary incentives; note that order may matter
      * @param accelerationIncentives Set&lt;AccelerationIncentive&gt;; acceleration incentives
      */
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory, final Synchronization synchronization, final Cooperation cooperation,
-            final GapAcceptance gapAcceptance, final Tailgating tailGating, final Set<MandatoryIncentive> mandatoryIncentives,
+            final GapAcceptance gapAcceptance, final Tailgating tailgating, final Set<MandatoryIncentive> mandatoryIncentives,
             final Set<VoluntaryIncentive> voluntaryIncentives, final Set<AccelerationIncentive> accelerationIncentives)
     {
         super(carFollowingModelFactory, perceptionFactory);
         this.synchronization = synchronization;
         this.cooperation = cooperation;
         this.gapAcceptance = gapAcceptance;
-        this.tailGating = tailGating;
+        this.tailgating = tailgating;
         this.mandatoryIncentives.addAll(mandatoryIncentives);
         this.voluntaryIncentives.addAll(voluntaryIncentives);
         this.accelerationIncentives.addAll(accelerationIncentives);
@@ -130,7 +130,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
     public final LMRS create(final LaneBasedGTU gtu) throws GTUException
     {
         LMRS lmrs = new LMRS(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
-                this.synchronization, this.cooperation, this.gapAcceptance, this.tailGating);
+                this.synchronization, this.cooperation, this.gapAcceptance, this.tailgating);
         if (this.mandatoryIncentives.isEmpty())
         {
             lmrs.setDefaultIncentives();

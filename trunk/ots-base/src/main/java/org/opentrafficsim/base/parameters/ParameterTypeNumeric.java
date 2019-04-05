@@ -17,7 +17,7 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> Class of the value.
  */
-public class ParameterTypeNumeric<T extends Number> extends ParameterType<T> implements Serializable
+public abstract class ParameterTypeNumeric<T extends Number> extends ParameterType<T> implements Serializable
 {
 
     /** */

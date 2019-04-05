@@ -47,12 +47,12 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -197,7 +197,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             System.out.println("Running " + script.getProperty("scenario") + "_" + script.getProperty("seed"));
         }
         // script.setProperty("sampler", true);
-        // script.setProperty("autorun", true);
+        // script.setProperty("autorun", false);
         // script.setProperty("tasks", true);
         // script.setProperty("strategies", false);
         // script.setProperty("adaptation", false);
@@ -209,6 +209,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         }
         catch (Throwable throwable)
         {
+            Throwable original = throwable;
             while (throwable != null)
             {
                 if (throwable instanceof CollisionException)
@@ -232,6 +233,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 }
                 throwable = throwable.getCause();
             }
+            throw new RuntimeException(original);
         }
     }
 
@@ -368,18 +370,18 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 this.sampler.registerExtendedDataType(new TaskAnticipationRelianceDataType("lane-changing"));
                 this.sampler.registerExtendedDataType(new TaskDemandDataType("lane-changing"));
             }
-        }
 
-        LinkData linkData = new LinkData((CrossSectionLink) network.getLink("LEFTIN"));
-        registerLinkToSampler(linkData, ignoreStart, linkData.getLength());
-        linkData = new LinkData((CrossSectionLink) network.getLink("RIGHTIN"));
-        registerLinkToSampler(linkData, ignoreStart, linkData.getLength());
-        linkData = new LinkData((CrossSectionLink) network.getLink("CONVERGE"));
-        registerLinkToSampler(linkData, Length.ZERO, linkData.getLength());
-        linkData = new LinkData((CrossSectionLink) network.getLink("WEAVING"));
-        registerLinkToSampler(linkData, Length.ZERO, linkData.getLength());
-        linkData = new LinkData((CrossSectionLink) network.getLink("END"));
-        registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
+            LinkData linkData = new LinkData((CrossSectionLink) network.getLink("LEFTIN"));
+            registerLinkToSampler(linkData, ignoreStart, linkData.getLength());
+            linkData = new LinkData((CrossSectionLink) network.getLink("RIGHTIN"));
+            registerLinkToSampler(linkData, ignoreStart, linkData.getLength());
+            linkData = new LinkData((CrossSectionLink) network.getLink("CONVERGE"));
+            registerLinkToSampler(linkData, Length.ZERO, linkData.getLength());
+            linkData = new LinkData((CrossSectionLink) network.getLink("WEAVING"));
+            registerLinkToSampler(linkData, Length.ZERO, linkData.getLength());
+            linkData = new LinkData((CrossSectionLink) network.getLink("END"));
+            registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
+        }
 
         // return
         return network;

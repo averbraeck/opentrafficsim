@@ -73,7 +73,7 @@ public class ParametersTest implements ConstraintInterface
 
         // Check ParameterType construction (id, description, class, defaultValue)
         Length defaultValue = new Length(1.0, LengthUnit.SI);
-        ParameterTypeNumeric<Length> a = new ParameterTypeNumeric<>("a", "along", Length.class, defaultValue);
+        ParameterTypeLength a = new ParameterTypeLength("a", "along", defaultValue);
         assertEquals("Parameter type id not properly set.", "a", a.getId());
         assertEquals("Parameter type description not properly set.", "along", a.getDescription());
         assertTrue("has a default value", a.hasDefaultValue());
@@ -87,7 +87,7 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // Check ParameterType construction (id, description, class)
-        ParameterTypeNumeric<Length> b = new ParameterTypeNumeric<>("b", "blong", Length.class);
+        ParameterTypeLength b = new ParameterTypeLength("b", "blong");
         assertEquals("Parameter type id not properly set.", "b", b.getId());
         assertEquals("Parameter type description not properly set.", "blong", b.getDescription());
         assertFalse("does not have a default value", b.hasDefaultValue());
@@ -495,7 +495,7 @@ public class ParametersTest implements ConstraintInterface
         // null default value
         try
         {
-            new ParameterTypeNumeric<>("v", "vlong", Speed.class, null, POSITIVE);
+            new ParameterTypeSpeed("v", "vlong", null, POSITIVE);
             fail("Setting a default value of 'null' on ParameterType did not fail.");
         }
         catch (RuntimeException re)
@@ -513,7 +513,7 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // set null value
-        ParameterTypeNumeric<Speed> v = new ParameterTypeNumeric<>("v", "vlong", Speed.class);
+        ParameterTypeSpeed v = new ParameterTypeSpeed("v", "vlong");
         Parameters params = new ParameterSet();
         try
         {

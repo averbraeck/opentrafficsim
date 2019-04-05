@@ -118,7 +118,7 @@ public final class LmrsUtil implements LmrsParameters
         Acceleration a;
         if (lmrsData.isHumanLongitudinalControl())
         {
-            lmrsData.getTailGating().tailgate(perception, params);
+            lmrsData.getTailgating().tailgate(perception, params);
             if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
             {
                 initHeadwayRelaxation(params, leaders.first());

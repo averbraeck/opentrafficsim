@@ -35,7 +35,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     private final GapAcceptance gapAcceptance;
 
     /** Form of tail gating. */
-    private final Tailgating tailGating;
+    private final Tailgating tailgating;
 
     /** Most recent leaders. */
     private final Set<String> leaders = new HashSet<>();
@@ -59,15 +59,15 @@ public final class LmrsData implements DesireBased, Synchronizable
      * @param synchronization Synchronization; synchronization
      * @param cooperation Cooperation; cooperation
      * @param gapAcceptance GapAcceptance; gap-acceptance
-     * @param tailGating Tailgating; tail gating
+     * @param tailgating Tailgating; tail gating
      */
     public LmrsData(final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
-            final Tailgating tailGating)
+            final Tailgating tailgating)
     {
         this.synchronization = synchronization;
         this.cooperation = cooperation;
         this.gapAcceptance = gapAcceptance;
-        this.tailGating = tailGating;
+        this.tailgating = tailgating;
     }
 
     /**
@@ -163,9 +163,9 @@ public final class LmrsData implements DesireBased, Synchronizable
      * Return the tail gating.
      * @return gap-acceptance
      */
-    Tailgating getTailGating()
+    Tailgating getTailgating()
     {
-        return this.tailGating;
+        return this.tailgating;
     }
 
     /** {@inheritDoc} */

@@ -99,14 +99,14 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
      * @param synchronization Synchronization; type of synchronization
      * @param cooperation Cooperation; type of cooperation
      * @param gapAcceptance GapAcceptance; gap-acceptance
-     * @param tailGating Tailgating; tail gating
+     * @param tailgating Tailgating; tail gating
      */
     public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception,
             final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
-            final Tailgating tailGating)
+            final Tailgating tailgating)
     {
         super(carFollowingModel, gtu, lanePerception);
-        this.lmrsData = new LmrsData(synchronization, cooperation, gapAcceptance, tailGating);
+        this.lmrsData = new LmrsData(synchronization, cooperation, gapAcceptance, tailgating);
     }
 
     /**

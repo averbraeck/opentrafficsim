@@ -195,7 +195,7 @@ public class ODOptions
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <K> option value type
      */
-    private static final class Option<K>
+    public static final class Option<K>
     {
 
         /** Id. */

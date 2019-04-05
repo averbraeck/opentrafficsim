@@ -273,6 +273,7 @@ public class FixedTimeController extends AbstractTrafficController
                 TrafficLight trafficLight = trafficLightObjects.get(trafficLightId);
                 if (null == trafficLight) // Traffic light not found using id; try to find it by full id
                 {
+                    // TODO: networkId.trafficLightId? Shouldn't that be linkId.trafficLightId?
                     trafficLight = trafficLightObjects.get(network.getId() + "." + trafficLightId);
                 }
                 Throw.when(trafficLight == null, SimRuntimeException.class, "Traffic light \"" + trafficLightId
