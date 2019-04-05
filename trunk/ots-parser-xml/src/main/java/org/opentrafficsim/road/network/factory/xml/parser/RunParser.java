@@ -57,7 +57,7 @@ public final class RunParser
         Map<String, StreamInterface> streams = new HashMap<>();
         if (run.getRANDOMSTREAMS() == null)
         {
-            for (String streamId : new String[] {"default", "generator"})
+            for (String streamId : new String[] {"default", "generation"})
             {
                 Map<Integer, Long> seedMap = new HashMap<>();
                 for (int rep = 1; rep <= numberReplications; rep++)
