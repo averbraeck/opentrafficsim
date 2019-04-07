@@ -18,6 +18,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
@@ -26,13 +27,14 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.TemplateGTUType;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
+import org.opentrafficsim.xml.generated.GTUTEMPLATE;
 import org.opentrafficsim.xml.generated.MODELTYPE;
 import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NETWORKDEMAND;
@@ -141,16 +143,26 @@ public final class XmlNetworkLaneParser implements Serializable
                 RunParser.parseRun(otsNetwork, ots.getRUN(), streamMap, simulator);
 
         Map<String, ROADLAYOUT> roadLayoutMap = new HashMap<>();
-        Map<GTUType, TemplateGTUType> gtuTemplates = new HashMap<>();
-        DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates, streamMap);
+        Map<String, GTUTEMPLATE> gtuTemplates = new HashMap<>();
+        Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap = new HashMap<>();
+        DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates, streamMap,
+                linkTypeSpeedLimitMap);
 
         NETWORK network = ots.getNETWORK();
         NetworkParser.parseNodes(otsNetwork, network);
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
         NetworkParser.parseLinks(otsNetwork, network, nodeDirections, simulator);
-        NetworkParser.applyRoadLayout(otsNetwork, network, simulator, roadLayoutMap);
+        NetworkParser.applyRoadLayout(otsNetwork, network, simulator, roadLayoutMap, linkTypeSpeedLimitMap);
+        NetworkParser.parseRoutes(otsNetwork, network);
+        NetworkParser.parseShortestRoutes(otsNetwork, network);
 
         List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
+        for (NETWORKDEMAND demand : demands)
+        {
+            GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates, simulator, streamMap);
+            GeneratorSinkParser.parseSinks(otsNetwork, demand, simulator);
+        }
+
         List<CONTROL> controls = ots.getCONTROL();
         List<MODELTYPE> modelParameters = ots.getMODEL();
         List<SCENARIO> scenario = ots.getSCENARIO();

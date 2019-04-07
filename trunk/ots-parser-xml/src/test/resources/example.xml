@@ -152,10 +152,10 @@
     </LINK>
 
     <ROUTE ID="A">
-      <NODE>N1</NODE>
-      <NODE>N2</NODE>
-      <NODE>N3</NODE>
-      <NODE>N4</NODE>
+      <NODE ID="N1" />
+      <NODE ID="N2" />
+      <NODE ID="N3" />
+      <NODE ID="N4" />
     </ROUTE>
 
   </NETWORK>
