@@ -198,11 +198,12 @@
           <xsd:element name="SHORTESTROUTE" type="xsd:string" />
           <xsd:element name="SHORTESTROUTEMIX" type="xsd:string" />
         </xsd:choice>
-        <xsd:element name="IAT" type="DURATIONDISTTYPE" />
+        <xsd:element name="FREQUENCY" type="FREQUENCYTYPE" />
         <xsd:element name="STARTTIME" type="TIMETYPE" minOccurs="0" maxOccurs="1" />
         <xsd:element name="ENDTIME" type="TIMETYPE" minOccurs="0" maxOccurs="1" />
         <xsd:element name="ROOMCHECKER" type="ROOMCHECKERTYPE" minOccurs="0" maxOccurs="1" default="CF" />
       </xsd:sequence>
+      <!-- LINK + LANE should be unique -->
       <xsd:attribute name="LINK" type="xsd:string" use="required" />
       <xsd:attribute name="LANE" type="xsd:string" use="required" />
       <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
@@ -263,7 +264,7 @@
 
   <xsd:simpleType name="ROOMCHECKERTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="CF|CFBA|TTC|TTC(\d*(\.\d\d*)s)" />
+      <xsd:pattern value="CF|CFBA|TTC(\d*(\.\d\d*)s)" />
     </xsd:restriction>
   </xsd:simpleType>
 

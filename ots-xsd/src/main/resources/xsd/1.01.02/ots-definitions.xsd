@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:fn="http://www.w3.org/2005/xpath-functions" elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
@@ -218,11 +219,10 @@
   <xsd:element name="ROADLAYOUT">
     <xsd:annotation>
       <xsd:documentation source="description">
-        Road layout. Lanes to the right of the design line have negative offset.
-        Those
-        to the right have positive offset. When not specifying offsets, sequence
-        the lines from right (most negative) to left
-        (most positive).
+        Road layout. Lanes to the right of the design line have negative
+        offset. Those to the right have positive offset. When not specifying offsets, sequence
+        the lines from right (most
+        negative) to left (most positive).
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
@@ -233,6 +233,11 @@
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
+    <!-- the LANE.ID should be unique within one ROADLAYOUT -->
+    <xsd:unique name="uniqueRoadLayoutLaneId">
+      <xsd:selector xpath="ots:LANE" />
+      <xsd:field xpath="@ID" />
+    </xsd:unique>
   </xsd:element>
 
   <xsd:element name="PARAMETERTYPES">
@@ -240,7 +245,8 @@
       <xsd:sequence>
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="STRING" type="PARAMETERTYPESTRING" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="ACCELERATION" type="PARAMETERTYPEACCELERATION" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="ACCELERATION" type="PARAMETERTYPEACCELERATION" minOccurs="0"
+            maxOccurs="unbounded" />
           <xsd:element name="BOOLEAN" type="PARAMETERTYPEBOOLEAN" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="CLASS" type="PARAMETERTYPECLASS" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="DOUBLE" type="PARAMETERTYPEDOUBLE" minOccurs="0" maxOccurs="unbounded" />
@@ -251,7 +257,8 @@
           <xsd:element name="FREQUENCY" type="PARAMETERTYPEFREQUENCY" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="INTEGER" type="PARAMETERTYPEINTEGER" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="LENGTH" type="PARAMETERTYPELENGTH" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element name="LINEARDENSITY" type="PARAMETERTYPELINEARDENSITY" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="LINEARDENSITY" type="PARAMETERTYPELINEARDENSITY" minOccurs="0"
+            maxOccurs="unbounded" />
           <xsd:element name="SPEED" type="PARAMETERTYPESPEED" minOccurs="0" maxOccurs="unbounded" />
         </xsd:choice>
       </xsd:sequence>
