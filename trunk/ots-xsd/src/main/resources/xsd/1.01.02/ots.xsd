@@ -75,7 +75,13 @@
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- TODO: Figure out if LANE.ID key can be forced to be unique within ROADLAYOUT -->
+    <!-- ======================================== UNIQUENESS, NO KEY ====================================== -->
+     
+    <xsd:unique name="uniqueGeneratorLinkIdLaneId">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
+      <xsd:field xpath="@LINK" />
+      <xsd:field xpath="@LANE" />
+    </xsd:unique>
      
     <!-- =========================================== NETWORK KEYS ========================================= -->
 
@@ -258,35 +264,56 @@
 
     <xsd:keyref name="definedroadlayoutRoadLayoutIdRef" refer="roadLayoutKey">
       <xsd:selector xpath=".//ots:NETWORK/ots:LINK" />
-      <xsd:field xpath="DEFINEDROADLAYOUT" />
+      <xsd:field xpath="ots:DEFINEDLAYOUT" />
+    </xsd:keyref>
+    
+    <!-- LINK.TYPE defined by LINKTYPE.ID -->
+
+    <xsd:keyref name="linkTypeIdRef" refer="linkTypeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:LINK" />
+      <xsd:field xpath="@TYPE" />
     </xsd:keyref>
     
     <!-- ROUTE.NODE defined by NODE.ID -->
 
-    <xsd:keyref name="routeNodeNodeIdRef" refer="ots:nodeKey">
+    <xsd:keyref name="routeNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTE/ots:NODE" />
+      <xsd:field xpath="@ID" />
+    </xsd:keyref>
+
+    <!-- ROUTE.GTUTYPE defined by GTUTYPE.ID -->
+
+    <xsd:keyref name="routeGtuTypeIdRef" refer="ots:gtuTypeKey">
       <xsd:selector xpath=".//ots:NETWORK/ots:ROUTE" />
-      <xsd:field xpath="NODE" />
+      <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTE.FROM defined by NODE.ID -->
 
     <xsd:keyref name="shortestRouteFromNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
-      <xsd:field xpath="FROM" />
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE/ots:FROM" />
+      <xsd:field xpath="@NODE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTE.TO defined by NODE.ID -->
 
     <xsd:keyref name="shortestRouteToNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
-      <xsd:field xpath="TO" />
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE/ots:TO" />
+      <xsd:field xpath="@NODE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTE.VIA defined by NODE.ID -->
 
     <xsd:keyref name="shortestRouteViaNodeIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE/ots:VIA" />
+      <xsd:field xpath="@NODE" />
+    </xsd:keyref>
+
+    <!-- SHORTESTROUTE.GTUTYPE defined by GTUTYPE.ID -->
+
+    <xsd:keyref name="shortestRouteGtuTypeIdRef" refer="ots:gtuTypeKey">
       <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
-      <xsd:field xpath="VIA" />
+      <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- ROUTEMIX.ROUTE.ID defined by ROUTE.ID -->
@@ -296,11 +323,11 @@
       <xsd:field xpath="@ID" />
     </xsd:keyref>
 
-    <!-- SHORTESTROUTEMIX.ROUTE.ID defined by SHORTESTROUTE.ID -->
+    <!-- ROUTEMIX.GTUTYPE defined by GTUTYPE.ID -->
 
-    <xsd:keyref name="shortestRouteMixShortestRouteIdRef" refer="ots:shortestRouteKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX/ots:SHORTESTROUTE" />
-      <xsd:field xpath="@ID" />
+    <xsd:keyref name="routeMixGtuTypeIdRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX" />
+      <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- ROUTEMIX.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
@@ -308,6 +335,20 @@
     <xsd:keyref name="routeMixRandomStreamIdRef" refer="ots:randomStreamKey">
       <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX" />
       <xsd:field xpath="@RANDOMSTREAM" />
+    </xsd:keyref>
+
+    <!-- SHORTESTROUTEMIX.ROUTE.ID defined by SHORTESTROUTE.ID -->
+
+    <xsd:keyref name="shortestRouteMixShortestRouteIdRef" refer="ots:shortestRouteKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX/ots:SHORTESTROUTE" />
+      <xsd:field xpath="@ID" />
+    </xsd:keyref>
+
+    <!-- SHORTESTROUTEMIX.GTUTYPE defined by GTUTYPE.ID -->
+
+    <xsd:keyref name="shortestRouteMixGtuTypeIdRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX" />
+      <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTEMIX.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
@@ -344,42 +385,42 @@
 
     <xsd:keyref name="generatorGtuTemplateIdRef" refer="ots:gtuTemplateKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
-      <xsd:field xpath="GTUTEMPLATE" />
+      <xsd:field xpath="ots:GTUTEMPLATE" />
     </xsd:keyref>
 
     <!-- GENERATOR.GTUTEMPLATEMIX defined by GTUTEMPLATEMIX.ID -->
 
     <xsd:keyref name="generatorGtuTemplateMixIdRef" refer="ots:gtuTemplateMixKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
-      <xsd:field xpath="GTUTEMPLATEMIX" />
+      <xsd:field xpath="ots:GTUTEMPLATEMIX" />
     </xsd:keyref>
 
     <!-- GENERATOR.ROUTE defined by ROUTE.ID -->
 
     <xsd:keyref name="generatorRouteIdRef" refer="ots:routeKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
-      <xsd:field xpath="ROUTE" />
+      <xsd:field xpath="ots:ROUTE" />
     </xsd:keyref>
 
     <!-- GENERATOR.ROUTEMIX defined by ROUTEMIX.ID -->
 
     <xsd:keyref name="generatorRouteMixIdRef" refer="ots:routeMixKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
-      <xsd:field xpath="ROUTEMIX" />
+      <xsd:field xpath="ots:ROUTEMIX" />
     </xsd:keyref>
 
     <!-- GENERATOR.SHORTESTROUTE defined by ROUTE.ID -->
 
     <xsd:keyref name="generatorShortestRouteouteIdRef" refer="ots:shortestRouteKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
-      <xsd:field xpath="SHORTESTROUTE" />
+      <xsd:field xpath="ots:SHORTESTROUTE" />
     </xsd:keyref>
 
     <!-- GENERATOR.SHORTESTROUTEMIX defined by ROUTEMIX.ID -->
 
     <xsd:keyref name="generatorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:GENERATOR" />
-      <xsd:field xpath="SHORTESTROUTEMIX" />
+      <xsd:field xpath="ots:SHORTESTROUTEMIX" />
     </xsd:keyref>
 
     <!-- LISTGENERATOR.LINK defined by LINK.ID -->
@@ -393,42 +434,42 @@
 
     <xsd:keyref name="listGeneratorGtuTemplateIdRef" refer="ots:gtuTemplateKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
-      <xsd:field xpath="GTUTEMPLATE" />
+      <xsd:field xpath="ots:GTUTEMPLATE" />
     </xsd:keyref>
 
     <!-- LISTGENERATOR.GTUTEMPLATEMIX defined by GTUTEMPLATEMIX.ID -->
 
     <xsd:keyref name="listGeneratorGtuTemplateMixIdRef" refer="ots:gtuTemplateMixKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
-      <xsd:field xpath="GTUTEMPLATEMIX" />
+      <xsd:field xpath="ots:GTUTEMPLATEMIX" />
     </xsd:keyref>
 
     <!-- LISTGENERATOR.ROUTE defined by ROUTE.ID -->
 
     <xsd:keyref name="listGeneratorRouteIdRef" refer="ots:routeKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
-      <xsd:field xpath="ROUTE" />
+      <xsd:field xpath="ots:ROUTE" />
     </xsd:keyref>
 
     <!-- LISTGENERATOR.ROUTEMIX defined by ROUTEMIX.ID -->
 
     <xsd:keyref name="listGeneratorRouteMixIdRef" refer="ots:routeMixKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
-      <xsd:field xpath="ROUTEMIX" />
+      <xsd:field xpath="ots:ROUTEMIX" />
     </xsd:keyref>
 
     <!-- LISTGENERATOR.SHORTESTROUTE defined by ROUTE.ID -->
 
     <xsd:keyref name="listGeneratorShortestRouteouteIdRef" refer="ots:shortestRouteKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
-      <xsd:field xpath="SHORTESTROUTE" />
+      <xsd:field xpath="ots:SHORTESTROUTE" />
     </xsd:keyref>
 
     <!-- LISTGENERATOR.SHORTESTROUTEMIX defined by ROUTEMIX.ID -->
 
     <xsd:keyref name="listGeneratorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:LISTGENERATOR" />
-      <xsd:field xpath="SHORTESTROUTEMIX" />
+      <xsd:field xpath="ots:SHORTESTROUTEMIX" />
     </xsd:keyref>
 
     <!-- OD.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
