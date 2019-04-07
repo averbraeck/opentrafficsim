@@ -1,21 +1,17 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.road.network.factory.xml.utils.Generators;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -31,6 +27,7 @@ import org.opentrafficsim.xml.generated.LINKTYPE;
 import org.opentrafficsim.xml.generated.LINKTYPES;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
 import org.opentrafficsim.xml.generated.ROADLAYOUTS;
+import org.opentrafficsim.xml.generated.SPEEDLIMIT;
 
 /**
  * DefinitionParser parses the XML nodes of the DEFINITIONS tag: GTUTYPE, GTUTEMPLATE, LINKTYPE, LANETYPE and ROADLAYOUT. <br>
@@ -56,15 +53,15 @@ public final class DefinitionsParser
      * @param roadLayoutMap temporary storage for the road layouts
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
      * @param streamMap map with stream information
+     * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @throws XmlParserException on parsing error
      */
     public static void parseDefinitions(final OTSRoadNetwork otsNetwork, final DEFINITIONS definitions,
             final boolean overwriteDefaults, final Map<String, ROADLAYOUT> roadLayoutMap,
-            final Map<GTUType, TemplateGTUType> gtuTemplates, Map<String, StreamInformation> streamMap)
-            throws XmlParserException
+            final Map<String, GTUTEMPLATE> gtuTemplates, Map<String, StreamInformation> streamMap, Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
     {
         parseGtuTypes(definitions, otsNetwork, overwriteDefaults);
-        parseLinkTypes(definitions, otsNetwork, overwriteDefaults);
+        parseLinkTypes(definitions, otsNetwork, overwriteDefaults, linkTypeSpeedLimitMap);
         parseLaneTypes(definitions, otsNetwork, overwriteDefaults);
         parseGtuTemplates(definitions, otsNetwork, overwriteDefaults, gtuTemplates, streamMap);
         parseRoadLayouts(definitions, otsNetwork, roadLayoutMap);
@@ -116,10 +113,11 @@ public final class DefinitionsParser
      * @param definitions the DEFINTIONS tag
      * @param otsNetwork the network
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
+     * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @throws XmlParserException on parsing error
      */
     public static void parseLinkTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
-            final boolean overwriteDefaults) throws XmlParserException
+            final boolean overwriteDefaults, final Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
     {
         for (LINKTYPES linkTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
                 LINKTYPES.class))
@@ -144,10 +142,18 @@ public final class DefinitionsParser
                     }
                     LinkType parent = otsNetwork.getLinkType(linkTag.getPARENT());
                     LinkType linkType = new LinkType(linkTag.getID(), parent, compatibility, otsNetwork);
+                    networkLinkType = linkType;
                     CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
                 }
                 else
                     CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LinkType {}", linkTag.getID());
+                
+                linkTypeSpeedLimitMap.put(networkLinkType, new HashMap<>());
+                for (SPEEDLIMIT speedLimitTag : linkTag.getSPEEDLIMIT())
+                {
+                    GTUType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
+                    linkTypeSpeedLimitMap.get(networkLinkType).put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
+                }
             }
         }
     }
@@ -207,7 +213,7 @@ public final class DefinitionsParser
     }
 
     /**
-     * Parse the GTUTEMPLATES tag in the OTS XML file.
+     * Store the GTUTEMPLATE tags in the OTS XML file.
      * @param definitions the DEFINTIONS tag
      * @param otsNetwork the network
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
@@ -216,8 +222,8 @@ public final class DefinitionsParser
      * @throws XmlParserException on parsing error
      */
     public static void parseGtuTemplates(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
-            final boolean overwriteDefaults, Map<GTUType, TemplateGTUType> gtuTemplates,
-            Map<String, StreamInformation> streamMap) throws XmlParserException
+            final boolean overwriteDefaults, Map<String, GTUTEMPLATE> gtuTemplates, Map<String, StreamInformation> streamMap)
+            throws XmlParserException
     {
         for (GTUTEMPLATES templateTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
                 GTUTEMPLATES.class))
@@ -230,35 +236,7 @@ public final class DefinitionsParser
                     throw new XmlParserException(
                             "GTUTemplate " + templateTag.getID() + " GTUType " + templateTag.getGTUTYPE() + " not found");
                 }
-                TemplateGTUType existingTemplate = gtuTemplates.get(gtuType);
-                if (existingTemplate == null || (existingTemplate != null && !templateTag.isDEFAULT())
-                        || (existingTemplate != null && templateTag.isDEFAULT() && overwriteDefaults))
-                {
-                    Generator<Length> lengthGenerator = Generators.makeLengthGenerator(streamMap, templateTag.getLENGTHDIST());
-                    Generator<Length> widthGenerator = Generators.makeLengthGenerator(streamMap, templateTag.getWIDTHDIST());
-                    Generator<Speed> maximumSpeedGenerator =
-                            Generators.makeSpeedGenerator(streamMap, templateTag.getMAXSPEEDDIST());
-                    if (templateTag.getMAXACCELERATIONDIST() == null)
-                    {
-                        TemplateGTUType templateGTUType =
-                                new TemplateGTUType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator);
-                        gtuTemplates.put(gtuType, templateGTUType);
-                        CategoryLogger.filter(Cat.PARSER).trace("Added TemplateGTUType {}", templateGTUType);
-                    }
-                    else
-                    {
-                        Generator<Acceleration> maximumAccelerationGenerator =
-                                Generators.makeAccelerationGenerator(streamMap, templateTag.getMAXACCELERATIONDIST());
-                        Generator<Acceleration> maximumDecelerationGenerator =
-                                Generators.makeDecelerationGenerator(streamMap, templateTag.getMAXDECELERATIONDIST());
-                        TemplateGTUType templateGTUType = new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
-                                maximumSpeedGenerator, maximumAccelerationGenerator, maximumDecelerationGenerator);
-                        gtuTemplates.put(gtuType, templateGTUType);
-                        CategoryLogger.filter(Cat.PARSER).trace("Added TemplateGTUType {}", templateGTUType);
-                    }
-                }
-                else
-                    CategoryLogger.filter(Cat.PARSER).trace("Did NOT add TemplateGTUType {}", templateTag.getID());
+                gtuTemplates.put(templateTag.getID(), templateTag);
             }
         }
     }
