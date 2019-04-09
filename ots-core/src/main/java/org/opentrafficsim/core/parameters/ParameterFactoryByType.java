@@ -1,16 +1,18 @@
 package org.opentrafficsim.core.parameters;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
-import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -20,6 +22,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
 /**
  * Sets parameter values based on the the GTU type. This includes stochastic parameters. Parameters may also be defined for all
@@ -44,11 +47,21 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /** {@inheritDoc} */
     @Override
-    public void setValues(final Parameters parameters, final GTUType gtuType)
+    public void setValues(final Parameters parameters, final GTUType gtuType) throws ParameterException
     {
         // set of parameters that this class is going to set
         Map<ParameterType<?>, ParameterEntry<?>> setType = new LinkedHashMap<>();
-        for (GTUType type : new GTUType[] {null, gtuType})
+        List<GTUType> gtuTypes = new ArrayList<>();
+        gtuTypes.add(gtuType);
+        GTUType parent = gtuType;
+        do
+        {
+            parent = parent.getParent();
+            gtuTypes.add(parent);
+        }
+        while (parent != null);
+        Collections.reverse(gtuTypes);
+        for (GTUType type : gtuTypes)
         {
             if (this.map.containsKey(type))
             {
@@ -71,7 +84,7 @@ public class ParameterFactoryByType implements ParameterFactory
          */
         Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>> remainingCorrelations = new LinkedHashMap<>();
         Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>> allCorrelations = new LinkedHashMap<>();
-        for (GTUType type : new GTUType[] {null, gtuType}) // null first, so specific type overwrites
+        for (GTUType type : gtuTypes) // null first, so specific type overwrites
         {
             if (this.correlations.containsKey(type))
             {
@@ -107,6 +120,13 @@ public class ParameterFactoryByType implements ParameterFactory
         }
 
         // loop and set parameters that do not correlate to parameters not yet set
+        if (!setType.keySet().containsAll(allCorrelations.keySet()))
+        {
+            Set<ParameterType<?>> params = new LinkedHashSet<>(allCorrelations.keySet());
+            params.removeAll(setType.keySet());
+            throw new ParameterException("Parameters " + params
+                    + " depend on a correlation, but are not added through addParameter() to set a base value.");
+        }
         boolean altered = true;
         while (altered)
         {
@@ -190,22 +210,10 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param value T; the value of the parameter
      * @param <T> parameter value type
      */
-    public <T extends DoubleScalarInterface> void addParameter(final GTUType gtuType, final ParameterType<T> parameterType,
-            final T value)
+    public <T> void addParameter(final GTUType gtuType, final ParameterType<T> parameterType, final T value)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new FixedEntry<>(parameterType, value));
-    }
-
-    /**
-     * @param gtuType GTUType; the gtu type
-     * @param parameterType ParameterTypeDouble; the parameter type
-     * @param value double; the value of the parameter
-     */
-    public void addParameter(final GTUType gtuType, final ParameterTypeDouble parameterType, final double value)
-    {
-        assureTypeInMap(gtuType);
-        this.map.get(gtuType).add(new FixedEntryDouble(parameterType, value));
     }
 
     /**
@@ -224,10 +232,22 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * @param gtuType GTUType; the gtu type
+     * @param parameterType ParameterTypeInteger; the parameter type
+     * @param distribution DistDiscrete; the distribution of the parameter
+     */
+    public void addParameter(final GTUType gtuType, final ParameterType<Integer> parameterType, final DistDiscrete distribution)
+    {
+        assureTypeInMap(gtuType);
+        this.map.get(gtuType).add(new DistributedEntryInteger(parameterType, distribution));
+    }
+
+    /**
+     * @param gtuType GTUType; the gtu type
      * @param parameterType ParameterTypeDouble; the parameter type
      * @param distribution DistContinuous; the distribution of the parameter
      */
-    public void addParameter(final GTUType gtuType, final ParameterTypeDouble parameterType, final DistContinuous distribution)
+    public void addParameter(final GTUType gtuType, final ParameterType<Double> parameterType,
+            final DistContinuous distribution)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new DistributedEntryDouble(parameterType, distribution));
@@ -239,7 +259,7 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param value T; the value of the parameter
      * @param <T> type
      */
-    public <T extends DoubleScalarInterface> void addParameter(final ParameterType<T> parameterType, final T value)
+    public <T> void addParameter(final ParameterType<T> parameterType, final T value)
     {
         addParameter(null, parameterType, value);
     }
@@ -421,61 +441,6 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
-     * Fixed double value.
-     * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 nov. 2016 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    private final class FixedEntryDouble implements ParameterEntry<Double>, Serializable
-    {
-        /** */
-        private static final long serialVersionUID = 20170400L;
-
-        /** Parameter type. */
-        private final ParameterTypeDouble parameterType;
-
-        /** Value. */
-        private final double value;
-
-        /**
-         * @param parameterType ParameterTypeDouble; the parameter type
-         * @param value double; the fixed value
-         */
-        FixedEntryDouble(final ParameterTypeDouble parameterType, final double value)
-        {
-            this.parameterType = parameterType;
-            this.value = value;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Double getValue()
-        {
-            return this.value;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public ParameterType<Double> getParameterType()
-        {
-            return this.parameterType;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "FixedEntryDouble [parameterType=" + this.parameterType + ", value=" + this.value + "]";
-        }
-    }
-
-    /**
      * Distributed parameter.
      * <p>
      * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -551,7 +516,7 @@ public class ParameterFactoryByType implements ParameterFactory
         private static final long serialVersionUID = 20180203L;
 
         /** Parameter type. */
-        private final ParameterTypeDouble parameterType;
+        private final ParameterType<Double> parameterType;
 
         /** Parameter distribution. */
         private final DistContinuous distribution;
@@ -560,7 +525,7 @@ public class ParameterFactoryByType implements ParameterFactory
          * @param parameterType ParameterTypeDouble; the parameter type
          * @param distribution DistContinuous; parameter distribution
          */
-        DistributedEntryDouble(final ParameterTypeDouble parameterType, final DistContinuous distribution)
+        DistributedEntryDouble(final ParameterType<Double> parameterType, final DistContinuous distribution)
         {
             this.parameterType = parameterType;
             this.distribution = distribution;
@@ -589,6 +554,61 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
+     * Distributed integer value.
+     * <p>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 nov. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private final class DistributedEntryInteger implements ParameterEntry<Integer>, Serializable
+    {
+        /** */
+        private static final long serialVersionUID = 20180203L;
+
+        /** Parameter type. */
+        private final ParameterType<Integer> parameterType;
+
+        /** Parameter distribution. */
+        private final DistDiscrete distribution;
+
+        /**
+         * @param parameterType ParameterTypeInteger; the parameter type
+         * @param distribution DistDiscrete; parameter distribution
+         */
+        DistributedEntryInteger(final ParameterType<Integer> parameterType, final DistDiscrete distribution)
+        {
+            this.parameterType = parameterType;
+            this.distribution = distribution;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Integer getValue()
+        {
+            return (int) this.distribution.draw();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public ParameterType<Integer> getParameterType()
+        {
+            return this.parameterType;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "DistributedEntryInteger [parameterType=" + this.parameterType + ", distribution=" + this.distribution + "]";
+        }
+    }
+
+    /**
      * Correlates two parameter values.
      * <p>
      * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -608,7 +628,7 @@ public class ParameterFactoryByType implements ParameterFactory
         /**
          * Returns the correlated value.
          * @param first C; value of independent parameter
-         * @param then T; pre-determined value
+         * @param then T; pre-determined value, the correlation may be relative to a base value
          * @return correlated value
          */
         T correlate(C first, T then);
