@@ -2,19 +2,19 @@ package org.opentrafficsim.trafficcontrol;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
-import org.djutils.immutablecollections.ImmutableCollections;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -26,6 +26,9 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.event.EventInterface;
 
 /**
  * Fixed time traffic light control.
@@ -63,7 +66,6 @@ public class FixedTimeController extends AbstractTrafficController
      * @param signalGroups Set&lt;SignalGroup&gt;; signal groups
      * @throws SimRuntimeException simulator is past zero time
      */
-    @SuppressWarnings({"synthetic-access"})
     public FixedTimeController(final String id, final OTSSimulatorInterface simulator, final Network network,
             final Duration cycleTime, final Duration offset, final Set<SignalGroup> signalGroups) throws SimRuntimeException
     {
@@ -74,7 +76,8 @@ public class FixedTimeController extends AbstractTrafficController
         Throw.whenNull(offset, "Offset may not be null.");
         Throw.whenNull(signalGroups, "Signal groups may not be null.");
         Throw.when(cycleTime.le0(), IllegalArgumentException.class, "Cycle time must be positive.");
-        Throw.when(signalGroups.isEmpty(), IllegalArgumentException.class, "Signal groups may not be empty.");
+        // Throw.when(signalGroups.isEmpty(), IllegalArgumentException.class, "Signal groups may not be empty.");
+        /*- This is no longer considered an error
         for (SignalGroup signalGroup1 : signalGroups)
         {
             for (SignalGroup signalGroup2 : signalGroups)
@@ -87,10 +90,171 @@ public class FixedTimeController extends AbstractTrafficController
                 }
             }
         }
+        */
         this.cycleTime = cycleTime;
         this.offset = offset;
-        this.signalGroups = signalGroups;
-        simulator.scheduleEventAbs(Time.ZERO, this, this, "setup", new Object[] {simulator, network});
+        this.signalGroups = new HashSet<>(signalGroups); // make a copy so we can modify it.
+        // Identify traffic lights that are present in more than one signal group
+        Map<String, List<SignalGroup>> signalGroupsOfTrafficLight = new HashMap<>();
+        for (SignalGroup sg : this.signalGroups)
+        {
+            for (String trafficLightId : sg.getTrafficLightIds())
+            {
+                List<SignalGroup> sgList = signalGroupsOfTrafficLight.get(trafficLightId);
+                if (null == sgList)
+                {
+                    sgList = new ArrayList<>();
+                    signalGroupsOfTrafficLight.put(trafficLightId, sgList);
+                }
+                sgList.add(sg);
+            }
+        }
+        // Collect all flanks that persist for nonzero duration
+        int nextNumber = 0;
+        for (String trafficLightId : signalGroupsOfTrafficLight.keySet())
+        {
+            List<SignalGroup> sgList = signalGroupsOfTrafficLight.get(trafficLightId);
+            if (sgList.size() > 1)
+            {
+                System.out.println("Signal " + trafficLightId + " is used in multiple signal groups");
+                // Check for overlapping or adjacent green phases
+                List<Flank> flanks = new ArrayList<>();
+                for (SignalGroup sg : sgList)
+                {
+                    double sgOffset = sg.getOffset().si;
+                    double preGreenDuration = sg.getPreGreen().si;
+                    if (preGreenDuration > 0)
+                    {
+                        flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.PREGREEN));
+                        sgOffset += preGreenDuration;
+                    }
+                    flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.GREEN));
+                    sgOffset += sg.getGreen().si;
+                    double yellowDuration = sg.getYellow().si;
+                    if (yellowDuration > 0)
+                    {
+                        flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.YELLOW));
+                        sgOffset += yellowDuration;
+                    }
+                    flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.RED));
+                }
+                Collections.sort(flanks);
+                System.out.println("Collected " + flanks.size() + " flanks:");
+                for (Flank flank : flanks)
+                {
+                    System.out.println(flank);
+                }
+                boolean combined = false;
+                int greenCount = 0;
+                for (int index = 0; index < flanks.size(); index++)
+                {
+                    Flank flank = flanks.get(index);
+                    TrafficLightColor nextColor = flank.getTrafficLightColor();
+                    if (TrafficLightColor.GREEN == nextColor)
+                    {
+                        greenCount++;
+                        if (greenCount > 1)
+                        {
+                            flanks.remove(index);
+                            index--;
+                            combined = true;
+                            continue;
+                        }
+                    }
+                    else if (TrafficLightColor.YELLOW == nextColor)
+                    {
+                        if (greenCount > 1)
+                        {
+                            flanks.remove(index);
+                            index--;
+                            continue;
+                        }
+                    }
+                    else if (TrafficLightColor.RED == nextColor)
+                    {
+                        greenCount--;
+                        if (greenCount > 0)
+                        {
+                            flanks.remove(index);
+                            index--;
+                            continue;
+                        }
+                    }
+                }
+                System.out.println("Reduced " + flanks.size() + " flanks:");
+                for (Flank flank : flanks)
+                {
+                    System.out.println(flank);
+                }
+                if (combined)
+                {
+                    // Traffic light has adjacent or overlapping green realizations.
+                    String newSignalGroupName = "CombinedSignalGroups_";
+                    // Remove the traffic light from the current signal groups that it is part of
+                    for (SignalGroup sg : sgList)
+                    {
+                        System.out.println("Reducing " + sg);
+                        newSignalGroupName = newSignalGroupName + "_" + sg.getId();
+                        Set<String> trafficLightIds = new HashSet<>();
+                        for (String tlId : sg.getTrafficLightIds())
+                        {
+                            if (!tlId.equals(trafficLightId))
+                            {
+                                trafficLightIds.add(tlId);
+                            }
+                        }
+                        this.signalGroups.remove(sg);
+                        if (trafficLightIds.size() > 0)
+                        {
+                            SignalGroup newSignalGroup = new SignalGroup(sg.getId(), trafficLightIds, sg.getOffset(),
+                                    sg.getPreGreen(), sg.getGreen(), sg.getYellow());
+                            System.out.println("reduced signal group " + newSignalGroup);
+                            this.signalGroups.add(newSignalGroup);
+                        }
+                        else
+                        {
+                            System.out.println("Signal group became empty");
+                        }
+                    }
+                    // Create new signal group(s) for each green realization of the traffic light
+                    Duration sgOffset = null;
+                    Duration preGreen = Duration.ZERO;
+                    Duration green = null;
+                    Duration yellow = Duration.ZERO;
+                    double cumulativeOffset = 0;
+                    for (int index = 0; index < flanks.size(); index++)
+                    {
+                        Flank flank = flanks.get(index);
+                        if (null == sgOffset)
+                        {
+                            sgOffset = Duration.createSI(flank.getOffset());
+                        }
+                        if (TrafficLightColor.GREEN == flank.getTrafficLightColor())
+                        {
+                            preGreen = Duration.createSI(flank.getOffset() - sgOffset.si);
+                        }
+                        if (TrafficLightColor.YELLOW == flank.getTrafficLightColor())
+                        {
+                            green = Duration.createSI(flank.getOffset() - cumulativeOffset);
+                        }
+                        if (TrafficLightColor.RED == flank.getTrafficLightColor())
+                        {
+                            nextNumber++;
+                            yellow = Duration.createSI(flank.getOffset() - cumulativeOffset);
+                            Set<String> trafficLightIds = new HashSet<>(1);
+                            trafficLightIds.add(trafficLightId);
+                            SignalGroup newSignalGroup = new SignalGroup(newSignalGroupName + "_" + nextNumber, trafficLightIds,
+                                    sgOffset, preGreen, green, yellow);
+                            this.signalGroups.add(newSignalGroup);
+                            System.out.println("Created signal group " + newSignalGroup);
+                        }
+                        cumulativeOffset = flank.getOffset();
+                    }
+                }
+            }
+        }
+        // Schedule setup at time == 0 (when the network should be fully created and all traffic lights have been constructed)
+        simulator.scheduleEventAbs(Time.ZERO, this, this, "setup", new Object[] { simulator, network });
     }
 
     /**
@@ -142,6 +306,30 @@ public class FixedTimeController extends AbstractTrafficController
         return getId();
     }
 
+    /**
+     * @return cycleTime.
+     */
+    public final Duration getCycleTime()
+    {
+        return this.cycleTime;
+    }
+
+    /**
+     * @return offset.
+     */
+    public final Duration getOffset()
+    {
+        return this.offset;
+    }
+
+    /**
+     * @return signalGroups.
+     */
+    public final Set<SignalGroup> getSignalGroups()
+    {
+        return this.signalGroups;
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString()
@@ -151,6 +339,7 @@ public class FixedTimeController extends AbstractTrafficController
     }
 
     /**
+     * Fixed time signal group.
      * <p>
      * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -181,6 +370,9 @@ public class FixedTimeController extends AbstractTrafficController
 
         /** Yellow duration. */
         private final Duration yellow;
+
+        /** Current color (according to <b>this</b> SignalGroup). */
+        private TrafficLightColor currentColor = TrafficLightColor.RED;
 
         // The following properties are remembered for the updates after the startup
 
@@ -238,7 +430,8 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
-         * @return id.
+         * Retrieve the id of this signal group.
+         * @return String
          */
         @Override
         public String getId()
@@ -247,16 +440,18 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
+         * Connect to the traffic lights in the network, initialize the traffic lights to their initial color and schedule the
+         * first transitions.
          * @param controllerOffset Duration;
          * @param cycleTime Duration;
-         * @param sim OTSSimulatorInterface;
+         * @param simulator OTSSimulatorInterface;
          * @param network Network;
          * @throws SimRuntimeException when traffic light does not exist in the network
          */
-        public void startup(final Duration controllerOffset, final Duration cycleTime, final OTSSimulatorInterface sim,
+        public void startup(final Duration controllerOffset, final Duration cycleTime, final OTSSimulatorInterface simulator,
                 final Network network) throws SimRuntimeException
         {
-            this.simulator = sim;
+            this.simulator = simulator;
             double totalOffsetSI = this.offset.si + controllerOffset.si;
             while (totalOffsetSI < 0.0)
             {
@@ -280,33 +475,39 @@ public class FixedTimeController extends AbstractTrafficController
                         + "\" in fixed time controller could not be found in network " + network.getId() + ".");
                 this.trafficLights.add(trafficLight);
             }
-
-            Duration inCycleTime = Duration.createSI(totalOffset.si - cycleTime.si);
+            // System.out.println("Starting up " + this);
+            Duration inCycleTime = Duration.ZERO.minus(totalOffset);
             while (inCycleTime.si < 0)
             {
                 inCycleTime = inCycleTime.plus(cycleTime);
             }
-            Duration duration;
-            if (inCycleTime.si < this.preGreen.si)
+            Duration duration = null;
+            if (inCycleTime.ge(this.preGreen.plus(this.green).plus(this.yellow)))
             {
-                setTrafficLights(TrafficLightColor.PREGREEN);
+                this.currentColor = TrafficLightColor.RED; // redundant; it is already RED
+                duration = cycleTime.minus(inCycleTime);
+            }
+            else if (inCycleTime.lt(this.preGreen))
+            {
+                this.currentColor = TrafficLightColor.PREGREEN;
                 duration = this.preGreen.minus(inCycleTime);
             }
-            else if (inCycleTime.si < this.preGreen.si + this.green.si)
+            else if (inCycleTime.lt(this.preGreen.plus(this.green)))
             {
-                setTrafficLights(TrafficLightColor.GREEN);
+                this.currentColor = TrafficLightColor.GREEN;
                 duration = this.preGreen.plus(this.green).minus(inCycleTime);
             }
-            else if (inCycleTime.si < this.preGreen.si + this.green.si + this.yellow.si)
+            else if (inCycleTime.lt(this.preGreen.plus(this.green).plus(this.yellow)))
             {
-                setTrafficLights(TrafficLightColor.YELLOW);
+                this.currentColor = TrafficLightColor.YELLOW;
                 duration = this.preGreen.plus(this.green).plus(this.yellow).minus(inCycleTime);
             }
             else
             {
-                setTrafficLights(TrafficLightColor.RED);
-                duration = cycleTime.minus(inCycleTime);
+                throw new SimRuntimeException("Cannot determine initial state of signal group " + this);
             }
+            // System.out.println("Initial color is " + this.currentColor + " next flank after " + duration);
+            setTrafficLights(this.currentColor);
             this.simulator.scheduleEventRel(duration, this, this, "updateColors", null);
         }
 
@@ -316,35 +517,35 @@ public class FixedTimeController extends AbstractTrafficController
         @SuppressWarnings("unused")
         private void updateColors()
         {
-            Duration duration = Duration.ZERO;
-            TrafficLightColor color = this.trafficLights.get(0).getTrafficLightColor();
-            while (duration.le0())
-            {
-                switch (color)
-                {
-                    case PREGREEN:
-                        color = TrafficLightColor.GREEN;
-                        duration = this.green;
-                        break;
-                    case GREEN:
-                        color = TrafficLightColor.YELLOW;
-                        duration = this.yellow;
-                        break;
-                    case YELLOW:
-                        color = TrafficLightColor.RED;
-                        duration = this.red;
-                        break;
-                    case RED:
-                        color = TrafficLightColor.PREGREEN;
-                        duration = this.preGreen;
-                        break;
-                    default:
-                        throw new RuntimeException("Cannot happen.");
-                }
-            }
-            setTrafficLights(color);
             try
             {
+                Duration duration = Duration.ZERO;
+                TrafficLightColor color = this.currentColor;
+                while (duration.le0())
+                {
+                    switch (color)
+                    {
+                        case PREGREEN:
+                            color = TrafficLightColor.GREEN;
+                            duration = this.green;
+                            break;
+                        case GREEN:
+                            color = TrafficLightColor.YELLOW;
+                            duration = this.yellow;
+                            break;
+                        case YELLOW:
+                            color = TrafficLightColor.RED;
+                            duration = this.red;
+                            break;
+                        case RED:
+                            color = TrafficLightColor.PREGREEN;
+                            duration = this.preGreen;
+                            break;
+                        default:
+                            throw new RuntimeException("Cannot happen.");
+                    }
+                }
+                setTrafficLights(color);
                 this.simulator.scheduleEventRel(duration, this, this, "updateColors", null);
             }
             catch (SimRuntimeException exception)
@@ -356,10 +557,11 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Change the color of our traffic lights.
-         * @param trafficLightColor TrafficLightColor; the new traffic light color
+         * @param trafficLightColor TrafficLightColor; the new traffic light color to show
          */
         private void setTrafficLights(final TrafficLightColor trafficLightColor)
         {
+            this.currentColor = trafficLightColor;
             for (TrafficLight trafficLight : this.trafficLights)
             {
                 trafficLight.setTrafficLightColor(trafficLightColor);
@@ -472,38 +674,102 @@ public class FixedTimeController extends AbstractTrafficController
             return this.yellow;
         }
 
+        /**
+         * Retrieve the current color of this SignalGroup.
+         * @return TrafficLightColor; the current color of this signal group.
+         */
+        public TrafficLightColor getCurrentColor()
+        {
+            return currentColor;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString()
         {
             return "SignalGroup [id=" + this.id + ", trafficLightIds=" + this.trafficLightIds + ", offset=" + this.offset
-                    + ", preGreen=" + this.preGreen + ", green=" + this.green + ", yellow=" + this.yellow + "]";
+                    + ", preGreen=" + this.preGreen + ", green=" + this.green + ", yellow=" + this.yellow + "currentColor="
+                    + this.currentColor + "]";
         }
 
     }
 
     /**
-     * @return cycleTime.
+     * Storage of an offset within a cycle and the new traffic light color. Used to sort the flanks.
      */
-    public final Duration getCycleTime()
+    class Flank implements Comparable<Flank>
     {
-        return this.cycleTime;
-    }
+        /** When (in the cycle time is this transition. */
+        final double offset;
 
-    /**
-     * @return offset.
-     */
-    public final Duration getOffset()
-    {
-        return this.offset;
-    }
+        /** What is the color after this transition. */
+        final TrafficLightColor newColor;
 
-    /**
-     * @return signalGroups.
-     */
-    public final Set<SignalGroup> getSignalGroups()
-    {
-        return this.signalGroups;
+        /**
+         * Construct a new Flank.
+         * @param offset double; offset within the cycle time
+         * @param newColor TrafficLightColor; color to show after this transition
+         */
+        public Flank(final double offset, final TrafficLightColor newColor)
+        {
+            this.offset = offset;
+            this.newColor = newColor;
+        }
+
+        /**
+         * Retrieve the offset.
+         * @return double; the offset
+         */
+        public double getOffset()
+        {
+            return this.offset;
+        }
+
+        /**
+         * Retrieve the color after this transition.
+         * @return TrafficLightColor; the color after this transition
+         */
+        public TrafficLightColor getTrafficLightColor()
+        {
+            return this.newColor;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Flank [offset=" + offset + ", newColor=" + newColor + "]";
+        }
+
+        /** Cumulative rounding errors are less than this value and traffic light transitions are spaced further apart. */
+        static private final double compareMargin = 0.01;
+
+        @Override
+        public int compareTo(Flank o)
+        {
+            double deltaOffset = this.offset - o.offset;
+            if (Math.abs(deltaOffset) < compareMargin)
+            {
+                deltaOffset = 0;
+            }
+            if (deltaOffset > 0)
+            {
+                return 1;
+            }
+            if (deltaOffset < 0)
+            {
+                return -1;
+            }
+            if (TrafficLightColor.GREEN == this.newColor && TrafficLightColor.GREEN != o.newColor)
+            {
+                return -1;
+            }
+            if (TrafficLightColor.GREEN == o.newColor && TrafficLightColor.GREEN != this.newColor)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
     }
 
 }
