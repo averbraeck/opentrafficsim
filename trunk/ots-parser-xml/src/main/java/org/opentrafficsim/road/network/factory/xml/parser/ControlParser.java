@@ -65,8 +65,9 @@ public final class ControlParser
                     {
                         // TODO is linkId.trafficLight id as it is found in the network?
                         String linkId = trafficLight.getLINK();
+                        String laneId = trafficLight.getLANE();
                         String trafficLightId = trafficLight.getTRAFFICLIGHTID();
-                        trafficLightIds.add(linkId + "." + trafficLightId);
+                        trafficLightIds.add(linkId + "." + laneId + "." + trafficLightId);
                     }
                     signalGroups
                             .add(new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, preGreen, green, yellow));
