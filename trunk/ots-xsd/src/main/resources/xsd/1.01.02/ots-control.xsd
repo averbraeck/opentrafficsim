@@ -24,6 +24,7 @@
                     <xsd:element name="TRAFFICLIGHT" minOccurs="1" maxOccurs="unbounded">
                       <xsd:complexType>
                         <xsd:attribute name="LINK" type="xsd:string" />
+                        <xsd:attribute name="LANE" type="xsd:string" />
                         <xsd:attribute name="TRAFFICLIGHTID" type="xsd:string" />
                       </xsd:complexType>
                     </xsd:element>
