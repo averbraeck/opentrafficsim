@@ -7,13 +7,11 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.CONTROL.FIXEDTIME;
 import org.opentrafficsim.xml.generated.CONTROL.FIXEDTIME.SIGNALGROUP.TRAFFICLIGHT;
-import org.opentrafficsim.xml.generated.OTS;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
