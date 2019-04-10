@@ -83,9 +83,11 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     {
         try
         {
-            return NeighborsUtil.perceive(NeighborsUtil.getFirstDownstreamGTUs(
-                    getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getFront(),
-                    getGtu().getFront(), RelativePosition.REAR, getTimestamp()), this.headwayGtuType, getGtu(), true);
+            return NeighborsUtil.perceive(
+                    NeighborsUtil.getFirstDownstreamGTUs(
+                            getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getFront(),
+                            getGtu().getFront(), RelativePosition.REAR, getTimestamp()),
+                    this.headwayGtuType, getGtu(), true);
         }
         catch (ParameterException | GTUException | IllegalArgumentException exception)
         {
@@ -111,9 +113,11 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     {
         try
         {
-            return NeighborsUtil.perceive(NeighborsUtil.getFirstUpstreamGTUs(
-                    getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getRear(),
-                    getGtu().getRear(), RelativePosition.FRONT, getTimestamp()), this.headwayGtuType, getGtu(), false);
+            return NeighborsUtil.perceive(
+                    NeighborsUtil.getFirstUpstreamGTUs(
+                            getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getRear(),
+                            getGtu().getRear(), RelativePosition.FRONT, getTimestamp()),
+                    this.headwayGtuType, getGtu(), false);
         }
         catch (ParameterException | GTUException | IllegalArgumentException exception)
         {
@@ -224,15 +228,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             Throw.whenNull(lane, "Lane may not be null.");
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos;
-            try
-            {
-                pos = record.getStartDistance().neg();
-            }
-            catch (NullPointerException ex)
-            {
-                System.out.println("hmmm");
-                throw ex;
-            }
+            pos = record.getStartDistance().neg();
             pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
                     : pos.minus(getGtu().getFront().getDx());
             return new UpstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),

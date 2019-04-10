@@ -3,7 +3,6 @@ package org.opentrafficsim.core.network.route;
 import java.io.Serializable;
 
 import org.opentrafficsim.core.distributions.ConstantGenerator;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.network.Node;
 
 /**

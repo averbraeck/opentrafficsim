@@ -30,21 +30,19 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
- *           &lt;element name="STRING" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPESTRING" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="ACCELERATION" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEACCELERATION" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="BOOLEAN" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEBOOLEAN" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="CLASS" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPECLASS" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="DOUBLE" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEDOUBLE" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="FLOAT" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEFLOAT" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="LONG" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPELONG" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="DURATION" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEDURATION" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="FRACTION" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEFRACTION" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="FREQUENCY" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEFREQUENCY" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="INTEGER" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEINTEGER" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="LENGTH" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPELENGTH" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="LINEARDENSITY" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPELINEARDENSITY" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="SPEED" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPESPEED" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;choice maxOccurs="unbounded"&gt;
+ *           &lt;element name="STRING" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPESTRING"/&gt;
+ *           &lt;element name="ACCELERATION" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEACCELERATION"/&gt;
+ *           &lt;element name="BOOLEAN" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEBOOLEAN"/&gt;
+ *           &lt;element name="CLASS" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPECLASS"/&gt;
+ *           &lt;element name="DOUBLE" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEDOUBLE"/&gt;
+ *           &lt;element name="DURATION" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEDURATION"/&gt;
+ *           &lt;element name="FRACTION" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEFRACTION"/&gt;
+ *           &lt;element name="FREQUENCY" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEFREQUENCY"/&gt;
+ *           &lt;element name="INTEGER" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPEINTEGER"/&gt;
+ *           &lt;element name="LENGTH" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPELENGTH"/&gt;
+ *           &lt;element name="LINEARDENSITY" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPELINEARDENSITY"/&gt;
+ *           &lt;element name="SPEED" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPESPEED"/&gt;
  *         &lt;/choice&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
@@ -58,9 +56,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "stringOrACCELERATIONOrBOOLEAN"
 })
-@XmlRootElement(name = "PARAMETERTYPES")
+@XmlRootElement(name = "PARAMETERS")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
-public class PARAMETERTYPES implements Serializable
+public class PARAMETERS
+    implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
@@ -71,8 +70,6 @@ public class PARAMETERTYPES implements Serializable
         @XmlElement(name = "BOOLEAN", type = PARAMETERTYPEBOOLEAN.class),
         @XmlElement(name = "CLASS", type = PARAMETERTYPECLASS.class),
         @XmlElement(name = "DOUBLE", type = PARAMETERTYPEDOUBLE.class),
-        @XmlElement(name = "FLOAT", type = PARAMETERTYPEFLOAT.class),
-        @XmlElement(name = "LONG", type = PARAMETERTYPELONG.class),
         @XmlElement(name = "DURATION", type = PARAMETERTYPEDURATION.class),
         @XmlElement(name = "FRACTION", type = PARAMETERTYPEFRACTION.class),
         @XmlElement(name = "FREQUENCY", type = PARAMETERTYPEFREQUENCY.class),
@@ -107,8 +104,6 @@ public class PARAMETERTYPES implements Serializable
      * {@link PARAMETERTYPEBOOLEAN }
      * {@link PARAMETERTYPECLASS }
      * {@link PARAMETERTYPEDOUBLE }
-     * {@link PARAMETERTYPEFLOAT }
-     * {@link PARAMETERTYPELONG }
      * {@link PARAMETERTYPEDURATION }
      * {@link PARAMETERTYPEFRACTION }
      * {@link PARAMETERTYPEFREQUENCY }

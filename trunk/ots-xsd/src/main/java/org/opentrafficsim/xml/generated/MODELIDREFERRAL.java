@@ -13,23 +13,22 @@ import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.djunits.value.vdouble.scalar.Frequency;
-import org.opentrafficsim.xml.bindings.FrequencyAdapter;
 
 
 /**
- * <p>Java class for PARAMETERTYPEFREQUENCY complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PARAMETERTYPEFREQUENCY"&gt;
+ * &lt;complexType&gt;
  *   &lt;complexContent&gt;
- *     &lt;extension base="{http://www.opentrafficsim.org/ots}PARAMETERTYPE"&gt;
- *       &lt;attribute name="DEFAULT" type="{http://www.opentrafficsim.org/ots}FREQUENCYTYPE" /&gt;
- *     &lt;/extension&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="ID" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="REFERREDID" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -37,22 +36,24 @@ import org.opentrafficsim.xml.bindings.FrequencyAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PARAMETERTYPEFREQUENCY")
+@XmlType(name = "")
+@XmlRootElement(name = "MODELIDREFERRAL")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
-public class PARAMETERTYPEFREQUENCY
-    extends PARAMETERTYPE
+public class MODELIDREFERRAL
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlAttribute(name = "DEFAULT")
-    @XmlJavaTypeAdapter(FrequencyAdapter.class)
+    @XmlAttribute(name = "ID")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
-    protected Frequency _default;
+    protected String id;
+    @XmlAttribute(name = "REFERREDID")
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
+    protected String referredid;
 
     /**
-     * Gets the value of the default property.
+     * Gets the value of the id property.
      * 
      * @return
      *     possible object is
@@ -60,12 +61,12 @@ public class PARAMETERTYPEFREQUENCY
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
-    public Frequency getDEFAULT() {
-        return _default;
+    public String getID() {
+        return id;
     }
 
     /**
-     * Sets the value of the default property.
+     * Sets the value of the id property.
      * 
      * @param value
      *     allowed object is
@@ -73,8 +74,34 @@ public class PARAMETERTYPEFREQUENCY
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
-    public void setDEFAULT(Frequency value) {
-        this._default = value;
+    public void setID(String value) {
+        this.id = value;
+    }
+
+    /**
+     * Gets the value of the referredid property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
+    public String getREFERREDID() {
+        return referredid;
+    }
+
+    /**
+     * Sets the value of the referredid property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-10T07:36:19+02:00", comments = "JAXB RI v2.3.0")
+    public void setREFERREDID(String value) {
+        this.referredid = value;
     }
 
 }

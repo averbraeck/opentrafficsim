@@ -26,7 +26,7 @@ public interface LmrsParameters
 
     /** Free lane change desire threshold. */
     ParameterTypeDouble DFREE =
-            new ParameterTypeDouble("dFree", "Free lane change desire threshold.", 0.365, ConstraintInterface.UNITINTERVAL)
+            new ParameterTypeDouble("dFree", "Free lane change desire threshold", 0.365, ConstraintInterface.UNITINTERVAL)
             {
                 /** */
                 private static final long serialVersionUID = 20160413L;
@@ -45,7 +45,7 @@ public interface LmrsParameters
             };
 
     /** Synchronized lane change desire threshold. */
-    ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync", "Synchronized lane change desire threshold.", 0.577,
+    ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync", "Synchronized lane change desire threshold", 0.577,
             ConstraintInterface.UNITINTERVAL)
     {
         /** */
@@ -63,7 +63,7 @@ public interface LmrsParameters
     };
 
     /** Cooperative lane change desire threshold. */
-    ParameterTypeDouble DCOOP = new ParameterTypeDouble("dCoop", "Cooperative lane change desire threshold.", 0.788,
+    ParameterTypeDouble DCOOP = new ParameterTypeDouble("dCoop", "Cooperative lane change desire threshold", 0.788,
             ConstraintInterface.UNITINTERVAL)
     {
         /** */
@@ -81,24 +81,24 @@ public interface LmrsParameters
     };
 
     /** Current left lane change desire. */
-    ParameterTypeDouble DLEFT = new ParameterTypeDouble("dLeft", "Left lane change desire.", 0.0);
+    ParameterTypeDouble DLEFT = new ParameterTypeDouble("dLeft", "Left lane change desire", 0.0);
 
     /** Current right lane change desire. */
-    ParameterTypeDouble DRIGHT = new ParameterTypeDouble("dRight", "Right lane change desire.", 0.0);
+    ParameterTypeDouble DRIGHT = new ParameterTypeDouble("dRight", "Right lane change desire", 0.0);
 
     /** Lane change desire of current lane change. */
-    ParameterTypeDouble DLC = new ParameterTypeDouble("dLaneChange", "Desire of current lane change.", 0.0);
+    ParameterTypeDouble DLC = new ParameterTypeDouble("dLaneChange", "Desire of current lane change", 0.0);
 
     /** Anticipation speed difference at full lane change desired. */
     ParameterTypeSpeed VGAIN =
-            new ParameterTypeSpeed("vGain", "Anticipation speed difference at " + "full lane change desired.",
+            new ParameterTypeSpeed("vGain", "Anticipation speed difference at full lane change desire",
                     new Speed(69.6, SpeedUnit.KM_PER_HOUR), ConstraintInterface.POSITIVE);
 
     /** Courtesy parameter. */
-    ParameterTypeDouble COURTESY = new ParameterTypeDouble("Courtesy", "Courtesy level for courtesy lane changes.", 1.0);
+    ParameterTypeDouble COURTESY = new ParameterTypeDouble("courtesy", "Courtesy level for courtesy lane changes", 1.0);
 
     /** Socio-speed sensitivity parameter. */
-    ParameterTypeDouble SOCIO = new ParameterTypeDouble("Socio-speed sensitivity", "Sensitivity level for speed of others.",
+    ParameterTypeDouble SOCIO = new ParameterTypeDouble("socio", "Sensitivity level for speed of others",
             1.0, ConstraintInterface.UNITINTERVAL);
 
 }

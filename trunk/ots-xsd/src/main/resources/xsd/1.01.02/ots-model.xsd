@@ -15,9 +15,32 @@
 
   <xsd:element name="MODEL" type="MODELTYPE" />
 
+  <xsd:element name="PARAMETERS">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="STRING" type="PARAMETERTYPESTRING" />
+          <xsd:element name="ACCELERATION" type="PARAMETERTYPEACCELERATION" />
+          <xsd:element name="BOOLEAN" type="PARAMETERTYPEBOOLEAN" />
+          <xsd:element name="CLASS" type="PARAMETERTYPECLASS" />
+          <xsd:element name="DOUBLE" type="PARAMETERTYPEDOUBLE" />
+          <!-- xsd:element name="FLOAT" type="PARAMETERTYPEFLOAT" />
+          <xsd:element name="LONG" type="PARAMETERTYPELONG" / -->
+          <xsd:element name="DURATION" type="PARAMETERTYPEDURATION" />
+          <xsd:element name="FRACTION" type="PARAMETERTYPEFRACTION" />
+          <xsd:element name="FREQUENCY" type="PARAMETERTYPEFREQUENCY" />
+          <xsd:element name="INTEGER" type="PARAMETERTYPEINTEGER" />
+          <xsd:element name="LENGTH" type="PARAMETERTYPELENGTH" />
+          <xsd:element name="LINEARDENSITY" type="PARAMETERTYPELINEARDENSITY" />
+          <xsd:element name="SPEED" type="PARAMETERTYPESPEED" />
+        </xsd:choice>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:complexType name="MODELTYPE">
     <xsd:sequence>
-    
+
       <xsd:element name="MODELPARAMETERS" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
           <xsd:choice minOccurs="1" maxOccurs="unbounded">
@@ -79,42 +102,6 @@
               <xsd:complexType>
                 <xsd:complexContent>
                   <xsd:extension base="PARAMETERDOUBLEDIST">
-                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="FLOAT">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="PARAMETERFLOAT">
-                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="FLOATDIST">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="PARAMETERFLOATDIST">
-                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="LONG">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="PARAMETERLONG">
-                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
-                  </xsd:extension>
-                </xsd:complexContent>
-              </xsd:complexType>
-            </xsd:element>
-            <xsd:element name="LONGDIST">
-              <xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="PARAMETERLONGDIST">
                     <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
                   </xsd:extension>
                 </xsd:complexContent>

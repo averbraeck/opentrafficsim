@@ -29,8 +29,7 @@ public class ParameterTypes implements ConstraintInterface
     }
 
     /** Fixed model time step. */
-    public static final ParameterTypeDuration DT =
-            new ParameterTypeDuration("dt", "Fixed model time step", Duration.createSI(0.5), POSITIVE);
+    public static final ParameterTypeDuration DT;
 
     /** Car-following stopping distance. */
     public static final ParameterTypeLength S0;
@@ -89,6 +88,8 @@ public class ParameterTypes implements ConstraintInterface
 
     static
     {
+
+        DT = new ParameterTypeDuration("dt", "Fixed model time step", Duration.createSI(0.5), POSITIVE);
 
         S0 = new ParameterTypeLength("s0", "Car-following stopping distance", Length.createSI(3.0), POSITIVE);
 
@@ -193,7 +194,7 @@ public class ParameterTypes implements ConstraintInterface
 
         LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration", Duration.createSI(3.0), POSITIVE);
 
-        PERCEPTION = new ParameterTypeLength("mapLength", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
+        PERCEPTION = new ParameterTypeLength("perception", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
 
         TR = new ParameterTypeDuration("Tr", "Reaction time", Duration.createSI(0.5), POSITIVEZERO);
 

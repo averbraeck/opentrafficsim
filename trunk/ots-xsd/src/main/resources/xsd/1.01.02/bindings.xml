@@ -42,6 +42,8 @@
       adapter="org.opentrafficsim.xml.bindings.DurationAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Frequency" xmlType="ots:FREQUENCYTYPE"
       adapter="org.opentrafficsim.xml.bindings.FrequencyAdapter" />
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:LINEARDENSITYTYPE"
+      adapter="org.opentrafficsim.xml.bindings.LinearDensityAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeType" xmlType="ots:STRIPETYPE"
       adapter="org.opentrafficsim.xml.bindings.StripeTypeAdapter" />
     <xjc:javaType name="java.awt.Color" xmlType="ots:COLORTYPE"
