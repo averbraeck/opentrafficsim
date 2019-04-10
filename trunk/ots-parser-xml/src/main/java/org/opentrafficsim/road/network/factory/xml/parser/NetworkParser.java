@@ -52,7 +52,6 @@ import org.opentrafficsim.xml.generated.CSESHOULDER;
 import org.opentrafficsim.xml.generated.CSESTRIPE;
 import org.opentrafficsim.xml.generated.LINK;
 import org.opentrafficsim.xml.generated.LINK.LANEOVERRIDE;
-import org.opentrafficsim.xml.generated.LINKTYPE;
 import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NODE;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
@@ -294,7 +293,7 @@ public final class NetworkParser
      * @param network NETWORK; the NETWORK tag
      * @param simulator OTSSimulatorInterface; the simulator
      * @param roadLayoutMap the map of the tags of the predefined ROADLAYOUT tags in DEFINITIONS
-     * @param linkTypeSpeedLimitMap map of speed limites per link type
+     * @param linkTypeSpeedLimitMap map of speed limits per link type
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OTSGeometryException when the design line is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
