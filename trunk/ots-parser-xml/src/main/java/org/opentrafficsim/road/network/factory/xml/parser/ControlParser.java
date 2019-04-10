@@ -63,7 +63,6 @@ public final class ControlParser
                     Set<String> trafficLightIds = new LinkedHashSet<>();
                     for (TRAFFICLIGHT trafficLight : trafficLights)
                     {
-                        // TODO is linkId.trafficLight id as it is found in the network?
                         String linkId = trafficLight.getLINK();
                         String laneId = trafficLight.getLANE();
                         String trafficLightId = trafficLight.getTRAFFICLIGHTID();
