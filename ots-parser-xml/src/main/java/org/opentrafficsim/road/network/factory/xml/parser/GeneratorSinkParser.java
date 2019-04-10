@@ -7,13 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
@@ -24,17 +21,13 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
-import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -84,21 +77,18 @@ public class GeneratorSinkParser
      * @param gtuTemplates GGTUTEMPLATE tags
      * @param simulator OTSSimulatorInterface; the simulator
      * @param streamMap map with stream information
+     * @return list of created GTU generators
      * @throws XmlParserException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseGenerators(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand,
+    public static List<LaneBasedGTUGenerator> parseGenerators(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand,
             Map<String, GTUTEMPLATE> gtuTemplates, final OTSSimulatorInterface simulator,
             Map<String, StreamInformation> streamMap) throws XmlParserException
     {
+        List<LaneBasedGTUGenerator> generators = new ArrayList<>();
         try
         {
             for (GENERATOR generatorTag : demand.getGENERATOR())
             {
-                CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(generatorTag.getLINK());
-                Lane lane = (Lane) link.getCrossSectionElement(generatorTag.getLANE());
-                Length position = Transformer.parseLengthBeginEnd(generatorTag.getPOSITION(), lane.getLength());
-
-                Class<?> gtuClass = LaneBasedIndividualGTU.class;
 
                 if (simulator.getReplication().getStream("generation") == null)
                 {
@@ -182,7 +172,7 @@ public class GeneratorSinkParser
                             Generators.makeSpeedGenerator(streamMap, templateTag.getMAXSPEEDDIST());
                     LaneBasedTemplateGTUType templateGTUType = new LaneBasedTemplateGTUType(gtuType, lengthGenerator,
                             widthGenerator, maximumSpeedGenerator, strategicalFactory, routeGenerator);
-                    gtuTypeDistribution.add(new FrequencyAndObject<LaneBasedTemplateGTUType>(1.0, templateGTUType));
+                    gtuTypeDistribution.add(new FrequencyAndObject<>(1.0, templateGTUType));
                 }
                 else if (generatorTag.getGTUTEMPLATEMIX() != null)
                 {
@@ -194,53 +184,34 @@ public class GeneratorSinkParser
                     throw new XmlParserException("No GTU information in GENERATOR");
                 }
 
-                Time startTime = generatorTag.getSTARTTIME() != null ? generatorTag.getSTARTTIME() : Time.ZERO;
-                Time endTime = generatorTag.getENDTIME() != null ? generatorTag.getENDTIME()
-                        : new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
-
-                // room checker: CF|CFBA|TTC(\d*(\.\d\d*)s)
-                RoomChecker roomChecker = null;
-
-                switch (generatorTag.getROOMCHECKER())
-                {
-                    case "CF":
-                        roomChecker = new CFRoomChecker();
-                        break;
-
-                    case "CFBA":
-                        roomChecker = new CFBARoomChecker();
-                        break;
-
-                    case "TTC":
-                        // TODO: TTC
-                        // break;
-
-                    default:
-                        throw new XmlParserException(
-                                "RoomChecker " + generatorTag.getROOMCHECKER() + " not one of CF|CFBA|TTC");
-                }
-
-                IdGenerator idGenerator = new IdGenerator(lane.getFullId());
+                RoomChecker roomChecker = Transformer.parseRoomChecker(generatorTag.getROOMCHECKER());
 
                 Generator<Duration> headwayGenerator =
                         new HeadwayGenerator(generatorTag.getFREQUENCY(), streamMap.get("generation").getStream());
 
+                CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(generatorTag.getLINK());
+                Lane lane = (Lane) link.getCrossSectionElement(generatorTag.getLANE());
+                // TODO: remove this hack for testing
+                Length position = Length.createSI(5.0); //Transformer.parseLengthBeginEnd(generatorTag.getPOSITION(), lane.getLength());
+                GTUDirectionality direction = GTUDirectionality.valueOf(generatorTag.getDIRECTION());
                 Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
-                // TODO: DIR_MINUS
                 initialLongitudinalPositions
-                        .add(new DirectedLanePosition(lane, new Length(5.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
+                        .add(new DirectedLanePosition(lane, position, direction));
 
+                IdGenerator idGenerator = new IdGenerator(lane.getFullId());
+                
                 LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
                         new LaneBasedTemplateGTUTypeDistribution(gtuTypeDistribution);
-                new LaneBasedGTUGenerator(lane.getFullId(), headwayGenerator, characteristicsGenerator,
+                generators.add(new LaneBasedGTUGenerator(lane.getFullId(), headwayGenerator, characteristicsGenerator,
                         GeneratorPositions.create(initialLongitudinalPositions, stream), otsNetwork, simulator, roomChecker,
-                        idGenerator);
+                        idGenerator));
             }
         }
         catch (Exception exception)
         {
             throw new XmlParserException(exception);
         }
+        return generators;
     }
 
     /**

@@ -51,7 +51,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /** Acceleration flattening. */
     public static final ParameterTypeDouble DELTA = new ParameterTypeDouble("delta",
-            "Acceleration flattening exponent towards desired speed.", 4.0, ConstraintInterface.POSITIVE);
+            "Acceleration flattening exponent towards desired speed", 4.0, ConstraintInterface.POSITIVE);
 
     /** Default IDM desired headway model. */
     public static final DesiredHeadwayModel HEADWAY = new DesiredHeadwayModel()

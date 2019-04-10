@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -138,11 +139,11 @@ public class TestXMLParserN201New extends OTSSimulationApplication<TestXMLModelN
         @Override
         public final void constructModel() throws SimRuntimeException
         {
-            URL url = URLResource.getResource("/N201v10102.xml");
+            InputStream stream = URLResource.getResourceAsStream("/N201v10102.xml");
             this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                XmlNetworkLaneParser.build(url.getPath(), this.network, getSimulator());
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
                     | URISyntaxException | XmlParserException | GTUException exception)

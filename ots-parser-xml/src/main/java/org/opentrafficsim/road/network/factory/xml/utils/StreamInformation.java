@@ -20,7 +20,8 @@ public class StreamInformation
     private final StreamInterface stream = new MersenneTwister(1L);
     
     /**
-     * 
+     * @param id 
+     * @param seedMap 
      */
     public StreamInformation(final String id, final Map<Integer, Long> seedMap)
     {

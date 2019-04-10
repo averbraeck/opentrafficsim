@@ -28,7 +28,7 @@ public final class TrafficLightUtil
 {
     /** Maximum deceleration for stopping for yellow traffic light. */
     public static final ParameterTypeAcceleration B_YELLOW =
-            new ParameterTypeAcceleration("bYellow", "Maximum deceleration for stopping for yellow traffic light.",
+            new ParameterTypeAcceleration("bYellow", "Maximum deceleration for stopping for yellow traffic light",
                     new Acceleration(3.5, AccelerationUnit.SI), ConstraintInterface.POSITIVE);
 
     /**

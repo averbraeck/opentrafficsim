@@ -70,7 +70,7 @@ public final class ConflictUtil
 {
 
     /** Minimum time gap between events. */
-    public static final ParameterTypeDuration MIN_GAP = new ParameterTypeDuration("minGap", "Minimum gap for conflicts.",
+    public static final ParameterTypeDuration MIN_GAP = new ParameterTypeDuration("minGap", "Minimum gap for conflicts",
             new Duration(0.000001, DurationUnit.SECOND), ConstraintInterface.POSITIVE);
 
     /** Comfortable deceleration. */
@@ -83,20 +83,20 @@ public final class ConflictUtil
     public static final ParameterTypeLength S0 = ParameterTypes.S0;
 
     /** Stopping distance at conflicts. */
-    public static final ParameterTypeLength S0_CONF = new ParameterTypeLength("s0 conf", "Stopping distance at conflicts.",
+    public static final ParameterTypeLength S0_CONF = new ParameterTypeLength("s0conf", "Stopping distance at conflicts",
             new Length(1.5, LengthUnit.METER), ConstraintInterface.POSITIVE);
 
     /** Multiplication factor on time for conservative assessment. */
     public static final ParameterTypeDouble TIME_FACTOR =
-            new ParameterTypeDouble("timeFactor", "Safety factor on estimated time.", 1.25, ConstraintInterface.ATLEASTONE);
+            new ParameterTypeDouble("timeFactor", "Safety factor on estimated time", 1.25, ConstraintInterface.ATLEASTONE);
 
     /** Area before stop line where one is considered arrived at the intersection. */
     public static final ParameterTypeLength STOP_AREA =
-            new ParameterTypeLength("stopArea", "Area before stop line where one is considered arrived at the intersection.",
+            new ParameterTypeLength("stopArea", "Area before stop line where one is considered arrived at the intersection",
                     new Length(4, LengthUnit.METER), ConstraintInterface.POSITIVE);
 
     /** Parameter of how much time before departure a bus indicates its departure to get priority. */
-    public static final ParameterTypeDuration TI = new ParameterTypeDuration("ti", "Indicator time before departure.",
+    public static final ParameterTypeDuration TI = new ParameterTypeDuration("ti", "Indicator time before bus departure",
             Duration.createSI(3.0), ConstraintInterface.POSITIVE);
 
     /** Time step for free acceleration anticipation. */
