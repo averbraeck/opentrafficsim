@@ -75,10 +75,10 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
-        Throw.whenNull(startNode, "startNode cannot be null");
-        Throw.whenNull(endNode, "endNode cannot be null");
-        Throw.whenNull(linkType, "linkType cannot be null");
-        Throw.whenNull(designLine, "designLine cannot be null");
+        Throw.whenNull(startNode, "startNode cannot be null (link %s)", id);
+        Throw.whenNull(endNode, "endNode cannot be null (link %s)", id);
+        Throw.whenNull(linkType, "linkType cannot be null (link %s)", id);
+        Throw.whenNull(designLine, "designLine cannot be null (link %s)", id);
         Throw.whenNull(simulator, "simulator cannot be null");
 
         this.network = network;
