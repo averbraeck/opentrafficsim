@@ -261,6 +261,7 @@ public final class OTSOffsetLinePK
                         }
                         else
                         {
+                            // This is where things went very wrong in the TestGeometry demo.
                             if (debugOffsetLine)
                             {
                                 System.out.println("#Not adding intersection of preceding segment and this segment "
@@ -270,9 +271,11 @@ public final class OTSOffsetLinePK
                             {
                                 if (debugOffsetLine)
                                 {
-                                    System.out.println("#Not adding segment");
+                                    System.out.println("#Not adding segment, but replacing end of last segment");
+                                    tempPoints.remove(tempPoints.size() - 1);
+                                    segmentFrom = tempPoints.get(tempPoints.size() - 1);
+                                    tempPoints.remove(tempPoints.size() - 1); 
                                 }
-                                addSegment = false;
                             }
                         }
                     }
@@ -370,4 +373,14 @@ public final class OTSOffsetLinePK
         }
         return null;
     }
+    
+    /**
+     * Set or clear the debugging flag.
+     * @param newValue boolean; new value for the debugging flag
+     */
+    public static void setDebugOffsetLine(final boolean newValue)
+    {
+        debugOffsetLine = newValue;
+    }
+    
 }
