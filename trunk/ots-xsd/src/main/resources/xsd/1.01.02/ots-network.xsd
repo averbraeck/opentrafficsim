@@ -101,6 +101,7 @@
         </xsd:choice>
 
         <xsd:element name="TRAFFICLIGHT" type="TRAFFICLIGHTTYPE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="TRAFFICLIGHTSENSOR" type="TRAFFICLIGHTSENSORTYPE" minOccurs="0" maxOccurs="unbounded" />
 
       </xsd:sequence>
 
@@ -225,6 +226,21 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+  </xsd:complexType>
+  
+  <xsd:complexType name="TRAFFICLIGHTSENSORTYPE">
+    <xsd:attribute name="ID" type="xsd:string" use="required" />
+    <xsd:attribute name="LANE" type="xsd:string" use="required" />
+    <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
+    <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="required" />
+    <!-- TODO allow for detectors that span multiple lanes (longitudinally); thus multiple links -->
+    <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required">
+      <xsd:annotation>
+        <xsd:documentation source="description">
+          Fully specified classname including the package.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>    
   </xsd:complexType>
 
 </xsd:schema>
