@@ -13,28 +13,29 @@ import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.xml.bindings.ClassNameAdapter;
+import org.opentrafficsim.xml.bindings.LengthAdapter;
+import org.opentrafficsim.xml.bindings.LengthBeginEndAdapter;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
 
 
 /**
- * <p>Java class for CATEGORYTYPE complex type.
+ * <p>Java class for TRAFFICLIGHTSENSORTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CATEGORYTYPE"&gt;
+ * &lt;complexType name="TRAFFICLIGHTSENSORTYPE"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="LANE" type="{http://www.opentrafficsim.org/ots}LANELINKTYPE" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
  *       &lt;attribute name="ID" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="GTUTYPE" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="ROUTE" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="FACTOR" type="{http://www.opentrafficsim.org/ots}POSITIVEFACTOR" default="1.0" /&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
+ *       &lt;attribute name="LANE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="POSITION" use="required" type="{http://www.opentrafficsim.org/ots}LENGTHBEGINENDTYPE" /&gt;
+ *       &lt;attribute name="LENGTH" use="required" type="{http://www.opentrafficsim.org/ots}LENGTHTYPE" /&gt;
+ *       &lt;attribute name="CLASS" use="required" type="{http://www.opentrafficsim.org/ots}CLASSNAMETYPE" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -43,61 +44,32 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CATEGORYTYPE", propOrder = {
-    "lane"
-})
+@XmlType(name = "TRAFFICLIGHTSENSORTYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-public class CATEGORYTYPE
+public class TRAFFICLIGHTSENSORTYPE
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlElement(name = "LANE")
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    protected LANELINKTYPE lane;
     @XmlAttribute(name = "ID", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
     protected String id;
-    @XmlAttribute(name = "GTUTYPE")
+    @XmlAttribute(name = "LANE", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    protected String gtutype;
-    @XmlAttribute(name = "ROUTE")
+    protected String lane;
+    @XmlAttribute(name = "POSITION", required = true)
+    @XmlJavaTypeAdapter(LengthBeginEndAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    protected String route;
-    @XmlAttribute(name = "FACTOR")
+    protected LengthBeginEnd position;
+    @XmlAttribute(name = "LENGTH", required = true)
+    @XmlJavaTypeAdapter(LengthAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    protected String factor;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
+    protected Length length;
+    @XmlAttribute(name = "CLASS", required = true)
+    @XmlJavaTypeAdapter(ClassNameAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    protected String base;
-
-    /**
-     * Gets the value of the lane property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LANELINKTYPE }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public LANELINKTYPE getLANE() {
-        return lane;
-    }
-
-    /**
-     * Sets the value of the lane property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LANELINKTYPE }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public void setLANE(LANELINKTYPE value) {
-        this.lane = value;
-    }
+    protected Class _class;
 
     /**
      * Gets the value of the id property.
@@ -126,7 +98,7 @@ public class CATEGORYTYPE
     }
 
     /**
-     * Gets the value of the gtutype property.
+     * Gets the value of the lane property.
      * 
      * @return
      *     possible object is
@@ -134,12 +106,12 @@ public class CATEGORYTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public String getGTUTYPE() {
-        return gtutype;
+    public String getLANE() {
+        return lane;
     }
 
     /**
-     * Sets the value of the gtutype property.
+     * Sets the value of the lane property.
      * 
      * @param value
      *     allowed object is
@@ -147,12 +119,12 @@ public class CATEGORYTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public void setGTUTYPE(String value) {
-        this.gtutype = value;
+    public void setLANE(String value) {
+        this.lane = value;
     }
 
     /**
-     * Gets the value of the route property.
+     * Gets the value of the position property.
      * 
      * @return
      *     possible object is
@@ -160,12 +132,12 @@ public class CATEGORYTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public String getROUTE() {
-        return route;
+    public LengthBeginEnd getPOSITION() {
+        return position;
     }
 
     /**
-     * Sets the value of the route property.
+     * Sets the value of the position property.
      * 
      * @param value
      *     allowed object is
@@ -173,12 +145,12 @@ public class CATEGORYTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public void setROUTE(String value) {
-        this.route = value;
+    public void setPOSITION(LengthBeginEnd value) {
+        this.position = value;
     }
 
     /**
-     * Gets the value of the factor property.
+     * Gets the value of the length property.
      * 
      * @return
      *     possible object is
@@ -186,16 +158,12 @@ public class CATEGORYTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public String getFACTOR() {
-        if (factor == null) {
-            return "1.0";
-        } else {
-            return factor;
-        }
+    public Length getLENGTH() {
+        return length;
     }
 
     /**
-     * Sets the value of the factor property.
+     * Sets the value of the length property.
      * 
      * @param value
      *     allowed object is
@@ -203,12 +171,12 @@ public class CATEGORYTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public void setFACTOR(String value) {
-        this.factor = value;
+    public void setLENGTH(Length value) {
+        this.length = value;
     }
 
     /**
-     * Gets the value of the base property.
+     * Gets the value of the class property.
      * 
      * @return
      *     possible object is
@@ -216,12 +184,12 @@ public class CATEGORYTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
+    public Class getCLASS() {
+        return _class;
     }
 
     /**
-     * Sets the value of the base property.
+     * Sets the value of the class property.
      * 
      * @param value
      *     allowed object is
@@ -229,8 +197,8 @@ public class CATEGORYTYPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-16T02:55:21+02:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+    public void setCLASS(Class value) {
+        this._class = value;
     }
 
 }

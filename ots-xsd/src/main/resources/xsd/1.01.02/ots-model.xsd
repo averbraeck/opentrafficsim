@@ -261,7 +261,7 @@
                   <xsd:element name="CARFOLLOWINGMODEL" type="CARFOLLOWINGMODELTYPE" minOccurs="0" />
 
                   <!-- Basic behavioral components -->
-                  <xsd:element name="SYNCHRONIZATION" minOccurs="0">
+                  <xsd:element name="SYNCHRONIZATION" minOccurs="0" default="PASSIVE">
                     <xsd:annotation>
                       <xsd:documentation source="description">
                         DEADEND: stop for dead-end during synchronization. PASSIVE

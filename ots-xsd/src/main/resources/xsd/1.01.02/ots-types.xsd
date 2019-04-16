@@ -359,6 +359,11 @@
   <!-- ================================================= TYPES ========================================== -->
   <!-- ================================================================================================== -->
 
+  <xsd:complexType name="MODELIDREFERRALTYPE">
+    <xsd:attribute name="ID" type="xsd:string" />
+    <xsd:attribute name="MODELID" type="xsd:string" />
+  </xsd:complexType>
+
   <xsd:simpleType name="CLASSNAMETYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="([A-Za-z_0-9$]+\.)*[A-Za-z_0-9$]+"></xsd:pattern>
