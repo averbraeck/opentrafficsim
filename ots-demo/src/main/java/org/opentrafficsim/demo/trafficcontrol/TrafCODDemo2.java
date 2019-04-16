@@ -2,34 +2,30 @@ package org.opentrafficsim.demo.trafficcontrol;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.Scanner;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
-import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
@@ -70,22 +66,42 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
+     * @throws IOException ...
      */
-    public static void main(final String[] args)
+    public static void main(final String[] args) throws IOException
     {
         demo(true);
     }
 
     /**
+     * Open an URL, read it and store the contents in a string. Adapted from
+     * https://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code
+     * @param url URL; the URL
+     * @return String
+     * @throws IOException when reading the file fails
+     */
+    public static String readStringFromURL(final URL url) throws IOException
+    {
+        try (Scanner scanner = new Scanner(url.openStream(), StandardCharsets.UTF_8.toString()))
+        {
+            scanner.useDelimiter("\\A");
+            return scanner.hasNext() ? scanner.next() : "";
+        }
+    }
+
+    /**
      * Start the demo.
      * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     * @throws IOException when reading the file fails
      */
-    public static void demo(final boolean exitOnClose)
+    public static void demo(final boolean exitOnClose) throws IOException
     {
         try
         {
             OTSAnimator simulator = new OTSAnimator();
-            final TrafCODModel trafcodModel = new TrafCODModel(simulator);
+            URL url = URLResource.getResource("/TrafCODDemo2/Network.xml");
+            String xml = readStringFromURL(url);
+            final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), trafcodModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
@@ -122,6 +138,9 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
         /** The network. */
         private OTSRoadNetwork network;
 
+        /** The XML. */
+        private final String xml;
+
         /** The TrafCOD controller. */
         private TrafCOD trafCOD;
 
@@ -129,11 +148,15 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
         private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
 
         /**
-         * @param simulator OTSSimulatorInterface; the simulator for this model
+         * @param simulator OTSSimulatorInterface; the simulator
+         * @param shortName String; name of the model
+         * @param description String; description of the model
+         * @param xml String; the XML string
          */
-        TrafCODModel(final OTSSimulatorInterface simulator)
+        TrafCODModel(final OTSSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {
-            super(simulator);
+            super(simulator, shortName, description);
+            this.xml = xml;
         }
 
         /** {@inheritDoc} */
@@ -142,10 +165,15 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
         {
             try
             {
-                URL url = URLResource.getResource("/TrafCODDemo2/Network.xml");
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(getSimulator());
-                this.network = nlp.build(url, true);
-                String[] directions = {"E", "S", "W", "N"};
+                this.network = new OTSRoadNetwork(getShortName(), true);
+                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
+                        getSimulator());
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
+                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
+
+                String controllerName = "TrafCOD_complex";
+                /*-
+                String[] directions = { "E", "S", "W", "N" };
                 // Add the traffic lights and the detectors
                 Length stopLineMargin = new Length(0.1, LengthUnit.METER);
                 Length headDetectorLength = new Length(1, LengthUnit.METER);
@@ -153,25 +181,12 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                 Length longDetectorLength = new Length(30, LengthUnit.METER);
                 Length longDetectorMargin = stopLineMargin.plus(longDetectorLength).plus(new Length(10, LengthUnit.METER));
                 int stream = 1;
-                String controllerName = "TrafCOD_complex";
                 for (String direction : directions)
                 {
                     for (int laneNumber = 3; laneNumber >= 1; laneNumber--)
                     {
                         Lane lane = (Lane) ((CrossSectionLink) this.network.getLink(direction, direction + "C"))
                                 .getCrossSectionElement("FORWARD" + laneNumber);
-                        TrafficLight tl = new SimpleTrafficLight(String.format("%s.%02d", controllerName, stream), lane,
-                                lane.getLength().minus(stopLineMargin), getSimulator());
-
-                        try
-                        {
-                            new TrafficLightAnimation(tl, this.simulator);
-                        }
-                        catch (RemoteException | NamingException exception)
-                        {
-                            throw new NetworkException(exception);
-                        }
-
                         new TrafficLightSensor(String.format("%s.D%02d1", controllerName, stream), lane,
                                 lane.getLength().minus(headDetectorMargin), lane,
                                 lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
@@ -183,6 +198,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                         stream++;
                     }
                 }
+                        */
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),
                         getSimulator(), this.controllerDisplayPanel);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
