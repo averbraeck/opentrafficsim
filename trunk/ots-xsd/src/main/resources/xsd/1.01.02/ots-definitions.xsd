@@ -67,7 +67,7 @@
   <xsd:element name="LANETYPE">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="COMPATIBILITY" minOccurs="1" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="PARENT" type="xsd:string" use="optional" />
@@ -88,7 +88,7 @@
   <xsd:element name="LINKTYPE">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="COMPATIBILITY" minOccurs="1" maxOccurs="unbounded" />
         <xsd:element ref="SPEEDLIMIT" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />

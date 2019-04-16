@@ -252,14 +252,18 @@ public class DemandParser
                 }
 
                 // Global time vector
-                List<Time> timeList = new ArrayList<>();
-                for (TIME time : od.getGLOBALTIME().getTIME())
+                TimeVector globalTimeVector = null;
+                if (od.getGLOBALTIME() != null)
                 {
-                    timeList.add(time.getVALUE());
+                    List<Time> timeList = new ArrayList<>();
+                    for (TIME time : od.getGLOBALTIME().getTIME())
+                    {
+                        timeList.add(time.getVALUE());
+                    }
+                    Collections.sort(timeList);
+                    globalTimeVector = Try.assign(() -> new TimeVector(timeList, StorageType.DENSE), XmlParserException.class,
+                            "Global time has no values.");
                 }
-                Collections.sort(timeList);
-                TimeVector globalTimeVector = Try.assign(() -> new TimeVector(timeList, StorageType.DENSE),
-                        XmlParserException.class, "Global time has no values.");
 
                 // Global interpolation
                 Interpolation globalInterpolation =
@@ -396,182 +400,197 @@ public class DemandParser
 
                 // OD Options
                 ODOptions odOptions = new ODOptions().set(ODOptions.GTU_ID, idGenerator);
-                for (ODOPTIONSITEM options : odOptionsMap.get(od.getOPTIONS()).getODOPTIONSITEM())
+                // templates
+                Set<TemplateGTUType> templates = new LinkedHashSet<>();
+                for (GTUTEMPLATE template : gtuTemplates.values())
                 {
-                    /*
-                     * The current 'options' is valid within a single context, i.e. global, link type, origin or lane. All
-                     * option values are set in odOptions for that context, in the current loop. For the model factories an
-                     * implementation of StrategicalPlannerFactorySupplierOD is created that responds to the GTU type, and
-                     * selects a factory assigned to that GTU type within the context. Or, the default factory in the context is
-                     * used. Or finally, a default LMRS. If no model factory is specified in the context (nor a higher context),
-                     * no option value is set and ODOptions itself returns a default LMRS factory.
-                     */
+                    GTUType gtuType = otsNetwork.getGtuType(template.getGTUTYPE());
+                    Generator<Length> lengthGenerator =
+                            ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
+                    Generator<Length> widthGenerator =
+                            ParseDistribution.parseLengthDist(streamMap, template.getWIDTHDIST());
+                    Generator<Speed> maximumSpeedGenerator =
+                            ParseDistribution.parseSpeedDist(streamMap, template.getMAXSPEEDDIST());
+                    if (template.getMAXACCELERATIONDIST() == null || template.getMAXDECELERATIONDIST() == null)
+                    {
+                        templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
+                                maximumSpeedGenerator));
+                    }
+                    else
+                    {
+                        Generator<Acceleration> maxAccelerationGenerator = ParseDistribution
+                                .parseAccelerationDist(streamMap, template.getMAXACCELERATIONDIST());
+                        Generator<Acceleration> maxDecelerationGenerator = ParseDistribution
+                                .parseAccelerationDist(streamMap, template.getMAXDECELERATIONDIST());
+                        templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
+                                maximumSpeedGenerator, maxAccelerationGenerator, maxDecelerationGenerator));
+                    }
+                }
+                // default global option to integrate defined templates 
+                Factory factory = new Factory(); // DefaultGTUCharacteristicsGeneratorOD factory
+                factory.setTemplates(templates);
+                odOptions.set(ODOptions.GTU_TYPE, factory.create());
+                // other options
+                if (od.getOPTIONS() != null)
+                {
+                    Throw.when(!odOptionsMap.containsKey(od.getOPTIONS()), XmlParserException.class,
+                            "OD options of id od.getOPTIONS() not defined.");
+                    for (ODOPTIONSITEM options : odOptionsMap.get(od.getOPTIONS()).getODOPTIONSITEM())
+                    {
+                        /*
+                         * The current 'options' is valid within a single context, i.e. global, link type, origin or lane. All
+                         * option values are set in odOptions for that context, in the current loop. For the model factories an
+                         * implementation of StrategicalPlannerFactorySupplierOD is created that responds to the GTU type, and
+                         * selects a factory assigned to that GTU type within the context. Or, the default factory in the
+                         * context is used. Or finally, a default LMRS. If no model factory is specified in the context (nor a
+                         * higher context), no option value is set and ODOptions itself returns a default LMRS factory.
+                         */
 
-                    // GTU type (model)
-                    if (options.getDEFAULTMODEL() != null || (options.getMODEL() != null && !options.getMODEL().isEmpty()))
-                    {
-                        LaneBasedStrategicalPlannerFactory<?> defaultFactory;
-                        if (options.getDEFAULTMODEL() != null)
+                        // GTU type (model)
+                        if (options.getDEFAULTMODEL() != null || (options.getMODEL() != null && !options.getMODEL().isEmpty()))
                         {
-                            // TODO: model id referral
-                            String modelId = DemandParser.getModelId(options.getDEFAULTMODEL(), modelIdReferrals);
-                            Throw.when(!factories.containsKey(modelId), XmlParserException.class,
-                                    "OD option DEFAULTMODEL refers to a non-existent model with ID %s.", modelId);
-                            defaultFactory = factories.get(modelId);
-                        }
-                        else
-                        {
-                            defaultFactory = null;
-                        }
-                        // compose map that couples GTU types to factories through MODEL ID's
-                        final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> gtuTypeFactoryMap = new LinkedHashMap<>();
-                        if (options.getMODEL() != null)
-                        {
-                            for (MODEL model : options.getMODEL())
+                            LaneBasedStrategicalPlannerFactory<?> defaultFactory;
+                            if (options.getDEFAULTMODEL() != null)
                             {
-                                GTUType gtuType = otsNetwork.getGtuType(model.getGTUTYPE());
-                                Throw.when(!factories.containsKey(model.getID()), XmlParserException.class,
-                                        "OD option MODEL refers to a non existent-model with ID %s.", model.getID());
-                                gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
-                            }
-                        }
-                        Factory factory = new Factory(); // DefaultGTUCharacteristicsGeneratorOD factory
-                        Set<TemplateGTUType> templates = new LinkedHashSet<>();
-                        for (GTUTEMPLATE template : gtuTemplates.values())
-                        {
-                            GTUType gtuType = otsNetwork.getGtuType(template.getGTUTYPE());
-                            Generator<Length> lengthGenerator =
-                                    ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
-                            Generator<Length> widthGenerator =
-                                    ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
-                            Generator<Speed> maximumSpeedGenerator =
-                                    ParseDistribution.parseSpeedDist(streamMap, template.getMAXSPEEDDIST());
-                            if (template.getMAXACCELERATIONDIST() == null || template.getMAXDECELERATIONDIST() == null)
-                            {
-                                templates.add(
-                                        new TemplateGTUType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
+                                // TODO: model id referral
+                                String modelId = DemandParser.getModelId(options.getDEFAULTMODEL(), modelIdReferrals);
+                                Throw.when(!factories.containsKey(modelId), XmlParserException.class,
+                                        "OD option DEFAULTMODEL refers to a non-existent model with ID %s.", modelId);
+                                defaultFactory = factories.get(modelId);
                             }
                             else
                             {
-                                Generator<Acceleration> maxAccelerationGenerator =
-                                        ParseDistribution.parseAccelerationDist(streamMap, template.getMAXACCELERATIONDIST());
-                                Generator<Acceleration> maxDecelerationGenerator =
-                                        ParseDistribution.parseAccelerationDist(streamMap, template.getMAXDECELERATIONDIST());
-                                templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
-                                        maximumSpeedGenerator, maxAccelerationGenerator, maxDecelerationGenerator));
+                                defaultFactory = null;
                             }
-                        }
-                        factory.setTemplates(templates);
-                        factory.setFactorySupplier(new StrategicalPlannerFactorySupplierOD()
-                        {
-                            /** {@inheritDoc} */
-                            @Override
-                            public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
-                                    final Category category, final StreamInterface randomStream) throws GTUException
+                            // compose map that couples GTU types to factories through MODEL ID's
+                            final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> gtuTypeFactoryMap = new LinkedHashMap<>();
+                            if (options.getMODEL() != null)
                             {
-                                if (category.getCategorization().entails(GTUType.class))
+                                for (MODEL model : options.getMODEL())
                                 {
-                                    LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory =
-                                            gtuTypeFactoryMap.get(category.get(GTUType.class));
-                                    if (strategicalPlannerFactory != null)
+                                    GTUType gtuType = otsNetwork.getGtuType(model.getGTUTYPE());
+                                    Throw.when(!factories.containsKey(model.getID()), XmlParserException.class,
+                                            "OD option MODEL refers to a non existent-model with ID %s.", model.getID());
+                                    gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
+                                }
+                            }
+                            factory = new Factory(); // DefaultGTUCharacteristicsGeneratorOD factory
+                            factory.setTemplates(templates);
+                            factory.setFactorySupplier(new StrategicalPlannerFactorySupplierOD()
+                            {
+                                /** {@inheritDoc} */
+                                @Override
+                                public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin,
+                                        final Node destination, final Category category, final StreamInterface randomStream)
+                                        throws GTUException
+                                {
+                                    if (category.getCategorization().entails(GTUType.class))
                                     {
-                                        // a model factory for this GTU type is specified
-                                        return strategicalPlannerFactory;
+                                        LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory =
+                                                gtuTypeFactoryMap.get(category.get(GTUType.class));
+                                        if (strategicalPlannerFactory != null)
+                                        {
+                                            // a model factory for this GTU type is specified
+                                            return strategicalPlannerFactory;
+                                        }
                                     }
+                                    if (defaultFactory != null)
+                                    {
+                                        // a default model factory is specified
+                                        return defaultFactory;
+                                    }
+                                    // no model factory specified, return a default LMRS factory
+                                    // TODO: LMRSFactory can receive a parameter factory, but how to define those parameters in
+                                    // XML?
+                                    return new LaneBasedStrategicalRoutePlannerFactory(
+                                            new LMRSFactory(new IDMPlusFactory(randomStream),
+                                                    new DefaultLMRSPerceptionFactory()),
+                                            RouteGeneratorOD.getDefaultRouteSupplier(randomStream));
                                 }
-                                if (defaultFactory != null)
-                                {
-                                    // a default model factory is specified
-                                    return defaultFactory;
-                                }
-                                // no model factory specified, return a default LMRS factory
-                                // TODO: LMRSFactory can receive a parameter factory, but how to define those parameters in XML?
-                                return new LaneBasedStrategicalRoutePlannerFactory(
-                                        new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()),
-                                        RouteGeneratorOD.getDefaultRouteSupplier(randomStream));
-                            }
-                        });
-                        setOption(odOptions, ODOptions.GTU_TYPE, factory.create(), options, otsNetwork);
-                    }
-                    // no lc
-                    setOption(odOptions, ODOptions.NO_LC_DIST, options.getNOLANECHANGE(), options, otsNetwork);
-                    // room checker
-                    setOption(odOptions, ODOptions.ROOM_CHECKER, Transformer.parseRoomChecker(options.getROOMCHECKER()),
-                            options, otsNetwork);
-                    // headway distribution
-                    try
-                    {
-                        setOption(odOptions, ODOptions.HEADWAY_DIST,
-                                Transformer.parseHeadwayDistribution(options.getHEADWAYDIST()), options, otsNetwork);
-                    }
-                    catch (NoSuchFieldException | IllegalAccessException exception)
-                    {
-                        throw new XmlParserException(exception);
-                    }
-                    // markov
-                    if (options.getMARKOV() != null)
-                    {
-                        Throw.when(!categorization.entails(GTUType.class), XmlParserException.class,
-                                "The OD option MARKOV can only be used if GTUType is in the CATEGORY's.");
-                        Throw.when(!categorization.entails(Lane.class) && options.getLANE() != null, XmlParserException.class,
-                                "Markov chains at lane level are not used if Lane's are not in the CATEGORY's.");
-                        MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
-                        for (STATE state : options.getMARKOV().getSTATE())
-                        {
-                            GTUType gtuType = otsNetwork.getGtuType(state.getGTUTYPE());
-                            double correlation = state.getCORRELATION();
-                            if (state.getPARENT() == null)
-                            {
-                                markov.addState(gtuType, correlation);
-                            }
-                            else
-                            {
-                                GTUType parentType = otsNetwork.getGtuType(state.getPARENT());
-                                markov.addState(parentType, gtuType, correlation);
-                            }
+                            });
+                            setOption(odOptions, ODOptions.GTU_TYPE, factory.create(), options, otsNetwork);
                         }
-                        setOption(odOptions, ODOptions.MARKOV, markov, options, otsNetwork);
-                    }
-                    // lane biases
-                    if (options.getLANEBIASES() != null)
-                    {
-                        LaneBiases laneBiases = new LaneBiases();
-                        for (LANEBIAS laneBias : options.getLANEBIASES().getLANEBIAS())
+                        // no lc
+                        setOption(odOptions, ODOptions.NO_LC_DIST, options.getNOLANECHANGE(), options, otsNetwork);
+                        // room checker
+                        setOption(odOptions, ODOptions.ROOM_CHECKER, Transformer.parseRoomChecker(options.getROOMCHECKER()),
+                                options, otsNetwork);
+                        // headway distribution
+                        try
                         {
-                            GTUType gtuType = otsNetwork.getGtuType(laneBias.getGTUTYPE());
-                            double bias = laneBias.getBIAS();
-                            int stickyLanes;
-                            if (laneBias.getSTICKYLANES() == null)
+                            setOption(odOptions, ODOptions.HEADWAY_DIST,
+                                    Transformer.parseHeadwayDistribution(options.getHEADWAYDIST()), options, otsNetwork);
+                        }
+                        catch (NoSuchFieldException | IllegalAccessException exception)
+                        {
+                            throw new XmlParserException(exception);
+                        }
+                        // markov
+                        if (options.getMARKOV() != null)
+                        {
+                            Throw.when(!categorization.entails(GTUType.class), XmlParserException.class,
+                                    "The OD option MARKOV can only be used if GTUType is in the CATEGORY's.");
+                            Throw.when(!categorization.entails(Lane.class) && options.getLANE() != null,
+                                    XmlParserException.class,
+                                    "Markov chains at lane level are not used if Lane's are not in the CATEGORY's.");
+                            MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
+                            for (STATE state : options.getMARKOV().getSTATE())
                             {
-                                stickyLanes = Integer.MAX_VALUE;
+                                GTUType gtuType = otsNetwork.getGtuType(state.getGTUTYPE());
+                                double correlation = state.getCORRELATION();
+                                if (state.getPARENT() == null)
+                                {
+                                    markov.addState(gtuType, correlation);
+                                }
+                                else
+                                {
+                                    GTUType parentType = otsNetwork.getGtuType(state.getPARENT());
+                                    markov.addState(parentType, gtuType, correlation);
+                                }
                             }
-                            else
+                            setOption(odOptions, ODOptions.MARKOV, markov, options, otsNetwork);
+                        }
+                        // lane biases
+                        if (options.getLANEBIASES() != null)
+                        {
+                            LaneBiases laneBiases = new LaneBiases();
+                            for (LANEBIAS laneBias : options.getLANEBIASES().getLANEBIAS())
                             {
-                                if (laneBias.getSTICKYLANES().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0)
+                                GTUType gtuType = otsNetwork.getGtuType(laneBias.getGTUTYPE());
+                                double bias = laneBias.getBIAS();
+                                int stickyLanes;
+                                if (laneBias.getSTICKYLANES() == null)
                                 {
                                     stickyLanes = Integer.MAX_VALUE;
                                 }
                                 else
                                 {
-                                    stickyLanes = laneBias.getSTICKYLANES().intValue();
+                                    if (laneBias.getSTICKYLANES().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0)
+                                    {
+                                        stickyLanes = Integer.MAX_VALUE;
+                                    }
+                                    else
+                                    {
+                                        stickyLanes = laneBias.getSTICKYLANES().intValue();
+                                    }
                                 }
+                                RoadPosition roadPosition;
+                                if (laneBias.getFROMRIGHT() != null)
+                                {
+                                    roadPosition = new RoadPosition.ByValue(laneBias.getFROMRIGHT());
+                                }
+                                else if (laneBias.getFROMLEFT() != null)
+                                {
+                                    roadPosition = new RoadPosition.ByValue(1.0 - laneBias.getFROMLEFT());
+                                }
+                                else
+                                {
+                                    roadPosition = new RoadPosition.BySpeed(laneBias.getLEFTSPEED(), laneBias.getRIGHTSPEED());
+                                }
+                                laneBiases.addBias(gtuType, new LaneBias(roadPosition, bias, stickyLanes));
                             }
-                            RoadPosition roadPosition;
-                            if (laneBias.getFROMRIGHT() != null)
-                            {
-                                roadPosition = new RoadPosition.ByValue(laneBias.getFROMRIGHT());
-                            }
-                            else if (laneBias.getFROMLEFT() != null)
-                            {
-                                roadPosition = new RoadPosition.ByValue(1.0 - laneBias.getFROMLEFT());
-                            }
-                            else
-                            {
-                                roadPosition = new RoadPosition.BySpeed(laneBias.getLEFTSPEED(), laneBias.getRIGHTSPEED());
-                            }
-                            laneBiases.addBias(gtuType, new LaneBias(roadPosition, bias, stickyLanes));
+                            setOption(odOptions, ODOptions.getLaneBiasOption(otsNetwork), laneBiases, options, otsNetwork);
                         }
-                        setOption(odOptions, ODOptions.getLaneBiasOption(otsNetwork), laneBiases, options, otsNetwork);
                     }
                 }
 

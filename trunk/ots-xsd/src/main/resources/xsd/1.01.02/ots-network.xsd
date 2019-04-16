@@ -46,8 +46,8 @@
               <xsd:attribute name="STARTDIRECTION" type="DIRECTIONTYPE" use="optional" />
               <xsd:attribute name="ENDDIRECTION" type="DIRECTIONTYPE" use="optional" />
               <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64" />
-              <xsd:attribute name="SHAPE" type="POSITIVEDOUBLE" use="optional" />
-              <xsd:attribute name="WEIGHTED" type="xsd:boolean" use="optional" />
+              <xsd:attribute name="SHAPE" type="POSITIVEDOUBLE" use="optional" default="1.0" />
+              <xsd:attribute name="WEIGHTED" type="xsd:boolean" use="optional" default="false" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="CLOTHOID">
