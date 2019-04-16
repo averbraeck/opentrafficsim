@@ -249,20 +249,13 @@
     </xsd:complexType>
   </xsd:element>
   
-  <xsd:element name="MODELIDREFERRAL">
-    <xsd:complexType>
-      <xsd:attribute name="ID" type="xsd:string" />
-      <xsd:attribute name="REFERREDID" type="xsd:string" />
-    </xsd:complexType>
-  </xsd:element>
-
   <xsd:element name="NETWORKDEMAND">
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="GTUTEMPLATEMIX" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ODOPTIONS" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="OD" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="MODELIDREFERRAL" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="MODELIDREFERRAL" type="MODELIDREFERRALTYPE" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="GENERATOR" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="SINK" minOccurs="0" maxOccurs="unbounded" />
