@@ -276,8 +276,8 @@ public final class NetworkParser
             // TODO: Directionality has to be added later when the lanes and their direction are known.
             LaneKeepingPolicy laneKeepingPolicy = LaneKeepingPolicy.valueOf(xmlLink.getLANEKEEPING().name());
             LinkType linkType = otsNetwork.getLinkType(xmlLink.getTYPE());
-            CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getID(), startNode, endNode,
-                    linkType, designLine, simulator, laneKeepingPolicy);
+            CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getID(), startNode, endNode, linkType, designLine,
+                    simulator, laneKeepingPolicy);
 
             if (xmlLink.getPRIORITY() != null)
             {
@@ -432,9 +432,9 @@ public final class NetworkParser
                 Length position = Transformer.parseLengthBeginEnd(trafficLight.getPOSITION(), lane.getLength());
                 try
                 {
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(),
-                            new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
-                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getID(), lane, position, simulator});
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(), new Class[] {
+                            String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
+                    trafficLightConstructor.newInstance(new Object[] { trafficLight.getID(), lane, position, simulator });
                 }
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException exception)
