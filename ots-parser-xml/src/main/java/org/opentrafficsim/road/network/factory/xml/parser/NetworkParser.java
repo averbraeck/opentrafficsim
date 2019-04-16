@@ -45,6 +45,7 @@ import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.xml.bindings.types.ArcDirection;
 import org.opentrafficsim.xml.generated.BASICROADLAYOUT;
+import org.opentrafficsim.xml.generated.CONNECTOR;
 import org.opentrafficsim.xml.generated.CROSSSECTIONELEMENT;
 import org.opentrafficsim.xml.generated.CSELANE;
 import org.opentrafficsim.xml.generated.CSENOTRAFFICLANE;
@@ -152,6 +153,18 @@ public final class NetworkParser
     static void parseLinks(final OTSRoadNetwork otsNetwork, final NETWORK network, Map<String, Direction> nodeDirections,
             OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
+        for (CONNECTOR xmlConnector : network.getCONNECTOR())
+        {
+            Node startNode = otsNetwork.getNode(xmlConnector.getNODESTART());
+            Node endNode = otsNetwork.getNode(xmlConnector.getNODEEND());
+            String id = xmlConnector.getID();
+            double demandWeight = xmlConnector.getDEMANDWEIGHT();
+            OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
+            CrossSectionLink link = new CrossSectionLink(otsNetwork, id, startNode, endNode,
+                    otsNetwork.getLinkType(LinkType.DEFAULTS.CONNECTOR), designLine, simulator, null);
+            link.setDemandWeight(demandWeight);
+        }
+
         for (LINK xmlLink : network.getLINK())
         {
             Node startNode = otsNetwork.getNode(xmlLink.getNODESTART());
@@ -250,12 +263,12 @@ public final class NetworkParser
             else if (xmlLink.getBEZIER() != null)
             {
                 int numSegments = xmlLink.getBEZIER().getNUMSEGMENTS().intValue();
+                double shape = xmlLink.getBEZIER().getSHAPE().doubleValue();
+                boolean weighted = xmlLink.getBEZIER().isWEIGHTED();
                 coordinates = Bezier
                         .cubic(numSegments, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startDirection),
-                                new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endDirection), 1.0, false)
+                                new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endDirection), shape, weighted)
                         .getPoints();
-
-                // TODO: Bezier shape factor and weighted factor
             }
 
             else if (xmlLink.getCLOTHOID() != null)
@@ -388,12 +401,12 @@ public final class NetworkParser
                     for (SPEEDLIMIT speedLimitTag : roadLayoutTag.getSPEEDLIMIT())
                     {
                         GTUType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
-                        linkTypeSpeedLimitMap.get(linkType).put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
+                        speedLimitMap.put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
                     }
                     for (SPEEDLIMIT speedLimitTag : laneTag.getSPEEDLIMIT())
                     {
                         GTUType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
-                        linkTypeSpeedLimitMap.get(linkType).put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
+                        speedLimitMap.put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
                     }
                     Lane lane = new Lane(csl, laneTag.getID(), cseData.centerOffsetStart, cseData.centerOffsetEnd,
                             cseData.widthStart, cseData.widthEnd, laneType, speedLimitMap);
