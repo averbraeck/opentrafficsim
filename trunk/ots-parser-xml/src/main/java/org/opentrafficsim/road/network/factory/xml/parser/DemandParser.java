@@ -11,8 +11,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.StorageType;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
@@ -28,7 +31,6 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
@@ -52,6 +54,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOD;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
+import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -59,6 +63,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.xml.generated.CATEGORYTYPE;
 import org.opentrafficsim.xml.generated.GENERATOR;
 import org.opentrafficsim.xml.generated.GLOBALTIMETYPE.TIME;
+import org.opentrafficsim.xml.generated.GTUTEMPLATE;
 import org.opentrafficsim.xml.generated.GTUTEMPLATEMIX;
 import org.opentrafficsim.xml.generated.LEVELTIMETYPE;
 import org.opentrafficsim.xml.generated.LISTGENERATOR;
@@ -67,6 +72,7 @@ import org.opentrafficsim.xml.generated.OD;
 import org.opentrafficsim.xml.generated.OD.DEMAND;
 import org.opentrafficsim.xml.generated.ODOPTIONS;
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM;
+import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.DEFAULTMODEL;
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.LANEBIASES.LANEBIAS;
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.MARKOV.STATE;
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.MODEL;
@@ -98,15 +104,16 @@ public class DemandParser
      * @param otsNetwork OTSRoadNetwork; network
      * @param simulator OTSSimulatorInterface; simulator
      * @param demands List&lt;NETWORKDEMAND&gt;; demand
-     * @param parameterFactory ParameterFactory; parameter factory, as parsed by {@code ModelParser}
-     * @param gtuTemplates Map&lt;GTUType, TemplateGTUType&gt;; GTU templates
+     * @param gtuTemplates Map&lt;String, GTUTEMPLATE&gt;; GTU templates
      * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
+     * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals
+     * @param streamMap Map&lt;String, StreamInformation&gt;; stream map
      * @throws XmlParserException; if the OD contains an inconsistency or error
      */
     public static void parseDemand(final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator,
-            final List<NETWORKDEMAND> demands, final ParameterFactory parameterFactory,
-            final Map<GTUType, TemplateGTUType> gtuTemplates, Map<String, LaneBasedStrategicalPlannerFactory<?>> factories)
-            throws XmlParserException
+            final List<NETWORKDEMAND> demands, final Map<String, GTUTEMPLATE> gtuTemplates,
+            Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
+            final Map<String, StreamInformation> streamMap) throws XmlParserException
     {
         IdGenerator idGenerator = new IdGenerator("");
 
@@ -406,7 +413,8 @@ public class DemandParser
                         LaneBasedStrategicalPlannerFactory<?> defaultFactory;
                         if (options.getDEFAULTMODEL() != null)
                         {
-                            String modelId = options.getDEFAULTMODEL().getID();
+                            // TODO: model id referral
+                            String modelId = DemandParser.getModelId(options.getDEFAULTMODEL(), modelIdReferrals);
                             Throw.when(!factories.containsKey(modelId), XmlParserException.class,
                                     "OD option DEFAULTMODEL refers to a non-existent model with ID %s.", modelId);
                             defaultFactory = factories.get(modelId);
@@ -424,11 +432,36 @@ public class DemandParser
                                 GTUType gtuType = otsNetwork.getGtuType(model.getGTUTYPE());
                                 Throw.when(!factories.containsKey(model.getID()), XmlParserException.class,
                                         "OD option MODEL refers to a non existent-model with ID %s.", model.getID());
-                                gtuTypeFactoryMap.put(gtuType, factories.get(model.getID()));
+                                gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
                             }
                         }
                         Factory factory = new Factory(); // DefaultGTUCharacteristicsGeneratorOD factory
-                        factory.setTemplates(new LinkedHashSet<>(gtuTemplates.values()));
+                        Set<TemplateGTUType> templates = new LinkedHashSet<>();
+                        for (GTUTEMPLATE template : gtuTemplates.values())
+                        {
+                            GTUType gtuType = otsNetwork.getGtuType(template.getGTUTYPE());
+                            Generator<Length> lengthGenerator =
+                                    ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
+                            Generator<Length> widthGenerator =
+                                    ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
+                            Generator<Speed> maximumSpeedGenerator =
+                                    ParseDistribution.parseSpeedDist(streamMap, template.getMAXSPEEDDIST());
+                            if (template.getMAXACCELERATIONDIST() == null || template.getMAXDECELERATIONDIST() == null)
+                            {
+                                templates.add(
+                                        new TemplateGTUType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
+                            }
+                            else
+                            {
+                                Generator<Acceleration> maxAccelerationGenerator =
+                                        ParseDistribution.parseAccelerationDist(streamMap, template.getMAXACCELERATIONDIST());
+                                Generator<Acceleration> maxDecelerationGenerator =
+                                        ParseDistribution.parseAccelerationDist(streamMap, template.getMAXDECELERATIONDIST());
+                                templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
+                                        maximumSpeedGenerator, maxAccelerationGenerator, maxDecelerationGenerator));
+                            }
+                        }
+                        factory.setTemplates(templates);
                         factory.setFactorySupplier(new StrategicalPlannerFactorySupplierOD()
                         {
                             /** {@inheritDoc} */
@@ -452,9 +485,10 @@ public class DemandParser
                                     return defaultFactory;
                                 }
                                 // no model factory specified, return a default LMRS factory
+                                // TODO: LMRSFactory can receive a parameter factory, but how to define those parameters in XML?
                                 return new LaneBasedStrategicalRoutePlannerFactory(
                                         new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()),
-                                        parameterFactory, RouteGeneratorOD.getDefaultRouteSupplier(randomStream));
+                                        RouteGeneratorOD.getDefaultRouteSupplier(randomStream));
                             }
                         });
                         setOption(odOptions, ODOptions.GTU_TYPE, factory.create(), options, otsNetwork);
@@ -656,6 +690,36 @@ public class DemandParser
                 odOptions.set(option, value);
             }
         }
+    }
+
+    /**
+     * Returns the ID of a default model, referred if there is a referral specified.
+     * @param model String; model
+     * @param modelIdReferrals String; model ID
+     * @return ID of a model, referred if there is a referral specified
+     */
+    private static String getModelId(final DEFAULTMODEL model, final Map<String, String> modelIdReferrals)
+    {
+        if (model.getMODELIDREFERRAL() != null)
+        {
+            return modelIdReferrals.get(model.getMODELIDREFERRAL());
+        }
+        return model.getID();
+    }
+
+    /**
+     * Returns the ID of a model, referred if there is a referral specified.
+     * @param model String; model
+     * @param modelIdReferrals String; model ID
+     * @return ID of a model, referred if there is a referral specified
+     */
+    private static String getModelId(final MODEL model, final Map<String, String> modelIdReferrals)
+    {
+        if (model.getMODELIDREFERRAL() != null)
+        {
+            return modelIdReferrals.get(model.getMODELIDREFERRAL());
+        }
+        return model.getID();
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
+import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
@@ -25,6 +26,7 @@ import org.opentrafficsim.xml.generated.LANETYPE;
 import org.opentrafficsim.xml.generated.LANETYPES;
 import org.opentrafficsim.xml.generated.LINKTYPE;
 import org.opentrafficsim.xml.generated.LINKTYPES;
+import org.opentrafficsim.xml.generated.PARAMETERTYPE;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
 import org.opentrafficsim.xml.generated.ROADLAYOUTS;
 import org.opentrafficsim.xml.generated.SPEEDLIMIT;
@@ -58,7 +60,8 @@ public final class DefinitionsParser
      */
     public static void parseDefinitions(final OTSRoadNetwork otsNetwork, final DEFINITIONS definitions,
             final boolean overwriteDefaults, final Map<String, ROADLAYOUT> roadLayoutMap,
-            final Map<String, GTUTEMPLATE> gtuTemplates, Map<String, StreamInformation> streamMap, Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
+            final Map<String, GTUTEMPLATE> gtuTemplates, Map<String, StreamInformation> streamMap,
+            Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
     {
         parseGtuTypes(definitions, otsNetwork, overwriteDefaults);
         parseLinkTypes(definitions, otsNetwork, overwriteDefaults, linkTypeSpeedLimitMap);
@@ -117,7 +120,8 @@ public final class DefinitionsParser
      * @throws XmlParserException on parsing error
      */
     public static void parseLinkTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
-            final boolean overwriteDefaults, final Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
+            final boolean overwriteDefaults, final Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap)
+            throws XmlParserException
     {
         for (LINKTYPES linkTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
                 LINKTYPES.class))
@@ -147,7 +151,7 @@ public final class DefinitionsParser
                 }
                 else
                     CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LinkType {}", linkTag.getID());
-                
+
                 linkTypeSpeedLimitMap.put(networkLinkType, new HashMap<>());
                 for (SPEEDLIMIT speedLimitTag : linkTag.getSPEEDLIMIT())
                 {
@@ -257,6 +261,31 @@ public final class DefinitionsParser
             for (ROADLAYOUT layoutTag : roadLayoutTypes.getROADLAYOUT())
             {
                 roadLayoutMap.put(layoutTag.getID(), layoutTag);
+            }
+        }
+    }
+
+    /**
+     * Parse the PARAMETERTYPE tags in the OTS XML file.
+     * @param definitions the DEFINTIONS tag
+     * @param otsNetwork the network
+     * @param parameterMap map to store parameter type by id
+     * @throws XmlParserException if the field in a PARAMETERTYPE does not refer to a ParameterType&lt;?&gt;
+     */
+    public static void parseParameterTypes(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
+            final Map<String, ParameterType<?>> parameterMap) throws XmlParserException
+    {
+        for (PARAMETERTYPE parameterType : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
+                PARAMETERTYPE.class))
+        {
+            try
+            {
+                parameterMap.put(parameterType.getID(), (ParameterType<?>) parameterType.getFIELD());
+            }
+            catch (ClassCastException exception)
+            {
+                throw new XmlParserException("Parameter type with id " + parameterType.getID()
+                        + " refers to a static field that is not a ParameterType<?>.");
             }
         }
     }
