@@ -21,6 +21,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.Historical;
@@ -824,13 +825,25 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             expand = false;
 
             // longitudinal
+            // find links to extend from so we can add lanes if -any- of the next lanes comes within the perception distance
+            Set<Link> linksToExpandFrom = new LinkedHashSet<>();
             Iterator<RollingLaneStructureRecord> iterator = this.downstreamEdge.iterator();
+            while (iterator.hasNext())
+            {
+                RollingLaneStructureRecord record = iterator.next();
+                if (record.getStartDistance().si + record.getLane().getLength().si < this.down.si)
+                {
+                    linksToExpandFrom.add(record.getLane().getParentLink());
+                }
+            }
+            iterator = this.downstreamEdge.iterator();
             Set<RollingLaneStructureRecord> modifiedEdge = new LinkedHashSet<>(this.downstreamEdge);
             while (iterator.hasNext())
             {
                 RollingLaneStructureRecord record = iterator.next();
                 Map<Lane, GTUDirectionality> nexts = record.getLane().downstreamLanes(record.getDirection(), gtuType);
-                if (record.getStartDistance().si + record.getLane().getLength().si > this.down.si)
+                if (!linksToExpandFrom.contains(record.getLane().getParentLink())
+                        && record.getStartDistance().si + record.getLane().getLength().si > this.down.si)
                 {
                     // downstream search ends on this lane
                     record.setCutOffEnd(this.down.minus(record.getStartDistance()));
