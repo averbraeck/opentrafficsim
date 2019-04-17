@@ -17,6 +17,7 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
@@ -79,6 +80,9 @@ public class OTSLine3D implements Locatable, Serializable
 
     /** Precision for fractional projection algorithm. */
     private static final double FRAC_PROJ_PRECISION = 2e-5 /* PK too fine 1e-6 */;
+
+    /** Radius at each vertex. */
+    private Length[] vertexRadii;
 
     /** Bounding of this OTSLine3D. */
     private Envelope envelope;
@@ -1606,6 +1610,108 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
+     * Returns the directional radius of the line at a given fraction. Negative values reflect right-hand curvature in the
+     * design-line direction. The radius is taken as the minimum of the radii at the vertices before and after the given
+     * fraction. The radius at a vertex is calculated as the radius of a circle that is equidistant from both edges connected to
+     * the vertex. The circle center is on a line perpendicular to the shortest edge, crossing through the middle of the
+     * shortest edge.
+     * @param fraction double; fraction along the line, between 0.0 and 1.0 (both inclusive)
+     * @return Length; radius
+     * @throws OTSGeometryException fraction out of bounds
+     */
+    public Length getRadius(final double fraction) throws OTSGeometryException
+    {
+        Throw.when(fraction < 0.0 || fraction > 1.0, OTSGeometryException.class, "Fraction %f is out of bounds [0.0 ... 1.0]",
+                fraction);
+        if (this.vertexRadii == null)
+        {
+            this.vertexRadii = new Length[size() - 1];
+        }
+        int index = find(fraction * getLength().si);
+        if (index > 0 && this.vertexRadii[index] == null)
+        {
+            this.vertexRadii[index] = getVertexRadius(index);
+        }
+        if (index < size() - 2 && this.vertexRadii[index + 1] == null)
+        {
+            this.vertexRadii[index + 1] = getVertexRadius(index + 1);
+        }
+        if (index == 0)
+        {
+            return this.vertexRadii[1];
+        }
+        if (index == size() - 2)
+        {
+            return this.vertexRadii[size() - 2];
+        }
+        return Math.abs(this.vertexRadii[index].si) < Math.abs(this.vertexRadii[index + 1].si) ? this.vertexRadii[index]
+                : this.vertexRadii[index + 1];
+    }
+
+    /**
+     * Calculates the directional radius at a vertex. Negative values reflect right-hand curvature in the design-line direction.
+     * The radius at a vertex is calculated as the radius of a circle that is equidistant from both edges connected to the
+     * vertex. The circle center is on a line perpendicular to the shortest edge, crossing through the middle of the shortest
+     * edge.
+     * @param index int; index of the vertex in range [1 ... size() - 2]
+     * @return Length; radius at the vertex
+     * @throws OTSGeometryException if the index is out of bounds
+     */
+    public Length getVertexRadius(final int index) throws OTSGeometryException
+    {
+        Throw.when(index < 1 || index > size() - 2, OTSGeometryException.class, "Index %d is out of bounds [1 ... size() - 2].",
+                index);
+        makeLengthIndexedLine();
+        determineFractionalHelpers(null, null);
+        double length1 = this.lengthIndexedLine[index] - this.lengthIndexedLine[index - 1];
+        double length2 = this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index];
+        int shortIndex = length1 < length2 ? index : index + 1;
+        // center of shortest edge
+        OTSPoint3D p1 = new OTSPoint3D(.5 * (this.points[shortIndex - 1].x + this.points[shortIndex].x),
+                .5 * (this.points[shortIndex - 1].y + this.points[shortIndex].y),
+                .5 * (this.points[shortIndex - 1].z + this.points[shortIndex].z));
+        // perpendicular to shortest edge, line crossing p1
+        OTSPoint3D p2 = new OTSPoint3D(p1.x + (this.points[shortIndex].y - this.points[shortIndex - 1].y),
+                p1.y - (this.points[shortIndex].x - this.points[shortIndex - 1].x), p1.z);
+        // vertex
+        OTSPoint3D p3 = this.points[index];
+        // point on line that splits angle between edges at vertex 50-50
+        OTSPoint3D p4 = this.fractionalHelperCenters[index];
+        if (p4 == null)
+        {
+            // parallel helper lines
+            p4 = new OTSPoint3D(p3.x + this.fractionalHelperDirections[index].x,
+                    p3.y + this.fractionalHelperDirections[index].y);
+        }
+        OTSPoint3D intersection = OTSPoint3D.intersectionOfLines(p1, p2, p3, p4);
+        // determine left or right
+        double refLength = length1 < length2 ? length1 : length2;
+        Length radius = intersection.distance(p1);
+        Length i2p2 = intersection.distance(p2);
+        if (radius.si < i2p2.si && i2p2.si > refLength)
+        {
+            // left as p1 is closer than p2 (which was placed to the right) and not on the perpendicular line
+            return radius;
+        }
+        // right as not left
+        return radius.neg();
+    }
+
+    /**
+     * Returns the length fraction at the vertex.
+     * @param index int; index of vertex [0 ... size() - 1]
+     * @return double; length fraction at the vertex
+     * @throws OTSGeometryException if the index is out of bounds
+     */
+    public double getVertexFraction(final int index) throws OTSGeometryException
+    {
+        Throw.when(index < 0 || index > size() - 1, OTSGeometryException.class, "Index %d is out of bounds [0 %d].", index,
+                size() - 1);
+        makeLengthIndexedLine();
+        return this.lengthIndexedLine[index] / getLengthSI();
+    }
+
+    /**
      * Calculate the centroid of this line, and the bounds, and cache for later use. Make sure the dx, dy and dz are at least
      * 0.5 m wide. XXX: For an OTSLine3D, coordinate systems are not guaranteed, so 0.5 m wide has NO MEANING.
      */
@@ -1707,7 +1813,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -1755,6 +1861,7 @@ public class OTSLine3D implements Locatable, Serializable
      */
     public static void main(final String[] args) throws OTSGeometryException
     {
+
         /*
          * OTSLine3D line = new OTSLine3D(new OTSPoint3D(-263.811, -86.551, 1.180), new OTSPoint3D(-262.945, -84.450, 1.180),
          * new OTSPoint3D(-261.966, -82.074, 1.180), new OTSPoint3D(-260.890, -79.464, 1.198), new OTSPoint3D(-259.909, -76.955,

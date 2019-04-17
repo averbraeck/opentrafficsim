@@ -11,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
+import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -103,20 +104,36 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
         if (this.crossSectionSlices.size() <= 2)
         {
-            this.centerLine = this.getParentLink().getDesignLine().offsetLine(getDesignLineOffsetAtBegin().getSI(),
-                    getDesignLineOffsetAtEnd().getSI());
+            this.centerLine = fixTightInnerCurve(new double[] { 0.0, 1.0 },
+                    new double[] { getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI() });
         }
         else
         {
-            double[] relativeFractions = new double[this.crossSectionSlices.size()];
+            double[] fractions = new double[this.crossSectionSlices.size()];
             double[] offsets = new double[this.crossSectionSlices.size()];
             for (int i = 0; i < this.crossSectionSlices.size(); i++)
             {
-                relativeFractions[i] = this.crossSectionSlices.get(i).getRelativeLength().si / this.parentLink.getLength().si;
+                fractions[i] = this.crossSectionSlices.get(i).getRelativeLength().si / this.parentLink.getLength().si;
                 offsets[i] = this.crossSectionSlices.get(i).getDesignLineOffset().si;
             }
-            this.centerLine = this.getParentLink().getDesignLine().offsetLine(relativeFractions, offsets);
+            this.centerLine = fixTightInnerCurve(fractions, offsets);
         }
+        // if (this.crossSectionSlices.size() <= 2)
+        // {
+        // this.centerLine = this.getParentLink().getDesignLine().offsetLine(getDesignLineOffsetAtBegin().getSI(),
+        // getDesignLineOffsetAtEnd().getSI());
+        // }
+        // else
+        // {
+        // double[] relativeFractions = new double[this.crossSectionSlices.size()];
+        // double[] offsets = new double[this.crossSectionSlices.size()];
+        // for (int i = 0; i < this.crossSectionSlices.size(); i++)
+        // {
+        // relativeFractions[i] = this.crossSectionSlices.get(i).getRelativeLength().si / this.parentLink.getLength().si;
+        // offsets[i] = this.crossSectionSlices.get(i).getDesignLineOffset().si;
+        // }
+        // this.centerLine = this.getParentLink().getDesignLine().offsetLine(relativeFractions, offsets);
+        // }
 
         this.length = this.centerLine.getLength();
         this.contour = constructContour(this);
@@ -171,13 +188,72 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             Length offsetAtFraction = Length.interpolate(lateralOffsetAtBegin, lateralOffsetAtEnd, relativeOffsetAtFraction);
             result.add(new CrossSectionSlice(lengthAtCrossSection, offsetAtFraction,
                     Length.interpolate(beginWidth, endWidth, fraction)));
-            // System.out.println("fraction " + fraction + ", angle " + Math.toDegrees((fraction - 0.5) * Math.PI) + ", fraction "
-            //        + relativeOffsetAtFraction + ", " + result.get(result.size() - 1));
+            // System.out.println("fraction " + fraction + ", angle " + Math.toDegrees((fraction - 0.5) * Math.PI) + ", fraction
+            // "
+            // + relativeOffsetAtFraction + ", " + result.get(result.size() - 1));
         }
 
         // Arrays.asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffsetAtBegin, beginWidth),
         // new CrossSectionSlice(parentLink.getLength(), lateralOffsetAtEnd, endWidth) })
         return result;
+    }
+
+    /**
+     * Returns the center line for this cross section element by adhering to the given offsets relative to the link design line.
+     * This method will create a Bezier curve, ignoring the link design line, if the offset at any vertex is larger than the
+     * radius, and on the inside of the curve.
+     * @param fractions double[]; length fractions of offsets
+     * @param offsets double[]; offsets
+     * @return OTSPoint3D; center line
+     * @throws OTSGeometryException index out of bounds
+     */
+    private OTSLine3D fixTightInnerCurve(final double[] fractions, final double[] offsets) throws OTSGeometryException
+    {
+        OTSLine3D linkCenterLine = getParentLink().getDesignLine();
+        for (int i = 1; i < linkCenterLine.size() - 1; i++)
+        {
+            double fraction = linkCenterLine.getVertexFraction(i);
+            int index = 0;
+            while (index < fractions.length - 2 && fraction > fractions[index + 1])
+            {
+                index++;
+            }
+            double w = (fraction - fractions[index]) / (fractions[index + 1] - fractions[index]);
+            double offset = (1.0 - w) * offsets[index] + w * offsets[index + 1];
+            double radius = linkCenterLine.getVertexRadius(i).si;
+            if ((radius < 0.0 && offset < 0.0 && offset < radius) || (radius > 0.0 && offset > 0.0 && offset > radius))
+            {
+                double offsetStart = getDesignLineOffsetAtBegin().getSI();
+                double offsetEnd = getDesignLineOffsetAtEnd().getSI();
+                DirectedPoint start = linkCenterLine.getLocationFraction(0.0);
+                DirectedPoint end = linkCenterLine.getLocationFraction(1.0);
+                start = new DirectedPoint(start.x - Math.sin(start.getRotZ()) * offsetStart,
+                        start.y + Math.cos(start.getRotZ()) * offsetStart, start.z, start.getRotX(), start.getRotY(),
+                        start.getRotZ());
+                end = new DirectedPoint(end.x - Math.sin(end.getRotZ()) * offsetEnd,
+                        end.y + Math.cos(end.getRotZ()) * offsetEnd, end.z, end.getRotX(), end.getRotY(), end.getRotZ());
+                System.out.println("Making Bezier for " + getId() + " on link " + getParentLink().getId());
+                while (this.crossSectionSlices.size() > 2)
+                {
+                    this.crossSectionSlices.remove(1);
+                }
+                return Bezier.cubic(start, end);
+            }
+        }
+        if (this.crossSectionSlices.size() <= 2)
+        {
+            return this.getParentLink().getDesignLine().offsetLine(getDesignLineOffsetAtBegin().getSI(),
+                    getDesignLineOffsetAtEnd().getSI());
+        }
+        else
+        {
+            for (int i = 0; i < this.crossSectionSlices.size(); i++)
+            {
+                fractions[i] = this.crossSectionSlices.get(i).getRelativeLength().si / this.parentLink.getLength().si;
+                offsets[i] = this.crossSectionSlices.get(i).getDesignLineOffset().si;
+            }
+            return this.getParentLink().getDesignLine().offsetLine(fractions, offsets);
+        }
     }
 
     /**
@@ -214,7 +290,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length lateralOffset,
             final Length width) throws OTSGeometryException, NetworkException
     {
-        this(parentLink, id, Arrays.asList(new CrossSectionSlice[] {new CrossSectionSlice(Length.ZERO, lateralOffset, width)}));
+        this(parentLink, id,
+                Arrays.asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffset, width) }));
     }
 
     /**
@@ -232,7 +309,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     {
         return this.parentLink.getNetwork();
     }
-    
+
     /**
      * Calculate the slice the fractional position is in.
      * @param fractionalPosition double; the fractional position between 0 and 1 compared to the design line
@@ -471,8 +548,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
         if (cse.crossSectionSlices.size() <= 2)
         {
-            OTSLine3D crossSectionDesignLine = cse.getParentLink().getDesignLine()
-                    .offsetLine(cse.getDesignLineOffsetAtBegin().getSI(), cse.getDesignLineOffsetAtEnd().getSI());
+            OTSLine3D crossSectionDesignLine = cse.centerLine;
             OTSLine3D rightBoundary =
                     crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
             OTSLine3D leftBoundary =
@@ -557,7 +633,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     @Override
     public boolean equals(final Object obj)
     {

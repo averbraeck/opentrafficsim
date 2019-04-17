@@ -172,6 +172,16 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         }
         return false;
     }
+    
+    /**
+     * Whether this equals the given type. 
+     * @param type DEFAULTS; type
+     * @return whether this equals the given type
+     */
+    public boolean isType(final DEFAULTS type)
+    {
+        return this.getId().equals(type.getId());
+    }
 
     /**
      * Returns default characteristics for given GTUType.
