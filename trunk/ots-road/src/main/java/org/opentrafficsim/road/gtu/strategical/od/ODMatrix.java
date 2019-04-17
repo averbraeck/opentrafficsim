@@ -95,8 +95,8 @@ public class ODMatrix implements Serializable, Identifiable
         Throw.when(destinations == null || destinations.contains(null), NullPointerException.class,
                 "Destination may not be or contain null.");
         Throw.whenNull(categorization, "Categorization may not be null.");
-        Throw.whenNull(globalTimeVector, "Global time vector may not be null.");
-        Throw.whenNull(globalInterpolation, "Global interpolation may not be null.");
+        // Throw.whenNull(globalTimeVector, "Global time vector may not be null.");
+        // Throw.whenNull(globalInterpolation, "Global interpolation may not be null.");
         this.id = id;
         this.origins = new ArrayList<>(origins);
         this.destinations = new ArrayList<>(destinations);
@@ -180,6 +180,26 @@ public class ODMatrix implements Serializable, Identifiable
     public final Interpolation getGlobalInterpolation()
     {
         return this.globalInterpolation;
+    }
+
+    /**
+     * Add a demand vector to OD.
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param demand FrequencyVector; demand data, length has to be equal to the global time vector
+     * @param fraction double; fraction of demand for this category
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
+     * @throws IllegalArgumentException if demand is negative or time not strictly increasing
+     * @throws IllegalArgumentException if the route (if in the category) is not from the origin to the destination
+     * @throws NullPointerException if an input is null
+     */
+    public final void putDemandVector(final Node origin, final Node destination, final Category category,
+            final FrequencyVector demand, final double fraction)
+    {
+        putDemandVector(origin, destination, category, demand, this.globalTimeVector, this.globalInterpolation, fraction);
     }
 
     /**
