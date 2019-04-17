@@ -8,7 +8,9 @@
     <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_lanetypes.xml" />
     <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_gtutemplates.xml" />
     <LANETYPES>
-      <LANETYPE ID="STREET" />
+      <LANETYPE ID="STREET">
+        <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+      </LANETYPE>
     </LANETYPES>
     <GTUTYPES>
       <!-- <GTUTYPE PARENT="ROAD_USER" ID="CAR" /> <GTUTYPE PARENT="ROAD_USER" ID="TRUCK" /> -->
@@ -40,7 +42,9 @@
     </GTUTEMPLATES>
 
     <LINKTYPES>
-      <LINKTYPE ID="STREET" />
+      <LINKTYPE ID="STREET">
+        <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+      </LINKTYPE>
     </LINKTYPES>
 
     <ROADLAYOUTS>
@@ -276,6 +280,14 @@
 
   </NETWORK>
   <NETWORKDEMAND>
+    <OD ID="Traffic Demand" GLOBALINTERPOLATION="STEPWISE" GLOBALFACTOR="1.000">
+      <CATEGORY GTUTYPE="CAR" ID="CAR" />
+      <CATEGORY GTUTYPE="TRUCK" ID="TRUCK" />
+      <DEMAND DESTINATION="N" CATEGORY="Car.53" ORIGIN="W">
+        <LEVEL TIME="0s">300.00veh/h</LEVEL>
+        <LEVEL TIME="3600s">300.00veh/h</LEVEL>
+      </DEMAND>
+    </OD>
   </NETWORKDEMAND>
   <CONTROL>
     <TRAFCOD ID="Complex TrafCOD demo">
@@ -315,7 +327,7 @@
       <SIGNALGROUP ID="12">
         <TRAFFICLIGHT LINK="NNC" LANE="FORWARD1" TRAFFICLIGHTID="12" />
       </SIGNALGROUP>
-      
+
       <SENSOR ID="D011">
         <SINGLELANE>
           <LINK>EEC</LINK>
@@ -326,10 +338,10 @@
       </SENSOR>
       <SENSOR ID="D012">
         <SINGLELANE>
-        <LINK>EEC</LINK>
-        <LANE>FORWARD3</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>EEC</LINK>
+          <LANE>FORWARD3</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
       <SENSOR ID="D021">
@@ -342,10 +354,10 @@
       </SENSOR>
       <SENSOR ID="D022">
         <SINGLELANE>
-        <LINK>EEC</LINK>
-        <LANE>FORWARD2</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>EEC</LINK>
+          <LANE>FORWARD2</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
       <SENSOR ID="D031">
@@ -358,13 +370,13 @@
       </SENSOR>
       <SENSOR ID="D032">
         <SINGLELANE>
-        <LINK>EEC</LINK>
-        <LANE>FORWARD1</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>EEC</LINK>
+          <LANE>FORWARD1</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
-      
+
       <SENSOR ID="D041">
         <SINGLELANE>
           <LINK>SSC</LINK>
@@ -375,10 +387,10 @@
       </SENSOR>
       <SENSOR ID="D042">
         <SINGLELANE>
-        <LINK>SSC</LINK>
-        <LANE>FORWARD3</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>SSC</LINK>
+          <LANE>FORWARD3</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
       <SENSOR ID="D051">
@@ -391,10 +403,10 @@
       </SENSOR>
       <SENSOR ID="D052">
         <SINGLELANE>
-        <LINK>SSC</LINK>
-        <LANE>FORWARD2</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>SSC</LINK>
+          <LANE>FORWARD2</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
       <SENSOR ID="D061">
@@ -407,13 +419,13 @@
       </SENSOR>
       <SENSOR ID="D062">
         <SINGLELANE>
-        <LINK>SSC</LINK>
-        <LANE>FORWARD1</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>SSC</LINK>
+          <LANE>FORWARD1</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
-      
+
       <SENSOR ID="D071">
         <SINGLELANE>
           <LINK>WWC</LINK>
@@ -424,10 +436,10 @@
       </SENSOR>
       <SENSOR ID="D072">
         <SINGLELANE>
-        <LINK>WWC</LINK>
-        <LANE>FORWARD3</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>WWC</LINK>
+          <LANE>FORWARD3</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
       <SENSOR ID="D081">
@@ -440,10 +452,10 @@
       </SENSOR>
       <SENSOR ID="D082">
         <SINGLELANE>
-        <LINK>WWC</LINK>
-        <LANE>FORWARD2</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>WWC</LINK>
+          <LANE>FORWARD2</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
       <SENSOR ID="D091">
@@ -456,13 +468,13 @@
       </SENSOR>
       <SENSOR ID="D092">
         <SINGLELANE>
-        <LINK>WWC</LINK>
-        <LANE>FORWARD1</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>WWC</LINK>
+          <LANE>FORWARD1</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
-      
+
       <SENSOR ID="D101">
         <SINGLELANE>
           <LINK>NNC</LINK>
@@ -473,10 +485,10 @@
       </SENSOR>
       <SENSOR ID="D102">
         <SINGLELANE>
-        <LINK>NNC</LINK>
-        <LANE>FORWARD3</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>NNC</LINK>
+          <LANE>FORWARD3</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
       <SENSOR ID="D111">
@@ -489,10 +501,10 @@
       </SENSOR>
       <SENSOR ID="D112">
         <SINGLELANE>
-        <LINK>NNC</LINK>
-        <LANE>FORWARD2</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>NNC</LINK>
+          <LANE>FORWARD2</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
       <SENSOR ID="D121">
@@ -505,13 +517,13 @@
       </SENSOR>
       <SENSOR ID="D122">
         <SINGLELANE>
-        <LINK>NNC</LINK>
-        <LANE>FORWARD1</LANE>
-        <ENTRYPOSITION>END-40m</ENTRYPOSITION>
-        <EXITPOSITION>END-10m</EXITPOSITION>
+          <LINK>NNC</LINK>
+          <LANE>FORWARD1</LANE>
+          <ENTRYPOSITION>END-40m</ENTRYPOSITION>
+          <EXITPOSITION>END-10m</EXITPOSITION>
         </SINGLELANE>
       </SENSOR>
-      
+
       <PROGRAM>Trafcod rules go here - eventually</PROGRAM>
     </TRAFCOD>
   </CONTROL>
