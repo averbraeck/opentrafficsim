@@ -842,8 +842,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             {
                 RollingLaneStructureRecord record = iterator.next();
                 Map<Lane, GTUDirectionality> nexts = record.getLane().downstreamLanes(record.getDirection(), gtuType);
-                if (!linksToExpandFrom.contains(record.getLane().getParentLink())
-                        && record.getStartDistance().si + record.getLane().getLength().si > this.down.si)
+                if (!linksToExpandFrom.contains(record.getLane().getParentLink()))
                 {
                     // downstream search ends on this lane
                     record.setCutOffEnd(this.down.minus(record.getStartDistance()));
