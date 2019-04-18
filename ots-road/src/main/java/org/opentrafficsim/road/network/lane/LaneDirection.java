@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
+ * Combines a Lane with its GTUDirectionality.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
