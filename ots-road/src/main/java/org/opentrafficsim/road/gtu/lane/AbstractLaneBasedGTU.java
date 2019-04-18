@@ -1280,6 +1280,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (laneDir.isPlus() ? nextFrontPosSI > lane.getLength().si : nextFrontPosSI < 0.0)
             {
                 LaneDirection next = new LaneDirection(lane, laneDir).getNextLaneDirection(this);
+                if (null == next)
+                {
+                    System.err.println("Oops: GTU is in wrong lane; there is no connecting lane to intended next link");
+                }
                 nextLane = next.getLane();
                 nextDirection = next.getDirection();
                 double endPos = laneDir.isPlus() ? lane.getLength().si - getFront().getDx().si : getFront().getDx().si;
