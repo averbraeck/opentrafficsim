@@ -195,10 +195,20 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             if (gtu.getTurnIndicatorStatus() != null && gtu.getTurnIndicatorStatus().isLeftOrBoth())
             {
                 graphics.fill(this.leftIndicator);
+                if (color.equals(Color.YELLOW))
+                {
+                    graphics.setColor(Color.BLACK);
+                    graphics.draw(this.leftIndicator);
+                }
             }
             if (gtu.getTurnIndicatorStatus() != null && gtu.getTurnIndicatorStatus().isRightOrBoth())
             {
                 graphics.fill(this.rightIndicator);
+                if (color.equals(Color.YELLOW))
+                {
+                    graphics.setColor(Color.BLACK);
+                    graphics.draw(this.rightIndicator);
+                }
             }
 
             // braking lights
@@ -207,6 +217,12 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
                 graphics.setColor(Color.RED);
                 graphics.fill(this.leftBrake);
                 graphics.fill(this.rightBrake);
+                if (color.equals(Color.RED))
+                {
+                    graphics.setColor(Color.BLACK);
+                    graphics.draw(this.leftBrake);
+                    graphics.draw(this.rightBrake);
+                }
             }
             graphics.setStroke(saveStroke);
         }
@@ -219,7 +235,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             this.dot.setFrame(x, x, w, w);
             graphics.fill(this.dot);
         }
-
     }
 
     /** {@inheritDoc} */
