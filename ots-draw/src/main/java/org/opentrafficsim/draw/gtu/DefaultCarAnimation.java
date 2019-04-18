@@ -174,14 +174,21 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         // Math.pow(graphics.getTransform().getScaleY(), 2));
         if (scale > 1)
         {
-            graphics.setColor(this.gtuColorer.getColor(gtu));
+            Color color = this.gtuColorer.getColor(gtu);
+            graphics.setColor(color);
             BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
             graphics.setStroke(new BasicStroke(0));
             graphics.fill(this.rectangle);
 
-            // Draw a white disk at the front to indicate which side faces forward
             graphics.setColor(Color.WHITE);
             graphics.fill(this.frontIndicator);
+            // Draw a white disk at the front to indicate which side faces forward
+            if (color.equals(Color.WHITE))
+            {
+                // Put a black ring around it
+                graphics.setColor(Color.BLACK);
+                graphics.draw(this.frontIndicator);
+            }
 
             // turn indicator lights
             graphics.setColor(Color.YELLOW);
