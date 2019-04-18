@@ -691,13 +691,13 @@ public final class NetworkParser
             case BLOCKED:
                 Stripe blockedLine = new Stripe(csl, startOffset, endOffset, stripeTag.getDRAWINGWIDTH() != null
                         ? stripeTag.getDRAWINGWIDTH() : new Length(40.0, LengthUnit.CENTIMETER));
-                blockedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.BOTH);
+                blockedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.BOTH);
                 cseList.add(blockedLine);
                 break;
 
             case DASHED:
                 Stripe dashedLine = new Stripe(csl, startOffset, endOffset, width);
-                dashedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.BOTH);
+                dashedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.BOTH);
                 cseList.add(dashedLine);
                 break;
 
@@ -708,13 +708,13 @@ public final class NetworkParser
 
             case LEFTONLY:
                 Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, width);
-                leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.LEFT);
+                leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.LEFT);
                 cseList.add(leftOnlyLine);
                 break;
 
             case RIGHTONLY:
                 Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, width);
-                rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.RIGHT);
+                rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.RIGHT);
                 cseList.add(rightOnlyLine);
                 break;
 
