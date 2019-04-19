@@ -4,9 +4,12 @@
   
   <body>
 
-    <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 120 -->
+    <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
     
-    <release version="1.01.02" date="2019-03-XX" description="GTUType, LinkType, LaneType in Defaults">
+    <release version="1.02.01" date="2019-04-19" description="ots-xsd; GTUType, LinkType, LaneType in Defaults">
+      <action dev="averbraeck" type="add">
+        Extensive work on the xsd files to parse complex files. All categories of the xsd have been changed. 
+      </action>
       <action dev="averbraeck" type="remove">
         OvertakingConditions have been removed from the Lane. Overtaking is not something that concerns
         single lanes.
