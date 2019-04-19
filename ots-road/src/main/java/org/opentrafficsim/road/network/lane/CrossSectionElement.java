@@ -232,7 +232,6 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
                         start.getRotZ());
                 end = new DirectedPoint(end.x - Math.sin(end.getRotZ()) * offsetEnd,
                         end.y + Math.cos(end.getRotZ()) * offsetEnd, end.z, end.getRotX(), end.getRotY(), end.getRotZ());
-                System.out.println("Making Bezier for " + getId() + " on link " + getParentLink().getId());
                 while (this.crossSectionSlices.size() > 2)
                 {
                     this.crossSectionSlices.remove(1);

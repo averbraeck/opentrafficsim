@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -31,6 +33,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -310,6 +314,23 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 n++;
                 prevFrom = from;
                 from = from.getNextLaneDirection(gtu);
+                if (from == null)
+                {
+                    // check sink sensor
+                    Length pos = prevFrom.getDirection().isPlus() ? prevFrom.getLength() : Length.ZERO;
+                    for (SingleSensor sensor : prevFrom.getLane().getSensors(pos, pos, gtu.getGTUType(),
+                            prevFrom.getDirection()))
+                    {
+                        if (sensor instanceof SinkSensor)
+                        {
+                            // just add some length so the GTU is happy to go to the sink
+                            DirectedPoint end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
+                            List<OTSPoint3D> points = new ArrayList<>(Arrays.asList(path.getPoints()));
+                            points.add(new OTSPoint3D(end));
+                            return new OTSLine3D(points);
+                        }
+                    }
+                }
                 if (path == null)
                 {
                     path = from.getDirection().isPlus() ? from.getLane().getCenterLine()
@@ -317,16 +338,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 }
                 else
                 {
-                    try
-                    {
-                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus()
-                                ? from.getLane().getCenterLine() : from.getLane().getCenterLine().reverse());
-                    }
-                    catch (NullPointerException nas)
-                    {
-                        prevFrom.getNextLaneDirection(gtu);
-                        ref.getLaneDirection().getNextLaneDirection(gtu);
-                    }
+                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus()
+                            ? from.getLane().getCenterLine() : from.getLane().getCenterLine().reverse());
                 }
             }
         }
@@ -545,7 +558,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             time = gtu.getOperationalPlan().getEndTime();
         }
         SimEventInterface<SimTimeDoubleUnit> event = gtu.getSimulator().scheduleEventAbs(time, (short) 6, gtu, gtu,
-                "finalizeLaneChange", new Object[] {laneChangeDirection});
+                "finalizeLaneChange", new Object[] { laneChangeDirection });
         gtu.setFinalizeLaneChangeEvent(event);
     }
 

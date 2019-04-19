@@ -28,6 +28,7 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
@@ -47,6 +48,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -128,6 +130,11 @@ public final class ODApplier
                 "Method ODApplier.applyOD() should be invoked at simulation time 0.");
 
         // TODO sinks? white extension links?
+        for (Node destination : od.getDestinations())
+        {
+            createSinksAtDestination(destination, simulator);
+        }
+
         final Categorization categorization = od.getCategorization();
         final boolean laneBased = categorization.entails(Lane.class);
         boolean markovian = od.getCategorization().entails(GTUType.class);
@@ -368,6 +375,44 @@ public final class ODApplier
             }
         }
         return output;
+    }
+
+    /**
+     * Create sinks at all lanes connected to a destination node. This method considers connectors too.
+     * @param destination Node; destination node
+     * @param simulator OTSSimulatorInterface; simulator
+     */
+    private static void createSinksAtDestination(final Node destination, final OTSSimulatorInterface simulator)
+    {
+        for (Link link : destination.getLinks())
+        {
+            if (link.getLinkType().isConnector() && !link.getStartNode().equals(destination))
+            {
+                createSinksAtDestination(link.getStartNode(), simulator);
+            }
+            if (link instanceof CrossSectionLink)
+            {
+                for (Lane lane : ((CrossSectionLink) link).getLanes())
+                {
+                    try
+                    {
+                        if (link.getEndNode().equals(destination))
+                        {
+                            new SinkSensor(lane, lane.getLength(), simulator);
+                        }
+                        else if (link.getStartNode().equals(destination))
+                        {
+                            new SinkSensor(lane, Length.ZERO, simulator);
+                        }
+                    }
+                    catch (NetworkException exception)
+                    {
+                        // can not happen, we use Length.ZERO and lane.getLength()
+                        throw new RuntimeException(exception);
+                    }
+                }
+            }
+        }
     }
 
     /**

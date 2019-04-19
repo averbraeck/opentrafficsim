@@ -38,6 +38,9 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
@@ -96,14 +99,13 @@ public final class LmrsUtil implements LmrsParameters
      * @throws ParameterException parameter exception
      * @throws OperationalPlanException operational plan exception
      */
-    @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
+    @SuppressWarnings({ "checkstyle:parameternumber", "checkstyle:methodlength" })
     public static SimpleOperationalPlan determinePlan(final LaneBasedGTU gtu, final Time startTime,
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
             final LanePerception perception, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
             final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-
         // obtain objects to get info
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         SpeedLimitProspect slp = infra.getSpeedLimitProspect(RelativeLane.CURRENT);
@@ -452,7 +454,6 @@ public final class LmrsUtil implements LmrsParameters
             final LateralDirectionality lat, final GapAcceptance gapAcceptance)
             throws ParameterException, OperationalPlanException
     {
-
         // beyond start distance
         boolean beyond = Try.assign(() -> perception.getGtu().laneChangeAllowed(), "Cannot obtain GTU.");
         if (!beyond)
@@ -469,18 +470,36 @@ public final class LmrsUtil implements LmrsParameters
 
         // other causes for deceleration
         IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
-        if (intersection != null)
+        // if (intersection != null)
+        // {
+        // // conflicts alongside?
+        // if ((lat.isLeft() && intersection.isAlongsideConflictLeft())
+        // || (lat.isRight() && intersection.isAlongsideConflictRight()))
+        // {
+        // return false;
+        // }
+        // if (quickIntersectionScan(params, sli, cfm, ownSpeed, lat, intersection).lt(params.getParameter(BCRIT).neg()))
+        // {
+        // return false;
+        // }
+        // }
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
+        RelativeLane lane = new RelativeLane(lat, 1);
+        PerceptionCollectable<HeadwayConflict, Conflict> conflicts = intersection.getConflicts(lane);
+        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(lane);
+        try
         {
-            // conflicts alongside?
-            if ((lat.isLeft() && intersection.isAlongsideConflictLeft())
-                    || (lat.isRight() && intersection.isAlongsideConflictRight()))
+            Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, cfm, ego.getLength(), ego.getWidth(),
+                    ownSpeed, ownAcceleration, sli, new ConflictPlans(), perception.getGtu(), lane);
+            if (a.lt(params.getParameter(ParameterTypes.B).neg()))
             {
                 return false;
             }
-            if (quickIntersectionScan(params, sli, cfm, ownSpeed, lat, intersection).lt(params.getParameter(BCRIT).neg()))
-            {
-                return false;
-            }
+        }
+        catch (GTUException exception)
+        {
+            throw new OperationalPlanException(exception);
         }
 
         // safe regarding neighbors?
