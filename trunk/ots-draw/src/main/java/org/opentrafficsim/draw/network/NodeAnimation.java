@@ -7,8 +7,11 @@ import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
+import javax.media.j3d.BoundingSphere;
+import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
@@ -17,6 +20,8 @@ import org.opentrafficsim.draw.core.TextAnimation;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.introspection.DelegateIntrospection;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -27,6 +32,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
+@SuppressWarnings("rawtypes")
 public class NodeAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
 {
     /** */
@@ -35,16 +41,20 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
     /** the Text object to destroy when the animation is destroyed. */
     private Text text;
 
+    /** Ensure that node animations are slightly above lane surface. */
+    public static final double ZOFFSET = 0.01;
+
     /**
      * @param node Node; n
      * @param simulator SimulatorInterface.TimeDoubleUnit; s
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
+    @SuppressWarnings("unchecked")
     public NodeAnimation(final Node node, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NamingException, RemoteException
     {
-        super(node, simulator);
+        super(new ElevatedNode(node), simulator);
         this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 
@@ -70,7 +80,7 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
     public ClonableRenderable2DInterface clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws NamingException, RemoteException
     {
-        // the constructor also constructs the corresponding Text object
+        // the constructor also constructs the corresponding Text object and ElevatedNode
         return new NodeAnimation((Node) newSource, newSimulator);
     }
 
@@ -79,6 +89,61 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
     public final String toString()
     {
         return "NodeAnimation [node=" + super.getSource() + "]";
+    }
+
+    /** Class for elevating the node for animation purposes. */
+    public static class ElevatedNode implements Locatable, DelegateIntrospection
+    {
+        /** the node for introspection. */
+        private final Node node;
+        
+        /** the location of the node to which the animation belongs. */
+        private DirectedPoint location;
+
+        /** the bounds of the node to which the animation belongs. */
+        private Bounds bounds;
+
+        /**
+         * @param node Node; the node to which the animation belongs
+         */
+        public ElevatedNode(final Node node)
+        {
+            super();
+            this.node = node;
+            try
+            {
+                this.location = new DirectedPoint(node.getLocation().x, node.getLocation().y, node.getLocation().z + ZOFFSET);
+                this.bounds = node.getBounds();
+            }
+            catch (RemoteException exception)
+            {
+                CategoryLogger.always().error(exception, "Could not construct elevated node for animation");
+                this.location = new DirectedPoint();
+                this.bounds = new BoundingSphere();
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public DirectedPoint getLocation() throws RemoteException
+        {
+            return this.location;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Bounds getBounds() throws RemoteException
+        {
+            return this.bounds;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Object getParentIntrospectionObject()
+        {
+            return this.node;
+        }
+
     }
 
     /**

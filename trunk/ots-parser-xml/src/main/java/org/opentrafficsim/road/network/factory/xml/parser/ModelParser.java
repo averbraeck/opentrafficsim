@@ -160,6 +160,9 @@ public class ModelParser
      * @param inputParameters InputParameters; input parameters
      * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
      * @param streamMap Map&lt;String, StreamInformation&gt;; stream information
+     * @param <U> a unit
+     * @param <T> a scalar type
+     * @param <K> a parameter type value
      * @return Map&lt;String, ParameterFactory&lt;?&gt;&gt;; parameter factories by model ID
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
@@ -342,6 +345,9 @@ public class ModelParser
      * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
      * @param streamMap Map&lt;String, StreamInformation&gt;; stream information
      * @param parameterFactories Map&lt;String, ParameterFactory&gt;; parameter factories
+     * @param <U> a unit
+     * @param <T> a scalar type
+     * @param <K> a parameter type value
      * @return Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; strategical planner factories by model ID
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
@@ -418,6 +424,12 @@ public class ModelParser
         }
     }
 
+    /**
+     * @param field a field
+     * @param type a class
+     * @param <T> a number type
+     * @return the ParameterTypeNumeric belonging to the field
+     */
     @SuppressWarnings("unchecked")
     private static <T extends Number> ParameterTypeNumeric<T> getParameterTypeNumeric(final String field, final Class<T> type)
     {
@@ -437,6 +449,11 @@ public class ModelParser
         }
     }
 
+    /**
+     * @param gtuTypeId the gtu type
+     * @param network the network
+     * @return the GTUType belonging to the id
+     */
     private static GTUType getGtuType(final String gtuTypeId, final OTSRoadNetwork network)
     {
         if (gtuTypeId == null)

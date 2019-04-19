@@ -53,9 +53,6 @@ public class OTSNode implements Node, Locatable, Serializable
     /** The cached immutable set of links to return. */
     private ImmutableSet<Link> cachedLinks = null;
     
-    /** Ensure that node animations are slightly above lane surface. */
-    public static final double ZOFFSET = 0.01; 
-
     /**
      * Map with connections per GTU type. When this map is null, the all connections that are possible for the GTU type will be
      * included, with the exception of the U-turn. When exceptions are taken into account, the map has to be completely filled
@@ -79,7 +76,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
         this.network = network;
         this.id = id;
-        this.point = new OTSPoint3D(point.x, point.y, point.z + ZOFFSET);
+        this.point = new OTSPoint3D(point.x, point.y, point.z);
 
         this.network.addNode(this);
     }

@@ -48,6 +48,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -396,13 +397,25 @@ public final class ODApplier
                 {
                     try
                     {
-                        if (link.getEndNode().equals(destination))
+                        // if the lane already contains a SinkSensor, skip creating a new one
+                        boolean sinkSensorExists = false;
+                        for (Sensor sensor : lane.getSensors())
                         {
-                            new SinkSensor(lane, lane.getLength(), simulator);
+                            if (sensor instanceof SinkSensor)
+                            {
+                                sinkSensorExists = true;
+                            }
                         }
-                        else if (link.getStartNode().equals(destination))
+                        if (!sinkSensorExists)
                         {
-                            new SinkSensor(lane, Length.ZERO, simulator);
+                            if (link.getEndNode().equals(destination))
+                            {
+                                new SinkSensor(lane, lane.getLength(), simulator);
+                            }
+                            else if (link.getStartNode().equals(destination))
+                            {
+                                new SinkSensor(lane, Length.ZERO, simulator);
+                            }
                         }
                     }
                     catch (NetworkException exception)

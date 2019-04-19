@@ -7,8 +7,21 @@
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
     
     <release version="1.02.01" date="2019-04-19" description="ots-xsd; GTUType, LinkType, LaneType in Defaults">
+     <action dev="averbraeck" type="update">
+        EASTING replaces NORTHING in Scalar3D, Speed3D, Acceleration3D, Clothoid, AngleUnits.
+      </action>
+     <action dev="averbraeck" type="update">
+        DSOL version 3.03.06 to allow for introspection of Maps and ImmutableCollections.
+      </action>
+     <action dev="averbraeck" type="update">
+        NodeAnimation now work with a delegate animation class (new in DSOL 3.03.06) to allow for increasing the
+        Z-value for display, but not increasing it in the Node itself. When introspecting the 
+        NodeAnimation.ElevatedNode, the information of the actual Node that delegated the animation is
+        shown instead.
+      </action>
       <action dev="averbraeck" type="add">
         Extensive work on the xsd files to parse complex files. All categories of the xsd have been changed. 
+        The old parser is still present, and will be removed in one of the future versions.
       </action>
       <action dev="averbraeck" type="remove">
         OvertakingConditions have been removed from the Lane. Overtaking is not something that concerns

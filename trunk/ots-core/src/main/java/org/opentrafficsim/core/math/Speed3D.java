@@ -179,8 +179,8 @@ public class Speed3D implements Serializable
     public final String toString()
     {
         return String.format(Locale.US, "Speed3D %s (%s, theta %s, phi %s)", this.speed, getSpeed(),
-                new Direction(getTheta().getInUnit(DirectionUnit.NORTH_DEGREE), DirectionUnit.NORTH_DEGREE),
-                new Direction(getPhi().getInUnit(DirectionUnit.NORTH_DEGREE), DirectionUnit.NORTH_DEGREE));
+                new Direction(getTheta().getInUnit(DirectionUnit.EAST_DEGREE), DirectionUnit.EAST_DEGREE),
+                new Direction(getPhi().getInUnit(DirectionUnit.EAST_DEGREE), DirectionUnit.EAST_DEGREE));
     }
 
 }

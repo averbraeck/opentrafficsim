@@ -15,13 +15,18 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class StreamInformation
 {
+    /** the stream id. */
     private final String id;
+
+    /** the seed map, mapping replication number to seed. */
     private final Map<Integer, Long> seedMap;
+
+    /** the stream itself; the seed value of 1L will be updated per replication. */
     private final StreamInterface stream = new MersenneTwister(1L);
-    
+
     /**
-     * @param id 
-     * @param seedMap 
+     * @param id the stream id
+     * @param seedMap the seed map, mapping replication number to seed
      */
     public StreamInformation(final String id, final Map<Integer, Long> seedMap)
     {
@@ -30,6 +35,8 @@ public class StreamInformation
         this.stream.setSeed(seedMap.get(1));
     }
 
+    // TODO: make sure the seed map is used by the OTSExperiment / OTSReplication
+    
     /**
      * @return id
      */
@@ -47,4 +54,3 @@ public class StreamInformation
     }
 
 }
-

@@ -183,8 +183,8 @@ public class Acceleration3D implements Serializable
     public final String toString()
     {
         return String.format(Locale.US, "Acceleration3D %s (%s, theta %s, phi %s)", this.acceleration, getAcceleration(),
-                new Direction(getTheta().getInUnit(DirectionUnit.NORTH_DEGREE), DirectionUnit.NORTH_DEGREE),
-                new Direction(getPhi().getInUnit(DirectionUnit.NORTH_DEGREE), DirectionUnit.NORTH_DEGREE));
+                new Direction(getTheta().getInUnit(DirectionUnit.EAST_DEGREE), DirectionUnit.EAST_DEGREE),
+                new Direction(getPhi().getInUnit(DirectionUnit.EAST_DEGREE), DirectionUnit.EAST_DEGREE));
     }
 
 }

@@ -426,7 +426,7 @@ public final class Clothoid
         // line = clothoid(104.1485, 89.037488, 0, 0, 0, -0.04841457, 0, 3.2, 100);
         // System.out.println(line.toPlotterFormat());
         // line = clothoid(10, 10, 5, Math.PI / 8, 0 * -0.03, 0.04, 100, 15, 100);
-        line = clothoid(new OTSPoint3D(10, 10, 5), new Direction(Math.PI / 8, DirectionUnit.NORTH_RADIAN),
+        line = clothoid(new OTSPoint3D(10, 10, 5), new Direction(Math.PI / 8, DirectionUnit.EAST_RADIAN),
                 new LinearDensity(0 * -0.03, LinearDensityUnit.PER_METER), new LinearDensity(0.04, LinearDensityUnit.PER_METER),
                 new Length(100, LengthUnit.METER), new Length(15, LengthUnit.METER), 100);
         System.out.println(OTSGeometryUtil.printCoordinates("#", line, "\n"));
