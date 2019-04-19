@@ -35,9 +35,11 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD.Factory;
+import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions.Option;
@@ -108,13 +110,17 @@ public class DemandParser
      * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
      * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals
      * @param streamMap Map&lt;String, StreamInformation&gt;; stream map
+     * @return List&lt;LaneBasedGTUGenerator&gt;; generators
      * @throws XmlParserException; if the OD contains an inconsistency or error
      */
-    public static void parseDemand(final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator,
-            final List<NETWORKDEMAND> demands, final Map<String, GTUTEMPLATE> gtuTemplates,
-            Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
-            final Map<String, StreamInformation> streamMap) throws XmlParserException
+    public static List<LaneBasedGTUGenerator> parseDemand(final OTSRoadNetwork otsNetwork,
+            final OTSSimulatorInterface simulator, final List<NETWORKDEMAND> demands,
+            final Map<String, GTUTEMPLATE> gtuTemplates, Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
+            final Map<String, String> modelIdReferrals, final Map<String, StreamInformation> streamMap)
+            throws XmlParserException
     {
+        List<LaneBasedGTUGenerator> generators = new ArrayList<>();
+
         IdGenerator idGenerator = new IdGenerator("");
 
         int idCounter = 1;
@@ -177,8 +183,14 @@ public class DemandParser
                 List<Node> destinations = new ArrayList<>();
                 for (DEMAND demand : od.getDEMAND())
                 {
-                    origins.add(otsNetwork.getNode(demand.getORIGIN()));
-                    destinations.add(otsNetwork.getNode(demand.getDESTINATION()));
+                    if (!origins.contains(otsNetwork.getNode(demand.getORIGIN())))
+                    {
+                        origins.add(otsNetwork.getNode(demand.getORIGIN()));
+                    }
+                    if (!destinations.contains(otsNetwork.getNode(demand.getDESTINATION())))
+                    {
+                        destinations.add(otsNetwork.getNode(demand.getDESTINATION()));
+                    }
                 }
 
                 // Create categorization
@@ -405,28 +417,25 @@ public class DemandParser
                 for (GTUTEMPLATE template : gtuTemplates.values())
                 {
                     GTUType gtuType = otsNetwork.getGtuType(template.getGTUTYPE());
-                    Generator<Length> lengthGenerator =
-                            ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
-                    Generator<Length> widthGenerator =
-                            ParseDistribution.parseLengthDist(streamMap, template.getWIDTHDIST());
+                    Generator<Length> lengthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
+                    Generator<Length> widthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getWIDTHDIST());
                     Generator<Speed> maximumSpeedGenerator =
                             ParseDistribution.parseSpeedDist(streamMap, template.getMAXSPEEDDIST());
                     if (template.getMAXACCELERATIONDIST() == null || template.getMAXDECELERATIONDIST() == null)
                     {
-                        templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
-                                maximumSpeedGenerator));
+                        templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
                     }
                     else
                     {
-                        Generator<Acceleration> maxAccelerationGenerator = ParseDistribution
-                                .parseAccelerationDist(streamMap, template.getMAXACCELERATIONDIST());
-                        Generator<Acceleration> maxDecelerationGenerator = ParseDistribution
-                                .parseAccelerationDist(streamMap, template.getMAXDECELERATIONDIST());
-                        templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator,
-                                maximumSpeedGenerator, maxAccelerationGenerator, maxDecelerationGenerator));
+                        Generator<Acceleration> maxAccelerationGenerator =
+                                ParseDistribution.parseAccelerationDist(streamMap, template.getMAXACCELERATIONDIST());
+                        Generator<Acceleration> maxDecelerationGenerator =
+                                ParseDistribution.parseAccelerationDist(streamMap, template.getMAXDECELERATIONDIST());
+                        templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
+                                maxAccelerationGenerator, maxDecelerationGenerator));
                     }
                 }
-                // default global option to integrate defined templates 
+                // default global option to integrate defined templates
                 Factory factory = new Factory(); // DefaultGTUCharacteristicsGeneratorOD factory
                 factory.setTemplates(templates);
                 odOptions.set(ODOptions.GTU_TYPE, factory.create());
@@ -595,10 +604,19 @@ public class DemandParser
                 }
 
                 // Invoke ODApplier
-                Try.execute(() -> ODApplier.applyOD(otsNetwork, odMatrix, simulator, odOptions), XmlParserException.class,
-                        "Simulator time should be zero when parsing an OD.");
+                Map<String, GeneratorObjects> output =
+                        Try.assign(() -> ODApplier.applyOD(otsNetwork, odMatrix, simulator, odOptions),
+                                XmlParserException.class, "Simulator time should be zero when parsing an OD.");
+
+                // Collect generators in output
+                for (GeneratorObjects generatorObject : output.values())
+                {
+                    generators.add(generatorObject.getGenerator());
+                }
             }
         }
+
+        return generators;
     }
 
     /**

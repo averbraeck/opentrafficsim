@@ -59,13 +59,12 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     private Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new HashMap<>();
 
     /** Legal Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane,
-            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility = new HashMap<>();
+    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility =
+            new HashMap<>();
 
     /** Physical Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane,
-            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
-                    new HashMap<>();
+    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
+            new HashMap<>();
 
     /** Cross-section. */
     private TimeStampedObject<SortedSet<RelativeLane>> crossSection;
@@ -389,7 +388,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @param legal boolean; legal, or physical otherwise
      * @param possibilityMap
-     *        Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
+     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; legal
      *            or physical possibility map
      * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section

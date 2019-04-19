@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -25,6 +26,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -35,7 +37,10 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
+import org.opentrafficsim.draw.lane.LaneStructureAnimation;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -56,7 +61,10 @@ import org.xml.sax.XMLReader;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Experiment;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * Parse an XML file for an OTS network, based on the ots-network.xsd definition.
@@ -179,7 +187,7 @@ public final class XmlNetworkLaneParser implements Serializable
                     public void notify(final EventInterface event) throws RemoteException
                     {
                         LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
-                        if (gtu.getId().equals("L49b.A280"))
+                        if (gtu.getId().equals("25"))
                         {
                             try
                             {
@@ -229,7 +237,33 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories =
                 ModelParser.parseModel(otsNetwork, models, inputParameters, parameterTypes, streamMap, parameterFactories);
         Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getSCENARIO(), ots.getNETWORKDEMAND());
-        DemandParser.parseDemand(otsNetwork, simulator, demands, gtuTemplates, factories, modelIdReferrals, streamMap);
+        List<LaneBasedGTUGenerator> generators =
+                DemandParser.parseDemand(otsNetwork, simulator, demands, gtuTemplates, factories, modelIdReferrals, streamMap);
+        // The code below can be used to visualize the LaneStructure of a particular GTU
+        /*-EventListenerInterface listener = new EventListenerInterface()
+        {
+            @Override
+            public void notify(final EventInterface event) throws RemoteException
+            {
+                LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
+                if (gtu.getId().equals("27"))
+                {
+                    try
+                    {
+                        LaneStructureAnimation.visualize(
+                                (RollingLaneStructure) gtu.getTacticalPlanner().getPerception().getLaneStructure(), gtu);
+                    }
+                    catch (ParameterException | ClassCastException exception)
+                    {
+                        SimLogger.always().warn("Could not draw lane structure of GTU.");
+                    }
+                }
+            }
+        };
+        for (LaneBasedGTUGenerator generator : generators)
+        {
+            generator.addListener(listener, LaneBasedGTUGenerator.GTU_GENERATED_EVENT);
+        }*/
 
         List<CONTROL> controls = ots.getCONTROL();
         List<MODELTYPE> modelParameters = ots.getMODEL();

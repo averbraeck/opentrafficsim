@@ -90,6 +90,48 @@ public final class Break
     /**
      * @param perception Perception&lt;?&gt;; perception to obtain gtu from
      * @param id String; GTU id to break on
+     * @param time String; time to break at (or after), in format ss, mm:ss or hh:mm:ss
+     * @param additionalCondition boolean; additional condition
+     */
+    public static void on(final Perception<?> perception, final String id, final String time, final boolean additionalCondition)
+    {
+        on(perception, id, timeFromString(time), additionalCondition);
+    }
+
+    /**
+     * Returns a double representation of a String time.
+     * @param time String; string format, ss, mm:ss or hh:mm:ss
+     * @return double representation of a String time
+     */
+    private static double timeFromString(final String time)
+    {
+        int index = time.indexOf(":");
+        if (index < 0)
+        {
+            return Double.valueOf(time) - 1e-6;
+        }
+        int index2 = time.indexOf(":", index + 1);
+        double h;
+        double m;
+        double s;
+        if (index2 < 0)
+        {
+            h = 0;
+            m = Double.valueOf(time.substring(0, index));
+            s = Double.valueOf(time.substring(index + 1));
+        }
+        else
+        {
+            h = Double.valueOf(time.substring(0, index));
+            m = Double.valueOf(time.substring(index + 1, index2));
+            s = Double.valueOf(time.substring(index2 + 1));
+        }
+        return h * 3600.0 + m * 60.0 + s - 1e-6;
+    }
+
+    /**
+     * @param perception Perception&lt;?&gt;; perception to obtain gtu from
+     * @param id String; GTU id to break on
      * @param time double; time to break at (or after)
      * @param additionalCondition boolean; additional condition
      */
@@ -99,6 +141,17 @@ public final class Break
                 "Trying to break on gtu, but gtu could not be obtained from perception.");
     }
 
+    /**
+     * @param gtu GTU; GTU
+     * @param id String; GTU id to break on
+     * @param time String; time to break at (or after), in format ss, mm:ss or hh:mm:ss
+     * @param additionalCondition boolean; additional condition
+     */
+    public static void on(final GTU gtu, final String id, final String time, final boolean additionalCondition)
+    {
+        on(gtu, id, timeFromString(time), additionalCondition);
+    }
+    
     /**
      * @param gtu GTU; GTU
      * @param id String; GTU id to break on

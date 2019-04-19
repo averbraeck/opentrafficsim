@@ -351,38 +351,41 @@ public final class ConflictBuilder
         }
 
         // Create crossings
-        boolean[] crossed = new boolean[4];
-        Iterator<Intersection> iterator = intersections.iterator();
-        double f1Start = Double.NaN;
-        double f2Start = Double.NaN;
-        double f2End = Double.NaN;
-        while (iterator.hasNext())
+        if (!lane1.getParentLink().equals(lane2.getParentLink())) // tight inner-curves with dedicated Bezier ignored
         {
-            Intersection intersection = iterator.next();
-            // First fraction found is start of conflict
-            if (Double.isNaN(f1Start))
+            boolean[] crossed = new boolean[4];
+            Iterator<Intersection> iterator = intersections.iterator();
+            double f1Start = Double.NaN;
+            double f2Start = Double.NaN;
+            double f2End = Double.NaN;
+            while (iterator.hasNext())
             {
-                f1Start = intersection.getFraction1();
-            }
-            f2Start = Double.isNaN(f2Start) ? intersection.getFraction2() : Math.min(f2Start, intersection.getFraction2());
-            f2End = Double.isNaN(f2End) ? intersection.getFraction2() : Math.max(f2End, intersection.getFraction2());
-            // Flip crossed state of intersecting line combination
-            crossed[intersection.getCombo()] = !crossed[intersection.getCombo()];
-            // If all crossed or all not crossed, end of conflict
-            if ((crossed[0] && crossed[1] && crossed[2] && crossed[3])
-                    || (!crossed[0] && !crossed[1] && !crossed[2] && !crossed[3]))
-            {
-                if (dir2.isMinus())
+                Intersection intersection = iterator.next();
+                // First fraction found is start of conflict
+                if (Double.isNaN(f1Start))
                 {
-                    double f2Temp = f2Start;
-                    f2Start = f2End;
-                    f2End = f2Temp;
+                    f1Start = intersection.getFraction1();
                 }
-                buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start, f2End, gtuType,
-                        simulator, widthGenerator, permitted);
-                f1Start = Double.NaN;
-                f2Start = Double.NaN;
-                f2End = Double.NaN;
+                f2Start = Double.isNaN(f2Start) ? intersection.getFraction2() : Math.min(f2Start, intersection.getFraction2());
+                f2End = Double.isNaN(f2End) ? intersection.getFraction2() : Math.max(f2End, intersection.getFraction2());
+                // Flip crossed state of intersecting line combination
+                crossed[intersection.getCombo()] = !crossed[intersection.getCombo()];
+                // If all crossed or all not crossed, end of conflict
+                if ((crossed[0] && crossed[1] && crossed[2] && crossed[3])
+                        || (!crossed[0] && !crossed[1] && !crossed[2] && !crossed[3]))
+                {
+                    if (dir2.isMinus())
+                    {
+                        double f2Temp = f2Start;
+                        f2Start = f2End;
+                        f2End = f2Temp;
+                    }
+                    buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start, f2End,
+                            gtuType, simulator, widthGenerator, permitted);
+                    f1Start = Double.NaN;
+                    f2Start = Double.NaN;
+                    f2End = Double.NaN;
+                }
             }
         }
 

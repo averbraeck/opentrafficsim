@@ -33,6 +33,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -129,6 +130,7 @@ public final class ConflictUtil
      * @param speedLimitInfo SpeedLimitInfo; speed limit info
      * @param conflictPlans ConflictPlans; set of plans for conflict
      * @param gtu LaneBasedGTU; gtu
+     * @param lane RelativeLane; lane
      * @return acceleration appropriate for approaching the conflicts
      * @throws GTUException in case of an unsupported conflict rule
      * @throws ParameterException if a parameter is not defined or out of bounds
@@ -138,8 +140,8 @@ public final class ConflictUtil
             final PerceptionCollectable<HeadwayConflict, Conflict> conflicts,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final CarFollowingModel carFollowingModel,
             final Length vehicleLength, final Length vehicleWidth, final Speed speed, final Acceleration acceleration,
-            final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGTU gtu)
-            throws GTUException, ParameterException
+            final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGTU gtu,
+            final RelativeLane lane) throws GTUException, ParameterException
     {
 
         conflictPlans.cleanPlans();
@@ -173,7 +175,7 @@ public final class ConflictUtil
                 a = Acceleration.min(a, followConflictingLeaderOnMergeOrSplit(conflict, parameters, carFollowingModel, speed,
                         speedLimitInfo, vehicleWidth));
             }
-            if (conflict.getDistance().lt0())
+            if (conflict.getDistance().lt0() && lane.isCurrent())
             {
                 if (conflict.getConflictType().isCrossing() && !conflict.getConflictPriority().isPriority())
                 {
@@ -185,16 +187,20 @@ public final class ConflictUtil
             }
 
             // indicator if bus
-            if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getGTUType().isOfType(GTUType.DEFAULTS.BUS)
-                    && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
+            if (lane.isCurrent())
             {
-                BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
-                Time actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
-                if (actualDeparture != null
-                        && actualDeparture.si < gtu.getSimulator().getSimulatorTime().si + parameters.getParameter(TI).si)
+                if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule
+                        && gtu.getGTUType().isOfType(GTUType.DEFAULTS.BUS)
+                        && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
-                    // TODO depending on left/right-hand traffic
-                    conflictPlans.setIndicatorIntent(TurnIndicatorIntent.LEFT, conflict.getDistance());
+                    BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
+                    Time actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
+                    if (actualDeparture != null
+                            && actualDeparture.si < gtu.getSimulator().getSimulatorTime().si + parameters.getParameter(TI).si)
+                    {
+                        // TODO depending on left/right-hand traffic
+                        conflictPlans.setIndicatorIntent(TurnIndicatorIntent.LEFT, conflict.getDistance());
+                    }
                 }
             }
 
@@ -566,7 +572,7 @@ public final class ConflictUtil
      * @return whether to stop for this conflict
      * @throws ParameterException if a parameter is not defined
      */
-    @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
+    @SuppressWarnings({ "checkstyle:parameternumber", "checkstyle:methodlength" })
     public static boolean stopForGiveWayConflict(final HeadwayConflict conflict,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Acceleration acceleration,
             final Length vehicleLength, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
