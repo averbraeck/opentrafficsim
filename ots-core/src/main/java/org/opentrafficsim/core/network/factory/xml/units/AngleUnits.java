@@ -34,8 +34,8 @@ public final class AngleUnits implements UNITS
         ANGLE_UNITS.put("deg", DEGREE);
         ANGLE_UNITS.put("rad", RADIAN);
 
-        DIRECTION_UNITS.put("deg", DirectionUnit.NORTH_DEGREE);
-        DIRECTION_UNITS.put("rad", DirectionUnit.NORTH_RADIAN);
+        DIRECTION_UNITS.put("deg", DirectionUnit.EAST_DEGREE);
+        DIRECTION_UNITS.put("rad", DirectionUnit.EAST_RADIAN);
     }
 
     /** Utility class cannot be instantiated. */
@@ -130,7 +130,7 @@ public final class AngleUnits implements UNITS
         {
             double value = Double.parseDouble(sv);
             Direction direction = new Direction(value, u);
-            return new Direction(AngleUtil.normalize(direction).si, DirectionUnit.NORTH_RADIAN);
+            return new Direction(AngleUtil.normalize(direction).si, DirectionUnit.EAST_RADIAN);
         }
         catch (NumberFormatException nfe)
         {

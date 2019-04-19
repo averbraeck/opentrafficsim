@@ -51,7 +51,7 @@ public final class AnimationToggles
      */
     public static void setTextAnimationTogglesFull(final OTSAnimationPanel panel)
     {
-        panel.addToggleAnimationButtonText("Node", OTSNode.class, "Show/hide nodes", true);
+        panel.addToggleAnimationButtonText("Node", NodeAnimation.ElevatedNode.class, "Show/hide nodes", true);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
         panel.addToggleAnimationButtonText("Link", OTSLink.class, "Show/hide links", true);
         panel.addToggleAnimationButtonText("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
@@ -77,7 +77,7 @@ public final class AnimationToggles
      */
     public static void setTextAnimationTogglesStandard(final OTSAnimationPanel panel)
     {
-        panel.addToggleAnimationButtonText("Node", OTSNode.class, "Show/hide nodes", false);
+        panel.addToggleAnimationButtonText("Node", NodeAnimation.ElevatedNode.class, "Show/hide nodes", false);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node Ids", false);
         panel.addToggleAnimationButtonText("Link", OTSLink.class, "Show/hide links", false);
         panel.addToggleAnimationButtonText("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
@@ -101,7 +101,8 @@ public final class AnimationToggles
      */
     public static void setIconAnimationTogglesFull(final OTSAnimationPanel panel)
     {
-        panel.addToggleAnimationButtonIcon("Node", OTSNode.class, "/icons/Node24.png", "Show/hide nodes", true, false);
+        panel.addToggleAnimationButtonIcon("Node", NodeAnimation.ElevatedNode.class, "/icons/Node24.png", "Show/hide nodes",
+                true, false);
         panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false,
                 true);
         panel.addToggleAnimationButtonIcon("Link", OTSLink.class, "/icons/Link24.png", "Show/hide links", true, false);
@@ -138,7 +139,8 @@ public final class AnimationToggles
      */
     public static void setIconAnimationTogglesStandard(final OTSAnimationPanel panel)
     {
-        panel.addToggleAnimationButtonIcon("Node", OTSNode.class, "/icons/Node24.png", "Show/hide nodes", false, false);
+        panel.addToggleAnimationButtonIcon("Node", NodeAnimation.ElevatedNode.class, "/icons/Node24.png", "Show/hide nodes",
+                false, false);
         panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node Ids", false,
                 true);
         panel.addToggleAnimationButtonIcon("Link", OTSLink.class, "/icons/Link24.png", "Show/hide links", false, false);

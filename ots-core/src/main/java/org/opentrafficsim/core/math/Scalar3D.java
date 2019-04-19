@@ -62,7 +62,7 @@ public final class Scalar3D
     public static Direction cartesianToTheta(final double x, final double y, final double z)
     {
         double r = Math.sqrt(x * x + y * y + z * z);
-        return new Direction(Math.acos(z / r), DirectionUnit.NORTH_RADIAN);
+        return new Direction(Math.acos(z / r), DirectionUnit.EAST_RADIAN);
     }
 
     /**
@@ -73,7 +73,7 @@ public final class Scalar3D
      */
     public static Direction cartesianToPhi(final double x, final double y)
     {
-        return new Direction(Math.atan2(y, x), DirectionUnit.NORTH_RADIAN);
+        return new Direction(Math.atan2(y, x), DirectionUnit.EAST_RADIAN);
     }
 
 }

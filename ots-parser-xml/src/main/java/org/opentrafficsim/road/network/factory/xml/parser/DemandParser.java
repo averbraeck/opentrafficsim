@@ -111,7 +111,7 @@ public class DemandParser
      * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals
      * @param streamMap Map&lt;String, StreamInformation&gt;; stream map
      * @return List&lt;LaneBasedGTUGenerator&gt;; generators
-     * @throws XmlParserException; if the OD contains an inconsistency or error
+     * @throws XmlParserException if the OD contains an inconsistency or error
      */
     public static List<LaneBasedGTUGenerator> parseDemand(final OTSRoadNetwork otsNetwork,
             final OTSSimulatorInterface simulator, final List<NETWORKDEMAND> demands,

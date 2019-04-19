@@ -93,7 +93,7 @@ public class Acceleration3DTest
         double phi = Math.PI * 0.3;
         double length = 10;
         a3d = new Acceleration3D(new Acceleration(length, AccelerationUnit.SI),
-                new Direction(theta, DirectionUnit.NORTH_RADIAN), new Direction(phi, DirectionUnit.NORTH_RADIAN));
+                new Direction(theta, DirectionUnit.EAST_RADIAN), new Direction(phi, DirectionUnit.EAST_RADIAN));
         checkAcceleration(a3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));
         assertTrue("toString output contains the class name", a3d.toString().contains("Acceleration3D"));

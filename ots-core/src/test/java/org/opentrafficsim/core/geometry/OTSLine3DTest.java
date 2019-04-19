@@ -1033,8 +1033,8 @@ public class OTSLine3DTest
             }
         }
         // test circle center
-        Direction start = new Direction(Math.PI / 2, DirectionUnit.NORTH_RADIAN);
-        Direction end = new Direction(-Math.PI / 2, DirectionUnit.NORTH_RADIAN);
+        Direction start = new Direction(Math.PI / 2, DirectionUnit.EAST_RADIAN);
+        Direction end = new Direction(-Math.PI / 2, DirectionUnit.EAST_RADIAN);
         for (double radius : new double[] {1e16, 1e12, 1e9, 1e6, 1e3, 1, 0.1, 1e-3, 1e-6, 1e-9, 1e-12})
         {
             for (int n : new int[] {9, 10, 901, 1000})
