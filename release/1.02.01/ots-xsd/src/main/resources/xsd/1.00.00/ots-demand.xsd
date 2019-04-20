@@ -1,0 +1,93 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
+
+  <xsd:include schemaLocation="ots-definitions.xsd" />
+  <xsd:include schemaLocation="ots-types.xsd" />
+
+  <xsd:element name="OD">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="GLOBALTIME" minOccurs="0" maxOccurs="1" />
+        <xsd:element name="CATEGORY" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="DEMAND" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="LEVEL" minOccurs="0" maxOccurs="unbounded" />
+            </xsd:sequence>
+            <xsd:attribute name="ORIGIN" type="xsd:string" use="required" />
+            <xsd:attribute name="DESTINATION" type="xsd:string" use="required" />
+            <xsd:attribute name="CATEGORY" type="xsd:string" use="optional" />
+            <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
+            <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" />
+            <xsd:attribute ref="xml:base" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:string" use="optional" />
+      <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
+      <xsd:attribute name="START" type="xsd:dateTime" use="optional" />
+      <xsd:attribute name="GLOBALFACTOR" type="POSITIVEFACTOR" use="optional" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <!-- ================================================================================================== -->
+  <!-- ================================================= TYPES ========================================== -->
+  <!-- ================================================================================================== -->
+
+  <xsd:element name="GLOBALTIME">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="TIME" minOccurs="2" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="VALUE" type="TIMETYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="TIME">
+    <xsd:complexType>
+      <xsd:attribute name="VALUE" type="TIMETYPE" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="CATEGORY">
+    <xsd:complexType>
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+      <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
+      <xsd:attribute name="LANE" type="xsd:string" use="optional" />
+      <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <!-- Either a factor, or veh per time unit. -->
+  <xsd:element name="LEVEL">
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="LEVELTYPE">
+          <xsd:attribute name="TIME" type="TIMETYPE" use="optional" />
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:simpleType name="LEVELTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(\d*(\.\d\d*)?\%?)|\d+\.?\d*\s*veh(\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week))?" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="POSITIVEFACTOR">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d*(\.\d\d*)?\%?" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>
