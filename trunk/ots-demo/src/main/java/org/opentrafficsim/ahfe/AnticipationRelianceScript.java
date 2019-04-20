@@ -9,9 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.naming.NamingException;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -43,13 +40,11 @@ import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
@@ -130,7 +125,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.object.Distraction;
 import org.opentrafficsim.road.network.lane.object.Distraction.TrapezoidProfile;
@@ -141,9 +136,7 @@ import org.opentrafficsim.road.network.sampling.data.LeaderId;
 import org.opentrafficsim.road.network.sampling.data.ReactionTime;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
-import org.xml.sax.SAXException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
@@ -310,17 +303,9 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
         // Network
         InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
-        XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(sim);
         OTSRoadNetwork network = new OTSRoadNetwork("Distraction", true);
-        try
-        {
-            nlp.build(stream, network, false);
-        }
-        catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                | OTSGeometryException | ValueException | ParameterException | SimRuntimeException exception)
-        {
-            exception.printStackTrace();
-        }
+        XmlNetworkLaneParser.build(stream, network, sim);
+
         new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000),
                 sim, new TrapezoidProfile(0.2, Length.createSI(-400), Length.createSI(200), Length.createSI(400)));
 
