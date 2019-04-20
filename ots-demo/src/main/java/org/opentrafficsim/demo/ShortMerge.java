@@ -85,7 +85,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -237,9 +237,8 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
                 this.network = new OTSRoadNetwork("ShortMerge", true);
-                nlp.build(stream, this.network, false);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
 
                 addGenerator();
 
