@@ -30,7 +30,7 @@ import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
@@ -474,12 +474,9 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
             this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
-
-                InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
-                // URL stream = URLResource.getResource("./Network.xml"); // Running Jar
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
+                InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
                 this.network = new OTSRoadNetwork("AHFE", true);
-                nlp.build(stream, this.network, true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
 
                 // Space-time regions for sampler
                 LinkData linkData = new LinkData((CrossSectionLink) this.network.getLink("LEFTIN"));
