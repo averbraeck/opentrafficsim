@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+
+  <!-- http://www.w3.org/2009/01/xml.xsd -->
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
+  <!-- http://www.w3.org/2001/xinclude.xsd -->
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="../ref/xinclude.xsd" />
+
+  <xsd:include schemaLocation="ots-types.xsd" />
+
+  <!-- TODO: parts of a model depending on GTU type, or with a distribution (e.g. 25% overestimates, 75% underestimates). -->
+  <!-- TODO: differences based on scenario -->
+
+  <xsd:element name="MODEL" type="MODELTYPE" />
+
+  <xsd:element name="PARAMETERS">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="STRING" type="PARAMETERTYPESTRING" />
+          <xsd:element name="ACCELERATION" type="PARAMETERTYPEACCELERATION" />
+          <xsd:element name="BOOLEAN" type="PARAMETERTYPEBOOLEAN" />
+          <xsd:element name="CLASS" type="PARAMETERTYPECLASS" />
+          <xsd:element name="DOUBLE" type="PARAMETERTYPEDOUBLE" />
+          <!-- xsd:element name="FLOAT" type="PARAMETERTYPEFLOAT" />
+          <xsd:element name="LONG" type="PARAMETERTYPELONG" / -->
+          <xsd:element name="DURATION" type="PARAMETERTYPEDURATION" />
+          <xsd:element name="FRACTION" type="PARAMETERTYPEFRACTION" />
+          <xsd:element name="FREQUENCY" type="PARAMETERTYPEFREQUENCY" />
+          <xsd:element name="INTEGER" type="PARAMETERTYPEINTEGER" />
+          <xsd:element name="LENGTH" type="PARAMETERTYPELENGTH" />
+          <xsd:element name="LINEARDENSITY" type="PARAMETERTYPELINEARDENSITY" />
+          <xsd:element name="SPEED" type="PARAMETERTYPESPEED" />
+        </xsd:choice>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="MODELTYPE">
+    <xsd:sequence>
+
+      <xsd:element name="MODELPARAMETERS" minOccurs="0" maxOccurs="1">
+        <xsd:complexType>
+          <xsd:choice minOccurs="1" maxOccurs="unbounded">
+            <xsd:element name="STRING">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERSTRING">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="ACCELERATION">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERACCELERATION">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="ACCELERATIONDIST">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERACCELERATIONDIST">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="BOOLEAN">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERBOOLEAN">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="CLASS">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERCLASS">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="DOUBLE">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERDOUBLE">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="DOUBLEDIST">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERDOUBLEDIST">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="DURATION">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERDURATION">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="DURATIONDIST">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERDURATIONDIST">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="FRACTION">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERFRACTION">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="FREQUENCY">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERFREQUENCY">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="FREQUENCYDIST">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERFREQUENCYDIST">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="INTEGER">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERINTEGER">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="INTEGERDIST">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERINTEGERDIST">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="LENGTH">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERLENGTH">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="LENGTHDIST">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERLENGTHDIST">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="LINEARDENSITY">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERLINEARDENSITY">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="LINEARDENSITYDIST">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERLINEARDENSITYDIST">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="SPEED">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERSPEED">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="SPEEDDIST">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="PARAMETERSPEEDDIST">
+                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="STRATEGICALPLANNER" minOccurs="0">
+        <xsd:complexType>
+          <xsd:choice>
+
+            <!-- Lane-based strategical route planner -->
+            <xsd:element name="ROUTE">
+              <xsd:complexType>
+                <xsd:choice>
+                  <xsd:element name="NONE" />
+                  <xsd:element name="SHORTEST" />
+                </xsd:choice>
+              </xsd:complexType>
+            </xsd:element>
+
+            <!-- Other strategical planners here -->
+
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="TACTICALPLANNER" minOccurs="0">
+        <xsd:complexType>
+          <xsd:choice>
+
+            <!-- LMRS -->
+            <xsd:element name="LMRS">
+              <xsd:complexType>
+                <xsd:sequence>
+
+                  <!-- Car-following model -->
+                  <xsd:element name="CARFOLLOWINGMODEL" type="CARFOLLOWINGMODELTYPE" minOccurs="0" />
+
+                  <!-- Basic behavioral components -->
+                  <xsd:element name="SYNCHRONIZATION" minOccurs="0" default="PASSIVE">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        DEADEND: stop for dead-end during synchronization. PASSIVE
+                        (default):
+                        follow first leader in target lane. ALIGNGAP: align to middle of adjacent gap. ACTIVE:
+                        actively
+                        consider whether gaps can be reached in time (not advised).
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="DEADEND|PASSIVE|PASSIVEMOVING|ALIGNGAP|ACTIVE" />
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:element>
+                  <xsd:element name="COOPERATION" minOccurs="0">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        PASSIVE (default): follow potential lane changer.
+                        PASSIVEMOVING:
+                        follow potential lane changer except at very low ego-speed. ACTIVE: actively consider
+                        whether the
+                        potential lane changer can make the gap.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="PASSIVE|PASSIVEMOVING|ACTIVE" />
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:element>
+                  <xsd:element name="GAPACCEPTANCE" minOccurs="0">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        INFORMED: aware of desired headway of potential follower.
+                        EGOHEADWAY (default): potential follower evaluated with own desired headway.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="INFORMED|EGOHEADWAY" />
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:element>
+                  <xsd:element name="TAILGATING" minOccurs="0">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        NONE (default): no tailgating. RHOONLY: pressure parameter
+                        affects
+                        other traffic, ego headway not affected. PRESSURE: ego headway and surrounding traffic affected.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="NONE|RHOONLY|PRESSURE" />
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:element>
+
+                  <!-- Lane change incentives -->
+                  <xsd:element name="MANDATORYINCENTIVES" minOccurs="0">
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:element name="INCENTIVE" minOccurs="0" maxOccurs="unbounded">
+                          <xsd:annotation>
+                            <xsd:documentation source="description">
+                              ROUTE: route and infrastructure. GETINLANE: earlier
+                              lane
+                              change when traffic on target lane is slow. BUSSTOP: for scheduled busses.
+                            </xsd:documentation>
+                          </xsd:annotation>
+                          <xsd:complexType>
+                            <xsd:simpleContent>
+                              <xsd:restriction base="CLASSATTRIBUTETYPE">
+                                <xsd:pattern value="CLASS|ROUTE|GETINLANE|BUSSTOP" />
+                              </xsd:restriction>
+                            </xsd:simpleContent>
+                          </xsd:complexType>
+                        </xsd:element>
+                      </xsd:sequence>
+                    </xsd:complexType>
+                  </xsd:element>
+                  <xsd:element name="VOLUNTARYINCENTIVES" minOccurs="0">
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:element name="INCENTIVE" minOccurs="0" maxOccurs="unbounded">
+                          <xsd:annotation>
+                            <xsd:documentation source="description">
+                              KEEP: keep right. SPEEDWITHCOURTESY: based on
+                              anticipated speed, and potential lane changers. COURTESY: get or stay out of the way for lane
+                              change desire of others. SOCIOSPEED: get or stay out of the way for desired speed of others.
+                              STAYRIGHT: incentive for trucks to stay on the right-most two lanes, interpreted in line with
+                              the
+                              route.
+                            </xsd:documentation>
+                          </xsd:annotation>
+                          <xsd:complexType>
+                            <xsd:simpleContent>
+                              <xsd:restriction base="CLASSATTRIBUTETYPE">
+                                <xsd:pattern value="CLASS|KEEP|SPEEDWITHCOURTESY|COURTESY|SOCIOSPEED|STAYRIGHT" />
+                              </xsd:restriction>
+                            </xsd:simpleContent>
+                          </xsd:complexType>
+                        </xsd:element>
+                      </xsd:sequence>
+                    </xsd:complexType>
+                  </xsd:element>
+
+                  <!-- Acceleration incentives -->
+                  <xsd:element name="ACCELERATIONINCENTIVES" minOccurs="0">
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:element name="INCENTIVE" minOccurs="0" maxOccurs="unbounded">
+                          <xsd:annotation>
+                            <xsd:documentation source="description">
+                              BUSSTOP: for scheduled busses to stop. CONFLICTS:
+                              consider intersection conflicts. SPEEDLIMITTRANSITION: decelerate for lower speed limit ahead.
+                              TRAFFICLIGHTS: consider traffic lights. NORIGHTOVERTAKE: follow left leader, in some
+                              circumstances.
+                            </xsd:documentation>
+                          </xsd:annotation>
+                          <xsd:complexType>
+                            <xsd:simpleContent>
+                              <xsd:restriction base="CLASSATTRIBUTETYPE">
+                                <xsd:pattern value="BUSSTOP|CONFLICTS|SPEEDLIMITTRANSITION|TRAFFICLIGHTS|NORIGHTOVERTAKE" />
+                              </xsd:restriction>
+                            </xsd:simpleContent>
+                          </xsd:complexType>
+                        </xsd:element>
+                      </xsd:sequence>
+                    </xsd:complexType>
+                  </xsd:element>
+
+                  <!-- Perception -->
+                  <xsd:element name="PERCEPTION" type="PERCEPTIONTYPE" minOccurs="0" />
+
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+
+            <!-- Other tactical planners here -->
+
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+
+    </xsd:sequence>
+    <xsd:attribute name="ID" type="xsd:string" />
+    <xsd:attribute name="PARENT" type="xsd:string" use="optional" />
+  </xsd:complexType>
+
+  <!-- Car-following model type for use in different tactical planners -->
+  <xsd:complexType name="CARFOLLOWINGMODELTYPE">
+    <xsd:choice>
+
+      <!-- IDM -->
+      <xsd:element name="IDM" type="CARFOLLOWINGMODELHEADWAYSPEEDTYPE" />
+
+      <!-- IDM+ -->
+      <xsd:element name="IDMPLUS" type="CARFOLLOWINGMODELHEADWAYSPEEDTYPE" />
+
+      <!-- Other car-following models here -->
+
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:complexType name="CARFOLLOWINGMODELHEADWAYSPEEDTYPE">
+    <xsd:sequence>
+      <xsd:element name="DESIREDHEADWAYMODEL" minOccurs="0">
+        <xsd:complexType>
+          <xsd:choice>
+            <xsd:element name="IDM" />
+            <xsd:element name="CLASS" type="CLASSNAMETYPE" />
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="DESIREDSPEEDMODEL" type="DESIREDSPEEDMODELTYPE" minOccurs="0" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="DESIREDSPEEDMODELTYPE">
+    <xsd:choice>
+      <xsd:element name="IDM" />
+      <xsd:element name="SOCIO" type="DESIREDSPEEDMODELTYPE">
+        <xsd:annotation>
+          <xsd:documentation source="description">
+            SOCIO wraps another desired speed model and adapts it with social
+            consideration.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CLASS" type="CLASSNAMETYPE" />
+    </xsd:choice>
+  </xsd:complexType>
+
+  <!-- Perception type for use in different tactical planners -->
+  <xsd:complexType name="PERCEPTIONTYPE">
+    <xsd:sequence>
+
+      <xsd:element name="CATEGORY" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="description">
+            CLASS: category by class name, should have LanePerception as constructor
+            parameter, and optionally a second HeadwayGtuType parameter. BUSSTOP: perceive bus stops for scheduled busses.
+            INFRASTRUCTURE: infrastructure. INTERSECTION: conflicts and traffic lights. NEIGHBORS: surrounding GTUs. TRAFFIC:
+            speed and density on lanes.
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:restriction base="CLASSATTRIBUTETYPE">
+              <xsd:pattern value="CLASS|EGO|BUSSTOP|INFRASTRUCTURE|INTERSECTION|NEIGHBORS|TRAFFIC" />
+            </xsd:restriction>
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="HEADWAYGTUTYPE" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="description">
+            WRAP: perfect perception. PERCEIVED: imperfect (delayed) perception with
+            estimation and anticipation.
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:choice>
+            <xsd:element name="WRAP" />
+            <xsd:element name="PERCEIVED">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="ESTIMATION">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        Estimation entails perfect (NONE) or under- or overestimation
+                        (UNDERESTIMATION, OVERESTIMATION) of the delayed speed and headway.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="NONE|UNDERESTIMATION|OVERESTIMATION" />
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:element>
+                  <xsd:element name="ANTICIPATION">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        Anticipation entails NONE, CONSTANTSPEED or
+                        CONSTANTACCELERATION, where the latter two anticipate to compensate the delay.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="NONE|CONSTANTSPEED|CONSTANTACCELERATION" />
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="MENTAL" minOccurs="0">
+        <xsd:complexType>
+          <xsd:choice>
+
+            <!-- Fuller -->
+            <xsd:element name="FULLER">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="TASK" type="CLASSNAMETYPE" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        Implementations of Task with constructor without input.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                  </xsd:element>
+                  <xsd:element name="BEHAVIORALADAPTATION" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        Implementations of BehavioralAdaptation with constructor
+                        without input (value CLASS, with CLASS attribute), or a default. SITUATIONALAWARENESS: sets parameters
+                        for situational awareness and reaction time. HEADWAY: increases the headway with high task demand.
+                        SPEED: decreases speed with high task demand.
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:simpleContent>
+                        <xsd:restriction base="CLASSATTRIBUTETYPE">
+                          <xsd:pattern value="CLASS|SITUATIONALAWARENESS|HEADWAY|SPEED" />
+                        </xsd:restriction>
+                      </xsd:simpleContent>
+                    </xsd:complexType>
+                  </xsd:element>
+                  <xsd:element name="TASKMANAGER" minOccurs="0">
+                    <xsd:annotation>
+                      <xsd:documentation source="description">
+                        SUMMATIVE: add task demand of tasks. ANTICIPATIONRELIANCE:
+                        rely on anticipation to reduce task demand of secondary task(s).
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                      <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="SUMMATIVE|ANTICIPATIONRELIANCE" />
+                      </xsd:restriction>
+                    </xsd:simpleType>
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+
+            <!-- Other mental modules here -->
+
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:attributeGroup name="INHERITANCE">
+    <xsd:attribute name="INHERITANCE" type="xsd:string">
+    </xsd:attribute>
+  </xsd:attributeGroup>
+
+  <xsd:complexType name="CLASSATTRIBUTETYPE">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="optional" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+</xsd:schema>
