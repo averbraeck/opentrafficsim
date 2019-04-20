@@ -1,0 +1,30 @@
+                   -----------------------
+                   OTS-SWING
+                   -----------------------
+                   December, 2018
+                   -----------------------
+                   
+OTS - Open Traffic Simulation Swing GUI classes.
+
+	The ots-swing project provides classes to run simulation models using a Swing GUI. It builds on the dsol-swing project
+	that already provides all major classes to control and run simulations and animations using Swing. The main components are:  
+
+    * GUI components for simulation control.
+    
+    * GUI components for animation.
+    
+    * GUI components for graphs.
+      
+    []
+
+======
+
+	OpenTrafficSim has an open source BSD 3-clause license.
+
+    * Third party components used in OpenTrafficSim can not have a license that is more restrictive than BSD, Apache, MIT, LGPL, Eclipse.
+
+    * OpenTrafficSim can be incorporated in part or in full in other products for any use (educational, commercial, whatever).
+
+    * OpenTrafficSim may be extended, evolved by anyone into anything else for any purpose.
+	
+	[]
