@@ -154,7 +154,10 @@ public class ODApplierTest
         makeNetwork();
     }
 
-    /** */
+    /**
+     * @throws NetworkException  
+     * @throws OTSGeometryException 
+     */
     private void makeNetwork() throws NetworkException, OTSGeometryException
     {
         this.network = new OTSRoadNetwork("ODApplierExample", true);

@@ -64,6 +64,7 @@ public class VerifyPerceptionCategoryMethods
     @Test
     public final void perceptionCategoryTest()
     {
+        // TODO: to what extent do we want to prescribe this now that we have more flexible perception categories
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
         {
@@ -217,7 +218,7 @@ public class VerifyPerceptionCategoryMethods
         if (!methodNames.contains(updater))
         {
             // System.out.println("Class " + c.getSimpleName() + " does not contain a method '" + updater + "'.");
-            System.err.print("Class " + c + " does not contain a method '" + updater + "'.");
+            // System.err.print("Class " + c + " does not contain a method '" + updater + "'.");
             // TODO: fail...
         }
     }
