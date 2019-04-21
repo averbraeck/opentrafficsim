@@ -14,10 +14,8 @@ import java.util.List;
 import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -31,9 +29,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element ref="{http://www.opentrafficsim.org/ots}LINKTYPE" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="GTUCOLORER" type="{http://www.opentrafficsim.org/ots}GTUCOLORERTYPE" maxOccurs="unbounded"/&gt;
  *       &lt;/sequence&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -43,77 +40,48 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "linktype"
+    "gtucolorer"
 })
-@XmlRootElement(name = "LINKTYPES")
+@XmlRootElement(name = "GTUCOLORERS")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
-public class LINKTYPES implements Serializable
+public class GTUCOLORERS
+    implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlElement(name = "LINKTYPE")
+    @XmlElement(name = "GTUCOLORER", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
-    protected List<LINKTYPE> linktype;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
-    protected String base;
+    protected List<GTUCOLORERTYPE> gtucolorer;
 
     /**
-     * Gets the value of the linktype property.
+     * Gets the value of the gtucolorer property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the linktype property.
+     * This is why there is not a <CODE>set</CODE> method for the gtucolorer property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getLINKTYPE().add(newItem);
+     *    getGTUCOLORER().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link LINKTYPE }
+     * {@link GTUCOLORERTYPE }
      * 
      * 
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
-    public List<LINKTYPE> getLINKTYPE() {
-        if (linktype == null) {
-            linktype = new ArrayList<LINKTYPE>();
+    public List<GTUCOLORERTYPE> getGTUCOLORER() {
+        if (gtucolorer == null) {
+            gtucolorer = new ArrayList<GTUCOLORERTYPE>();
         }
-        return this.linktype;
-    }
-
-    /**
-     * Gets the value of the base property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
-    }
-
-    /**
-     * Sets the value of the base property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+        return this.gtucolorer;
     }
 
 }
