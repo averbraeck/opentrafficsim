@@ -13,21 +13,27 @@ import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for PARAMETERFREQUENCYDIST complex type.
+ * <p>Java class for LAYERTOGGLETYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PARAMETERFREQUENCYDIST"&gt;
+ * &lt;complexType name="LAYERTOGGLETYPE"&gt;
  *   &lt;complexContent&gt;
- *     &lt;extension base="{http://www.opentrafficsim.org/ots}FREQUENCYDISTTYPE"&gt;
- *       &lt;attribute name="ID" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *     &lt;/extension&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="ID" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="TOGGLE" use="required"&gt;
+ *         &lt;simpleType&gt;
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *             &lt;pattern value="ON|OFF|INVISIBLE"/&gt;
+ *           &lt;/restriction&gt;
+ *         &lt;/simpleType&gt;
+ *       &lt;/attribute&gt;
+ *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -35,21 +41,20 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PARAMETERFREQUENCYDIST")
-@XmlSeeAlso({
-    org.opentrafficsim.xml.generated.MODELTYPE.MODELPARAMETERS.FREQUENCYDIST.class
-})
+@XmlType(name = "LAYERTOGGLETYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
-public class PARAMETERFREQUENCYDIST
-    extends FREQUENCYDISTTYPE
+public class LAYERTOGGLETYPE
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlAttribute(name = "ID")
+    @XmlAttribute(name = "ID", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
     protected String id;
+    @XmlAttribute(name = "TOGGLE", required = true)
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
+    protected String toggle;
 
     /**
      * Gets the value of the id property.
@@ -75,6 +80,32 @@ public class PARAMETERFREQUENCYDIST
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
     public void setID(String value) {
         this.id = value;
+    }
+
+    /**
+     * Gets the value of the toggle property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
+    public String getTOGGLE() {
+        return toggle;
+    }
+
+    /**
+     * Sets the value of the toggle property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-04-21T03:35:53+02:00", comments = "JAXB RI v2.3.0")
+    public void setTOGGLE(String value) {
+        this.toggle = value;
     }
 
 }
