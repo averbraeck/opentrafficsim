@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
@@ -45,7 +46,8 @@
         <xsd:element name="ODOPTIONSITEM" maxOccurs="unbounded">
           <xsd:annotation>
             <xsd:documentation source="description">
-              Defines options on a GLOBAL, LINKTYPE, ORIGIN (node) or LANE level. The
+              Defines options on a GLOBAL, LINKTYPE, ORIGIN (node) or LANE
+              level. The
               most
               specific level is always applicable for a vehicle generator.
             </xsd:documentation>
@@ -86,7 +88,8 @@
               <xsd:element name="NOLANECHANGE" type="LENGTHTYPE" minOccurs="0">
                 <xsd:annotation>
                   <xsd:documentation source="description">
-                    Initial distance over which GTUs are not allowed to change lane,
+                    Initial distance over which GTUs are not allowed to change
+                    lane,
                     to
                     prevent interacting with generation on adjacent lanes.
                   </xsd:documentation>
@@ -119,7 +122,8 @@
                     <xsd:element name="STATE" maxOccurs="unbounded">
                       <xsd:annotation>
                         <xsd:documentation source="description">
-                          Defines auto-correlation of a GTU type. The parent type
+                          Defines auto-correlation of a GTU type. The parent
+                          type
                           creates a
                           group of correlated GTU types under a single parent.
                         </xsd:documentation>
@@ -136,7 +140,8 @@
               <xsd:element name="LANEBIASES" minOccurs="0">
                 <xsd:annotation>
                   <xsd:documentation source="description">
-                    Influences the preferred lateral position of generated GTU's.
+                    Influences the preferred lateral position of generated
+                    GTU's.
                   </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -144,9 +149,11 @@
                     <xsd:element name="LANEBIAS" maxOccurs="unbounded">
                       <xsd:annotation>
                         <xsd:documentation source="description">
-                          Sets the preferred lateral position for given GTU type
+                          Sets the preferred lateral position for given GTU
+                          type
                           either based
-                          on speed, or a fixed lateral position (between 0 and 1 of the road width, in terms of
+                          on speed, or a fixed lateral position (between 0 and 1 of the road width, in
+                          terms of
                           lanes).
                         </xsd:documentation>
                       </xsd:annotation>
@@ -210,7 +217,13 @@
       <!-- LINK + LANE should be unique -->
       <xsd:attribute name="LINK" type="xsd:string" use="required" />
       <xsd:attribute name="LANE" type="xsd:string" use="required" />
-      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
+      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required">
+        <xsd:annotation>
+          <xsd:documentation source="description">
+            GTUDIRECTIONTYPE: DIR_PLUS|DIR_MINUS
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
     </xsd:complexType>
   </xsd:element>
@@ -220,7 +233,13 @@
     <xsd:complexType>
       <xsd:attribute name="LINK" type="xsd:string" use="required" />
       <xsd:attribute name="LANE" type="xsd:string" use="required" />
-      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
+      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required">
+        <xsd:annotation>
+          <xsd:documentation source="description">
+            GTUDIRECTIONTYPE: DIR_PLUS|DIR_MINUS
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
     </xsd:complexType>
   </xsd:element>
@@ -242,13 +261,19 @@
       </xsd:sequence>
       <xsd:attribute name="LINK" type="xsd:string" use="required" />
       <xsd:attribute name="LANE" type="xsd:string" use="required" />
-      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required" />
+      <xsd:attribute name="DIRECTION" type="GTUDIRECTIONTYPE" use="required">
+        <xsd:annotation>
+          <xsd:documentation source="description">
+            GTUDIRECTIONTYPE: DIR_PLUS|DIR_MINUS
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
       <xsd:attribute name="URI" type="xsd:anyURI" use="required" />
       <!-- TODO: Add inline list. -->
     </xsd:complexType>
   </xsd:element>
-  
+
   <xsd:element name="NETWORKDEMAND">
     <xsd:complexType>
       <xsd:sequence>
