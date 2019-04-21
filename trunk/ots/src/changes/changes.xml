@@ -6,6 +6,18 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
     
+    <release version="1.02.02" date="1019-04-XX" description="xsd-parser finished; research projects moved out">
+      <action dev="averbraeck" type="update">
+        On a SHORTESTROUTE, either DISTANCECOST or TIMECOST or both should be present now.
+      </action>
+      <action dev="averbraeck" type="update">
+        All demos that use an xml-parser in ots-demo have been upgraded to the latest xml-format and parser.
+      </action>
+      <action dev="averbraeck" type="update">
+        DJUNITS version updated to 3.01.03.
+      </action>
+    </release>
+    
     <release version="1.02.01" date="2019-04-19" description="ots-xsd; GTUType, LinkType, LaneType in Defaults">
      <action dev="averbraeck" type="update">
         EASTING replaces NORTHING in Scalar3D, Speed3D, Acceleration3D, Clothoid, AngleUnits.
