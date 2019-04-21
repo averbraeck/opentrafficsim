@@ -60,7 +60,13 @@
   <xsd:element name="COMPATIBILITY">
     <xsd:complexType>
       <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-      <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="required" />
+      <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="required">
+        <xsd:annotation>
+          <xsd:documentation source="description">
+            DRIVINGDIRECTIONTYPE: FORWARD|BACKWARD|BOTH|NONE
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
@@ -221,8 +227,7 @@
       <xsd:documentation source="description">
         Road layout. Lanes to the right of the design line have negative
         offset. Those to the right have positive offset. When not specifying offsets, sequence
-        the lines from right (most
-        negative) to left (most positive).
+        the lines from right (most negative) to left (most positive).
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
