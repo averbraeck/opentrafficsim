@@ -114,6 +114,7 @@
       <xsd:attribute name="OFFSETEND" type="LENGTHTYPE" use="optional" default="0.0 m" />
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" default="KEEPRIGHT" />
       <xsd:attribute name="PRIORITY" type="PRIORITYTYPE" use="optional" />
+      <xsd:attribute name="FIXGRADUALOFFSET" type="xsd:boolean" use="optional" default="false" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
