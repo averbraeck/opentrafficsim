@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.LaneKeepingType;
 
 /**
@@ -36,8 +37,10 @@ public class LaneKeepingAdapter extends XmlAdapter<String, LaneKeepingType>
         }
         catch (Exception exception)
         {
+            CategoryLogger.always().error(exception, "Problem parsing LaneKeeping '" + field + "'");
             throw new IllegalArgumentException("Error parsing LaneKeeping " + field, exception);
         }
+        CategoryLogger.always().error("Problem parsing LaneKeeping '" + field + "'");
         throw new IllegalArgumentException("Error parsing LaneKeeping " + field);
     }
 

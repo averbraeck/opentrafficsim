@@ -33,7 +33,7 @@ public class LengthAdapterTest
     @Test
     public void testSignedLengthAdapter() throws JAXBException
     {
-        SignedLengthAdapter lengthAdapter = new SignedLengthAdapter();
+        LengthAdapter lengthAdapter = new LengthAdapter();
 
         for (int i = 0; i < this.units.length; i++)
         {
@@ -68,7 +68,7 @@ public class LengthAdapterTest
     @Test
     public void testLengthAdapter() throws JAXBException
     {
-        LengthAdapter lengthAdapter = new LengthAdapter();
+        PositiveLengthAdapter lengthAdapter = new PositiveLengthAdapter();
 
         for (int i = 0; i < this.units.length; i++)
         {

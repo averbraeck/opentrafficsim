@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.net.URL;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -19,7 +19,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.demo.conflict.TestNetworkDemo.TestNetworkModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
@@ -114,9 +114,9 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
         {
             try
             {
-                URL url = URLResource.getResource("/conflict/Test-Network-14.xml");
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
-                this.network = nlp.build(url, true);
+                InputStream stream = URLResource.getResourceAsStream("/conflict/Test-Network-14.xml");
+                this.network = new OTSRoadNetwork("Test-Network-14", true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
 
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 // ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_D3b-D3a"),

@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * PerLengthAdapter converts between the XML String for a LinearDensity and the DJUnits LinearDensity. <br>
@@ -19,7 +20,15 @@ public class PerLengthAdapter extends XmlAdapter<String, LinearDensity>
     @Override
     public LinearDensity unmarshal(final String field) throws IllegalArgumentException
     {
-        return LinearDensity.valueOf(field);
+        try
+        {
+            return LinearDensity.valueOf(field);
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing PerLength (LinearDensity) '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */

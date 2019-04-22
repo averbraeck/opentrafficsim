@@ -14,7 +14,23 @@
         All demos that use an xml-parser in ots-demo have been upgraded to the latest xml-format and parser.
       </action>
       <action dev="averbraeck" type="update">
-        DJUNITS version updated to 3.01.03.
+        DJUNITS version updated to 3.01.04.
+      </action>
+      <action dev="averbraeck" type="update">
+        Explicit error messages added to the XML adapters, as JAXB silently ignores the exceptions. 
+      </action>
+      <action dev="averbraeck" type="update">
+        All ROUTE information moved to the NETWORKDEMAND tag instead of the NETWORK tag. 
+      </action>
+      <action dev="averbraeck" type="update">
+        xml code in the ots-demo project updated to the latest xsd-standard. 
+      </action>
+      <action dev="averbraeck" type="update">
+        In the xsds, SIGNEDLENGTHTYPE is now LENGTHTYPE. The old LENGTHTYPE (which had to be non-negative) is now called
+        POSITIVELENGTHTYPE.  
+      </action>
+      <action dev="averbraeck" type="update">
+        In the xml NETWORK tag: NODE, LINK and CONNECTOR entries can be mixed to allow for subnetworks to be kept together. 
       </action>
     </release>
     

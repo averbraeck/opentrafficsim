@@ -2,7 +2,7 @@ package org.opentrafficsim.demo.conflictAndControl;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.net.URL;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +28,7 @@ import org.opentrafficsim.demo.conflictAndControl.DemoTrafcodAndTurbo.TrafCODMod
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -150,9 +150,10 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
         {
             try
             {
-                URL url = URLResource.getResource("/conflictAndControl/TurboRoundaboutAndSignal.xml");
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
-                this.network = nlp.build(url, true);
+                InputStream inputStream = URLResource.getResourceAsStream("/conflictAndControl/TurboRoundaboutAndSignal.xml");
+                this.network = new OTSRoadNetwork("TurboRoundaboutAndSignal", true);
+                XmlNetworkLaneParser.build(inputStream, this.network, getSimulator());
+
                 // add conflicts
                 ((CrossSectionLink) this.network.getLink("EBNA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("NBWA")).setPriority(Priority.PRIORITY);

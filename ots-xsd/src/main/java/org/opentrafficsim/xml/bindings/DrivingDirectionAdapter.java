@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.DrivingDirectionType;
 
 /**
@@ -40,9 +41,11 @@ public class DrivingDirectionAdapter extends XmlAdapter<String, DrivingDirection
         }
         catch (Exception exception)
         {
-            throw new IllegalArgumentException("Error parsing DrivingDirectionType " + field, exception);
+            CategoryLogger.always().error(exception, "Problem parsing DrivingDirection '" + field + "'");
+            throw new IllegalArgumentException("Error parsing DrivingDirection " + field, exception);
         }
-        throw new IllegalArgumentException("Error parsing DrivingDirectionType " + field);
+        CategoryLogger.always().error("Problem parsing DrivingDirextion '" + field + "'");
+        throw new IllegalArgumentException("Error parsing DrivingDirection " + field);
     }
 
     /** {@inheritDoc} */

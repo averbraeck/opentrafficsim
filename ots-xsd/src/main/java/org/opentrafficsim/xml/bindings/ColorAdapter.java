@@ -4,6 +4,8 @@ import java.awt.Color;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.djutils.logger.CategoryLogger;
+
 /**
  * ColorAdapter to convert between Color and a String representation of the Color. Allowed representations are:<br>
  * - #RRGGBB as three hexadecimal values<br>
@@ -66,8 +68,10 @@ public class ColorAdapter extends XmlAdapter<String, Color>
         }
         catch (Exception exception)
         {
+            CategoryLogger.always().error(exception, "Problem parsing color '" + field + "'");
             throw new IllegalArgumentException("Error parsing color " + field, exception);
         }
+        CategoryLogger.always().error("Problem parsing color '" + field + "'");
         throw new IllegalArgumentException("Error parsing color " + field);
     }
 

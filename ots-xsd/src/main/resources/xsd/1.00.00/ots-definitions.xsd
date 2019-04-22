@@ -27,8 +27,8 @@
         </xsd:element>
         <xsd:element name="LANECHANGEURGEGTUCOLORER" minOccurs="0" maxOccurs="1">
           <xsd:complexType>
-            <xsd:attribute name="MINLANECHANGEDISTANCE" type="LENGTHTYPE" use="required" />
-            <xsd:attribute name="HORIZON" type="LENGTHTYPE" use="required" />
+            <xsd:attribute name="MINLANECHANGEDISTANCE" type="POSITIVELENGTHTYPE" use="required" />
+            <xsd:attribute name="HORIZON" type="POSITIVELENGTHTYPE" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
@@ -80,7 +80,7 @@
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
-      <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="required" />
+      <xsd:attribute name="DEFAULTLANEWIDTH" type="POSITIVELENGTHTYPE" use="required" />
       <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="required" />
       <xsd:attribute name="DEFAULTOVERTAKING" type="OVERTAKINGTYPE" use="required" />
       <xsd:attribute ref="xml:base" />
@@ -98,7 +98,7 @@
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
-      <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="optional" />
+      <xsd:attribute name="DEFAULTLANEWIDTH" type="POSITIVELENGTHTYPE" use="optional" />
       <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
@@ -130,10 +130,10 @@
               <xsd:attribute name="ID" type="xsd:string" use="required" />
               <xsd:attribute name="LANETYPE" type="xsd:string" use="optional" />
               <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSET" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETSTART" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETEND" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="WIDTH" type="POSITIVELENGTHTYPE" use="optional" />
               <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="required" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
               <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
@@ -144,10 +144,10 @@
             <xsd:complexType>
               <xsd:attribute name="ID" type="xsd:string" use="optional" />
               <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSET" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETSTART" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETEND" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="WIDTH" type="POSITIVELENGTHTYPE" use="optional" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
             </xsd:complexType>
           </xsd:element>
@@ -156,10 +156,10 @@
             <xsd:complexType>
               <xsd:attribute name="ID" type="xsd:string" use="optional" />
               <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" />
-              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSET" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETSTART" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETEND" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="WIDTH" type="POSITIVELENGTHTYPE" use="optional" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
             </xsd:complexType>
           </xsd:element>
@@ -168,8 +168,8 @@
             <xsd:complexType>
               <xsd:attribute name="ID" type="xsd:string" use="optional" />
               <xsd:attribute name="TYPE" type="STRIPETYPE" use="required" />
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
-              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSET" type="LENGTHTYPE" use="required" />
+              <xsd:attribute name="WIDTH" type="POSITIVELENGTHTYPE" use="optional" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
             </xsd:complexType>
           </xsd:element>
@@ -178,7 +178,7 @@
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
       <xsd:attribute name="ROADTYPE" type="xsd:string" use="required" />
-      <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+      <xsd:attribute name="WIDTH" type="POSITIVELENGTHTYPE" use="optional" />
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
       <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
       <xsd:attribute ref="xml:base" />

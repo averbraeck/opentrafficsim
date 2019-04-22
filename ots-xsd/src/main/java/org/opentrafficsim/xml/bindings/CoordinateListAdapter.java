@@ -4,6 +4,7 @@ import javax.vecmath.Point3d;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.Point3dList;
 
 /**
@@ -46,7 +47,8 @@ public class CoordinateListAdapter extends XmlAdapter<String, Point3dList>
         }
         catch (Exception exception)
         {
-            throw new IllegalArgumentException("Error parsing coordinate" + field, exception);
+            CategoryLogger.always().error(exception, "Problem parsing coordinate list: '" + field + "'");
+            throw new IllegalArgumentException("Error parsing coordinate list: " + field, exception);
         }
     }
 

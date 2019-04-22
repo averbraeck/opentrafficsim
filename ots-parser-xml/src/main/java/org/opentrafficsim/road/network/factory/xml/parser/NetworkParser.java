@@ -27,7 +27,6 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
@@ -56,8 +55,6 @@ import org.opentrafficsim.xml.generated.LINK.LANEOVERRIDE;
 import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NODE;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
-import org.opentrafficsim.xml.generated.ROUTE;
-import org.opentrafficsim.xml.generated.SHORTESTROUTE;
 import org.opentrafficsim.xml.generated.SPEEDLIMIT;
 import org.opentrafficsim.xml.generated.TRAFFICLIGHTTYPE;
 
@@ -89,8 +86,10 @@ public final class NetworkParser
      */
     public static void parseNodes(final OTSRoadNetwork otsNetwork, final NETWORK network) throws NetworkException
     {
-        for (NODE xmlNode : network.getNODE())
+        for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
+        {
             new OTSNode(otsNetwork, xmlNode.getID(), new OTSPoint3D(xmlNode.getCOORDINATE()));
+        }
     }
 
     /**
@@ -103,7 +102,7 @@ public final class NetworkParser
     public static Map<String, Direction> calculateNodeAngles(final OTSRoadNetwork otsNetwork, final NETWORK network)
     {
         Map<String, Direction> nodeDirections = new HashMap<>();
-        for (NODE xmlNode : network.getNODE())
+        for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
             if (xmlNode.getDIRECTION() != null)
             {
@@ -111,7 +110,7 @@ public final class NetworkParser
             }
         }
 
-        for (LINK xmlLink : network.getLINK())
+        for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
         {
             if (xmlLink.getSTRAIGHT() != null)
             {
@@ -130,7 +129,7 @@ public final class NetworkParser
             }
         }
 
-        for (NODE xmlNode : network.getNODE())
+        for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
             if (!nodeDirections.containsKey(xmlNode.getID()))
             {
@@ -150,10 +149,10 @@ public final class NetworkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OTSGeometryException when the design line is invalid
      */
-    static void parseLinks(final OTSRoadNetwork otsNetwork, final NETWORK network, Map<String, Direction> nodeDirections,
-            OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
+    static void parseLinks(final OTSRoadNetwork otsNetwork, final NETWORK network, final Map<String, Direction> nodeDirections,
+            final OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
-        for (CONNECTOR xmlConnector : network.getCONNECTOR())
+        for (CONNECTOR xmlConnector : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), CONNECTOR.class))
         {
             Node startNode = otsNetwork.getNode(xmlConnector.getNODESTART());
             Node endNode = otsNetwork.getNode(xmlConnector.getNODEEND());
@@ -165,7 +164,7 @@ public final class NetworkParser
             link.setDemandWeight(demandWeight);
         }
 
-        for (LINK xmlLink : network.getLINK())
+        for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
         {
             Node startNode = otsNetwork.getNode(xmlLink.getNODESTART());
             Node endNode = otsNetwork.getNode(xmlLink.getNODEEND());
@@ -265,6 +264,14 @@ public final class NetworkParser
                 int numSegments = xmlLink.getBEZIER().getNUMSEGMENTS().intValue();
                 double shape = xmlLink.getBEZIER().getSHAPE().doubleValue();
                 boolean weighted = xmlLink.getBEZIER().isWEIGHTED();
+                if (xmlLink.getBEZIER().getSTARTDIRECTION() != null)
+                {
+                    startDirection = xmlLink.getBEZIER().getSTARTDIRECTION().getSI();
+                }
+                if (xmlLink.getBEZIER().getENDDIRECTION() != null)
+                {
+                    endDirection = xmlLink.getBEZIER().getENDDIRECTION().getSI();
+                }
                 coordinates = Bezier
                         .cubic(numSegments, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startDirection),
                                 new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endDirection), shape, weighted)
@@ -313,11 +320,11 @@ public final class NetworkParser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GTUException when construction of the Strategical Planner failed
      */
-    static void applyRoadLayout(final OTSRoadNetwork otsNetwork, final NETWORK network, OTSSimulatorInterface simulator,
-            Map<String, ROADLAYOUT> roadLayoutMap, Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap)
+    static void applyRoadLayout(final OTSRoadNetwork otsNetwork, final NETWORK network, final OTSSimulatorInterface simulator,
+            final Map<String, ROADLAYOUT> roadLayoutMap, final Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap)
             throws NetworkException, OTSGeometryException, XmlParserException, SimRuntimeException, GTUException
     {
-        for (LINK xmlLink : network.getLINK())
+        for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
         {
             CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getID());
             List<CrossSectionElement> cseList = new ArrayList<>();
@@ -396,7 +403,9 @@ public final class NetworkParser
                     Map<GTUType, Speed> speedLimitMap = new HashMap<>();
                     LinkType linkType = csl.getLinkType();
                     if (!linkTypeSpeedLimitMap.containsKey(linkType))
+                    {
                         linkTypeSpeedLimitMap.put(linkType, new HashMap<>());
+                    }
                     speedLimitMap.putAll(linkTypeSpeedLimitMap.get(linkType));
                     for (SPEEDLIMIT speedLimitTag : roadLayoutTag.getSPEEDLIMIT())
                     {
@@ -439,15 +448,17 @@ public final class NetworkParser
             for (TRAFFICLIGHTTYPE trafficLight : xmlLink.getTRAFFICLIGHT())
             {
                 if (!lanes.containsKey(trafficLight.getLANE()))
+                {
                     throw new NetworkException("LINK: " + xmlLink.getID() + ", TrafficLight with id " + trafficLight.getID()
                             + " on Lane " + trafficLight.getLANE() + " - Lane not found");
+                }
                 Lane lane = lanes.get(trafficLight.getLANE());
                 Length position = Transformer.parseLengthBeginEnd(trafficLight.getPOSITION(), lane.getLength());
                 try
                 {
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(), new Class[] {
-                            String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
-                    trafficLightConstructor.newInstance(new Object[] { trafficLight.getID(), lane, position, simulator });
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(),
+                            new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
+                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getID(), lane, position, simulator});
                 }
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException exception)
@@ -470,8 +481,9 @@ public final class NetworkParser
      * @param cseDataList the list of offsets and widths for each tag, in order of definition in the ROADLAYOUT tag
      * @param cseTagMap the map of the tags to the index in the list, to be able to find them quickly
      */
-    private static void calculateOffsets(BASICROADLAYOUT roadLayoutTag, LINK xmlLink, List<CSEData> cseDataList,
-            Map<Object, Integer> cseTagMap)
+    @SuppressWarnings("checkstyle:methodlength")
+    private static void calculateOffsets(final BASICROADLAYOUT roadLayoutTag, final LINK xmlLink,
+            final List<CSEData> cseDataList, final Map<Object, Integer> cseTagMap)
     {
         int nr = 0;
         Length totalWidthStart = Length.ZERO;
@@ -753,72 +765,6 @@ public final class NetworkParser
         {
             return "CSEData [widthStart=" + this.widthStart + ", widthEnd=" + this.widthEnd + ", centerOffsetStart="
                     + this.centerOffsetStart + ", centerOffsetEnd=" + this.centerOffsetEnd + "]";
-        }
-    }
-
-    /**
-     * Parse the ROUTE tags.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
-     * @param network NETWORK; the NETWORK tag
-     * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     */
-    static void parseRoutes(final OTSRoadNetwork otsNetwork, final NETWORK network) throws NetworkException
-    {
-        for (ROUTE routeTag : network.getROUTE())
-        {
-            Route route = new Route(routeTag.getID());
-            GTUType gtuType = otsNetwork.getGtuType(routeTag.getGTUTYPE());
-            if (gtuType == null)
-                throw new NetworkException("GTUTYPE " + routeTag.getGTUTYPE() + " not found in ROUTE " + routeTag.getID());
-            for (ROUTE.NODE nodeTag : routeTag.getNODE())
-            {
-                Node node = otsNetwork.getNode(nodeTag.getID());
-                if (node == null)
-                    throw new NetworkException("NODE " + nodeTag.getID() + " not found in ROUTE " + routeTag.getID());
-                route.addNode(node);
-            }
-            otsNetwork.addRoute(gtuType, route);
-        }
-    }
-
-    /**
-     * Parse the SHORTESTROUTE tags.
-     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
-     * @param network NETWORK; the NETWORK tag
-     * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     */
-    static void parseShortestRoutes(final OTSRoadNetwork otsNetwork, final NETWORK network) throws NetworkException
-    {
-        for (SHORTESTROUTE shortestRouteTag : network.getSHORTESTROUTE())
-        {
-            Route route = new Route(shortestRouteTag.getID());
-            GTUType gtuType = otsNetwork.getGtuType(shortestRouteTag.getGTUTYPE());
-            if (gtuType == null)
-                throw new NetworkException(
-                        "GTUTYPE " + shortestRouteTag.getGTUTYPE() + " not found in SHORTESTROUTE " + shortestRouteTag.getID());
-            Node nodeFrom = otsNetwork.getNode(shortestRouteTag.getFROM().getNODE());
-            if (nodeFrom == null)
-                throw new NetworkException("FROM NODE " + shortestRouteTag.getFROM().getNODE() + " not found in SHORTESTROUTE "
-                        + shortestRouteTag.getID());
-            Node nodeTo = otsNetwork.getNode(shortestRouteTag.getTO().getNODE());
-            if (nodeTo == null)
-                throw new NetworkException("TO NODE " + shortestRouteTag.getTO().getNODE() + " not found in SHORTESTROUTE "
-                        + shortestRouteTag.getID());
-            List<Node> nodesVia = new ArrayList<>();
-            for (SHORTESTROUTE.VIA nodeViaTag : shortestRouteTag.getVIA())
-            {
-                Node nodeVia = otsNetwork.getNode(nodeViaTag.getNODE());
-                if (nodeTo == null)
-                    throw new NetworkException(
-                            "VIA NODE " + nodeViaTag.getNODE() + " not found in SHORTESTROUTE " + shortestRouteTag.getID());
-                nodesVia.add(nodeVia);
-            }
-            Route shortestRoute = otsNetwork.getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia);
-            for (Node node : shortestRoute.getNodes())
-            {
-                route.addNode(node);
-            }
-            otsNetwork.addRoute(gtuType, route);
         }
     }
 

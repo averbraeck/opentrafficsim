@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * FrequencyAdapter converts between the XML String for a Frequency and the DJUnits Frequency. <br>
@@ -19,7 +20,15 @@ public class FrequencyAdapter extends XmlAdapter<String, Frequency>
     @Override
     public Frequency unmarshal(final String field) throws IllegalArgumentException
     {
-        return Frequency.valueOf(field);
+        try
+        {
+            return Frequency.valueOf(field);
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing Frequency '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */

@@ -194,7 +194,7 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="LENGTHTYPE">
+  <xsd:simpleType name="POSITIVELENGTHTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?\d+\.?\d*\s*(m|mm|cm|dm|dam|hm|km|ft|in|mi|NM|yd|A|fm|am|Mm|AU|mum|nm|pc|ly|pm)"></xsd:pattern>
     </xsd:restriction>
@@ -405,7 +405,7 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="SIGNEDLENGTHTYPE">
+  <xsd:simpleType name="LENGTHTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)"></xsd:pattern>
     </xsd:restriction>
@@ -1011,14 +1011,14 @@
   <xsd:complexType name="PARAMETERTYPELENGTH">
     <xsd:complexContent>
       <xsd:extension base="PARAMETERTYPE">
-        <xsd:attribute name="DEFAULT" type="LENGTHTYPE" use="optional" />
+        <xsd:attribute name="DEFAULT" type="POSITIVELENGTHTYPE" use="optional" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="PARAMETERLENGTH">
     <xsd:simpleContent>
-      <xsd:extension base="LENGTHTYPE">
+      <xsd:extension base="POSITIVELENGTHTYPE">
         <xsd:attribute name="ID" type="xsd:string" />
       </xsd:extension>
     </xsd:simpleContent>

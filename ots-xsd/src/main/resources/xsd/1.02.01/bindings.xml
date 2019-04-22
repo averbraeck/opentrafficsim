@@ -20,8 +20,8 @@
       adapter="org.opentrafficsim.xml.bindings.LengthAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.LinearDensity" xmlType="ots:PERLENGTHTYPE"
       adapter="org.opentrafficsim.xml.bindings.PerLengthAdapter" />
-    <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:SIGNEDLENGTHTYPE"
-      adapter="org.opentrafficsim.xml.bindings.SignedLengthAdapter" />
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Length" xmlType="ots:POSITIVELENGTHTYPE"
+      adapter="org.opentrafficsim.xml.bindings.PositiveLengthAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LengthBeginEnd"
       xmlType="ots:LENGTHBEGINENDTYPE" adapter="org.opentrafficsim.xml.bindings.LengthBeginEndAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Speed" xmlType="ots:SPEEDTYPE"

@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.net.URL;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -12,7 +12,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -22,7 +21,7 @@ import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -117,9 +116,9 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
         {
             try
             {
-                URL url = URLResource.getResource("/conflict/TJunction.xml");
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator, new DefaultSwitchableGTUColorer());
-                this.network = nlp.build(url, false);
+                InputStream stream = URLResource.getResourceAsStream("/conflict/TJunction.xml");
+                this.network = new OTSRoadNetwork("TJunction", true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
 
                 // add conflicts
                 // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);

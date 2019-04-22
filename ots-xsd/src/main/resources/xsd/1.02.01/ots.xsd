@@ -106,40 +106,40 @@
       <xsd:field xpath="@ID" />
     </xsd:key>
 
-    <!-- define the ROUTE.ID key -->
-
-    <xsd:key name="routeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTE" />
-      <xsd:field xpath="@ID" />
-    </xsd:key>
-
-    <!-- define the SHORTESTROUTE.ID key -->
-
-    <xsd:key name="shortestRouteKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
-      <xsd:field xpath="@ID" />
-    </xsd:key>
-
-    <!-- define the ROUTEMIX.ID key -->
-
-    <xsd:key name="routeMixKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX" />
-      <xsd:field xpath="@ID" />
-    </xsd:key>
-
-    <!-- define the SHORTESTROUTEMIX.ID key -->
-
-    <xsd:key name="shortestRouteMixKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX" />
-      <xsd:field xpath="@ID" />
-    </xsd:key>
-
     <!-- ======================================== NETWORKDEMAND KEYS ====================================== -->
     
     <!-- define the OD.ID key -->
 
     <xsd:key name="odKey">
       <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:OD" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- define the ROUTE.ID key -->
+
+    <xsd:key name="routeKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:ROUTE" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- define the SHORTESTROUTE.ID key -->
+
+    <xsd:key name="shortestRouteKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTE" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- define the ROUTEMIX.ID key -->
+
+    <xsd:key name="routeMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:ROUTEMIX" />
+      <xsd:field xpath="@ID" />
+    </xsd:key>
+
+    <!-- define the SHORTESTROUTEMIX.ID key -->
+
+    <xsd:key name="shortestRouteMixKey">
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTEMIX" />
       <xsd:field xpath="@ID" />
     </xsd:key>
 
@@ -274,91 +274,91 @@
       <xsd:field xpath="@TYPE" />
     </xsd:keyref>
     
+    <!-- ====================================== CHECKS IN NETWORKDEMAND =================================== -->
+
     <!-- ROUTE.NODE defined by NODE.ID -->
 
     <xsd:keyref name="routeNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTE/ots:NODE" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:ROUTE/ots:NODE" />
       <xsd:field xpath="@ID" />
     </xsd:keyref>
 
     <!-- ROUTE.GTUTYPE defined by GTUTYPE.ID -->
 
     <xsd:keyref name="routeGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTE" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:ROUTE" />
       <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTE.FROM defined by NODE.ID -->
 
     <xsd:keyref name="shortestRouteFromNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE/ots:FROM" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTE/ots:FROM" />
       <xsd:field xpath="@NODE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTE.TO defined by NODE.ID -->
 
     <xsd:keyref name="shortestRouteToNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE/ots:TO" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTE/ots:TO" />
       <xsd:field xpath="@NODE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTE.VIA defined by NODE.ID -->
 
     <xsd:keyref name="shortestRouteViaNodeIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE/ots:VIA" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTE/ots:VIA" />
       <xsd:field xpath="@NODE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTE.GTUTYPE defined by GTUTYPE.ID -->
 
     <xsd:keyref name="shortestRouteGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTE" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTE" />
       <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- ROUTEMIX.ROUTE.ID defined by ROUTE.ID -->
 
     <xsd:keyref name="routeMixRouteIdRef" refer="ots:routeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX/ots:ROUTE" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:ROUTEMIX/ots:ROUTE" />
       <xsd:field xpath="@ID" />
     </xsd:keyref>
 
     <!-- ROUTEMIX.GTUTYPE defined by GTUTYPE.ID -->
 
     <xsd:keyref name="routeMixGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:ROUTEMIX" />
       <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- ROUTEMIX.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
 
     <xsd:keyref name="routeMixRandomStreamIdRef" refer="ots:randomStreamKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:ROUTEMIX" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:ROUTEMIX" />
       <xsd:field xpath="@RANDOMSTREAM" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTEMIX.ROUTE.ID defined by SHORTESTROUTE.ID -->
 
     <xsd:keyref name="shortestRouteMixShortestRouteIdRef" refer="ots:shortestRouteKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX/ots:SHORTESTROUTE" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTEMIX/ots:SHORTESTROUTE" />
       <xsd:field xpath="@ID" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTEMIX.GTUTYPE defined by GTUTYPE.ID -->
 
     <xsd:keyref name="shortestRouteMixGtuTypeIdRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTEMIX" />
       <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
 
     <!-- SHORTESTROUTEMIX.RANDOMSTREAM defined by RANDOMSTREAM.ID -->
 
     <xsd:keyref name="shortestRouteMixRandomStreamIdRef" refer="ots:randomStreamKey">
-      <xsd:selector xpath=".//ots:NETWORK/ots:SHORTESTROUTEMIX" />
+      <xsd:selector xpath=".//ots:NETWORKDEMAND/ots:SHORTESTROUTEMIX" />
       <xsd:field xpath="@RANDOMSTREAM" />
     </xsd:keyref>
-
-    <!-- ====================================== CHECKS IN NETWORKDEMAND =================================== -->
 
     <!-- GTUTEMPLATEMIX.GTUTEMPLATE.ID defined by GTUTEMPLATE.ID -->
 
@@ -491,6 +491,36 @@
     </xsd:keyref>
 
     <!-- TODO: other XPath checks in CONTROL --> 
+
+    <!-- ======================================== CHECKS IN ANIMATION ===================================== -->
+
+    <!-- ANIMATION.LINKTYPE defined by LINKTYPE.ID -->
+
+    <xsd:keyref name="animationLinkTypeRef" refer="ots:linkTypeKey">
+      <xsd:selector xpath=".//ots:ANIMATION/ots:LINKTYPE" />
+      <xsd:field xpath="@ID" />
+    </xsd:keyref>
+
+    <!-- ANIMATION.LANETYPE defined by LANETYPE.ID -->
+
+    <xsd:keyref name="animationLaneTypeRef" refer="ots:laneTypeKey">
+      <xsd:selector xpath=".//ots:ANIMATION/ots:LANETYPE" />
+      <xsd:field xpath="@ID" />
+    </xsd:keyref>
+
+    <!-- ANIMATION.ROADLAYOUT defined by ROADLAYOUT.ID -->
+
+    <xsd:keyref name="animationRoadLayoutRef" refer="ots:roadLayoutKey">
+      <xsd:selector xpath=".//ots:ANIMATION/ots:ROADLAYOUT" />
+      <xsd:field xpath="@ID" />
+    </xsd:keyref>
+
+    <!-- ANIMATION.LINK defined by LINK.ID -->
+
+    <xsd:keyref name="animationLinkRef" refer="ots:linkKey">
+      <xsd:selector xpath=".//ots:ANIMATION/ots:LINK" />
+      <xsd:field xpath="@ID" />
+    </xsd:keyref>
 
   </xsd:element>
 

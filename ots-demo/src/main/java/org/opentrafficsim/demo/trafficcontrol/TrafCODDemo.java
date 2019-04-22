@@ -2,7 +2,7 @@ package org.opentrafficsim.demo.trafficcontrol;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.net.URL;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -24,7 +24,7 @@ import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
@@ -141,9 +141,10 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
         {
             try
             {
-                URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(getSimulator());
-                this.network = nlp.build(url, true);
+                InputStream stream = URLResource.getResourceAsStream("/TrafCODDemo1/TrafCODDemo1.xml");
+                this.network = new OTSRoadNetwork("TrafCODDemo1", true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+
                 String controllerName = "TrafCOD_simple";
 
                 Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "X")).getCrossSectionElement("FORWARD");

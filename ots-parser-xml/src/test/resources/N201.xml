@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.01.02/ots.xsd"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.02.01/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <DEFINITIONS>
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_gtutypes.xml" />
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_linktypes.xml" />
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_lanetypes.xml" />
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_gtutemplates.xml" />
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml" />
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml" />
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml" />
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutemplates.xml" />
 
     <LINKTYPES>
       <LINKTYPE ID="OUTSIDECITY">
@@ -248,10 +248,10 @@
     <NODE ID="N23a" COORDINATE="(106087, 481343)" />
     <NODE ID="N25a" COORDINATE="(106130, 481309)" />
     <NODE ID="N26a" COORDINATE="(106329, 481151)" />
-    <NODE ID="N27a" COORDINATE="(106344, 481140)" DIRECTION="335 East(deg)" />
-    <NODE ID="N28a" COORDINATE="(106474, 481103)" DIRECTION="350 East(deg)" />
-    <NODE ID="N30a" COORDINATE="(106529, 481104)" DIRECTION="10 East(deg)" />
-    <NODE ID="N31a" COORDINATE="(106644, 481125)" DIRECTION="12 East(deg)" />
+    <NODE ID="N27a" COORDINATE="(106344, 481140)" DIRECTION="335 deg" />
+    <NODE ID="N28a" COORDINATE="(106474, 481103)" DIRECTION="350 deg" />
+    <NODE ID="N30a" COORDINATE="(106529, 481104)" DIRECTION="10 deg" />
+    <NODE ID="N31a" COORDINATE="(106644, 481125)" DIRECTION="12 deg" />
     <NODE ID="N32a" COORDINATE="(106767, 481151)" />
     <NODE ID="N33a" COORDINATE="(107337, 481276)" />
     <NODE ID="N34a" COORDINATE="(107712, 481220)" />
@@ -266,15 +266,15 @@
     <NODE ID="N43a" COORDINATE="(108973, 480090)" />
     <NODE ID="N44a" COORDINATE="(109054, 479665)" />
     <NODE ID="N45a" COORDINATE="(108777, 479205)" />
-    <NODE ID="N46a" COORDINATE="(108760, 479170)" DIRECTION="255 East(deg)" />
-    <NODE ID="N47a" COORDINATE="(108747, 479050)" DIRECTION="275 East(deg)" />
-    <NODE ID="N49a" COORDINATE="(108758, 478992)" DIRECTION="285 East(deg)" />
-    <NODE ID="N50a" COORDINATE="(108851, 478845)" DIRECTION="315 East(deg)" />
+    <NODE ID="N46a" COORDINATE="(108760, 479170)" DIRECTION="255 deg" />
+    <NODE ID="N47a" COORDINATE="(108747, 479050)" DIRECTION="275 deg" />
+    <NODE ID="N49a" COORDINATE="(108758, 478992)" DIRECTION="285 deg" />
+    <NODE ID="N50a" COORDINATE="(108851, 478845)" DIRECTION="315 deg" />
     
-    <NODE ID="N50b" COORDINATE="(108870, 478849)"  DIRECTION="135 East(deg)"/>
-    <NODE ID="N49b" COORDINATE="(108777, 478992)"  DIRECTION="100 East(deg)"/>
-    <NODE ID="N47b" COORDINATE="(108766, 479052)"  DIRECTION="93 East(deg)"/>
-    <NODE ID="N46b" COORDINATE="(108779, 479165)"  DIRECTION="75 East(deg)"/>
+    <NODE ID="N50b" COORDINATE="(108870, 478849)"  DIRECTION="135 deg"/>
+    <NODE ID="N49b" COORDINATE="(108777, 478992)"  DIRECTION="100 deg"/>
+    <NODE ID="N47b" COORDINATE="(108766, 479052)"  DIRECTION="93 deg"/>
+    <NODE ID="N46b" COORDINATE="(108779, 479165)"  DIRECTION="75 deg"/>
     <NODE ID="N45b" COORDINATE="(108804, 479224)" />
     <NODE ID="N44b" COORDINATE="(109047, 479628)" />
     <NODE ID="N43b" COORDINATE="(108981, 480098)" />
@@ -290,9 +290,9 @@
     <NODE ID="N33b" COORDINATE="(107363, 481293)" />
     <NODE ID="N32b" COORDINATE="(106762, 481162)" />
     <NODE ID="N31b" COORDINATE="(106640, 481141)" />
-    <NODE ID="N30b" COORDINATE="(106528, 481119)" DIRECTION="190 East(deg)" />
-    <NODE ID="N28b" COORDINATE="(106469, 481121)" DIRECTION="170 East(deg)" />
-    <NODE ID="N28t" COORDINATE="(106383, 481144)" DIRECTION="160 East(deg)" />
+    <NODE ID="N30b" COORDINATE="(106528, 481119)" DIRECTION="190 deg" />
+    <NODE ID="N28b" COORDINATE="(106469, 481121)" DIRECTION="170 deg" />
+    <NODE ID="N28t" COORDINATE="(106383, 481144)" DIRECTION="160 deg" />
     <NODE ID="N27b" COORDINATE="(106321, 481180)" />
     <NODE ID="N26b" COORDINATE="(106240, 481241)" />
     <NODE ID="N25b" COORDINATE="(106142, 481322)" />
@@ -347,19 +347,19 @@
     <NODE ID="N245b_in" COORDINATE="(106145, 481368)" />
     <NODE ID="N245b_in2" COORDINATE="(106223, 481455)" />
 
-    <NODE ID="N249a_uit" COORDINATE="(106486, 481077)" DIRECTION="265 East(deg)" />
-    <NODE ID="N249a_uit2" COORDINATE="(106462, 481010)" DIRECTION="235 East(deg)" />
-    <NODE ID="N249a_in" COORDINATE="(106500, 481082)" DIRECTION="90 East(deg)" />
-    <NODE ID="N249a_in2" COORDINATE="(106472, 481001)" DIRECTION="55 East(deg)" />
+    <NODE ID="N249a_uit" COORDINATE="(106486, 481077)" DIRECTION="265 deg" />
+    <NODE ID="N249a_uit2" COORDINATE="(106462, 481010)" DIRECTION="235 deg" />
+    <NODE ID="N249a_in" COORDINATE="(106500, 481082)" DIRECTION="90 deg" />
+    <NODE ID="N249a_in2" COORDINATE="(106472, 481001)" DIRECTION="55 deg" />
     <NODE ID="N249b_uit" COORDINATE="(106499, 481144)" />
     <NODE ID="N249b_uit2" COORDINATE="(106501, 481195)" />
     <NODE ID="N249b_in" COORDINATE="(106491, 481136)" />
     <NODE ID="N249b_in2" COORDINATE="(106494, 481195)" />
 
-    <NODE ID="N270b_in" COORDINATE="(108324, 480764)" DIRECTION="138 East(deg)" />
-    <NODE ID="N270b_uit" COORDINATE="(108352, 480737)" DIRECTION="138 East(deg)" />
-    <NODE ID="N270a_in" COORDINATE="(108278, 480654)" DIRECTION="318 East(deg)" />
-    <NODE ID="N270a_uit" COORDINATE="(108250, 480678)" DIRECTION="318 East(deg)" />
+    <NODE ID="N270b_in" COORDINATE="(108324, 480764)" DIRECTION="138 deg" />
+    <NODE ID="N270b_uit" COORDINATE="(108352, 480737)" DIRECTION="138 deg" />
+    <NODE ID="N270a_in" COORDINATE="(108278, 480654)" DIRECTION="318 deg" />
+    <NODE ID="N270a_uit" COORDINATE="(108250, 480678)" DIRECTION="318 deg" />
     
     <NODE ID="N291a_uit" COORDINATE="(108722, 479019)" />
     <NODE ID="N291a_uit1" COORDINATE="(108701, 479014)" />
@@ -367,9 +367,9 @@
     <NODE ID="N291a_in" COORDINATE="(108729, 479006)" />
     <NODE ID="N291a_in2" COORDINATE="(108662, 478987)" />
     <NODE ID="N291b_uit" COORDINATE="(108780, 479020)" />
-    <NODE ID="N291b_uit2" COORDINATE="(108803, 479006)" DIRECTION="250 East(deg)" />
-    <NODE ID="N291b_in" COORDINATE="(108779, 479030)" DIRECTION="170 East(deg)" />
-    <NODE ID="N291b_in2" COORDINATE="(108808, 479006)" DIRECTION="70 East(deg)" />
+    <NODE ID="N291b_uit2" COORDINATE="(108803, 479006)" DIRECTION="250 deg" />
+    <NODE ID="N291b_in" COORDINATE="(108779, 479030)" DIRECTION="170 deg" />
+    <NODE ID="N291b_in2" COORDINATE="(108808, 479006)" DIRECTION="70 deg" />
     
 
     <!--- CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor" 
@@ -1253,6 +1253,11 @@
       <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
     </LINK>
 
+  </NETWORK>
+
+
+  <NETWORKDEMAND>
+
     <SHORTESTROUTE ID="A" GTUTYPE="CAR">
       <FROM NODE="N1a" />
       <TO NODE="N50a" />
@@ -1266,11 +1271,7 @@
       <DISTANCECOST>1.0/km</DISTANCECOST>
       <TIMECOST>0.0/s</TIMECOST>
     </SHORTESTROUTE>
-  </NETWORK>
-
-
-  <NETWORKDEMAND>
-
+    
     <GENERATOR LINK="L49b" DIRECTION="DIR_PLUS" LANE="A1" POSITION="10m">
       <GTUTEMPLATE>CAR</GTUTEMPLATE>
       <SHORTESTROUTE>B</SHORTESTROUTE>

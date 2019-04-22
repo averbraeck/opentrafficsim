@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -26,8 +25,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
+import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -35,12 +34,10 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
-import org.opentrafficsim.draw.lane.LaneStructureAnimation;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -61,10 +58,7 @@ import org.xml.sax.XMLReader;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Experiment;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * Parse an XML file for an OTS network, based on the ots-network.xsd definition.
@@ -170,42 +164,22 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
         NetworkParser.parseLinks(otsNetwork, network, nodeDirections, simulator);
         NetworkParser.applyRoadLayout(otsNetwork, network, simulator, roadLayoutMap, linkTypeSpeedLimitMap);
-        NetworkParser.parseRoutes(otsNetwork, network);
-        NetworkParser.parseShortestRoutes(otsNetwork, network);
 
         List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
         for (NETWORKDEMAND demand : demands)
         {
-            List<LaneBasedGTUGenerator> generators =
-                    GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates, simulator, streamMap);
-            // The code below can be used to visualize the LaneStructure of a particular GTU
-            /*-for (LaneBasedGTUGenerator generator : generators)
-            {
-                EventListenerInterface listener = new EventListenerInterface()
-                {
-                    @Override
-                    public void notify(final EventInterface event) throws RemoteException
-                    {
-                        LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
-                        if (gtu.getId().equals("25"))
-                        {
-                            try
-                            {
-                                LaneStructureAnimation.visualize(
-                                        (RollingLaneStructure) gtu.getTacticalPlanner().getPerception().getLaneStructure(), gtu);
-                            }
-                            catch (ParameterException | ClassCastException exception)
-                            {
-                                SimLogger.always().warn("Could not draw lane structure of GTU.");
-                            }
-                        }
-                    }
-                };
-                generator.addListener(listener, LaneBasedGTUGenerator.GTU_GENERATED_EVENT);
-            }*/
+            GeneratorSinkParser.parseRoutes(otsNetwork, demand);
+            GeneratorSinkParser.parseShortestRoutes(otsNetwork, demand);
+            Map<String, List<FrequencyAndObject<Route>>> routeMixMap = GeneratorSinkParser.parseRouteMix(otsNetwork, demand);
+            Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap =
+                    GeneratorSinkParser.parseShortestRouteMix(otsNetwork, demand);
+            List<LaneBasedGTUGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates,
+                    routeMixMap, shortestRouteMixMap, simulator, streamMap);
             GeneratorSinkParser.parseSinks(otsNetwork, demand, simulator);
         }
+
         List<MODELTYPE> models = ots.getMODEL();
+
         // TODO: parse input parameters
         InputParameters inputParameters = new InputParameters()
         {
@@ -238,7 +212,7 @@ public final class XmlNetworkLaneParser implements Serializable
                 ModelParser.parseModel(otsNetwork, models, inputParameters, parameterTypes, streamMap, parameterFactories);
         Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getSCENARIO(), ots.getNETWORKDEMAND());
         List<LaneBasedGTUGenerator> generators =
-                DemandParser.parseDemand(otsNetwork, simulator, demands, gtuTemplates, factories, modelIdReferrals, streamMap);
+                ODParser.parseDemand(otsNetwork, simulator, demands, gtuTemplates, factories, modelIdReferrals, streamMap);
         // The code below can be used to visualize the LaneStructure of a particular GTU
         /*-EventListenerInterface listener = new EventListenerInterface()
         {

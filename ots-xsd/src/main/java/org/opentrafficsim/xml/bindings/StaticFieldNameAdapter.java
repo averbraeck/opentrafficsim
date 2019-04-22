@@ -3,6 +3,7 @@ package org.opentrafficsim.xml.bindings;
 import javax.management.modelmbean.XMLParseException;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.djutils.logger.CategoryLogger;
 import org.djutils.reflection.ClassUtil;
 
 /**
@@ -23,10 +24,18 @@ public class StaticFieldNameAdapter extends XmlAdapter<String, Object>
     @Override
     public Object unmarshal(final String field) throws Exception
     {
-        int dot = field.lastIndexOf(".");
-        String className = field.substring(0, dot);
-        String fieldName = field.substring(dot + 1);
-        return ClassUtil.resolveField(Class.forName(className), fieldName).get(null);
+        try
+        {
+            int dot = field.lastIndexOf(".");
+            String className = field.substring(0, dot);
+            String fieldName = field.substring(dot + 1);
+            return ClassUtil.resolveField(Class.forName(className), fieldName).get(null);
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing Static Field '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */

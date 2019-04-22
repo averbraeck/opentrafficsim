@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.djunits.value.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -28,19 +27,16 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD.Factory;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
+import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions.Option;
 import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
@@ -60,15 +56,11 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.xml.generated.CATEGORYTYPE;
-import org.opentrafficsim.xml.generated.GENERATOR;
 import org.opentrafficsim.xml.generated.GLOBALTIMETYPE.TIME;
 import org.opentrafficsim.xml.generated.GTUTEMPLATE;
-import org.opentrafficsim.xml.generated.GTUTEMPLATEMIX;
 import org.opentrafficsim.xml.generated.LEVELTIMETYPE;
-import org.opentrafficsim.xml.generated.LISTGENERATOR;
 import org.opentrafficsim.xml.generated.NETWORKDEMAND;
 import org.opentrafficsim.xml.generated.OD;
 import org.opentrafficsim.xml.generated.OD.DEMAND;
@@ -78,7 +70,6 @@ import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.DEFAULTMODEL;
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.LANEBIASES.LANEBIAS;
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.MARKOV.STATE;
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.MODEL;
-import org.opentrafficsim.xml.generated.SINK;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -92,11 +83,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public class DemandParser
+public final class ODParser
 {
     /** */
-    private DemandParser()
+    private ODParser()
     {
         // static class
     }
@@ -113,9 +103,10 @@ public class DemandParser
      * @return List&lt;LaneBasedGTUGenerator&gt;; generators
      * @throws XmlParserException if the OD contains an inconsistency or error
      */
+    @SuppressWarnings("checkstyle:methodlength")
     public static List<LaneBasedGTUGenerator> parseDemand(final OTSRoadNetwork otsNetwork,
             final OTSSimulatorInterface simulator, final List<NETWORKDEMAND> demands,
-            final Map<String, GTUTEMPLATE> gtuTemplates, Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
+            final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
             final Map<String, String> modelIdReferrals, final Map<String, StreamInformation> streamMap)
             throws XmlParserException
     {
@@ -123,48 +114,8 @@ public class DemandParser
 
         IdGenerator idGenerator = new IdGenerator("");
 
-        int idCounter = 1;
         for (NETWORKDEMAND subDemand : demands)
         {
-
-            // Map<String>
-            for (GTUTEMPLATEMIX gtuMix : subDemand.getGTUTEMPLATEMIX())
-            {
-
-            }
-
-            for (GENERATOR generator : subDemand.getGENERATOR())
-            {
-                String linkId = generator.getLINK();
-                String laneId = null;
-
-                String id = linkId + "." + laneId + "." + idCounter;
-                Generator<Duration> interarrivelTimeGenerator;
-                RoomChecker roomChecker;
-                LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator;
-                // Location
-
-                Link link = otsNetwork.getLink(linkId);
-                Throw.when(!(link instanceof CrossSectionLink), XmlParserException.class,
-                        "Generator on link %s can not be added as the link is not a CrossSectionLink.", linkId);
-                // Lane lane = link.
-                Set<DirectedLanePosition> positions = new LinkedHashSet<>();
-                // GeneratorPositions generatorPositions = GeneratorPositions.create(positions, stream);
-
-                // LaneBasedGTUGenerator gen = new LaneBasedGTUGenerator(id, interarrivelTimeGenerator,
-                // laneBasedGTUCharacteristicsGenerator, generatorPositions, otsNetwork, simulator, roomChecker, idGenerator);
-            }
-
-            for (LISTGENERATOR generator : subDemand.getLISTGENERATOR())
-            {
-
-            }
-
-            for (SINK sink : subDemand.getSINK())
-            {
-
-            }
-
             // Collect options
             Map<String, ODOPTIONS> odOptionsMap = new LinkedHashMap<>();
             for (ODOPTIONS odOptions : subDemand.getODOPTIONS())
@@ -462,7 +413,7 @@ public class DemandParser
                             if (options.getDEFAULTMODEL() != null)
                             {
                                 // TODO: model id referral
-                                String modelId = DemandParser.getModelId(options.getDEFAULTMODEL(), modelIdReferrals);
+                                String modelId = ODParser.getModelId(options.getDEFAULTMODEL(), modelIdReferrals);
                                 Throw.when(!factories.containsKey(modelId), XmlParserException.class,
                                         "OD option DEFAULTMODEL refers to a non-existent model with ID %s.", modelId);
                                 defaultFactory = factories.get(modelId);
@@ -625,7 +576,7 @@ public class DemandParser
      * @param factor double; total applicable factor on this level
      * @return Frequency; resulting frequency
      */
-    private static Frequency parseLevel(final String string, double factor)
+    private static Frequency parseLevel(final String string, final double factor)
     {
         return Frequency.valueOf(string.replace("veh", "")).multiplyBy(factor);
     }
@@ -663,9 +614,9 @@ public class DemandParser
      * Parse a list of {@code LEVELTIMETYPE} to a {@code TimeVector}.
      * @param list List&lt;LEVELTIMETYPE&gt;; list of time information
      * @return TimeVector; time vector
-     * @throws XmlParserException
+     * @throws XmlParserException if global time has no values
      */
-    private final static TimeVector parseTimeVector(final List<LEVELTIMETYPE> list) throws XmlParserException
+    private static TimeVector parseTimeVector(final List<LEVELTIMETYPE> list) throws XmlParserException
     {
         List<Time> timeList = new ArrayList<>();
         for (LEVELTIMETYPE time : list)
@@ -683,7 +634,7 @@ public class DemandParser
      * @return double; factor in {@code double} format
      * @throws XmlParserException if the factor is not positive
      */
-    private final static double parsePositiveFactor(final String factor) throws XmlParserException
+    private static double parsePositiveFactor(final String factor) throws XmlParserException
     {
         double factorValue;
         if (factor.endsWith("%"))

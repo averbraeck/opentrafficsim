@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.GTUPositionType;
 
 /**
@@ -37,8 +38,10 @@ public class GTUPositionAdapter extends XmlAdapter<String, GTUPositionType>
         }
         catch (Exception exception)
         {
-            throw new IllegalArgumentException("Error parsing GTUPositionType " + field, exception);
+            CategoryLogger.always().error(exception, "Problem parsing GTUPosition '" + field + "'");
+            throw new IllegalArgumentException("Error parsing GTUPosition " + field, exception);
         }
+        CategoryLogger.always().error("Problem parsing GTUPosition '" + field + "'");
         throw new IllegalArgumentException("Error parsing GTUPositionType " + field);
     }
 

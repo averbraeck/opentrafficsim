@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.01.02/ots.xsd"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.02.01/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <DEFINITIONS>
 
-    <xi:include href="xsd/1.01.02/defaults/default_gtutypes.xml">
+    <xi:include href="xsd/1.02.01/defaults/default_gtutypes.xml">
       <xi:fallback>
-        <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_gtutypes.xml" />
+        <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml" />
       </xi:fallback>
     </xi:include>
 
@@ -15,24 +15,24 @@
       <GTUTYPE ID="AUTOMATED_CAR" PARENT="VEHICLE" />
     </GTUTYPES>
 
-    <xi:include href="xsd/1.01.02/defaults/default_linktypes.xml">
+    <xi:include href="xsd/1.02.01/defaults/default_linktypes.xml">
       <xi:fallback>
-        <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_linktypes.xml" />
+        <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml" />
       </xi:fallback>
     </xi:include>
 
     <LINKTYPES>
       <LINKTYPE ID="HIGHWAY2x2" DEFAULT="false" PARENT="FREEWAY">
-        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="BOTH" />
-        <COMPATIBILITY GTUTYPE="AUTOMATED_CAR" DIRECTION="BOTH" />
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
+        <COMPATIBILITY GTUTYPE="AUTOMATED_CAR" DIRECTION="FORWARD" />
         <COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="NONE" />
         <COMPATIBILITY GTUTYPE="BICYCLE" DIRECTION="NONE" />
       </LINKTYPE>
     </LINKTYPES>
 
-    <xi:include href="xsd/1.01.02/defaults/default_lanetypes.xml">
+    <xi:include href="xsd/1.02.01/defaults/default_lanetypes.xml">
       <xi:fallback>
-        <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_lanetypes.xml" />
+        <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml" />
       </xi:fallback>
     </xi:include>
 
@@ -45,9 +45,9 @@
       </LANETYPE>
     </LANETYPES>
 
-    <xi:include href="xsd/1.01.02/defaults/default_gtutemplates.xml">
+    <xi:include href="xsd/1.02.01/defaults/default_gtutemplates.xml">
       <xi:fallback>
-        <xi:include href="https://opentrafficsim.org/docs/xsd/1.01.02/defaults/default_gtutemplates.xml" />
+        <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutemplates.xml" />
       </xi:fallback>
     </xi:include>
 
@@ -121,7 +121,7 @@
 
   <NETWORK>
 
-    <NODE COORDINATE="(0,0)" ID="N1" DIRECTION="10.0 East(deg)"/>
+    <NODE COORDINATE="(0,0)" ID="N1" DIRECTION="10.0 deg"/>
     <NODE COORDINATE="(100,0)" ID="N2" />
     <NODE COORDINATE="(300,100)" ID="N3" />
     <NODE COORDINATE="(400,100)" ID="N4" />
