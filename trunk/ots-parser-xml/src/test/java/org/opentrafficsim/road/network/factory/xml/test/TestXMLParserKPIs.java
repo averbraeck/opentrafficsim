@@ -1,19 +1,20 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
-import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -21,7 +22,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -42,7 +42,10 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -146,16 +149,17 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
         @Override
         public final void constructModel() throws SimRuntimeException
         {
-            // URL url = URLResource.getResource("/PNH1.xml");
-            // URL url = URLResource.getResource("/offset-example.xml");
-            // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
-            // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
-            // URL url = URLResource.getResource("/Circuit.xml");
-            URL url = URLResource.getResource("/N201v8.xml");
-            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
+            InputStream stream = URLResource.getResourceAsStream("/N201.xml");
+            this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                this.network = nlp.build(url, true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+
+                for (TrafficLight tl : this.network.getObjectMap(TrafficLight.class).values())
+                {
+                    tl.setTrafficLightColor(TrafficLightColor.GREEN);
+                }
+
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
                 RoadSampler sampler = new RoadSampler(this.simulator, new Frequency(10.0, FrequencyUnit.SI));
@@ -163,8 +167,8 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
                 Query query = N201ODfactory.getQuery(this.network, sampler);
                 scheduleKpiEvent(30.0, this.simulator, query);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
+                    | JAXBException | URISyntaxException | XmlParserException exception)
             {
                 exception.printStackTrace();
             }
