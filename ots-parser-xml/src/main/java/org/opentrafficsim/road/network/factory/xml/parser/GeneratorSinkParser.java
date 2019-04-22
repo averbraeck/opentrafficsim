@@ -137,6 +137,10 @@ public final class GeneratorSinkParser
             }
             // TODO: distance weight and time weight
             Route shortestRoute = otsNetwork.getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia);
+            if (shortestRoute == null)
+            {
+                throw new NetworkException("Cannot find shortest route from " + nodeFrom.getId() + " to " + nodeTo.getId());
+            }
             for (Node node : shortestRoute.getNodes())
             {
                 route.addNode(node);

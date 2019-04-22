@@ -2,6 +2,8 @@ package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,13 +11,12 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -27,7 +28,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.OTSRoadNetworkUtils;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
@@ -130,12 +132,12 @@ public class TestXMLParserWriteXstream extends OTSSimulationApplication<OTSModel
         public final void constructModel() throws SimRuntimeException
         {
             long millis = System.currentTimeMillis();
-            URL url = URLResource.getResource("/N201v8.xml");
-            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
-
+            InputStream stream = URLResource.getResourceAsStream("/N201.xml");
+            this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                this.network = nlp.build(url, true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+
                 System.out.println("parsing took : " + (System.currentTimeMillis() - millis) + " ms");
 
                 millis = System.currentTimeMillis();
@@ -145,8 +147,8 @@ public class TestXMLParserWriteXstream extends OTSSimulationApplication<OTSModel
                 Files.write(Paths.get("e://temp/network.txt"), xml.getBytes());
                 System.out.println("writing took : " + (System.currentTimeMillis() - millis) + " ms");
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
+                    | URISyntaxException | XmlParserException | IOException | GTUException exception)
             {
                 exception.printStackTrace();
             }
