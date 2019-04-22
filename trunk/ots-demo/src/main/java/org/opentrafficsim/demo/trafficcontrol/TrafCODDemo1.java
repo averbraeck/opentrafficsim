@@ -20,7 +20,7 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo.TrafCODModel;
+import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -49,7 +49,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
+public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
 {
     /** */
     private static final long serialVersionUID = 20161118L;
@@ -61,7 +61,7 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
      * @param model TrafCODModel; the model
      * @throws OTSDrawingException on animation error
      */
-    public TrafCODDemo(final String title, final OTSAnimationPanel panel, final TrafCODModel model) throws OTSDrawingException
+    public TrafCODDemo1(final String title, final OTSAnimationPanel panel, final TrafCODModel model) throws OTSDrawingException
     {
         super(model, panel);
     }
@@ -88,7 +88,7 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), trafcodModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
-            TrafCODDemo app = new TrafCODDemo("TrafCOD demo simple crossing", animationPanel, trafcodModel);
+            TrafCODDemo1 app = new TrafCODDemo1("TrafCOD demo simple crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)

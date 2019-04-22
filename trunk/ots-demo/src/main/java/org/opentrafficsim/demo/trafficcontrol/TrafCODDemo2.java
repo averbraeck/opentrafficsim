@@ -99,7 +99,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
         try
         {
             OTSAnimator simulator = new OTSAnimator();
-            URL url = URLResource.getResource("/TrafCODDemo2/Network.xml");
+            URL url = URLResource.getResource("/TrafCODDemo2/TrafCODDemo2.xml");
             String xml = readStringFromURL(url);
             final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), trafcodModel);
