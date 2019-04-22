@@ -43,13 +43,35 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      *            the end of the road marker.
      * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
      * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
+     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length startCenterPosition, final Length endCenterPosition,
+            final Length beginWidth, final Length endWidth, final boolean fixGradualLateralOffset)
+            throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, UUID.randomUUID().toString(), startCenterPosition, endCenterPosition, beginWidth, endWidth,
+                fixGradualLateralOffset);
+    }
+
+    /**
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
+     * the StartNode towards the EndNode as the longitudinal direction.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
+     * @param startCenterPosition Length; the lateral start position compared to the linear geometry of the Cross Section Link
+     *            at the start of the road marker.
+     * @param endCenterPosition Length; the lateral end position compared to the linear geometry of the Cross Section Link at
+     *            the end of the road marker.
+     * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
+     * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public RoadMarkerAlong(final CrossSectionLink parentLink, final Length startCenterPosition, final Length endCenterPosition,
             final Length beginWidth, final Length endWidth) throws OTSGeometryException, NetworkException
     {
-        super(parentLink, UUID.randomUUID().toString(), startCenterPosition, endCenterPosition, beginWidth, endWidth);
+        this(parentLink, startCenterPosition, endCenterPosition, beginWidth, endWidth, false);
     }
 
     /**
