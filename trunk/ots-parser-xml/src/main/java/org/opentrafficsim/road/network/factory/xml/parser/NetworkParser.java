@@ -378,13 +378,15 @@ public final class NetworkParser
             List<CSEData> cseDataList = new ArrayList<>();
             Map<Object, Integer> cseTagMap = new HashMap<>();
             calculateOffsets(roadLayoutTag, xmlLink, cseDataList, cseTagMap);
+            boolean fixGradualLateralOffset = xmlLink.isFIXGRADUALOFFSET();
 
             // STRIPE
             for (CSESTRIPE stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getLANEOrNOTRAFFICLANEOrSHOULDER(),
                     CSESTRIPE.class))
             {
                 CSEData cseData = cseDataList.get(cseTagMap.get(stripeTag));
-                makeStripe(csl, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList);
+                makeStripe(csl, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList,
+                        fixGradualLateralOffset);
             }
 
             // Other CROSSECTIONELEMENT
@@ -418,7 +420,7 @@ public final class NetworkParser
                         speedLimitMap.put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
                     }
                     Lane lane = new Lane(csl, laneTag.getID(), cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd, laneType, speedLimitMap);
+                            cseData.widthStart, cseData.widthEnd, laneType, speedLimitMap, fixGradualLateralOffset);
                     cseList.add(lane);
                     lanes.put(lane.getId(), lane);
                 }
@@ -429,7 +431,7 @@ public final class NetworkParser
                     CSENOTRAFFICLANE ntlTag = (CSENOTRAFFICLANE) cseTag;
                     String id = ntlTag.getID() != null ? ntlTag.getID() : UUID.randomUUID().toString();
                     Lane lane = new NoTrafficLane(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd);
+                            cseData.widthStart, cseData.widthEnd, fixGradualLateralOffset);
                     cseList.add(lane);
                 }
 
@@ -439,7 +441,7 @@ public final class NetworkParser
                     CSESHOULDER shoulderTag = (CSESHOULDER) cseTag;
                     String id = shoulderTag.getID() != null ? shoulderTag.getID() : UUID.randomUUID().toString();
                     Shoulder shoulder = new Shoulder(csl, id, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd);
+                            cseData.widthStart, cseData.widthEnd, fixGradualLateralOffset);
                     cseList.add(shoulder);
                 }
             }
@@ -688,12 +690,13 @@ public final class NetworkParser
      * @param endOffset Length; the offset of the end node
      * @param stripeTag CSESTRIPE; the CSESTRIPE tag in the XML file
      * @param cseList List&lt;CrossSectionElement&gt;; the list of CrossSectionElements to which the stripes should be added
+     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized
      */
     private static void makeStripe(final CrossSectionLink csl, final Length startOffset, final Length endOffset,
-            final CSESTRIPE stripeTag, final List<CrossSectionElement> cseList)
+            final CSESTRIPE stripeTag, final List<CrossSectionElement> cseList, final boolean fixGradualLateralOffset)
             throws OTSGeometryException, NetworkException, XmlParserException
     {
         Length width =
@@ -702,36 +705,36 @@ public final class NetworkParser
         {
             case BLOCKED:
                 Stripe blockedLine = new Stripe(csl, startOffset, endOffset, stripeTag.getDRAWINGWIDTH() != null
-                        ? stripeTag.getDRAWINGWIDTH() : new Length(40.0, LengthUnit.CENTIMETER));
+                        ? stripeTag.getDRAWINGWIDTH() : new Length(40.0, LengthUnit.CENTIMETER), fixGradualLateralOffset);
                 blockedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.BOTH);
                 cseList.add(blockedLine);
                 break;
 
             case DASHED:
-                Stripe dashedLine = new Stripe(csl, startOffset, endOffset, width);
+                Stripe dashedLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
                 dashedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.BOTH);
                 cseList.add(dashedLine);
                 break;
 
             case DOUBLE:
-                Stripe doubleLine = new Stripe(csl, startOffset, endOffset, width);
+                Stripe doubleLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
                 cseList.add(doubleLine);
                 break;
 
             case LEFTONLY:
-                Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, width);
+                Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
                 leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.LEFT);
                 cseList.add(leftOnlyLine);
                 break;
 
             case RIGHTONLY:
-                Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, width);
+                Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
                 rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.RIGHT);
                 cseList.add(rightOnlyLine);
                 break;
 
             case SOLID:
-                Stripe solidLine = new Stripe(csl, startOffset, endOffset, width);
+                Stripe solidLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
                 cseList.add(solidLine);
                 break;
 

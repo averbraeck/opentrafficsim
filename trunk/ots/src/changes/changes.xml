@@ -32,6 +32,12 @@
       <action dev="averbraeck" type="update">
         In the xml NETWORK tag: NODE, LINK and CONNECTOR entries can be mixed to allow for subnetworks to be kept together. 
       </action>
+      <action dev="averbraeck" type="add">
+        An extra attribute called FIXGRADUALOFFSET has been added to the LINK definition in XML, and a parameter 
+        called fixGradualLateralOffset has been added to constructors of CrossSectionElement, Lane, Shoulder, 
+        NoTrafficLane, RoadMarkerAlong, Stripe. This either gradually offsets the line with a sine wave or not
+        when the lateral offset changes. Default false.
+      </action>
     </release>
     
     <release version="1.02.01" date="2019-04-19" description="ots-xsd; GTUType, LinkType, LaneType in Defaults">
