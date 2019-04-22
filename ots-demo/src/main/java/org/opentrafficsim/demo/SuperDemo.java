@@ -24,7 +24,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 
 import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo;
+import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
@@ -80,7 +80,7 @@ public class SuperDemo extends JFrame
                 "A number of different networks with merging and splitting,\n" + "forcing cars to change lanes and to merge."));
         this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,
                 "Model of a crossing with traffic lights.\n"));
-        this.demos.add(new Demo("TrafCODDemoSimple", TrafCODDemo.class,
+        this.demos.add(new Demo("TrafCODDemoSimple", TrafCODDemo1.class,
                 "Model of a simple crossing with traffic lights.\n" + "using a TrafCOD controller"));
         this.demos.add(new Demo("TrafCODDemoComplex", TrafCODDemo2.class,
                 "Model of a complex crossing with traffic lights.\n" + "using a TrafCOD controller"));

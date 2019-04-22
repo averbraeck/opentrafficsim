@@ -1,24 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xsd/src/main/resources/xsd/1.02.01/ots.xsd"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.02.01/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
-  
+
   <DEFINITIONS>
     <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml" />
     <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml" />
     <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml" />
     <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutemplates.xml" />
-  
+
     <LANETYPES>
       <LANETYPE ID="STREET">
         <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
       </LANETYPE>
     </LANETYPES>
-  
+
     <GTUTYPES>
       <!-- <GTUTYPE PARENT="ROAD_USER" ID="CAR" /> <GTUTYPE PARENT="ROAD_USER" ID="TRUCK" /> -->
     </GTUTYPES>
-  
+
     <GTUTEMPLATES>
       <GTUTEMPLATE GTUTYPE="CAR" ID="CARS">
         <LENGTHDIST LENGTHUNIT="m">
@@ -290,42 +290,42 @@
     </LINK>
 
     <LINK ID="ECNC" NODESTART="EC" NODEEND="NCO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">
-      <BEZIER />
+      <BEZIER SHAPE="0.5" />
       <DEFINEDLAYOUT>r2r</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="ECSC" NODESTART="EC" NODEEND="SCO" TYPE="STREET" OFFSETSTART="3.3m" OFFSETEND="0m">
-      <BEZIER />
+      <BEZIER SHAPE="1.0" />
       <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="NCWC" NODESTART="NC" NODEEND="WCO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">
-      <BEZIER />
+      <BEZIER SHAPE="0.5" />
       <DEFINEDLAYOUT>r2r</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="NCEC" NODESTART="NC" NODEEND="ECO" TYPE="STREET" OFFSETSTART="3.3m" OFFSETEND="0m">
-      <BEZIER />
+      <BEZIER SHAPE="1.0" />
       <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="WCSC" NODESTART="WC" NODEEND="SCO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">
-      <BEZIER />
+      <BEZIER SHAPE="0.5" />
       <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="WCNC" NODESTART="WC" NODEEND="NCO" TYPE="STREET" OFFSETSTART="3.3m" OFFSETEND="0m">
-      <BEZIER />
+      <BEZIER SHAPE="1.0" />
       <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="SCEC" NODESTART="SC" NODEEND="ECO" TYPE="STREET" OFFSETSTART="-3.3m" OFFSETEND="0m">
-      <BEZIER />
+      <BEZIER SHAPE="0.5" />
       <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
     </LINK>
 
     <LINK ID="SCWC" NODESTART="SC" NODEEND="WCO" TYPE="STREET" OFFSETSTART="3.3m" OFFSETEND="0m">
-      <BEZIER />
+      <BEZIER SHAPE="1.0" />
       <DEFINEDLAYOUT>r2l</DEFINEDLAYOUT>
     </LINK>
 
