@@ -31,6 +31,24 @@ public class Shoulder extends CrossSectionElement
      * @param lateralPositionEnd Length; the lateral end position compared to the linear geometry of the Cross Section Link
      * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
      * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
+     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    public Shoulder(final CrossSectionLink parentLink, final String id, final Length lateralPositionStart,
+            final Length lateralPositionEnd, final Length beginWidth, final Length endWidth,
+            final boolean fixGradualLateralOffset) throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, fixGradualLateralOffset);
+    }
+
+    /**
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
+     * @param id String; the id of the lane. Should be unique within the parentLink.
+     * @param lateralPositionStart Length; the lateral start position compared to the linear geometry of the Cross Section Link.
+     * @param lateralPositionEnd Length; the lateral end position compared to the linear geometry of the Cross Section Link
+     * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
+     * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -38,7 +56,7 @@ public class Shoulder extends CrossSectionElement
             final Length lateralPositionEnd, final Length beginWidth, final Length endWidth)
             throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth);
+        this(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth, false);
     }
 
     /**

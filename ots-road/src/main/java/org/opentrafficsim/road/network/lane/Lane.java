@@ -222,6 +222,35 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GTUType, Speed&gt;; speed limit on this lane, specified per GTU Type
+     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
+            final Map<GTUType, Speed> speedLimitMap, final boolean fixGradualLateralOffset)
+            throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
+        this.laneType = laneType;
+        checkDirectionality();
+        this.speedLimitMap = speedLimitMap;
+        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
+    }
+
+    /**
+     * Construct a new Lane.
+     * @param parentLink CrossSectionLink; the link to which the new Lane will belong (must be constructed first)
+     * @param id String; the id of this lane within the link; should be unique within the link.
+     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the end of the parent Link
+     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
+     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
+     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
+     * @param speedLimitMap Map&lt;GTUType, Speed&gt;; speed limit on this lane, specified per GTU Type
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -230,10 +259,35 @@ public class Lane extends CrossSectionElement implements Serializable
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
             final Map<GTUType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
+        this(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, speedLimitMap, false);
+    }
+
+    /**
+     * Construct a new Lane.
+     * @param parentLink CrossSectionLink; the link to which the element will belong (must be constructed first)
+     * @param id String; the id of this lane within the link; should be unique within the link.
+     * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link at the end of the parent Link
+     * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
+     * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
+     * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
+     * @param speedLimit Speed; speed limit on this lane
+     * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
+            final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
+            final Speed speedLimit, final boolean fixGradualLateralOffset) throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
         this.laneType = laneType;
         checkDirectionality();
-        this.speedLimitMap = speedLimitMap;
+        this.speedLimitMap = new LinkedHashMap<>();
+        this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), speedLimit);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -257,12 +311,7 @@ public class Lane extends CrossSectionElement implements Serializable
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
             final Speed speedLimit) throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
-        this.laneType = laneType;
-        checkDirectionality();
-        this.speedLimitMap = new LinkedHashMap<>();
-        this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), speedLimit);
-        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
+        this(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, speedLimit, false);
     }
 
     /**
