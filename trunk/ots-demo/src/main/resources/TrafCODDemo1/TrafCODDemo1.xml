@@ -1,16 +1,50 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.00.00/ots-network.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.02.01/ots.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <DEFINITIONS>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml" />
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml" />
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml" />
 
-    <GLOBAL />
+    <GTUTEMPLATES>
+      <GTUTEMPLATE DEFAULT="true" GTUTYPE="CAR" ID="CAR">
+        <LENGTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="3.0" MAX="4.0" />
+        </LENGTHDIST>
+        <WIDTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="1.7" MAX="2.0" />
+        </WIDTHDIST>
+        <MAXSPEEDDIST SPEEDUNIT="km/h">
+          <CONSTANT C="120" />
+        </MAXSPEEDDIST>
+      </GTUTEMPLATE>
+      <GTUTEMPLATE DEFAULT="true" GTUTYPE="TRUCK" ID="TRUCK">
+        <LENGTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="16.0" MAX="24.0" />
+        </LENGTHDIST>
+        <WIDTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="2.2" MAX="2.7" />
+        </WIDTHDIST>
+        <MAXSPEEDDIST SPEEDUNIT="km/h">
+          <CONSTANT C="100" />
+        </MAXSPEEDDIST>
+      </GTUTEMPLATE>
+    </GTUTEMPLATES>
 
-    <GTUTYPE NAME="CAR" />
-    <GTUTYPE NAME="TRUCK" />
-
-    <GTU NAME="CAR" GTUTYPE="CAR" LENGTH="UNIF(4,7) m" WIDTH="UNIF(1.7, 2) m" MAXSPEED="CONST(120) km/h" />
-    <GTU NAME="TRUCK" GTUTYPE="TRUCK" LENGTH="UNIF(16,24) m" WIDTH="UNIF(2.2, 2.7) m" MAXSPEED="CONST(100) km/h" />
+    <LINKTYPES>
+      <LINKTYPE ID="HIGHWAY">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
+        <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="100km/h" />
+        <SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="90km/h" />
+      </LINKTYPE>
+      <LINKTYPE ID="STREET">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
+        <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="40km/h" />
+        <SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="40km/h" />
+      </LINKTYPE>
+    </LINKTYPES>
 
     <GTUMIX NAME="C60T40">
       <GTU NAME="CAR" WEIGHT="60"></GTU>
@@ -22,61 +56,64 @@
       <GTU NAME="TRUCK" WEIGHT="20" />
     </GTUMIX>
 
-    <ROADTYPE NAME="HIGHWAY" DEFAULTLANEWIDTH="3.6m" DEFAULTLANEKEEPING="KEEPRIGHT"
-      DEFAULTOVERTAKING="LEFTSET([CAR, TRUCK] OVERTAKE [ALL]) RIGHTSPEED(40 km/h)">
-      <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="100km/h" />
-      <SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="90km/h" />
-    </ROADTYPE>
-
-    <ROADTYPE NAME="STREET" DEFAULTLANEWIDTH="3.6m" DEFAULTLANEKEEPING="KEEPRIGHT"
-      DEFAULTOVERTAKING="LEFTSET([CAR, TRUCK] OVERTAKE [ALL]) RIGHTSPEED(40 km/h)">
-      <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="40km/h" />
-      <SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="40km/h" />
-    </ROADTYPE>
-
     <LANETYPE NAME="NOTRUCK">
       <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="100km/h" />
     </LANETYPE>
 
-    <ROADLAYOUT NAME="r1" ROADTYPE="STREET">
-      <SHOULDER WIDTH="2m" OFFSET="-2.85m" COLOR="GREEN" />
-      <STRIPE TYPE="SOLID" OFFSET="-1.85m" />
-      <LANE NAME="FORWARD" OFFSET="0m" WIDTH="3.5m" DIRECTION="FORWARD" />
-      <STRIPE TYPE="SOLID" OFFSET="1.85m" WIDTH="20cm" COLOR="#FFFFFF" />
-      <SHOULDER WIDTH="2m" OFFSET="2.85m" COLOR="GREEN" />
-    </ROADLAYOUT>
-
+    <ROADLAYOUTS>
+      <ROADLAYOUT ID="r1" LINKTYPE="STREET">
+        <SHOULDER><CENTEROFFSET>-2.75m</CENTEROFFSET><WIDTH>2m</WIDTH></SHOULDER>WIDTH="2m" OFFSET="-2.85m" COLOR="GREEN" />
+        <STRIPE TYPE="SOLID" OFFSET="-1.85m" />
+        <LANE ID="FORWARD" OFFSET="0m" WIDTH="3.5m" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>0.0m</CENTEROFFSET>
+          <WIDTH>3.5m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" OFFSET="1.85m" WIDTH="20cm" COLOR="#FFFFFF" />
+        <SHOULDER><CENTEROFFSET>-2.75m</CENTEROFFSET><WIDTH>2m</WIDTH></SHOULDER>WIDTH="2m" OFFSET="2.85m" COLOR="GREEN" />
+      </ROADLAYOUT>
+    </ROADLAYOUTS>
   </DEFINITIONS>
 
-  <NODE NAME="N" COORDINATE="(0,300)" DIRECTION="270 deg" />
-  <NODE NAME="E" COORDINATE="(100,0)" DIRECTION="180 deg" />
-  <NODE NAME="S" COORDINATE="(0,-100)" DIRECTION="90 deg" />
-  <NODE NAME="W" COORDINATE="(-300,0)" DIRECTION="0 deg" />
-  <NODE NAME="X" COORDINATE="(0,0)" DIRECTION="0 deg" />
+  <NETWORK>
+    <NODE ID="N" COORDINATE="(0,300)" DIRECTION="270 deg" />
+    <NODE ID="E" COORDINATE="(100,0)" DIRECTION="180 deg" />
+    <NODE ID="S" COORDINATE="(0,-100)" DIRECTION="90 deg" />
+    <NODE ID="W" COORDINATE="(-300,0)" DIRECTION="0 deg" />
+    <NODE ID="X" COORDINATE="(0,0)" DIRECTION="0 deg" />
 
-  <ROUTE NAME="NS" NODELIST="N X S" />
-  <ROUTE NAME="WE" NODELIST="W X E" />
+    <ROUTE NAME="NS" NODELIST="N X S" />
+    <ROUTE NAME="WE" NODELIST="W X E" />
 
-  <LINK NAME="NX" NODESTART="N" NODEEND="X" ROADLAYOUT="r1">
-    <STRAIGHT />
-    <GENERATOR LANE="FORWARD" POSITION="10m" IAT="EXPO(8) s" INITIALSPEED="CONST(0.0) km/h" GTU="CAR"
-      ROUTE="NS" GTUCOLORER="SWITCHABLE" />
-  </LINK>
+    <LINK ID="NX" NODESTART="N" NODEEND="X" ROADLAYOUT="r1">
+      <STRAIGHT />
+      <GENERATOR LANE="FORWARD" POSITION="10m" IAT="EXPO(8) s" INITIALSPEED="CONST(0.0) km/h" GTU="CAR"
+        ROUTE="NS" GTUCOLORER="SWITCHABLE" />
+    </LINK>
 
-  <LINK NAME="WX" NODESTART="W" NODEEND="X" ROADLAYOUT="r1">
-    <STRAIGHT />
-    <GENERATOR LANE="FORWARD" POSITION="10m" IAT="EXPO(8) s" INITIALSPEED="CONST(0.0) km/h" GTU="CAR"
-      ROUTE="WE" GTUCOLORER="SWITCHABLE" />
-  </LINK>
+    <LINK ID="WX" NODESTART="W" NODEEND="X" ROADLAYOUT="r1">
+      <STRAIGHT />
+      <GENERATOR LANE="FORWARD" POSITION="10m" IAT="EXPO(8) s" INITIALSPEED="CONST(0.0) km/h" GTU="CAR"
+        ROUTE="WE" GTUCOLORER="SWITCHABLE" />
+    </LINK>
 
-  <LINK NAME="XS" NODESTART="X" NODEEND="S" ROADLAYOUT="r1">
-    <STRAIGHT />
-    <SINK POSITION="50m" LANE="FORWARD" />
-  </LINK>
+    <LINK ID="XS" NODESTART="X" NODEEND="S" ROADLAYOUT="r1">
+      <STRAIGHT />
+      <SINK POSITION="50m" LANE="FORWARD" />
+    </LINK>
 
-  <LINK NAME="XE" NODESTART="X" NODEEND="E" ROADLAYOUT="r1">
-    <STRAIGHT />
-    <SINK POSITION="50m" LANE="FORWARD" />
-  </LINK>
+    <LINK ID="XE" NODESTART="X" NODEEND="E" ROADLAYOUT="r1">
+      <STRAIGHT />
+      <SINK POSITION="50m" LANE="FORWARD" />
+    </LINK>
 
-</NETWORK>
+  </NETWORK>
+
+  <NETWORKDEMAND>
+  </NETWORKDEMAND>
+
+  <SCENARIO></SCENARIO>
+
+  <RUN>
+    <RUNLENGTH>1h</RUNLENGTH>
+  </RUN>
+</OTS>

@@ -117,27 +117,27 @@
   <xsd:complexType name="CROSSSECTIONELEMENT">
     <xsd:sequence>
       <xsd:choice minOccurs="0">
-        <xsd:element name="CENTEROFFSET" type="SIGNEDLENGTHTYPE" />
-        <xsd:element name="LEFTOFFSET" type="SIGNEDLENGTHTYPE" />
-        <xsd:element name="RIGHTOFFSET" type="SIGNEDLENGTHTYPE" />
+        <xsd:element name="CENTEROFFSET" type="LENGTHTYPE" />
+        <xsd:element name="LEFTOFFSET" type="LENGTHTYPE" />
+        <xsd:element name="RIGHTOFFSET" type="LENGTHTYPE" />
         <xsd:sequence>
           <xsd:choice>
-            <xsd:element name="CENTEROFFSETSTART" type="SIGNEDLENGTHTYPE" />
-            <xsd:element name="LEFTOFFSETSTART" type="SIGNEDLENGTHTYPE" />
-            <xsd:element name="RIGHTOFFSETSTART" type="SIGNEDLENGTHTYPE" />
+            <xsd:element name="CENTEROFFSETSTART" type="LENGTHTYPE" />
+            <xsd:element name="LEFTOFFSETSTART" type="LENGTHTYPE" />
+            <xsd:element name="RIGHTOFFSETSTART" type="LENGTHTYPE" />
           </xsd:choice>
           <xsd:choice>
-            <xsd:element name="CENTEROFFSETEND" type="SIGNEDLENGTHTYPE" />
-            <xsd:element name="LEFTOFFSETEND" type="SIGNEDLENGTHTYPE" />
-            <xsd:element name="RIGHTOFFSETEND" type="SIGNEDLENGTHTYPE" />
+            <xsd:element name="CENTEROFFSETEND" type="LENGTHTYPE" />
+            <xsd:element name="LEFTOFFSETEND" type="LENGTHTYPE" />
+            <xsd:element name="RIGHTOFFSETEND" type="LENGTHTYPE" />
           </xsd:choice>
         </xsd:sequence>
       </xsd:choice>
       <xsd:choice>
-        <xsd:element name="WIDTH" type="LENGTHTYPE" />
+        <xsd:element name="WIDTH" type="POSITIVELENGTHTYPE" />
         <xsd:sequence>
-          <xsd:element name="WIDTHSTART" type="SIGNEDLENGTHTYPE" />
-          <xsd:element name="WIDTHEND" type="SIGNEDLENGTHTYPE" />
+          <xsd:element name="WIDTHSTART" type="LENGTHTYPE" />
+          <xsd:element name="WIDTHEND" type="LENGTHTYPE" />
         </xsd:sequence>
       </xsd:choice>
     </xsd:sequence>
@@ -175,17 +175,17 @@
   <xsd:complexType name="CSESTRIPE">
     <xsd:sequence>
       <xsd:choice minOccurs="0">
-        <xsd:element name="CENTEROFFSET" type="SIGNEDLENGTHTYPE" />
+        <xsd:element name="CENTEROFFSET" type="LENGTHTYPE" />
         <xsd:sequence>
           <xsd:choice>
-            <xsd:element name="CENTEROFFSETSTART" type="SIGNEDLENGTHTYPE" />
+            <xsd:element name="CENTEROFFSETSTART" type="LENGTHTYPE" />
           </xsd:choice>
           <xsd:choice>
-            <xsd:element name="CENTEROFFSETEND" type="SIGNEDLENGTHTYPE" />
+            <xsd:element name="CENTEROFFSETEND" type="LENGTHTYPE" />
           </xsd:choice>
         </xsd:sequence>
       </xsd:choice>
-      <xsd:element name="DRAWINGWIDTH" type="LENGTHTYPE" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="DRAWINGWIDTH" type="POSITIVELENGTHTYPE" minOccurs="0" maxOccurs="1" />
     </xsd:sequence>
     <xsd:attribute name="ID" type="xsd:string" use="optional" />
     <xsd:attribute name="TYPE" type="STRIPETYPE" use="required" />

@@ -85,7 +85,7 @@
                   <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
                 </xsd:complexType>
               </xsd:element>
-              <xsd:element name="NOLANECHANGE" type="LENGTHTYPE" minOccurs="0">
+              <xsd:element name="NOLANECHANGE" type="POSITIVELENGTHTYPE" minOccurs="0">
                 <xsd:annotation>
                   <xsd:documentation source="description">
                     Initial distance over which GTUs are not allowed to change
@@ -198,6 +198,84 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="ROUTE">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="NODE" minOccurs="2" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="ID" type="xsd:string" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="SHORTESTROUTE">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="FROM" minOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="NODE" type="xsd:string" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="TO" minOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="NODE" type="xsd:string" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="VIA" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NODE" type="xsd:string" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:choice minOccurs="1" maxOccurs="2">
+          <xsd:element name="DISTANCECOST" type="DISTANCECOSTTYPE" minOccurs="1" maxOccurs="1" />
+          <xsd:element name="TIMECOST" type="TIMECOSTTYPE" minOccurs="1" maxOccurs="1" />
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="ROUTEMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="ROUTE" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="SHORTESTROUTEMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="SHORTESTROUTE" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="RANDOMSTREAM" type="xsd:string" use="optional" default="default" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="GENERATOR">
     <xsd:complexType>
       <xsd:sequence>
@@ -277,6 +355,10 @@
   <xsd:element name="NETWORKDEMAND">
     <xsd:complexType>
       <xsd:sequence>
+        <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="SHORTESTROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="GTUTEMPLATEMIX" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ODOPTIONS" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="OD" minOccurs="0" maxOccurs="unbounded" />

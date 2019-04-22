@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * DurationAdapter converts between the XML String for a Duration and the DJUnits Duration. <br>
@@ -19,7 +20,15 @@ public class DurationAdapter extends XmlAdapter<String, Duration>
     @Override
     public Duration unmarshal(final String field) throws IllegalArgumentException
     {
-        return Duration.valueOf(field);
+        try
+        {
+            return Duration.valueOf(field);
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing Duration '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */

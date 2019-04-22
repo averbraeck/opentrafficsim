@@ -3,6 +3,7 @@ package org.opentrafficsim.xml.bindings;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * FractionAdapter to convert fractions as a number between 0.0 and 1.0, or as a percentage between 0% and 100%. <br>
@@ -37,8 +38,10 @@ public class FractionAdapter extends XmlAdapter<String, Double>
         }
         catch (Exception exception)
         {
+            CategoryLogger.always().error(exception, "Problem parsing fraction '" + field + "'");
             throw new IllegalArgumentException("Error parsing fraction " + field, exception);
         }
+        CategoryLogger.always().error("Problem parsing fraction '" + field + "'");
         throw new IllegalArgumentException("Error parsing fraction " + field);
     }
 

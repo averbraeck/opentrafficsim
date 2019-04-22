@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.net.URL;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +70,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -174,9 +174,10 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             this.simulator.getReplication().setStreams(streams);
             try
             {
-                URL url = URLResource.getResource("/conflict/BusStreet.xml");
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
-                this.network = nlp.build(url, false);
+                InputStream stream = URLResource.getResourceAsStream("/conflict/BusStreet.xml");
+                this.network = new OTSRoadNetwork("BusStreet", true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 

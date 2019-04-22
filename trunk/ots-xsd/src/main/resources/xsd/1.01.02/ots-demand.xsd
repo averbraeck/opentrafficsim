@@ -83,7 +83,7 @@
                   <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
                 </xsd:complexType>
               </xsd:element>
-              <xsd:element name="NOLANECHANGE" type="LENGTHTYPE" minOccurs="0">
+              <xsd:element name="NOLANECHANGE" type="POSITIVELENGTHTYPE" minOccurs="0">
                 <xsd:annotation>
                   <xsd:documentation source="description">
                     Initial distance over which GTUs are not allowed to change lane,

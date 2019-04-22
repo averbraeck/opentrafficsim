@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * TimeAdapter converts between the XML String for a Time and the DJUnits Time. <br>
@@ -19,7 +20,15 @@ public class TimeAdapter extends XmlAdapter<String, Time>
     @Override
     public Time unmarshal(final String field) throws IllegalArgumentException
     {
-        return Time.valueOf(field);
+        try
+        {
+            return Time.valueOf(field);
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing Time '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */

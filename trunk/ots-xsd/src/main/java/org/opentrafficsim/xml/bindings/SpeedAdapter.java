@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * SpeedAdapter converts between the XML String for a Speed and the DJUnits Speed. <br>
@@ -19,7 +20,15 @@ public class SpeedAdapter extends XmlAdapter<String, Speed>
     @Override
     public Speed unmarshal(final String field) throws IllegalArgumentException
     {
-        return Speed.valueOf(field);
+        try
+        {
+            return Speed.valueOf(field);
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing Speed '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */

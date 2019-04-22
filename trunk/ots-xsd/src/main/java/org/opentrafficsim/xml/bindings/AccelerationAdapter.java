@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * AccelerationAdapter converts between the XML String for an Acceleration and the DJUnits Acceleration. <br>
@@ -19,7 +20,15 @@ public class AccelerationAdapter extends XmlAdapter<String, Acceleration>
     @Override
     public Acceleration unmarshal(final String field) throws IllegalArgumentException
     {
-        return Acceleration.valueOf(field);
+        try
+        {
+            return Acceleration.valueOf(field);
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing Acceleration '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */

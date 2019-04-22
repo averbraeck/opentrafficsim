@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.net.URL;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -22,7 +22,7 @@ import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -118,9 +118,9 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
         {
             try
             {
-                URL url = URLResource.getResource("/conflict/TurboRoundabout.xml");
-                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator, new DefaultSwitchableGTUColorer());
-                this.network = nlp.build(url, false);
+                InputStream stream = URLResource.getResourceAsStream("/conflict/TurboRoundabout.xml");
+                this.network = new OTSRoadNetwork("TurboRoundabout", true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
 
                 // add conflicts
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,

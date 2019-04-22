@@ -2,6 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.ArcDirection;
 
 /**
@@ -33,9 +34,11 @@ public class LeftRightAdapter extends XmlAdapter<String, ArcDirection>
         }
         catch (Exception exception)
         {
-            throw new IllegalArgumentException("Error parsing ArcDirection " + field, exception);
+            CategoryLogger.always().error(exception, "Problem parsing ArcDirection (LeftRight) '" + field + "'");
+            throw new IllegalArgumentException("Error parsing ArcDirection (LeftRight) " + field, exception);
         }
-        throw new IllegalArgumentException("Error parsing ArcDirection " + field);
+        CategoryLogger.always().error("Problem parsing ArcDirection (LeftRight) '" + field + "'");
+        throw new IllegalArgumentException("Error parsing ArcDirection (LeftRight) " + field);
     }
 
     /** {@inheritDoc} */

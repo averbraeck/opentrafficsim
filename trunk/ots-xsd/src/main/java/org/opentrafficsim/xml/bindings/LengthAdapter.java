@@ -4,9 +4,11 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.logger.CategoryLogger;
 
 /**
- * LengthAdapter converts between the XML String for a Length and the DJUnits Length. The length should be positive. <br>
+ * SignedLengthAdapter converts between the XML String for a Length and the DJUnits Length. The length can be positive or
+ * negative. <br>
  * <br>
  * Copyright (c) 2003-2018 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
  * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
@@ -19,21 +21,21 @@ public class LengthAdapter extends XmlAdapter<String, Length>
     @Override
     public Length unmarshal(final String field) throws IllegalArgumentException
     {
-        if (field.trim().startsWith("-"))
+        try
         {
-            throw new IllegalArgumentException("Length cannot be negative: " + field);
+            return Length.valueOf(field);
         }
-        return Length.valueOf(field);
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing Length '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public String marshal(final Length length) throws IllegalArgumentException
     {
-        if (length.lt(Length.ZERO))
-        {
-            throw new IllegalArgumentException("Length cannot be negative: " + length);
-        }
         return Scalar.textualStringOfDefaultLocale(length);
     }
 

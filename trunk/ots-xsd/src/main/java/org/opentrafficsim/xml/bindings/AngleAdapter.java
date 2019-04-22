@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * AngleAdapter converts between the XML String for an Angle and the DJUnits Angle. <br>
@@ -19,7 +20,15 @@ public class AngleAdapter extends XmlAdapter<String, Angle>
     @Override
     public Angle unmarshal(final String field) throws IllegalArgumentException
     {
-        return Angle.valueOf(field);
+        try
+        {
+            return Angle.valueOf(field);
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().error(exception, "Problem parsing Angle '" + field + "'");
+            throw exception;
+        }
     }
 
     /** {@inheritDoc} */

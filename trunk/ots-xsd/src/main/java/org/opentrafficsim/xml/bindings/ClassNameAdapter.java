@@ -2,6 +2,8 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.djutils.logger.CategoryLogger;
+
 /**
  * ClassNameAdapter converts between the XML String for a class name and the Class object. <br>
  * <br>
@@ -22,6 +24,7 @@ public class ClassNameAdapter extends XmlAdapter<String, Class<?>>
         }
         catch (Exception exception)
         {
+            CategoryLogger.always().error(exception, "Problem parsing classname '" + field + "'");
             throw new IllegalArgumentException("Error parsing classname " + field, exception);
         }
     }

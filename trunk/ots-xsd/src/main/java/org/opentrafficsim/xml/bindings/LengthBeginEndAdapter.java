@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
 
 /**
@@ -61,6 +62,7 @@ public class LengthBeginEndAdapter extends XmlAdapter<String, LengthBeginEnd>
         }
         catch (Exception exception)
         {
+            CategoryLogger.always().error(exception, "Problem parsing LengthBeginEnd '" + field + "'");
             throw new IllegalArgumentException("Error parsing LengthBeginEnd " + field, exception);
         }
     }

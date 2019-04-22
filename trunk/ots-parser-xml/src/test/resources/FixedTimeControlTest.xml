@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-xsd/src/main/resources/xsd/1.01.02/ots.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-xsd/src/main/resources/xsd/1.02.01/ots.xsd">
 
   <DEFINITIONS>
     <LINKTYPES>
@@ -13,8 +13,8 @@
       <LANETYPE NAME="HIGHWAYLANE"></LANETYPE>
     </LANETYPES>
     <ROADLAYOUTS>
-      <ROADLAYOUT NAME="Broad" LINKTYPE="HIGHWAY">
-        <LANE NAME="LEFT" LANETYPE="HIGHWAYLANE" DIRECTION="FORWARD">
+      <ROADLAYOUT ID="Broad" LINKTYPE="HIGHWAY">
+        <LANE ID="LEFT" LANETYPE="HIGHWAYLANE" DIRECTION="FORWARD">
           <CENTEROFFSET>-3.5m</CENTEROFFSET>
           <WIDTH>3.5m</WIDTH>
         </LANE>

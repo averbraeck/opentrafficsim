@@ -4,6 +4,7 @@ import javax.vecmath.Point3d;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * CoordinateAdapter converts between the XML String for a coordinate and a Point3d. Because the ots-xsd project is not
@@ -39,6 +40,7 @@ public class CoordinateAdapter extends XmlAdapter<String, Point3d>
         }
         catch (Exception exception)
         {
+            CategoryLogger.always().error(exception, "Problem parsing coordinate '" + field + "'");
             throw new IllegalArgumentException("Error parsing coordinate" + field, exception);
         }
     }
