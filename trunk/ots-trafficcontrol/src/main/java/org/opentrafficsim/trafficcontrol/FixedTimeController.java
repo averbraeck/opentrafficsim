@@ -116,7 +116,7 @@ public class FixedTimeController extends AbstractTrafficController
             List<SignalGroup> sgList = signalGroupsOfTrafficLight.get(trafficLightId);
             if (sgList.size() > 1)
             {
-                System.out.println("Signal " + trafficLightId + " is used in multiple signal groups");
+                // System.out.println("Signal " + trafficLightId + " is used in multiple signal groups");
                 // Check for overlapping or adjacent green phases
                 List<Flank> flanks = new ArrayList<>();
                 for (SignalGroup sg : sgList)
@@ -139,11 +139,13 @@ public class FixedTimeController extends AbstractTrafficController
                     flanks.add(new Flank(sgOffset % this.cycleTime.si, TrafficLightColor.RED));
                 }
                 Collections.sort(flanks);
+                /*-
                 System.out.println("Collected " + flanks.size() + " flanks:");
                 for (Flank flank : flanks)
                 {
                     System.out.println(flank);
                 }
+                */
                 boolean combined = false;
                 int greenCount = 0;
                 for (int index = 0; index < flanks.size(); index++)
@@ -181,11 +183,13 @@ public class FixedTimeController extends AbstractTrafficController
                         }
                     }
                 }
+                /*-
                 System.out.println("Reduced " + flanks.size() + " flanks:");
                 for (Flank flank : flanks)
                 {
                     System.out.println(flank);
                 }
+                */
                 if (combined)
                 {
                     // Traffic light has adjacent or overlapping green realizations.
@@ -193,7 +197,7 @@ public class FixedTimeController extends AbstractTrafficController
                     // Remove the traffic light from the current signal groups that it is part of
                     for (SignalGroup sg : sgList)
                     {
-                        System.out.println("Reducing " + sg);
+                        // System.out.println("Reducing " + sg);
                         newSignalGroupName = newSignalGroupName + "_" + sg.getId();
                         Set<String> trafficLightIds = new HashSet<>();
                         for (String tlId : sg.getTrafficLightIds())
@@ -208,13 +212,15 @@ public class FixedTimeController extends AbstractTrafficController
                         {
                             SignalGroup newSignalGroup = new SignalGroup(sg.getId(), trafficLightIds, sg.getOffset(),
                                     sg.getPreGreen(), sg.getGreen(), sg.getYellow());
-                            System.out.println("reduced signal group " + newSignalGroup);
+                            // System.out.println("reduced signal group " + newSignalGroup);
                             this.signalGroups.add(newSignalGroup);
                         }
+                        /*-
                         else
                         {
                             System.out.println("Signal group became empty");
                         }
+                        */
                     }
                     // Create new signal group(s) for each green realization of the traffic light
                     Duration sgOffset = null;
@@ -246,7 +252,7 @@ public class FixedTimeController extends AbstractTrafficController
                             SignalGroup newSignalGroup = new SignalGroup(newSignalGroupName + "_" + nextNumber, trafficLightIds,
                                     sgOffset, preGreen, green, yellow);
                             this.signalGroups.add(newSignalGroup);
-                            System.out.println("Created signal group " + newSignalGroup);
+                            // System.out.println("Created signal group " + newSignalGroup);
                         }
                         cumulativeOffset = flank.getOffset();
                     }
