@@ -208,7 +208,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 value /= 10.0;
             }
             fireTimedEvent(TrafficController.TRAFFICCONTROL_VARIABLE_CREATED,
-                    new Object[] {getId(), v.getName(), v.getStream(), value}, simulator.getSimulatorTime());
+                    new Object[] { getId(), v.getName(), v.getStream(), value }, simulator.getSimulatorTime());
         }
         // Schedule the consistency check (don't call it directly) to allow interested parties to subscribe before the
         // consistency check is performed
@@ -429,7 +429,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             {
                 // System.out.println("Warning: " + v.getName() + v.getStream() + " is never referenced");
                 fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
-                        new Object[] {getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " is never referenced"},
+                        new Object[] { getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " is never referenced" },
                         this.simulator.getSimulatorTime());
             }
             if (!v.isDetector())
@@ -438,14 +438,14 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 {
                     // System.out.println("Warning: " + v.getName() + v.getStream() + " has no start rule");
                     fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
-                            new Object[] {getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " has no start rule"},
+                            new Object[] { getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " has no start rule" },
                             this.simulator.getSimulatorTime());
                 }
                 if ((!v.getFlags().contains(Flags.HAS_END_RULE)) && (!v.isTimer()))
                 {
                     // System.out.println("Warning: " + v.getName() + v.getStream() + " has no end rule");
                     fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
-                            new Object[] {getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " has no end rule"},
+                            new Object[] { getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " has no end rule" },
                             this.simulator.getSimulatorTime());
                 }
             }
@@ -485,37 +485,45 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             list.add(tl);
         }
         Map<String, TrafficLightSensor> sensors = new HashMap<>();
+        // Look up all the flank sensors and collect their parents (the traffic light sensors)
+        for (FlankSensor flankSensor : network.getObjectMap(FlankSensor.class).values())
+        {
+            TrafficLightSensor trafficLightSensor = flankSensor.getParent();
+            sensors.put(trafficLightSensor.getId(), trafficLightSensor);
+        }
+        /*-new HashMap<>();
         // Search the entire network for all traffic light sensors; there should be an easier way
         for (Link link : network.getLinkMap().values())
         {
-            if (link instanceof CrossSectionLink)
+        if (link instanceof CrossSectionLink)
+        {
+        for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
+        {
+            if (cse instanceof Lane)
             {
-                for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
+                Lane lane = (Lane) cse;
+                for (SingleSensor singleSensor : lane.getSensors())
                 {
-                    if (cse instanceof Lane)
+                    if (singleSensor instanceof FlankSensor)
                     {
-                        Lane lane = (Lane) cse;
-                        for (SingleSensor singleSensor : lane.getSensors())
+                        TrafficLightSensor tls = ((FlankSensor) singleSensor).getParent();
+                        String sensorName = tls.getId();
+                        if (sensorName.startsWith(getId()))
                         {
-                            if (singleSensor instanceof FlankSensor)
+                            sensorName = sensorName.substring(getId().length());
+                            if (sensorName.startsWith("."))
                             {
-                                TrafficLightSensor tls = ((FlankSensor) singleSensor).getParent();
-                                String sensorName = tls.getId();
-                                if (sensorName.startsWith(getId()))
-                                {
-                                    sensorName = sensorName.substring(getId().length());
-                                    if (sensorName.startsWith("."))
-                                    {
-                                        sensorName = sensorName.substring(1);
-                                    }
-                                    sensors.put(sensorName, tls);
-                                }
+                                sensorName = sensorName.substring(1);
                             }
+                            sensors.put(sensorName, tls);
                         }
                     }
                 }
             }
         }
+        }
+        }
+        */
         for (Variable variable : this.variables.values())
         {
             if (variable.isOutput())
@@ -557,7 +565,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 TrafficLightSensor tls = sensors.get("D" + digits + subNumber);
                 if (null == tls)
                 {
-                    throw new TrafficControlException("No sensor found that matches " + name + " and " + getId());
+                    throw new TrafficControlException(
+                            "No sensor found that matches " + name + " subNumber " + subNumber + " and " + getId());
                 }
                 variable.subscribeToDetector(tls);
                 if (null != this.stateDisplay)
@@ -778,7 +787,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     @SuppressWarnings("unused")
     private void evalExprs() throws TrafficControlException, SimRuntimeException
     {
-        fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING, new Object[] {getId()},
+        fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING, new Object[] { getId() },
                 this.simulator.getSimulatorTime());
         // System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().si));
         // insert some delay for testing; without this the simulation runs too fast
@@ -819,7 +828,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 }
             }
             fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING,
-                    new Object[] {getId(), warningMessage.toString()}, this.simulator.getSimulatorTime());
+                    new Object[] { getId(), warningMessage.toString() }, this.simulator.getSimulatorTime());
         }
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
     }
@@ -951,7 +960,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             if (destination.isOutput())
             {
                 fireEvent(TRAFFIC_LIGHT_CHANGED,
-                        new Object[] {getId(), new Integer(destination.getStream()), destination.getColor()});
+                        new Object[] { getId(), new Integer(destination.getStream()), destination.getColor() });
             }
             if (destination.isConflictGroup() && resultValue != 0)
             {
@@ -966,7 +975,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     conflictGroupList.append(String.format("%02d", stream));
                 }
                 fireEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED,
-                        new Object[] {getId(), this.currentConflictGroup, conflictGroupList.toString()});
+                        new Object[] { getId(), this.currentConflictGroup, conflictGroupList.toString() });
                 // System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
                 // + conflictGroupList.toString());
                 this.currentConflictGroup = conflictGroupList.toString();
@@ -1967,7 +1976,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         {
             // TODO figure out how to provide a display for the clone
             TrafCOD result = new TrafCOD(getId(), newSimulator, null);
-            result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED, new Object[] {getId(), TrafficController.BEING_CLONED},
+            result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED, new Object[] { getId(), TrafficController.BEING_CLONED },
                     newSimulator.getSimulatorTime());
             // Clone the variables
             for (Variable v : this.variablesInDefinitionOrder)
@@ -2418,8 +2427,8 @@ class Variable implements EventListenerInterface
         {
             // System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
             // + " due to " + cause.toString());
-            trafCOD.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED, new Object[] {trafCOD.getId(),
-                    toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value, newValue, cause.toString()});
+            trafCOD.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED, new Object[] { trafCOD.getId(),
+                    toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value, newValue, cause.toString() });
         }
         this.value = newValue;
         return result;
