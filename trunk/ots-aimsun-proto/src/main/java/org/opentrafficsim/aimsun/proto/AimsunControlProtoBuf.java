@@ -19,33 +19,15 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required double runTime = 1;</code>
-     */
-    boolean hasRunTime();
-    /**
-     * <code>required double runTime = 1;</code>
-     */
-    double getRunTime();
-
-    /**
-     * <code>required double warmUpTime = 2;</code>
-     */
-    boolean hasWarmUpTime();
-    /**
-     * <code>required double warmUpTime = 2;</code>
-     */
-    double getWarmUpTime();
-
-    /**
-     * <code>optional string networkXML = 3;</code>
+     * <code>required string networkXML = 3;</code>
      */
     boolean hasNetworkXML();
     /**
-     * <code>optional string networkXML = 3;</code>
+     * <code>required string networkXML = 3;</code>
      */
     java.lang.String getNetworkXML();
     /**
-     * <code>optional string networkXML = 3;</code>
+     * <code>required string networkXML = 3;</code>
      */
     com.google.protobuf.ByteString
         getNetworkXMLBytes();
@@ -57,14 +39,11 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.CreateSimulation)
       CreateSimulationOrBuilder {
-  private static final long serialVersionUID = 0L;
     // Use CreateSimulation.newBuilder() to construct.
     private CreateSimulation(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
     private CreateSimulation() {
-      runTime_ = 0D;
-      warmUpTime_ = 0D;
       networkXML_ = "";
     }
 
@@ -90,25 +69,15 @@ public final class AimsunControlProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
                 done = true;
               }
               break;
             }
-            case 9: {
-              bitField0_ |= 0x00000001;
-              runTime_ = input.readDouble();
-              break;
-            }
-            case 17: {
-              bitField0_ |= 0x00000002;
-              warmUpTime_ = input.readDouble();
-              break;
-            }
             case 26: {
               com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000004;
+              bitField0_ |= 0x00000001;
               networkXML_ = bs;
               break;
             }
@@ -137,46 +106,16 @@ public final class AimsunControlProtoBuf {
     }
 
     private int bitField0_;
-    public static final int RUNTIME_FIELD_NUMBER = 1;
-    private double runTime_;
-    /**
-     * <code>required double runTime = 1;</code>
-     */
-    public boolean hasRunTime() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>required double runTime = 1;</code>
-     */
-    public double getRunTime() {
-      return runTime_;
-    }
-
-    public static final int WARMUPTIME_FIELD_NUMBER = 2;
-    private double warmUpTime_;
-    /**
-     * <code>required double warmUpTime = 2;</code>
-     */
-    public boolean hasWarmUpTime() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>required double warmUpTime = 2;</code>
-     */
-    public double getWarmUpTime() {
-      return warmUpTime_;
-    }
-
     public static final int NETWORKXML_FIELD_NUMBER = 3;
     private volatile java.lang.Object networkXML_;
     /**
-     * <code>optional string networkXML = 3;</code>
+     * <code>required string networkXML = 3;</code>
      */
     public boolean hasNetworkXML() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+      return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional string networkXML = 3;</code>
+     * <code>required string networkXML = 3;</code>
      */
     public java.lang.String getNetworkXML() {
       java.lang.Object ref = networkXML_;
@@ -193,7 +132,7 @@ public final class AimsunControlProtoBuf {
       }
     }
     /**
-     * <code>optional string networkXML = 3;</code>
+     * <code>required string networkXML = 3;</code>
      */
     public com.google.protobuf.ByteString
         getNetworkXMLBytes() {
@@ -215,11 +154,7 @@ public final class AimsunControlProtoBuf {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasRunTime()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasWarmUpTime()) {
+      if (!hasNetworkXML()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -230,12 +165,6 @@ public final class AimsunControlProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeDouble(1, runTime_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeDouble(2, warmUpTime_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, networkXML_);
       }
       unknownFields.writeTo(output);
@@ -247,14 +176,6 @@ public final class AimsunControlProtoBuf {
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, runTime_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, warmUpTime_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, networkXML_);
       }
       size += unknownFields.getSerializedSize();
@@ -262,6 +183,7 @@ public final class AimsunControlProtoBuf {
       return size;
     }
 
+    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -273,20 +195,6 @@ public final class AimsunControlProtoBuf {
       org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation other = (org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation) obj;
 
       boolean result = true;
-      result = result && (hasRunTime() == other.hasRunTime());
-      if (hasRunTime()) {
-        result = result && (
-            java.lang.Double.doubleToLongBits(getRunTime())
-            == java.lang.Double.doubleToLongBits(
-                other.getRunTime()));
-      }
-      result = result && (hasWarmUpTime() == other.hasWarmUpTime());
-      if (hasWarmUpTime()) {
-        result = result && (
-            java.lang.Double.doubleToLongBits(getWarmUpTime())
-            == java.lang.Double.doubleToLongBits(
-                other.getWarmUpTime()));
-      }
       result = result && (hasNetworkXML() == other.hasNetworkXML());
       if (hasNetworkXML()) {
         result = result && getNetworkXML()
@@ -303,16 +211,6 @@ public final class AimsunControlProtoBuf {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (hasRunTime()) {
-        hash = (37 * hash) + RUNTIME_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            java.lang.Double.doubleToLongBits(getRunTime()));
-      }
-      if (hasWarmUpTime()) {
-        hash = (37 * hash) + WARMUPTIME_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            java.lang.Double.doubleToLongBits(getWarmUpTime()));
-      }
       if (hasNetworkXML()) {
         hash = (37 * hash) + NETWORKXML_FIELD_NUMBER;
         hash = (53 * hash) + getNetworkXML().hashCode();
@@ -446,12 +344,8 @@ public final class AimsunControlProtoBuf {
       }
       public Builder clear() {
         super.clear();
-        runTime_ = 0D;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        warmUpTime_ = 0D;
-        bitField0_ = (bitField0_ & ~0x00000002);
         networkXML_ = "";
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -479,14 +373,6 @@ public final class AimsunControlProtoBuf {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.runTime_ = runTime_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.warmUpTime_ = warmUpTime_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
         result.networkXML_ = networkXML_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -498,7 +384,7 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
+          Object value) {
         return (Builder) super.setField(field, value);
       }
       public Builder clearField(
@@ -511,12 +397,12 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
+          int index, Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
+          Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -530,14 +416,8 @@ public final class AimsunControlProtoBuf {
 
       public Builder mergeFrom(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation other) {
         if (other == org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation.getDefaultInstance()) return this;
-        if (other.hasRunTime()) {
-          setRunTime(other.getRunTime());
-        }
-        if (other.hasWarmUpTime()) {
-          setWarmUpTime(other.getWarmUpTime());
-        }
         if (other.hasNetworkXML()) {
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000001;
           networkXML_ = other.networkXML_;
           onChanged();
         }
@@ -547,10 +427,7 @@ public final class AimsunControlProtoBuf {
       }
 
       public final boolean isInitialized() {
-        if (!hasRunTime()) {
-          return false;
-        }
-        if (!hasWarmUpTime()) {
+        if (!hasNetworkXML()) {
           return false;
         }
         return true;
@@ -575,79 +452,15 @@ public final class AimsunControlProtoBuf {
       }
       private int bitField0_;
 
-      private double runTime_ ;
+      private java.lang.Object networkXML_ = "";
       /**
-       * <code>required double runTime = 1;</code>
+       * <code>required string networkXML = 3;</code>
        */
-      public boolean hasRunTime() {
+      public boolean hasNetworkXML() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required double runTime = 1;</code>
-       */
-      public double getRunTime() {
-        return runTime_;
-      }
-      /**
-       * <code>required double runTime = 1;</code>
-       */
-      public Builder setRunTime(double value) {
-        bitField0_ |= 0x00000001;
-        runTime_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required double runTime = 1;</code>
-       */
-      public Builder clearRunTime() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        runTime_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double warmUpTime_ ;
-      /**
-       * <code>required double warmUpTime = 2;</code>
-       */
-      public boolean hasWarmUpTime() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>required double warmUpTime = 2;</code>
-       */
-      public double getWarmUpTime() {
-        return warmUpTime_;
-      }
-      /**
-       * <code>required double warmUpTime = 2;</code>
-       */
-      public Builder setWarmUpTime(double value) {
-        bitField0_ |= 0x00000002;
-        warmUpTime_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required double warmUpTime = 2;</code>
-       */
-      public Builder clearWarmUpTime() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        warmUpTime_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object networkXML_ = "";
-      /**
-       * <code>optional string networkXML = 3;</code>
-       */
-      public boolean hasNetworkXML() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional string networkXML = 3;</code>
+       * <code>required string networkXML = 3;</code>
        */
       public java.lang.String getNetworkXML() {
         java.lang.Object ref = networkXML_;
@@ -664,7 +477,7 @@ public final class AimsunControlProtoBuf {
         }
       }
       /**
-       * <code>optional string networkXML = 3;</code>
+       * <code>required string networkXML = 3;</code>
        */
       public com.google.protobuf.ByteString
           getNetworkXMLBytes() {
@@ -680,36 +493,36 @@ public final class AimsunControlProtoBuf {
         }
       }
       /**
-       * <code>optional string networkXML = 3;</code>
+       * <code>required string networkXML = 3;</code>
        */
       public Builder setNetworkXML(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000001;
         networkXML_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string networkXML = 3;</code>
+       * <code>required string networkXML = 3;</code>
        */
       public Builder clearNetworkXML() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000001);
         networkXML_ = getDefaultInstance().getNetworkXML();
         onChanged();
         return this;
       }
       /**
-       * <code>optional string networkXML = 3;</code>
+       * <code>required string networkXML = 3;</code>
        */
       public Builder setNetworkXMLBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000001;
         networkXML_ = value;
         onChanged();
         return this;
@@ -783,7 +596,6 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.SimulateUntil)
       SimulateUntilOrBuilder {
-  private static final long serialVersionUID = 0L;
     // Use SimulateUntil.newBuilder() to construct.
     private SimulateUntil(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -814,8 +626,8 @@ public final class AimsunControlProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -901,6 +713,7 @@ public final class AimsunControlProtoBuf {
       return size;
     }
 
+    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -1104,7 +917,7 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
+          Object value) {
         return (Builder) super.setField(field, value);
       }
       public Builder clearField(
@@ -1117,12 +930,12 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
+          int index, Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
+          Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -1299,7 +1112,6 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.GTUPositions)
       GTUPositionsOrBuilder {
-  private static final long serialVersionUID = 0L;
     // Use GTUPositions.newBuilder() to construct.
     private GTUPositions(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -1331,8 +1143,8 @@ public final class AimsunControlProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -1476,7 +1288,6 @@ public final class AimsunControlProtoBuf {
         com.google.protobuf.GeneratedMessageV3 implements
         // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition)
         GTUPositionOrBuilder {
-    private static final long serialVersionUID = 0L;
       // Use GTUPosition.newBuilder() to construct.
       private GTUPosition(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -1515,8 +1326,8 @@ public final class AimsunControlProtoBuf {
                 done = true;
                 break;
               default: {
-                if (!parseUnknownField(
-                    input, unknownFields, extensionRegistry, tag)) {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
                   done = true;
                 }
                 break;
@@ -1873,6 +1684,7 @@ public final class AimsunControlProtoBuf {
         return size;
       }
 
+      private static final long serialVersionUID = 0L;
       @java.lang.Override
       public boolean equals(final java.lang.Object obj) {
         if (obj == this) {
@@ -2214,7 +2026,7 @@ public final class AimsunControlProtoBuf {
         }
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
           return (Builder) super.setField(field, value);
         }
         public Builder clearField(
@@ -2227,12 +2039,12 @@ public final class AimsunControlProtoBuf {
         }
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
+            int index, Object value) {
           return (Builder) super.setRepeatedField(field, index, value);
         }
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
           return (Builder) super.addRepeatedField(field, value);
         }
         public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -2833,6 +2645,7 @@ public final class AimsunControlProtoBuf {
       return size;
     }
 
+    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -3055,7 +2868,7 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
+          Object value) {
         return (Builder) super.setField(field, value);
       }
       public Builder clearField(
@@ -3068,12 +2881,12 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
+          int index, Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
+          Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -3570,7 +3383,6 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.OTSMessage)
       OTSMessageOrBuilder {
-  private static final long serialVersionUID = 0L;
     // Use OTSMessage.newBuilder() to construct.
     private OTSMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -3600,8 +3412,8 @@ public final class AimsunControlProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -3855,6 +3667,7 @@ public final class AimsunControlProtoBuf {
       return size;
     }
 
+    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -4099,7 +3912,7 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
+          Object value) {
         return (Builder) super.setField(field, value);
       }
       public Builder clearField(
@@ -4112,12 +3925,12 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
+          int index, Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
+          Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -4697,23 +4510,22 @@ public final class AimsunControlProtoBuf {
   static {
     java.lang.String[] descriptorData = {
       "\n\020ots-aimsun.proto\022\037org.opentrafficsim.a" +
-      "imsun.proto\"K\n\020CreateSimulation\022\017\n\007runTi" +
-      "me\030\001 \002(\001\022\022\n\nwarmUpTime\030\002 \002(\001\022\022\n\nnetworkX" +
-      "ML\030\003 \001(\t\"\035\n\rSimulateUntil\022\014\n\004time\030\001 \002(\001\"" +
-      "\371\001\n\014GTUPositions\022I\n\006gtuPos\030\001 \003(\01329.org.o" +
-      "pentrafficsim.aimsun.proto.GTUPositions." +
-      "GTUPosition\022\016\n\006status\030\002 \002(\t\032\215\001\n\013GTUPosit" +
-      "ion\022\r\n\005gtuId\030\001 \002(\t\022\t\n\001x\030\002 \002(\001\022\t\n\001y\030\003 \002(\001" +
-      "\022\t\n\001z\030\004 \001(\001\022\r\n\005angle\030\005 \002(\001\022\r\n\005width\030\006 \002(" +
-      "\001\022\016\n\006length\030\007 \002(\001\022\021\n\tgtuTypeId\030\010 \002(\005\022\r\n\005",
-      "speed\030\t \002(\001\"\362\001\n\nOTSMessage\022M\n\020createSimu" +
-      "lation\030\001 \001(\01321.org.opentrafficsim.aimsun" +
-      ".proto.CreateSimulationH\000\022G\n\rsimulateUnt" +
-      "il\030\002 \001(\0132..org.opentrafficsim.aimsun.pro" +
-      "to.SimulateUntilH\000\022E\n\014gtuPositions\030\003 \001(\013" +
-      "2-.org.opentrafficsim.aimsun.proto.GTUPo" +
-      "sitionsH\000B\005\n\003msgB\027B\025AimsunControlProtoBu" +
-      "f"
+      "imsun.proto\"&\n\020CreateSimulation\022\022\n\nnetwo" +
+      "rkXML\030\003 \002(\t\"\035\n\rSimulateUntil\022\014\n\004time\030\001 \002" +
+      "(\001\"\371\001\n\014GTUPositions\022I\n\006gtuPos\030\001 \003(\01329.or" +
+      "g.opentrafficsim.aimsun.proto.GTUPositio" +
+      "ns.GTUPosition\022\016\n\006status\030\002 \002(\t\032\215\001\n\013GTUPo" +
+      "sition\022\r\n\005gtuId\030\001 \002(\t\022\t\n\001x\030\002 \002(\001\022\t\n\001y\030\003 " +
+      "\002(\001\022\t\n\001z\030\004 \001(\001\022\r\n\005angle\030\005 \002(\001\022\r\n\005width\030\006" +
+      " \002(\001\022\016\n\006length\030\007 \002(\001\022\021\n\tgtuTypeId\030\010 \002(\005\022" +
+      "\r\n\005speed\030\t \002(\001\"\362\001\n\nOTSMessage\022M\n\020createS",
+      "imulation\030\001 \001(\01321.org.opentrafficsim.aim" +
+      "sun.proto.CreateSimulationH\000\022G\n\rsimulate" +
+      "Until\030\002 \001(\0132..org.opentrafficsim.aimsun." +
+      "proto.SimulateUntilH\000\022E\n\014gtuPositions\030\003 " +
+      "\001(\0132-.org.opentrafficsim.aimsun.proto.GT" +
+      "UPositionsH\000B\005\n\003msgB\027B\025AimsunControlProt" +
+      "oBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4732,7 +4544,7 @@ public final class AimsunControlProtoBuf {
     internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_opentrafficsim_aimsun_proto_CreateSimulation_descriptor,
-        new java.lang.String[] { "RunTime", "WarmUpTime", "NetworkXML", });
+        new java.lang.String[] { "NetworkXML", });
     internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_org_opentrafficsim_aimsun_proto_SimulateUntil_fieldAccessorTable = new
