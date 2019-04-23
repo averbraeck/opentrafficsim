@@ -9,9 +9,7 @@ package org.opentrafficsim.aimsun.proto;
 option java_outer_classname = "AimsunControlProtoBuf";
 
 message CreateSimulation {
-	required double runTime = 1;
-	required double warmUpTime = 2;
-	optional string networkXML = 3;
+	required string networkXML = 3;
 }
 
 message SimulateUntil {
