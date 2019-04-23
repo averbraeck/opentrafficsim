@@ -92,8 +92,8 @@ public final class TestController
         // Construct the create simulation command (including the network description in XML
         AimsunControlProtoBuf.CreateSimulation.Builder createSimulationBuilder =
                 AimsunControlProtoBuf.CreateSimulation.newBuilder();
-        createSimulationBuilder.setRunTime(3600d);
-        createSimulationBuilder.setWarmUpTime(0d);
+        // createSimulationBuilder.setRunTime(3600d);
+        // createSimulationBuilder.setWarmUpTime(0d);
         // String network = URLResource.getResource("/aimsun/singleRoad.xml").toString(); // wrong; fix later
         // String networkResource = "/aimsun/singleRoad.xml";
         String networkResource = "d:/AimsunOtsNetwork.xml";
