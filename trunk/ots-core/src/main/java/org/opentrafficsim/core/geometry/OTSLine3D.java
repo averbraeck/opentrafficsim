@@ -1684,6 +1684,10 @@ public class OTSLine3D implements Locatable, Serializable
                     p3.y + this.fractionalHelperDirections[index].y);
         }
         OTSPoint3D intersection = OTSPoint3D.intersectionOfLines(p1, p2, p3, p4);
+        if (null == intersection)
+        {
+             return Length.createSI(Double.NaN);
+        }
         // determine left or right
         double refLength = length1 < length2 ? length1 : length2;
         Length radius = intersection.distance(p1);

@@ -105,8 +105,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
         if (this.crossSectionSlices.size() <= 2)
         {
-            this.centerLine = fixTightInnerCurve(new double[] {0.0, 1.0},
-                    new double[] {getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI()});
+            this.centerLine = fixTightInnerCurve(new double[] { 0.0, 1.0 },
+                    new double[] { getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI() });
         }
         else
         {
@@ -205,13 +205,14 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             double radius = 1.0;
             try
             {
-               radius = linkCenterLine.getVertexRadius(i).si;
+                radius = linkCenterLine.getVertexRadius(i).si;
             }
             catch (Exception e)
             {
                 CategoryLogger.always().error(e, "fixTightInnerCurve.getVertexFraction for " + linkCenterLine);
             }
-            if ((radius < 0.0 && offset < 0.0 && offset < radius) || (radius > 0.0 && offset > 0.0 && offset > radius))
+            if ((!Double.isNaN(radius))
+                    && ((radius < 0.0 && offset < 0.0 && offset < radius) || (radius > 0.0 && offset > 0.0 && offset > radius)))
             {
                 double offsetStart = getDesignLineOffsetAtBegin().getSI();
                 double offsetEnd = getDesignLineOffsetAtEnd().getSI();
@@ -279,7 +280,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length lateralOffset,
             final Length width) throws OTSGeometryException, NetworkException
     {
-        this(parentLink, id, Arrays.asList(new CrossSectionSlice[] {new CrossSectionSlice(Length.ZERO, lateralOffset, width)}));
+        this(parentLink, id,
+                Arrays.asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffset, width) }));
     }
 
     /**
@@ -621,7 +623,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     @Override
     public boolean equals(final Object obj)
     {
