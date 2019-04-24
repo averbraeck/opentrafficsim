@@ -19,6 +19,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.core.TextAnimation.ContrastToBackground;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 
@@ -113,8 +114,15 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             this.gtuColorer = gtuColorer;
         }
 
-        this.text = new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
-
+        this.text = new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator, new TextAnimation.ContrastToBackground()
+        {
+            
+            @Override
+            public Color getBackgroundColor()
+            {
+                return gtuColorer.getColor(gtu);
+            }
+        });
     }
 
     /**
@@ -315,6 +323,25 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, simulator);
+        }
+
+        /**
+         * @param source Locatable; the object for which the text is displayed
+         * @param text String; the text to display
+         * @param dx float; the horizontal movement of the text, in meters
+         * @param dy float; the vertical movement of the text, in meters
+         * @param textAlignment TextAlignment; where to place the text
+         * @param color Color; the color of the text
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @throws NamingException when animation context cannot be created or retrieved
+         * @throws RemoteException - when remote context cannot be found
+         */
+        public Text(final Locatable source, final String text, final float dx, final float dy,
+                final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator, 
+                final TextAnimation.ContrastToBackground background)
+                throws RemoteException, NamingException
+        {
+            super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, simulator, background);
         }
 
         /** {@inheritDoc} */

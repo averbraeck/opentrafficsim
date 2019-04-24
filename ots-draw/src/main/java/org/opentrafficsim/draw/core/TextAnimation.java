@@ -70,9 +70,54 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /** The font. */
     private Font font;
+    
+    /** Access to the current background color. */
+    private final ContrastToBackground background;
 
     /** The font rectangle. */
     private Rectangle2D fontRectangle = null;
+
+    /**
+     * @param source Locatable; the object for which the text is displayed
+     * @param text String; the text to display
+     * @param dx float; the horizontal movement of the text, in meters
+     * @param dy float; the vertical movement of the text, in meters
+     * @param textAlignment TextAlignment; where to place the text
+     * @param color Color; the color of the text
+     * @param fontSize float; the size of the font; default = 2.0 (meters)
+     * @param minFontSize float; minimum font size resulting from scaling
+     * @param maxFontSize float; maximum font size resulting from scaling
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+     * @param background ContrastToBackground; allows querying the background color and adaptation of the actual color of the
+     *            text to ensure contrast
+     * @throws NamingException when animation context cannot be created or retrieved
+     * @throws RemoteException when remote context cannot be found
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
+            final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
+            final float maxFontSize, final SimulatorInterface.TimeDoubleUnit simulator, final ContrastToBackground background)
+            throws RemoteException, NamingException
+    {
+        this.source = source;
+        this.text = text;
+        this.dx = dx;
+        this.dy = dy;
+        this.textAlignment = textAlignment;
+        this.color = color;
+        this.fontSize = fontSize;
+        this.minFontSize = minFontSize;
+        this.maxFontSize = maxFontSize;
+        this.background = background;
+
+        this.font = new Font("SansSerif", Font.PLAIN, 2);
+        if (this.fontSize != 2.0f)
+        {
+            this.font = this.font.deriveFont(this.fontSize);
+        }
+
+        this.animationImpl = new AnimationImpl(this, simulator);
+    }
 
     /**
      * @param source Locatable; the object for which the text is displayed
@@ -93,23 +138,7 @@ public abstract class TextAnimation implements Locatable, Serializable
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
             final float maxFontSize, final SimulatorInterface.TimeDoubleUnit simulator) throws RemoteException, NamingException
     {
-        this.source = source;
-        this.text = text;
-        this.dx = dx;
-        this.dy = dy;
-        this.textAlignment = textAlignment;
-        this.color = color;
-        this.fontSize = fontSize;
-        this.minFontSize = minFontSize;
-        this.maxFontSize = maxFontSize;
-
-        this.font = new Font("SansSerif", Font.PLAIN, 2);
-        if (this.fontSize != 2.0f)
-        {
-            this.font = this.font.deriveFont(this.fontSize);
-        }
-
-        this.animationImpl = new AnimationImpl(this, simulator);
+        this(source, text, dx, dy, textAlignment, color, fontSize, minFontSize, maxFontSize, simulator, null);
     }
 
     /**
@@ -166,7 +195,7 @@ public abstract class TextAnimation implements Locatable, Serializable
                 FontMetrics fm = graphics.getFontMetrics();
                 scaledFontRectangle = fm.getStringBounds(this.text, graphics);
             }
-            else if(scale > this.maxFontSize / this.fontSize)
+            else if (scale > this.maxFontSize / this.fontSize)
             {
                 graphics.setFont(this.font.deriveFont((float) (this.maxFontSize / scale)));
                 FontMetrics fm = graphics.getFontMetrics();
@@ -182,7 +211,20 @@ public abstract class TextAnimation implements Locatable, Serializable
                 }
                 scaledFontRectangle = this.fontRectangle;
             }
-            graphics.setColor(this.color);
+            Color useColor = this.color;
+            if (null != this.background && useColor.equals(this.background.getBackgroundColor()))
+            {
+                // Construct an alternative color
+                if (Color.BLACK.equals(useColor))
+                {
+                    useColor =  Color.WHITE;
+                }
+                else
+                {
+                    useColor = Color.BLACK;
+                }
+            }
+            graphics.setColor(useColor);
             float dxText =
                     this.textAlignment.equals(TextAlignment.LEFT) ? 0.0f : this.textAlignment.equals(TextAlignment.CENTER)
                             ? (float) -scaledFontRectangle.getWidth() / 2.0f : (float) -scaledFontRectangle.getWidth();
@@ -447,5 +489,17 @@ public abstract class TextAnimation implements Locatable, Serializable
             return "TextAnimation.AnimationImpl []";
         }
 
+    }
+
+    /**
+     * Interface to obtain the color of the background.
+     */
+    public interface ContrastToBackground
+    {
+        /**
+         * Retrieve the color of the background.
+         * @return Color; the (current) color of the background
+         */
+        public Color getBackgroundColor();
     }
 }
