@@ -1,29 +1,33 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
-import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.value.ValueException;
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
@@ -31,15 +35,17 @@ import org.xml.sax.SAXException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
+ * Circuit demo
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
- * initial version Oct 17, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 1, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author Wouter Schakel
  */
-public class TestNetwork2 extends OTSSimulationApplication<OTSModelInterface>
+public class Circuit extends OTSSimulationApplication<OTSModelInterface>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -49,7 +55,7 @@ public class TestNetwork2 extends OTSSimulationApplication<OTSModelInterface>
      * @param animationPanel the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public TestNetwork2(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public Circuit(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
     }
@@ -73,7 +79,7 @@ public class TestNetwork2 extends OTSSimulationApplication<OTSModelInterface>
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
-                    new TestNetwork2(xmlModel, animationPanel);
+                    new Circuit(xmlModel, animationPanel);
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
                 {
@@ -87,7 +93,7 @@ public class TestNetwork2 extends OTSSimulationApplication<OTSModelInterface>
     @Override
     public String toString()
     {
-        return "TestNetwork2 []";
+        return "Circuit []";
     }
 
     /**
@@ -108,7 +114,7 @@ public class TestNetwork2 extends OTSSimulationApplication<OTSModelInterface>
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
-        private OTSRoadNetwork network;
+        private OTSRoadNetwork network = null;
 
         /**
          * @param simulator the simulator
@@ -122,14 +128,14 @@ public class TestNetwork2 extends OTSSimulationApplication<OTSModelInterface>
         @Override
         public final void constructModel() throws SimRuntimeException
         {
-            URL url = URLResource.getResource("/Testnetwork2.x.xml");
-            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
             try
             {
-                this.network = nlp.build(url, true);
+                InputStream stream = URLResource.getResourceAsStream("/Circuit.xml");
+                this.network = new OTSRoadNetwork("Circuit", true);
+                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
+                    | JAXBException | URISyntaxException | XmlParserException exception)
             {
                 exception.printStackTrace();
             }
