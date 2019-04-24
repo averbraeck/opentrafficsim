@@ -9,6 +9,7 @@ import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -201,7 +202,15 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             }
             double w = (fraction - fractions[index]) / (fractions[index + 1] - fractions[index]);
             double offset = (1.0 - w) * offsets[index] + w * offsets[index + 1];
-            double radius = linkCenterLine.getVertexRadius(i).si;
+            double radius = 1.0;
+            try
+            {
+               radius = linkCenterLine.getVertexRadius(i).si;
+            }
+            catch (Exception e)
+            {
+                CategoryLogger.always().error(e, "fixTightInnerCurve.getVertexFraction for " + linkCenterLine);
+            }
             if ((radius < 0.0 && offset < 0.0 && offset < radius) || (radius > 0.0 && offset > 0.0 && offset > radius))
             {
                 double offsetStart = getDesignLineOffsetAtBegin().getSI();
