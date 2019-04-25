@@ -4,10 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.geom.Point2D;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Bounds;
@@ -23,21 +28,29 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.mockito.Mockito;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.mock.MockDEVSSimulator;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -163,6 +176,377 @@ public class LaneTest implements UNITS
                 lane2.getContour().getLengthSI(), 12); // This lane takes a path that is about 11 meters shorter
         assertEquals("There should be no GTUs on the lane", 0, lane2.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane2.getLaneType());
+
+        // Construct a lane using CrossSectionSlices
+        try
+        {
+            new Lane(link, "lanex", null, laneType, speedMap);
+            fail("null pointer for CrossSectionSlices should have thrown a NullPointerException");
+        }
+        catch (NullPointerException npe)
+        {
+            // Ignore expected exception
+        }
+        List<CrossSectionSlice> crossSectionSlices = new ArrayList<>();
+        try
+        {
+            new Lane(link, "lanex", crossSectionSlices, laneType, speedMap);
+            fail("empty CrossSectionSlices should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        crossSectionSlices.add(new CrossSectionSlice(Length.ZERO, startLateralPos, startWidth));
+        lane = new Lane(link, "lanex", crossSectionSlices, laneType, new Speed(100, KM_PER_HOUR));
+        sensorTest(lane);
+    }
+
+    /**
+     * Add/Remove some sensor to/from a lane and see if the expected events occur.
+     * @param lane Lane; the lane to manipulate
+     * @throws NetworkException when this happens uncaught; this test has failed
+     */
+    public final void sensorTest(final Lane lane) throws NetworkException
+    {
+        assertEquals("List of sensor is initially empty", 0, lane.getSensors().size());
+        Listener listener = new Listener();
+        double length = lane.getLength().si;
+        lane.addListener(listener, Lane.SENSOR_ADD_EVENT);
+        lane.addListener(listener, Lane.SENSOR_REMOVE_EVENT);
+        assertEquals("event list is initially empty", 0, listener.events.size());
+        SingleSensor sensor1 = new MockSensor("sensor1", Length.createSI(length / 4)).getMock();
+        lane.addSensor(sensor1);
+        assertEquals("event list now contains one event", 1, listener.events.size());
+        assertEquals("event indicates that a sensor got added", listener.events.get(0).getType(), Lane.SENSOR_ADD_EVENT);
+        assertEquals("lane now contains one sensor", 1, lane.getSensors().size());
+        assertEquals("sensor on lane is sensor1", sensor1, lane.getSensors().get(0));
+        SingleSensor sensor2 = new MockSensor("sensor2", Length.createSI(length / 2)).getMock();
+        lane.addSensor(sensor2);
+        assertEquals("event list now contains two events", 2, listener.events.size());
+        assertEquals("event indicates that a sensor got added", listener.events.get(1).getType(), Lane.SENSOR_ADD_EVENT);
+        List<SingleSensor> sensors = lane.getSensors();
+        assertEquals("lane now contains two sensors", 2, sensors.size());
+        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
+        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        sensors = lane.getSensors(Length.ZERO, Length.createSI(length / 3),
+                lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+        assertEquals("first third of lane contains 1 sensor", 1, sensors.size());
+        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
+        sensors = lane.getSensors(Length.createSI(length / 3), Length.createSI(length),
+                lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+        assertEquals("last two-thirds of lane contains 1 sensor", 1, sensors.size());
+        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE),
+                GTUDirectionality.DIR_PLUS);
+        // NB. The mocked sensor is compatible with all GTU types in all directions.
+        assertEquals("sensor list contains two sensors", 2, sensors.size());
+        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
+        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE),
+                GTUDirectionality.DIR_MINUS);
+        // NB. The mocked sensor is compatible with all GTU types in all directions.
+        assertEquals("sensor list contains two sensors", 2, sensors.size());
+        assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
+        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        SortedMap<Double, List<SingleSensor>> sensorMap = lane.getSensorMap(
+                lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+        assertEquals("sensor map contains two entries", 2, sensorMap.size());
+        for (Double d : sensorMap.keySet())
+        {
+            List<SingleSensor> sensorsAtD = sensorMap.get(d);
+            assertEquals("There is one sensor at position d", 1, sensorsAtD.size());
+            assertEquals("Sensor map contains the correct sensor at the correct distance", d < length / 3 ? sensor1 : sensor2,
+                    sensorsAtD.get(0));
+        }
+
+        lane.removeSensor(sensor1);
+        assertEquals("event list now contains three events", 3, listener.events.size());
+        assertEquals("event indicates that a sensor got removed", listener.events.get(2).getType(), Lane.SENSOR_REMOVE_EVENT);
+        sensors = lane.getSensors();
+        assertEquals("lane now contains one sensor", 1, sensors.size());
+        assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
+        try
+        {
+            lane.removeSensor(sensor1);
+            fail("Removing a sensor twice should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            lane.addSensor(sensor2);
+            fail("Adding a sensor twice should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        SingleSensor badSensor = new MockSensor("sensor3", Length.createSI(-0.1)).getMock();
+        try
+        {
+            lane.addSensor(badSensor);
+            fail("Adding a sensor at negative position should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        badSensor = new MockSensor("sensor4", Length.createSI(length + 0.1)).getMock();
+        try
+        {
+            lane.addSensor(badSensor);
+            fail("Adding a sensor at position beyond the end of the lane should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        lane.removeSensor(sensor2);
+        List<LaneBasedObject> lboList = lane.getLaneBasedObjects();
+        assertEquals("lane initially contains zero lane based objects", 0, lboList.size());
+        LaneBasedObject lbo1 = new MockLaneBasedObject("lbo1", Length.createSI(length / 4)).getMock();
+        listener.getEvents().clear();
+        lane.addListener(listener, Lane.OBJECT_ADD_EVENT);
+        lane.addListener(listener, Lane.OBJECT_REMOVE_EVENT);
+        lane.addLaneBasedObject(lbo1);
+        assertEquals("adding a lane based object cause the lane to emit an event", 1, listener.getEvents().size());
+        assertEquals("The emitted event was a OBJECT_ADD_EVENT", Lane.OBJECT_ADD_EVENT, listener.getEvents().get(0).getType());
+        LaneBasedObject lbo2 = new MockLaneBasedObject("lbo2", Length.createSI(3 * length / 4)).getMock();
+        lane.addLaneBasedObject(lbo2);
+        lboList = lane.getLaneBasedObjects();
+        assertEquals("lane based object list now contains two objects", 2, lboList.size());
+        assertTrue("lane base object list contains lbo1", lboList.contains(lbo1));
+        assertTrue("lane base object list contains lbo2", lboList.contains(lbo2));
+        lboList = lane.getLaneBasedObjects(Length.ZERO, Length.createSI(length / 2));
+        assertEquals("first half of lane contains one object", 1, lboList.size());
+        assertEquals("object in first haf of lane is lbo1", lbo1, lboList.get(0));
+        lboList = lane.getLaneBasedObjects(Length.createSI(length / 2), Length.createSI(length));
+        assertEquals("second half of lane contains one object", 1, lboList.size());
+        assertEquals("object in second haf of lane is lbo2", lbo2, lboList.get(0));
+        SortedMap<Double, List<LaneBasedObject>> sortedMap = lane.getLaneBasedObjectMap();
+        assertEquals("sorted map contains two objects", 2, sortedMap.size());
+        for (Double d : sortedMap.keySet())
+        {
+            List<LaneBasedObject> objectsAtD = sortedMap.get(d);
+            assertEquals("There is one object at position d", 1, objectsAtD.size());
+            assertEquals("Object at position d is the expected one", d < length / 2 ? lbo1 : lbo2, objectsAtD.get(0));
+        }
+
+        for (double fraction : new double[] { -0.5, 0, 0.2, 0.5, 0.9, 1.0, 2 })
+        {
+            double positionSI = length * fraction;
+            double fractionSI = lane.fractionSI(positionSI);
+            assertEquals("fractionSI matches fraction", fraction, fractionSI, 0.0001);
+
+            LaneBasedObject nextObject = positionSI < lbo1.getLongitudinalPosition().si ? lbo1
+                    : positionSI < lbo2.getLongitudinalPosition().si ? lbo2 : null;
+            List<LaneBasedObject> expected = null;
+            if (null != nextObject)
+            {
+                expected = new ArrayList<>();
+                expected.add(nextObject);
+            }
+            List<LaneBasedObject> got = lane.getObjectAhead(Length.createSI(positionSI), GTUDirectionality.DIR_PLUS);
+            assertEquals("First bunch of objects ahead of d", expected, got);
+
+            nextObject = positionSI > lbo2.getLongitudinalPosition().si ? lbo2
+                    : positionSI > lbo1.getLongitudinalPosition().si ? lbo1 : null;
+            expected = null;
+            if (null != nextObject)
+            {
+                expected = new ArrayList<>();
+                expected.add(nextObject);
+            }
+            got = lane.getObjectAhead(Length.createSI(positionSI), GTUDirectionality.DIR_MINUS);
+            assertEquals("First bunch of objects behind d", expected, got);
+        }
+
+        lane.removeLaneBasedObject(lbo1);
+        assertEquals("removing a lane based object caused the lane to emit an event", 3, listener.getEvents().size());
+        assertEquals("removing a lane based object caused the lane to emit OBJECT_REMOVE_EVENT", Lane.OBJECT_REMOVE_EVENT,
+                listener.getEvents().get(2).getType());
+        try
+        {
+            lane.removeLaneBasedObject(lbo1);
+            fail("Removing a lane bases object that was already removed should have caused a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            lane.addLaneBasedObject(lbo2);
+            fail("Adding a lane base object that was already added should have caused a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        LaneBasedObject badLBO = new MockLaneBasedObject("badLBO", Length.createSI(-0.1)).getMock();
+        try
+        {
+            lane.addLaneBasedObject(badLBO);
+            fail("Adding a lane based object at negative position should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        badLBO = new MockLaneBasedObject("badLBO", Length.createSI(length + 0.1)).getMock();
+        try
+        {
+            lane.addLaneBasedObject(badLBO);
+            fail("Adding a lane based object at position beyond end of lane should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+    }
+
+    /**
+     * Simple event listener that collects events in a list.
+     */
+    class Listener implements EventListenerInterface
+    {
+        /** Collect the received events. */
+        private List<EventInterface> events = new ArrayList<>();
+
+        @Override
+        public void notify(final EventInterface event) throws RemoteException
+        {
+            events.add(event);
+        }
+
+        /**
+         * Retrieve the collected events.
+         * @return List&lt;EventInterface&gt;; the events
+         */
+        public List<EventInterface> getEvents()
+        {
+            return this.events;
+        }
+
+    }
+
+    /**
+     * Mock a SingleSensor.
+     */
+    class MockSensor
+    {
+        /** The mocked sensor. */
+        private final SingleSensor mockSensor;
+
+        /** Id of the mocked sensor. */
+        private final String id;
+
+        /** The position along the lane of the sensor. */
+        private final Length position;
+
+        /** Faked simulator. */
+        private final OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
+
+        /**
+         * Construct a new Mocked SingleSensor.
+         * @param id String; result of the getId() method of the mocked SingleSensor
+         * @param position Length; result of the getLongitudinalPosition of the mocked SingleSensor
+         */
+        MockSensor(final String id, final Length position)
+        {
+            this.mockSensor = Mockito.mock(SingleSensor.class);
+            this.id = id;
+            this.position = position;
+            Mockito.when(this.mockSensor.getId()).thenReturn(this.id);
+            Mockito.when(this.mockSensor.getLongitudinalPosition()).thenReturn(this.position);
+            Mockito.when(this.mockSensor.getSimulator()).thenReturn(this.simulator);
+            Mockito.when(this.mockSensor.getFullId()).thenReturn(this.id);
+            Mockito.when(this.mockSensor.isCompatible(Mockito.any(), Mockito.any())).thenReturn(true);
+        }
+
+        /**
+         * Retrieve the mocked sensor.
+         * @return SingleSensor; the mocked sensor
+         */
+        public SingleSensor getMock()
+        {
+            return this.mockSensor;
+        }
+
+        /**
+         * Retrieve the position of the mocked sensor.
+         * @return Length; the longitudinal position of the mocked sensor
+         */
+        public Length getLongitudinalPosition()
+        {
+            return this.position;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "MockSensor [mockSensor=" + mockSensor + ", id=" + id + ", position=" + position + "]";
+        }
+
+    }
+
+    /**
+     * Mock a LaneBasedObject.
+     */
+    class MockLaneBasedObject
+    {
+        /** The mocked sensor. */
+        private final LaneBasedObject mockLaneBasedObject;
+
+        /** Id of the mocked sensor. */
+        private final String id;
+
+        /** The position along the lane of the sensor. */
+        private final Length position;
+
+        /**
+         * Construct a new Mocked SingleSensor.
+         * @param id String; result of the getId() method of the mocked SingleSensor
+         * @param position Length; result of the getLongitudinalPosition of the mocked SingleSensor
+         */
+        MockLaneBasedObject(final String id, final Length position)
+        {
+            this.mockLaneBasedObject = Mockito.mock(SingleSensor.class);
+            this.id = id;
+            this.position = position;
+            Mockito.when(this.mockLaneBasedObject.getId()).thenReturn(this.id);
+            Mockito.when(this.mockLaneBasedObject.getLongitudinalPosition()).thenReturn(this.position);
+            Mockito.when(this.mockLaneBasedObject.getFullId()).thenReturn(this.id);
+        }
+
+        /**
+         * Retrieve the mocked LaneBasedObject.
+         * @return LaneBasedObject; the mocked LaneBasedObject
+         */
+        public LaneBasedObject getMock()
+        {
+            return this.mockLaneBasedObject;
+        }
+
+        /**
+         * Retrieve the position of the mocked sensor.
+         * @return Length; the longitudinal position of the mocked sensor
+         */
+        public Length getLongitudinalPosition()
+        {
+            return this.position;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "MockLaneBasedObject [mockLaneBasedObject=" + mockLaneBasedObject + ", id=" + id + ", position=" + position
+                    + "]";
+        }
+
     }
 
     /**
@@ -173,9 +557,9 @@ public class LaneTest implements UNITS
     @Test
     public final void contourTest() throws Exception
     {
-        final int[] startPositions = {0, 1, -1, 20, -20};
-        final double[] angles = {0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
-                Math.PI * 1.01, Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2)};
+        final int[] startPositions = { 0, 1, -1, 20, -20 };
+        final double[] angles = { 0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
+                Math.PI * 1.01, Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2) };
         int laneNum = 0;
         for (int xStart : startPositions)
         {
@@ -203,13 +587,13 @@ public class LaneTest implements UNITS
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end,
                             network.getLinkType(LinkType.DEFAULTS.ROAD), line, simulator, LaneKeepingPolicy.KEEPRIGHT);
-                    final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
+                    final int[] lateralOffsets = { -10, -3, -1, 0, 1, 3, 10 };
                     for (int startLateralOffset : lateralOffsets)
                     {
                         for (int endLateralOffset : lateralOffsets)
                         {
                             int startWidth = 4; // This one is not varied
-                            for (int endWidth : new int[] {2, 4, 6})
+                            for (int endWidth : new int[] { 2, 4, 6 })
                             {
                                 // Now we can construct a Lane
                                 // FIXME what overtaking conditions do we want to test in this unit test?

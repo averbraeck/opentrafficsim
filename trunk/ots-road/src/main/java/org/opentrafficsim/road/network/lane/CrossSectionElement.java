@@ -88,6 +88,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             Throw.when(cse.getId().equals(id), NetworkException.class,
                     "Constructor of CrossSectionElement -- id %s not unique within the Link", id);
         }
+        Throw.whenNull(crossSectionSlices, "crossSectionSlices may not be null");
         this.id = id;
         this.parentLink = parentLink;
 
