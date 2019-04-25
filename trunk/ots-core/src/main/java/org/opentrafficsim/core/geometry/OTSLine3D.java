@@ -1614,7 +1614,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException oge)
         {
-            // cannot happen as points are from this OTSLine3D which performed the same checks and 2 points are given
+            // Cannot happen as points are from this OTSLine3D which performed the same checks and 2 points are given
             throw new RuntimeException(oge);
         }
     }
@@ -1726,8 +1726,7 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
-     * Calculate the centroid of this line, and the bounds, and cache for later use. Make sure the dx, dy and dz are at least
-     * 0.5 m wide. XXX: For an OTSLine3D, coordinate systems are not guaranteed, so 0.5 m wide has NO MEANING.
+     * Calculate the centroid of this line, and the bounds, and cache for later use.
      */
     private void calcCentroidBounds()
     {
@@ -1747,10 +1746,9 @@ public class OTSLine3D implements Locatable, Serializable
             maxZ = Math.max(maxZ, p.z);
         }
         this.centroid = new OTSPoint3D((maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2);
-        double deltaX = maxX - minX; // XXX: was Math.max(maxX - minX, 0.5);
-        double deltaY = maxY - minY; // XXX: was Math.max(maxY - minY, 0.5);
-        double deltaZ = maxZ - minZ; // XXX: was Math.max(maxZ - minZ, 0.5);
-        // XXX: WRONG: this.bounds = new BoundingBox(deltaX, deltaY, deltaZ);
+        double deltaX = maxX - minX;
+        double deltaY = maxY - minY;
+        double deltaZ = maxZ - minZ;
         this.bounds = new BoundingBox(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0),
                 new Point3d(deltaX / 2, deltaY / 2, deltaZ / 2));
         this.envelope = new Envelope(minX, maxX, minY, maxY);
@@ -1843,6 +1841,7 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
+     * Convert the 2D projection of this OTSLine3D to something that MS-Excel can plot.
      * @return excel XY plottable output
      */
     public final String toExcel()
@@ -1856,6 +1855,7 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
+     * Convert the 2D projection of this OTSLine3D to Peter's plot format.
      * @return Peter's format plot output
      */
     public final String toPlot()
@@ -1870,6 +1870,7 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
+     * Test/development code for the fractional helper stuff.
      * @param args String[]; the command line arguments (not used)
      * @throws OTSGeometryException in case of error
      */
