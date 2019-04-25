@@ -192,7 +192,7 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSRoadNetwork build(final URL url, boolean interpretXMLComments)
+    public final OTSRoadNetwork build(final URL url, final boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
@@ -216,7 +216,7 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSRoadNetwork build(final InputStream stream, boolean interpretXMLComments)
+    public final OTSRoadNetwork build(final InputStream stream, final boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
@@ -241,7 +241,7 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSRoadNetwork build(final URL url, final OTSRoadNetwork otsNetwork, boolean interpretXMLComments)
+    public final OTSRoadNetwork build(final URL url, final OTSRoadNetwork otsNetwork, final boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
@@ -266,7 +266,7 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSRoadNetwork build(final InputStream stream, final OTSRoadNetwork otsNetwork, boolean interpretXMLComments)
+    public final OTSRoadNetwork build(final InputStream stream, final OTSRoadNetwork otsNetwork, final boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
