@@ -1119,15 +1119,25 @@ public class OTSLine3D implements Locatable, Serializable
         double remainder = lengthSI - this.lengthIndexedLine[index];
         double fraction = remainder / (this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index]);
         OTSPoint3D p1 = this.points[index];
-        OTSPoint3D p2 = this.points[index + 1];
-        OTSPoint3D newLastPoint = new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
-                p1.z + fraction * (p2.z - p1.z));
+        OTSPoint3D lastPoint;
+        if (0.0 == fraction)
+        {
+            index--;
+            lastPoint = p1;
+        }
+        else
+        {
+            OTSPoint3D p2 = this.points[index + 1];
+            lastPoint = new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
+                    p1.z + fraction * (p2.z - p1.z));
+
+        }
         OTSPoint3D[] coords = new OTSPoint3D[index + 2];
         for (int i = 0; i <= index; i++)
         {
             coords[i] = this.points[i];
         }
-        coords[index + 1] = newLastPoint;
+        coords[index + 1] = lastPoint;
         return new OTSLine3D(coords);
     }
 
@@ -1686,7 +1696,7 @@ public class OTSLine3D implements Locatable, Serializable
         OTSPoint3D intersection = OTSPoint3D.intersectionOfLines(p1, p2, p3, p4);
         if (null == intersection)
         {
-             return Length.createSI(Double.NaN);
+            return Length.createSI(Double.NaN);
         }
         // determine left or right
         double refLength = length1 < length2 ? length1 : length2;
