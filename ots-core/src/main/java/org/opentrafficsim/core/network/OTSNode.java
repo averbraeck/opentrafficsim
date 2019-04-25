@@ -123,7 +123,7 @@ public class OTSNode implements Node, Locatable, Serializable
     }
 
     /**
-     * Add a single connection for a GTU type to the connections map. The data structures will be created is it does not exist
+     * Add a single connection for a GTU type to the connections map. The data structures will be created if it does not exist
      * yet.
      * @param gtuType GTUType; the GTU type for which this connection is made
      * @param incomingLink Link; the link that connects to this Node
