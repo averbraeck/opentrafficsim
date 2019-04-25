@@ -980,6 +980,9 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /***************************************************************************************/
 
+    /** Extra clearance around boundaries of network as fraction of width and height. */
+    public static final  double EXTENT_MARGIN = 0.05;
+            
     /**
      * Calculate the extent of the network based on the network objects' locations and return the dimensions.
      * @return Rectangle2D.Double; the extent of the network
@@ -1035,10 +1038,10 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         if (content)
         {
-            double relativeMargin = 0.05;
+            double relativeMargin = EXTENT_MARGIN;
             double xMargin = relativeMargin * (maxX - minX);
             double yMargin = relativeMargin * (maxY - minY);
-            return new Rectangle2D.Double(minX - xMargin / 2, minY - yMargin / 2, maxX - minX + xMargin, maxY - minY + xMargin);
+            return new Rectangle2D.Double(minX - xMargin / 2, minY - yMargin / 2, maxX - minX + xMargin, maxY - minY + yMargin);
         }
         else
         {

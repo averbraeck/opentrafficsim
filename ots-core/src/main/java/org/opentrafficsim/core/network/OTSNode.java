@@ -332,13 +332,16 @@ public class OTSNode implements Node, Locatable, Serializable
     {
         return this.point.getDirectedPoint();
     }
+    
+    /** Margin around node in m when computing bounding sphere. */
+    public static final double BOUNDINGRADIUS = 10.0;
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public Bounds getBounds()
     {
-        return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
+        return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), BOUNDINGRADIUS);
     }
 
     /** {@inheritDoc} */

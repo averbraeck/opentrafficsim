@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -326,6 +327,39 @@ public class OTSNetworkTest implements EventListenerInterface
         assertNull("gtu1 can no longer be retrieved", network.getGTU("gtu1"));
         assertNull("gtu2 can no longer be retrieved", network.getGTU("gtu2"));
         assertTrue("toString contains the name of the network", network.toString().contains(network.getId()));
+    }
+
+    /**
+     * Test the getExtent method of OTSNetwork.
+     * @throws NetworkException if that happens uncaught, this test has failed
+     */
+    @Test
+    public final void testExtent() throws NetworkException
+    {
+        OTSNetwork network = new OTSNetwork("test", false);
+        Rectangle2D extent = network.getExtent();
+        assertEquals("extend left", -500, extent.getMinX(), 0);
+        assertEquals("extend bottom", -500, extent.getMinY(), 0);
+        assertEquals("extend right", 500, extent.getMaxX(), 0);
+        assertEquals("extend top", 500, extent.getMaxY(), 0);
+
+        // Add one node
+        new OTSNode(network, "node1", new OTSPoint3D(10, 20, 30));
+        extent = network.getExtent();
+        double margin = OTSNode.BOUNDINGRADIUS * (1.0 + OTSNetwork.EXTENT_MARGIN);
+        assertEquals("extend left", 10 - margin, extent.getMinX(), 0.01);
+        assertEquals("extend bottom", 20 - margin, extent.getMinY(), 0.01);
+        assertEquals("extend right", 10 + margin, extent.getMaxX(), 0.01);
+        assertEquals("extend top", 20 + margin, extent.getMaxY(), 0.01);
+        // Add another node
+        new OTSNode(network, "node2", new OTSPoint3D(110, 220, 330));
+        extent = network.getExtent();
+        double xMargin = (100 + 2 * OTSNode.BOUNDINGRADIUS) * OTSNetwork.EXTENT_MARGIN / 2;
+        double yMargin = (200 + 2 * OTSNode.BOUNDINGRADIUS) * OTSNetwork.EXTENT_MARGIN / 2;
+        assertEquals("extend left", 10 - OTSNode.BOUNDINGRADIUS - xMargin, extent.getMinX(), 0.01);
+        assertEquals("extend bottom", 20 - OTSNode.BOUNDINGRADIUS - yMargin, extent.getMinY(), 0.01);
+        assertEquals("extend right", 110 + OTSNode.BOUNDINGRADIUS + xMargin, extent.getMaxX(), 0.01);
+        assertEquals("extend top", 220 + OTSNode.BOUNDINGRADIUS + yMargin, extent.getMaxY(), 0.01);
     }
 
     /**
