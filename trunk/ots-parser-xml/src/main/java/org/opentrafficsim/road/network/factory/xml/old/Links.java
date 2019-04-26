@@ -394,7 +394,7 @@ final class Links
                     {
                         try
                         {
-                            new LaneAnimation(lane, simulator, color, false);
+                            new LaneAnimation(lane, simulator, color);
                         }
                         catch (RemoteException exception)
                         {
@@ -495,7 +495,7 @@ final class Links
                                 if (laneOverrideTag.color != null)
                                     color = laneOverrideTag.color;
                             }
-                            new LaneAnimation(lane, simulator, color, false);
+                            new LaneAnimation(lane, simulator, color);
                         }
                         catch (RemoteException exception)
                         {
