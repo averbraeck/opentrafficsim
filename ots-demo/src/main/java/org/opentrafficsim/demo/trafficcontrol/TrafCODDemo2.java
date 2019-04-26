@@ -168,8 +168,6 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                 this.network = new OTSRoadNetwork(getShortName(), true);
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                         getSimulator());
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
 
                 String controllerName = "TrafCOD_complex";
                 /*-

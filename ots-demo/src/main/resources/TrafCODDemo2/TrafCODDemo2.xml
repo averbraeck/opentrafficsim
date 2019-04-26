@@ -375,48 +375,48 @@
       <CATEGORY GTUTYPE="CAR" ID="CAR" />
       <CATEGORY GTUTYPE="TRUCK" ID="TRUCK" />
       <DEMAND CATEGORY="CAR" ORIGIN="W" DESTINATION="N">
-        <LEVEL TIME="0s">150.00veh/h</LEVEL>
+        <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="W" DESTINATION="E">
-        <LEVEL TIME="0s">200.00veh/h</LEVEL>
-        <LEVEL TIME="3600s">200.00veh/h</LEVEL>
+        <LEVEL TIME="0s">300.00veh/h</LEVEL>
+        <LEVEL TIME="3600s">300.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="W" DESTINATION="S">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="N" DESTINATION="E">
-        <LEVEL TIME="0s">150.00veh/h</LEVEL>
+        <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="N" DESTINATION="S">
-        <LEVEL TIME="0s">200.00veh/h</LEVEL>
-        <LEVEL TIME="3600s">200.00veh/h</LEVEL>
+        <LEVEL TIME="0s">300.00veh/h</LEVEL>
+        <LEVEL TIME="3600s">300.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="N" DESTINATION="W">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="E" DESTINATION="S">
-        <LEVEL TIME="0s">150.00veh/h</LEVEL>
+        <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="E" DESTINATION="W">
-        <LEVEL TIME="0s">200.00veh/h</LEVEL>
-        <LEVEL TIME="3600s">200.00veh/h</LEVEL>
+        <LEVEL TIME="0s">300.00veh/h</LEVEL>
+        <LEVEL TIME="3600s">300.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="E" DESTINATION="N">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="S" DESTINATION="W">
-        <LEVEL TIME="0s">150.00veh/h</LEVEL>
+        <LEVEL TIME="0s">200.00veh/h</LEVEL>
         <LEVEL TIME="3600s">200.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="S" DESTINATION="N">
-        <LEVEL TIME="0s">200.00veh/h</LEVEL>
-        <LEVEL TIME="3600s">200.00veh/h</LEVEL>
+        <LEVEL TIME="0s">300.00veh/h</LEVEL>
+        <LEVEL TIME="3600s">300.00veh/h</LEVEL>
       </DEMAND>
       <DEMAND CATEGORY="CAR" ORIGIN="S" DESTINATION="E">
         <LEVEL TIME="0s">200.00veh/h</LEVEL>
