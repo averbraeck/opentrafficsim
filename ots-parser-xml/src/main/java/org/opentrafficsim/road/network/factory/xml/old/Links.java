@@ -407,7 +407,7 @@ final class Links
                     {
                         SinkTag sinkTag = linkTag.sinkTags.get(cseTag.name);
                         Length position = LinkTag.parseBeginEndPosition(sinkTag.positionStr, lane);
-                        new SinkSensor(lane, position, simulator);
+                        new SinkSensor(lane, position, Compatible.EVERYTHING, simulator);
                     }
 
                     // TRAFFICLIGHT

@@ -27,6 +27,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
@@ -320,7 +321,7 @@ public class A58OdUtil
             System.out.println("Adding sink on lane " + lane + " to node " + endNode);
             try
             {
-                new SinkSensor(lane, lane.getLength().minus(new Length(30, LengthUnit.SI)), simulator);
+                new SinkSensor(lane, lane.getLength().minus(new Length(30, LengthUnit.SI)), Compatible.EVERYTHING, simulator);
             }
             catch (NetworkException exception)
             {

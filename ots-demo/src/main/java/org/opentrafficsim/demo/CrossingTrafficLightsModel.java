@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -183,7 +184,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
                     {
                         for (Lane lane : lanes)
                         {
-                            new SinkSensor(lane, new Length(500.0, METER), this.simulator);
+                            new SinkSensor(lane, new Length(500.0, METER), Compatible.EVERYTHING, this.simulator);
                         }
                     }
                 }

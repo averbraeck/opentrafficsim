@@ -116,6 +116,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGTU, 
      * @return LaneDirection; right-most of two lanes
      */
     // TODO private when we use java 9
+    // TODO include lane keeping conditions
     default LaneDirection rightMost(final LaneDirection lane1, final LaneDirection lane2)
     {
         Length offset1 = lane1.getLane().getDesignLineOffsetAtBegin().plus(lane1.getLane().getDesignLineOffsetAtEnd());

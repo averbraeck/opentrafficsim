@@ -382,7 +382,7 @@ public final class GeneratorSinkParser
             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(sinkTag.getLINK());
             Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLANE());
             Length position = Transformer.parseLengthBeginEnd(sinkTag.getPOSITION(), lane.getLength());
-            new SinkSensor(lane, position, simulator);
+            new SinkSensor(lane, position, GTUDirectionality.valueOf(sinkTag.getDIRECTION()), simulator);
         }
     }
 

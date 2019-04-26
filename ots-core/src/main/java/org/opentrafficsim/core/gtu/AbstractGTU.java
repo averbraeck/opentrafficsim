@@ -15,6 +15,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;

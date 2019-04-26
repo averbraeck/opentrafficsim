@@ -155,8 +155,8 @@ public class ODApplierTest
     }
 
     /**
-     * @throws NetworkException  
-     * @throws OTSGeometryException 
+     * @throws NetworkException on network exception
+     * @throws OTSGeometryException on geometry exception
      */
     private void makeNetwork() throws NetworkException, OTSGeometryException
     {
@@ -219,9 +219,9 @@ public class ODApplierTest
      * @throws SimRuntimeException on exception
      * @throws ParameterException on exception
      * @throws ProbabilityException on exception
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws OTSGeometryException
+     * @throws IllegalAccessException on exception
+     * @throws IllegalArgumentException on exception
+     * @throws OTSGeometryException on exception
      */
     @Test
     public void headwayGeneratorTest() throws ValueException, NetworkException, ParameterException, SimRuntimeException,

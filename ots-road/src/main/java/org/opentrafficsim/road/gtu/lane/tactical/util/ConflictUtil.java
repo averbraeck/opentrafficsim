@@ -315,7 +315,7 @@ public final class ConflictUtil
         if (a.si < -6.0 && speed.si > 5 / 3.6)
         {
             System.err.println("Deceleration from conflict util stronger than 6m/s^2.");
-            // return IGNORE;
+            //return Acceleration.POSITIVE_INFINITY;
         }
         return a;
     }

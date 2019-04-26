@@ -51,7 +51,7 @@ public class TestFixedTimeController
      * Test the constructors and initializers of the signal group and fixed time controller classes.
      * @throws SimRuntimeException if that happens uncaught; this test has failed
      * @throws NamingException if that happens uncaught; this test has failed
-     * @throws NetworkException
+     * @throws NetworkException on exception
      */
     // TODO: @Test
     public void testConstructors() throws SimRuntimeException, NamingException, NetworkException
@@ -268,9 +268,9 @@ public class TestFixedTimeController
 
     /**
      * Test detection of non-disjoint sets of traffic lights.
-     * @throws NamingException
-     * @throws SimRuntimeException
-     * @throws NetworkException
+     * @throws NamingException on exception
+     * @throws SimRuntimeException on exception
+     * @throws NetworkException on exception
      */
     // TODO: @Test
     public void testDisjoint() throws SimRuntimeException, NamingException, NetworkException
@@ -318,7 +318,7 @@ public class TestFixedTimeController
      * Test timing of fixed time controller.
      * @throws SimRuntimeException if that happens uncaught; this test has failed
      * @throws NamingException if that happens uncaught; this test has failed
-     * @throws NetworkException
+     * @throws NetworkException on exception
      */
     // TODO: @Test
     public void testTimings() throws SimRuntimeException, NamingException, NetworkException

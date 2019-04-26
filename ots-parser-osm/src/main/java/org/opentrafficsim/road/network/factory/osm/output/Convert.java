@@ -19,6 +19,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.locationtech.jts.geom.Coordinate;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -674,7 +675,7 @@ public final class Convert
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
                         laneAttributes.getWidth(), laneType, speedLimit);
-                new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
+                new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), Compatible.EVERYTHING, simulator);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {
