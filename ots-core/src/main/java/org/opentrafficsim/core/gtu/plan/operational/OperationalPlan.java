@@ -810,7 +810,7 @@ public class OperationalPlan implements Serializable
          * @param distance Length; the distance for which the travel time has to be calculated
          * @return the time at distance
          */
-        abstract Duration timeAtDistance(final Length distance);
+        abstract Duration timeAtDistance(Length distance);
 
         /** {@inheritDoc} */
         @SuppressWarnings("checkstyle:designforextension")
