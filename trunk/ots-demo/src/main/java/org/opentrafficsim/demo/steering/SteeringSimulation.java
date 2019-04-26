@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -173,7 +174,7 @@ public class SteeringSimulation extends AbstractSimulationScript
                 // sink sensors
                 if (lane.getParentLink().getId().equals("CD"))
                 {
-                    new SinkSensor(lane, lane.getLength().minus(Length.createSI(100.0)), sim);
+                    new SinkSensor(lane, lane.getLength().minus(Length.createSI(100.0)), Compatible.EVERYTHING, sim);
                     // detectors 100m after on ramp
                     new Detector(lane.getFullId(), lane, Length.createSI(100.0), sim); // id equal to lane, may be different
                 }

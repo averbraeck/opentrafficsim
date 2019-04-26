@@ -44,6 +44,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.AbstractOTSSimulationApplication;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -492,7 +493,7 @@ public class LmrsStrategies implements EventListenerInterface
         /**
          * @param model OTSModelInterface; the model
          * @param panel OTSAnimationPanel; the animation panel
-         * @throws OTSDrawingException
+         * @throws OTSDrawingException on animation error
          */
         LmrsStrategiesAnimation(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
         {
@@ -771,8 +772,8 @@ public class LmrsStrategies implements EventListenerInterface
                 new StripeAnimation(stripeBC2, getSimulator(), TYPE.DASHED);
                 new StripeAnimation(stripeBC3, getSimulator(), TYPE.SOLID);
                 // sensors
-                new SinkSensor(laneBC1, laneBC1.getLength().minus(Length.createSI(100.0)), getSimulator());
-                new SinkSensor(laneBC2, laneBC2.getLength().minus(Length.createSI(100.0)), getSimulator());
+                new SinkSensor(laneBC1, laneBC1.getLength().minus(Length.createSI(100.0)), Compatible.EVERYTHING, getSimulator());
+                new SinkSensor(laneBC2, laneBC2.getLength().minus(Length.createSI(100.0)), Compatible.EVERYTHING, getSimulator());
 
                 // detectors
                 Lane[][] grid =

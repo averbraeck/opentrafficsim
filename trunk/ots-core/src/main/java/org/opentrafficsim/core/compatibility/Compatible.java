@@ -29,6 +29,26 @@ public interface Compatible
         }
     };
 
+    /** Plus direction {@code Compatible} that allows all GTU types in the plus direction. */
+    Compatible PLUS = new Compatible()
+    {
+        @Override
+        public boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+        {
+            return directionality.isPlus();
+        }
+    };
+
+    /** Minus direction {@code Compatible} that allows all GTU types in the minus direction. */
+    Compatible MINUS = new Compatible()
+    {
+        @Override
+        public boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+        {
+            return directionality.isMinus();
+        }
+    };
+
     /**
      * Test if a GTUType is handled by the infrastructure in the given direction. For Lane and Link, <cite>handled</cite> means
      * that GTUs of this type can travel over this infrastructure in the direction. For Sensors it means that the sensor will

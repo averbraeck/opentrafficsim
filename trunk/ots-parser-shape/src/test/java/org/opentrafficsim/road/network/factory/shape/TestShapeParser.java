@@ -220,7 +220,7 @@ public class TestShapeParser extends DSOLApplication
          * @param fileName String;
          * @param shapeIdentifier String;
          * @return map of naames road elements
-         * @throws NetworkException
+         * @throws NetworkException network exception
          */
         private Map<String, AbstractNWBRoadElement> getRoadMapNWB(String initialDir, String fileName, String shapeIdentifier)
                 throws NetworkException
@@ -247,7 +247,7 @@ public class TestShapeParser extends DSOLApplication
          * @param initialDir String;
          * @param fileName String;
          * @return shapefile datastore
-         * @throws IOException
+         * @throws IOException on IO exception
          */
         private FileDataStore newDatastore(String initialDir, final String fileName) throws IOException
         {
@@ -301,7 +301,7 @@ public class TestShapeParser extends DSOLApplication
          * @param feautureIterator FeatureIterator;
          * @param shapeIdentifier String;
          * @return feature attributes
-         * @throws NetworkException
+         * @throws NetworkException on network exception
          */
         private Map<String, AbstractNWBRoadElement> getFeatureAttributes(final FeatureIterator feautureIterator,
                 String shapeIdentifier) throws NetworkException
@@ -333,7 +333,7 @@ public class TestShapeParser extends DSOLApplication
         /**
          * @param feature Feature;
          * @return one road element with properties
-         * @throws NetworkException
+         * @throws NetworkException on network exception
          */
         private NWBRoadElement getPropertiesNWB(final Feature feature) throws NetworkException
         {
@@ -392,7 +392,7 @@ public class TestShapeParser extends DSOLApplication
         /**
          * @param feature Feature;
          * @return info on one driving lane
-         * @throws NetworkException
+         * @throws NetworkException on network exception
          */
         private NWBDrivingLane getPropertiesDrivingLanes(final Feature feature) throws NetworkException
         {
@@ -453,7 +453,7 @@ public class TestShapeParser extends DSOLApplication
         /**
          * @param feature Feature;
          * @return info on one special lane
-         * @throws NetworkException
+         * @throws NetworkException on network exception
          */
         private NWBDrivingLane getPropertiesSpecialLanes(final Feature feature) throws NetworkException
         {

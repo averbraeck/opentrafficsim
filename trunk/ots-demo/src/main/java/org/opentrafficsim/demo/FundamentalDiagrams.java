@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -260,7 +261,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                         this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
                         this.speedLimit);
-                new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
+                new SinkSensor(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
 
                 this.carProbability = (double) getInputParameter("generic.carProbability");
                 this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());

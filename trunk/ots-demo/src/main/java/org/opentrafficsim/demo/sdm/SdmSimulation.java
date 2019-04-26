@@ -25,6 +25,7 @@ import org.opentrafficsim.base.compressedfiles.Writer;
 import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -33,7 +34,6 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
-import org.opentrafficsim.demo.steering.SteeringSimulation;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphPath;
@@ -232,7 +232,7 @@ public class SdmSimulation extends AbstractSimulationScript
         allLanes.addAll(lanesEF);
         for (Lane lane : lanesEF)
         {
-            new SinkSensor(lane, lane.getLength().minus(Length.createSI(50)), sim);
+            new SinkSensor(lane, lane.getLength().minus(Length.createSI(50)), Compatible.EVERYTHING, sim);
         }
 
         // OD

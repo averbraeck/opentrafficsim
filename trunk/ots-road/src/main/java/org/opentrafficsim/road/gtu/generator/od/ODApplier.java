@@ -410,11 +410,11 @@ public final class ODApplier
                         {
                             if (link.getEndNode().equals(destination))
                             {
-                                new SinkSensor(lane, lane.getLength(), simulator);
+                                new SinkSensor(lane, lane.getLength(), GTUDirectionality.DIR_PLUS, simulator);
                             }
                             else if (link.getStartNode().equals(destination))
                             {
-                                new SinkSensor(lane, Length.ZERO, simulator);
+                                new SinkSensor(lane, Length.ZERO, GTUDirectionality.DIR_MINUS, simulator);
                             }
                         }
                     }

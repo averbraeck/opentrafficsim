@@ -24,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -262,7 +263,7 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
                                 Length position = lane.getLength().lt(m25) ? m0 : m25;
                                 try
                                 {
-                                    new SinkSensor(lane, position, this.simulator);
+                                    new SinkSensor(lane, position, Compatible.EVERYTHING, this.simulator);
                                 }
                                 catch (NetworkException exception)
                                 {
@@ -306,7 +307,7 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
                                 Length position = lane.getLength().lt(m25) ? lane.getLength() : lane.getLength().minus(m25);
                                 try
                                 {
-                                    new SinkSensor(lane, position, this.simulator);
+                                    new SinkSensor(lane, position, Compatible.EVERYTHING, this.simulator);
                                 }
                                 catch (NetworkException exception)
                                 {

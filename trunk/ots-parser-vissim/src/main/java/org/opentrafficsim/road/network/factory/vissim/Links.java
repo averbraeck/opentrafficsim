@@ -429,7 +429,7 @@ final class Links
                     Double smallest = Math.min(10, lane.getLength().getInUnit(LengthUnit.METER) - 1);
                     Length beforeEnd = new Length(smallest, LengthUnit.METER);
                     Length pos = lane.getLength().minus(beforeEnd);
-                    SinkSensor sensor = new SinkSensor(lane, pos, simulator);
+                    SinkSensor sensor = new SinkSensor(lane, pos, Compatible.EVERYTHING, simulator);
                     lane.getSensors().add(sensor);
                 }
             }

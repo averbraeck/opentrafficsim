@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -308,7 +309,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                             laneType, this.speedLimit, this.simulator);
                     if (i == this.nodes.size() - 1)
                     {
-                        new SinkSensor(lanes[0], new Length(100.0, METER), this.simulator);
+                        new SinkSensor(lanes[0], new Length(100.0, METER), Compatible.EVERYTHING, this.simulator);
                     }
                     this.path.add(lanes[0]);
                     links.add(lanes[0].getParentLink());

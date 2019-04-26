@@ -38,9 +38,9 @@ public class Converter
     private Map<String, String> roadTypeToLinkTypeMap = new HashMap<>();
 
     /**
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
+     * @throws IOException on IO exception
+     * @throws SAXException on SAXException
+     * @throws ParserConfigurationException on parser exception
      */
     public Converter() throws ParserConfigurationException, SAXException, IOException
     {
@@ -411,9 +411,9 @@ public class Converter
 
     /**
      * @param args args
-     * @throws IOException
-     * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws IOException on IO exception
+     * @throws SAXException on SAXException
+     * @throws ParserConfigurationException on parser exception
      */
     public static void main(final String[] args) throws ParserConfigurationException, SAXException, IOException
     {
