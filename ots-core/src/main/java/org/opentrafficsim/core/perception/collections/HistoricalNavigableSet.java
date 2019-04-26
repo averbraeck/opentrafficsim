@@ -23,6 +23,7 @@ public interface HistoricalNavigableSet<E> extends HistoricalSortedSet<E>, Navig
      * Returns the current navigable set.
      * @return NavigableSet; current navigable set
      */
+    @Override
     NavigableSet<E> get();
 
     /**
@@ -30,6 +31,7 @@ public interface HistoricalNavigableSet<E> extends HistoricalSortedSet<E>, Navig
      * @param time Time; time to obtain the navigable set at
      * @return NavigableSet; past navigable set
      */
+    @Override
     NavigableSet<E> get(Time time);
 
 }

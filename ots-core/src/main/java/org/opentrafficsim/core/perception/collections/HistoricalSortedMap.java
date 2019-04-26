@@ -24,6 +24,7 @@ public interface HistoricalSortedMap<K, V> extends HistoricalMap<K, V>, SortedMa
      * Returns the current sorted map.
      * @return SortedMap; current sorted map
      */
+    @Override
     SortedMap<K, V> get();
 
     /**
@@ -31,6 +32,7 @@ public interface HistoricalSortedMap<K, V> extends HistoricalMap<K, V>, SortedMa
      * @param time Time; time to obtain the sorted map at
      * @return SortedMap; past sorted map
      */
+    @Override
     SortedMap<K, V> get(Time time);
 
 }

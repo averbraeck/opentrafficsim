@@ -23,6 +23,7 @@ public interface HistoricalQueue<E> extends HistoricalCollection<E>, Queue<E>
      * Returns the current queue.
      * @return Queue; current queue
      */
+    @Override
     Queue<E> get();
 
     /**
@@ -30,6 +31,7 @@ public interface HistoricalQueue<E> extends HistoricalCollection<E>, Queue<E>
      * @param time Time; time to obtain the queue at
      * @return Queue; past queue
      */
+    @Override
     Queue<E> get(Time time);
 
 }

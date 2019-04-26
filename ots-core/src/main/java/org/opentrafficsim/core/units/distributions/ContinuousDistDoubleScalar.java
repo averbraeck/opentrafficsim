@@ -115,6 +115,7 @@ public interface ContinuousDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
+        @Override
         @SuppressWarnings({"unchecked", "rawtypes"})
         public T draw()
         {
@@ -178,6 +179,7 @@ public interface ContinuousDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
+        @Override
         @SuppressWarnings({"unchecked", "rawtypes"})
         public T draw()
         {
