@@ -582,7 +582,7 @@ class RoadTag implements Serializable
 
                     try
                     {
-                        Renderable2D animation = new LaneAnimation(lane, simulator, color, false);
+                        Renderable2D animation = new LaneAnimation(lane, simulator, color);
                         openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (RemoteException exception)
@@ -640,7 +640,7 @@ class RoadTag implements Serializable
                         currentLaneSec.lanes.put(leftLane.id, lane);
 
                         lastLane = lane;
-                        Renderable2D animation = new LaneAnimation(lane, simulator, color, false);
+                        Renderable2D animation = new LaneAnimation(lane, simulator, color);
                         openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (Exception exception)
@@ -782,7 +782,7 @@ class RoadTag implements Serializable
 
                     try
                     {
-                        Renderable2D animation = new LaneAnimation(lane, simulator, color, false);
+                        Renderable2D animation = new LaneAnimation(lane, simulator, color);
                         openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (RemoteException exception)
@@ -831,7 +831,7 @@ class RoadTag implements Serializable
 
                         currentLaneSec.lanes.put(rightLane.id, lane);
                         lastLane = lane;
-                        Renderable2D animation = new LaneAnimation(lane, simulator, color, false);
+                        Renderable2D animation = new LaneAnimation(lane, simulator, color);
                         openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (Exception exception)
