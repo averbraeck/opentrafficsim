@@ -2,14 +2,14 @@ package org.opentrafficsim.draw.road;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
+import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.PaintPolygons;
@@ -20,6 +20,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface.TimeDoubleUnit;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -40,9 +41,6 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
     /** Color of the lane. */
     private final Color color;
 
-    /** Whether to draw the center line or not. */
-    private final boolean drawCenterLine;
-
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;
 
@@ -51,18 +49,17 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
      * @param lane Lane; the lane
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
      * @param color Color; Color of the lane.
-     * @param drawCenterLine boolean; whether to draw the center line or not
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public LaneAnimation(final Lane lane, final SimulatorInterface.TimeDoubleUnit simulator, final Color color,
-            final boolean drawCenterLine) throws NamingException, RemoteException
+    public LaneAnimation(final Lane lane, final SimulatorInterface.TimeDoubleUnit simulator, final Color color)
+            throws NamingException, RemoteException
     {
         super(lane, simulator);
         this.color = color;
-        this.drawCenterLine = drawCenterLine;
         this.text = new Text(lane, lane.getParentLink().getId() + "." + lane.getId(), 0.0f, 0.0f, TextAlignment.CENTER,
                 Color.BLACK, simulator);
+        new CenterLineAnimation(new CenterLine(lane.getCenterLine()), simulator);
     }
 
     /**
@@ -82,19 +79,6 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
         {
             PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
         }
-
-        if (this.drawCenterLine)
-        {
-            PaintLine.paintLine(graphics, Color.RED, 0.25, lane.getLocation(), lane.getCenterLine());
-            Shape startCircle = new Ellipse2D.Double(lane.getCenterLine().getFirst().x - lane.getLocation().x - 0.25,
-                    -lane.getCenterLine().getFirst().y + lane.getLocation().y - 0.25, 0.5, 0.5);
-            Shape endCircle = new Ellipse2D.Double(lane.getCenterLine().getLast().x - lane.getLocation().x - 0.25,
-                    -lane.getCenterLine().getLast().y + lane.getLocation().y - 0.25, 0.5, 0.5);
-            graphics.setColor(Color.BLUE);
-            graphics.fill(startCircle);
-            graphics.setColor(Color.RED);
-            graphics.fill(endCircle);
-        }
     }
 
     /** {@inheritDoc} */
@@ -112,15 +96,99 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
             throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
-        return new LaneAnimation(newSource, newSimulator, this.color, this.drawCenterLine);
+        return new LaneAnimation(newSource, newSimulator, this.color);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LaneAnimation [lane = " + getSource().toString() + ", color=" + this.color + ", drawCenterLine="
-                + this.drawCenterLine + "]";
+        return "LaneAnimation [lane = " + getSource().toString() + ", color=" + this.color + "]";
+    }
+
+    /**
+     * Draw center line of a lane.
+     */
+    public static class CenterLine implements Locatable
+    {
+        /** The center line. */
+        private final OTSLine3D centerLine;
+
+        /**
+         * Construct a new CenterLine.
+         * @param centerLine OTSLine3D; the center line of a lane
+         */
+        CenterLine(final OTSLine3D centerLine)
+        {
+            this.centerLine = centerLine;
+        }
+
+        @Override
+        public final DirectedPoint getLocation() throws RemoteException
+        {
+            DirectedPoint dp = this.centerLine.getLocation();
+            return new DirectedPoint(dp.x, dp.y, dp.z + 0.1);
+        }
+
+        @Override
+        public final Bounds getBounds() throws RemoteException
+        {
+            return this.centerLine.getBounds();
+        }
+
+        /**
+         * Retrieve the center line.
+         * @return OTSLine3D; the center line
+         */
+        public OTSLine3D getCenterLine()
+        {
+            return centerLine;
+        }
+
+    }
+
+    /**
+     * Animation for center line of a lane.
+     */
+    public static class CenterLineAnimation extends Renderable2D<CenterLine>
+            implements ClonableRenderable2DInterface<CenterLine>, Serializable
+    {
+        /** Drawing color for the center line. */
+        private static final Color COLOR = Color.MAGENTA.darker().darker();
+        
+        /**  */
+        private static final long serialVersionUID = 20180426L;
+
+        /**
+         * Construct a new CenterLineAnimation.
+         * @param centerLine CemterLine; the center line of a lane
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @throws NamingException when the name of this object is not unique
+         * @throws RemoteException when communication with a remote process fails
+         */
+        public CenterLineAnimation(final CenterLine centerLine, final SimulatorInterface.TimeDoubleUnit simulator)
+                throws NamingException, RemoteException
+        {
+            super(centerLine, simulator);
+        }
+
+        @Override
+        public final ClonableRenderable2DInterface<CenterLine> clone(final CenterLine newSource,
+                final TimeDoubleUnit newSimulator) throws NamingException, RemoteException
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+        {
+            PaintLine.paintLine(graphics, COLOR, 0.1, getSource().getLocation(),
+                    ((CenterLine) getSource()).getCenterLine());
+            graphics.setColor(Color.BLUE);
+            graphics.setColor(Color.RED);
+        }
+
     }
 
     /**

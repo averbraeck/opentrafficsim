@@ -57,6 +57,7 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonText("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
         panel.addToggleAnimationButtonText("Lane", Lane.class, "Show/hide lanes", true);
         panel.addToggleAnimationButtonText("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
+        panel.addToggleAnimationButtonText("LaneCenter", LaneAnimation.CenterLine.class, "Show/hide lane center lines", false);
         panel.addToggleAnimationButtonText("Stripe", Stripe.class, "Show/hide stripes", true);
         panel.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
         panel.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
@@ -83,6 +84,7 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonText("LinkId", LinkAnimation.Text.class, "Show/hide link Ids", false);
         panel.addToggleAnimationButtonText("Lane", Lane.class, "Show/hide lanes", true);
         panel.addToggleAnimationButtonText("LaneId", LaneAnimation.Text.class, "Show/hide lane Ids", false);
+        panel.addToggleAnimationButtonText("LaneCenter", LaneAnimation.CenterLine.class, "Show/hide lane center lines", false);
         panel.addToggleAnimationButtonText("Stripe", Stripe.class, "Show/hide stripes", true);
         panel.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
         panel.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);

@@ -113,7 +113,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
                         {
                             if (element instanceof Lane)
                             {
-                                new LaneAnimation((Lane) element, simulator, Color.GRAY.brighter(), false);
+                                new LaneAnimation((Lane) element, simulator, Color.GRAY.brighter());
                             }
                             else if (element instanceof Shoulder)
                             {
