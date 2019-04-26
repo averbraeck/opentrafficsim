@@ -66,7 +66,7 @@ public class OTSPoint3DTest
                     Coordinate c = p.getCoordinate();
                     assertEquals("x value", x, c.x, Math.ulp(x));
                     assertEquals("y value", y, c.y, Math.ulp(y));
-                    assertEquals("z value", z, c.z, Math.ulp(z));
+                    assertEquals("z value", z, c.getZ(), Math.ulp(z));
                     DirectedPoint dp = p.getDirectedPoint();
                     assertEquals("x value", x, dp.x, Math.ulp(x));
                     assertEquals("y value", y, dp.y, Math.ulp(y));
