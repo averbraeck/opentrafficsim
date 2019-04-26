@@ -185,8 +185,6 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
         {
             PaintLine.paintLine(graphics, COLOR, 0.1, getSource().getLocation(),
                     ((CenterLine) getSource()).getCenterLine());
-            graphics.setColor(Color.BLUE);
-            graphics.setColor(Color.RED);
         }
 
     }
