@@ -758,11 +758,11 @@ public class LmrsStrategies implements EventListenerInterface
                 new NodeAnimation(nodeC, getSimulator());
                 new LinkAnimation(linkAB, getSimulator(), 0.5f);
                 new LinkAnimation(linkBC, getSimulator(), 0.5f);
-                new LaneAnimation(laneAB1, getSimulator(), Color.GRAY.brighter(), false);
-                new LaneAnimation(laneAB2, getSimulator(), Color.GRAY.brighter(), false);
-                new LaneAnimation(laneAB3, getSimulator(), Color.GRAY.brighter(), false);
-                new LaneAnimation(laneBC1, getSimulator(), Color.GRAY.brighter(), false);
-                new LaneAnimation(laneBC2, getSimulator(), Color.GRAY.brighter(), false);
+                new LaneAnimation(laneAB1, getSimulator(), Color.GRAY.brighter());
+                new LaneAnimation(laneAB2, getSimulator(), Color.GRAY.brighter());
+                new LaneAnimation(laneAB3, getSimulator(), Color.GRAY.brighter());
+                new LaneAnimation(laneBC1, getSimulator(), Color.GRAY.brighter());
+                new LaneAnimation(laneBC2, getSimulator(), Color.GRAY.brighter());
                 new StripeAnimation(stripeAB1, getSimulator(), TYPE.SOLID);
                 new StripeAnimation(stripeAB2, getSimulator(), TYPE.DASHED);
                 new StripeAnimation(stripeAB3, getSimulator(), TYPE.DASHED);

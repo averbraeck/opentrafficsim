@@ -442,14 +442,14 @@ public final class ShapeFileReader implements UNITS
                 //
                 Lane laneEM = new NoTrafficLane(link, lr + "." + "EM", new Length(i * 0.75, METER), new Length(i * 0.75, METER),
                         m05, m05);
-                new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY, false);
+                new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
                 double lat = 1;
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.75;
                     Lane lane = new Lane(link, "lane." + lr + "." + j, new Length(lat, METER), new Length(lat, METER), m35, m35,
                             null, speedLimit);
-                    new LaneAnimation(lane, simulator, Color.GRAY, false);
+                    new LaneAnimation(lane, simulator, Color.GRAY);
                     lat += i * 1.75;
                 }
                 // spitsstroken
@@ -458,12 +458,12 @@ public final class ShapeFileReader implements UNITS
                     lat += i * 1.75;
                     Lane lane = new NoTrafficLane(link, "extra." + lr + "." + j, new Length(lat, METER), new Length(lat, METER),
                             m35, m35);
-                    new LaneAnimation(lane, simulator, Color.LIGHT_GRAY, false);
+                    new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
                 Lane laneEO = new NoTrafficLane(link, lr + "." + "EO", new Length(lat + i * 0.25, METER),
                         new Length(lat + i * 0.25, METER), m05, m05);
-                new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY, false);
+                new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
                 lat += i * 0.5;
                 Shoulder sO = new Shoulder(link, lr + "." + "sO", new Length(lat, METER), m10);
                 new ShoulderAnimation(sO, simulator, Color.GREEN);
@@ -510,7 +510,7 @@ public final class ShapeFileReader implements UNITS
                     String lr = i < 0 ? "L" : "R";
                     Lane lane = new Lane(link, "lane." + lr + "." + j, new Length(lat, METER), new Length(lat, METER), m30, m30,
                             null, speedLimit);
-                    new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
+                    new LaneAnimation(lane, simulator, Color.DARK_GRAY);
                     lat += i * 1.5;
                 }
             }
@@ -535,7 +535,7 @@ public final class ShapeFileReader implements UNITS
         try
         {
             Lane lane = new Lane(link, "lane", new Length(0.0, METER), new Length(0.0, METER), m60, m60, null, speedLimit);
-            new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
+            new LaneAnimation(lane, simulator, Color.DARK_GRAY);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)
         {
