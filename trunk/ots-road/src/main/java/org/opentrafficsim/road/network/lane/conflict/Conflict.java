@@ -21,6 +21,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
+import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneDirectionRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -28,9 +29,11 @@ import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -82,6 +85,12 @@ public final class Conflict extends AbstractLaneBasedObject
 
     /** Whether the conflict is a permitted conflict in traffic light control. */
     private final boolean permitted;
+
+    /** Distance to upstream traffic light. */
+    private Length trafficLightDistance;
+
+    /** Maximum maximum search distance. */
+    private Length maxMaxTrafficLightDistance;
 
     /** Lock object for cloning a pair of conflicts. */
     private final Object cloneLock;
@@ -171,8 +180,7 @@ public final class Conflict extends AbstractLaneBasedObject
 
         // Lane record for GTU provision
         this.rootPosition = direction.isPlus() ? longitudinalPosition : lane.getLength().minus(longitudinalPosition);
-        this.root = new LaneDirectionRecord(lane, direction, this.rootPosition.neg(),
-                lane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE));
+        this.root = new LaneDirectionRecord(lane, direction, this.rootPosition.neg(), gtuType);
     }
 
     /**
@@ -243,9 +251,9 @@ public final class Conflict extends AbstractLaneBasedObject
         {
             // setup a base iterable to provide the GTUs
             boolean ignoreIfUpstream = false;
-            this.downstreamGtus = new DownstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition,
-                    this.maxDownstreamVisibility, RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT,
-                    ignoreIfUpstream);
+            this.downstreamGtus =
+                    new DownstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition, this.maxDownstreamVisibility,
+                            RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT, ignoreIfUpstream);
             this.downstreamTime = time;
         }
         // return iterable that uses the base iterable
@@ -308,6 +316,44 @@ public final class Conflict extends AbstractLaneBasedObject
     public boolean isPermitted()
     {
         return this.permitted;
+    }
+
+    /**
+     * Returns the distance to an upstream traffic light.
+     * @param maxDistance Length; maximum distance of traffic light
+     * @return Length; distance to upstream traffic light, infinite if beyond maximum distance
+     */
+    public Length getTrafficLightDistance(final Length maxDistance)
+    {
+        if (this.trafficLightDistance == null)
+        {
+            if (this.maxMaxTrafficLightDistance == null || this.maxMaxTrafficLightDistance.lt(maxDistance))
+            {
+                this.maxMaxTrafficLightDistance = maxDistance;
+                boolean downstream = false;
+                LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight> it =
+                        new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight>(null, TrafficLight.class, this.root,
+                                getLongitudinalPosition(), downstream, maxDistance, RelativePosition.REFERENCE_POSITION, null)
+                        {
+                            /** {@inheritDoc} */
+                            @Override
+                            protected HeadwayTrafficLight perceive(final LaneBasedGTU perceivingGtu, final TrafficLight object,
+                                    final Length distance) throws GTUException, ParameterException
+                            {
+                                return new HeadwayTrafficLight(object, distance);
+                            }
+                        };
+                if (!it.isEmpty())
+                {
+                    this.trafficLightDistance = it.first().getDistance();
+                }
+            }
+        }
+        if (this.trafficLightDistance != null && maxDistance.ge(this.trafficLightDistance))
+        {
+            return this.trafficLightDistance;
+        }
+        return Length.POSITIVE_INFINITY;
     }
 
     /**

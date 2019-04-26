@@ -75,6 +75,15 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         this.relativePosition = relativePosition;
         this.route = route;
     }
+    
+    /**
+     * Whether the iterable searches downstream.
+     * @return boolean; whether the iterable searches downstream
+     */
+    public boolean isDownstream()
+    {
+        return this.downstream;
+    }
 
     /** {@inheritDoc} */
     @Override

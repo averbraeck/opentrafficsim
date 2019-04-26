@@ -12,7 +12,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
- * Iterable that searches downstream for a certain type of lane based object.
+ * Iterable that searches downstream or upstream for a certain type of lane based object.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -28,6 +28,9 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
         extends AbstractPerceptionIterable<H, L, Void>
 {
 
+    /** Margin for start and end of lane. */
+    private static final Length MARGIN = Length.createSI(1e-9); 
+    
     /** Class of lane based objects to return. */
     private final Class<L> clazz;
 
@@ -37,14 +40,16 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
      * @param clazz Class&lt;L&gt;; class of lane based objects to return
      * @param root LaneRecord&lt;?&gt;; root record
      * @param initialPosition Length; initial position
+     * @param downstream boolean; downstream
      * @param maxDistance Length; max distance to search
      * @param relativePosition RelativePosition; relative position
      * @param route Route; route of the GTU, may be {@code null}
      */
     public LaneBasedObjectIterable(final LaneBasedGTU perceivingGtu, final Class<L> clazz, final LaneRecord<?> root,
-            final Length initialPosition, final Length maxDistance, final RelativePosition relativePosition, final Route route)
+            final Length initialPosition, final boolean downstream, final Length maxDistance,
+            final RelativePosition relativePosition, final Route route)
     {
-        super(perceivingGtu, root, initialPosition, true, maxDistance, relativePosition, route);
+        super(perceivingGtu, root, initialPosition, downstream, maxDistance, relativePosition, route);
         this.clazz = clazz;
     }
 
@@ -53,11 +58,21 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
     @Override
     protected Entry getNext(final LaneRecord<?> record, final Length position, final Void counter)
     {
-        if (!record.isDownstreamBranch())
+        List<LaneBasedObject> list;
+        if (isDownstream())
         {
-            return null;
+            if (!record.isDownstreamBranch())
+            {
+                return null;
+            }
+            Length pos = position.eq0() ? MARGIN.neg() : position;
+            list = record.getLane().getObjectAhead(pos, record.getDirection());
         }
-        List<LaneBasedObject> list = record.getLane().getObjectAhead(position, record.getDirection());
+        else
+        {
+            Length pos = position.eq(record.getLane().getLength()) ? record.getLane().getLength().plus(MARGIN) : position;
+            list = record.getLane().getObjectBehind(pos, record.getDirection());
+        }
         while (list != null)
         {
             Set<L> set = new LinkedHashSet<>();
@@ -78,7 +93,14 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
                 }
                 return new Entry(set, null, pos);
             }
-            list = record.getLane().getObjectAhead(pos, record.getDirection());
+            if (isDownstream())
+            {
+                list = record.getLane().getObjectAhead(pos, record.getDirection());
+            }
+            else
+            {
+                list = record.getLane().getObjectBehind(pos, record.getDirection());
+            }
         }
         return null;
     }
@@ -87,14 +109,15 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
     @Override
     protected final Length getDistance(final L object, final LaneRecord<?> record, final Length position)
     {
-        return record.getDistanceToPosition(position).minus(getDx());
+        return isDownstream() ? record.getDistanceToPosition(position).minus(getDx())
+                : record.getDistanceToPosition(position).neg().plus(getDx());
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString()
     {
-        return "LaneBasedObjectIterable [class=" + this.clazz + "]";
+        return "LaneBasedObjectIterable [class=" + this.clazz + ", downstream=" + isDownstream() + "]";
     }
 
 }

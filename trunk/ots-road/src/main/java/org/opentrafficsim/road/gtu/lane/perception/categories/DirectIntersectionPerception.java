@@ -92,7 +92,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
                     : pos.minus(getGtu().getFront().getDx());
             return new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight>(getGtu(), TrafficLight.class, record,
-                    Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), route)
+                    Length.max(Length.ZERO, pos), true, getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
+                    route)
             {
                 /** {@inheritDoc} */
                 @Override
@@ -163,7 +164,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 }
             }
             return new LaneBasedObjectIterable<HeadwayConflict, Conflict>(getGtu(), Conflict.class, record,
-                    Length.max(MARGIN.neg(), pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), route)
+                    Length.max(MARGIN.neg(), pos), true, getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
+                    route)
             {
                 /** {@inheritDoc} */
                 @SuppressWarnings("synthetic-access")
@@ -197,8 +199,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                     LongitudinalDirectionality otherDir = otherConflict.getDirection();
                     Throw.when(otherDir.isBoth(), UnsupportedOperationException.class,
                             "Conflicts on lanes with direction BOTH are not supported.");
-                    // TODO limit 'conflictingVisibility' to first upstream traffic light, so GTU's behind it are
-                    // ignored
+                    // TODO limit 'conflictingVisibility' to first upstream traffic light, so GTU's behind it are ignored
 
                     HeadwayConflict headwayConflict;
                     try
@@ -231,16 +232,18 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                                 length, conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs,
                                 conflictingVisibility, conflictingSpeedLimit, conflictingLink,
                                 HeadwayConflict.Width.linear(startWidth, endWidth), stopLine, conflictingStopLine);
+
+                        Length trafficLightDistance = conflict.getOtherConflict()
+                                .getTrafficLightDistance(perceivingGtu.getParameters().getParameter(ParameterTypes.LOOKAHEAD));
+                        if (trafficLightDistance != null && trafficLightDistance.le(lookAhead))
+                        {
+                            headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());
+                        }
                     }
-                    catch (GTUException | OTSGeometryException exception)
+                    catch (GTUException | OTSGeometryException | ParameterException exception)
                     {
                         throw new RuntimeException("Could not create headway objects.", exception);
                     }
-                    // TODO
-                    // if (trafficLightDistance != null && trafficLightDistance.le(lookAhead))
-                    // {
-                    // headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());
-                    // }
                     return headwayConflict;
                 }
             };
