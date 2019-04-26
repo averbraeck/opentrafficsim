@@ -655,6 +655,11 @@ public final class ConflictUtil
         }
         else
         {
+            if (conflict.getConflictingTrafficLightDistance().lt(conflictingVehiclesCollectable.first().getDistance()))
+            {
+                // conflicting traffic upstream of traffic light
+                return false;
+            }
             conflictingVehicles = conflictingVehiclesCollectable;
         }
 
