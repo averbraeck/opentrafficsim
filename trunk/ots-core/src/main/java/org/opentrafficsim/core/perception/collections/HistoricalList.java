@@ -27,6 +27,7 @@ public interface HistoricalList<E> extends HistoricalCollection<E>, List<E>
      * Returns the current list.
      * @return List; current list
      */
+    @Override
     List<E> get();
 
     /**
@@ -34,6 +35,7 @@ public interface HistoricalList<E> extends HistoricalCollection<E>, List<E>
      * @param time Time; time to obtain the list at
      * @return List; past list
      */
+    @Override
     List<E> get(Time time);
 
     /** {@inheritDoc} */

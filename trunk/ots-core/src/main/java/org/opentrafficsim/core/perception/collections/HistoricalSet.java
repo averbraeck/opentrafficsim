@@ -23,6 +23,7 @@ public interface HistoricalSet<E> extends HistoricalCollection<E>, Set<E>
      * Returns the current set.
      * @return Set; current set
      */
+    @Override
     Set<E> get();
 
     /**
@@ -30,6 +31,7 @@ public interface HistoricalSet<E> extends HistoricalCollection<E>, Set<E>
      * @param time Time; time to obtain the set at
      * @return Set; past set
      */
+    @Override
     Set<E> get(Time time);
 
 }
