@@ -119,7 +119,7 @@ public class OTSPoint3D implements Locatable, Serializable
      */
     public OTSPoint3D(final Coordinate coordinate)
     {
-        this(coordinate.x, coordinate.y, Double.isNaN(coordinate.z) ? 0.0 : coordinate.z);
+        this(coordinate.x, coordinate.y, Double.isNaN(coordinate.getZ()) ? 0.0 : coordinate.getZ());
     }
 
     /**
