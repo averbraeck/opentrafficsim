@@ -19,7 +19,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
-import org.opentrafficsim.draw.core.TextAnimation.ContrastToBackground;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 
@@ -333,9 +332,11 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
          * @param textAlignment TextAlignment; where to place the text
          * @param color Color; the color of the text
          * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param background TextAnimation.ContrastToBackground; connection to retrieve the current background color
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
+        @SuppressWarnings("parameternumber")
         public Text(final Locatable source, final String text, final float dx, final float dy,
                 final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator,
                 final TextAnimation.ContrastToBackground background) throws RemoteException, NamingException
