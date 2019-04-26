@@ -26,6 +26,10 @@ public final class Convolution
         //
     }
 
+    /**
+     * Program entry point.
+     * @param args String...; the command line arguments (not used)
+     */
     public static void main(final String... args)
     {
         int[] size = new int[] {10, 12, 15, 18, 20, 25, 30, 35, 50, 100, 200, 500, 1000};
