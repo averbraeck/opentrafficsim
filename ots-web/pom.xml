@@ -18,8 +18,17 @@
       <artifactId>ots-road</artifactId>
     </dependency>
     <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-draw</artifactId>
+    </dependency>
+    <dependency>
       <groupId>dsol</groupId>
-      <artifactId>dsol-web</artifactId>
+      <artifactId>dsol-swing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>9.4.17.v20190418</version>
     </dependency>
   </dependencies>
 

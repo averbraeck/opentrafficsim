@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<SCRIPT type="text/javascript">
+	function simpleDialog(msg) {
+		features = 'toolbar=no, location=no, directories=no, status=no, menubar=no, '
+				+ 'scrollbars=no, resizable=yes, fullscreen=yes, titlebar=no'
+		dlg = window.open("", "Dialog", features)
+		dlg.document.write("<HTML><BODY bgColor='black' text='white'>")
+		dlg.document.write("<H2><CENTER>", msg, "</CENTER></H2>")
+		dlg.document.write("<FORM><CENTER>")
+		dlg.document
+				.write("<INPUT type='button' value='OK' onClick = 'self.close()'>")
+		dlg.document.write("</CENTER></FORM></BODY></HTML>")
+		dlg.document.close()
+	}
+</SCRIPT>
+</HEAD>
+<BODY>
+	<FORM>
+		<INPUT type='button' value='test simple dialog' onClick='simpleDialog("Click to close")'>
+	</FORM>
+</BODY>
+</HTML>
