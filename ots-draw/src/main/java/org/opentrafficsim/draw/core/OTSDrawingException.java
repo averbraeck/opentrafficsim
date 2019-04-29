@@ -39,7 +39,7 @@ public class OTSDrawingException extends Exception
      * @param message String; the error message
      * @param cause Throwable; the cause of the exception to be included
      */
-    public OTSDrawingException(String message, Throwable cause)
+    public OTSDrawingException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
