@@ -35,8 +35,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GTUException when the speed of the gtu cannot be determined
      */
-    AccelerationStep computeAccelerationStep(final LaneBasedGTU gtu, final Speed leaderSpeed, final Length headway,
-            final Length maxDistance, final Speed speedLimit) throws GTUException;
+    AccelerationStep computeAccelerationStep(LaneBasedGTU gtu, Speed leaderSpeed, Length headway, Length maxDistance,
+            Speed speedLimit) throws GTUException;
 
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -49,8 +49,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GTUException when the speed of the gtu cannot be determined
      */
-    AccelerationStep computeAccelerationStep(final LaneBasedGTU gtu, final Speed leaderSpeed, final Length headway,
-            final Length maxDistance, final Speed speedLimit, final Duration stepSize) throws GTUException;
+    AccelerationStep computeAccelerationStep(LaneBasedGTU gtu, Speed leaderSpeed, Length headway, Length maxDistance,
+            Speed speedLimit, Duration stepSize) throws GTUException;
 
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -63,8 +63,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return Acceleration; the acceleration (or, if negative, deceleration) resulting from application of the GTU following
      *         model
      */
-    Acceleration computeAcceleration(final Speed followerSpeed, Speed followerMaximumSpeed, final Speed leaderSpeed,
-            final Length headway, final Speed speedLimit);
+    Acceleration computeAcceleration(Speed followerSpeed, Speed followerMaximumSpeed, Speed leaderSpeed, Length headway,
+            Speed speedLimit);
 
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -78,8 +78,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return Acceleration; the acceleration (or, if negative, deceleration) resulting from application of the GTU following
      *         model
      */
-    Acceleration computeAcceleration(final Speed followerSpeed, Speed followerMaximumSpeed, final Speed leaderSpeed,
-            final Length headway, final Speed speedLimit, final Duration stepSize);
+    Acceleration computeAcceleration(Speed followerSpeed, Speed followerMaximumSpeed, Speed leaderSpeed, Length headway,
+            Speed speedLimit, Duration stepSize);
 
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -108,7 +108,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      *         model
      */
     AccelerationStep computeAccelerationStep(Speed followerSpeed, Speed leaderSpeed, Length headway, Speed speedLimit,
-            Time currentTime, final Duration stepSize);
+            Time currentTime, Duration stepSize);
 
     /**
      * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
@@ -126,8 +126,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      *         the GTU following model of the referenceGTU for each leader and follower
      * @throws GTUException when the speed of the gtu cannot be determined
      */
-    DualAccelerationStep computeDualAccelerationStep(final LaneBasedGTU gtu, final Collection<Headway> otherHeadways,
-            final Length maxDistance, final Speed speedLimit) throws GTUException;
+    DualAccelerationStep computeDualAccelerationStep(LaneBasedGTU gtu, Collection<Headway> otherHeadways, Length maxDistance,
+            Speed speedLimit) throws GTUException;
 
     /**
      * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
@@ -146,8 +146,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      *         the GTU following model of the referenceGTU for each leader and follower
      * @throws GTUException when the speed of the gtu cannot be determined
      */
-    DualAccelerationStep computeDualAccelerationStep(final LaneBasedGTU gtu, final Collection<Headway> otherHeadways,
-            final Length maxDistance, final Speed speedLimit, final Duration stepSize) throws GTUException;
+    DualAccelerationStep computeDualAccelerationStep(LaneBasedGTU gtu, Collection<Headway> otherHeadways, Length maxDistance,
+            Speed speedLimit, Duration stepSize) throws GTUException;
 
     /**
      * Compute the acceleration that would be used if the is not leader in sight.
@@ -157,8 +157,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GTUException when the speed of the gtu cannot be determined
      */
-    AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGTU gtu, final Length maxDistance,
-            final Speed speedLimit) throws GTUException;
+    AccelerationStep computeAccelerationStepWithNoLeader(LaneBasedGTU gtu, Length maxDistance, Speed speedLimit)
+            throws GTUException;
 
     /**
      * Compute the acceleration that would be used if the is not leader in sight.
@@ -169,8 +169,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GTUException when the speed of the gtu cannot be determined
      */
-    AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGTU gtu, final Length maxDistance,
-            final Speed speedLimit, final Duration stepSize) throws GTUException;
+    AccelerationStep computeAccelerationStepWithNoLeader(LaneBasedGTU gtu, Length maxDistance, Speed speedLimit,
+            Duration stepSize) throws GTUException;
 
     /**
      * Compute the minimum <b>net</b> headway given the speed of the follower and the leader.<br>
@@ -183,7 +183,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @param followerMaximumSpeed Speed; the maximum speed that the follower can drive at
      * @return Length
      */
-    Length minimumHeadway(Speed followerSpeed, Speed leaderSpeed, Length precision, final Length maxDistance, Speed speedLimit,
+    Length minimumHeadway(Speed followerSpeed, Speed leaderSpeed, Length precision, Length maxDistance, Speed speedLimit,
             Speed followerMaximumSpeed);
 
     /**
@@ -204,18 +204,18 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * Set value of acceleration parameter.
      * @param a Acceleration; value to set
      */
-    void setA(final Acceleration a);
+    void setA(Acceleration a);
 
     /**
      * Set value of desired headway.
      * @param t Duration; desired headway
      */
-    void setT(final Duration t);
+    void setT(Duration t);
 
     /**
      * Set value of desired speed factor.
      * @param fSpeed double; desired speed factor
      */
-    void setFspeed(final double fSpeed);
+    void setFspeed(double fSpeed);
 
 }

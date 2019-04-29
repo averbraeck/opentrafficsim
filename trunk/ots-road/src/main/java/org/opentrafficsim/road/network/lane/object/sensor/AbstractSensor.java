@@ -150,7 +150,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * Implementation of the response to a trigger of this sensor by a GTU.
      * @param gtu LaneBasedGTU; the lane based GTU that triggered this sensor.
      */
-    protected abstract void triggerResponse(final LaneBasedGTU gtu);
+    protected abstract void triggerResponse(LaneBasedGTU gtu);
 
     /** {@inheritDoc} */
     @Override
