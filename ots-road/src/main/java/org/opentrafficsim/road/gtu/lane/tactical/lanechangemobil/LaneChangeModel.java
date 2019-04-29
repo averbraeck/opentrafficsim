@@ -45,11 +45,10 @@ public interface LaneChangeModel
      * @throws OperationalPlanException if DefaultAlexander perception category is not present.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu, final Collection<Headway> sameLaneTraffic,
-            final Collection<Headway> rightLaneTraffic, final Collection<Headway> leftLaneTraffic, final Speed speedLimit,
-            final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
-            final Acceleration nonPreferredLaneRouteIncentive)
-            throws GTUException, ParameterException, OperationalPlanException;
+    LaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGTU gtu, Collection<Headway> sameLaneTraffic,
+            Collection<Headway> rightLaneTraffic, Collection<Headway> leftLaneTraffic, Speed speedLimit,
+            Acceleration preferredLaneRouteIncentive, Acceleration laneChangeThreshold,
+            Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException, OperationalPlanException;
 
     /**
      * Return the name of this GTU following model.
