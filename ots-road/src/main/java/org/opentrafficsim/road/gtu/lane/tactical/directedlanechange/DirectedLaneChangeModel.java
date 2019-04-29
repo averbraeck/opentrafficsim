@@ -49,10 +49,10 @@ public interface DirectedLaneChangeModel
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu, final LateralDirectionality direction,
-            final Collection<Headway> sameLaneTraffic, final Collection<Headway> otherLaneTraffic, final Length maxDistance,
-            final Speed speedLimit, final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
-            Duration laneChangeTime) throws GTUException, ParameterException, OperationalPlanException;
+    DirectedLaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGTU gtu, LateralDirectionality direction,
+            Collection<Headway> sameLaneTraffic, Collection<Headway> otherLaneTraffic, Length maxDistance, Speed speedLimit,
+            Acceleration otherLaneRouteIncentive, Acceleration laneChangeThreshold, Duration laneChangeTime)
+            throws GTUException, ParameterException, OperationalPlanException;
 
     /** @return the perception. */
     LanePerception getPerception();
