@@ -577,7 +577,7 @@ public final class AHFEUtil
          * @param demandVector FrequencyVector; the corresponding demand vector
          * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
          */
-        public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
+        HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
                 final SimulatorInterface.TimeDoubleUnit simulator)
         {
             this(timeVector, demandVector, simulator, Interpolation.STEPWISE);
@@ -589,7 +589,7 @@ public final class AHFEUtil
          * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
          * @param interpolation Interpolation; interpolation type
          */
-        public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
+        HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
                 final SimulatorInterface.TimeDoubleUnit simulator, final Interpolation interpolation)
         {
             Throw.whenNull(timeVector, "Time vector may not be null.");
