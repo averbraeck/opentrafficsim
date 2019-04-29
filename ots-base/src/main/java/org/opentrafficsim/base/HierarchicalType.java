@@ -52,9 +52,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
         this.parent = parent;
     }
 
-    /**
-     * @return id.
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
