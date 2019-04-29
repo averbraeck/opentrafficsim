@@ -13,12 +13,9 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -32,6 +29,8 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Test the fixed time traffic controller class.
