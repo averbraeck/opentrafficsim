@@ -12,7 +12,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -23,7 +22,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
@@ -218,7 +216,6 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
                     pos += actualHeadway;
                 }
             }
-            DefaultAnimationFactory.animateNetwork(getNetwork(), simulator, new DefaultSwitchableGTUColorer());
         }
         catch (Exception exception)
         {
