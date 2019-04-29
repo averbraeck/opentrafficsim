@@ -35,7 +35,7 @@ public class LaneStructureLocatable implements Locatable
      * @param rollingLaneStructure RollingLaneStructure; the rolling lane structure
      * @param gtu GTU; the gtu
      */
-    public LaneStructureLocatable(RollingLaneStructure rollingLaneStructure, final GTU gtu)
+    public LaneStructureLocatable(final RollingLaneStructure rollingLaneStructure, final GTU gtu)
     {
         super();
         this.rollingLaneStructure = rollingLaneStructure;
