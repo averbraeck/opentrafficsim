@@ -273,6 +273,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
         }
 
         /** {@inheritDoc} */
+        @Override
         protected boolean accept(final Number value)
         {
             return this.bound.doubleValue() <= value.doubleValue();
@@ -306,6 +307,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
         }
 
         /** {@inheritDoc} */
+        @Override
         protected boolean accept(final Number value)
         {
             return this.bound.doubleValue() < value.doubleValue();
@@ -339,6 +341,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
         }
 
         /** {@inheritDoc} */
+        @Override
         protected boolean accept(final Number value)
         {
             return this.bound.doubleValue() >= value.doubleValue();
@@ -372,6 +375,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
         }
 
         /** {@inheritDoc} */
+        @Override
         protected boolean accept(final Number value)
         {
             return this.bound.doubleValue() > value.doubleValue();
