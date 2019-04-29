@@ -425,6 +425,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param rangeValue double; range value (y-axis)
      * @return String; status label when the mouse is over the given location
      */
+    @Override
     protected final String getStatusLabel(final double domainValue, final double rangeValue)
     {
         if (this.dataPool == null)

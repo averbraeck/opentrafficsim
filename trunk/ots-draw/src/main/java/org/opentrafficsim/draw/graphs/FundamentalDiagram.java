@@ -1116,6 +1116,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         {
             new Thread(new Runnable()
             {
+                @Override
                 @SuppressWarnings("synthetic-access")
                 public void run()
                 {
