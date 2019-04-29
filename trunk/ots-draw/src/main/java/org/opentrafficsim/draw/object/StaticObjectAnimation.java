@@ -25,7 +25,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * initial version Sep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class StaticObjectAnimation extends Renderable2D implements Serializable
+public class StaticObjectAnimation extends Renderable2D<StaticObject> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
