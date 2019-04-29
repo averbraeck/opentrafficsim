@@ -110,6 +110,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
     /**
      * Add tab with trafCOD status.
      */
+    @Override
     protected void addTabs()
     {
         JScrollPane scrollPane = new JScrollPane(getModel().getControllerDisplayPanel());
