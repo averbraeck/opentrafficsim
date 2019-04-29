@@ -30,7 +30,7 @@ public class XmlParserException extends Exception
      * @param message String; message
      * @param cause Throwable; cause
      */
-    public XmlParserException(String message, Throwable cause)
+    public XmlParserException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -38,7 +38,7 @@ public class XmlParserException extends Exception
     /**
      * @param message String; messge
      */
-    public XmlParserException(String message)
+    public XmlParserException(final String message)
     {
         super(message);
     }
@@ -46,7 +46,7 @@ public class XmlParserException extends Exception
     /**
      * @param cause Throwable; cause
      */
-    public XmlParserException(Throwable cause)
+    public XmlParserException(final Throwable cause)
     {
         super(cause);
     }
