@@ -500,6 +500,6 @@ public abstract class TextAnimation implements Locatable, Serializable
          * Retrieve the color of the background.
          * @return Color; the (current) color of the background
          */
-        public Color getBackgroundColor();
+        Color getBackgroundColor();
     }
 }
