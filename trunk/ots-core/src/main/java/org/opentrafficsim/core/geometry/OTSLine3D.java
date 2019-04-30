@@ -14,7 +14,6 @@ import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import org.djunits.unit.DirectionUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
@@ -57,8 +56,8 @@ public class OTSLine3D implements Locatable, Serializable
     /** The cumulative length of the line at point 'i'. */
     private double[] lengthIndexedLine = null;
 
-    /** The cached length; will be calculated when needed for the first time. */
-    private double length = Double.NaN;
+    /** The cached length; will be calculated at time of construction. */
+    private Length length;
 
     /** The cached centroid; will be calculated when needed for the first time. */
     private OTSPoint3D centroid = null;
@@ -122,6 +121,7 @@ public class OTSLine3D implements Locatable, Serializable
             this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + pts[i - 1].distanceSI(pts[i]);
         }
         this.points = pts;
+        this.length = Length.createSI(this.lengthIndexedLine[this.lengthIndexedLine.length - 1]);
     }
 
     /** Which offsetLine method to use... */
@@ -548,8 +548,7 @@ public class OTSLine3D implements Locatable, Serializable
         {
             throw new OTSGeometryException("Bad interval");
         }
-        getLength(); // computes and sets the length field
-        return extract(start * this.length, end * this.length);
+        return extract(start * this.length.si, end * this.length.si);
     }
 
     /**
@@ -858,17 +857,9 @@ public class OTSLine3D implements Locatable, Serializable
      * constituting this line are expressed in meters.)
      * @return the length of the line in SI units
      */
-    public final synchronized double getLengthSI()
+    public final double getLengthSI()
     {
-        if (Double.isNaN(this.length))
-        {
-            this.length = 0.0;
-            for (int i = 0; i < size() - 1; i++)
-            {
-                this.length += this.points[i].distanceSI(this.points[i + 1]);
-            }
-        }
-        return this.length;
+        return this.length.si;
     }
 
     /**
@@ -878,7 +869,7 @@ public class OTSLine3D implements Locatable, Serializable
      */
     public final Length getLength()
     {
-        return new Length(getLengthSI(), LengthUnit.SI);
+        return this.length;
     }
 
     /**
