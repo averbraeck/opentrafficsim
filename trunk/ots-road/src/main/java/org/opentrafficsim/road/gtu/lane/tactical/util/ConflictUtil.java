@@ -315,7 +315,7 @@ public final class ConflictUtil
         if (a.si < -6.0 && speed.si > 5 / 3.6)
         {
             System.err.println("Deceleration from conflict util stronger than 6m/s^2.");
-            //return Acceleration.POSITIVE_INFINITY;
+            // return Acceleration.POSITIVE_INFINITY;
         }
         return a;
     }
@@ -655,7 +655,8 @@ public final class ConflictUtil
         }
         else
         {
-            if (conflict.getConflictingTrafficLightDistance().lt(conflictingVehiclesCollectable.first().getDistance()))
+            if (conflict.getConflictingTrafficLightDistance() != null
+                    && conflict.getConflictingTrafficLightDistance().lt(conflictingVehiclesCollectable.first().getDistance()))
             {
                 // conflicting traffic upstream of traffic light
                 return false;

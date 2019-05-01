@@ -295,7 +295,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
 
     /**
      * Returns the distance of a traffic light upstream on the conflicting lane.
-     * @return distance of a traffic light upstream on the conflicting lane.
+     * @return distance of a traffic light upstream on the conflicting lane, or {@code null} if no traffic light
      */
     public final Length getConflictingTrafficLightDistance()
     {
