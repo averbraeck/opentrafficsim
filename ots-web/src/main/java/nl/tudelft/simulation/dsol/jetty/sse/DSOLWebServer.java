@@ -82,24 +82,41 @@ public abstract class DSOLWebServer implements EventListenerInterface
                     new Event(SimulatorInterface.START_REPLICATION_EVENT, this.simulator, this.simulator.getSimulatorTime()));
         }
 
-        Server server = new Server(8080);
-        ResourceHandler resourceHandler = new ResourceHandler();
+        new ServerThread().start();
+    }
 
-        // root folder; to work in Eclipse, as an external jar, and in an embedded jar
-        URL homeFolder = URLResource.getResource("/home");
-        String webRoot = homeFolder.toExternalForm();
-        System.out.println("webRoot is " + webRoot);
+    /** Handle in separate thread to avoid 'lock' of the main application. */
+    class ServerThread extends Thread
+    {
+        @Override
+        public void run()
+        {
+            Server server = new Server(8080);
+            ResourceHandler resourceHandler = new ResourceHandler();
 
-        resourceHandler.setDirectoriesListed(true);
-        resourceHandler.setWelcomeFiles(new String[] {"index.html"});
-        resourceHandler.setResourceBase(webRoot);
+            // root folder; to work in Eclipse, as an external jar, and in an embedded jar
+            URL homeFolder = URLResource.getResource("/home");
+            String webRoot = homeFolder.toExternalForm();
+            System.out.println("webRoot is " + webRoot);
 
-        HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] {resourceHandler, new XHRHandler(this)});
-        server.setHandler(handlers);
+            resourceHandler.setDirectoriesListed(true);
+            resourceHandler.setWelcomeFiles(new String[] {"index.html"});
+            resourceHandler.setResourceBase(webRoot);
 
-        server.start();
-        server.join();
+            HandlerList handlers = new HandlerList();
+            handlers.setHandlers(new Handler[] {resourceHandler, new XHRHandler(DSOLWebServer.this)});
+            server.setHandler(handlers);
+
+            try
+            {
+                server.start();
+                server.join();
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -317,25 +334,25 @@ public abstract class DSOLWebServer implements EventListenerInterface
                         answer = this.webServer.getAnimationPanel().getDrawingCommands();
                         break;
                     }
-                    
+
                     case "arrowDown":
                     {
                         this.webServer.getAnimationPanel().pan(HTMLGridPanel.DOWN, 0.1);
                         break;
                     }
-                    
+
                     case "arrowUp":
                     {
                         this.webServer.getAnimationPanel().pan(HTMLGridPanel.UP, 0.1);
                         break;
                     }
-                    
+
                     case "arrowLeft":
                     {
                         this.webServer.getAnimationPanel().pan(HTMLGridPanel.LEFT, 0.1);
                         break;
                     }
-                    
+
                     case "arrowRight":
                     {
                         this.webServer.getAnimationPanel().pan(HTMLGridPanel.RIGHT, 0.1);

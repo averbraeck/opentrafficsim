@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -11,8 +12,12 @@ import org.djunits.value.vdouble.scalar.Time;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface.AnimationThread;
 
 /**
  * Construct a DSOL DEVSAnimator the easy way.
@@ -88,5 +93,4 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
     {
         return "OTSAnimator [lastReplication=" + this.lastReplication + "]";
     }
-
 }

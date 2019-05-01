@@ -7,15 +7,11 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSRealTimeSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.jetty.sse.DSOLWebServer;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test4DCrossing.java. <br>
@@ -27,9 +23,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class CircularModelWeb extends DSOLWebServer
 {
-    long startTime;
-    LaneBasedGTU gtu40;
-    
     /**
      * @param title String; the tile for the model
      * @param simulator DEVSRealTimeClock.TimeDouble; the simulator
@@ -40,53 +33,21 @@ public class CircularModelWeb extends DSOLWebServer
     {
         super(title, simulator, new Rectangle2D.Double(-200, -200, 400, 400));
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), simulator, new DefaultSwitchableGTUColorer());
-//        this.startTime = System.currentTimeMillis();
-//        this.gtu40 = (LaneBasedGTU) model.getNetwork().getGTU("40");
-        tick();
     }
 
-    public void tick() throws SimRuntimeException
-    {
-        ((OTSRealTimeSimulator) getSimulator()).scheduleEventRel(Duration.createSI(0.1), this, this, "tick", new Object[] {});
-//        DirectedPoint l = this.gtu40.getLocation();
-//        System.out.println(((OTSAnimator) getSimulator()).getSimulatorTime().si + "\t" + (System.currentTimeMillis() - this.startTime)
-//                + "\t" + l.x + "\t" + l.y);
-    }
-    
     /**
      * @param args String[]; arguments, expected to be empty
      * @throws Exception on error
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSRealTimeSimulator simulator = new OTSRealTimeSimulator();
+        OTSAnimator simulator = new OTSAnimator();
+        simulator.setAnimation(false);
         CircularRoadModel model = new CircularRoadModel(simulator);
         if (TabbedParameterDialog.process(model.getInputParameterMap()))
         {
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), model);
             new CircularModelWeb("Circular Road", simulator, model);
-        }
-    }
-
-    /** */
-    static class WebThread extends Thread
-    {
-        @Override
-        public void run()
-        {
-            System.out.println("GC thread started");
-            while (true)
-            {
-                try
-                {
-                    Thread.sleep(10);
-                    System.gc();
-                }
-                catch (InterruptedException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
         }
     }
 }

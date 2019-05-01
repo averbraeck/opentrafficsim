@@ -138,7 +138,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         final LaneBasedGTU gtu = getSource();
-
         if (gtu.isDestroyed())
         {
             if (!this.isDestroyed)
@@ -184,7 +183,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             Color color = this.gtuColorer.getColor(gtu);
             graphics.setColor(color);
             BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
-            graphics.setStroke(new BasicStroke(0));
+            graphics.setStroke(new BasicStroke(0.05f)); // 5 cm
             graphics.fill(this.rectangle);
 
             graphics.setColor(Color.WHITE);

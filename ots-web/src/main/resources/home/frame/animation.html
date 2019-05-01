@@ -12,7 +12,11 @@
 
  -->
 <script>
-  function animateTimer() {
+  // the animation timer that can be cancelled when the simulator time stops
+  var animationTimer;
+  var INTERVAL = 40; // 20 Hz
+
+  function postAnimate() {
     var content = {
       "message" : "animate"
     };
@@ -22,8 +26,10 @@
       dataType : 'text',
       data : content,
       success : function(data) {
+        var time = Date.now();
         animate(data);
-        var t = setTimeout(animateTimer, 1000); // 1 Hz
+		var delta = Math.max(1, INTERVAL - (Date.now() - time));        
+        animationTimer = setTimeout(postAnimate, delta);
       },
       error : function(data, status, er) {
         alert("error: " + data + " status: " + status + " er:" + er);
@@ -32,6 +38,7 @@
   };
 
   function post(message) {
+    console.log("post " + message);
     var content = {
         "message" : message
       };
@@ -51,7 +58,7 @@
   
   function init() {
     initCanvas();
-    animateTimer();
+    postAnimate();
   };
 
   // var canvasDiv;
@@ -59,7 +66,7 @@
   var contextArr; // double buffering
   var canvasId = 0;
   
-  var lastData; // the last received data for redraw in case of dragging
+  var lastData; // the last received data for redraw in case of zooming
   
   var sansFont = "Calibri, Helvetica, Arial, sans-serif"; // the sans font
   var serifFont = "Georgia, Times, 'Times New Roman', serif"; // the serif font
@@ -100,7 +107,7 @@
     $(data).children().each(function() {
       var tagName = this.tagName;
       var val = $(this).text();
-      // console.log(tagName + "=>" + val);
+      console.log(tagName + "=>" + val);
 
       /* 0=command, 1=transform.m11(h-scale), 2=transform.m12(h-skew), 3=transform.m21(v-skew), 4=transform.m22(v-scale),
        * 5=transform.dx(h-translate), 6=transform.dy(v-translate), 7=color.r, 8=color.g, 9=color.b, 10=color.alpha, 
