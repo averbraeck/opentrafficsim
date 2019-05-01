@@ -8,6 +8,9 @@
     
     <release version="1.02.02" date="1019-04-XX" description="xsd-parser finished; research projects moved out">
       <action dev="averbraeck" type="update">
+        DSOL updated to version 3.03.07 to solve 'jumps' in the animation. 
+      </action>
+      <action dev="averbraeck" type="update">
         On a SHORTESTROUTE, either DISTANCECOST or TIMECOST or both should be present now.
       </action>
       <action dev="averbraeck" type="update">

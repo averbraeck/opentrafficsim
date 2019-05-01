@@ -75,7 +75,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
 
     /** {@inheritDoc} */
     @Override
-    protected final Duration relativeMillis(final double factor)
+    protected final Duration simulatorTimeForWallClockMillis(final double factor)
     {
         return new Duration(factor, DurationUnit.MILLISECOND);
     }
@@ -87,6 +87,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
         return "DEVSRealTimeClock.TimeDoubleUnit [time=" + getSimulatorTime() + "]";
     }
 
+    // TODO: update the run() method of OTSDEVSRTParallelMove and adapt to the latest parent class version in DSOL 3.03.07
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -98,8 +99,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
         long clockTime0 = System.currentTimeMillis(); // _________ current zero for the wall clock
         SimTimeDoubleUnit simTime0 = this.simulatorTime; // _______ current zero for the sim clock
         double factor = getSpeedFactor(); // _____________________ local copy of speed factor to detect change
-        double msec1 = relativeMillis(1.0).doubleValue(); // _____ translation factor for 1 msec for sim clock
-        Duration rSim = this.relativeMillis(getUpdateMsec() * factor); // sim clock change for 'updateMsec' wall clock
+        double msec1 = simulatorTimeForWallClockMillis(1.0).doubleValue(); // _____ translation factor for 1 msec for sim clock
+        Duration rSim = this.simulatorTimeForWallClockMillis(getUpdateMsec() * factor); // sim clock change for 'updateMsec' wall clock
 
         while (this.isRunning() && !this.eventList.isEmpty()
                 && this.getSimulatorTime().le(this.replication.getTreatment().getEndTime()))
@@ -110,7 +111,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                 clockTime0 = System.currentTimeMillis();
                 simTime0 = this.simulatorTime;
                 factor = getSpeedFactor();
-                rSim = this.relativeMillis(getUpdateMsec() * factor);
+                rSim = this.simulatorTimeForWallClockMillis(getUpdateMsec() * factor);
             }
 
             // check if we are behind; syncTime is the needed current time on the wall-clock
@@ -133,7 +134,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                     // first
                     synchronized (super.semaphore)
                     {
-                        Duration delta = relativeMillis((syncTime - simTime) / msec1);
+                        Duration delta = simulatorTimeForWallClockMillis((syncTime - simTime) / msec1);
                         SimTimeDoubleUnit absSyncTime = this.simulatorTime.plus(delta);
                         SimTimeDoubleUnit eventTime = this.eventList.first().getAbsoluteExecutionTime();
                         if (absSyncTime.lt(eventTime))

@@ -152,9 +152,6 @@ public class TestOpenDriveParserNASA extends OTSSimulationApplication<OTSModelIn
         /** */
         private static final long serialVersionUID = 20150811L;
 
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
-
         /** the network. */
         private OTSRoadNetwork network;
 

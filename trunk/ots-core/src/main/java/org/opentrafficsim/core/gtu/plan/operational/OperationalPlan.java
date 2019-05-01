@@ -430,6 +430,12 @@ public class OperationalPlan implements Serializable
         double distanceTraveledInSegment = segment.distanceSI(deltaT.si);
         double startDistance = sp.getSegmentStartPosition().si;
         double fraction = (startDistance + distanceTraveledInSegment) / this.path.getLengthSI();
+//        if (this.gtu.getId().equals("2"))
+//        {
+//            System.out.println(time.si + "\t" + fraction + "\t" + this.gtu.getOdometer().si + "\t" + startDistance + "\t"
+//                    + distanceTraveledInSegment + "\t " + this.path.getLengthSI() + "\t" + deltaT.si + "\t"
+//                    + System.nanoTime());
+//        }
         DirectedPoint p = new DirectedPoint();
         try
         {
