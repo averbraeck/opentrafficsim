@@ -3,6 +3,7 @@ package org.opentrafficsim.draw.road;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
@@ -77,6 +78,8 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
         graphics.setColor(fillColor);
         super.paint(graphics, observer);
 
+        Stroke oldStroke = graphics.getStroke();
+        
         BasicStroke stroke;
         float factor = conflict.isPermitted() ? .5f : 1f;
         if (conflict.getConflictType().equals(ConflictType.CROSSING))
@@ -100,8 +103,12 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
         {
             PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getGeometry(), false);
         }
+        if (isRotate() && angle != 0.0)
+        {
+            graphics.rotate(+angle);
+        }
+        graphics.setStroke(oldStroke);
         graphics.setTransform(saveAT);
-
     }
 
     /** {@inheritDoc} */

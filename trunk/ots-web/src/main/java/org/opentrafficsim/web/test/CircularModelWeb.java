@@ -9,8 +9,9 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
+import org.opentrafficsim.web.animation.WebAnimationToggles;
 
-import nl.tudelft.simulation.dsol.jetty.sse.DSOLWebServer;
+import nl.tudelft.simulation.dsol.jetty.sse.OTSWebServer;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 
 /**
@@ -21,7 +22,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class CircularModelWeb extends DSOLWebServer
+public class CircularModelWeb extends OTSWebServer
 {
     /**
      * @param title String; the tile for the model

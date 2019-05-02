@@ -1,11 +1,16 @@
 package nl.tudelft.simulation.dsol.jetty.sse;
 
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,17 +23,25 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.web.animation.WebAnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.web.animation.D2.HTMLAnimationPanel;
 import nl.tudelft.simulation.dsol.web.animation.D2.HTMLGridPanel;
+import nl.tudelft.simulation.dsol.web.animation.D2.ToggleButtonInfo;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.introspection.Property;
+import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
 
 /**
  * DSOLWebServer.java. <br>
@@ -38,13 +51,13 @@ import nl.tudelft.simulation.event.EventListenerInterface;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public abstract class DSOLWebServer implements EventListenerInterface
+public abstract class OTSWebServer implements EventListenerInterface
 {
     /** the title for the model window. */
     private final String title;
 
     /** the simulator. */
-    private final SimulatorInterface<?, ?, ?> simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** dirty flag for the controls: when the model e.g. stops, the status needs to be changed. */
     private boolean dirtyControls = false;
@@ -58,7 +71,7 @@ public abstract class DSOLWebServer implements EventListenerInterface
      * @param extent Rectangle2D.Double; the extent to use for the graphics (min/max coordinates)
      * @throws Exception in case jetty crashes
      */
-    public DSOLWebServer(final String title, final SimulatorInterface<?, ?, ?> simulator, final Rectangle2D.Double extent)
+    public OTSWebServer(final String title, final OTSSimulatorInterface simulator, final Rectangle2D.Double extent)
             throws Exception
     {
         this.title = title;
@@ -77,6 +90,7 @@ public abstract class DSOLWebServer implements EventListenerInterface
         if (this.simulator instanceof AnimatorInterface)
         {
             this.animationPanel = new HTMLAnimationPanel(extent, new Dimension(800, 600), this.simulator);
+            WebAnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
             // get the already created elements in context(/animation/D2)
             this.animationPanel.notify(
                     new Event(SimulatorInterface.START_REPLICATION_EVENT, this.simulator, this.simulator.getSimulatorTime()));
@@ -104,7 +118,7 @@ public abstract class DSOLWebServer implements EventListenerInterface
             resourceHandler.setResourceBase(webRoot);
 
             HandlerList handlers = new HandlerList();
-            handlers.setHandlers(new Handler[] {resourceHandler, new XHRHandler(DSOLWebServer.this)});
+            handlers.setHandlers(new Handler[] {resourceHandler, new XHRHandler(OTSWebServer.this)});
             server.setHandler(handlers);
 
             try
@@ -130,7 +144,7 @@ public abstract class DSOLWebServer implements EventListenerInterface
     /**
      * @return simulator
      */
-    public final SimulatorInterface<?, ?, ?> getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -234,13 +248,19 @@ public abstract class DSOLWebServer implements EventListenerInterface
     public static class XHRHandler extends AbstractHandler
     {
         /** web server for callback of actions. */
-        final DSOLWebServer webServer;
+        final OTSWebServer webServer;
+
+        /** Timer update interval in msec. */
+        private long lastWallTIme = -1;
+
+        /** Simulation time time. */
+        private double prevSimTime = 0;
 
         /**
          * Create the handler for Servlet requests.
          * @param webServer DSOLWebServer; web server for callback of actions
          */
-        public XHRHandler(final DSOLWebServer webServer)
+        public XHRHandler(final OTSWebServer webServer)
         {
             this.webServer = webServer;
         }
@@ -263,6 +283,7 @@ public abstract class DSOLWebServer implements EventListenerInterface
                 String message = request.getParameter("message");
                 String[] parts = message.split("\\|");
                 String command = parts[0];
+                HTMLAnimationPanel animationPanel = this.webServer.getAnimationPanel();
 
                 switch (command)
                 {
@@ -288,7 +309,7 @@ public abstract class DSOLWebServer implements EventListenerInterface
                         {
                             int width = Integer.parseInt(parts[1]);
                             int height = Integer.parseInt(parts[2]);
-                            this.webServer.getAnimationPanel().setSize(new Dimension(width, height));
+                            animationPanel.setSize(new Dimension(width, height));
                         }
                         break;
                     }
@@ -331,43 +352,108 @@ public abstract class DSOLWebServer implements EventListenerInterface
 
                     case "animate":
                     {
-                        answer = this.webServer.getAnimationPanel().getDrawingCommands();
+                        answer = animationPanel.getDrawingCommands();
                         break;
                     }
 
                     case "arrowDown":
                     {
-                        this.webServer.getAnimationPanel().pan(HTMLGridPanel.DOWN, 0.1);
+                        animationPanel.pan(HTMLGridPanel.DOWN, 0.1);
                         break;
                     }
 
                     case "arrowUp":
                     {
-                        this.webServer.getAnimationPanel().pan(HTMLGridPanel.UP, 0.1);
+                        animationPanel.pan(HTMLGridPanel.UP, 0.1);
                         break;
                     }
 
                     case "arrowLeft":
                     {
-                        this.webServer.getAnimationPanel().pan(HTMLGridPanel.LEFT, 0.1);
+                        animationPanel.pan(HTMLGridPanel.LEFT, 0.1);
                         break;
                     }
 
                     case "arrowRight":
                     {
-                        this.webServer.getAnimationPanel().pan(HTMLGridPanel.RIGHT, 0.1);
+                        animationPanel.pan(HTMLGridPanel.RIGHT, 0.1);
+                        break;
+                    }
+
+                    case "pan":
+                    {
+                        if (parts.length == 3)
+                        {
+                            int dx = Integer.parseInt(parts[1]);
+                            int dy = Integer.parseInt(parts[2]);
+                            double scale =
+                                    Renderable2DInterface.Util.getScale(animationPanel.getExtent(), animationPanel.getSize());
+                            Rectangle2D.Double extent = (Rectangle2D.Double) animationPanel.getExtent();
+                            extent.setRect((extent.getMinX() - dx * scale), (extent.getMinY() + dy * scale), extent.getWidth(),
+                                    extent.getHeight());
+                        }
+                        break;
+                    }
+
+                    case "introspect":
+                    {
+                        if (parts.length == 3)
+                        {
+                            int x = Integer.parseInt(parts[1]);
+                            int y = Integer.parseInt(parts[2]);
+                            List<Locatable> targets = new ArrayList<Locatable>();
+                            try
+                            {
+                                Point2D point = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(x, y),
+                                        animationPanel.getExtent(), animationPanel.getSize());
+                                for (Renderable2DInterface<?> renderable : animationPanel.getElements())
+                                {
+                                    if (animationPanel.isShowElement(renderable)
+                                            && renderable.contains(point, animationPanel.getExtent(), animationPanel.getSize()))
+                                    {
+                                        if (renderable.getSource() instanceof GTU)
+                                        {
+                                            targets.add(renderable.getSource());
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception exception)
+                            {
+                                SimLogger.always().warn(exception, "getSelectedObjects");
+                            }
+                            if (targets.size() > 0)
+                            {
+                                Object introspectedObject = targets.get(0);
+                                Property[] properties = new BeanIntrospector().getProperties(introspectedObject);
+                                SortedMap<String, Property> propertyMap = new TreeMap<>();
+                                for (Property property : properties)
+                                    propertyMap.put(property.getName(), property);
+                                answer = "<introspection>\n";
+                                for (Property property : propertyMap.values())
+                                {
+                                    answer += "<property><field>" + property.getName() + "</field><value>" + property.getValue()
+                                            + "</value></property>\n";
+                                }
+                                answer += "<introspection>\n";
+                            }
+                            else
+                            {
+                                answer = "<none />";
+                            }
+                        }
                         break;
                     }
 
                     case "zoomIn":
                     {
                         if (parts.length == 1)
-                            this.webServer.getAnimationPanel().zoom(0.9);
+                            animationPanel.zoom(0.9);
                         else
                         {
                             int x = Integer.parseInt(parts[1]);
                             int y = Integer.parseInt(parts[2]);
-                            this.webServer.getAnimationPanel().zoom(0.9, x, y);
+                            animationPanel.zoom(0.9, x, y);
                         }
                         break;
                     }
@@ -375,12 +461,88 @@ public abstract class DSOLWebServer implements EventListenerInterface
                     case "zoomOut":
                     {
                         if (parts.length == 1)
-                            this.webServer.getAnimationPanel().zoom(1.1);
+                            animationPanel.zoom(1.1);
                         else
                         {
                             int x = Integer.parseInt(parts[1]);
                             int y = Integer.parseInt(parts[2]);
-                            this.webServer.getAnimationPanel().zoom(1.1, x, y);
+                            animationPanel.zoom(1.1, x, y);
+                        }
+                        break;
+                    }
+
+                    case "zoomAll":
+                    {
+                        animationPanel.zoomAll();
+                        break;
+                    }
+
+                    case "home":
+                    {
+                        animationPanel.home();
+                        break;
+                    }
+
+                    case "toggleGrid":
+                    {
+                        animationPanel.setShowGrid(!animationPanel.isShowGrid());
+                        break;
+                    }
+
+                    case "getTime":
+                    {
+                        double now = Math.round(this.webServer.getSimulator().getSimulatorTime().si * 1000) / 1000d;
+                        int seconds = (int) Math.floor(now);
+                        int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
+                        String timeText = String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60,
+                                seconds % 60, fractionalSeconds);
+                        answer = timeText;
+                        break;
+                    }
+
+                    case "getSpeed":
+                    {
+                        double simTime = this.webServer.getSimulator().getSimulatorTime().si;
+                        double speed = getSimulationSpeed(simTime);
+                        String speedText = "";
+                        if (!Double.isNaN(speed))
+                        {
+                            speedText = String.format("% 5.2fx  ", speed);
+                        }
+                        answer = speedText;
+                        break;
+                    }
+
+                    case "getToggles":
+                    {
+                        answer = getToggles(animationPanel);
+                        break;
+                    }
+
+                    // we expect something of the form toggle|class|Node|true or toggle|gis|streets|false
+                    case "toggle":
+                    {
+                        if (parts.length != 4)
+                            System.err.println("wrong toggle commmand: " + message);
+                        else
+                        {
+                            String toggleName = parts[1];
+                            boolean gis = parts[2].equals("gis");
+                            boolean show = parts[3].equals("true");
+                            if (gis)
+                            {
+                                if (show)
+                                    animationPanel.showGISLayer(toggleName);
+                                else
+                                    animationPanel.hideGISLayer(toggleName);
+                            }
+                            else
+                            {
+                                if (show)
+                                    animationPanel.showClass(toggleName);
+                                else
+                                    animationPanel.hideClass(toggleName);
+                            }
                         }
                         break;
                     }
@@ -452,6 +614,55 @@ public abstract class DSOLWebServer implements EventListenerInterface
                         + "<resetActive>false</resetActive>\n" + "</controls>\n";
             }
         }
+
+        /**
+         * Return the toggle button info for the toggle panel.
+         * @param panel the HTMLAnimationPanel
+         * @return the String that can be parsed by the select.html iframe
+         */
+        private String getToggles(final HTMLAnimationPanel panel)
+        {
+            String ret = "<toggles>\n";
+            for (ToggleButtonInfo toggle : panel.getToggleButtons())
+            {
+                if (toggle instanceof ToggleButtonInfo.Text)
+                {
+                    ret += "<text>" + toggle.getName() + "</text>\n";
+                }
+                else if (toggle instanceof ToggleButtonInfo.LocatableClass)
+                {
+                    ret += "<class>" + toggle.getName() + "," + toggle.isVisible() + "</class>\n";
+                }
+                else if (toggle instanceof ToggleButtonInfo.Gis)
+                {
+                    ret += "<gis>" + toggle.getName() + "," + ((ToggleButtonInfo.Gis) toggle).getLayerName() + ","
+                            + toggle.isVisible() + "</gis>\n";
+                }
+            }
+            ret += "</toggles>\n";
+            return ret;
+        }
+
+        /**
+         * Returns the simulation speed.
+         * @param simTime double; simulation time
+         * @return simulation speed
+         */
+        private double getSimulationSpeed(final double simTime)
+        {
+            long now = System.currentTimeMillis();
+            if (this.lastWallTIme < 0 || this.lastWallTIme == now)
+            {
+                this.lastWallTIme = now;
+                this.prevSimTime = simTime;
+                return Double.NaN;
+            }
+            double speed = (simTime - this.prevSimTime) / (0.001 * (now - this.lastWallTIme));
+            this.prevSimTime = simTime;
+            this.lastWallTIme = now;
+            return speed;
+        }
+
     }
 
 }
