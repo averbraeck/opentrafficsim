@@ -15,6 +15,10 @@
   <dependencies>
     <dependency>
       <groupId>opentrafficsim</groupId>
+      <artifactId>ots-parser-xml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>opentrafficsim</groupId>
       <artifactId>ots-road</artifactId>
     </dependency>
     <dependency>

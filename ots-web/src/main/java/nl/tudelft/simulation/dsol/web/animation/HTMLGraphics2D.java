@@ -62,7 +62,7 @@ public class HTMLGraphics2D extends Graphics2D
     Canvas canvas = new Canvas();
 
     /** the cached current font properties. */
-    FontMetrics fontMetrics = canvas.getFontMetrics(font);
+    FontMetrics fontMetrics = this.canvas.getFontMetrics(this.font);
 
     /** the current paint. */
     Paint paint = Color.BLACK;
@@ -154,7 +154,7 @@ public class HTMLGraphics2D extends Graphics2D
     }
 
     /**
-     * add font data to the command.
+     * add font data to the command, font-name, font-size, bold/italic/plain
      */
     protected void addFontData()
     {
@@ -234,7 +234,7 @@ public class HTMLGraphics2D extends Graphics2D
     /**
      * adds a float array to the command
      * @param array float[]; the array
-     * @param length int; the length
+     * @param length int; the number of points from the array to write
      */
     private void addFloatArray(final float[] array, final int length)
     {
@@ -245,127 +245,164 @@ public class HTMLGraphics2D extends Graphics2D
     }
 
     /**
-     * Add a path2D to the command
-     * @param drawCommand String; the tag to use
-     * @param path Path2D.Float; the path to draw
-     * @param fill boolean; // TODO fill
+     * adds a double array to the command
+     * @param array double[]; the array
+     * @param length int; the number of points from the array to write
      */
-    protected void addTransformPathFloat(String drawCommand, Path2D.Float path, boolean fill)
+    private void addDoubleArray(final double[] array, final int length)
     {
-        // XXX this.commands.append("<transformPath>" + drawCommand);
-        // addAffineTransform();
-        // addColor();
-
-        // TODO: make it real...
-        // XXX write generalPath.getWindingRule());
-        float[] coords = new float[6];
-        PathIterator i = path.getPathIterator(null);
-        float[] lastCoords = new float[2]; // XXX delete after full implementation
-        while (!i.isDone())
+        for (int i = 0; i < length; i++)
         {
-            int segment = i.currentSegment(coords);
-            switch (segment)
-            {
-                case PathIterator.SEG_CLOSE:
-                    // this.commands.append(", CLOSE");
-                    // addFloatArray(coords, 0);
-                    break;
-                case PathIterator.SEG_CUBICTO:
-                    // this.commands.append(", CUBICTO");
-                    // addFloatArray(coords, 6);
-                    addTransformDraw("drawLine", lastCoords[0], lastCoords[1], coords[4], coords[5]);
-                    lastCoords[0] = coords[4];
-                    lastCoords[1] = coords[5];
-                    break;
-                case PathIterator.SEG_LINETO:
-                    // this.commands.append(", LINETO");
-                    // addFloatArray(coords, 2);
-                    addTransformDraw("drawLine", lastCoords[0], lastCoords[1], coords[0], coords[1]);
-                    lastCoords[0] = coords[0];
-                    lastCoords[1] = coords[1];
-                    break;
-                case PathIterator.SEG_MOVETO:
-                    // this.commands.append(", MOVETO");
-                    // addFloatArray(coords, 2);
-                    lastCoords[0] = coords[0];
-                    lastCoords[1] = coords[1];
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    // this.commands.append(", QUADTO");
-                    // addFloatArray(coords, 4);
-                    addTransformDraw("drawLine", lastCoords[0], lastCoords[1], coords[2], coords[3]);
-                    lastCoords[0] = coords[2];
-                    lastCoords[1] = coords[3];
-                    break;
-                default:
-                    throw new RuntimeException("unkown segment");
-            }
-            i.next();
+            this.commands.append(", " + array[i]);
         }
-        // XXX this.commands.append(", -1"); // We are ready and give an end-signal
-        // XXX this.commands.append("</transformDraw>\n");
     }
 
     /**
-     * Add a path2D to the command
-     * @param drawCommand String; the tag to use
-     * @param path Path2D.Double; the path to draw
-     * @param fill boolean; // TODO fill
+     * Add a path2D to the command. In case of fill:<br>
+     * FILL, transform.m11(h-scale), transform.m12(h-skew), transform.m21(v-skew), transform.m22(v-scale),
+     * transform.dx(h-translate), transform.dy(v-translate), fillcolor.r, fillcolor.g, fillcolor.b, fillcolor.alpha,
+     * fillcolor.transparency, winding_rule[WIND_EVEN_ODD/WIND_NON_ZERO], COMMAND, coords, COMMAND, coords, ... <br>
+     * In case of draw:<br>
+     * DRAW, transform.m11(h-scale), transform.m12(h-skew), transform.m21(v-skew), transform.m22(v-scale),
+     * transform.dx(h-translate), transform.dy(v-translate), strokecolor.r, strokecolor.g, strokecolor.b, strokecolor.alpha,
+     * strokecolor.transparency, line_width, COMMAND, coords, COMMAND, coords, ... <br>
+     * where command can be one of the following:<br>
+     * - CLOSE, followed by no coordinates<br>
+     * - CUBICTO, followed by 3 coordinates (6 numbers)<br>
+     * - LINETO, followed by 1 coordinate (2 numbers)<br>
+     * - MOVETO, followed by 1 coordinate (2 numbers)<br>
+     * - QUADTO, followed by 2 coordinates (4 numbers)<br>
+     * @param path Path2D.Float; the path to draw
+     * @param fill boolean;
      */
-    protected void addTransformPathDouble(String drawCommand, Path2D.Double path, boolean fill)
+    protected void addTransformPathFloat(Path2D.Float path, boolean fill)
     {
-        // XXX this.commands.append("<transformPath>" + drawCommand);
-        // addAffineTransform();
-        // addColor();
-
-        // TODO: make it real...
-        // XXX write generalPath.getWindingRule());
-        double[] coords = new double[6];
+        if (fill)
+            this.commands.append("<transformPath>FILL");
+        else
+            this.commands.append("<transformPath>DRAW");
+        addAffineTransform();
+        addColor(this.color);
+        if (fill)
+        {
+            if (path.getWindingRule() == Path2D.WIND_EVEN_ODD)
+                this.commands.append(",WIND_EVEN_ODD");
+            else
+                this.commands.append(",WIND_NON_ZERO");
+        }
+        else
+        {
+            if (this.stroke instanceof BasicStroke)
+                this.commands.append("," + ((BasicStroke) this.stroke).getLineWidth());
+            else
+                this.commands.append(", 0.1");
+        }
+        float[] coords = new float[6];
         PathIterator i = path.getPathIterator(null);
-        double[] lastCoords = new double[2]; // XXX delete after full implementation
         while (!i.isDone())
         {
             int segment = i.currentSegment(coords);
             switch (segment)
             {
                 case PathIterator.SEG_CLOSE:
-                    // this.commands.append(", CLOSE");
-                    // addFloatArray(coords, 0);
+                    this.commands.append(",CLOSE");
                     break;
                 case PathIterator.SEG_CUBICTO:
-                    // this.commands.append(", CUBICTO");
-                    // addFloatArray(coords, 6);
-                    addTransformDraw("drawLine", lastCoords[0], lastCoords[1], coords[4], coords[5]);
-                    lastCoords[0] = coords[4];
-                    lastCoords[1] = coords[5];
+                    this.commands.append(",CUBICTO");
+                    addFloatArray(coords, 6);
                     break;
                 case PathIterator.SEG_LINETO:
-                    // this.commands.append(", LINETO");
-                    // addFloatArray(coords, 2);
-                    addTransformDraw("drawLine", lastCoords[0], lastCoords[1], coords[0], coords[1]);
-                    lastCoords[0] = coords[0];
-                    lastCoords[1] = coords[1];
+                    this.commands.append(",LINETO");
+                    addFloatArray(coords, 2);
                     break;
                 case PathIterator.SEG_MOVETO:
-                    // this.commands.append(", MOVETO");
-                    // addFloatArray(coords, 2);
-                    lastCoords[0] = coords[0];
-                    lastCoords[1] = coords[1];
+                    this.commands.append(",MOVETO");
+                    addFloatArray(coords, 2);
                     break;
                 case PathIterator.SEG_QUADTO:
-                    // this.commands.append(", QUADTO");
-                    // addFloatArray(coords, 4);
-                    addTransformDraw("drawLine", lastCoords[0], lastCoords[1], coords[2], coords[3]);
-                    lastCoords[0] = coords[2];
-                    lastCoords[1] = coords[3];
+                    this.commands.append(",QUADTO");
+                    addFloatArray(coords, 4);
                     break;
                 default:
                     throw new RuntimeException("unkown segment");
             }
             i.next();
         }
-        // XXX this.commands.append(", -1"); // We are ready and give an end-signal
-        // XXX this.commands.append("</transformDraw>\n");
+            this.commands.append("</transformPath>\n");
+    }
+
+    /**
+     * Add a path2D to the command. In case of fill:<br>
+     * FILL, transform.m11(h-scale), transform.m12(h-skew), transform.m21(v-skew), transform.m22(v-scale),
+     * transform.dx(h-translate), transform.dy(v-translate), fillcolor.r, fillcolor.g, fillcolor.b, fillcolor.alpha,
+     * fillcolor.transparency, winding_rule[WIND_EVEN_ODD/WIND_NON_ZERO], COMMAND, coords, COMMAND, coords, ... <br>
+     * In case of draw:<br>
+     * DRAW, transform.m11(h-scale), transform.m12(h-skew), transform.m21(v-skew), transform.m22(v-scale),
+     * transform.dx(h-translate), transform.dy(v-translate), strokecolor.r, strokecolor.g, strokecolor.b, strokecolor.alpha,
+     * strokecolor.transparency, line_width, COMMAND, coords, COMMAND, coords, ... <br>
+     * where command can be one of the following:<br>
+     * - CLOSE, followed by no coordinates<br>
+     * - CUBICTO, followed by 3 coordinates (6 numbers)<br>
+     * - LINETO, followed by 1 coordinate (2 numbers)<br>
+     * - MOVETO, followed by 1 coordinate (2 numbers)<br>
+     * - QUADTO, followed by 2 coordinates (4 numbers)<br>
+     * @param path Path2D.Double; the path to draw
+     * @param fill boolean;
+     */
+    protected void addTransformPathDouble(Path2D.Double path, boolean fill)
+    {
+        if (fill)
+            this.commands.append("<transformPath>FILL");
+        else
+            this.commands.append("<transformPath>DRAW");
+        addAffineTransform();
+        addColor(this.color);
+        if (fill)
+        {
+            if (path.getWindingRule() == Path2D.WIND_EVEN_ODD)
+                this.commands.append(",WIND_EVEN_ODD");
+            else
+                this.commands.append(",WIND_NON_ZERO");
+        }
+        else
+        {
+            if (this.stroke instanceof BasicStroke)
+                this.commands.append("," + ((BasicStroke) this.stroke).getLineWidth());
+            else
+                this.commands.append(", 0.1");
+        }
+        double[] coords = new double[6];
+        PathIterator i = path.getPathIterator(null);
+        while (!i.isDone())
+        {
+            int segment = i.currentSegment(coords);
+            switch (segment)
+            {
+                case PathIterator.SEG_CLOSE:
+                    this.commands.append(",CLOSE");
+                    break;
+                case PathIterator.SEG_CUBICTO:
+                    this.commands.append(",CUBICTO");
+                    addDoubleArray(coords, 6);
+                    break;
+                case PathIterator.SEG_LINETO:
+                    this.commands.append(",LINETO");
+                    addDoubleArray(coords, 2);
+                    break;
+                case PathIterator.SEG_MOVETO:
+                    this.commands.append(",MOVETO");
+                    addDoubleArray(coords, 2);
+                    break;
+                case PathIterator.SEG_QUADTO:
+                    this.commands.append(",QUADTO");
+                    addDoubleArray(coords, 4);
+                    break;
+                default:
+                    throw new RuntimeException("unkown segment");
+            }
+            i.next();
+        }
+        this.commands.append("</transformPath>\n");
     }
 
     /**
@@ -407,17 +444,21 @@ public class HTMLGraphics2D extends Graphics2D
         {
             Ellipse2D.Double ellipse = (Ellipse2D.Double) shape;
             if (fill)
-                addTransformFill("fillOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0, ellipse.height / 2.0);
+                addTransformFill("fillOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0,
+                        ellipse.height / 2.0);
             else
-                addTransformDraw("drawOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0, ellipse.height / 2.0);
+                addTransformDraw("drawOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0,
+                        ellipse.height / 2.0);
         }
         else if (shape instanceof Ellipse2D.Float)
         {
             Ellipse2D.Float ellipse = (Ellipse2D.Float) shape;
             if (fill)
-                addTransformFill("fillOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0, ellipse.height / 2.0);
+                addTransformFill("fillOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0,
+                        ellipse.height / 2.0);
             else
-                addTransformDraw("drawOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0, ellipse.height / 2.0);
+                addTransformDraw("drawOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0,
+                        ellipse.height / 2.0);
         }
         else if (shape instanceof Line2D.Double)
         {
@@ -449,17 +490,17 @@ public class HTMLGraphics2D extends Graphics2D
         {
             SerializableGeneralPath sgp = (SerializableGeneralPath) shape;
             Path2D.Float path = sgp.getGeneralPath();
-            addTransformPathFloat("drawPath", path, fill);
+            addTransformPathFloat(path, fill);
         }
         else if (shape instanceof Path2D.Float)
         {
             Path2D.Float path = (Path2D.Float) shape;
-            addTransformPathFloat("drawPath", path, fill);
+            addTransformPathFloat(path, fill);
         }
         else if (shape instanceof Path2D.Double)
         {
             Path2D.Double path = (Path2D.Double) shape;
-            addTransformPathDouble("drawPath", path, fill);
+            addTransformPathDouble(path, fill);
         }
 
     }
@@ -469,7 +510,7 @@ public class HTMLGraphics2D extends Graphics2D
     public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphics2D.drawImage()");
-        return false;
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -765,7 +806,7 @@ public class HTMLGraphics2D extends Graphics2D
     public void setColor(Color c)
     {
         this.color = c;
-        this.paint = c; // XXX see how difference between paint and color should be handled
+        this.paint = c; // TODO see how difference between paint and color should be handled
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphics2D.setColor()");
     }
 

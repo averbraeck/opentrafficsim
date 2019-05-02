@@ -23,7 +23,11 @@ import javax.naming.event.NamingExceptionEvent;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point4i;
 
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+
+import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DComparator;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
@@ -81,6 +85,24 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
 
     /** dirty flag for the list. */
     private boolean dirtyElements = false;
+
+    /** Map of toggle names to toggle animation classes. */
+    private Map<String, Class<? extends Locatable>> toggleLocatableMap = new HashMap<>();
+
+    /** Set of animation classes to toggle buttons. */
+    private Map<Class<? extends Locatable>, ToggleButtonInfo> toggleButtonMap = new HashMap<>();
+
+    /** Set of GIS layer names to toggle GIS layers . */
+    private Map<String, MapInterface> toggleGISMap = new HashMap<>();
+
+    /** Set of GIS layer names to toggle buttons. */
+    private Map<String, ToggleButtonInfo> toggleGISButtonMap = new HashMap<>();
+
+    /** List of buttons in the right order. */
+    private List<ToggleButtonInfo> toggleButtons = new ArrayList<>();
+
+    /** The switchableGTUColorer used to color the GTUs. */
+    private GTUColorer gtuColorer = null;
 
     /**
      * constructs a new AnimationPanel.
@@ -384,4 +406,179 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
     {
         this.dragLineEnabled = dragLineEnabled;
     }
+
+    /**********************************************************************************************************/
+    /******************************************* TOGGLES ******************************************************/
+    /**********************************************************************************************************/
+
+    /**
+     * Add a button for toggling an animatable class on or off.
+     * @param name String; the name of the button
+     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
+     * @param toolTipText String; the tool tip text to show when hovering over the button
+     * @param initiallyVisible boolean; whether the class is initially shown or not
+     */
+    public final void addToggleAnimationButtonText(final String name, final Class<? extends Locatable> locatableClass,
+            final String toolTipText, final boolean initiallyVisible)
+    {
+        ToggleButtonInfo.LocatableClass buttonInfo =
+                new ToggleButtonInfo.LocatableClass(name, locatableClass, toolTipText, initiallyVisible);
+        if (initiallyVisible)
+        {
+            showClass(locatableClass);
+        }
+        else
+        {
+            hideClass(locatableClass);
+        }
+        this.toggleButtons.add(buttonInfo);
+        this.toggleLocatableMap.put(name, locatableClass);
+        this.toggleButtonMap.put(locatableClass, buttonInfo);
+    }
+
+    /**
+     * Show a Locatable class based on the name.
+     * @param name the name of the class to show
+     */
+    public final void showClass(final String name)
+    {
+        showClass(this.toggleLocatableMap.get(name));
+    }
+    
+    /**
+     * Hide a Locatable class based on the name.
+     * @param name the name of the class to hide
+     */
+    public final void hideClass(final String name)
+    {
+        hideClass(this.toggleLocatableMap.get(name));
+    }
+    
+    /**
+     * Add a text to explain animatable classes.
+     * @param text String; the text to show
+     */
+    public final void addToggleText(final String text)
+    {
+        this.toggleButtons.add(new ToggleButtonInfo.Text(text, true));
+    }
+
+    /**
+     * Add buttons for toggling all GIS layers on or off.
+     * @param header String; the name of the group of layers
+     * @param gisMap GisRenderable2D; the GIS map for which the toggles have to be added
+     * @param toolTipText String; the tool tip text to show when hovering over the button
+     */
+    public final void addAllToggleGISButtonText(final String header, final GisRenderable2D gisMap, final String toolTipText)
+    {
+        addToggleText(" ");
+        addToggleText(header);
+        try
+        {
+            for (String layerName : gisMap.getMap().getLayerMap().keySet())
+            {
+                addToggleGISButtonText(layerName, layerName, gisMap, toolTipText);
+            }
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Add a button to toggle a GIS Layer on or off.
+     * @param layerName String; the name of the layer
+     * @param displayName String; the name to display next to the tick box
+     * @param gisMap GisRenderable2D; the map
+     * @param toolTipText String; the tool tip text
+     */
+    public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2D gisMap,
+            final String toolTipText)
+    {
+        ToggleButtonInfo.Gis buttonInfo = new ToggleButtonInfo.Gis(displayName, layerName, toolTipText, true);
+        this.toggleButtons.add(buttonInfo);
+        this.toggleGISMap.put(layerName, gisMap.getMap());
+        this.toggleGISButtonMap.put(layerName, buttonInfo);
+    }
+
+    /**
+     * Set a GIS layer to be shown in the animation to true.
+     * @param layerName String; the name of the GIS-layer that has to be shown.
+     */
+    public final void showGISLayer(final String layerName)
+    {
+        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        if (gisMap != null)
+        {
+            try
+            {
+                gisMap.showLayer(layerName);
+                this.toggleGISButtonMap.get(layerName).setVisible(true);
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Set a GIS layer to be hidden in the animation to true.
+     * @param layerName String; the name of the GIS-layer that has to be hidden.
+     */
+    public final void hideGISLayer(final String layerName)
+    {
+        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        if (gisMap != null)
+        {
+            try
+            {
+                gisMap.hideLayer(layerName);
+                this.toggleGISButtonMap.get(layerName).setVisible(false);
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Toggle a GIS layer to be displayed in the animation to its reverse value.
+     * @param layerName String; the name of the GIS-layer that has to be turned off or vice versa.
+     */
+    public final void toggleGISLayer(final String layerName)
+    {
+        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        if (gisMap != null)
+        {
+            try
+            {
+                if (gisMap.getVisibleLayers().contains(gisMap.getLayerMap().get(layerName)))
+                {
+                    gisMap.hideLayer(layerName);
+                    this.toggleGISButtonMap.get(layerName).setVisible(false);
+                }
+                else
+                {
+                    gisMap.showLayer(layerName);
+                    this.toggleGISButtonMap.get(layerName).setVisible(true);
+                }
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * @return toggleButtons
+     */
+    public final List<ToggleButtonInfo> getToggleButtons()
+    {
+        return this.toggleButtons;
+    }
+
 }
