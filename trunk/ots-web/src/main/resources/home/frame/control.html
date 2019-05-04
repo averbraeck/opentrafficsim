@@ -15,6 +15,8 @@
 
  -->
 <script>
+  var queryString;
+  
   var speedLabels = new Array(1301);
   speedLabels[0] = "0.1";
   speedLabels[100] = "0.2";
@@ -41,7 +43,7 @@
           };
         console.log(ui.value);
         jQuery.post({
-          url : "control.html",
+          url : "control.html" + queryString,
           type : 'POST',
           dataType : 'text',
           data : content,
@@ -69,7 +71,7 @@
       "message" : button
     };
     jQuery.post({
-      url : "control.html",
+      url : "control.html" + queryString,
       type : 'POST',
       dataType : 'text',
       data : content,
@@ -113,6 +115,11 @@
     console.log($(data).find('startStopActive').text());
 
   };
+  
+  function init() {
+    queryString = window.parent.location.search;
+    sendAjaxButton('init');
+  }
 </script>
 <!-- 
 
@@ -166,7 +173,7 @@
 ----------------- HTML --------------
 
  -->
-<body bgcolor="#BBBBBB" onload="sendAjaxButton('init')">
+<body bgcolor="#BBBBBB" onload="init();">
   <table style="width: 624px; margin: 0; border: 0px; border-spacing: 0px; padding: 0px;">
     <tr height="36px">
       <td width="48px" align="center" valign="middle" bgcolor="#EEEEEE" title="Execute one event"

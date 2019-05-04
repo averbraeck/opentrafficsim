@@ -11,13 +11,14 @@
  -->
 <script>
 var alertShown = false;
+var queryString;
 
 function sendAjaxButton(button) {
   var content = {
     "message" : button
   };
   jQuery.post({
-    url : "homegrid.html",
+    url : "homegrid.html" + queryString,
     type : 'POST',
     dataType : 'text',
     data : content,
@@ -33,6 +34,10 @@ function sendAjaxButton(button) {
     }
   });
 };
+
+function init() {
+  queryString = window.parent.location.search;
+}
 </script>
 <!-- 
 
@@ -40,7 +45,7 @@ function sendAjaxButton(button) {
 
  -->
 </head>
-<body bgcolor="#BBBBBB">
+<body bgcolor="#BBBBBB" onload="init();">
   <table style="width: 150px; margin: 0; border: 0px; border-spacing: 0px; padding: 0px;">
     <tr height="36px">
       <td width="48px" align="center" valign="middle" bgcolor="#EEEEEE" title="Zoom whole image" onclick="sendAjaxButton('zoomAll')">

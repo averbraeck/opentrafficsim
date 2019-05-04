@@ -11,13 +11,14 @@
  -->
 <script>
 var alertShown = false;
+var queryString;
 
 function postTime() {
   var content = {
     "message" : "getTime"
   };
   jQuery.post({
-    url : "time.html",
+    url : "time.html" + queryString,
     type : 'POST',
     dataType : 'text',
     data : content,
@@ -36,6 +37,7 @@ function postTime() {
 };
 
 function init() {
+  queryString = window.parent.location.search;
   postTime();
 }
 </script>
