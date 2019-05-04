@@ -577,7 +577,7 @@ public abstract class OTSWebServer implements EventListenerInterface
                 }
             }
 
-            // System.out.println();
+            // System.out.println(answer);
 
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");

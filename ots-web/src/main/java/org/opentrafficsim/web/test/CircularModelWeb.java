@@ -9,7 +9,6 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.web.animation.WebAnimationToggles;
 
 import nl.tudelft.simulation.dsol.jetty.sse.OTSWebServer;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;

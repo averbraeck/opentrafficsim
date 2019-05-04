@@ -16,13 +16,14 @@
   var animationTimer;
   var INTERVAL = 40; // 20 Hz
   var alertShown = false;
+  var queryString;
 
   function postAnimate() {
     var content = {
       "message" : "animate"
     };
     jQuery.post({
-      url : "animation.html",
+      url : "animation.html" + queryString,
       type : 'POST',
       dataType : 'text',
       data : content,
@@ -47,7 +48,7 @@
       "message" : message
     };
     jQuery.post({
-      url : "animation.html",
+      url : "animation.html" + queryString,
       type : 'POST',
       dataType : 'text',
       data : content,
@@ -70,7 +71,7 @@
       "message" : message
     };
     jQuery.post({
-      url : "animation.html",
+      url : "animation.html" + queryString,
       type : 'POST',
       dataType : 'text',
       data : content,
@@ -88,6 +89,7 @@
   };
 
   function init() {
+    queryString = window.parent.parent.location.search;
     initCanvas();
     postAnimate();
   };

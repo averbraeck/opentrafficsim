@@ -11,13 +11,14 @@
  -->
 <script>
 var alertShown = false;
+var queryString;
 
 function postToggle(message) {
   var content = {
     "message" : message
   };
   jQuery.post({
-    url : "select.html",
+    url : "select.html" + queryString,
     type : 'POST',
     dataType : 'text',
     data : content,
@@ -39,7 +40,7 @@ function postRequestToggles() {
     "message" : "getToggles"
   };
   jQuery.post({
-    url : "select.html",
+    url : "select.html" + queryString,
     type : 'POST',
     dataType : 'text',
     data : content,
@@ -58,6 +59,7 @@ function postRequestToggles() {
 
 function askToggles()
 {
+  queryString = window.parent.parent.location.search;
   postRequestToggles();
 }
 
