@@ -109,10 +109,44 @@
           <xsd:complexType>
             <xsd:complexContent>
               <xsd:extension base="RESPONSIVECONTROLTYPE">
-                <xsd:choice>
-                  <xsd:element name="PROGRAM" type="xsd:string" />
-                  <xsd:element name="PROGRAMFILE" type="xsd:anyURI" />
-                </xsd:choice>
+                <xsd:sequence>
+                  <xsd:choice>
+                    <xsd:element name="PROGRAM">
+                      <xsd:complexType>
+                        <xsd:simpleContent>
+                          <xsd:extension base="xsd:string">
+                            <xsd:attribute ref="xml:space" use="optional" default="preserve" />
+                          </xsd:extension>
+                        </xsd:simpleContent>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="PROGRAMFILE" type="xsd:anyURI" />
+                  </xsd:choice>
+                  <xsd:element name="CONSOLE">
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:choice>
+                          <xsd:element name="MAP">
+                            <xsd:complexType>
+                              <xsd:simpleContent>
+                                <xsd:extension base="xsd:string">
+                                  <xsd:attribute name="TYPE" type="GRAPHICSTYPE" />
+                                  <xsd:attribute name="ENCODING" type="ENCODINGTYPE" />
+                                  <xsd:attribute ref="xml:space" use="optional" default="preserve" />
+                                </xsd:extension>
+                              </xsd:simpleContent>
+                            </xsd:complexType>
+                          </xsd:element>
+                          <xsd:element name="MAPFILE" type="xsd:anyURI" />
+                        </xsd:choice>
+                        <xsd:choice>
+                          <xsd:element name="COORDINATES" type="TRAFCODCOORDINATESTYPE" />
+                          <xsd:element name="COORDINATESFILE" type="xsd:anyURI" />
+                        </xsd:choice>
+                      </xsd:sequence>
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
               </xsd:extension>
             </xsd:complexContent>
           </xsd:complexType>
@@ -121,5 +155,26 @@
       </xsd:choice>
     </xsd:complexType>
   </xsd:element>
+
+  <xsd:simpleType name="GRAPHICSTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="PNG|GIF|BMP|JPG" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ENCODINGTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="base64" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <xsd:complexType name="TRAFCODCOORDINATESTYPE">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute ref="xml:space" use="optional" default="preserve" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
 
 </xsd:schema>
