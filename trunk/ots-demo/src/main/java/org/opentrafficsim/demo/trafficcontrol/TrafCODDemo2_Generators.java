@@ -119,11 +119,12 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
     @Override
     protected final void addTabs()
     {
-        JScrollPane scrollPane = new JScrollPane(getModel().getControllerDisplayPanel());
-        JPanel wrapper = new JPanel(new BorderLayout());
-        wrapper.add(scrollPane);
-        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount() - 1,
-                getModel().getTrafCOD().getId(), wrapper);
+        // This version does not properly construct the console panel ...
+        // JScrollPane scrollPane = new JScrollPane(getModel().getControllerDisplayPanel());
+        // JPanel wrapper = new JPanel(new BorderLayout());
+        // wrapper.add(scrollPane);
+        // getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount() - 1,
+        // getModel().getTrafCOD().getId(), wrapper);
     }
 
     /**
@@ -167,39 +168,11 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
                 this.network = new OTSRoadNetwork(getShortName(), true);
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                         getSimulator());
-                // ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
-                // getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
 
                 String controllerName = "TrafCOD_complex";
-                /*-
-                String[] directions = { "E", "S", "W", "N" };
-                // Add the traffic lights and the detectors
-                Length stopLineMargin = new Length(0.1, LengthUnit.METER);
-                Length headDetectorLength = new Length(1, LengthUnit.METER);
-                Length headDetectorMargin = stopLineMargin.plus(headDetectorLength).plus(new Length(3, LengthUnit.METER));
-                Length longDetectorLength = new Length(30, LengthUnit.METER);
-                Length longDetectorMargin = stopLineMargin.plus(longDetectorLength).plus(new Length(10, LengthUnit.METER));
-                int stream = 1;
-                for (String direction : directions)
-                {
-                    for (int laneNumber = 3; laneNumber >= 1; laneNumber--)
-                    {
-                        Lane lane = (Lane) ((CrossSectionLink) this.network.getLink(direction, direction + "C"))
-                                .getCrossSectionElement("FORWARD" + laneNumber);
-                        new TrafficLightSensor(String.format("%s.D%02d1", controllerName, stream), lane,
-                                lane.getLength().minus(headDetectorMargin), lane,
-                                lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
-                        new TrafficLightSensor(String.format("%s.D%02d2", controllerName, stream), lane,
-                                lane.getLength().minus(longDetectorMargin), lane,
-                                lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
-                        stream++;
-                    }
-                }
-                        */
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),
-                        getSimulator(), this.controllerDisplayPanel);
+                        getSimulator(), this.controllerDisplayPanel,
+                        null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);

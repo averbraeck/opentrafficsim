@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -17,8 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -79,9 +76,6 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     /** Text leading up to the control program structure. */
     private final static String STRUCTURE_PREFIX = "Structure:";
 
-    /** The original rules. */
-    final List<String> trafcodRules = new ArrayList<>();
-
     /** The tokenized rules. */
     final List<Object[]> tokenisedRules = new ArrayList<>();
 
@@ -133,7 +127,19 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     /** The current time in units of 0.1 s */
     private int currentTime10 = 0;
 
-    /** Animation of the current state of this TrafCOD contoller. */
+    /** The unparsed TrafCOD rules (needed for cloning). */
+    private final List<String> trafCODRules;
+
+    /** Container for controller state display. */
+    private final Container displayContainer;
+
+    /** Background image for state display. */
+    final BufferedImage displayBackground;
+
+    /** Objects to draw on top of display background. */
+    final List<String> displayObjectLocations;
+
+    /** Animation of the current state of this TrafCOD controller. */
     private TrafCODDisplay stateDisplay = null;
 
     /** The simulation engine. */
@@ -148,51 +154,47 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @param trafCodURL URL; the URL of the TrafCOD rules
      * @param simulator OTSSimulatorInterface; the simulation engine
      * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
+     * @param displayBackground BufferedImage; background for controller display image
+     * @param displayObjectLocations List&lt;String&gt;; list of sensors and traffic lights and their locations on the
+     *            <code>displayBackGround</code>
+     * @throws TrafficControlException when a rule cannot be parsed
+     * @throws SimRuntimeException when scheduling the first evaluation event fails
+     * @throws IOException when loading the TrafCOD rules from the URL fails
+     */
+    public TrafCOD(String controllerName, final URL trafCodURL, final OTSSimulatorInterface simulator, Container display,
+            final BufferedImage displayBackground, final List<String> displayObjectLocations)
+            throws TrafficControlException, SimRuntimeException, IOException
+    {
+        this(controllerName, loadTextFromURL(trafCodURL), simulator, display, displayBackground, displayObjectLocations);
+    }
+
+    /**
+     * Construct a new TrafCOD traffic light controller.
+     * @param controllerName String; name of this TrafCOD traffic light controller
+     * @param trafCODRules List<String>; the TrafCOD rules
+     * @param simulator OTSSimulatorInterface; the simulation engine
+     * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
+     * @param displayBackground BufferedImage; background for controller display image
+     * @param displayObjectLocations List&lt;String&gt;; list of sensors and traffic lights and their locations on the
+     *            <code>displayBackGround</code>
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
-    public TrafCOD(String controllerName, final URL trafCodURL, final OTSSimulatorInterface simulator, Container display)
+    public TrafCOD(String controllerName, final List<String> trafCODRules, final OTSSimulatorInterface simulator,
+            final Container display, final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException
     {
-        this(controllerName, simulator, display);
-        Throw.whenNull(trafCodURL, "trafCodURL may not be null");
-        try
-        {
-            parseTrafCODRules(loadTextFromURL(trafCodURL));
-        }
-        catch (IOException exception)
-        {
-            throw new TrafficControlException(exception);
-        }
-        if (null != display)
-        {
-            String path = trafCodURL.getPath();
-            // System.out.println("path of URL is \"" + path + "\"");
-            if (null == path)
-            {
-                return; // give up
-            }
-            path = path.replaceFirst("\\.[Tt][Ff][Cc]$", ".tfg");
-            int pos = path.lastIndexOf("/");
-            if (pos > 0)
-            {
-                path = path.substring(pos + 1);
-            }
-            // System.out.println("fixed last component is \"" + path + "\"");
-            try
-            {
-                URL mapFileURL = new URL(trafCodURL, path);
-                // System.out.println("path of mapFileURL is \"" + mapFileURL.getPath() + "\"");
-                this.stateDisplay = makeDisplay(mapFileURL);
-                display.add(this.stateDisplay);
-            }
-            catch (MalformedURLException exception)
-            {
-                exception.printStackTrace();
-            }
-            // trafCodURL.replaceFirst("\\.[Tt][Ff][Cc]$", ".tfg");
-            // // System.out.println("mapFileURL is \"" + tfgFileURL + "\"");
-        }
+        super(controllerName, simulator);
+        Throw.whenNull(controllerName, "controllerName may not be null");
+        Throw.whenNull(simulator, "simulator may not be null");
+        this.simulator = simulator;
+        this.displayContainer = display;
+        this.displayBackground = displayBackground;
+        this.displayObjectLocations = displayObjectLocations;
+        Throw.whenNull(trafCODRules, "trafCodRules may not be null");
+        this.trafCODRules = trafCODRules;
+        parseTrafCODRules();
+
         // Initialize the variables that have a non-zero initial value
         for (Variable v : this.variablesInDefinitionOrder)
         {
@@ -205,6 +207,19 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             fireTimedEvent(TrafficController.TRAFFICCONTROL_VARIABLE_CREATED,
                     new Object[] { getId(), v.getName(), v.getStream(), value }, simulator.getSimulatorTime());
         }
+        if (null != this.displayContainer && null != this.displayBackground && null != this.displayObjectLocations)
+        {
+            this.stateDisplay = new TrafCODDisplay(this.displayBackground);
+            this.displayContainer.add(this.stateDisplay);
+            try
+            {
+                addTrafCODDisplay(this.displayObjectLocations);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
         // Schedule the consistency check (don't call it directly) to allow interested parties to subscribe before the
         // consistency check is performed
         this.simulator.scheduleEventRel(Duration.ZERO, this, this, "checkConsistency", null);
@@ -213,28 +228,12 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     }
 
     /**
-     * @param controllerName String; name of this TrafCOD traffic light controller
-     * @param simulator OTSSimulatorInterface; the simulation engine
-     * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
-     * @throws TrafficControlException when a rule cannot be parsed
-     * @throws SimRuntimeException when scheduling the first evaluation event fails
-     */
-    private TrafCOD(String controllerName, final OTSSimulatorInterface simulator, Container display)
-            throws TrafficControlException, SimRuntimeException
-    {
-        super(controllerName, simulator);
-        Throw.whenNull(controllerName, "controllerName may not be null");
-        Throw.whenNull(simulator, "simulator may not be null");
-        this.simulator = simulator;
-    }
-
-    /**
      * Read a text from a URL and convert it to a list of strings.
      * @param url URL; the URL to open and read
      * @return List&lt;String&gt;; the lines read from the URL (trimmed).
      * @throws IOException when opening or reading the URL failed.
      */
-    private List<String> loadTextFromURL(final URL url) throws IOException
+    public static List<String> loadTextFromURL(final URL url) throws IOException
     {
         List<String> result = new ArrayList<>();
         BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -248,17 +247,13 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Read and parse the TrafCOD traffic control program.
-     * @param trafCodSource List&lt;String&gt;; the TrafCOD program lines
-     * @throws MalformedURLException when the URL is invalid
-     * @throws IOException when the TrafCOD file could not be read
      * @throws TrafficControlException when the TrafCOD file contains errors
      */
-    private void parseTrafCODRules(final List<String> trafCodSource)
-            throws MalformedURLException, IOException, TrafficControlException
+    private void parseTrafCODRules() throws TrafficControlException
     {
-        for (int lineno = 0; lineno < trafCodSource.size(); lineno++)
+        for (int lineno = 0; lineno < this.trafCODRules.size(); lineno++)
         {
-            String trimmedLine = trafCodSource.get(lineno);
+            String trimmedLine = this.trafCODRules.get(lineno);
             // System.out.println(lineno + ":\t" + inputLine);
             if (trimmedLine.length() == 0)
             {
@@ -290,18 +285,16 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 {
                     while (trimmedLine.startsWith(COMMENT_PREFIX))
                     {
-                        if (++lineno >= trafCodSource.size())
+                        if (++lineno >= this.trafCODRules.size())
                         {
                             throw new TrafficControlException(
                                     "Unexpected EOF (reading sequence key at " + locationDescription + ")");
                         }
-                        trimmedLine = trafCodSource.get(lineno);
+                        trimmedLine = this.trafCODRules.get(lineno);
                     }
-                    String[] fields = trimmedLine.split("\t");
-                    if (fields.length != 2)
-                    {
-                        throw new TrafficControlException("Wrong number of fields in Sequence information");
-                    }
+                    String[] fields = trimmedLine.split("\\s");
+                    Throw.when(fields.length != 2, TrafficControlException.class,
+                            "Wrong number of fields in Sequence information line (%s)", trimmedLine);
                     try
                     {
                         this.numberOfConflictGroups = Integer.parseInt(fields[0]);
@@ -332,22 +325,22 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     }
                     for (int conflictMemberLine = 0; conflictMemberLine < this.numberOfConflictGroups; conflictMemberLine++)
                     {
-                        if (++lineno >= trafCodSource.size())
+                        if (++lineno >= this.trafCODRules.size())
                         {
                             throw new TrafficControlException(
                                     "Unexpected EOF (reading conflict groups at " + locationDescription + ")");
                         }
-                        trimmedLine = trafCodSource.get(lineno);
+                        trimmedLine = this.trafCODRules.get(lineno);
                         while (trimmedLine.startsWith(COMMENT_PREFIX))
                         {
-                            if (++lineno >= trafCodSource.size())
+                            if (++lineno >= this.trafCODRules.size())
                             {
                                 throw new TrafficControlException(
                                         "Unexpected EOF (reading conflict groups at " + locationDescription + ")");
                             }
-                            trimmedLine = trafCodSource.get(lineno);
+                            trimmedLine = this.trafCODRules.get(lineno);
                         }
-                        String[] fields = trimmedLine.split("\t");
+                        String[] fields = trimmedLine.split("\\s+");
                         if (fields.length != this.conflictGroupSize)
                         {
                             throw new TrafficControlException("Wrong number of conflict groups in Structure information");
@@ -401,18 +394,16 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 variable.setOutput(value);
                 continue;
             }
-            this.trafcodRules.add(trimmedLine);
             Object[] tokenisedRule = parse(trimmedLine, locationDescription);
-            if (null != tokenisedRule)
+            if (null != tokenisedRule && tokenisedRule.length > 0)
             {
                 this.tokenisedRules.add(tokenisedRule);
-                // System.out.println(printRule(tokenisedRule, false));
             }
         }
     }
 
     /**
-     * Check the consistency of the traffic control program.
+     * Check the consistency of the traffic control program and perform initializations that require a completely built network.
      * @throws SimRuntimeException when the simulation model is not an OTSModelInterface
      * @throws TrafficControlException when a required traffic light or sensor is not present in the network
      */
@@ -486,43 +477,17 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             TrafficLightSensor trafficLightSensor = flankSensor.getParent();
             sensors.put(trafficLightSensor.getId(), trafficLightSensor);
         }
-        /*-new HashMap<>();
-        // Search the entire network for all traffic light sensors; there should be an easier way
-        for (Link link : network.getLinkMap().values())
-        {
-        if (link instanceof CrossSectionLink)
-        {
-        for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
-        {
-            if (cse instanceof Lane)
-            {
-                Lane lane = (Lane) cse;
-                for (SingleSensor singleSensor : lane.getSensors())
-                {
-                    if (singleSensor instanceof FlankSensor)
-                    {
-                        TrafficLightSensor tls = ((FlankSensor) singleSensor).getParent();
-                        String sensorName = tls.getId();
-                        if (sensorName.startsWith(getId()))
-                        {
-                            sensorName = sensorName.substring(getId().length());
-                            if (sensorName.startsWith("."))
-                            {
-                                sensorName = sensorName.substring(1);
-                            }
-                            sensors.put(sensorName, tls);
-                        }
-                    }
-                }
-            }
-        }
-        }
-        }
-        */
         for (Variable variable : this.variables.values())
         {
             if (variable.isOutput())
             {
+                if (variable.getValue() != 0)
+                {
+                    for (TrafficLight trafficLight : variable.getTrafficLights())
+                    {
+                        trafficLight.setTrafficLightColor(variable.getColor());
+                    }
+                }
                 int added = 0;
                 String name = String.format("%s%02d", variable.getName(), variable.getStream());
                 String digits = String.format("%02d", variable.getStream());
@@ -537,7 +502,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     {
                         // CANNOT HAPPEN
                         exception.printStackTrace();
-                        throw new RuntimeException(exception);
+                        throw new SimRuntimeException(exception);
                     }
                     if (variable.getValue() != 0)
                     {
@@ -573,7 +538,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     {
                         throw new TrafficControlException("Cannor find detector image matching variable " + variable);
                     }
-                    System.out.println("creating subscriptions to sensor " + tls);
+                    // System.out.println("creating subscriptions to sensor " + tls);
                     tls.addListener(eli, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
                     tls.addListener(eli, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
                 }
@@ -582,131 +547,89 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     }
 
     /**
-     * Construct the display of this TrafCOD machine and connect the displayed traffic lights and sensors to this TrafCOD
+     * Construct the display of this TrafCOD machine and connect it to the displayed traffic lights and sensors to this TrafCOD
      * machine.
-     * @param tfgFileURL URL; the URL where the display information is to be read from
-     * @return TrafCODDisplay, or null when the display information could not be read, was incomplete, or invalid
-     * @throws TrafficControlException when the tfg file could not be read or is invalid
+     * @param rules List<String>; the individual lines that specify the graphics file and the locations of the sensor and lights
+     *            in the image
+     * @throws TrafficControlException when the tfg data is invalid
+     * @throws IOException when reading the background image fails
      */
-    private TrafCODDisplay makeDisplay(final URL tfgFileURL) throws TrafficControlException
+    private void addTrafCODDisplay(final List<String> rules) throws TrafficControlException, IOException
     {
-        TrafCODDisplay result = null;
         boolean useFirstCoordinates = true;
-        try
+        int lineno = 0;
+        for (String line : rules)
         {
-            BufferedReader mapReader = new BufferedReader(new InputStreamReader(tfgFileURL.openStream()));
-            int lineno = 0;
-            String inputLine;
-            while ((inputLine = mapReader.readLine()) != null)
+            lineno++;
+            String rule = line.trim();
+            if (rule.length() == 0)
             {
-                ++lineno;
-                inputLine = inputLine.trim();
-                if (inputLine.startsWith("mapfile="))
+                continue;
+            }
+            String[] fields = rule.split("=");
+            if ("mapfile".contentEquals(fields[0]))
+            {
+                if (fields[1].matches("[Bb][Mm][Pp]|[Pp][Nn][Gg]$"))
                 {
-                    try
-                    {
-                        URL imageFileURL = new URL(tfgFileURL, inputLine.substring(8));
-                        // System.out.println("path of imageFileURL is \"" + imageFileURL.getPath() + "\"");
-                        BufferedImage image = ImageIO.read(imageFileURL);
-                        result = new TrafCODDisplay(image);
-                        if (inputLine.matches("[Bb][Mm][Pp]|[Pp][Nn][Gg]$"))
-                        {
-                            useFirstCoordinates = false;
-                        }
-                    }
-                    catch (MalformedURLException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                    // System.out.println("map file description is " + inputLine);
-                    // Make a decent attempt at constructing the URL of the map file
+                    useFirstCoordinates = false; // TODO really figure out which coordinates to use
                 }
-                else if (inputLine.startsWith("light="))
+                // System.out.println("map file description is " + inputLine);
+                // Make a decent attempt at constructing the URL of the map file
+            }
+            else if ("light".equals(fields[0]))
+            {
+                // Extract the stream number
+                int streamNumber;
+                try
                 {
-                    if (null == result)
-                    {
-                        throw new TrafficControlException("tfg file defines light before mapfile");
-                    }
-                    // Extract the stream number
-                    int streamNumber;
-                    try
-                    {
-                        streamNumber = Integer.parseInt(inputLine.substring(6, 8));
-                    }
-                    catch (NumberFormatException nfe)
-                    {
-                        throw new TrafficControlException("Bad traffic light number in tfg file: " + inputLine);
-                    }
-                    // Extract the coordinates and create the image
-                    TrafficLightImage tli =
-                            new TrafficLightImage(result, getCoordinates(inputLine.substring(9), useFirstCoordinates),
-                                    String.format("Traffic Light %02d", streamNumber));
-                    for (Variable v : this.variablesInDefinitionOrder)
-                    {
-                        if (v.isOutput() && v.getStream() == streamNumber)
-                        {
-                            v.addOutput(tli);
-                        }
-                    }
+                    streamNumber = Integer.parseInt(fields[1].substring(0, 2));
                 }
-                else if (inputLine.startsWith("detector="))
+                catch (NumberFormatException nfe)
                 {
-                    if (null == result)
-                    {
-                        throw new TrafficControlException("tfg file defines detector before mapfile");
-                    }
-
-                    int detectorStream;
-                    int detectorSubNumber;
-                    try
-                    {
-                        detectorStream = Integer.parseInt(inputLine.substring(9, 11));
-                        detectorSubNumber = Integer.parseInt(inputLine.substring(12, 13));
-                    }
-                    catch (NumberFormatException nfe)
-                    {
-                        throw new TrafficControlException("Cannot parse detector number in " + inputLine);
-                    }
-                    String detectorName = String.format("D%02d%d", detectorStream, detectorSubNumber);
-                    Variable detectorVariable = this.variables.get(detectorName);
-                    if (null == detectorVariable)
-                    {
-                        throw new TrafficControlException(
-                                "tfg file defines detector " + detectorName + " which does not exist in the TrafCOD program");
-                    }
-                    // DetectorImage di =
-                    new DetectorImage(result, getCoordinates(inputLine.substring(14), useFirstCoordinates),
-                            String.format("%02d.%d", detectorStream, detectorSubNumber),
-                            String.format("Detector %02d.%d", detectorStream, detectorSubNumber));
-                    // TrafficLightSensor sensor = null;
-                    // for (TrafficLightSensor tls : sensors)
-                    // {
-                    // if (tls.getId().endsWith(detectorName))
-                    // {
-                    // sensor = tls;
-                    // }
-                    // }
-                    // if (null == sensor)
-                    // {
-                    // throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
-                    // + detectorName + " among the provided sensors");
-                    // }
-                    // sensor.addListener(di,
-                    // NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
-                    // sensor.addListener(di,
-                    // NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+                    throw new TrafficControlException("Bad traffic light number in coordinates: " + rule);
                 }
-                else
+                // Extract the coordinates and create the image
+                TrafficLightImage tli =
+                        new TrafficLightImage(this.stateDisplay, getCoordinates(fields[1].substring(3), useFirstCoordinates),
+                                String.format("Traffic Light %02d", streamNumber));
+                for (Variable v : this.variablesInDefinitionOrder)
                 {
-                    System.out.println("Ignoring tfg line(" + lineno + ") \"" + inputLine + "\"");
+                    if (v.isOutput() && v.getStream() == streamNumber)
+                    {
+                        v.addOutput(tli);
+                    }
                 }
             }
+            else if ("detector".equals(fields[0]))
+            {
+                int detectorStream;
+                int detectorSubNumber;
+                try
+                {
+                    detectorStream = Integer.parseInt(fields[1].substring(0, 2));
+                    detectorSubNumber = Integer.parseInt(fields[1].substring(3, 4));
+                }
+                catch (NumberFormatException nfe)
+                {
+                    throw new TrafficControlException("Cannot parse detector number in coordinates " + rule);
+                }
+                String detectorName = String.format("D%02d%d", detectorStream, detectorSubNumber);
+                Variable detectorVariable = this.variables.get(detectorName);
+                if (null == detectorVariable)
+                {
+                    throw new TrafficControlException(
+                            "coordinates defines detector " + detectorName + " which does not exist in the TrafCOD program");
+                }
+                // DetectorImage di =
+                new DetectorImage(this.stateDisplay, getCoordinates(fields[1].substring(5), useFirstCoordinates),
+                        String.format("%02d.%d", detectorStream, detectorSubNumber),
+                        String.format("Detector %02d.%d", detectorStream, detectorSubNumber));
+            }
+            else
+            {
+                throw new TrafficControlException("Cannot parse coordinates line " + lineno + "in \"" + line + "\"");
+            }
         }
-        catch (IOException e)
-        {
-            throw new TrafficControlException(e);
-        }
-        return result;
     }
 
     /**
@@ -717,7 +640,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @return Point2D
      * @throws TrafficControlException when the coordinates could not be parsed
      */
-    private Point2D getCoordinates(final String line, final boolean useFirstCoordinates) throws TrafficControlException
+    private static Point2D getCoordinates(final String line, final boolean useFirstCoordinates) throws TrafficControlException
     {
         String work = line.replaceAll("[ ,\t]+", "\t").trim();
         int x;
@@ -1970,7 +1893,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         try
         {
             // TODO figure out how to provide a display for the clone
-            TrafCOD result = new TrafCOD(getId(), newSimulator, null);
+            TrafCOD result = new TrafCOD(getId(), this.trafCODRules, newSimulator, null, this.displayBackground, null);
             result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED, new Object[] { getId(), TrafficController.BEING_CLONED },
                     newSimulator.getSimulatorTime());
             // Clone the variables
@@ -2221,6 +2144,11 @@ class Variable implements EventListenerInterface
         result.endSource = this.endSource;
         for (TrafficLight tl : this.trafficLights)
         {
+            if (tl instanceof TrafficLightImage)
+            {
+                // Do not clone TrafficLightImage objects; these should (?) be created in the clone operation of TrafCOD.
+                continue;
+            }
             ObjectInterface clonedTrafficLight = newNetwork.getObjectMap().get(tl.getId());
             Throw.when(null == clonedTrafficLight, NetworkException.class,
                     "Cannot find clone of traffic light %s in newNetwork", tl.getId());
@@ -2229,6 +2157,16 @@ class Variable implements EventListenerInterface
             result.addOutput((TrafficLight) clonedTrafficLight);
         }
         return result;
+    }
+
+    /**
+     * Retrieve the traffic lights controlled by this variable.
+     * @return Set&ltTrafficLight&gt;; the traffic lights controlled by this variable, or null when this variable has no traffic
+     *         lights
+     */
+    public Set<TrafficLight> getTrafficLights()
+    {
+        return this.trafficLights;
     }
 
     /**

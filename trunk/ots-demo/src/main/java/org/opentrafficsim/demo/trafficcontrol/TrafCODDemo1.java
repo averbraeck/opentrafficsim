@@ -184,7 +184,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
                         new Length(260, LengthUnit.METER), laneNX, new Length(285, LengthUnit.METER), null,
                         RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
-                        getSimulator(), this.controllerDisplayPanel);
+                        getSimulator(), this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
