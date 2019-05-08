@@ -111,8 +111,28 @@ public final class XmlNetworkLaneParser implements Serializable
         {
             throw new XmlParserException("File could not be found.", exception);
         }
-
         return otsNetwork;
+    }
+
+    /**
+     * Parse an OTS XML input stream and build an OTS object.
+     * @param xmlStream inputStream; the xml stream
+     * @return OTS; the constructed OTS object
+     * @throws JAXBException when the parsing fails
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws SAXException on error creating SAX parser
+     */
+    public static OTS parseXML(final InputStream xmlStream) throws JAXBException, SAXException, ParserConfigurationException
+    {
+        JAXBContext jc = JAXBContext.newInstance(OTS.class);
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setXIncludeAware(true);
+        spf.setNamespaceAware(true);
+        spf.setValidating(false);
+        XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+        SAXSource saxSource = new SAXSource(xmlReader, new InputSource(xmlStream));
+        return (OTS) unmarshaller.unmarshal(saxSource);
     }
 
     /**
@@ -136,16 +156,30 @@ public final class XmlNetworkLaneParser implements Serializable
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GTUException
     {
-        JAXBContext jc = JAXBContext.newInstance(OTS.class);
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-        spf.setXIncludeAware(true);
-        spf.setNamespaceAware(true);
-        spf.setValidating(false);
-        XMLReader xmlReader = spf.newSAXParser().getXMLReader();
-        SAXSource saxSource = new SAXSource(xmlReader, new InputSource(xmlStream));
-        OTS ots = (OTS) unmarshaller.unmarshal(saxSource);
+        return build(parseXML(xmlStream), otsNetwork, simulator);
+    }
 
+    /**
+     * Build the network from an OTS object (probably constructed by parsing an OTS XML file; e.g. the parseXML method).
+     * @param ots OTS; the OTS object
+     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @return the experiment based on the information in the RUN tag
+     * @throws JAXBException when the parsing fails
+     * @throws URISyntaxException when the filename is not valid
+     * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
+     * @throws OTSGeometryException when the design line of a link is invalid
+     * @throws XmlParserException when the stripe type cannot be recognized
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws SAXException on error creating SAX parser
+     * @throws SimRuntimeException in case of simulation problems building the car generator
+     * @throws GTUException when construction of the Strategical Planner failed
+     */
+    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final OTS ots,
+            final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator)
+            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
+            ParserConfigurationException, SimRuntimeException, GTUException
+    {
         CategoryLogger.setLogCategories(Cat.PARSER);
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
@@ -247,6 +281,7 @@ public final class XmlNetworkLaneParser implements Serializable
         ControlParser.parseControl(otsNetwork, simulator, controls);
 
         return experiment;
+
     }
 
     /**
