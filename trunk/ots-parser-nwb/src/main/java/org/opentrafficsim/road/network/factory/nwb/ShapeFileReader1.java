@@ -97,8 +97,8 @@ public class ShapeFileReader1
     /**
      * Construct a new NWB shape file reader.
      * @param date int; date encoded in 8 digits like YYYYMMDD.
-     * @throws IOException
-     * @throws MalformedURLException
+     * @throws IOException on I/O error
+     * @throws MalformedURLException when the shape file path is invalid
      */
     public ShapeFileReader1(final int date) throws MalformedURLException, IOException
     {
@@ -117,7 +117,7 @@ public class ShapeFileReader1
      * @param qualifier RoadDataQualifier; will be used to determine which RoadData objects shall be returned
      * @return List&lt;RoadData&gt;; the road data
      * @throws IOException when anything goes wrong
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on invalid lines
      */
     public List<RoadData> readRoadData(final RoadDataQualifier qualifier) throws IOException, OTSGeometryException
     {
@@ -282,7 +282,7 @@ public class ShapeFileReader1
          * @param feature Feature; the data about one record in the "wegvakken" shape file
          * @throws IOException when some value is not available of out of range TODO: don't use IOException for everything that
          *             goes wrong
-         * @throws OTSGeometryException
+         * @throws OTSGeometryException on invalid error
          */
         public RoadData(final Feature feature) throws IOException, OTSGeometryException
         {
@@ -367,7 +367,7 @@ public class ShapeFileReader1
         public String toString()
         {
             return "RoadData [wvkId=" + this.wvkId + ", since=" + this.fromDate + ", from=" + this.fromJunction + ", to="
-                    + this.toJunction + ", roadAuthority=" + roadAuthority + ", autorityName=" + this.authorityName + ", nr="
+                    + this.toJunction + ", roadAuthority=" + this.roadAuthority + ", autorityName=" + this.authorityName + ", nr="
                     + this.roadNumber + ", streetName=" + this.streetName + ", locality=" + this.localityName
                     + ", municipality=" + this.municipality + ", wdl=" + this.partLetter + ", hl=" + this.hectoLetter
                     + ", admDir=" + this.admDirection + ", drivingDir=" + this.drivingDirection + ", rst=" + this.roadwaySubType
