@@ -16,6 +16,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.MultiLineString;
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.Property;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -55,9 +56,41 @@ public class FeatureViewer extends JFrame
     }
 
     /**
+     * Construct a new shape viewer.
+     * @param left int; the left edge of the new window
+     * @param top int; the top edge of the new window
+     * @param width int; the width of the new window
+     * @param height int; the height of the new window
+     */
+    public FeatureViewer(final int left, final int top, final int width, final int height)
+    {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.panelGraph = new GraphPanel();
+        this.setLayout(new BorderLayout(0, 0));
+        panelGraph = new GraphPanel();
+        this.add(panelGraph);
+        setBounds(left, top, width, height);
+        setVisible(true);
+    }
+
+    /**
+     * Construct the design line of a Feature.
+     * @param feature Feature; the feature
+     * @return OTSLine3D; the design line of the feature
+     * @throws OTSGeometryException when the feature is not a proper line
+     */
+    public static OTSLine3D designLine(final Feature feature) throws OTSGeometryException
+    {
+        GeometryAttribute geometry = feature.getDefaultGeometryProperty();
+        MultiLineString multiLineString = (MultiLineString) geometry.getValue();
+        Coordinate[] coordinates = multiLineString.getCoordinates();
+        return new OTSLine3D(coordinates);
+    }
+
+    /**
      * Display road data.
      * @param features List<Feature>; the road data to show
-     * @throws OTSGeometryException 
+     * @throws OTSGeometryException
      */
     public void showRoadData(final List<Feature> features) throws OTSGeometryException
     {
@@ -103,20 +136,6 @@ public class FeatureViewer extends JFrame
         private List<Feature> data = null;
 
         /**
-         * Construct the design line of a Feature.
-         * @param feature Feature; the feature
-         * @return OTSLine3D; the design line of the feature
-         * @throws OTSGeometryException when the feature is not a proper line
-         */
-        public OTSLine3D designLine(final Feature feature) throws OTSGeometryException
-        {
-            GeometryAttribute geometry = feature.getDefaultGeometryProperty();
-            MultiLineString multiLineString = (MultiLineString) geometry.getValue();
-            Coordinate[] coordinates = multiLineString.getCoordinates();
-            return new OTSLine3D(coordinates);
-        }
-
-        /**
          * Graph road data.
          * @param features List&lt;RoadData&gt;; the road data to graph
          * @throws OTSGeometryException
@@ -160,27 +179,35 @@ public class FeatureViewer extends JFrame
             this.yOffset = this.maxY + ((super.getHeight() / scale - this.height) / 2);
             for (Feature feature : this.data)
             {
-                switch (((String) feature.getProperty("WEGBEHSRT").getValue()).charAt(0))
+                Property property = feature.getProperty("WEGBEHSRT");
+                if (null != property)
                 {
-                    case 'G':
-                        g.setColor(Color.GREEN);
-                        break;
+                    switch (((String) property.getValue()).charAt(0))
+                    {
+                        case 'G':
+                            g.setColor(Color.GREEN);
+                            break;
 
-                    case 'P':
-                        g.setColor(Color.MAGENTA);
-                        break;
+                        case 'P':
+                            g.setColor(Color.MAGENTA);
+                            break;
 
-                    case 'R':
-                        g.setColor(Color.RED);
-                        break;
+                        case 'R':
+                            g.setColor(Color.RED);
+                            break;
 
-                    case 'W':
-                        g.setColor(Color.DARK_GRAY);
-                        break;
+                        case 'W':
+                            g.setColor(Color.DARK_GRAY);
+                            break;
 
-                    default:
-                        g.setColor(Color.BLACK);
-                        break;
+                        default:
+                            g.setColor(Color.BLACK);
+                            break;
+                    }
+                }
+                else
+                {
+                    g.setColor(Color.BLACK);
                 }
                 try
                 {
