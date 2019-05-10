@@ -307,11 +307,13 @@
   };
 
   function setFillColor(context, arr) {
-    context.fillStyle = "rgb(" + arr[7] + "," + arr[8] + "," + arr[9] + "," + arr[10] + ")";
+    // TODO see why alpha value arr[10] as 4th argument does not work in IE/Edge
+    context.fillStyle = "rgb(" + arr[7] + "," + arr[8] + "," + arr[9] + ")";
   };
 
   function setStrokeColor(context, arr) {
-    context.strokeStyle = "rgb(" + arr[7] + "," + arr[8] + "," + arr[9] + "," + arr[10] + ")";
+    // TODO see why alpha value arr[10] as 4th argument does not work in IE/Edge
+    context.strokeStyle = "rgb(" + arr[7] + "," + arr[8] + "," + arr[9] + ")";
   };
 
   // =============================== ZOOM AND PAN ======================================
