@@ -29,9 +29,9 @@ public class Main
     /**
      * Program entry point.
      * @param args String[]; the command line arguments
-     * @throws IOException
-     * @throws MalformedURLException
-     * @throws OTSGeometryException
+     * @throws IOException on I/O error
+     * @throws MalformedURLException on wrong URL for shape file
+     * @throws OTSGeometryException when lines are invalid
      */
     public static void main(final String[] args) throws MalformedURLException, IOException, OTSGeometryException
     {

@@ -49,8 +49,8 @@ public class FeatureViewer extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.panelGraph = new GraphPanel();
         this.setLayout(new BorderLayout(0, 0));
-        panelGraph = new GraphPanel();
-        this.add(panelGraph);
+        this.panelGraph = new GraphPanel();
+        this.add(this.panelGraph);
         setBounds(100, 100, 1000, 800);
         setVisible(true);
     }
@@ -67,8 +67,8 @@ public class FeatureViewer extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.panelGraph = new GraphPanel();
         this.setLayout(new BorderLayout(0, 0));
-        panelGraph = new GraphPanel();
-        this.add(panelGraph);
+        this.panelGraph = new GraphPanel();
+        this.add(this.panelGraph);
         setBounds(left, top, width, height);
         setVisible(true);
     }
@@ -90,11 +90,11 @@ public class FeatureViewer extends JFrame
     /**
      * Display road data.
      * @param features List<Feature>; the road data to show
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException when line is invalid
      */
     public void showRoadData(final List<Feature> features) throws OTSGeometryException
     {
-        panelGraph.renderRoadData(features);
+        this.panelGraph.renderRoadData(features);
     }
 
     /**
@@ -138,7 +138,7 @@ public class FeatureViewer extends JFrame
         /**
          * Graph road data.
          * @param features List&lt;RoadData&gt;; the road data to graph
-         * @throws OTSGeometryException
+         * @throws OTSGeometryException when line is invalid
          */
         public void renderRoadData(final List<Feature> features) throws OTSGeometryException
         {
@@ -147,15 +147,15 @@ public class FeatureViewer extends JFrame
             {
                 for (OTSPoint3D p : designLine(f).getPoints())
                 {
-                    minX = Math.min(minX, p.x);
-                    minY = Math.min(minY, p.y);
-                    maxX = Math.max(maxX, p.x);
-                    maxY = Math.max(maxY, p.y);
+                    this.minX = Math.min(this.minX, p.x);
+                    this.minY = Math.min(this.minY, p.y);
+                    this.maxX = Math.max(this.maxX, p.x);
+                    this.maxY = Math.max(this.maxY, p.y);
                 }
             }
-            System.out.println(String.format("range is %.1f,%.1f - %.1f,%.1f", minX, minY, maxX, maxY));
-            this.width = maxX - minX;
-            this.height = maxY - minY;
+            System.out.println(String.format("range is %.1f,%.1f - %.1f,%.1f", this.minX, this.minY, this.maxX, this.maxY));
+            this.width = this.maxX - this.minX;
+            this.height = this.maxY - this.minY;
             this.data = features;
             repaint();
             this.addMouseMotionListener(this);
@@ -175,8 +175,8 @@ public class FeatureViewer extends JFrame
             double xScale = super.getWidth() / this.width;
             double yScale = super.getHeight() / this.height;
             this.scale = Math.min(xScale, yScale);
-            this.xOffset = this.minX - ((super.getWidth() / scale - this.width) / 2);
-            this.yOffset = this.maxY + ((super.getHeight() / scale - this.height) / 2);
+            this.xOffset = this.minX - ((super.getWidth() / this.scale - this.width) / 2);
+            this.yOffset = this.maxY + ((super.getHeight() / this.scale - this.height) / 2);
             for (Feature feature : this.data)
             {
                 Property property = feature.getProperty("WEGBEHSRT");
@@ -296,7 +296,7 @@ public class FeatureViewer extends JFrame
          */
         double worldToPanelX(final double x)
         {
-            return (x - xOffset) * scale;
+            return (x - this.xOffset) * this.scale;
         }
 
         /**
@@ -306,7 +306,7 @@ public class FeatureViewer extends JFrame
          */
         double worldToPanelY(final double y)
         {
-            return (yOffset - y) * scale;
+            return (this.yOffset - y) * this.scale;
         }
 
         /**
