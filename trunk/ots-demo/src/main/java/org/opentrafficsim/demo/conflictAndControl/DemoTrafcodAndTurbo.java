@@ -190,7 +190,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                         {
                             if (stream != 7)
                             {
-                                TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
+                                TrafficLight tl = new SimpleTrafficLight(String.format("%02d", stream), lane,
                                         lane.getLength().minus(stopLineMargin), this.simulator);
                                 trafficLights.add(tl);
 
@@ -216,7 +216,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                             {
                                 lane = (Lane) ((CrossSectionLink) this.network.getLink("ESS1", "ESS"))
                                         .getCrossSectionElement("FORWARD");
-                                TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
+                                TrafficLight tl = new SimpleTrafficLight(String.format("%02d", stream), lane,
                                         lane.getLength().minus(stopLineMargin), this.simulator);
                                 trafficLights.add(tl);
 
@@ -246,7 +246,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                 }
                 String controllerName = "Not so simple TrafCOD controller";
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/conflictAndControl/Intersection12Dir.tfc"),
-                        this.simulator, this.controllerDisplayPanel);
+                        this.simulator, this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
