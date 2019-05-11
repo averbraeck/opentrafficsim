@@ -171,16 +171,16 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
                     throw new NetworkException(exception);
                 }
 
-                new TrafficLightSensor(String.format("%s.D%02d1", controllerName, 8), laneWX, new Length(292, LengthUnit.METER),
+                new TrafficLightSensor(String.format("D%02d1", 8), laneWX, new Length(292, LengthUnit.METER),
                         laneWX, new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
                         getSimulator(), Compatible.EVERYTHING);
-                new TrafficLightSensor(String.format("%s.D%02d2", controllerName, 8), laneWX, new Length(260, LengthUnit.METER),
+                new TrafficLightSensor(String.format("D%02d2", 8), laneWX, new Length(260, LengthUnit.METER),
                         laneWX, new Length(285, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
                         getSimulator(), Compatible.EVERYTHING);
-                new TrafficLightSensor(String.format("%s.D%02d1", controllerName, 11), laneNX,
+                new TrafficLightSensor(String.format("D%02d1", 11), laneNX,
                         new Length(292, LengthUnit.METER), laneNX, new Length(294, LengthUnit.METER), null,
                         RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
-                new TrafficLightSensor(String.format("%s.D%02d2", controllerName, 11), laneNX,
+                new TrafficLightSensor(String.format("D%02d2", 11), laneNX,
                         new Length(260, LengthUnit.METER), laneNX, new Length(285, LengthUnit.METER), null,
                         RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
