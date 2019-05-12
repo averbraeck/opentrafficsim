@@ -149,7 +149,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
     /**
      * The simulation model.
      */
-    static class BusStreetModel extends AbstractOTSModel
+    public static class BusStreetModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -160,7 +160,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        BusStreetModel(final OTSSimulatorInterface simulator)
+        public BusStreetModel(final OTSSimulatorInterface simulator)
         {
             super(simulator);
         }

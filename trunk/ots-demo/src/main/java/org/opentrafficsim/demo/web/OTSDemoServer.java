@@ -1,4 +1,4 @@
-package nl.tudelft.simulation.dsol.jetty.sse;
+package org.opentrafficsim.demo.web;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,10 +35,19 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.demo.CircularRoadModel;
+import org.opentrafficsim.demo.CrossingTrafficLightsModel;
+import org.opentrafficsim.demo.NetworksModel;
+import org.opentrafficsim.demo.ShortMerge;
+import org.opentrafficsim.demo.StraightModel;
+import org.opentrafficsim.demo.conflict.BusStreetDemo;
+import org.opentrafficsim.demo.conflict.TJunctionDemo;
+import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo;
+import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1;
+import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.web.test.CircularRoadModel;
-import org.opentrafficsim.web.test.TJunctionModel;
 
+import nl.tudelft.simulation.dsol.jetty.sse.OTSWebModel;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDistContinuousSelection;
@@ -53,7 +62,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionMap;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
-import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputFieldDoubleScalar;
 
 /**
  * DSOLWebServer.java. <br>
@@ -72,7 +80,7 @@ public class OTSDemoServer
     final Map<String, OTSWebModel> sessionWebModelMap = new HashMap<>();
 
     /**
-     * Run a SuperDemo OTS Web server
+     * Run a SuperDemo OTS Web server.
      * @param args String[]; not used
      * @throws Exception o Jetty error
      */
@@ -138,7 +146,7 @@ public class OTSDemoServer
 
         /** {@inheritDoc} */
         @Override
-        public Resource getResource(String path)
+        public Resource getResource(final String path)
         {
             System.out.println(path);
             return super.getResource(path);
@@ -146,8 +154,9 @@ public class OTSDemoServer
 
         /** {@inheritDoc} */
         @Override
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                throws IOException, ServletException
+        @SuppressWarnings("checkstyle:usebraces")
+        public void handle(final String target, final Request baseRequest, final HttpServletRequest request,
+                final HttpServletResponse response) throws IOException, ServletException
         {
             /*-
             System.out.println("target      = " + target);
@@ -167,10 +176,29 @@ public class OTSDemoServer
                     OTSAnimator simulator = new OTSAnimator();
                     simulator.setAnimation(false);
                     OTSModelInterface model = null;
+                    
                     if (modelId.toLowerCase().contains("circularroad"))
                         model = new CircularRoadModel(simulator);
+                    else if (modelId.toLowerCase().contains("straight"))
+                        model = new StraightModel(simulator);
+                    else if (modelId.toLowerCase().contains("shortmerge"))
+                        model = new ShortMerge.ShortMergeModel(simulator);
+                    else if (modelId.toLowerCase().contains("networksdemo"))
+                        model = new NetworksModel(simulator);
+                    else if (modelId.toLowerCase().contains("crossingtrafficlights"))
+                        model = new CrossingTrafficLightsModel(simulator);
+                    else if (modelId.toLowerCase().contains("trafcoddemosimple"))
+                        model = new TrafCODDemo1.TrafCODModel(simulator);
+                    else if (modelId.toLowerCase().contains("trafcoddemocomplex"))
+                        model = new TrafCODDemo2.TrafCODModel(simulator, "TrafCODDemo2", "TrafCODDemo2",
+                                "/TrafCODDemo2/TrafCODDemo2.xml");
                     else if (modelId.toLowerCase().contains("tjunction"))
-                        model = new TJunctionModel(simulator);
+                        model = new TJunctionDemo.TJunctionModel(simulator);
+                    else if (modelId.toLowerCase().contains("busstreet"))
+                        model = new BusStreetDemo.BusStreetModel(simulator);
+                    else if (modelId.toLowerCase().contains("turboroundabout"))
+                        model = new TurboRoundaboutDemo.TurboRoundaboutModel(simulator);
+
                     if (model != null)
                         OTSDemoServer.this.sessionModelMap.put(sessionId, model);
                     else
@@ -219,7 +247,7 @@ public class OTSDemoServer
     public static class XHRHandler extends AbstractHandler
     {
         /** web server for callback of actions. */
-        final OTSDemoServer webServer;
+        private final OTSDemoServer webServer;
 
         /**
          * Create the handler for Servlet requests.
@@ -230,9 +258,10 @@ public class OTSDemoServer
             this.webServer = webServer;
         }
 
+        /** {@inheritDoc} */
         @Override
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                throws IOException, ServletException
+        public void handle(final String target, final Request baseRequest, final HttpServletRequest request,
+                final HttpServletResponse response) throws IOException, ServletException
         {
             if (request.getParameterMap().containsKey("sessionId"))
             {
@@ -297,7 +326,7 @@ public class OTSDemoServer
          * @param model the model with parameters
          * @return an XML string with the parameters
          */
-        private String makeParameterMap(OTSModelInterface model)
+        private String makeParameterMap(final OTSModelInterface model)
         {
             StringBuffer answer = new StringBuffer();
             answer.append("<parameters>\n");
@@ -418,21 +447,25 @@ public class OTSDemoServer
         }
 
         /**
+         * @param <U> the unit
+         * @param <T> the scalar type
          * @param parameter double scalar input parameter
          * @return default value in the unit
          */
         private <U extends Unit<U>,
-                T extends AbstractDoubleScalar<U, T>> String getValueInUnit(InputParameterDoubleScalar<U, T> parameter)
+                T extends AbstractDoubleScalar<U, T>> String getValueInUnit(final InputParameterDoubleScalar<U, T> parameter)
         {
             return "" + parameter.getDefaultTypedValue().getInUnit(parameter.getDefaultTypedValue().getUnit());
         }
 
         /**
+         * @param <U> the unit
+         * @param <T> the scalar type
          * @param parameter double scalar input parameter
          * @return abbreviations for the units
          */
         private <U extends Unit<U>,
-                T extends AbstractDoubleScalar<U, T>> List<String> getUnits(InputParameterDoubleScalar<U, T> parameter)
+                T extends AbstractDoubleScalar<U, T>> List<String> getUnits(final InputParameterDoubleScalar<U, T> parameter)
         {
             List<String> unitList = new ArrayList<>();
             for (String option : parameter.getUnitParameter().getOptions().keySet())
@@ -443,21 +476,25 @@ public class OTSDemoServer
         }
 
         /**
+         * @param <U> the unit
+         * @param <T> the scalar type
          * @param parameter double scalar input parameter
          * @return default value in the unit
          */
         private <U extends Unit<U>,
-                T extends AbstractFloatScalar<U, T>> String getValueInUnit(InputParameterFloatScalar<U, T> parameter)
+                T extends AbstractFloatScalar<U, T>> String getValueInUnit(final InputParameterFloatScalar<U, T> parameter)
         {
             return "" + parameter.getDefaultTypedValue().getInUnit(parameter.getDefaultTypedValue().getUnit());
         }
 
         /**
+         * @param <U> the unit
+         * @param <T> the scalar type
          * @param parameter double scalar input parameter
          * @return abbreviations for the units
          */
         private <U extends Unit<U>,
-                T extends AbstractFloatScalar<U, T>> List<String> getUnits(InputParameterFloatScalar<U, T> parameter)
+                T extends AbstractFloatScalar<U, T>> List<String> getUnits(final InputParameterFloatScalar<U, T> parameter)
         {
             List<String> unitList = new ArrayList<>();
             for (String option : parameter.getUnitParameter().getOptions().keySet())
@@ -473,7 +510,7 @@ public class OTSDemoServer
          * @param message the key-value pairs of the set parameters
          * @return the errors if they are detected. If none, errors is set to "OK"
          */
-        private String setParameters(OTSModelInterface model, String message)
+        private String setParameters(final OTSModelInterface model, final String message)
         {
             String errors = "OK";
             InputParameterMap inputParameters = model.getInputParameterMap();

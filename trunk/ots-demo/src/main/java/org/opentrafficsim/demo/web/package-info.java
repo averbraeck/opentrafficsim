@@ -1,5 +1,5 @@
 /**
- * package-info.java. <br>
+ * Demos via the Web. <br>
  * <br>
  * Copyright (c) 2003-2019 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
  * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The

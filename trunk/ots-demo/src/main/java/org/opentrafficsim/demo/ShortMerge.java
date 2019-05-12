@@ -206,7 +206,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    static class ShortMergeModel extends AbstractOTSModel
+    public static class ShortMergeModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20170407L;
@@ -217,7 +217,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator
          */
-        ShortMergeModel(final OTSSimulatorInterface simulator)
+        public ShortMergeModel(final OTSSimulatorInterface simulator)
         {
             super(simulator);
         }

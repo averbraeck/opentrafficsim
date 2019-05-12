@@ -24,6 +24,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
@@ -168,7 +169,7 @@ public class SuperDemo extends JFrame
 
         /** the demo class. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
-        protected final Class<? extends OTSSwingApplication> clazz;
+        protected final Class<? extends OTSSwingApplication<? extends OTSModelInterface>> clazz;
 
         /** the demo description. */
         private final String description;
@@ -178,7 +179,8 @@ public class SuperDemo extends JFrame
          * @param clazz Class&lt;? extends OTSSwingApplication&gt;; the demo class
          * @param description String; the demo description
          */
-        Demo(final String name, final Class<? extends OTSSwingApplication> clazz, final String description)
+        Demo(final String name, final Class<? extends OTSSwingApplication<? extends OTSModelInterface>> clazz,
+                final String description)
         {
             super();
             this.name = name;

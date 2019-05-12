@@ -96,7 +96,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
     /**
      * The simulation model.
      */
-    static class TurboRoundaboutModel extends AbstractOTSModel
+    public static class TurboRoundaboutModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -107,7 +107,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        TurboRoundaboutModel(final OTSSimulatorInterface simulator)
+        public TurboRoundaboutModel(final OTSSimulatorInterface simulator)
         {
             super(simulator);
         }

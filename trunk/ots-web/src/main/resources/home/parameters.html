@@ -26,7 +26,7 @@
       }
     });
   };
-  
+
   function requestParameters() {
     var content = {
       "message" : "getParameterMap"
@@ -44,7 +44,7 @@
       }
     });
   };
-  
+
   function sendParameters(parameters) {
     var content = {
       "message" : parameters
@@ -57,7 +57,7 @@
       success : function(data) {
         if (data === "OK") {
           // after paramters have been received, we can strat the model
-          window.location="/model.html" + window.location.search; 
+          window.location = "/model.html" + window.location.search;
         } else {
           alert(data);
         }
@@ -67,59 +67,53 @@
       }
     });
   };
-  
+
   function buildParameters(data) {
-  	$(data).children().each(function() {
-  	  var tag = this.tagName;
-      var val = $(this).text();
-      // console.log(tag + "=>" + val);
-      if (tag === "TAB") {
-        $("#params").append("<tr><td colspan='2'><hr><h2>" + val + "</h2></td></tr>");
-      } 
-      else if (tag === "DOUBLE" || tag === "FLOAT") {
-        $("#params").append("<tr><td>" + $(this).attr("name") + "</td>" 
-            + "<td><input type='number' id='" + $(this).attr("key") + "' javaType='" + tag
-            + "' name='" + $(this).attr("name") + "' value='" + val + "'></td></tr>"); 
-      }
-      else if (tag === "LONG" || tag === "INTEGER") {
-        $("#params").append("<tr><td>" + $(this).attr("name") + "</td>" 
-            + "<td><input type='number' id='" + $(this).attr("key") + "' javaType='" + tag
-            + "' name='" + $(this).attr("name") + "' value='" + val + "' step='1'></td></tr>"); 
-      }
-      else if (tag === "STRING") {
-        $("#params").append("<tr><td>" + $(this).attr("name") + "</td>" 
-            + "<td><input type='text' id='" + $(this).attr("key") + "' javaType='" + tag
-            + "' name='" + $(this).attr("name") + "' value='" + val + "'></td></tr>"); 
-      }
-      else if (tag === "BOOLEAN") {
-        var line = "<tr><td>" + $(this).attr("name") + "</td>" 
-          + "<td><input type='checkbox' id='" + $(this).attr("key") + "' javaType='" + tag
-          + "' name='" + $(this).attr("name") + "' value='" +  $(this).attr("key") + "'";
-        if (val.toUpperCase() === "TRUE") {
-          line += " checked";
-        }
-        line += "></td></tr>"; 
-        $("#params").append(line);
-      }
-      else if (tag === "DOUBLESCALAR" || tag === "FLOATSCALAR") {
-        var val = $(this).children('value')[0];
-        var id = $(this).attr("key");
-        var line = "<tr><td>" + $(this).attr("name") + "</td>" 
-          + "<td><input type='number' id='" + $(this).attr("key") + "' javaType='" + tag 
-          + "' name='" + $(this).attr("name") + "' value='" +  $(val).text() + "'>\n";
-        line += "&nbsp; <select id='" + id + "'>\n";
-        $(this).children('unit').each(function() {
-          if ($(this).attr("chosen") === 'true')
-	        line += "<option value='" + $(this).text() + "' selected>" + $(this).text() + "</option>\n";
-	      else
-	        line += "<option value='" + $(this).text() + "'>" + $(this).text() + "</option>\n";
+    $(data).children().each(
+        function() {
+          var tag = this.tagName;
+          var val = $(this).text();
+          // console.log(tag + "=>" + val);
+          if (tag === "TAB") {
+            $("#params").append("<tr><td colspan='2'><hr><h2>" + val + "</h2></td></tr>");
+          } else if (tag === "DOUBLE" || tag === "FLOAT") {
+            $("#params").append(
+                "<tr><td>" + $(this).attr("name") + "</td>" + "<td><input type='number' id='" + $(this).attr("key") + "' javaType='" + tag
+                    + "' name='" + $(this).attr("name") + "' value='" + val + "'></td></tr>");
+          } else if (tag === "LONG" || tag === "INTEGER") {
+            $("#params").append(
+                "<tr><td>" + $(this).attr("name") + "</td>" + "<td><input type='number' id='" + $(this).attr("key") + "' javaType='" + tag
+                    + "' name='" + $(this).attr("name") + "' value='" + val + "' step='1'></td></tr>");
+          } else if (tag === "STRING") {
+            $("#params").append(
+                "<tr><td>" + $(this).attr("name") + "</td>" + "<td><input type='text' id='" + $(this).attr("key") + "' javaType='" + tag
+                    + "' name='" + $(this).attr("name") + "' value='" + val + "'></td></tr>");
+          } else if (tag === "BOOLEAN") {
+            var line = "<tr><td>" + $(this).attr("name") + "</td>" + "<td><input type='checkbox' id='" + $(this).attr("key")
+                + "' javaType='" + tag + "' name='" + $(this).attr("name") + "' value='" + $(this).attr("key") + "'";
+            if (val.toUpperCase() === "TRUE") {
+              line += " checked";
+            }
+            line += "></td></tr>";
+            $("#params").append(line);
+          } else if (tag === "DOUBLESCALAR" || tag === "FLOATSCALAR") {
+            var val = $(this).children('value')[0];
+            var id = $(this).attr("key");
+            var line = "<tr><td>" + $(this).attr("name") + "</td>" + "<td><input type='number' id='" + $(this).attr("key") + "' javaType='"
+                + tag + "' name='" + $(this).attr("name") + "' value='" + $(val).text() + "'>\n";
+            line += "&nbsp; <select id='" + id + "'>\n";
+            $(this).children('unit').each(function() {
+              if ($(this).attr("chosen") === 'true')
+                line += "<option value='" + $(this).text() + "' selected>" + $(this).text() + "</option>\n";
+              else
+                line += "<option value='" + $(this).text() + "'>" + $(this).text() + "</option>\n";
+            });
+            line += "</select>\n</td></tr>\n"
+            $("#params").append(line);
+          }
         });
-        line += "</select>\n</td></tr>\n"
-        $("#params").append(line);
-      }
- 	});
   }
-  
+
   function setParameters() {
     var parameters = "setParameters|\n";
     $('input').each(function() {
@@ -130,28 +124,31 @@
     });
     sendParameters(parameters);
   }
-  
+
   function init() {
     requestTitle();
     requestParameters();
   }
-  
+
   function startModel() {
     setParameters();
   }
-  </script>
-  
+</script>
+
 <style type="text/css">
 body {
   font-family: sans-serif;
 }
+
 table {
   border: none;
   border-collapse: collapse;
 }
+
 th {
   border: none;
 }
+
 td {
   border: none;
   vertical-align: top;
@@ -165,9 +162,9 @@ td {
   <form>
     <table id="params">
     </table>
-    </form>
-    <br>
-    <hr>
+  </form>
+  <br>
+  <hr>
   <button onclick="startModel();">START MODEL</button>
 </body>
 </html>
