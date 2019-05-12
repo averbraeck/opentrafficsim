@@ -113,7 +113,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
     /**
      * The simulation model.
      */
-    static class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
+    public static class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -130,7 +130,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        TrafCODModel(final OTSSimulatorInterface simulator)
+        public TrafCODModel(final OTSSimulatorInterface simulator)
         {
             super(simulator);
         }

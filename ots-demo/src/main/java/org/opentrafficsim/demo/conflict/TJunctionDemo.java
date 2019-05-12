@@ -94,7 +94,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
     /**
      * The simulation model.
      */
-    static class TJunctionModel extends AbstractOTSModel
+    public static class TJunctionModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -105,7 +105,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
         /**
          * @param simulator OTSSimulatorInterface; the simulator for this model
          */
-        TJunctionModel(final OTSSimulatorInterface simulator)
+        public TJunctionModel(final OTSSimulatorInterface simulator)
         {
             super(simulator);
         }

@@ -138,7 +138,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
     /**
      * The simulation model.
      */
-    static class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
+    public static class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -161,7 +161,8 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
          * @param description String; description of the model
          * @param xml String; the XML string
          */
-        TrafCODModel(final OTSSimulatorInterface simulator, final String shortName, final String description, final String xml)
+        public TrafCODModel(final OTSSimulatorInterface simulator, final String shortName, final String description,
+                final String xml)
         {
             super(simulator, shortName, description);
             this.xml = xml;

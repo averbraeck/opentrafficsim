@@ -6,7 +6,18 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
     
-    <release version="1.02.02" date="1019-04-XX" description="xsd-parser finished; research projects moved out">
+    <release version="1.02.02" date="2019-05-XX" description="xsd-parser, ots-web ready; gradual lane change">
+      <action dev="averbraeck" type="add">
+        ots-web is now completely working. Animation is sent to the web client, and actions such as zooming,
+        panning, introspection, starting and stopping of the simulation clock have all been implemented.
+      </action>
+      <action dev="pknoppers" type="add">
+        XML parsing of TRAFCOD traffic control can now be done through XML, including the visual representation
+        and the TRAFCOD program.
+      </action>
+      <action dev="wjschakel" type="add">
+        Gradual lane changes have been introduced.
+      </action>
       <action dev="averbraeck" type="update">
         DJUTILS updated to 1.00.06 to use ImmutableEntry in the ImmutableMap.
       </action>
