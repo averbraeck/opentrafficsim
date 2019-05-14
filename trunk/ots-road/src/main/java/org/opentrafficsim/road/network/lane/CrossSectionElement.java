@@ -65,8 +65,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     private final OTSShape contour;
 
     /**
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
-     * the StartNode towards the EndNode as the longitudinal direction.
+     * Construct a new CrossSectionElement. <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative
+     * lateral direction, with the direction from the StartNode towards the EndNode as the longitudinal direction.
      * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
      * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; the offsets and widths at positions along the line, relative to
