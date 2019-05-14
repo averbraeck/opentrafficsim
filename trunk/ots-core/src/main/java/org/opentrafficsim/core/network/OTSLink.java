@@ -59,8 +59,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /**
      * Construct a new link.
-     * @param id String; the link id
      * @param network Network; the network to which the link belongs
+     * @param id String; the link id
      * @param startNode Node; start node (directional)
      * @param endNode Node; end node (directional)
      * @param linkType LinkType; Link type to indicate compatibility with GTU types
