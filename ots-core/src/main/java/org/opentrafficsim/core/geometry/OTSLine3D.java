@@ -32,7 +32,7 @@ import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
- * Line with OTSPoint3D points, a cached length indexed line, a cahced length, and a cached centroid (all calculated on first
+ * Line with OTSPoint3D points, a cached length indexed line, a cached length, and a cached centroid (all calculated on first
  * use).
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
