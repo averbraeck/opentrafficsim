@@ -492,6 +492,10 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 String name = String.format("%s%02d", variable.getName(), variable.getStream());
                 String digits = String.format("%02d", variable.getStream());
                 List<TrafficLight> matchingLights = trafficLightMap.get(digits);
+                if (null == matchingLights)
+                {
+                    throw new TrafficControlException("No traffic light for stream " + digits + " found");
+                }
                 for (TrafficLight tl : matchingLights)
                 {
                     try
