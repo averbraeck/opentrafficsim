@@ -151,6 +151,9 @@ public class AimsunControl
     /** Shared between sendGTUPositionsToAimsun and the commandLoop methods. */
     private Time simulateUntil = null;
 
+    /** Shared between sendGTUPositionsToAimsun and the commandLoop methods. */
+    private Boolean waitingForSimulator = false;
+
     /**
      * Construct a GTU positions message, clear the simulateUntil value, transmit all GTU positions to Aimsun and wait for the
      * simulateUntil value to be set again.
@@ -159,8 +162,8 @@ public class AimsunControl
     protected void sendGTUPositionsToAimsun(final OutputStream outputStream)
     {
         OTSSimulatorInterface simulator = this.model.getSimulator();
-        System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
         Time stopTime = simulator.getSimulatorTime();
+        // System.err.println("Entering sendGTUPositionsToAimsun: simulator time is " + stopTime);
         AimsunControlProtoBuf.GTUPositions.Builder builder = AimsunControlProtoBuf.GTUPositions.newBuilder();
         for (GTU gtu : this.model.getNetwork().getGTUs())
         {
@@ -200,7 +203,9 @@ public class AimsunControl
         {
             exception.printStackTrace();
         }
-        System.out.println("Simulator waiting for new simulateUntil value");
+        // System.err.println("sendGTUPositionsToAimsun: GTU positions sent; setting wait for next Aimsun message flag");
+        waitingForSimulator = false;
+        // System.err.println("sendGTUPositionsToAimsun: polling simulateUntil value to become non null");
         while (this.simulateUntil == null)
         {
             try
@@ -209,6 +214,7 @@ public class AimsunControl
             }
             catch (InterruptedException exception)
             {
+                System.err.println("Interrupted exception (sendGTUPositionsToAimsun)");
                 // exception.printStackTrace();
             }
         }
@@ -221,7 +227,7 @@ public class AimsunControl
         {
             exception.printStackTrace();
         }
-        System.out.println("Simulator resuming");
+        // System.err.println("Simulator resuming from sendGTUPositionsToAimsun event");
     }
 
     /**
@@ -247,11 +253,81 @@ public class AimsunControl
         {
             try
             {
+                if (waitingForSimulator)
+                {
+                    // System.err.println("Polling waitingForSimulator");
+                    // System.err.println("Simulator running status is " + this.model.getSimulator().isRunning());
+                    while (waitingForSimulator)
+                    {
+                        if (!this.model.getSimulator().isRunning())
+                        {
+                            System.out.println("Simulator has stopped; constructing GTUPositions message with error status");
+                            Time stopTime = this.model.getSimulator().getSimulatorTime();
+                            AimsunControlProtoBuf.GTUPositions.Builder builder =
+                                    AimsunControlProtoBuf.GTUPositions.newBuilder();
+                            for (GTU gtu : this.model.getNetwork().getGTUs())
+                            {
+                                AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder gpb =
+                                        AimsunControlProtoBuf.GTUPositions.GTUPosition.newBuilder();
+                                gpb.setGtuId(gtu.getId());
+                                DirectedPoint dp;
+                                try
+                                {
+                                    dp = gtu.getOperationalPlan().getLocation(stopTime);
+                                    gpb.setX(dp.x);
+                                    gpb.setY(dp.y);
+                                    gpb.setZ(dp.z);
+                                    gpb.setAngle(dp.getRotZ());
+                                    gpb.setLength(gtu.getLength().si);
+                                    gpb.setWidth(gtu.getWidth().si);
+                                    gpb.setGtuTypeId(Integer.parseInt(gtu.getGTUType().getId().split("\\.")[1]));
+                                    gpb.setSpeed(gtu.getSpeed().si);
+                                    builder.addGtuPos(gpb.build());
+                                }
+                                catch (OperationalPlanException exception)
+                                {
+                                    exception.printStackTrace();
+                                }
+                            }
+                            builder.setStatus("ERROR");
+                            GTUPositions gtuPositions = builder.build();
+                            AimsunControlProtoBuf.OTSMessage.Builder resultBuilder =
+                                    AimsunControlProtoBuf.OTSMessage.newBuilder();
+                            resultBuilder.setGtuPositions(gtuPositions);
+                            AimsunControlProtoBuf.OTSMessage result = resultBuilder.build();
+                            this.simulateUntil = null;
+                            try
+                            {
+                                transmitMessage(result, outputStream);
+                            }
+                            catch (IOException exception)
+                            {
+                                exception.printStackTrace();
+                            }
+                            System.out.println("Error message sent");
+                            // System.err.println("Clearing waitingForSimulator flag");
+                            waitingForSimulator = false;
+                            break;
+                        }
+                        try
+                        {
+                            Thread.sleep(1);
+                        }
+                        catch (InterruptedException exception)
+                        {
+                            System.err.println("Interrupted exception (command loop)");
+                            // exception.printStackTrace();
+                        }
+                    }
+                    // System.err.println("waitingForSimulator flag became false");
+                    // System.err.println("Simulator running status is " + this.model.getSimulator().isRunning());
+                }
                 byte[] sizeBytes = new byte[4];
+                // System.err.println("CommandLoop: request fillBuffer to read 4 bytes");
                 fillBuffer(inputStream, sizeBytes);
                 int size = ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
                         + (sizeBytes[3] & 0xff);
-                System.out.println("expecting message of " + size + " bytes");
+                // System.err.println("CommandLoop: requesting fillBuffer to read " + size + " bytes");
                 byte[] buffer = new byte[size];
                 fillBuffer(inputStream, buffer);
                 AimsunControlProtoBuf.OTSMessage message = AimsunControlProtoBuf.OTSMessage.parseFrom(buffer);
@@ -301,7 +377,7 @@ public class AimsunControl
                         System.out.println("Received SIMULATEUNTIL message");
                         AimsunControlProtoBuf.SimulateUntil simulateUntilThing = message.getSimulateUntil();
                         Time stopTime = new Time(simulateUntilThing.getTime(), TimeUnit.BASE_SECOND);
-                        System.out.println("Simulate until " + stopTime + " ");
+                        // System.err.println("Simulate until " + stopTime);
                         OTSSimulatorInterface simulator = this.model.getSimulator();
                         if (!simulatorStarted)
                         {
@@ -319,7 +395,8 @@ public class AimsunControl
                         }
                         else
                         {
-                            System.out.println("Resuming simulator");
+                            // System.out.println("Resuming simulator by setting simulateUntil to " + stopTime);
+                            waitingForSimulator = true;
                             this.simulateUntil = stopTime;
                         }
                         break;
@@ -359,8 +436,8 @@ public class AimsunControl
             throws IOException
     {
         int size = message.getSerializedSize();
-        System.out.print("Transmitting " + message.getGtuPositions().getGtuPosCount() + " GTU positions and status \""
-                + message.getGtuPositions().getStatus() + "\" encoded in " + size + " bytes ... ");
+        // System.out.print("Transmitting " + message.getGtuPositions().getGtuPosCount() + " GTU positions and status \""
+        // + message.getGtuPositions().getStatus() + "\" encoded in " + size + " bytes ... ");
         byte[] sizeBytes = new byte[4];
         sizeBytes[0] = (byte) ((size >> 24) & 0xff);
         sizeBytes[1] = (byte) ((size >> 16) & 0xff);
@@ -370,7 +447,7 @@ public class AimsunControl
         byte[] buffer = new byte[size];
         buffer = message.toByteArray();
         outputStream.write(buffer);
-        System.out.println("Message sent");
+        // System.out.println("Message sent");
     }
 
     /**
@@ -381,7 +458,7 @@ public class AimsunControl
      */
     static void fillBuffer(final InputStream in, final byte[] buffer) throws IOException
     {
-        System.out.print("Need to read " + buffer.length + " bytes ... ");
+        // System.err.println("fillBuffer: attempting to read " + buffer.length + " bytes ... ");
         int offset = 0;
         while (true)
         {
@@ -393,15 +470,16 @@ public class AimsunControl
             offset += bytesRead;
             if (buffer.length == offset)
             {
-                System.out.println("got all " + buffer.length + " requested bytes");
+                // System.err.println("fillBuffer: got all " + buffer.length + " requested bytes");
                 break;
             }
             if (buffer.length < offset)
             {
-                System.out.println("Oops: Got more than " + buffer.length + " requested bytes");
+                System.err.println("fillBuffer: Oops: Got more than " + buffer.length + " requested bytes");
                 break;
             }
-            System.out.print("now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes ... ");
+            // System.err.println(
+            // "fillBuffer: now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes ... ");
         }
         if (offset != buffer.length)
         {
@@ -458,7 +536,7 @@ public class AimsunControl
         @Override
         public void notify(EventInterface event) throws RemoteException
         {
-            System.out.println("Received event " + event);
+            System.err.println("Received event " + event);
         }
 
         /** {@inheritDoc} */
@@ -477,8 +555,8 @@ public class AimsunControl
             this.network = new OTSRoadNetwork(getShortName(), true);
             try
             {
-                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)),
-                        this.network, getSimulator());
+                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
+                        getSimulator());
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
