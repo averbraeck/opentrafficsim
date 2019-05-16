@@ -45,6 +45,42 @@ public interface Synchronizable
 
         /** Subject vehicle is cooperating for a lane change of another GTU. */
         COOPERATING;
+        
+        /**
+         * Returns whether this is NONE.
+         * @return boolean; whether this is NONE
+         */
+        public boolean isNone()
+        {
+            return this == NONE;
+        }
+        
+        /**
+         * Returns whether this is SYNCHRONIZING.
+         * @return boolean; whether this is SYNCHRONIZING
+         */
+        public boolean isSycnhronizing()
+        {
+            return this == SYNCHRONIZING;
+        }
+        
+        /**
+         * Returns whether this is INDICATING.
+         * @return boolean; whether this is INDICATING
+         */
+        public boolean isIndicating()
+        {
+            return this == INDICATING;
+        }
+        
+        /**
+         * Returns whether this is COOPERATING.
+         * @return boolean; whether this is COOPERATING
+         */
+        public boolean isCooperating()
+        {
+            return this == COOPERATING;
+        }
     }
 
 }

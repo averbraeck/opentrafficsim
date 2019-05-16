@@ -46,9 +46,8 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
     /** {@inheritDoc} */
     @Override
     public final Acceleration getDesiredAcceleration(final LaneBasedGTU gtu,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders) throws ParameterException
+            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Parameters settings) throws ParameterException
     {
-        Parameters params = gtu.getParameters();
         SpeedLimitInfo speedInfo;
         try
         {
@@ -59,13 +58,13 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
         {
             throw new RuntimeException("Infrastructure perception is not available.", exception);
         }
-        Speed v0 = gtu.getTacticalPlanner().getCarFollowingModel().desiredSpeed(params, speedInfo);
-        Acceleration a = Acceleration.createSI(params.getParameter(KF) * (v0.si - gtu.getSpeed().si));
+        Speed v0 = gtu.getTacticalPlanner().getCarFollowingModel().desiredSpeed(gtu.getParameters(), speedInfo);
+        Acceleration a = Acceleration.createSI(settings.getParameter(KF) * (v0.si - gtu.getSpeed().si));
         if (leaders.isEmpty())
         {
             return a;
         }
-        return Acceleration.min(a, getFollowingAcceleration(gtu, leaders));
+        return Acceleration.min(a, getFollowingAcceleration(gtu, leaders, settings));
     }
 
     /**
@@ -73,10 +72,11 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
      * leader.
      * @param gtu LaneBasedGTU; gtu
      * @param leaders PerceptionCollectable&lt;HeadwayGTU, LaneBasedGTU&gt;; leaders
+     * @param settings Parameters; system settings
      * @return Acceleration; following acceleration of the longitudinal control
      * @throws ParameterException if parameter is not present
      */
     public abstract Acceleration getFollowingAcceleration(LaneBasedGTU gtu,
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders) throws ParameterException;
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, Parameters settings) throws ParameterException;
 
 }

@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import org.opentrafficsim.base.parameters.ParameterSet;
-import org.opentrafficsim.base.parameters.Parameters;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
@@ -13,26 +12,16 @@ import org.opentrafficsim.base.parameters.Parameters;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class IDMPlusMultiFactory implements CarFollowingModelFactory<IDMPlusMulti>
+public class IDMPlusMultiFactory extends AbstractIDMFactory<IDMPlusMulti>
 {
 
-    /** Single instance as it is state-less. */
-    private final IDMPlusMulti idmPlusMulti = new IDMPlusMulti();
-
-    /** {@inheritDoc} */
-    @Override
-    public final IDMPlusMulti generateCarFollowingModel()
+    /**
+     * Constructor.
+     * @param randomStream StreamInterface; random number stream
+     */
+    public IDMPlusMultiFactory(final StreamInterface randomStream)
     {
-        return this.idmPlusMulti;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Parameters getParameters()
-    {
-        ParameterSet parameters = new ParameterSet();
-        parameters.setDefaultParameters(AbstractIDM.class);
-        return parameters;
+        super(new IDMPlusMulti(), randomStream);
     }
 
     /** {@inheritDoc} */

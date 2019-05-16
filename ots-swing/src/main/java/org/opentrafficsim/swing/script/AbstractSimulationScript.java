@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -15,14 +17,10 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -102,6 +100,16 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     }
 
     /**
+     * Returns whether the property is present.
+     * @param propertyName String; property name
+     * @return boolean; whether the property is present
+     */
+    public final boolean hasProperty(final String propertyName)
+    {
+        return this.props.containsKey(propertyName);
+    }
+    
+    /**
      * Returns the String value of given property.
      * @param propertyName String; property name
      * @return String; value of property
@@ -171,6 +179,26 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     public final Time getTimeProperty(final String propertyName)
     {
         return Time.createSI(getDoubleProperty(propertyName));
+    }
+    
+    /**
+     * Returns the Length value of given property.
+     * @param propertyName String; property name
+     * @return Length; value of property
+     */
+    public final Length getLengthProperty(final String propertyName)
+    {
+        return Length.createSI(getDoubleProperty(propertyName));
+    }
+    
+    /**
+     * Returns the Acceleration value of given property.
+     * @param propertyName String; property name
+     * @return Acceleration; value of property
+     */
+    public final Acceleration getAccelerationProperty(final String propertyName)
+    {
+        return Acceleration.createSI(getDoubleProperty(propertyName));
     }
 
     /**
@@ -348,11 +376,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      */
     protected void setAnimationToggles(final OTSAnimationPanel animation)
     {
-        AnimationToggles.setIconAnimationTogglesFull(animation);
-        animation.getAnimationPanel().toggleClass(OTSLink.class);
-        animation.getAnimationPanel().toggleClass(OTSNode.class);
-        animation.getAnimationPanel().toggleClass(GtuGeneratorQueue.class);
-        animation.getAnimationPanel().showClass(SpeedSign.class);
+        AnimationToggles.setIconAnimationTogglesStandard(animation);
     }
 
     // Abstract methods

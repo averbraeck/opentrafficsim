@@ -84,7 +84,10 @@ public class IDMPlusMulti extends AbstractIDM
             {
                 break;
             }
-            cumulVehicleLengths += leader.getLength().si;
+            if (leader.getLength() != null) // usage could be e.g. a dead-end
+            {
+                cumulVehicleLengths += leader.getLength().si;
+            }
         }
         return new Acceleration(aIntMulti < aFree.si ? aIntMulti : aFree.si, AccelerationUnit.SI);
     }

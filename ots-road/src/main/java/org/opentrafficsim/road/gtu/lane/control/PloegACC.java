@@ -5,34 +5,32 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 /**
- * Simple linear CACC implementation.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 13, 2019 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 11, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class LinearCACC extends LinearACC
+public class PloegACC extends LinearACC
 {
 
-    /** Acceleration error gain parameter. */
-    public static final ParameterTypeDouble KA =
-            new ParameterTypeDouble("ka", "Acceleration error gain", 1.0, NumericConstraint.POSITIVE);
+    /** Gap error derivative gain parameter. */
+    public static final ParameterTypeDouble KD =
+            new ParameterTypeDouble("kd", "Gap error derivative gain", 0.7, NumericConstraint.POSITIVE);
 
     /**
      * Constructor using default sensors with no delay.
      * @param delayedActuation DelayedActuation; delayed actuation
      */
-    public LinearCACC(final DelayedActuation delayedActuation)
+    public PloegACC(final DelayedActuation delayedActuation)
     {
         super(delayedActuation);
     }
@@ -43,16 +41,10 @@ public class LinearCACC extends LinearACC
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Parameters settings) throws ParameterException
     {
         HeadwayGTU leader = leaders.first();
-        if (leader.getAcceleration() == null)
-        {
-            // ACC mode
-            return super.getFollowingAcceleration(gtu, leaders, settings);
-        }
         double es =
-                leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDCACC).si - settings.getParameter(X0).si;
-        double ev = leader.getSpeed().si - gtu.getSpeed().si;
-        double kaui = settings.getParameter(KA) * leader.getAcceleration().si;
-        return Acceleration.createSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev + kaui);
+                leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDACC).si - settings.getParameter(X0).si;
+        double esd = leader.getSpeed().si - gtu.getSpeed().si - gtu.getAcceleration().si * settings.getParameter(TDACC).si;
+        return Acceleration.createSI(settings.getParameter(KS) * es + settings.getParameter(KD) * esd);
     }
 
 }

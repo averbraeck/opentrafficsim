@@ -2,9 +2,9 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -65,7 +65,7 @@ public class LaneDirectionRecord implements LaneRecord<LaneDirectionRecord>
     {
         if (this.next == null)
         {
-            Map<Lane, GTUDirectionality> map = this.lane.downstreamLanes(this.dir, this.gtuType);
+            ImmutableMap<Lane, GTUDirectionality> map = this.lane.downstreamLanes(this.dir, this.gtuType);
             this.next = new ArrayList<>();
             Length distance = this.startDistance.plus(getLength());
             for (Lane down : map.keySet())
@@ -82,7 +82,7 @@ public class LaneDirectionRecord implements LaneRecord<LaneDirectionRecord>
     {
         if (this.prev == null)
         {
-            Map<Lane, GTUDirectionality> map = this.lane.upstreamLanes(this.dir, this.gtuType);
+            ImmutableMap<Lane, GTUDirectionality> map = this.lane.upstreamLanes(this.dir, this.gtuType);
             this.prev = new ArrayList<>();
             for (Lane up : map.keySet())
             {

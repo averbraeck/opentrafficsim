@@ -13,6 +13,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.DirectedLinkPosition;
@@ -104,10 +105,10 @@ public final class GraphLaneUtil
                 }
             });
             set.add(lane);
-            Map<Lane, GTUDirectionality> map = lane.getLane().downstreamLanes(lane.getDirection(), null);
+            ImmutableMap<Lane, GTUDirectionality> map = lane.getLane().downstreamLanes(lane.getDirection(), null);
             if (map.size() == 1)
             {
-                Map.Entry<Lane, GTUDirectionality> entry = map.entrySet().iterator().next();
+                ImmutableMap.ImmutableEntry<Lane, GTUDirectionality> entry = map.entrySet().iterator().next();
                 lane = new LaneDirection(entry.getKey(), entry.getValue());
             }
         }
@@ -188,9 +189,10 @@ public final class GraphLaneUtil
                     List<LaneDirection> nextLanes = new ArrayList<>();
                     for (LaneDirection laneDir : lanes)
                     {
-                        Map<Lane, GTUDirectionality> map = laneDir.getLane().downstreamLanes(laneDir.getDirection(), null);
+                        ImmutableMap<Lane, GTUDirectionality> map =
+                                laneDir.getLane().downstreamLanes(laneDir.getDirection(), null);
                         int n = 0;
-                        for (Map.Entry<Lane, GTUDirectionality> entry : map.entrySet())
+                        for (ImmutableMap.ImmutableEntry<Lane, GTUDirectionality> entry : map.entrySet())
                         {
                             if (entry.getKey().getParentLink().equals(nextLink))
                             {

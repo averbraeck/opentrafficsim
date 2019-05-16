@@ -2,11 +2,11 @@ package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -115,7 +115,7 @@ public class LaneDirection implements Serializable
      */
     public final LaneDirection getNextLaneDirection(final LaneBasedGTU gtu)
     {
-        Map<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGTUType());
+        ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGTUType());
         if (next.isEmpty())
         {
             return null;

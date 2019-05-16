@@ -10,6 +10,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictPriority;
 import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
@@ -24,7 +25,7 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayConflict extends AbstractHeadwayCopy
+public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
 {
 
     /** */
@@ -97,6 +98,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * @param width Width; width progression of conflict
      * @param stopLine HeadwayStopLine; stop line on the own lane
      * @param conflictingStopLine HeadwayStopLine; stop line on the conflicting lane
+     * @param lane Lane; the lane
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -105,9 +107,9 @@ public class HeadwayConflict extends AbstractHeadwayCopy
             final Length conflictingLength, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
             final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width,
-            final HeadwayStopLine stopLine, final HeadwayStopLine conflictingStopLine) throws GTUException
+            final HeadwayStopLine stopLine, final HeadwayStopLine conflictingStopLine, final Lane lane) throws GTUException
     {
-        super(ObjectType.CONFLICT, id, distance, length);
+        super(ObjectType.CONFLICT, id, distance, length, lane);
         Throw.whenNull(conflictType, "Conflict type may not be null.");
         Throw.whenNull(conflictPriority, "Conflict priority may not be null.");
         Throw.whenNull(conflictRuleType, "Conflict rule type may not be null.");
@@ -150,6 +152,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * @param conflictingSpeedLimit Speed; speed limit on the conflicting lane
      * @param conflictingLink CrossSectionLink; conflicting link
      * @param width Width; width progression of conflict
+     * @param lane Lane; the lane
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -157,10 +160,12 @@ public class HeadwayConflict extends AbstractHeadwayCopy
             final Class<? extends ConflictRule> conflictRuleType, final String id, final Length distance, final Length length,
             final Length conflictingLength, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
-            final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width) throws GTUException
+            final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width, final Lane lane)
+            throws GTUException
     {
         this(conflictType, conflictPriority, conflictRuleType, id, distance, length, conflictingLength, upstreamConflictingGTUs,
-                downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit, conflictingLink, width, null, null);
+                downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit, conflictingLink, width, null, null,
+                lane);
     }
 
     /**
@@ -417,8 +422,8 @@ public class HeadwayConflict extends AbstractHeadwayCopy
             Throw.whenNull(endWidth, "End width may not be null.");
             try
             {
-                return new Width(new double[] {0.0, 1.0},
-                        new LengthVector(new Length[] {startWidth, endWidth}, StorageType.DENSE));
+                return new Width(new double[] { 0.0, 1.0 },
+                        new LengthVector(new Length[] { startWidth, endWidth }, StorageType.DENSE));
             }
             catch (ValueException exception)
             {

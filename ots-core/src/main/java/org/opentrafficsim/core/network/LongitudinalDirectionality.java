@@ -143,6 +143,15 @@ public enum LongitudinalDirectionality
     {
         return this.equals(DIR_BOTH);
     }
+    
+    /**
+     * Easy access method to test if the directionality is NONE.
+     * @return whether the directionality is NONE
+     */
+    public final boolean isNone()
+    {
+        return this.equals(DIR_NONE);
+    }
 
     /**
      * Compute the intersection of this LongitudinalDirectionality with another LongitudinalDirectionality.

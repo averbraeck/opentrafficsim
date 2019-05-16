@@ -4,7 +4,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -20,8 +19,11 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class PloegCACC extends LinearCACC
+public class PloegCACC extends PloegACC
 {
+
+    /** Acceleration error gain parameter. */
+    public static final ParameterTypeDouble KA = LinearCACC.KA;
 
     /**
      * Constructor using default sensors with no delay.
@@ -32,35 +34,21 @@ public class PloegCACC extends LinearCACC
         super(delayedActuation);
     }
 
-    /** Gap error derivative gain parameter. */
-    public static final ParameterTypeDouble KD =
-            new ParameterTypeDouble("kd", "Gap error derivative gain", 0.7, NumericConstraint.POSITIVE);
-
     /** {@inheritDoc} */
     @Override
     public Acceleration getFollowingAcceleration(final LaneBasedGTU gtu,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders) throws ParameterException
+            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Parameters settings) throws ParameterException
     {
-        Parameters params = gtu.getParameters();
         HeadwayGTU leader = leaders.first();
-        double es;
-        double esd;
-        double kaui;
         if (leader.getAcceleration() == null)
         {
-            // ACC mode
-            es = leader.getDistance().si - gtu.getSpeed().si * params.getParameter(TDACC).si - params.getParameter(X0).si;
-            esd = leader.getSpeed().si - gtu.getSpeed().si - gtu.getAcceleration().si * params.getParameter(TDACC).si;
-            kaui = 0.0;
+            return super.getFollowingAcceleration(gtu, leaders, settings);
         }
-        else
-        {
-            // CACC mode
-            es = leader.getDistance().si - gtu.getSpeed().si * params.getParameter(TDCACC).si - params.getParameter(X0).si;
-            esd = leader.getSpeed().si - gtu.getSpeed().si - gtu.getAcceleration().si * params.getParameter(TDCACC).si;
-            kaui = params.getParameter(KA) * leader.getAcceleration().si;
-        }
-        return Acceleration.createSI(params.getParameter(KS) * es + params.getParameter(KD) * esd + kaui);
+        double es =
+                leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDCACC).si - settings.getParameter(X0).si;
+        double esd = leader.getSpeed().si - gtu.getSpeed().si - gtu.getAcceleration().si * settings.getParameter(TDCACC).si;
+        double kaui = settings.getParameter(KA) * leader.getAcceleration().si;
+        return Acceleration.createSI(settings.getParameter(KS) * es + settings.getParameter(KD) * esd + kaui);
     }
 
 }

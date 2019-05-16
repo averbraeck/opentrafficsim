@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -77,7 +78,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     public static final Random RANDOM = new Random();
 
     /** Lane change status. */
-    private final LaneChange laneChange = new LaneChange();
+    private final LaneChange laneChange;
 
     /**
      * Constructor.
@@ -87,6 +88,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
+        this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GTUException.class);
         getPerception().addPerceptionCategory(new ToledoPerception(getPerception()));
         getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGtuType.WRAP));
     }

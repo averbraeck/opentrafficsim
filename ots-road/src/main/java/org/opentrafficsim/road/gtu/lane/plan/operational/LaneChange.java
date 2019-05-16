@@ -6,21 +6,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
@@ -57,16 +62,49 @@ public class LaneChange implements Serializable
     private Length boundary;
 
     /** Lane change path. */
-    private LaneChangePath laneChangePath = LaneChangePath.BEZIER;
+    private LaneChangePath laneChangePath = LaneChangePath.SINE_INTERP;
 
     /** Whether the GTU is changing lane. */
     private LateralDirectionality laneChangeDirectionality = null;
+
+    /** Minimum lane change distance. */
+    private final Length minimumLaneChangeDistance;
 
     /** Instance to invoke static method through scheduled event on. */
     private static final LaneOperationalPlanBuilder BUILDER = new LaneOperationalPlanBuilder();
 
     /** Minimum distance required to perform a lane change as factor on vehicle length. */
     public static double MIN_LC_LENGTH_FACTOR = 2.0;
+
+    /**
+     * Constructor.
+     * @param gtu LaneBasedGTU; gtu
+     * @throws ParameterException if LCDUR parameter is not defined
+     */
+    public LaneChange(final LaneBasedGTU gtu) throws ParameterException
+    {
+        this.minimumLaneChangeDistance = gtu.getLength().multiplyBy(MIN_LC_LENGTH_FACTOR);
+    }
+
+    /**
+     * Constructor.
+     * @param minimumLaneChangeDistance Length; minimum lane change distance
+     * @param desiredLaneChangeDuration Duration; deaired lane change duration
+     */
+    public LaneChange(final Length minimumLaneChangeDistance, final Duration desiredLaneChangeDuration)
+    {
+        this.minimumLaneChangeDistance = minimumLaneChangeDistance;
+        this.desiredLaneChangeDuration = desiredLaneChangeDuration;
+    }
+
+    /**
+     * Returns the minimum lane change distance.
+     * @return Length; minimum lane change distance
+     */
+    public Length getMinimumLaneChangeDistance()
+    {
+        return this.minimumLaneChangeDistance;
+    }
 
     /**
      * Sets the desired lane change duration. Should be set by a tactical planner.
@@ -203,13 +241,12 @@ public class LaneChange implements Serializable
          * We take 3 factors in to account. The first two are 1) minimum physical lane change length, and 2) desired lane change
          * duration. With the current mean speed of the plan, we take the maximum. So at very low speeds, the minimum physical
          * length may increase the lane change duration. We also have 3) the maximum length before a lane change needs to have
-         * been performed. To overcome simulation troubles, we allow this to result in an even shorted length than the minimum
+         * been performed. To overcome simulation troubles, we allow this to result in an even shorter length than the minimum
          * physical distance. So: length = min( max("1", "2"), "3" ). These distances are all considered along the from-lanes.
          * Actual path distance is different.
          */
         Speed meanSpeed = planDistance.divideBy(timeStep);
-        double minDistance = gtu.getLength().si * MIN_LC_LENGTH_FACTOR; // simple bare minimum
-        double minDuration = minDistance / meanSpeed.si;
+        double minDuration = this.minimumLaneChangeDistance.si / meanSpeed.si;
         double laneChangeDuration = Math.max(this.desiredLaneChangeDuration.si, minDuration);
         if (this.boundary != null)
         {
@@ -244,7 +281,7 @@ public class LaneChange implements Serializable
             LaneDirection nextToLane = nextFromLane.getAdjacentLaneDirection(this.laneChangeDirectionality, gtu);
             if (nextToLane == null)
             {
-                // there are no lanes to move change to, restrict lane change length/duration (given fixed mean speed)
+                // there are no lanes to change to, restrict lane change length/duration (given fixed mean speed)
                 double endFromPosLimit = fromLane.getLane().getLength().si - gtu.getFront().getDx().si;
                 double f = 1.0 - (endPosFrom - endFromPosLimit) / fromDist;
                 laneChangeDuration *= f;
@@ -281,7 +318,7 @@ public class LaneChange implements Serializable
             {
                 // TODO get rid of cast to AbstractLaneBasedGTU
                 gtu.getSimulator().scheduleEventNow(gtu, BUILDER, "scheduleLaneChangeFinalization", new Object[] {
-                        (AbstractLaneBasedGTU) gtu, Length.min(planDistance, path.getLength()), laneChangeDirection});
+                        (AbstractLaneBasedGTU) gtu, Length.min(planDistance, path.getLength()), laneChangeDirection });
             }
             catch (SimRuntimeException exception)
             {
@@ -327,6 +364,54 @@ public class LaneChange implements Serializable
         return path;
     }
 
+    /**
+     * Checks whether the given GTU has sufficient space relative to a {@code Headway}.
+     * @param gtu LaneBasedGTU; gtu
+     * @param headway Headway; headway
+     * @return boolean; whether the given GTU has sufficient space relative to a {@code Headway}
+     */
+    public boolean checkRoom(final LaneBasedGTU gtu, final Headway headway)
+    {
+        if (this.desiredLaneChangeDuration == null)
+        {
+            this.desiredLaneChangeDuration = Try.assign(() -> gtu.getParameters().getParameter(ParameterTypes.LCDUR),
+                    "LaneChange; the desired lane change duration should be set or paramater LCDUR should be defined.");
+        }
+
+        EgoPerception<?, ?> ego = gtu.getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(EgoPerception.class);
+        Speed egoSpeed = ego == null ? gtu.getSpeed() : ego.getSpeed();
+        Acceleration egoAcceleration = ego == null ? gtu.getAcceleration() : ego.getAcceleration();
+        Speed speed = headway.getSpeed() == null ? Speed.ZERO : headway.getSpeed();
+        Acceleration acceleration = headway.getAcceleration() == null ? Acceleration.ZERO : headway.getAcceleration();
+
+        Length distanceToStop;
+        if (speed.eq0())
+        {
+            distanceToStop = Length.ZERO;
+        }
+        else
+        {
+            Acceleration b = gtu.getParameters().getParameterOrNull(ParameterTypes.B);
+            b = b == null ? Acceleration.ZERO : b.neg();
+            Acceleration a = Acceleration.min(Acceleration.max(b, acceleration.plus(b)), acceleration);
+            if (a.ge0())
+            {
+                return true;
+            }
+            double t = speed.si / -a.si;
+            distanceToStop = Length.createSI(speed.si * t + .5 * a.si * t * t);
+        }
+
+        Length availableDistance = headway.getDistance().plus(distanceToStop);
+        double t = this.desiredLaneChangeDuration.si;
+        if (egoAcceleration.lt0())
+        {
+            t = Math.min(egoSpeed.si / -egoAcceleration.si, t);
+        }
+        Length requiredDistance = Length.createSI(egoSpeed.si * t + .5 * egoAcceleration.si * t * t);
+        return availableDistance.gt(requiredDistance);
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString()
@@ -348,9 +433,29 @@ public class LaneChange implements Serializable
      */
     public interface LaneChangePath
     {
+
+        /** Sine-shaped interpolation between center lines. */
+        LaneChangePath SINE_INTERP = new InterpolatedLaneChangePath()
+        {
+            /** {@inheritDoc} */
+            @Override
+            double longitudinalFraction(final double lateralFraction)
+            {
+                return 1.0 - Math.acos(2.0 * (lateralFraction - 0.5)) / Math.PI;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            double lateralFraction(final double longitudinalFraction)
+            {
+                return 0.5 - 0.5 * Math.cos(longitudinalFraction * Math.PI);
+            }
+        };
+
         /** A simple Bezier curve directly to the lane change target position. */
         LaneChangePath BEZIER = new LaneChangePath()
         {
+            /** {@inheritDoc} */
             @Override
             public OTSLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final DirectedLanePosition from, final DirectedPoint startPosition,
@@ -522,12 +627,144 @@ public class LaneChange implements Serializable
         }
 
         /**
+         * Helper class for interpolation between the from and to center lines.
+         * <p>
+         * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+         * reserved. <br>
+         * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+         * <p>
+         * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 3, 2019 <br>
+         * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+         * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+         * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+         */
+        abstract class InterpolatedLaneChangePath implements LaneChangePath
+        {
+
+            /** {@inheritDoc} */
+            @Override
+            public OTSLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
+                    final DirectedLanePosition from, final DirectedPoint startPosition,
+                    final LateralDirectionality laneChangeDirection, final List<LaneDirection> fromLanes,
+                    final List<LaneDirection> toLanes, final double endFractionalPosition, final Duration laneChangeDuration,
+                    final double lcFraction) throws OTSGeometryException
+            {
+
+                // create center lines
+                double startFractionalPosition = from.getPosition().si / from.getLane().getLength().si;
+                OTSLine3D fromLine = getLine(fromLanes, startFractionalPosition, endFractionalPosition);
+                OTSLine3D toLine = getLine(toLanes, startFractionalPosition, endFractionalPosition);
+
+                double startLateralFraction = fromLine.get(0).getLocation().distance(startPosition)
+                        / fromLine.get(0).getLocation().distance(toLine.get(0).getLocation());
+                double startLongitudinalFractionTotal = longitudinalFraction(startLateralFraction);
+
+                double nSegments = Math.ceil((64 * (1.0 - lcFraction)));
+                List<OTSPoint3D> pointList = new ArrayList<>();
+                pointList.add(new OTSPoint3D(startPosition));
+                for (int i = 1; i <= nSegments; i++)
+                {
+                    double f = i / nSegments;
+                    double longitudinalFraction = startLongitudinalFractionTotal + f * (1.0 - startLongitudinalFractionTotal);
+                    double lateralFraction = lateralFraction(longitudinalFraction);
+                    DirectedPoint fromPoint = fromLine.getLocationFraction(f);
+                    DirectedPoint toPoint = toLine.getLocationFraction(f);
+                    pointList.add(new OTSPoint3D((1.0 - lateralFraction) * fromPoint.x + lateralFraction * toPoint.x,
+                            (1.0 - lateralFraction) * fromPoint.y + lateralFraction * toPoint.y,
+                            (1.0 - lateralFraction) * fromPoint.z + lateralFraction * toPoint.z));
+                }
+
+                return new OTSLine3D(pointList);
+            }
+
+            /**
+             * Transform lateral to longitudinal fraction.
+             * @param lateralFraction double; lateral fraction
+             * @return double; transformation of lateral to longitudinal fraction
+             */
+            abstract double longitudinalFraction(double lateralFraction);
+
+            /**
+             * Transform longitudinal to lateral fraction.
+             * @param longitudinalFraction double; longitudinal fraction
+             * @return double; transformation of longitudinal to lateral fraction
+             */
+            abstract double lateralFraction(double longitudinalFraction);
+
+            /**
+             * Returns a line from the lane center lines, cutting of at the from position and the end fractional position.
+             * @param lanes List&lt;LaneDirection&gt;; lanes
+             * @param startFractionalPosition double; current fractional GTU position on first lane
+             * @param endFractionalPosition double; target fractional GTU position on last lane
+             * @return OTSLine3D; line from the lane center lines
+             * @throws OTSGeometryException on fraction outside of range
+             */
+            private OTSLine3D getLine(final List<LaneDirection> lanes, final double startFractionalPosition,
+                    final double endFractionalPosition) throws OTSGeometryException
+            {
+                OTSLine3D line = null;
+                for (LaneDirection lane : lanes)
+                {
+                    if (line == null && lane.equals(lanes.get(lanes.size() - 1)))
+                    {
+                        if (lane.getDirection().isPlus())
+                        {
+                            line = lane.getLane().getCenterLine().extractFractional(startFractionalPosition,
+                                    endFractionalPosition);
+                        }
+                        else
+                        {
+                            line = lane.getLane().getCenterLine()
+                                    .extractFractional(startFractionalPosition, endFractionalPosition).reverse();
+                        }
+                    }
+                    else if (line == null)
+                    {
+                        if (lane.getDirection().isPlus())
+                        {
+                            line = lane.getLane().getCenterLine().extractFractional(startFractionalPosition, 1.0);
+                        }
+                        else
+                        {
+                            line = lane.getLane().getCenterLine().extractFractional(0.0, startFractionalPosition).reverse();
+                        }
+                    }
+                    else if (lane.equals(lanes.get(lanes.size() - 1)))
+                    {
+                        if (lane.getDirection().isPlus())
+                        {
+                            line = OTSLine3D.concatenate(Lane.MARGIN.si, line,
+                                    lane.getLane().getCenterLine().extractFractional(0.0, endFractionalPosition));
+                        }
+                        else
+                        {
+                            line = OTSLine3D.concatenate(Lane.MARGIN.si, line,
+                                    lane.getLane().getCenterLine().extractFractional(endFractionalPosition, 1.0).reverse());
+                        }
+                    }
+                    else
+                    {
+                        if (lane.getDirection().isPlus())
+                        {
+                            line = OTSLine3D.concatenate(Lane.MARGIN.si, line, lane.getLane().getCenterLine());
+                        }
+                        else
+                        {
+                            line = OTSLine3D.concatenate(Lane.MARGIN.si, line, lane.getLane().getCenterLine().reverse());
+                        }
+                    }
+                }
+                return line;
+            }
+        }
+
+        /**
          * Returns a (partial) path for a lane change. The method is called both at the start and during a lane change, and
          * should return a valid path. This path should at least have a length of {@code planDistance}, unless the lane change
          * will be finished during the coming time step. In that case, the caller of this method is to lengthen the path along
          * the center line of the target lane.
          * @param timeStep Duration; time step
-         * @param planDistance Length; distance covered during the plan
+         * @param planDistance Length; distance covered during the operational plan
          * @param meanSpeed Speed; mean speed during time step
          * @param from DirectedLanePosition; current position on the from-lanes
          * @param startPosition DirectedPoint; current 2D position

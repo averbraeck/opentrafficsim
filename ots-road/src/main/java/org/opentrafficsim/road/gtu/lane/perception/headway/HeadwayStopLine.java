@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * <p>
@@ -13,7 +14,7 @@ import org.opentrafficsim.core.gtu.GTUException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public final class HeadwayStopLine extends AbstractHeadwayCopy
+public final class HeadwayStopLine extends AbstractHeadwayLaneBasedObject
 {
 
     /** */
@@ -23,11 +24,12 @@ public final class HeadwayStopLine extends AbstractHeadwayCopy
      * Construct a new HeadwayStopLine.
      * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
+     * @param lane Lane; lane
      * @throws GTUException when id is null, or parameters are inconsistent
      */
-    public HeadwayStopLine(final String id, final Length distance) throws GTUException
+    public HeadwayStopLine(final String id, final Length distance, final Lane lane) throws GTUException
     {
-        super(ObjectType.STOPLINE, id, distance);
+        super(ObjectType.STOPLINE, id, distance, lane);
     }
 
     /** {@inheritDoc} */

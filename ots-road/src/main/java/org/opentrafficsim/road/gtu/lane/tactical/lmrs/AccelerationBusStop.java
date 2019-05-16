@@ -11,6 +11,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -37,15 +38,15 @@ public class AccelerationBusStop implements AccelerationIncentive
 {
 
     /** Distance within which the bus can open the doors. */
-    // TODO this is much more complex: tail blocking other traffic? other bus in front? many people at bus stop?
+    // TODO this process is much more complex: tail blocking other traffic? other bus in front? many people at bus stop?
     private static final Length STOP_DISTANCE = new Length(15.0, LengthUnit.SI);
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:parameternumber")
-    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo)
+    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
+            final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
+            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
         PerceptionCollectable<HeadwayBusStop, BusStop> stops =
@@ -56,7 +57,11 @@ public class AccelerationBusStop implements AccelerationIncentive
         }
         BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
         Time now = gtu.getSimulator().getSimulatorTime();
-        for (HeadwayBusStop stop : stops)
+        Iterable<HeadwayBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
+        {
+            return busStop.getDistance().gt(mergeDistance);
+        });
+        for (HeadwayBusStop stop : it)
         {
             String busStopId = stop.getId();
             if (busSchedule.isLineStop(busStopId, now))

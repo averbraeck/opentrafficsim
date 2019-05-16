@@ -23,7 +23,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
+import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableList;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -167,13 +169,15 @@ public class Lane extends CrossSectionElement implements Serializable
      * Downstream lane(s) following this lane that some GTU types can drive onto given the direction. Initially empty so we can
      * calculate and cache the first time the method is called.
      */
-    private NestedCache<Map<Lane, GTUDirectionality>> downLanes = new NestedCache<>(GTUType.class, GTUDirectionality.class);
+    private NestedCache<ImmutableMap<Lane, GTUDirectionality>> downLanes =
+            new NestedCache<>(GTUType.class, GTUDirectionality.class);
 
     /**
      * Previous lane(s) preceding this lane that some GTU types can drive from given the direction. Initially empty so we can
      * calculate and cache the first time the method is called.
      */
-    private NestedCache<Map<Lane, GTUDirectionality>> upLanes = new NestedCache<>(GTUType.class, GTUDirectionality.class);
+    private NestedCache<ImmutableMap<Lane, GTUDirectionality>> upLanes =
+            new NestedCache<>(GTUType.class, GTUDirectionality.class);
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
@@ -459,7 +463,8 @@ public class Lane extends CrossSectionElement implements Serializable
             final GTUDirectionality drivingDirection, final boolean legal)
     {
         NestedCache<Set<Lane>> cache = direction.isLeft() ? this.leftNeighbours : this.rightNeighbours;
-        return cache.getValue(() -> {
+        return cache.getValue(() ->
+        {
             Set<Lane> lanes = new LinkedHashSet<>(1);
             for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
             {
@@ -1150,7 +1155,8 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return null;
         }
-        int[] search = lineSearch((int index) -> {
+        int[] search = lineSearch((int index) ->
+        {
             LaneBasedGTU gtu = list.get(index);
             return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
         }, list.size(), position.si);
@@ -1486,9 +1492,10 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType GTUType; gtu type
      * @return lanes that can be followed in a given direction and for the given GTU type
      */
-    public final Map<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
+    public final ImmutableMap<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
     {
-        return this.downLanes.getValue(() -> {
+        return this.downLanes.getValue(() ->
+        {
             Map<Lane, GTUDirectionality> downMap =
                     new LinkedHashMap<>(direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType)); // safe copy
             Node downNode = direction.isPlus() ? getParentLink().getEndNode() : getParentLink().getStartNode();
@@ -1503,7 +1510,7 @@ public class Lane extends CrossSectionElement implements Serializable
                     iterator.remove();
                 }
             }
-            return downMap;
+            return new ImmutableLinkedHashMap<>(downMap, Immutable.WRAP);
         }, gtuType, direction);
     }
 
@@ -1513,9 +1520,10 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType GTUType; gtu type
      * @return lanes that can be followed in a given direction and for the given GTU type
      */
-    public final Map<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
+    public final ImmutableMap<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
     {
-        return this.upLanes.getValue(() -> {
+        return this.upLanes.getValue(() ->
+        {
             Map<Lane, GTUDirectionality> upMap =
                     new LinkedHashMap<>(direction.isPlus() ? prevLanes(gtuType) : nextLanes(gtuType)); // safe copy
             Node upNode = direction.isPlus() ? getParentLink().getStartNode() : getParentLink().getEndNode();
@@ -1530,7 +1538,7 @@ public class Lane extends CrossSectionElement implements Serializable
                     iterator.remove();
                 }
             }
-            return upMap;
+            return new ImmutableLinkedHashMap<>(upMap, Immutable.WRAP);
         }, gtuType, direction);
     }
 
@@ -1796,7 +1804,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int indexOfGtu(final LaneBasedGTU gtu)
     {
-        return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) -> {
+        return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) ->
+        {
             try
             {
                 return gtu1.position(this, gtu1.getReference()).compareTo(gtu2.position(this, gtu2.getReference()));
@@ -1816,7 +1825,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int indexOfGtu(final LaneBasedGTU gtu, final Time time)
     {
-        return Collections.binarySearch(getGtuList(time), gtu, (gtu1, gtu2) -> {
+        return Collections.binarySearch(getGtuList(time), gtu, (gtu1, gtu2) ->
+        {
             try
             {
                 return Double.compare(gtu1.fractionalPosition(this, gtu1.getReference(), time),

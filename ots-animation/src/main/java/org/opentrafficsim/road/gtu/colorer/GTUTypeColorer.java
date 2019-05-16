@@ -135,8 +135,8 @@ public class GTUTypeColorer implements GTUColorer, Serializable
         List<LegendEntry> legend = new ArrayList<>();
         for (String name : this.map.keySet())
         {
-            name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-            legend.add(new LegendEntry(this.map.get(name), name, name));
+            String nameCase = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+            legend.add(new LegendEntry(this.map.get(name), nameCase, nameCase));
         }
         return legend;
     }

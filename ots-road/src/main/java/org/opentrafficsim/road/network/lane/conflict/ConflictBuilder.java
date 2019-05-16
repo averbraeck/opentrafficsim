@@ -3,14 +3,14 @@ package org.opentrafficsim.road.network.lane.conflict;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableIterator;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableMap.ImmutableEntry;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -134,8 +134,8 @@ public final class ConflictBuilder
             Lane lane1 = lanes.get(i);
             for (GTUDirectionality dir1 : lane1.getLaneType().getDirectionality(gtuType).getDirectionalities())
             {
-                Map<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
-                Map<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
+                ImmutableMap<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
+                ImmutableMap<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
 
                 for (int j = i + 1; j < lanes.size(); j++)
                 {
@@ -148,8 +148,8 @@ public final class ConflictBuilder
 
                     for (GTUDirectionality dir2 : lane2.getLaneType().getDirectionality(gtuType).getDirectionalities())
                     {
-                        Map<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
-                        Map<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
+                        ImmutableMap<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
+                        ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
                         // See if conflict needs to be build, and build if so
                         try
                         {
@@ -202,10 +202,10 @@ public final class ConflictBuilder
             final GTUDirectionality dir2, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final WidthGenerator widthGenerator, final boolean permitted) throws OTSGeometryException
     {
-        Map<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
-        Map<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
-        Map<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
-        Map<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
+        ImmutableMap<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
+        ImmutableMap<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
+        ImmutableMap<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
+        ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
         try
         {
             buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted, simulator, widthGenerator);
@@ -234,10 +234,11 @@ public final class ConflictBuilder
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static void buildConflicts(final Lane lane1, final GTUDirectionality dir1, final Map<Lane, GTUDirectionality> down1,
-            final Map<Lane, GTUDirectionality> up1, final Lane lane2, final GTUDirectionality dir2,
-            final Map<Lane, GTUDirectionality> down2, final Map<Lane, GTUDirectionality> up2, final GTUType gtuType,
-            final boolean permitted, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
+    private static void buildConflicts(final Lane lane1, final GTUDirectionality dir1,
+            final ImmutableMap<Lane, GTUDirectionality> down1, final ImmutableMap<Lane, GTUDirectionality> up1,
+            final Lane lane2, final GTUDirectionality dir2, final ImmutableMap<Lane, GTUDirectionality> down2,
+            final ImmutableMap<Lane, GTUDirectionality> up2, final GTUType gtuType, final boolean permitted,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
             throws OTSGeometryException, NetworkException
     {
 
@@ -262,15 +263,15 @@ public final class ConflictBuilder
         intersections.addAll(Intersection.getIntersectionList(right1, right2, 3));
 
         // Create merge
-        Iterator<Entry<Lane, GTUDirectionality>> iterator1 = down1.entrySet().iterator();
-        Iterator<Entry<Lane, GTUDirectionality>> iterator2 = down2.entrySet().iterator();
+        ImmutableIterator<ImmutableEntry<Lane, GTUDirectionality>> iterator1 = down1.entrySet().iterator();
+        ImmutableIterator<ImmutableEntry<Lane, GTUDirectionality>> iterator2 = down2.entrySet().iterator();
         boolean merge = false;
         while (iterator1.hasNext() && !merge)
         {
-            Entry<Lane, GTUDirectionality> next1 = iterator1.next();
+            ImmutableEntry<Lane, GTUDirectionality> next1 = iterator1.next();
             while (iterator2.hasNext() && !merge)
             {
-                Entry<Lane, GTUDirectionality> next2 = iterator2.next();
+                ImmutableEntry<Lane, GTUDirectionality> next2 = iterator2.next();
                 if (next1.equals(next2))
                 {
                     // Same downstream lane, so a merge
@@ -309,10 +310,10 @@ public final class ConflictBuilder
         boolean split = false;
         while (iterator1.hasNext() && !split)
         {
-            Entry<Lane, GTUDirectionality> prev1 = iterator1.next();
+            ImmutableEntry<Lane, GTUDirectionality> prev1 = iterator1.next();
             while (iterator2.hasNext() && !split)
             {
-                Entry<Lane, GTUDirectionality> prev2 = iterator2.next();
+                ImmutableEntry<Lane, GTUDirectionality> prev2 = iterator2.next();
                 if (prev1.equals(prev2))
                 {
                     // Same upstream lane, so a split

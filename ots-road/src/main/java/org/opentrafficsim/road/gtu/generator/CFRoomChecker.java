@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.generator;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -9,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -110,7 +110,7 @@ public class CFRoomChecker implements RoomChecker
                 Length canMove = dir.isPlus() ? lane.getLength().minus(position) : position;
                 while (canMove.lt(move))
                 {
-                    Map<Lane, GTUDirectionality> down = lane.downstreamLanes(dir, characteristics.getGTUType());
+                    ImmutableMap<Lane, GTUDirectionality> down = lane.downstreamLanes(dir, characteristics.getGTUType());
                     if (down.size() != 1)
                     {
                         // split or dead-end, fall back to original position

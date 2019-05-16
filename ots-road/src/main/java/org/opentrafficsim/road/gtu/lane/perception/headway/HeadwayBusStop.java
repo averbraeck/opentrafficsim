@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 
 /**
@@ -18,7 +19,7 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayBusStop extends AbstractHeadwayCopy
+public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
 {
 
     /** */
@@ -38,12 +39,13 @@ public class HeadwayBusStop extends AbstractHeadwayCopy
      * @param distance Length; distance
      * @param relativeLane RelativeLane; relative lane
      * @param conflictIds Set&lt;String&gt;; conflicts downstream of the bus stop
+     * @param lane Lane; lane
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayBusStop(final BusStop busStop, final Length distance, final RelativeLane relativeLane,
-            final Set<String> conflictIds) throws GTUException
+            final Set<String> conflictIds, final Lane lane) throws GTUException
     {
-        super(ObjectType.BUSSTOP, busStop.getId(), distance);
+        super(ObjectType.BUSSTOP, busStop.getId(), distance, lane);
         this.relativeLane = relativeLane;
         this.lines = busStop.getLines();
         this.conflictIds = conflictIds;

@@ -3,12 +3,12 @@ package org.opentrafficsim.road.network.lane.object;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashSet;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -117,7 +117,7 @@ public class BusStop extends AbstractLaneBasedObject
                     }
                     objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition(), dir);
                 }
-                Map<Lane, GTUDirectionality> downstreamLanes =
+                ImmutableMap<Lane, GTUDirectionality> downstreamLanes =
                         lane.downstreamLanes(dir, lane.getNetwork().getGtuType(GTUType.DEFAULTS.BUS));
                 int numLanes = 0;
                 for (Lane nextLane : downstreamLanes.keySet())

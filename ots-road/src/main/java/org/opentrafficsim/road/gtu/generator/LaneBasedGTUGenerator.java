@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -391,8 +392,8 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
             }
             return;
         }
-        Map<Lane, GTUDirectionality> downstreamLanes =
-                lane.getLane().downstreamLanes(lane.getDirection(), network.getGtuType(GTUType.DEFAULTS.VEHICLE));
+        ImmutableMap<Lane, GTUDirectionality> downstreamLanes =
+                lane.getLane().downstreamLanes(lane.getDirection(), this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         for (Lane downstreamLane : downstreamLanes.keySet())
         {
             Length startDistanceDownstream = startDistance.plus(lane.getLane().getLength());

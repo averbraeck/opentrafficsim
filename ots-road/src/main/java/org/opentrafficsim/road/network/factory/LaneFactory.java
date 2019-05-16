@@ -64,6 +64,12 @@ public final class LaneFactory
     /** Lane width to use (negative when building left to right). */
     private Length laneWidth0;
 
+    /** Start offset. */
+    private Length offsetStart = Length.ZERO;
+
+    /** End offset. */
+    private Length offsetEnd = Length.ZERO;
+
     /** Lane type to use. */
     private LaneType laneType0;
 
@@ -153,7 +159,8 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth.neg();
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Try.execute(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH),
+        Try.execute(
+                () -> new Stripe(this.link, this.offset.plus(this.offsetStart), this.offset.plus(this.offsetEnd), STRIPE_WIDTH),
                 "Unexpected exception while building link.");
         return this;
     }
@@ -179,6 +186,28 @@ public final class LaneFactory
     }
 
     /**
+     * Set start offset.
+     * @param startOffset Length; offset
+     * @return LaneFactory this lane factory for method chaining
+     */
+    public LaneFactory setOffsetStart(final Length startOffset)
+    {
+        this.offsetStart = startOffset;
+        return this;
+    }
+
+    /**
+     * Set end offset.
+     * @param endOffset Length; offset
+     * @return LaneFactory this lane factory for method chaining
+     */
+    public LaneFactory setOffsetEnd(final Length endOffset)
+    {
+        this.offsetEnd = endOffset;
+        return this;
+    }
+
+    /**
      * Adds a lane pair for each permeable, where the permeable determines the right-hand side line when building from left to
      * right and vice versa. The left-most line is created in {@code leftToRight()}, meaning that each permeable describes
      * permeablility between a lane and it's right-hand neighbor, when building left to right (and vice versa). For no allowed
@@ -192,12 +221,15 @@ public final class LaneFactory
         list.add(null);
         for (Permeable perm : list)
         {
-            this.lanes.add(Try.assign(() -> new Lane(this.link, "Lane " + (this.lanes.size() + 1),
-                    this.offset.plus(this.laneWidth0.multiplyBy(0.5)), this.laneWidth0.abs(), this.laneType0, this.speedLimit0),
+            Length startOffset = this.offset.plus(this.laneWidth0.multiplyBy(0.5)).plus(this.offsetStart);
+            Length endOffset = this.offset.plus(this.laneWidth0.multiplyBy(0.5)).plus(this.offsetEnd);
+            this.lanes.add(Try.assign(
+                    () -> new Lane(this.link, "Lane " + (this.lanes.size() + 1), startOffset, endOffset, this.laneWidth0.abs(),
+                            this.laneWidth0.abs(), this.laneType0, this.speedLimit0),
                     "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
-            Stripe stripe = Try.assign(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH),
-                    "Unexpected exception while building link.");
+            Stripe stripe = Try.assign(() -> new Stripe(this.link, this.offset.plus(this.offsetStart),
+                    this.offset.plus(this.offsetEnd), STRIPE_WIDTH), "Unexpected exception while building link.");
             if (perm != null)
             {
                 stripe.addPermeability(this.link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), perm);
