@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -29,9 +30,9 @@ public class AccelerationSpeedLimitTransition implements AccelerationIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException
+    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
+            final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
+            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException
     {
         SpeedLimitProspect slp = perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane);
         simplePlan.minimizeAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(params, speed, slp, carFollowingModel));

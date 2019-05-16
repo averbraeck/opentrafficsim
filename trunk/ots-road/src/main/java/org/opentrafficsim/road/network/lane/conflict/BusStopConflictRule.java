@@ -1,9 +1,8 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
-import java.util.Map;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -77,7 +76,7 @@ public class BusStopConflictRule implements ConflictRule
                 gtu = lane.getGtuBehind(pos, dir, RelativePosition.FRONT, this.simulator.getSimulatorTime());
                 if (gtu == null)
                 {
-                    Map<Lane, GTUDirectionality> map =
+                    ImmutableMap<Lane, GTUDirectionality> map =
                             lane.upstreamLanes(dir, lane.getNetwork().getGtuType(GTUType.DEFAULTS.BUS));
                     if (map.size() == 1)
                     {

@@ -75,7 +75,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
                     }
                     visited.add(laneDir);
                     cumulDist = cumulDist.plus(lane.getLength());
-                    map = lane.downstreamLanes(dir, gtuObj.getGTUType());
+                    map = lane.downstreamLanes(dir, gtuObj.getGTUType()).toMap();
                 }
                 else
                 {

@@ -5,6 +5,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 
@@ -28,7 +30,9 @@ public interface Estimation
         public NeighborTriplet estimate(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length distance, final boolean downstream, final Time when) throws ParameterException
         {
-            return new NeighborTriplet(distance, perceivedGtu.getSpeed(), perceivedGtu.getAcceleration());
+            return new NeighborTriplet(getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when),
+                    getEgoSpeed(perceivingGtu).plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when)),
+                    perceivedGtu.getAcceleration(when));
         }
     };
 
@@ -68,6 +72,58 @@ public interface Estimation
             Time when) throws ParameterException;
 
     /**
+     * Returns a delayed headway.
+     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivedGtu LaneBasedGTU; perceived GTU
+     * @param distance Length; actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
+     * @param downstream boolean; downstream (or upstream) neighbor
+     * @param when Time; moment of perception, reaction time included
+     * @return Length; delayed headway
+     */
+    default Length getDelayedHeadway(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu, final Length distance,
+            final boolean downstream, final Time when)
+    {
+        double delta = (perceivedGtu.getOdometer().si - perceivedGtu.getOdometer(when).si)
+                - (perceivingGtu.getOdometer().si - perceivingGtu.getOdometer(when).si);
+        if (downstream)
+        {
+            delta = -delta; // faster leader increases the headway, faster follower reduces the headway
+        }
+        return Length.createSI(distance.si + delta);
+    }
+
+    /**
+     * Returns the ego speed. This is the speed used in AbstractLaneBasedGTU.getCarFollowingAcceleration(), and hence this is
+     * the reference speed for the stimulus of speed difference.
+     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @return Speed; ego speed
+     */
+    default Speed getEgoSpeed(final LaneBasedGTU perceivingGtu)
+    {
+        try
+        {
+            return perceivingGtu.getTacticalPlanner().getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
+        }
+        catch (OperationalPlanException exception)
+        {
+            throw new RuntimeException("Speed difference is perceived using EgoPerception for the ego speed, but it's missing.",
+                    exception);
+        }
+    }
+
+    /**
+     * Returns a delayed speed difference (other minus ego).
+     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivedGtu LaneBasedGTU; perceived GTU
+     * @param when Time; moment of perception, reaction time included
+     * @return Speed; delayed speed difference (other minus ego)
+     */
+    default Speed getDelayedSpeedDifference(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu, final Time when)
+    {
+        return Speed.createSI(perceivedGtu.getSpeed(when).si - perceivingGtu.getSpeed(when).si);
+    }
+
+    /**
      * Estimation based on a factor.
      * <p>
      * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -100,15 +156,9 @@ public interface Estimation
         {
             double factor = 1.0 + this.sign * (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
                     - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
-            double delta = (perceivedGtu.getOdometer().si - perceivedGtu.getOdometer(when).si)
-                    - (perceivingGtu.getOdometer().si - perceivingGtu.getOdometer(when).si);
-            if (downstream)
-            {
-                delta = -delta; // faster leader increases the headway, faster follower reduces the headway
-            }
-            Length headway = Length.createSI((distance.si + delta) * factor);
-            double egoSpeed = perceivingGtu.getSpeed(when).si;
-            Speed speed = Speed.createSI(egoSpeed + factor * (perceivedGtu.getSpeed(when).si - egoSpeed));
+            Length headway = getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when).multiplyBy(factor);
+            Speed speed = getEgoSpeed(perceivingGtu)
+                    .plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when).multiplyBy(factor));
             Acceleration acceleration = perceivedGtu.getAcceleration(when);
             return new NeighborTriplet(headway, speed, acceleration);
         }

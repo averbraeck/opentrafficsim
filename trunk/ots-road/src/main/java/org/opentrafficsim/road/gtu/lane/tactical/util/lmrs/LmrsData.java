@@ -47,7 +47,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     private final Map<Class<? extends Incentive>, Desire> desireMap = new HashMap<>();
 
     /** Synchronization state. */
-    private Synchronizable.State synchronizationState;
+    private Synchronizable.State synchronizationState = Synchronizable.State.NONE;
 
     /** Vehicle that is being synchronized to. */
     private String syncVehicle;
@@ -174,7 +174,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     {
         return this.desireMap.get(incentiveClass);
     }
-
+    
     /**
      * Returns the desire map.
      * @return Map&lt;Class&lt;? extends Incentive&gt;, Desire&gt;; desire map

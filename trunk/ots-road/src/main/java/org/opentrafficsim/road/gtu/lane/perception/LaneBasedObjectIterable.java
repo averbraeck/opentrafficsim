@@ -25,12 +25,12 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @param <L> lane based object type
  */
 public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneBasedObject>
-        extends AbstractPerceptionIterable<H, L, Void>
+        extends AbstractPerceptionIterable<H, L, Boolean>
 {
 
     /** Margin for start and end of lane. */
-    private static final Length MARGIN = Length.createSI(1e-9); 
-    
+    private static final Length MARGIN = Length.createSI(1e-9);
+
     /** Class of lane based objects to return. */
     private final Class<L> clazz;
 
@@ -56,7 +56,7 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
-    protected Entry getNext(final LaneRecord<?> record, final Length position, final Void counter)
+    protected Entry getNext(final LaneRecord<?> record, final Length position, final Boolean counter)
     {
         List<LaneBasedObject> list;
         if (isDownstream())
@@ -65,12 +65,13 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
             {
                 return null;
             }
-            Length pos = position.eq0() ? MARGIN.neg() : position;
+            Length pos = position.eq0() && counter == null ? MARGIN.neg() : position;
             list = record.getLane().getObjectAhead(pos, record.getDirection());
         }
         else
         {
-            Length pos = position.eq(record.getLane().getLength()) ? record.getLane().getLength().plus(MARGIN) : position;
+            Length pos = position.eq(record.getLane().getLength()) && counter == null
+                    ? record.getLane().getLength().plus(MARGIN) : position;
             list = record.getLane().getObjectBehind(pos, record.getDirection());
         }
         while (list != null)
@@ -89,9 +90,9 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
             {
                 if (set.size() == 1)
                 {
-                    return new Entry(set.iterator().next(), null, pos);
+                    return new Entry(set.iterator().next(), true, pos);
                 }
-                return new Entry(set, null, pos);
+                return new Entry(set, true, pos);
             }
             if (isDownstream())
             {

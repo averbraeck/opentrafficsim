@@ -80,6 +80,16 @@ public class SimpleOperationalPlan implements Serializable
     {
         return this.acceleration;
     }
+    
+    /**
+     * Sets acceleration. 
+     * @param acceleration Acceleration; acceleration
+     */
+    public final void setAcceleration(final Acceleration acceleration)
+    {
+        checkAcceleration(acceleration);
+        this.acceleration = acceleration;
+    }
 
     /**
      * @return duration.

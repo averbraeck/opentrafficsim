@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
@@ -42,9 +43,9 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
 
     /** {@inheritDoc} */
     @Override
-    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo)
+    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
+            final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
+            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
         // TODO ignore incentive if we need to change lane for the route

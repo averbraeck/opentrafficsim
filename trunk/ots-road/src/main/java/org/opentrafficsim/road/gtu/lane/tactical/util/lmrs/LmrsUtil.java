@@ -137,15 +137,18 @@ public final class LmrsUtil implements LmrsParameters
         TurnIndicatorIntent turnIndicatorStatus = TurnIndicatorIntent.NONE;
         if (laneChange.isChangingLane())
         {
-            RelativeLane secondLane = laneChange.getSecondLane(gtu);
             initiatedLaneChange = LateralDirectionality.NONE;
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> secondLeaders = neighbors.getLeaders(secondLane);
-            Acceleration aSecond = carFollowingModel.followingAcceleration(params, speed, sli, secondLeaders);
-            if (!secondLeaders.isEmpty() && lmrsData.isNewLeader(secondLeaders.first()))
+            if (lmrsData.isHumanLongitudinalControl())
             {
-                initHeadwayRelaxation(params, secondLeaders.first());
+                RelativeLane secondLane = laneChange.getSecondLane(gtu);
+                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> secondLeaders = neighbors.getLeaders(secondLane);
+                Acceleration aSecond = carFollowingModel.followingAcceleration(params, speed, sli, secondLeaders);
+                if (!secondLeaders.isEmpty() && lmrsData.isNewLeader(secondLeaders.first()))
+                {
+                    initHeadwayRelaxation(params, secondLeaders.first());
+                }
+                a = Acceleration.min(a, aSecond);
             }
-            a = Acceleration.min(a, aSecond);
         }
         else
         {
@@ -161,7 +164,7 @@ public final class LmrsUtil implements LmrsParameters
             if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree)
             {
                 if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getLeft(), speed, a,
-                        LateralDirectionality.LEFT, lmrsData.getGapAcceptance()))
+                        LateralDirectionality.LEFT, lmrsData.getGapAcceptance(), laneChange))
                 {
                     // change left
                     initiatedLaneChange = LateralDirectionality.LEFT;
@@ -182,7 +185,7 @@ public final class LmrsUtil implements LmrsParameters
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree)
             {
                 if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getRight(), speed, a,
-                        LateralDirectionality.RIGHT, lmrsData.getGapAcceptance()))
+                        LateralDirectionality.RIGHT, lmrsData.getGapAcceptance(), laneChange))
                 {
                     // change right
                     initiatedLaneChange = LateralDirectionality.RIGHT;
@@ -253,7 +256,7 @@ public final class LmrsUtil implements LmrsParameters
                     state = Synchronizable.State.SYNCHRONIZING;
                 }
                 aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.getLeft(),
-                        LateralDirectionality.LEFT, lmrsData);
+                        LateralDirectionality.LEFT, lmrsData, laneChange, initiatedLaneChange);
                 a = applyAcceleration(a, aSync, lmrsData, state);
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
@@ -270,7 +273,7 @@ public final class LmrsUtil implements LmrsParameters
                     state = Synchronizable.State.SYNCHRONIZING;
                 }
                 aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.getRight(),
-                        LateralDirectionality.RIGHT, lmrsData);
+                        LateralDirectionality.RIGHT, lmrsData, laneChange, initiatedLaneChange);
                 a = applyAcceleration(a, aSync, lmrsData, state);
             }
             else
@@ -445,18 +448,19 @@ public final class LmrsUtil implements LmrsParameters
      * @param ownAcceleration Acceleration; current car-following acceleration
      * @param lat LateralDirectionality; lateral direction for synchronization
      * @param gapAcceptance GapAcceptance; gap-acceptance model
+     * @param laneChange LaneChange; lane change
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
     static boolean acceptLaneChange(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
             final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final Acceleration ownAcceleration,
-            final LateralDirectionality lat, final GapAcceptance gapAcceptance)
+            final LateralDirectionality lat, final GapAcceptance gapAcceptance, final LaneChange laneChange)
             throws ParameterException, OperationalPlanException
     {
         // beyond start distance
-        boolean beyond = Try.assign(() -> perception.getGtu().laneChangeAllowed(), "Cannot obtain GTU.");
-        if (!beyond)
+        LaneBasedGTU gtu = Try.assign(() -> perception.getGtu(), "Cannot obtain GTU.");
+        if (!gtu.laneChangeAllowed())
         {
             return false;
         }
@@ -468,42 +472,78 @@ public final class LmrsUtil implements LmrsParameters
             return false;
         }
 
-        // other causes for deceleration
-        IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
-        // if (intersection != null)
-        // {
-        // // conflicts alongside?
-        // if ((lat.isLeft() && intersection.isAlongsideConflictLeft())
-        // || (lat.isRight() && intersection.isAlongsideConflictRight()))
-        // {
-        // return false;
-        // }
-        // if (quickIntersectionScan(params, sli, cfm, ownSpeed, lat, intersection).lt(params.getParameter(BCRIT).neg()))
-        // {
-        // return false;
-        // }
-        // }
+        // neighbors and lane change distance (not gap-acceptance)
         NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
-        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
-        RelativeLane lane = new RelativeLane(lat, 1);
-        PerceptionCollectable<HeadwayConflict, Conflict> conflicts = intersection.getConflicts(lane);
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(lane);
-        try
+        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+        if (!leaders.isEmpty())
         {
-            Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, cfm, ego.getLength(), ego.getWidth(),
-                    ownSpeed, ownAcceleration, sli, new ConflictPlans(), perception.getGtu(), lane);
-            if (a.lt(params.getParameter(ParameterTypes.B).neg()))
+            boolean ok = laneChange.checkRoom(gtu, leaders.first());
+            if (!ok)
             {
                 return false;
             }
         }
-        catch (GTUException exception)
+        RelativeLane lane = new RelativeLane(lat, 1);
+        leaders = neighbors.getLeaders(lane);
+        if (!leaders.isEmpty())
         {
-            throw new OperationalPlanException(exception);
+            boolean ok = laneChange.checkRoom(gtu, leaders.first());
+            if (!ok)
+            {
+                return false;
+            }
+        }
+
+        // other causes for deceleration
+        IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
+        if (intersection != null)
+        {
+            // // conflicts alongside?
+            // if ((lat.isLeft() && intersection.isAlongsideConflictLeft())
+            // || (lat.isRight() && intersection.isAlongsideConflictRight()))
+            // {
+            // return false;
+            // }
+            // if (quickIntersectionScan(params, sli, cfm, ownSpeed, lat, intersection).lt(params.getParameter(BCRIT).neg()))
+            // {
+            // return false;
+            // }
+
+            // conflicts
+            EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
+            PerceptionCollectable<HeadwayConflict, Conflict> conflicts = intersection.getConflicts(lane);
+            try
+            {
+                Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, cfm, ego.getLength(),
+                        ego.getWidth(), ownSpeed, ownAcceleration, sli, new ConflictPlans(), perception.getGtu(), lane);
+                if (a.lt(params.getParameter(ParameterTypes.B).neg()))
+                {
+                    return false;
+                }
+            }
+            catch (GTUException exception)
+            {
+                throw new OperationalPlanException(exception);
+            }
+
+            // traffic lights
+            Iterable<HeadwayTrafficLight> trafficLights = intersection.getTrafficLights(lane);
+            for (HeadwayTrafficLight trafficLight : trafficLights)
+            {
+                if (trafficLight.getTrafficLightColor().isRedOrYellow())
+                {
+                    boolean ok = laneChange.checkRoom(gtu, trafficLight);
+                    if (!ok)
+                    {
+                        return false;
+                    }
+                }
+            }
         }
 
         // safe regarding neighbors?
         return gapAcceptance.acceptGap(perception, params, sli, cfm, desire, ownSpeed, ownAcceleration, lat);
+
     }
 
     /**

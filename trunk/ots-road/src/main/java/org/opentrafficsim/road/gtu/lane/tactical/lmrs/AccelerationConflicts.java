@@ -9,6 +9,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -21,7 +22,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -43,21 +43,26 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
 
     /** {@inheritDoc} */
     @Override
-    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo)
+    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
+            final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
+            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
-        // TODO consider adjacent lanes before and during lane change
         EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
         Acceleration acceleration = ego.getAcceleration();
         Length length = ego.getLength();
         Length width = ego.getWidth();
-        PerceptionCollectable<HeadwayConflict, Conflict> conflicts =
-                perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
+        Iterable<HeadwayConflict> conflicts = perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
         PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
-
+        if (!lane.isCurrent())
+        {
+            conflicts = new FilteredIterable<>(conflicts, (conflict) ->
+            {
+                return conflict.getDistance().gt(mergeDistance);
+            });
+        }
+        conflicts = onRoute(conflicts, gtu);
         Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length, width, speed,
                 acceleration, speedLimitInfo, this.yieldPlans, gtu, lane);
         simplePlan.minimizeAcceleration(a);

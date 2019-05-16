@@ -210,8 +210,9 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                                 otherConflict.getDownstreamGtus(getGtu(), DirectIntersectionPerception.this.headwayGtuType,
                                         conflictingVisibility);
                         // TODO stop lines (current models happen not to use this, but should be possible)
-                        HeadwayStopLine stopLine = new HeadwayStopLine("stopLineId", Length.ZERO);
-                        HeadwayStopLine conflictingStopLine = new HeadwayStopLine("conflictingStopLineId", Length.ZERO);
+                        HeadwayStopLine stopLine = new HeadwayStopLine("stopLineId", Length.ZERO, conflict.getLane());
+                        HeadwayStopLine conflictingStopLine =
+                                new HeadwayStopLine("conflictingStopLineId", Length.ZERO, conflict.getLane());
 
                         Lane thisLane = conflict.getLane();
                         Lane otherLane = otherConflict.getLane();
@@ -231,7 +232,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                         headwayConflict = new HeadwayConflict(conflictType, conflictPriority, conflictRuleType, id, distance,
                                 length, conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs,
                                 conflictingVisibility, conflictingSpeedLimit, conflictingLink,
-                                HeadwayConflict.Width.linear(startWidth, endWidth), stopLine, conflictingStopLine);
+                                HeadwayConflict.Width.linear(startWidth, endWidth), stopLine, conflictingStopLine, thisLane);
 
                         Length trafficLightDistance = conflict.getOtherConflict()
                                 .getTrafficLightDistance(perceivingGtu.getParameters().getParameter(ParameterTypes.LOOKAHEAD));

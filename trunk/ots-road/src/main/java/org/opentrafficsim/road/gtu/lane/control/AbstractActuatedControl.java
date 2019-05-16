@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -64,13 +65,13 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
 
     /** {@inheritDoc} */
     @Override
-    public Acceleration getAcceleration(final LaneBasedGTU gtu)
+    public Acceleration getAcceleration(final LaneBasedGTU gtu, final Parameters settings)
     {
         try
         {
             PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = gtu.getTacticalPlanner().getPerception()
                     .getPerceptionCategory(LongitudinalControllerPerception.class).getLeaders();
-            return this.delayedActuation.delayActuation(getDesiredAcceleration(gtu, leaders), gtu);
+            return delayActuation(getDesiredAcceleration(gtu, leaders, settings), gtu);
         }
         catch (OperationalPlanException exception)
         {
@@ -86,10 +87,11 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
      * Returns the desired acceleration from the longitudinal control.
      * @param gtu LaneBasedGTU; gtu
      * @param leaders PerceptionCollectable&lt;HeadwayGTU, LaneBasedGTU&gt;; leaders
+     * @param settings Parameters; system settings
      * @return Acceleration; desired acceleration
      * @throws ParameterException if parameter is not present
      */
     public abstract Acceleration getDesiredAcceleration(LaneBasedGTU gtu,
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders) throws ParameterException;
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, Parameters settings) throws ParameterException;
 
 }

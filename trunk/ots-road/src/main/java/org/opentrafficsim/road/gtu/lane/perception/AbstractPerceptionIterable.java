@@ -16,6 +16,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
@@ -75,7 +76,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         this.relativePosition = relativePosition;
         this.route = route;
     }
-    
+
     /**
      * Whether the iterable searches downstream.
      * @return boolean; whether the iterable searches downstream
@@ -94,7 +95,9 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
     /**
      * Returns the next object(s) on the lane represented by the record. This should only consider objects on the given lane.
-     * This method should not check the distance towards objects with the maximum distance.
+     * This method should not check the distance towards objects with the maximum distance. The counter will be {@code null} for
+     * the first object(s). For following object(s) it is whatever value is given with the previous output {@code Entry}. Hence,
+     * this method maintains its own counting system.
      * @param record LaneRecord&lt;?&gt;; record representing the lane and direction
      * @param position Length; position to look beyond
      * @param counter C; counter
@@ -427,7 +430,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         {
             return this.set != null;
         }
-        
+
         /**
          * Returns the underlying object. Use {@code !isSet()} to check whether there is an object.
          * @return U; underlying set
@@ -436,7 +439,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         {
             return this.object;
         }
-        
+
         /**
          * Returns the underlying set. Use {@code isSet()} to check whether there is a set.
          * @return Set&lt;U&gt;; underlying set

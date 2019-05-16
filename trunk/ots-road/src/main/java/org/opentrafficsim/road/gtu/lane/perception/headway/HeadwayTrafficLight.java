@@ -17,7 +17,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class HeadwayTrafficLight extends AbstractHeadwayCopy
+public class HeadwayTrafficLight extends AbstractHeadwayLaneBasedObject
 {
     /** */
     private static final long serialVersionUID = 20160410L;
@@ -34,7 +34,7 @@ public class HeadwayTrafficLight extends AbstractHeadwayCopy
      */
     public HeadwayTrafficLight(final TrafficLight trafficLight, final Length distance) throws GTUException
     {
-        super(ObjectType.TRAFFICLIGHT, id(trafficLight), distance);
+        super(ObjectType.TRAFFICLIGHT, id(trafficLight), distance, trafficLight.getLane());
         this.trafficLight = trafficLight;
     }
 

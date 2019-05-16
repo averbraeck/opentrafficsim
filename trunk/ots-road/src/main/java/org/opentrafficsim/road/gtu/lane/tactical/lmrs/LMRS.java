@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClassList;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -77,7 +78,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
     private static final long serialVersionUID = 20160300L;
 
     /** Lane change status. */
-    private final LaneChange laneChange = new LaneChange();
+    private final LaneChange laneChange;
 
     /** LMRS data. */
     private final LmrsData lmrsData;
@@ -106,6 +107,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
             final Tailgating tailgating)
     {
         super(carFollowingModel, gtu, lanePerception);
+        this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GTUException.class);
         this.lmrsData = new LmrsData(synchronization, cooperation, gapAcceptance, tailgating);
     }
 
@@ -185,25 +187,31 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
         double dSync = params.getParameterOrNull(LmrsParameters.DSYNC);
         if (this.laneChange.isChangingLane())
         {
-            lanes = new RelativeLane[] {RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu())};
+            lanes = new RelativeLane[] { RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu()) };
         }
         else if (dLeft >= dSync && dLeft >= dRight)
         {
-            lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.LEFT};
+            lanes = new RelativeLane[] { RelativeLane.CURRENT, RelativeLane.LEFT };
         }
         else if (dRight >= dSync)
         {
-            lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.RIGHT};
+            lanes = new RelativeLane[] { RelativeLane.CURRENT, RelativeLane.RIGHT };
         }
         else
         {
-            lanes = new RelativeLane[] {RelativeLane.CURRENT};
+            lanes = new RelativeLane[] { RelativeLane.CURRENT };
         }
-        for (AccelerationIncentive incentive : this.accelerationIncentives)
+        for (RelativeLane lane : lanes)
         {
-            for (RelativeLane lane : lanes)
+            // On the current lane, consider all incentives. On adjacent lanes only consider incentives beyond the distance over
+            // which a lane change is not yet possible, i.e. the merge distance.
+            // TODO: consider route in incentives (only if not on current lane?)
+            Length mergeDistance = lane.isCurrent() ? Length.ZERO
+                    : Synchronization.getMergeDistance(getPerception(), lane.getLateralDirectionality());
+            for (AccelerationIncentive incentive : this.accelerationIncentives)
             {
-                incentive.accelerate(simplePlan, lane, getGtu(), getPerception(), getCarFollowingModel(), speed, params, sli);
+                incentive.accelerate(simplePlan, lane, mergeDistance, getGtu(), getPerception(), getCarFollowingModel(), speed,
+                        params, sli);
             }
         }
 

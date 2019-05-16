@@ -16,6 +16,7 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -528,7 +529,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             while (iterator.hasNext())
             {
                 RollingLaneStructureRecord prev = iterator.next();
-                Map<Lane, GTUDirectionality> nexts = prev.getLane().upstreamLanes(prev.getDirection(), gtuType);
+                ImmutableMap<Lane, GTUDirectionality> nexts = prev.getLane().upstreamLanes(prev.getDirection(), gtuType);
                 if (prev.getStartDistance().si < this.up.si)
                 {
                     // upstream search ends on this lane
@@ -841,7 +842,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             while (iterator.hasNext())
             {
                 RollingLaneStructureRecord record = iterator.next();
-                Map<Lane, GTUDirectionality> nexts = record.getLane().downstreamLanes(record.getDirection(), gtuType);
+                ImmutableMap<Lane, GTUDirectionality> nexts = record.getLane().downstreamLanes(record.getDirection(), gtuType);
                 if (!linksToExpandFrom.contains(record.getLane().getParentLink()))
                 {
                     // downstream search ends on this lane
@@ -941,7 +942,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         {
             for (RollingLaneStructureRecord prev : prevs.keySet())
             {
-                Map<Lane, GTUDirectionality> nextLanes = prev.getLane().downstreamLanes(prev.getDirection(), gtuType);
+                ImmutableMap<Lane, GTUDirectionality> nextLanes = prev.getLane().downstreamLanes(prev.getDirection(), gtuType);
                 RelativeLane relativeLane = this.relativeLanes.get(prev);
                 for (Lane nextLane : nextLanes.keySet())
                 {
@@ -997,7 +998,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         {
             for (RollingLaneStructureRecord prev : prevs.keySet())
             {
-                Map<Lane, GTUDirectionality> nextLanes = prev.getLane().upstreamLanes(prev.getDirection(), gtuType);
+                ImmutableMap<Lane, GTUDirectionality> nextLanes = prev.getLane().upstreamLanes(prev.getDirection(), gtuType);
                 boolean anyAdded = false;
                 for (Lane nextLane : nextLanes.keySet())
                 {

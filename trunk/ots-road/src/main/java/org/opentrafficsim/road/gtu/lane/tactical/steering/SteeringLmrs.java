@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.steering;
 import java.util.LinkedHashSet;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClassList;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -56,7 +57,7 @@ public class SteeringLmrs extends AbstractLaneBasedTacticalPlanner
     private static final long serialVersionUID = 20160300L;
 
     /** Lane change status. */
-    private final LaneChange laneChange = new LaneChange();
+    private final LaneChange laneChange;
 
     /** LMRS data. */
     private final LmrsData lmrsData;
@@ -88,6 +89,7 @@ public class SteeringLmrs extends AbstractLaneBasedTacticalPlanner
             final FeedbackTable feedbackTable)
     {
         super(carFollowingModel, gtu, lanePerception);
+        this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GTUException.class);
         this.lmrsData = new LmrsData(synchronization, cooperation, gapAcceptance, Tailgating.NONE);
         this.feedbackTable = feedbackTable;
     }

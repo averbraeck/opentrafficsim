@@ -1,13 +1,16 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
@@ -28,13 +31,23 @@ public class AccelerationTrafficLights implements AccelerationIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, OperationalPlanException
+    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
+            final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
+            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
+            throws ParameterException, OperationalPlanException
     {
-        simplePlan.minimizeAcceleration(TrafficLightUtil.respondToTrafficLights(params,
-                perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane), carFollowingModel, speed,
-                speedLimitInfo));
+        Iterable<HeadwayTrafficLight> it =
+                perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane);
+        if (!lane.isCurrent() && mergeDistance.gt0())
+        {
+            it = new FilteredIterable<>(it, (trafficLight) ->
+            {
+                return trafficLight.getDistance().gt(mergeDistance);
+            });
+        }
+        it = onRoute(it, gtu);
+        simplePlan.minimizeAcceleration(
+                TrafficLightUtil.respondToTrafficLights(params, it, carFollowingModel, speed, speedLimitInfo));
     }
 
     /** {@inheritDoc} */

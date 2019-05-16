@@ -1,5 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.canBeAhead;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.removeAllUpstreamOfConflicts;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -17,6 +26,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -28,6 +38,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPercep
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -52,19 +63,21 @@ public interface Synchronization extends LmrsParameters
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
+                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
                 throws ParameterException, OperationalPlanException
         {
-
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             // stop for end
             Length remainingDist = null;
+            int nCur = 0;
             for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(InfrastructurePerception.class)
                     .getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
             {
                 if (remainingDist == null || remainingDist.gt(ili.getRemainingDistance()))
                 {
                     remainingDist = ili.getRemainingDistance();
+                    nCur = ili.getRequiredNumberOfLaneChanges();
                 }
             }
             if (remainingDist != null)
@@ -72,10 +85,14 @@ public interface Synchronization extends LmrsParameters
                 Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
                 Acceleration bCrit = params.getParameter(ParameterTypes.BCRIT);
                 remainingDist = remainingDist.minus(params.getParameter(ParameterTypes.S0));
-                // TODO replace this hack with something that properly accounts for overshoot
-                // this method also introduces very strong deceleration at low speeds, as the time step makes bMin go from 3.4
-                // (ignored, so maybe 1.25 acceleration applied) to >10
-                remainingDist = remainingDist.minus(Length.createSI(10));
+                if (!laneChange.isChangingLane() && initiatedLaneChange.isNone())
+                {
+                    // TODO replace this hack with something that properly accounts for overshoot
+                    // this method also introduces very strong deceleration at low speeds, as the time step makes bMin go from 3.4
+                    // (ignored, so maybe 1.25 acceleration applied) to >10
+                    //remainingDist = remainingDist.minus(Length.createSI(10));
+                    remainingDist = remainingDist.minus(laneChange.getMinimumLaneChangeDistance().multiplyBy(nCur));
+                }
                 if (remainingDist.le0())
                 {
                     if (speed.gt0())
@@ -106,19 +123,17 @@ public interface Synchronization extends LmrsParameters
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
+                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
                 throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
-            PerceptionCollectable<HeadwayGTU,
-                    LaneBasedGTU> set =
-                            removeAllUpstreamOfConflicts(
-                                    removeAllUpstreamOfConflicts(perception.getPerceptionCategory(NeighborsPerception.class)
-                                            .getLeaders(relativeLane), perception, relativeLane),
-                                    perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
+                    relativeLane), perception, RelativeLane.CURRENT);
             HeadwayGTU leader = null;
             if (set != null)
             {
@@ -146,7 +161,8 @@ public interface Synchronization extends LmrsParameters
                 a = Acceleration.min(a, aSingle);
                 a = gentleUrgency(a, desire, params);
                 // dead end
-                a = Acceleration.min(a, DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
+                a = Acceleration.min(a, DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange,
+                        initiatedLaneChange));
 
             }
 
@@ -173,7 +189,8 @@ public interface Synchronization extends LmrsParameters
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
+                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
                 throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POSITIVE_INFINITY;
@@ -204,24 +221,25 @@ public interface Synchronization extends LmrsParameters
                 // a = Acceleration.min(a, DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
             }
             // brake for dead-end
-            Length remainingDist = null;
-            for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(InfrastructurePerception.class)
-                    .getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
-            {
-                if (remainingDist == null || remainingDist.gt(ili.getRemainingDistance()))
-                {
-                    remainingDist = ili.getRemainingDistance();
-                }
-            }
-            if (remainingDist != null)
-            {
-                params.setParameterResettable(ParameterTypes.B, Acceleration.interpolate(params.getParameter(ParameterTypes.B),
-                        params.getParameter(ParameterTypes.BCRIT), 0.99));
-                a = Acceleration.min(a, CarFollowingUtil.stop(cfm, params, ownSpeed, sli, remainingDist));
-                params.resetParameter(ParameterTypes.B);
-            }
+            a = Acceleration.min(a,
+                    DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange, initiatedLaneChange));
+            // Length remainingDist = null;
+            // for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(InfrastructurePerception.class)
+            // .getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
+            // {
+            // if (remainingDist == null || remainingDist.gt(ili.getRemainingDistance()))
+            // {
+            // remainingDist = ili.getRemainingDistance();
+            // }
+            // }
+            // if (remainingDist != null)
+            // {
+            // params.setParameterResettable(ParameterTypes.B, Acceleration.interpolate(params.getParameter(ParameterTypes.B),
+            // params.getParameter(ParameterTypes.BCRIT), 0.99));
+            // a = Acceleration.min(a, CarFollowingUtil.stop(cfm, params, ownSpeed, sli, remainingDist));
+            // params.resetParameter(ParameterTypes.B);
+            // }
             // never stop before we can actually merge
-            // TODO: this ignores the front it seems!
             Length xMerge = getMergeDistance(perception, lat);
             if (xMerge.gt0())
             {
@@ -237,7 +255,8 @@ public interface Synchronization extends LmrsParameters
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
+                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
                 throws ParameterException, OperationalPlanException
         {
             double dCoop = params.getParameter(DCOOP);
@@ -247,7 +266,7 @@ public interface Synchronization extends LmrsParameters
             {
                 return Acceleration.POSITIVE_INFINITY;
             }
-            return PASSIVE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData);
+            return PASSIVE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange, initiatedLaneChange);
         }
     };
 
@@ -256,7 +275,8 @@ public interface Synchronization extends LmrsParameters
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
+                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
                 throws ParameterException, OperationalPlanException
         {
 
@@ -413,7 +433,7 @@ public interface Synchronization extends LmrsParameters
                     }
                 }
                 else if (!LmrsUtil.acceptLaneChange(perception, params, sli, cfm, desire, ownSpeed, Acceleration.ZERO, lat,
-                        lmrsData.getGapAcceptance()))
+                        lmrsData.getGapAcceptance(), laneChange))
                 {
                     a = stopForEnd(xCur, xMerge, params, ownSpeed, cfm, sli);
                     // but no stronger than getting behind the leader
@@ -463,13 +483,18 @@ public interface Synchronization extends LmrsParameters
      * @return Length; distance to the next merge
      * @throws OperationalPlanException if there is no infrastructure perception
      */
-    static Length getMergeDistance(final LanePerception perception, final LateralDirectionality lat)
+    public static Length getMergeDistance(final LanePerception perception, final LateralDirectionality lat)
             throws OperationalPlanException
     {
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         Length dx = Try.assign(() -> perception.getGtu().getFront().getDx(), "Could not obtain GTU.");
-        Length xMerge = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).minus(dx);
-        return xMerge.lt0() ? xMerge.neg() : Length.ZERO; // zero or positive value where lane change is not possible
+        Length xMergeRef = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat);
+        if (xMergeRef.gt0() && xMergeRef.lt(dx))
+        {
+            return Length.ZERO;
+        }
+        Length xMerge = xMergeRef.minus(dx);
+        return xMerge.lt0() ? xMerge.neg() : Length.ZERO; // positive value where lane change is not possible
     }
 
     /**
@@ -481,12 +506,15 @@ public interface Synchronization extends LmrsParameters
      * @param desire double; level of lane change desire
      * @param lat LateralDirectionality; lateral direction for synchronization
      * @param lmrsData LmrsData; LMRS data
+     * @param laneChange LaneChange; lane change
+     * @param initiatedLaneChange LateralDirectionality; lateral direction of initiated lane change
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
     Acceleration synchronize(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm,
-            double desire, LateralDirectionality lat, LmrsData lmrsData) throws ParameterException, OperationalPlanException;
+            double desire, LateralDirectionality lat, LmrsData lmrsData, LaneChange laneChange,
+            LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException;
 
     /**
      * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.
