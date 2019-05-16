@@ -285,7 +285,7 @@ public class FeatureViewer extends JFrame
                 String s = "<html>" + nearestFeature.toString().replaceAll(", ", "<br/>") + "</html>";
                 setToolTipText(s);
                 ToolTipManager.sharedInstance().setDismissDelay(20000);
-                // System.out.println(s);
+                System.out.println(s);
             }
         }
 
