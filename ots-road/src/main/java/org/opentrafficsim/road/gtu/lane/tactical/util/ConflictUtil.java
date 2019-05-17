@@ -31,7 +31,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
@@ -560,7 +559,8 @@ public final class ConflictUtil
         else
         {
             HeadwayGTU conflictingGTU = conflict.getUpstreamConflictingGTUs().first();
-            if (conflictingGTU.getSpeed().eq0() && conflictingGTU.getDistance().gt(parameters.getParameter(S0)))
+            if (conflictingGTU.getSpeed().eq0() && conflictingGTU.isAhead()
+                    && conflictingGTU.getDistance().gt(parameters.getParameter(S0)))
             {
                 // conflicting vehicle too far away
                 return false;
@@ -764,10 +764,25 @@ public final class ConflictUtil
                     SpeedLimitInfo sli = conflictingVehicle.getSpeedLimitInfo();
                     CarFollowingModel cfm = conflictingVehicle.getCarFollowingModel();
                     // Constant acceleration creates inf at stand still, triggering passing trough a congested stream
-                    tteCa = AnticipationInfo.anticipateMovementFreeAcceleration(conflictingVehicle.getDistance(),
-                            conflictingVehicle.getSpeed(), params, cfm, sli, TIME_STEP);
+                    if (conflictingVehicle.isAhead())
+                    {
+                        tteCa = AnticipationInfo.anticipateMovementFreeAcceleration(conflictingVehicle.getDistance(),
+                                conflictingVehicle.getSpeed(), params, cfm, sli, TIME_STEP);
+                    }
+                    else
+                    {
+                        tteCa = new AnticipationInfo(Duration.ZERO, conflictingVehicle.getSpeed());
+                    }
                 }
-                tteCs = AnticipationInfo.anticipateMovement(conflictingVehicle.getDistance(), conflictingVehicle.getSpeed(), b);
+                if (conflictingVehicle.isAhead())
+                {
+                    tteCs = AnticipationInfo.anticipateMovement(conflictingVehicle.getDistance(), conflictingVehicle.getSpeed(),
+                            b);
+                }
+                else
+                {
+                    tteCs = new AnticipationInfo(Duration.ZERO, conflictingVehicle.getSpeed());
+                }
             }
 
             // check gap
@@ -780,9 +795,10 @@ public final class ConflictUtil
                 speedDiff = speedDiff > 0 ? speedDiff : 0;
                 Duration additionalTime = new Duration(speedDiff / -b.si, DurationUnit.SI);
                 // check if conflict vehicle will be upstream after that time, position beyond conflict after additional time
-                double followerFront = conflictingVehicle.getSpeed().si * ttcOa.getDuration().si
+                double followerFront = conflictingVehicle.isAhead() ? conflictingVehicle.getSpeed().si * ttcOa.getDuration().si
                         - conflictingVehicle.getDistance().si + (conflictingVehicle.getSpeed().si * additionalTime.si
-                                + 0.5 * b.si * additionalTime.si * additionalTime.si);
+                                + 0.5 * b.si * additionalTime.si * additionalTime.si)
+                        : 0.0;
                 double ownRear = vSelf * additionalTime.si; // constant speed after clearing
                 Duration tMax = parameters.getParameter(ParameterTypes.TMAX);
                 Length s0 = parameters.getParameter(S0);

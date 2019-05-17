@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -233,8 +234,32 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         }
         if (this.crossSectionSlices.size() <= 2)
         {
-            return this.getParentLink().getDesignLine().offsetLine(getDesignLineOffsetAtBegin().getSI(),
-                    getDesignLineOffsetAtEnd().getSI());
+            OTSLine3D designLine = this.getParentLink().getDesignLine();
+            if (designLine.size() > 2)
+            {
+                return designLine.offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
+            }
+            else
+            {
+                try
+                {
+                    DirectedPoint refStart = getParentLink().getStartNode().getLocation();
+                    double startRot = refStart.getRotZ();
+                    double startOffset = this.crossSectionSlices.get(0).getDesignLineOffset().si;
+                    OTSPoint3D start = new OTSPoint3D(refStart.x - Math.sin(startRot) * startOffset,
+                            refStart.y + Math.cos(startRot) * startOffset, refStart.z);
+                    DirectedPoint refEnd = getParentLink().getEndNode().getLocation();
+                    double endRot = refEnd.getRotZ();
+                    double endOffset = this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getDesignLineOffset().si;
+                    OTSPoint3D end = new OTSPoint3D(refEnd.x - Math.sin(endRot) * endOffset,
+                            refEnd.y + Math.cos(endRot) * endOffset, refEnd.z);
+                    return new OTSLine3D(start, end);
+                }
+                catch (RemoteException exception)
+                {
+                    throw new OTSGeometryException(exception);
+                }
+            }
         }
         else
         {
