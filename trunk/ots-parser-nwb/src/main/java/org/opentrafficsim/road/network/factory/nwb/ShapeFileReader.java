@@ -3,8 +3,8 @@ package org.opentrafficsim.road.network.factory.nwb;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
@@ -12,9 +12,14 @@ import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.MultiLineString;
 import org.opengis.feature.Feature;
+import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 
 /**
  * Access to the NWB (Nationaal WegenBestand - Dutch National Road database) shape files.
@@ -93,12 +98,12 @@ public class ShapeFileReader
     /**
      * Read a shape file and collect records that match a caller-provided check.
      * @param qualifier FeatureQualifier; the check to use
-     * @return List&lt;Feature&gt;; the Features that passed the check
+     * @return Map&lt;Integer, Feature&gt;; map with the Features that passed the check
      * @throws IOException when reading a file failed
      */
-    public List<Feature> readShapeFile(final FeatureQualifier qualifier) throws IOException
+    public Map<Long, Feature> readShapeFile(final FeatureQualifier qualifier) throws IOException
     {
-        List<Feature> result = new ArrayList<>();
+        Map<Long, Feature> result = new HashMap<>();
         DataStore dataStore = (ShapefileDataStore) FileDataStoreFinder.getDataStore(subDirAndShapeFile);
         FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
 
@@ -107,9 +112,10 @@ public class ShapeFileReader
         while (featureIterator.hasNext())
         {
             Feature feature = featureIterator.next();
-            if (qualifier.qualify(feature))
+            Long key = qualifier.qualify(feature);
+            if (null != key)
             {
-                result.add(feature);
+                result.put(key, feature);
             }
         }
         featureIterator.close();
@@ -125,9 +131,23 @@ public class ShapeFileReader
         /**
          * Determine if a Feature object should be saved for use.
          * @param feature Feature; the Feature object
-         * @return boolean; true of the Feature should be saved; false if it should be discarded
+         * @return Integer; key to use to store the feature, or null if the feature should not be stored
          */
-        boolean qualify(Feature feature);
+        Long qualify(Feature feature);
+    }
+    
+    /**
+     * Construct the design line of a Feature.
+     * @param feature Feature; the feature
+     * @return OTSLine3D; the design line of the feature
+     * @throws OTSGeometryException when the feature is not a proper line
+     */
+    public static OTSLine3D designLine(final Feature feature) throws OTSGeometryException
+    {
+        GeometryAttribute geometry = feature.getDefaultGeometryProperty();
+        MultiLineString multiLineString = (MultiLineString) geometry.getValue();
+        Coordinate[] coordinates = multiLineString.getCoordinates();
+        return new OTSLine3D(coordinates);
     }
 
 }

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -85,14 +84,14 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
         long start = System.nanoTime();
         ShapeFileReader shr =
                 new ShapeFileReader(baseDir + File.separator + "wegen", date, "Wegvakken" + File.separator + "Wegvakken.shp");
-        List<Feature> roadData = shr.readShapeFile(new FeatureQualifier()
+        Map<Long, Feature> roadData = shr.readShapeFile(new FeatureQualifier()
         {
             int count = 0;
 
             int collected = 0;
 
             @Override
-            public boolean qualify(Feature feature)
+            public Long qualify(Feature feature)
             {
                 if (++count % 100000 == 0)
                 {
@@ -100,11 +99,12 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
                 }
                 try
                 {
-                    for (OTSPoint3D p : FeatureViewer.designLine(feature).getPoints())
+                    for (OTSPoint3D p : ShapeFileReader.designLine(feature).getPoints())
                     {
                         if (p.x < 80000 || p.y < 444000 || p.x > 90000 || p.y > 455000)
                         {
-                            return false;
+                            collected++;
+                            return (Long) null;
                         }
                     }
                 }
@@ -112,35 +112,25 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
                 {
                     e.printStackTrace();
                 }
-                collected++;
-                return true;
-                // String roadNumber = ((String) feature.getProperty("WEGNUMMER").getValue());
-                // return roadNumber.contains("020") || roadNumber.contains("470") || roadNumber.contains("013")
-                // || roadNumber.contains("471") || roadNumber.contains("209") || roadNumber.contains("472")
-                // || roadNumber.contains("473");
+                return (Long) feature.getProperty("WVK_ID").getValue();
             }
         });
         long end = System.nanoTime();
         System.out.println(String.format("Data collection time %.3fs", (end - start) / 1e9));
         System.out.println("Retrieved " + roadData.size() + " records");
 
-        Map<Integer, Feature> wvkMap = new HashMap<>();
-        for (Feature feature : roadData)
-        {
-            wvkMap.put(Math.toIntExact((Long) feature.getProperty("WVK_ID").getValue()), feature);
-        }
         start = System.nanoTime();
         ShapeFileReader lanes = new ShapeFileReader(baseDir + File.separator + "wegvakken", date,
                 "Rijstroken" + File.separator + "Rijstroken.shp");
-        List<Feature> laneData = lanes.readShapeFile(new FeatureQualifier()
+        Map<Long, Feature> laneData = lanes.readShapeFile(new FeatureQualifier()
         {
 
             @Override
-            public boolean qualify(Feature feature)
+            public Long qualify(Feature feature)
             {
                 // System.out.println(feature);
-                Integer wvkId = Math.toIntExact((Long) feature.getProperty("WVK_ID").getValue());
-                return wvkMap.containsKey(wvkId);
+                Long wvkId = (Long) feature.getProperty("WVK_ID").getValue();
+                return roadData.containsKey(wvkId) ? wvkId : null;
                 // if (((String) feature.getProperty("WEGNUMMER").getValue()).contains("013"))
                 // {
                 // System.out.println(feature);
@@ -163,11 +153,12 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
         LaneType standardLaneType = network.getLaneType(DEFAULTS.HIGHWAY);
         Map<GTUType, Speed> speedLimitMap = new HashMap<>();
 
-        for (Feature feature : laneData)
+        for (Long wvkId : roadData.keySet())
         {
+            Feature feature = roadData.get(wvkId);
             OTSNode startNode = null;
             OTSNode endNode = null;
-            OTSLine3D designLine = FeatureViewer.designLine(feature);
+            OTSLine3D designLine = ShapeFileReader.designLine(feature);
             for (OTSPoint3D p : designLine.getPoints())
             {
                 String nodeName = String.format("Node%d", ++nextNodeNumber);
@@ -179,27 +170,30 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
                 endNode = node;
             }
             ExtendedCrossSectionLink link = new ExtendedCrossSectionLink(network,
-                    String.format("%s.%d", feature.getProperty("WVK_ID").getValue(), ++nextLinkNumber), startNode, endNode,
+                    String.format("%s.%d", feature.getProperty("STT_NAAM").getValue(), ++nextLinkNumber), startNode, endNode,
                     linkType, designLine, simulator, LaneKeepingPolicy.KEEPRIGHT);
-            Integer wvkId = Math.toIntExact((Long) feature.getProperty("WVK_ID").getValue());
-            System.out.println("Adding feature for " + wvkId + " which contains " + wvkMap.get(wvkId));
-            link.addFeature("Wegvakken", wvkMap.get(wvkId));
-            link.addFeature("Basic roads database Rijstroken", feature);
-            // We don't know lateral positions of the CrossSectionElements; this leads to odd problems...
-            String laneFormat = (String) feature.getProperty("OMSCHR").getValue();
-            int lanesAtStart = Integer.parseInt(laneFormat.substring(0, 1));
-            int lanesAtEnd = Integer.parseInt(laneFormat.substring(5, 6));
-            int maxLaneNo = Math.max(lanesAtStart, lanesAtEnd);
-            Length cumulativeOffsetAtStart = Length.ZERO;
-            Length cumulativeOffsetAtEnd = Length.ZERO;
-            for (int laneNo = 0; laneNo < maxLaneNo; laneNo++)
+            // System.out.println("Adding feature for " + wvkId + " which contains " + roadData.get(wvkId));
+            link.addFeature("Wegvakken", feature);
+            Feature f = laneData.get(wvkId);
+            if (null != f)
             {
-                Length widthAtStart = laneNo < lanesAtStart - lanesAtEnd ? Length.ZERO : standardLaneWidth;
-                Length widthAtEnd = laneNo < lanesAtEnd - lanesAtStart ? Length.ZERO : standardLaneWidth;
-                new Lane(link, String.format("Lane %d", laneNo + 1), cumulativeOffsetAtStart, cumulativeOffsetAtEnd,
-                        widthAtStart, widthAtEnd, standardLaneType, speedLimitMap, false);
-                cumulativeOffsetAtStart = cumulativeOffsetAtStart.minus(widthAtStart);
-                cumulativeOffsetAtEnd = cumulativeOffsetAtEnd.minus(widthAtEnd);
+                link.addFeature("Basic roads database Rijstroken", f);
+                // We don't know lateral positions of the CrossSectionElements; this leads to odd problems...
+                String laneFormat = (String) f.getProperty("OMSCHR").getValue();
+                int lanesAtStart = Integer.parseInt(laneFormat.substring(0, 1));
+                int lanesAtEnd = Integer.parseInt(laneFormat.substring(5, 6));
+                int maxLaneNo = Math.max(lanesAtStart, lanesAtEnd);
+                Length cumulativeOffsetAtStart = Length.ZERO;
+                Length cumulativeOffsetAtEnd = Length.ZERO;
+                for (int laneNo = 0; laneNo < maxLaneNo; laneNo++)
+                {
+                    Length widthAtStart = laneNo < lanesAtStart - lanesAtEnd ? Length.ZERO : standardLaneWidth;
+                    Length widthAtEnd = laneNo < lanesAtEnd - lanesAtStart ? Length.ZERO : standardLaneWidth;
+                    new Lane(link, String.format("Lane %d", laneNo + 1), cumulativeOffsetAtStart, cumulativeOffsetAtEnd,
+                            widthAtStart, widthAtEnd, standardLaneType, speedLimitMap, false);
+                    cumulativeOffsetAtStart = cumulativeOffsetAtStart.minus(widthAtStart);
+                    cumulativeOffsetAtEnd = cumulativeOffsetAtEnd.minus(widthAtEnd);
+                }
             }
         }
         OTSAnimationPanel animationPanel = new OTSAnimationPanel(network.getExtent(), new Dimension(800, 600), simulator,
