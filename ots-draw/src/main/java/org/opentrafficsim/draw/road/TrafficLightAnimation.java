@@ -153,7 +153,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
                 final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
                 throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, simulator);
+            super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);
         }
 
         /** {@inheritDoc} */

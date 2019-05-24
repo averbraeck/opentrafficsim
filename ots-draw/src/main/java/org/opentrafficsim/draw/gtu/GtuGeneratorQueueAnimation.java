@@ -48,7 +48,7 @@ public class GtuGeneratorQueueAnimation extends TextAnimation
     public GtuGeneratorQueueAnimation(final GtuGeneratorQueue source, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NamingException, RemoteException
     {
-        super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
+        super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator, TextAnimation.RENDERWHEN1);
     }
 
     /** {@inheritDoc} */

@@ -12,10 +12,13 @@ import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
+import org.opentrafficsim.draw.core.TextAnimation.ScaleDependentRendering;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -55,7 +58,16 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
             throws NamingException, RemoteException
     {
         super(new ElevatedNode(node), simulator);
-        this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator);
+        // Figure out the relevance of this node
+        ScaleDependentRendering sizeLimiter = TextAnimation.RENDERWHEN1;
+        for (Link link : node.getLinks())
+        {
+            if (link.getLinkType().getId().equals(LinkType.DEFAULTS.FREEWAY.getId()))
+            {
+                sizeLimiter = TextAnimation.RENDERWHEN10;
+            }
+        }
+        this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator, sizeLimiter);
     }
 
     /** {@inheritDoc} */
@@ -96,7 +108,7 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
     {
         /** the node for introspection. */
         private final Node node;
-        
+
         /** the location of the node to which the animation belongs. */
         private DirectedPoint location;
 
@@ -172,14 +184,16 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
          * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param scaleDependentRendering ScaleDependendentRendering; size limiter for text animation
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
+        @SuppressWarnings("checkstyle:parameternumber")
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
-                throws RemoteException, NamingException
+                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator,
+                final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, simulator);
+            super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, simulator, scaleDependentRendering);
             setFlip(false);
             setRotate(false);
         }
@@ -190,7 +204,8 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
         public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
                 throws RemoteException, NamingException
         {
-            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
+            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator,
+                    getScaleDependentRendering());
         }
 
         /** {@inheritDoc} */
