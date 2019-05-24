@@ -12,6 +12,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.TextAlignment;
@@ -57,7 +58,9 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
     {
         super(link, simulator);
         this.width = width;
-        this.text = new Text(link, link.getId(), 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, simulator);
+        this.text = new Text(link, link.getId(), 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, simulator,
+                link.getLinkType().getId().equals(LinkType.DEFAULTS.FREEWAY.getId()) ? TextAnimation.RENDERWHEN10
+                        : TextAnimation.RENDERWHEN1);
     }
 
     /** {@inheritDoc} */
@@ -100,8 +103,8 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         {
             OTSLine3D line = new OTSLine3D(new OTSPoint3D(endPoint.x - dy, endPoint.y + dx, endPoint.z),
                     new OTSPoint3D(endPoint.x + dy, endPoint.y - dx, endPoint.z));
-            PaintLine.paintLine(graphics, getSource().getLinkType().isConnector() ? Color.PINK.darker() : Color.BLUE, this.width / 30,
-                    getSource().getLocation(), line);
+            PaintLine.paintLine(graphics, getSource().getLinkType().isConnector() ? Color.PINK.darker() : Color.BLUE,
+                    this.width / 30, getSource().getLocation(), line);
         }
         catch (OTSGeometryException exception)
         {
@@ -164,14 +167,15 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
          * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param scaleDependentRendering ScaleDependentRendering; enables rendering in a scale dependent fashion
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
-                throws RemoteException, NamingException
+                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator,
+                final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, simulator);
+            super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, simulator, null, scaleDependentRendering);
         }
 
         /** {@inheritDoc} */
@@ -195,7 +199,8 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
                 throws RemoteException, NamingException
         {
-            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
+            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator,
+                    super.getScaleDependentRendering());
         }
 
         /** {@inheritDoc} */
