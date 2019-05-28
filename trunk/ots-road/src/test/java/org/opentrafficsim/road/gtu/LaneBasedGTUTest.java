@@ -8,12 +8,14 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -49,6 +51,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -99,19 +102,19 @@ public class LaneBasedGTUTest implements UNITS
         GTUType truckType = this.network.getGtuType(GTUType.DEFAULTS.TRUCK);
         LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // Create a series of Nodes (some closely bunched together)
-        ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
+        List<OTSRoadNode> nodes = new ArrayList<>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new OTSNode(this.network, "Node at " + xPos, new OTSPoint3D(xPos, 20, 0)));
+            nodes.add(new OTSRoadNode(this.network, "Node at " + xPos, new OTSPoint3D(xPos, 20, 0), Direction.ZERO));
         }
         // Now we can build a series of Links with Lanes on them
         ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
         final int laneCount = 5;
         for (int i = 1; i < nodes.size(); i++)
         {
-            OTSNode fromNode = nodes.get(i - 1);
-            OTSNode toNode = nodes.get(i);
+            OTSRoadNode fromNode = nodes.get(i - 1);
+            OTSRoadNode toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, null, laneCount, laneType,
                     new Speed(100, KM_PER_HOUR), simulator);
@@ -386,8 +389,8 @@ public class LaneBasedGTUTest implements UNITS
             }
             GTUType carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            OTSNode fromNode = new OTSNode(this.network, "Node A", new OTSPoint3D(0, 0, 0));
-            OTSNode toNode = new OTSNode(this.network, "Node B", new OTSPoint3D(1000, 0, 0));
+            OTSRoadNode fromNode = new OTSRoadNode(this.network, "Node A", new OTSPoint3D(0, 0, 0), Direction.ZERO);
+            OTSRoadNode toNode = new OTSRoadNode(this.network, "Node B", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
             String linkName = "AB";
             Lane lane = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, null, 1, laneType,
                     new Speed(200, KM_PER_HOUR), simulator)[0];

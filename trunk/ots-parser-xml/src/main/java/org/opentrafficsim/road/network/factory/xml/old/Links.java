@@ -37,6 +37,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
@@ -80,9 +81,9 @@ final class Links
     {
         OTSLine3D designLine =
                 new OTSLine3D(connectorTag.nodeStartTag.node.getPoint(), connectorTag.nodeEndTag.node.getPoint());
-        CrossSectionLink connector = new CrossSectionLink(parser.network, connectorTag.name, connectorTag.nodeStartTag.node,
-                connectorTag.nodeEndTag.node, parser.network.getLinkType(LinkType.DEFAULTS.CONNECTOR), designLine, simulator,
-                null);
+        CrossSectionLink connector = new CrossSectionLink(parser.network, connectorTag.name, 
+                (OTSRoadNode) connectorTag.nodeStartTag.node, (OTSRoadNode) connectorTag.nodeEndTag.node, 
+                parser.network.getLinkType(LinkType.DEFAULTS.CONNECTOR), designLine, simulator, null);
         if (connectorTag.demandWeight != null)
         {
             connector.setDemandWeight(connectorTag.demandWeight);
@@ -252,9 +253,9 @@ final class Links
         OTSLine3D designLine = OTSLine3D.createAndCleanOTSLine3D(coordinates);
 
         // TODO: Directionality has to be added later when the lanes and their direction are known.
-        CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
-                linkTag.nodeEndTag.node, parser.network.getLinkType(LinkType.DEFAULTS.FREEWAY), designLine, simulator,
-                linkTag.laneKeepingPolicy);
+        CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, (OTSRoadNode) linkTag.nodeStartTag.node,
+                (OTSRoadNode) linkTag.nodeEndTag.node, parser.network.getLinkType(LinkType.DEFAULTS.FREEWAY), designLine, 
+                simulator, linkTag.laneKeepingPolicy);
 
         if (linkTag.priority != null)
         {

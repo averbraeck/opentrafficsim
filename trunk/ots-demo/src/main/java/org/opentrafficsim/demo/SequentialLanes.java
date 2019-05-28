@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -56,6 +57,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -207,7 +209,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
         private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
         /** The nodes of our network in the order that all GTUs will visit them. */
-        private List<OTSNode> nodes = new ArrayList<>();
+        private List<OTSRoadNode> nodes = new ArrayList<>();
 
         /** Strategical planner generator for cars. */
         private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
@@ -277,13 +279,13 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             this.nodes = new ArrayList<>();
             try
             {
-                OTSNode n0 = new OTSNode(this.network, "Node(0,0)", new OTSPoint3D(0, 0));
-                OTSNode n1 = new OTSNode(this.network, "Node(1000,0)", new OTSPoint3D(1000, 0));
-                OTSNode n2 = new OTSNode(this.network, "Node(1020,3)", new OTSPoint3D(1020, 3));
-                OTSNode n3 = new OTSNode(this.network, "Node(2000,197)", new OTSPoint3D(2000, 197));
-                OTSNode n4 = new OTSNode(this.network, "Node(2020,200)", new OTSPoint3D(2020, 200));
-                OTSNode n5 = new OTSNode(this.network, "Node(2200,200)", new OTSPoint3D(2200, 200));
-                this.nodes.addAll(Arrays.asList(new OTSNode[] {n0, n1, n2, n3, n4, n5}));
+                OTSRoadNode n0 = new OTSRoadNode(this.network, "Node(0,0)", new OTSPoint3D(0, 0), Direction.ZERO);
+                OTSRoadNode n1 = new OTSRoadNode(this.network, "Node(1000,0)", new OTSPoint3D(1000, 0), Direction.ZERO);
+                OTSRoadNode n2 = new OTSRoadNode(this.network, "Node(1020,3)", new OTSPoint3D(1020, 3), Direction.ZERO);
+                OTSRoadNode n3 = new OTSRoadNode(this.network, "Node(2000,197)", new OTSPoint3D(2000, 197), Direction.ZERO);
+                OTSRoadNode n4 = new OTSRoadNode(this.network, "Node(2020,200)", new OTSPoint3D(2020, 200), Direction.ZERO);
+                OTSRoadNode n5 = new OTSRoadNode(this.network, "Node(2200,200)", new OTSPoint3D(2200, 200), Direction.ZERO);
+                this.nodes.addAll(Arrays.asList(new OTSRoadNode[] {n0, n1, n2, n3, n4, n5}));
 
                 LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 
@@ -299,8 +301,8 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
 
                 for (int i = 1; i < this.nodes.size(); i++)
                 {
-                    OTSNode fromNode = this.nodes.get(i - 1);
-                    OTSNode toNode = this.nodes.get(i);
+                    OTSRoadNode fromNode = this.nodes.get(i - 1);
+                    OTSRoadNode toNode = this.nodes.get(i);
                     OTSLine3D line = lines[i - 1];
                     String linkName = fromNode.getId() + "-" + toNode.getId();
                     // LongitudinalDirectionality direction = line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network;
 import static org.junit.Assert.assertEquals;
 
 import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -12,9 +13,9 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkLocation;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.mock.MockSimulator;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -39,8 +40,8 @@ public class LinkLocationTest implements UNITS
     {
         // Preparations
         OTSRoadNetwork network = new OTSRoadNetwork("link location test network", true);
-        OTSNode nodeFrom = new OTSNode(network, "From", new OTSPoint3D(0, 0, 0));
-        OTSNode nodeTo = new OTSNode(network, "To", new OTSPoint3D(1000, 0, 0));
+        OTSRoadNode nodeFrom = new OTSRoadNode(network, "From", new OTSPoint3D(0, 0, 0), Direction.ZERO);
+        OTSRoadNode nodeTo = new OTSRoadNode(network, "To", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
         OTSSimulatorInterface simulator = MockSimulator.createMock();
         CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo,

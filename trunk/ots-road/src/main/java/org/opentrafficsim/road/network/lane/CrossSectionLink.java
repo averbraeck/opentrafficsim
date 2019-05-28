@@ -68,8 +68,8 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Construction of a cross section link.
      * @param network RoadNetwork; the network
      * @param id String; the link id.
-     * @param startNode Node; the start node (directional).
-     * @param endNode Node; the end node (directional).
+     * @param startNode OTSRoadNode; the start node (directional).
+     * @param endNode OTSRoadNode; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OTSLine3D; the design line of the Link
      * @param simulator OTSSimulatorInterface; the simulator on which events can be scheduled
@@ -78,7 +78,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CrossSectionLink(final RoadNetwork network, final String id, final Node startNode, final Node endNode,
+    public CrossSectionLink(final RoadNetwork network, final String id, final OTSRoadNode startNode, final OTSRoadNode endNode,
             final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {

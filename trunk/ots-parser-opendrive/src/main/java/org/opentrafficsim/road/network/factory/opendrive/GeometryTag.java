@@ -6,12 +6,14 @@ import java.util.UUID;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -70,7 +72,7 @@ class GeometryTag implements Serializable
 
     /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    OTSNode node = null;
+    OTSRoadNode node = null;
 
     OTSLine3D interLine = null;
 
@@ -135,7 +137,7 @@ class GeometryTag implements Serializable
             geometryTag.id = UUID.randomUUID().toString();
         }
 
-        OTSNode node = new OTSNode(network, geometryTag.id, coordinate);
+        OTSRoadNode node = new OTSRoadNode(network, geometryTag.id, coordinate, Direction.createSI(Double.NaN));
         geometryTag.node = node;
         return node;
     }

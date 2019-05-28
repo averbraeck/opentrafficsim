@@ -22,6 +22,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
@@ -145,6 +146,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -715,9 +717,9 @@ public class LmrsStrategies implements EventListenerInterface
                 OTSPoint3D pointA = new OTSPoint3D(0, 0, 0);
                 OTSPoint3D pointB = new OTSPoint3D(4000, 0, 0);
                 OTSPoint3D pointC = new OTSPoint3D(7400, 0, 0);
-                OTSNode nodeA = new OTSNode(net, "A", pointA);
-                OTSNode nodeB = new OTSNode(net, "B", pointB);
-                OTSNode nodeC = new OTSNode(net, "C", pointC);
+                OTSRoadNode nodeA = new OTSRoadNode(net, "A", pointA, Direction.ZERO);
+                OTSRoadNode nodeB = new OTSRoadNode(net, "B", pointB, Direction.ZERO);
+                OTSRoadNode nodeC = new OTSRoadNode(net, "C", pointC, Direction.ZERO);
                 CrossSectionLink linkAB = new CrossSectionLink(net, "AB", nodeA, nodeB,
                         LmrsStrategies.this.network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(pointA, pointB),
                         getSimulator(), LaneKeepingPolicy.KEEPRIGHT);

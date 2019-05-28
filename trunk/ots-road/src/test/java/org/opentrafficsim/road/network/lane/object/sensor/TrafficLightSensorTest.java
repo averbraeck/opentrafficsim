@@ -16,6 +16,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -51,6 +52,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.event.EventInterface;
@@ -84,20 +86,21 @@ public class TrafficLightSensorTest implements EventListenerInterface
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException
     {
         OTSRoadNetwork network = new OTSRoadNetwork("network", true);
-        OTSNode prevNode = null;
+        OTSRoadNode prevNode = null;
         Lane[] result = new Lane[lengths.length];
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
-            OTSNode node = new OTSNode(network, "node" + nodeNumber, new OTSPoint3D(cumulativeLength, 0, 0));
+            OTSRoadNode node = new OTSRoadNode(network, "node" + nodeNumber, new OTSPoint3D(cumulativeLength, 0, 0), 
+                    Direction.ZERO);
             if (null != prevNode)
             {
                 LongitudinalDirectionality direction = lengths[nodeNumber - 1] > 0 ? LongitudinalDirectionality.DIR_PLUS
                         : LongitudinalDirectionality.DIR_MINUS;
-                OTSNode fromNode = LongitudinalDirectionality.DIR_PLUS == direction ? prevNode : node;
-                OTSNode toNode = LongitudinalDirectionality.DIR_PLUS == direction ? node : prevNode;
+                OTSRoadNode fromNode = LongitudinalDirectionality.DIR_PLUS == direction ? prevNode : node;
+                OTSRoadNode toNode = LongitudinalDirectionality.DIR_PLUS == direction ? node : prevNode;
                 int laneOffset = LongitudinalDirectionality.DIR_PLUS == direction ? 0 : -1;
                 result[nodeNumber - 1] = LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1,
                         laneOffset, laneOffset, laneType, speedLimit, simulator)[0];
@@ -157,7 +160,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
     public final void trafficLightSensorTest()
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException, GTUException
     {
-        double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900},};
+        double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900}, };
         for (double[] lengthList : lengthLists)
         {
             for (int pos = 50; pos < 130; pos++)

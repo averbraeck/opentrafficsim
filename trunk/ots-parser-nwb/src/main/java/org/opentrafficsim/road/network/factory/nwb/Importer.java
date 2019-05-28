@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -25,12 +26,12 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.nwb.ShapeFileReader.FeatureQualifier;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -175,18 +176,30 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
         for (Long wvkId : roadData.keySet())
         {
             Feature feature = roadData.get(wvkId);
-            OTSNode startNode = null;
-            OTSNode endNode = null;
+            OTSRoadNode startNode = null;
+            OTSRoadNode endNode = null;
             OTSLine3D designLine = ShapeFileReader.designLine(feature);
+            OTSPoint3D prevPoint = null;
             for (OTSPoint3D p : designLine.getPoints())
             {
                 String nodeName = String.format("Node%d", ++nextNodeNumber);
-                OTSNode node = new OTSNode(network, nodeName, p);
+                Direction direction ;
+                if (null == startNode)
+                {
+                    OTSPoint3D nextPoint = designLine.getPoints()[1];
+                    direction = Direction.createSI(Math.atan2(nextPoint.y - p.y, nextPoint.x - p.x));
+                }
+                else
+                {
+                    direction = Direction.createSI(Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x));
+                }
+                OTSRoadNode node = new OTSRoadNode(network, nodeName, p, direction);
                 if (null == startNode)
                 {
                     startNode = node;
                 }
                 endNode = node;
+                prevPoint = p;
             }
             ExtendedCrossSectionLink link = new ExtendedCrossSectionLink(network,
                     String.format("%s.%d", feature.getProperty("STT_NAAM").getValue(), ++nextLinkNumber), startNode, endNode,

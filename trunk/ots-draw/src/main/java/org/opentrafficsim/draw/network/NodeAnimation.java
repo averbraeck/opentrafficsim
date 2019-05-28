@@ -1,8 +1,10 @@
 package org.opentrafficsim.draw.network;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -76,6 +78,23 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
     {
         graphics.setColor(Color.BLACK);
         graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
+        try
+        {
+            double direction = getSource().getLocation().getZ();
+            if (!Double.isNaN(direction))
+            {
+                graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                GeneralPath arrow = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
+                arrow.moveTo(0.5,  -0.5);
+                arrow.lineTo(2,  0);
+                arrow.lineTo(0.5,  0.5);
+                graphics.draw(arrow);
+            }
+        }
+        catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /** {@inheritDoc} */
@@ -124,7 +143,8 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
             this.node = node;
             try
             {
-                this.location = new DirectedPoint(node.getLocation().x, node.getLocation().y, node.getLocation().z + ZOFFSET);
+                DirectedPoint p = node.getLocation();
+                this.location = new DirectedPoint(p.x, p.y, p.z + ZOFFSET, p.getRotX(), p.getRotY(), p.getRotZ());
                 this.bounds = node.getBounds();
             }
             catch (RemoteException exception)

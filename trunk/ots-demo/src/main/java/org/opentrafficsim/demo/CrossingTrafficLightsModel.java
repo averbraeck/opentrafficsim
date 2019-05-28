@@ -8,11 +8,13 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -27,7 +29,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
@@ -43,6 +44,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -119,26 +121,26 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
     {
         try
         {
-            OTSNode[][] nodes = new OTSNode[4][4];
-            nodes[0][0] = new OTSNode(this.network, "sn1", new OTSPoint3D(10, -500));
-            nodes[0][1] = new OTSNode(this.network, "sn2", new OTSPoint3D(10, -20));
-            nodes[0][2] = new OTSNode(this.network, "sn3", new OTSPoint3D(10, +20));
-            nodes[0][3] = new OTSNode(this.network, "sn4", new OTSPoint3D(10, +5000));
+            OTSRoadNode[][] nodes = new OTSRoadNode[4][4];
+            nodes[0][0] = new OTSRoadNode(this.network, "sn1", new OTSPoint3D(10, -500), new Direction(90, DirectionUnit.EAST_DEGREE));
+            nodes[0][1] = new OTSRoadNode(this.network, "sn2", new OTSPoint3D(10, -20), new Direction(90, DirectionUnit.EAST_DEGREE));
+            nodes[0][2] = new OTSRoadNode(this.network, "sn3", new OTSPoint3D(10, +20), new Direction(90, DirectionUnit.EAST_DEGREE));
+            nodes[0][3] = new OTSRoadNode(this.network, "sn4", new OTSPoint3D(10, +5000), new Direction(90, DirectionUnit.EAST_DEGREE));
 
-            nodes[1][0] = new OTSNode(this.network, "we1", new OTSPoint3D(-500, -10));
-            nodes[1][1] = new OTSNode(this.network, "we2", new OTSPoint3D(-20, -10));
-            nodes[1][2] = new OTSNode(this.network, "we3", new OTSPoint3D(+20, -10));
-            nodes[1][3] = new OTSNode(this.network, "we4", new OTSPoint3D(+5000, -10));
+            nodes[1][0] = new OTSRoadNode(this.network, "we1", new OTSPoint3D(-500, -10), Direction.ZERO);
+            nodes[1][1] = new OTSRoadNode(this.network, "we2", new OTSPoint3D(-20, -10), Direction.ZERO);
+            nodes[1][2] = new OTSRoadNode(this.network, "we3", new OTSPoint3D(+20, -10), Direction.ZERO);
+            nodes[1][3] = new OTSRoadNode(this.network, "we4", new OTSPoint3D(+5000, -10), Direction.ZERO);
 
-            nodes[2][0] = new OTSNode(this.network, "ns1", new OTSPoint3D(-10, +500));
-            nodes[2][1] = new OTSNode(this.network, "ns2", new OTSPoint3D(-10, +20));
-            nodes[2][2] = new OTSNode(this.network, "ns3", new OTSPoint3D(-10, -20));
-            nodes[2][3] = new OTSNode(this.network, "ns4", new OTSPoint3D(-10, -5000));
+            nodes[2][0] = new OTSRoadNode(this.network, "ns1", new OTSPoint3D(-10, +500), new Direction(270, DirectionUnit.EAST_DEGREE));
+            nodes[2][1] = new OTSRoadNode(this.network, "ns2", new OTSPoint3D(-10, +20), new Direction(270, DirectionUnit.EAST_DEGREE));
+            nodes[2][2] = new OTSRoadNode(this.network, "ns3", new OTSPoint3D(-10, -20), new Direction(270, DirectionUnit.EAST_DEGREE));
+            nodes[2][3] = new OTSRoadNode(this.network, "ns4", new OTSPoint3D(-10, -5000), new Direction(270, DirectionUnit.EAST_DEGREE));
 
-            nodes[3][0] = new OTSNode(this.network, "ew1", new OTSPoint3D(+500, 10));
-            nodes[3][1] = new OTSNode(this.network, "ew2", new OTSPoint3D(+20, 10));
-            nodes[3][2] = new OTSNode(this.network, "ew3", new OTSPoint3D(-20, 10));
-            nodes[3][3] = new OTSNode(this.network, "ew4", new OTSPoint3D(-5000, 10));
+            nodes[3][0] = new OTSRoadNode(this.network, "ew1", new OTSPoint3D(+500, 10), new Direction(180, DirectionUnit.EAST_DEGREE));
+            nodes[3][1] = new OTSRoadNode(this.network, "ew2", new OTSPoint3D(+20, 10), new Direction(180, DirectionUnit.EAST_DEGREE));
+            nodes[3][2] = new OTSRoadNode(this.network, "ew3", new OTSPoint3D(-20, 10), new Direction(180, DirectionUnit.EAST_DEGREE));
+            nodes[3][3] = new OTSRoadNode(this.network, "ew4", new OTSPoint3D(-5000, 10), new Direction(180, DirectionUnit.EAST_DEGREE));
 
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 

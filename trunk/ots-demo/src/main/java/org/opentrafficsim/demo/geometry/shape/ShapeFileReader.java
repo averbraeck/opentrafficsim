@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -37,7 +38,6 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.ShoulderAnimation;
@@ -45,6 +45,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -77,7 +78,7 @@ public final class ShapeFileReader implements UNITS
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<String, OTSNode> readNodes(final Network network, final String shapeFileName, final String numberType,
+    public static Map<String, OTSRoadNode> readNodes(final Network network, final String shapeFileName, final String numberType,
             final boolean returnCentroid, final boolean allCentroids) throws IOException
     {
         /*-
@@ -100,7 +101,7 @@ public final class ShapeFileReader implements UNITS
         }
         ShapefileDataStore storeNodes = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<String, OTSNode> nodes = new HashMap<>();
+        Map<String, OTSRoadNode> nodes = new HashMap<>();
 
         SimpleFeatureSource featureSourceNodes = storeNodes.getFeatureSource();
         SimpleFeatureCollection featureCollectionNodes = featureSourceNodes.getFeatures();
@@ -133,7 +134,7 @@ public final class ShapeFileReader implements UNITS
                 }
                 if (addThisNode)
                 {
-                    OTSNode node = new OTSNode(network, nr, new OTSPoint3D(coordinate));
+                    OTSRoadNode node = new OTSRoadNode(network, nr, new OTSPoint3D(coordinate), Direction.createSI(Double.NaN));
                     nodes.put(nr, node);
                 }
             }
@@ -176,7 +177,7 @@ public final class ShapeFileReader implements UNITS
      * @throws IOException on error
      */
     public static void readLinks(final OTSRoadNetwork network, final String shapeFileName, final Map<String, Link> links,
-            final Map<String, OTSNode> nodes, final OTSSimulatorInterface simulator) throws IOException
+            final Map<String, OTSRoadNode> nodes, final OTSSimulatorInterface simulator) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -240,8 +241,8 @@ public final class ShapeFileReader implements UNITS
                 Frequency capacity = new Frequency(capacityIn, PER_HOUR);
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), KILOMETER);
                 // create the link or connector to a centroid....
-                OTSNode nodeA = nodes.get(lNodeA);
-                OTSNode nodeB = nodes.get(lNodeB);
+                OTSRoadNode nodeA = nodes.get(lNodeA);
+                OTSRoadNode nodeB = nodes.get(lNodeB);
 
                 if (nodeA != null && nodeB != null)
                 {

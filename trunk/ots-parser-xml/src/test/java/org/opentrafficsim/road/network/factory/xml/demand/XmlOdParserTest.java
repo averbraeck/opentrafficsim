@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -35,6 +36,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -94,9 +96,10 @@ public class XmlOdParserTest
         this.simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), model);
         this.gtuTypes.add(this.network.getGtuType(GTUType.DEFAULTS.CAR));
         this.gtuTypes.add(this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
-        OTSNode A = new OTSNode(this.network, "A", new OTSPoint3D(0, 0, 0));
-        OTSNode B = new OTSNode(this.network, "B", new OTSPoint3D(1, 0, 0));
-        OTSNode C = new OTSNode(this.network, "C", new OTSPoint3D(0, 1, 0));
+        // TODO verify that Direction.ZERO will not cause problems...
+        OTSRoadNode A = new OTSRoadNode(this.network, "A", new OTSPoint3D(0, 0, 0), Direction.ZERO);
+        OTSRoadNode B = new OTSRoadNode(this.network, "B", new OTSPoint3D(1, 0, 0), Direction.ZERO);
+        OTSRoadNode C = new OTSRoadNode(this.network, "C", new OTSPoint3D(0, 1, 0), Direction.ZERO);
         this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Route("AB").addNode(A).addNode(B));
         this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
                 new Route("AB2").addNode(A).addNode(C).addNode(B));
