@@ -16,7 +16,7 @@ import java.util.HashSet;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> super type for all possible classes, e.g. TacticalPlanner
  */
-public class ClassConstraint<T> extends CollectionConstraint<Class<? extends T>>
+public final class ClassConstraint<T> extends CollectionConstraint<Class<? extends T>>
 {
 
     /**

@@ -18,6 +18,7 @@ import javax.swing.event.EventListenerList;
 
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -47,7 +48,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
@@ -67,6 +67,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
@@ -284,9 +285,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
         Lane[] lanes = LaneFactory.makeMultiLane(this.network, "Road with two lanes",
-                new OTSNode(this.network, "From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0)),
-                new OTSNode(this.network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0)), null, 2, laneType, speedLimit,
-                simulator);
+                new OTSRoadNode(this.network, "From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0), Direction.ZERO),
+                new OTSRoadNode(this.network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0), Direction.ZERO), null, 2, 
+                laneType, speedLimit, simulator);
 
         // Create the reference vehicle
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);

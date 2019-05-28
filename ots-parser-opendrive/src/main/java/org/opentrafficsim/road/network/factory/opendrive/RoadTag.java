@@ -40,6 +40,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
@@ -124,11 +125,11 @@ class RoadTag implements Serializable
 
     /** The calculated startNode. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    OTSNode startNode = null;
+    OTSRoadNode startNode = null;
 
     /** The calculated endNode. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    OTSNode endNode = null;
+    OTSRoadNode endNode = null;
 
     /** The calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -863,7 +864,7 @@ class RoadTag implements Serializable
             RoadTag predecessorRoadTag = openDriveNetworkLaneParser.roadTags.get(roadTag.linkTag.predecessorId);
             RoadTag successorRoadTag = openDriveNetworkLaneParser.roadTags.get(roadTag.linkTag.successorId);
 
-            OTSNode from = null;
+            OTSRoadNode from = null;
 
             if (roadTag.linkTag.predecessorContactPoint.equals(ContactPointEnum.START))
                 from = predecessorRoadTag.startNode;
@@ -872,7 +873,7 @@ class RoadTag implements Serializable
             else
                 System.out.println("sth is wrong in building links");
 
-            OTSNode to = null;
+            OTSRoadNode to = null;
 
             if (roadTag.linkTag.successorContactPoint.equals(ContactPointEnum.START))
                 to = successorRoadTag.startNode;
@@ -894,8 +895,8 @@ class RoadTag implements Serializable
         }
         else
         {
-            OTSNode from = roadTag.startNode;
-            OTSNode to = roadTag.endNode;
+            OTSRoadNode from = roadTag.startNode;
+            OTSRoadNode to = roadTag.endNode;
             CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
                     openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD), roadTag.designLine,
                     openDriveNetworkLaneParser.simulator, LaneKeepingPolicy.KEEPLANE);

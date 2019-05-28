@@ -21,8 +21,10 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -47,7 +49,6 @@ import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -91,6 +92,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -501,8 +503,10 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
-        OTSNode nodeA = new OTSNode(network, "A", new OTSPoint3D(-radius, 0, 0));
-        OTSNode nodeB = new OTSNode(network, "B", new OTSPoint3D(radius, 0, 0));
+        OTSRoadNode nodeA = new OTSRoadNode(network, "A", new OTSPoint3D(-radius, 0, 0), 
+                new Direction(90, DirectionUnit.EAST_DEGREE));
+        OTSRoadNode nodeB = new OTSRoadNode(network, "B", new OTSPoint3D(radius, 0, 0), 
+                new Direction(270, DirectionUnit.EAST_DEGREE));
 
         OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
         for (int i = 0; i < coordsHalf1.length; i++)

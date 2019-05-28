@@ -9,6 +9,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Mass;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -55,6 +56,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -136,11 +138,11 @@ public class SteeringSimulation extends AbstractSimulationScript
         OTSPoint3D pointE = new OTSPoint3D(1500, -30);
 
         // nodes
-        OTSNode nodeA = new OTSNode(network, "A", pointA);
-        OTSNode nodeB = new OTSNode(network, "B", pointB);
-        OTSNode nodeC = new OTSNode(network, "C", pointC);
-        OTSNode nodeD = new OTSNode(network, "D", pointD);
-        OTSNode nodeE = new OTSNode(network, "E", pointE);
+        OTSRoadNode nodeA = new OTSRoadNode(network, "A", pointA, Direction.ZERO);
+        OTSRoadNode nodeB = new OTSRoadNode(network, "B", pointB, Direction.ZERO);
+        OTSRoadNode nodeC = new OTSRoadNode(network, "C", pointC, Direction.ZERO);
+        OTSRoadNode nodeD = new OTSRoadNode(network, "D", pointD, Direction.ZERO);
+        OTSRoadNode nodeE = new OTSRoadNode(network, "E", pointE, Direction.ZERO);
 
         // links
         CrossSectionLink linkAB =

@@ -427,7 +427,7 @@ public class AimsunControl
     }
 
     /**
-     * Transmit a message
+     * Transmit a message.
      * @param message AimsunControlProtoBuf.OTSMessage; the message
      * @param outputStream OutputStream; the output stream
      * @throws IOException when transmission fails
@@ -500,7 +500,7 @@ public class AimsunControl
          * @param panel OTSAnimationPanel; the panel of the main screen
          * @throws OTSDrawingException on animation error
          */
-        public AimsunSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
+        AimsunSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
         {
             super(model, panel);
         }
@@ -526,7 +526,8 @@ public class AimsunControl
          * @param description String; the model description
          * @param xml String; the XML description of the simulation model
          */
-        public AimsunModel(OTSSimulatorInterface simulator, String shortName, String description, final String xml)
+        AimsunModel(final OTSSimulatorInterface simulator, final String shortName, final String description,
+                final String xml)
         {
             super(simulator, shortName, description);
             this.xml = xml;
@@ -534,7 +535,7 @@ public class AimsunControl
 
         /** {@inheritDoc} */
         @Override
-        public void notify(EventInterface event) throws RemoteException
+        public void notify(final EventInterface event) throws RemoteException
         {
             System.err.println("Received event " + event);
         }

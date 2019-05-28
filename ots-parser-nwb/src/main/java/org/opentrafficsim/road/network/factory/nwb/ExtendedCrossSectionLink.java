@@ -1,18 +1,17 @@
 package org.opentrafficsim.road.network.factory.nwb;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.opengis.feature.Feature;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
  * Augmented cross section link object.
@@ -37,8 +36,8 @@ public class ExtendedCrossSectionLink extends CrossSectionLink
      * Construction of a cross section link with some extra data.
      * @param network RoadNetwork; the network
      * @param id String; the link id.
-     * @param startNode Node; the start node (directional).
-     * @param endNode Node; the end node (directional).
+     * @param startNode OTSRoadNode; the start node (directional).
+     * @param endNode OTSRoadNode; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OTSLine3D; the design line of the Link
      * @param simulator OTSSimulatorInterface; the simulator on which events can be scheduled
@@ -46,7 +45,7 @@ public class ExtendedCrossSectionLink extends CrossSectionLink
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public ExtendedCrossSectionLink(final RoadNetwork network, final String id, final Node startNode, final Node endNode,
+    public ExtendedCrossSectionLink(final RoadNetwork network, final String id, final OTSRoadNode startNode, final OTSRoadNode endNode,
             final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {

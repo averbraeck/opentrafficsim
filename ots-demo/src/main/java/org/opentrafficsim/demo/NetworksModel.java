@@ -15,6 +15,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -60,6 +61,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -199,14 +201,14 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
 
-            OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(0, 0, 0));
-            OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(2000, 0, 0));
-            OTSNode from2a = new OTSNode(this.network, "From2a", new OTSPoint3D(0, -50, 0));
-            OTSNode from2b = new OTSNode(this.network, "From2b", new OTSPoint3D(490, -2, 0));
-            OTSNode firstVia = new OTSNode(this.network, "Via1", new OTSPoint3D(500, 0, 0));
-            OTSNode end2a = new OTSNode(this.network, "End2a", new OTSPoint3D(1020, -2, 0));
-            OTSNode end2b = new OTSNode(this.network, "End2b", new OTSPoint3D(2000, -50, 0));
-            OTSNode secondVia = new OTSNode(this.network, "Via2", new OTSPoint3D(1000, 0, 0));
+            OTSRoadNode from = new OTSRoadNode(this.network, "From", new OTSPoint3D(0, 0, 0), Direction.ZERO);
+            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OTSPoint3D(2000, 0, 0), Direction.ZERO);
+            OTSRoadNode from2a = new OTSRoadNode(this.network, "From2a", new OTSPoint3D(0, -50, 0), Direction.ZERO);
+            OTSRoadNode from2b = new OTSRoadNode(this.network, "From2b", new OTSPoint3D(490, -2, 0), Direction.ZERO);
+            OTSRoadNode firstVia = new OTSRoadNode(this.network, "Via1", new OTSPoint3D(500, 0, 0), Direction.ZERO);
+            OTSRoadNode end2a = new OTSRoadNode(this.network, "End2a", new OTSPoint3D(1020, -2, 0), Direction.ZERO);
+            OTSRoadNode end2b = new OTSRoadNode(this.network, "End2b", new OTSPoint3D(2000, -50, 0), Direction.ZERO);
+            OTSRoadNode secondVia = new OTSRoadNode(this.network, "Via2", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
 
             String networkType = getInputParameter("generic.network").toString();
             boolean merge = networkType.startsWith("M");
@@ -458,12 +460,13 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException, OTSGeometryException
     {
         CrossSectionLink link = lanes[0].getParentLink();
-        Node to = link.getEndNode();
-        Node from = link.getStartNode();
+        OTSRoadNode to = (OTSRoadNode) link.getEndNode();
+        OTSRoadNode from = (OTSRoadNode) link.getStartNode();
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        Node end = new OTSNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z));
+        OTSRoadNode end = new OTSRoadNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z), 
+                Direction.createSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
         for (Lane lane : lanes)
         {

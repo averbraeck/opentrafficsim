@@ -38,6 +38,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
@@ -88,7 +89,7 @@ public final class NetworkParser
     {
         for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
-            new OTSNode(otsNetwork, xmlNode.getID(), new OTSPoint3D(xmlNode.getCOORDINATE()));
+            new OTSRoadNode(otsNetwork, xmlNode.getID(), new OTSPoint3D(xmlNode.getCOORDINATE()), xmlNode.getDIRECTION());
         }
     }
 
@@ -154,8 +155,8 @@ public final class NetworkParser
     {
         for (CONNECTOR xmlConnector : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), CONNECTOR.class))
         {
-            Node startNode = otsNetwork.getNode(xmlConnector.getNODESTART());
-            Node endNode = otsNetwork.getNode(xmlConnector.getNODEEND());
+            OTSRoadNode startNode = (OTSRoadNode) otsNetwork.getNode(xmlConnector.getNODESTART());
+            OTSRoadNode endNode = (OTSRoadNode) otsNetwork.getNode(xmlConnector.getNODEEND());
             String id = xmlConnector.getID();
             double demandWeight = xmlConnector.getDEMANDWEIGHT();
             OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
@@ -166,8 +167,8 @@ public final class NetworkParser
 
         for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
         {
-            Node startNode = otsNetwork.getNode(xmlLink.getNODESTART());
-            Node endNode = otsNetwork.getNode(xmlLink.getNODEEND());
+            OTSRoadNode startNode = (OTSRoadNode) otsNetwork.getNode(xmlLink.getNODESTART());
+            OTSRoadNode endNode = (OTSRoadNode) otsNetwork.getNode(xmlLink.getNODEEND());
             double startDirection =
                     nodeDirections.containsKey(startNode.getId()) ? nodeDirections.get(startNode.getId()).getSI() : 0.0;
             double endDirection =

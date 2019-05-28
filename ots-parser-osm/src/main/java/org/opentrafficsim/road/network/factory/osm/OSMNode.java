@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 /**
  * OpenStreetmap Node.
@@ -52,7 +53,7 @@ public class OSMNode implements Serializable
     public int linksTerminating = 0;
 
     /** The OTS Node that corresponds to this OSMNode. */
-    private OTSNode otsNode = null;
+    private OTSRoadNode otsNode = null;
 
     /**
      * @return Id
@@ -210,9 +211,9 @@ public class OSMNode implements Serializable
     }
 
     /**
-     * @param n OTSNode; OTSNode&lt;String&gt;
+     * @param n OTSRoadNode; OTSRoadNode&lt;String&gt;
      */
-    public final void setOtsNode(final OTSNode n)
+    public final void setOtsNode(final OTSRoadNode n)
     {
         if (this.otsNode != null)
         {
@@ -224,7 +225,7 @@ public class OSMNode implements Serializable
     /**
      * @return OTSNodeOTSNode&lt;String&gt; - The associated OTS Node.
      */
-    public final OTSNode getOtsNode()
+    public final OTSRoadNode getOtsNode()
     {
         return this.otsNode;
     }

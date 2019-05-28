@@ -16,6 +16,7 @@ import javax.xml.crypto.dsig.TransformException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.locationtech.jts.geom.Coordinate;
@@ -43,6 +44,7 @@ import org.opentrafficsim.road.network.factory.osm.events.WarningListener;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
@@ -131,13 +133,13 @@ public final class Convert
         List<OSMNode> nodes = link.getSplineList();
         int coordinateCount = 2 + nodes.size();
         coordinates = new Coordinate[coordinateCount];
-        OTSNode start = link.getStart().getOtsNode();
+        OTSRoadNode start = link.getStart().getOtsNode();
         coordinates[0] = new Coordinate(start.getPoint().x, start.getPoint().y, 0);
         for (int i = 0; i < nodes.size(); i++)
         {
             coordinates[i + 1] = new Coordinate(nodes.get(i).getLongitude(), nodes.get(i).getLatitude());
         }
-        OTSNode end = link.getEnd().getOtsNode();
+        OTSRoadNode end = link.getEnd().getOtsNode();
         coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
         OTSLine3D designLine = new OTSLine3D(coordinates);
         // XXX How to figure out whether to keep left, right or keep lane?
@@ -159,10 +161,10 @@ public final class Convert
      * This method converts an OSM node to an OTS node.
      * @param network OTSRoadNetwork; the network
      * @param node OSMNode; OSM Node to be converted
-     * @return OTS Node
+     * @return OTSRoadNode
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique
      */
-    public OTSNode convertNode(final OTSRoadNetwork network, final OSMNode node) throws NetworkException
+    public OTSRoadNode convertNode(final OTSRoadNetwork network, final OSMNode node) throws NetworkException
     {
         OSMTag tag = node.getTag("ele");
         if (null != tag)
@@ -195,7 +197,8 @@ public final class Convert
                 Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), elevation);
                 try
                 {
-                    return new OTSNode(network, Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)));
+                    return new OTSRoadNode(network, Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)),
+                            Direction.createSI(Double.NaN));
                 }
                 catch (TransformException exception)
                 {
@@ -212,10 +215,11 @@ public final class Convert
         try
         {
             String nodeName = Objects.toString(node.getId());
-            OTSNode otsNode = (OTSNode) network.getNode(nodeName);
+            OTSRoadNode otsNode = (OTSRoadNode) network.getNode(nodeName);
             if (null == otsNode)
             {
-                otsNode = new OTSNode(network, nodeName, new OTSPoint3D(Convert.transform(coordWGS84)));
+                otsNode = new OTSRoadNode(network, nodeName, new OTSPoint3D(Convert.transform(coordWGS84)), 
+                        Direction.createSI(Double.NaN));
             }
             return otsNode;
         }

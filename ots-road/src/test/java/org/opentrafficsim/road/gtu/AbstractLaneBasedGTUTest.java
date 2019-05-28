@@ -15,6 +15,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -47,6 +48,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -77,8 +79,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OTSNode nodeAFrom = new OTSNode(this.network, "AFrom", new OTSPoint3D(0, 0, 0));
-        OTSNode nodeATo = new OTSNode(this.network, "ATo", new OTSPoint3D(1000, 0, 0));
+        OTSRoadNode nodeAFrom = new OTSRoadNode(this.network, "AFrom", new OTSPoint3D(0, 0, 0), Direction.ZERO);
+        OTSRoadNode nodeATo = new OTSRoadNode(this.network, "ATo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
         GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
         LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // And a simulator, but for that we first need something that implements OTSModelInterface
@@ -89,8 +91,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(this.network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OTSNode nodeBFrom = new OTSNode(this.network, "BFrom", new OTSPoint3D(10, 0, 0));
-        OTSNode nodeBTo = new OTSNode(this.network, "BTo", new OTSPoint3D(1000, 0, 0));
+        OTSRoadNode nodeBFrom = new OTSRoadNode(this.network, "BFrom", new OTSPoint3D(10, 0, 0), Direction.ZERO);
+        OTSRoadNode nodeBTo = new OTSRoadNode(this.network, "BTo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
         Lane[] lanesGroupB = LaneFactory.makeMultiLane(this.network, "B", nodeBFrom, nodeBTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
@@ -337,8 +339,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
             }
         }
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OTSNode nodeCFrom = new OTSNode(this.network, "CFrom", new OTSPoint3D(10, 100, 0));
-        OTSNode nodeCTo = new OTSNode(this.network, "CTo", new OTSPoint3D(1000, 0, 0));
+        OTSRoadNode nodeCFrom = new OTSRoadNode(this.network, "CFrom", new OTSPoint3D(10, 100, 0), Direction.ZERO);
+        OTSRoadNode nodeCTo = new OTSRoadNode(this.network, "CTo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
         Lane[] lanesGroupC = LaneFactory.makeMultiLane(this.network, "C", nodeCFrom, nodeCTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         car.enterLane(lanesGroupC[0], new Length(0.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS);

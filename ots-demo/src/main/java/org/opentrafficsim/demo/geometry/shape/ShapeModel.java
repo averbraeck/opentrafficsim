@@ -7,8 +7,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -28,7 +28,7 @@ public class ShapeModel extends AbstractOTSModel
     private static final long serialVersionUID = 20140815L;
 
     /** Nodes from shape file. */
-    private Map<String, OTSNode> nodes;
+    private Map<String, OTSRoadNode> nodes;
 
     /** Links from shape file. */
     private Map<String, Link> shpLinks;

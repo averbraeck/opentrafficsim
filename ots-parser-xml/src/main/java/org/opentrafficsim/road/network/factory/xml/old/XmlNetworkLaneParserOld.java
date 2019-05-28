@@ -53,6 +53,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.demand.XmlOdParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -487,20 +488,20 @@ public class XmlNetworkLaneParserOld implements Serializable
             {
                 throw new NetworkException("Cannot find link with id \"" + linkId + "\"");
             }
-            org.opentrafficsim.core.network.Node from = null;
-            org.opentrafficsim.core.network.Node to = null;
+            OTSRoadNode from = null;
+            OTSRoadNode to = null;
             if ("attracts".equals(od))
             {
                 destinations.add(centroidNode);
-                from = link.getEndNode();
-                to = centroidNode;
+                from = (OTSRoadNode) link.getEndNode();
+                to = (OTSRoadNode) centroidNode;
 
             }
             else if ("generates".equals(od))
             {
                 origins.add(centroidNode);
-                from = centroidNode;
-                to = link.getStartNode();
+                from = (OTSRoadNode) centroidNode;
+                to = (OTSRoadNode) link.getStartNode();
             }
             OTSLine3D designLine = new OTSLine3D(from.getPoint(), to.getPoint());
             String linkName = String.format("connector_from_%s_to_%s", from.getId(), to.getId());

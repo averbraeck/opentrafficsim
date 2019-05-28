@@ -3,10 +3,13 @@ package org.opentrafficsim.road.network.lane;
 import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.AngleUnit;
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -63,10 +66,12 @@ public class CurveTest
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         OTSSimulatorInterface simulator = CarTest.makeSimulator();
-        OTSNode origin = new OTSNode(network, "origin", new OTSPoint3D(10, 10, 0));
-        OTSNode curveStart = new OTSNode(network, "curveStart", new OTSPoint3D(100, 10, 0));
-        OTSNode curveEnd = new OTSNode(network, "curveEnd", new OTSPoint3D(150, 60, 0));
-        OTSNode destination = new OTSNode(network, "destination", new OTSPoint3D(150, 150, 0));
+        OTSRoadNode origin = new OTSRoadNode(network, "origin", new OTSPoint3D(10, 10, 0), Direction.ZERO);
+        OTSRoadNode curveStart = new OTSRoadNode(network, "curveStart", new OTSPoint3D(100, 10, 0), Direction.ZERO);
+        OTSRoadNode curveEnd = new OTSRoadNode(network, "curveEnd", new OTSPoint3D(150, 60, 0), 
+                new Direction(90, DirectionUnit.EAST_DEGREE));
+        OTSRoadNode destination = new OTSRoadNode(network, "destination", new OTSPoint3D(150, 150, 0),
+                new Direction(90, DirectionUnit.EAST_DEGREE));
         Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
                 speedLimit, simulator);
         Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,

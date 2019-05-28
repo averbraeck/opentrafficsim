@@ -11,6 +11,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -28,7 +29,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -44,6 +44,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -162,8 +163,8 @@ public class CarTest implements UNITS
     public static Lane makeLane(final RoadNetwork network, final LaneType laneType, final OTSSimulatorInterface simulator)
             throws NetworkException, OTSGeometryException
     {
-        OTSNode n1 = new OTSNode(network, "n1", new OTSPoint3D(0, 0));
-        OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));
+        OTSRoadNode n1 = new OTSRoadNode(network, "n1", new OTSPoint3D(0, 0), Direction.ZERO);
+        OTSRoadNode n2 = new OTSRoadNode(network, "n2", new OTSPoint3D(100000.0, 0.0), Direction.ZERO);
         OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
         CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, network.getLinkType(LinkType.DEFAULTS.ROAD),
                 new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
