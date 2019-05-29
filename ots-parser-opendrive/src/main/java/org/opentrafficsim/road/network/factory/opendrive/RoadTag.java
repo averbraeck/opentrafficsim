@@ -911,8 +911,9 @@ class RoadTag implements Serializable
      * @param openDriveNetworkLaneParser OpenDriveNetworkLaneParser; the parser
      * @throws NetworkException on network error
      */
-    public static void generateTrafficLightsbySignal(RoadTag roadTag, DEVSSimulatorInterface.TimeDoubleUnit simulator,
-            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
+    public static void generateTrafficLightsbySignal(final RoadTag roadTag,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OpenDriveNetworkLaneParser openDriveNetworkLaneParser)
+            throws NetworkException
     {
         for (SignalTag signalTag : roadTag.signalsTag.signalTags)
         {
