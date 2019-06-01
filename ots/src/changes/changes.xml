@@ -22,8 +22,9 @@
         DJUTILS updated to 1.00.06 to use ImmutableEntry in the ImmutableMap.
       </action>
       <action dev="averbraeck" type="update">
-        DSOL updated to version 3.03.07 to solve 'jumps' in the animation, and to 3.03.08 to repair the
-        min/max settings in the InputParameters.
+        DSOL updated to version 3.03.07 to solve 'jumps' in the animation, to 3.03.08 to repair the
+        min/max settings in the InputParameters, and to 3.03.09 for some bugs in InputParameters and
+        the size of the extent in Swing.
       </action>
       <action dev="averbraeck" type="update">
         On a SHORTESTROUTE, either DISTANCECOST or TIMECOST or both should be present now.
