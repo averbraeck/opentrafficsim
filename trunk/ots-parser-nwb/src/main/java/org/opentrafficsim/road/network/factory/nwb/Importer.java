@@ -150,6 +150,11 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
             System.out.println("Retrieved " + laneData.size() + " records");
             additionalData.put(database, laneData);
         }
+        /*
+         * The kenmerken shape files do not have a WVK_ID column. If we read those, we would have to match to WVK_ID using road
+         * number and distance range. At this time I have the impression that the kenmerken shape files do not add anything that
+         * is not in the wegvakken shape files.
+         */
 
         OTSRoadNetwork network = new OTSRoadNetwork("NWB import", true);
 
