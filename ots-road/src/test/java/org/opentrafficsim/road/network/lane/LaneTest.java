@@ -16,6 +16,7 @@ import java.util.SortedMap;
 
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Bounds;
+import javax.naming.NamingException;
 import javax.vecmath.Point3d;
 
 import org.djunits.unit.DurationUnit;
@@ -34,6 +35,7 @@ import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -101,7 +103,7 @@ public class LaneTest implements UNITS
         // FIXME what overtaking conditions do we want to test in this unit test?
         Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
-        assertEquals("Link returns network",  network, link.getNetwork());
+        assertEquals("Link returns network", network, link.getNetwork());
         assertEquals("Lane returns network", network, lane.getNetwork());
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
@@ -552,6 +554,83 @@ public class LaneTest implements UNITS
     }
 
     /**
+     * Test that gradually varying lateral offsets have gradually increasing angles (with respect to the design line) in the
+     * first half and gradually decreasing angles in the second half.
+     * @throws NetworkException when that happens uncaught; this test has failed
+     * @throws NamingException when that happens uncaught; this test has failed
+     * @throws SimRuntimeException when that happens uncaught; this test has failed
+     * @throws OTSGeometryException when that happens uncaught; this test has failed
+     */
+    @Test
+    public final void lateralOffsetTest() throws NetworkException, SimRuntimeException, NamingException, OTSGeometryException
+    {
+        OTSPoint3D from = new OTSPoint3D(10, 10, 0);
+        OTSPoint3D to = new OTSPoint3D(1010, 10, 0);
+        OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true);
+        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
+        directionalityMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
+        OTSRoadNode start = new OTSRoadNode(network, "start", from, Direction.ZERO);
+        OTSRoadNode end = new OTSRoadNode(network, "end", to, Direction.ZERO);
+        OTSPoint3D[] coordinates = new OTSPoint3D[2];
+        coordinates[0] = start.getPoint();
+        coordinates[1] = end.getPoint();
+        OTSLine3D line = new OTSLine3D(coordinates);
+        OTSSimulatorInterface simulator = new OTSSimulator();
+        Model model = new Model(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
+        CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, network.getLinkType(LinkType.DEFAULTS.ROAD),
+                line, simulator, LaneKeepingPolicy.KEEPRIGHT);
+        Length offsetAtStart = Length.createSI(5);
+        Length offsetAtEnd = Length.createSI(15);
+        Length width = Length.createSI(4);
+        Lane lane = new Lane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap, true);
+        OTSLine3D laneCenterLine = lane.getCenterLine();
+        // System.out.println("Center line is " + laneCenterLine);
+        OTSPoint3D[] points = laneCenterLine.getPoints();
+        double prev = offsetAtStart.si + from.y;
+        double prevRatio = 0;
+        double prevDirection = 0;
+        for (int i = 0; i < points.length; i++)
+        {
+            OTSPoint3D p = points[i];
+            double relativeLength = p.x - from.x;
+            double ratio = relativeLength / (to.x - from.x);
+            double actualOffset = p.y;
+            if (0 == i)
+            {
+                assertEquals("first point must have offset at start", offsetAtStart.si + from.y, actualOffset, 0.001);
+            }
+            if (points.length - 1 == i)
+            {
+                assertEquals("last point must have offset at end", offsetAtEnd.si + from.y, actualOffset, 0.001);
+            }
+            // Other offsets must grow smoothly
+            double delta = actualOffset - prev;
+            assertTrue("delta must be nonnegative", delta >= 0);
+            if (i > 0)
+            {
+                OTSPoint3D prevPoint = points[i - 1];
+                double direction = Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x);
+                // System.out.println(String.format("p=%30s: ratio=%7.5f, direction=%10.7f", p, ratio, direction));
+                assertTrue("Direction of lane center line is > 0", direction > 0);
+                if (ratio < 0.5)
+                {
+                    assertTrue("in first half direction is increasing", direction > prevDirection);
+                }
+                else if (prevRatio > 0.5)
+                {
+                    assertTrue("in second half direction is decreasing", direction < prevDirection);
+                }
+                prevDirection = direction;
+                prevRatio = ratio;
+            }
+        }
+    }
+
+    /**
      * Test that the contour of a constructed lane covers the expected area. Tests are only performed for straight lanes, but
      * the orientation of the link and the offset of the lane from the link is varied in many ways.
      * @throws Exception when something goes wrong (should not happen)
@@ -575,8 +654,8 @@ public class LaneTest implements UNITS
                     directionalityMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
                     Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
-                    OTSRoadNode start = new OTSRoadNode(network, "start", new OTSPoint3D(xStart, yStart), 
-                            Direction.createSI(angle));
+                    OTSRoadNode start =
+                            new OTSRoadNode(network, "start", new OTSPoint3D(xStart, yStart), Direction.createSI(angle));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
