@@ -101,6 +101,8 @@ public class LaneTest implements UNITS
         // FIXME what overtaking conditions do we want to test in this unit test?
         Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
+        assertEquals("Link returns network",  network, link.getNetwork());
+        assertEquals("Lane returns network", network, lane.getNetwork());
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         double approximateLengthOfContour =
