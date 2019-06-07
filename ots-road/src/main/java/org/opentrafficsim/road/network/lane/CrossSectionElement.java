@@ -10,6 +10,7 @@ import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
@@ -65,6 +66,15 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     /** The contour of the element. Calculated once at the creation. */
     private final OTSShape contour;
 
+    /** Maximum direction difference w.r.t. node direction at beginning and end of a CrossSectionElement. */
+    public static final double MAXIMUMDIRECTIONERROR = Math.toRadians(0.1);
+
+    /**
+     * At what fraction of the first segment will an extra point be inserted if the <code>MAXIMUMDIRECTIONERROR</code> is
+     * exceeded.
+     */
+    public static final double FIXUPPOINTPROPORTION = 1.0 / 3;
+
     /**
      * Construct a new CrossSectionElement. <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative
      * lateral direction, with the direction from the StartNode towards the EndNode as the longitudinal direction.
@@ -104,10 +114,10 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
                 NetworkException.class, "CrossSectionElement %s for %s has a last slice with relativeLength is not equal "
                         + "to the length of the parent link",
                 id, parentLink);
-
+        OTSLine3D proposedCenterLine = null;
         if (this.crossSectionSlices.size() <= 2)
         {
-            this.centerLine = fixTightInnerCurve(new double[] { 0.0, 1.0 },
+            proposedCenterLine = fixTightInnerCurve(new double[] { 0.0, 1.0 },
                     new double[] { getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI() });
         }
         else
@@ -119,12 +129,54 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
                 fractions[i] = this.crossSectionSlices.get(i).getRelativeLength().si / this.parentLink.getLength().si;
                 offsets[i] = this.crossSectionSlices.get(i).getDesignLineOffset().si;
             }
-            this.centerLine = fixTightInnerCurve(fractions, offsets);
+            proposedCenterLine = fixTightInnerCurve(fractions, offsets);
         }
-
+        // Make positions and directions of begin and end of CrossSection exact
+        List<OTSPoint3D> points = new ArrayList<OTSPoint3D>(Arrays.asList(proposedCenterLine.getPoints()));
+        // Make position at begin exact
+        DirectedPoint linkFrom = Try.assign(() -> parentLink.getStartNode().getLocation(), "Cannot happen");
+        double fromDirection = linkFrom.getRotZ();
+        points.remove(0);
+        points.add(0, new OTSPoint3D(linkFrom.x + getDesignLineOffsetAtBegin().getSI() * Math.cos(fromDirection + Math.PI / 2), 
+                linkFrom.y + getDesignLineOffsetAtBegin().getSI() * Math.sin(fromDirection + Math.PI / 2)));
+        // Make position at end exact
+        DirectedPoint linkTo = Try.assign(() -> parentLink.getEndNode().getLocation(), "Cannot happen");
+        double toDirection = linkTo.getRotZ();
+        points.remove(points.size() - 1);
+        points.add(new OTSPoint3D(linkTo.x + getDesignLineOffsetAtEnd().getSI() * Math.cos(toDirection + Math.PI / 2), 
+                linkTo.y + getDesignLineOffsetAtEnd().getSI() * Math.sin(toDirection + Math.PI / 2)));
+        // Check direction at begin
+        double direction = points.get(0).horizontalDirectionSI(points.get(1));
+        OTSPoint3D extraPointAfterStart = null;
+        if (Math.abs(direction - fromDirection) > MAXIMUMDIRECTIONERROR)
+        {
+            // Insert an extra point to ensure that the new CrossSectionElement starts off in the right direction
+            OTSPoint3D from = points.get(0);
+            OTSPoint3D next = points.get(1);
+            double distance = from.horizontalDistanceSI(next) * FIXUPPOINTPROPORTION;
+            extraPointAfterStart = new OTSPoint3D(from.x + Math.cos(fromDirection) * distance, 
+                    from.y + Math.sin(fromDirection) * distance, from.z + FIXUPPOINTPROPORTION * (next.z - from.z));
+            // Do not insert it yet because that could cause a similar point near the end to be put at the wrong distance
+        }
+        // Check direction at end
+        int pointCount = points.size();
+        direction = points.get(pointCount - 2).horizontalDirectionSI(points.get(pointCount - 1));
+        if (Math.abs(direction - toDirection) > MAXIMUMDIRECTIONERROR)
+        {
+            // Insert an extra point to ensure that the new CrossSectionElement ends in the right direction
+            OTSPoint3D to = points.get(pointCount - 1);
+            OTSPoint3D before = points.get(pointCount - 2);
+            double distance = before.horizontalDistanceSI(to) * FIXUPPOINTPROPORTION;
+            points.add(pointCount - 1, new OTSPoint3D(to.x - Math.cos(toDirection) * distance, 
+                    to.y - Math.sin(toDirection) * distance, to.z - FIXUPPOINTPROPORTION * (before.z - to.z)));
+        }
+        if (null != extraPointAfterStart)
+        {
+            points.add(1, extraPointAfterStart);
+        }
+        this.centerLine = new OTSLine3D(points);
         this.length = this.centerLine.getLength();
         this.contour = constructContour(this);
-
         this.parentLink.addCrossSectionElement(this);
     }
 
