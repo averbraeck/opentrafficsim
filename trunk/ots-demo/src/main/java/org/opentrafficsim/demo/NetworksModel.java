@@ -201,13 +201,19 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
 
+            OTSPoint3D pFrom2a = new OTSPoint3D(0, -50, 0);
+            OTSPoint3D pFrom2b = new OTSPoint3D(490, -0.5, 0);
+            Direction onrampDirection = pFrom2a.horizontalDirection(pFrom2b);
             OTSRoadNode from = new OTSRoadNode(this.network, "From", new OTSPoint3D(0, 0, 0), Direction.ZERO);
             OTSRoadNode end = new OTSRoadNode(this.network, "End", new OTSPoint3D(2000, 0, 0), Direction.ZERO);
-            OTSRoadNode from2a = new OTSRoadNode(this.network, "From2a", new OTSPoint3D(0, -50, 0), Direction.ZERO);
-            OTSRoadNode from2b = new OTSRoadNode(this.network, "From2b", new OTSPoint3D(490, -2, 0), Direction.ZERO);
+            OTSRoadNode from2a = new OTSRoadNode(this.network, "From2a", pFrom2a, onrampDirection);
+            OTSRoadNode from2b = new OTSRoadNode(this.network, "From2b", pFrom2b, onrampDirection);
             OTSRoadNode firstVia = new OTSRoadNode(this.network, "Via1", new OTSPoint3D(500, 0, 0), Direction.ZERO);
-            OTSRoadNode end2a = new OTSRoadNode(this.network, "End2a", new OTSPoint3D(1020, -2, 0), Direction.ZERO);
-            OTSRoadNode end2b = new OTSRoadNode(this.network, "End2b", new OTSPoint3D(2000, -50, 0), Direction.ZERO);
+            OTSPoint3D pEnd2a = new OTSPoint3D(1020, -0.5, 0);
+            OTSPoint3D pEnd2b = new OTSPoint3D(2000, -50, 0);
+            Direction offrampDirection = pEnd2a.horizontalDirection(pEnd2b);
+            OTSRoadNode end2a = new OTSRoadNode(this.network, "End2a", pEnd2a, offrampDirection);
+            OTSRoadNode end2b = new OTSRoadNode(this.network, "End2b", pEnd2b, offrampDirection);
             OTSRoadNode secondVia = new OTSRoadNode(this.network, "Via2", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
 
             String networkType = getInputParameter("generic.network").toString();
@@ -488,12 +494,12 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
         EventType eventType = event.getType();
         if (Network.GTU_ADD_EVENT.equals(eventType))
         {
-            System.out.println("A GTU just got created. It's Id is " + (String) event.getContent());
+            System.out.println("A GTU was created (id " + (String) event.getContent() + ")");
             this.knownGTUs.add(this.network.getGTU((String) event.getContent()));
         }
         else if (Network.GTU_REMOVE_EVENT.equals(eventType))
         {
-            System.out.println("A GTU with id " + ((String) event.getContent()) + " was removed from the network");
+            System.out.println("A GTU was removed (id " + ((String) event.getContent()) + ")");
             this.knownGTUs.remove(this.network.getGTU((String) event.getContent()));
         }
     }
