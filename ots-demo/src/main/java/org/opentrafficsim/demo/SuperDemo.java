@@ -226,6 +226,7 @@ public class SuperDemo extends JFrame
                         catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                                 | ClassNotFoundException exception)
                         {
+                            exception.printStackTrace();
                             JOptionPane
                                     .showMessageDialog(null,
                                             "Method 'demo' for demo " + Demo.this.name + " cound not be started\n"
