@@ -10,6 +10,7 @@ import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
@@ -482,12 +483,33 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
+     * Compute the distance to another point.
      * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
     public final Length distance(final OTSPoint3D point)
     {
         return new Length(distanceSI(point), LengthUnit.SI);
+    }
+    
+    /**
+     * Compute the horizontal direction to another point.
+     * @param point OTSPoint3D; the other point
+     * @return double; the direction in radians
+     */
+    public final double horizontalDirectionSI(final OTSPoint3D point)
+    {
+        return Math.atan2(point.y - this.y, point.x - this.x);
+    }
+
+    /**
+     * Compute the horizontal direction to another point.
+     * @param point OTSPoint3D; the other point
+     * @return double; the direction in radians
+     */
+    public final Direction horizontalDirection(final OTSPoint3D point)
+    {
+        return Direction.createSI(Math.atan2(point.y - this.y, point.x - this.x));
     }
 
     /**
