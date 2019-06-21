@@ -570,13 +570,13 @@ public class OTSDemoServer
                         param.getDoubleParameter().setDoubleValue(Double.valueOf(val));
                         String unitString = unitMap.get(id);
                         if (unitString == null)
-                            System.err.println("Could not find unit for Doublevalie parameter with id=" + id);
+                            System.err.println("Could not find unit for DoubleScalar parameter with id=" + id);
                         else
                         {
                             Unit<?> unit = param.getUnitParameter().getOptions().get(unitString);
                             if (unit == null)
                                 System.err.println(
-                                        "Could not find unit " + unitString + " for Doublevalie parameter with id=" + id);
+                                        "Could not find unit " + unitString + " for DoubleScalar parameter with id=" + id);
                             else
                             {
                                 param.getUnitParameter().setObjectValue(unit);
