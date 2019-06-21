@@ -279,12 +279,15 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             this.nodes = new ArrayList<>();
             try
             {
-                OTSRoadNode n0 = new OTSRoadNode(this.network, "Node(0,0)", new OTSPoint3D(0, 0), Direction.ZERO);
-                OTSRoadNode n1 = new OTSRoadNode(this.network, "Node(1000,0)", new OTSPoint3D(1000, 0), Direction.ZERO);
-                OTSRoadNode n2 = new OTSRoadNode(this.network, "Node(1020,3)", new OTSPoint3D(1020, 3), Direction.ZERO);
-                OTSRoadNode n3 = new OTSRoadNode(this.network, "Node(2000,197)", new OTSPoint3D(2000, 197), Direction.ZERO);
-                OTSRoadNode n4 = new OTSRoadNode(this.network, "Node(2020,200)", new OTSPoint3D(2020, 200), Direction.ZERO);
-                OTSRoadNode n5 = new OTSRoadNode(this.network, "Node(2200,200)", new OTSPoint3D(2200, 200), Direction.ZERO);
+                OTSPoint3D p2 = new OTSPoint3D(1020, 3);
+                OTSPoint3D p3 = new OTSPoint3D(2000, 197);
+                Direction dir23 = p2.horizontalDirection(p3);
+                OTSRoadNode n0 = new OTSRoadNode(this.network, "Node-0-(0,0)", new OTSPoint3D(0, 0), Direction.ZERO);
+                OTSRoadNode n1 = new OTSRoadNode(this.network, "Node-1-(1000,0)", new OTSPoint3D(1000, 0), Direction.ZERO);
+                OTSRoadNode n2 = new OTSRoadNode(this.network, "Node-2-(1020,3)", p2, dir23);
+                OTSRoadNode n3 = new OTSRoadNode(this.network, "Node-3-(2000,197)", p3, dir23);
+                OTSRoadNode n4 = new OTSRoadNode(this.network, "Node-4-(2020,200)", new OTSPoint3D(2020, 200), Direction.ZERO);
+                OTSRoadNode n5 = new OTSRoadNode(this.network, "Node-5-(2200,200)", new OTSPoint3D(2200, 200), Direction.ZERO);
                 this.nodes.addAll(Arrays.asList(new OTSRoadNode[] {n0, n1, n2, n3, n4, n5}));
 
                 LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
