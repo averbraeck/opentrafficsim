@@ -69,6 +69,10 @@ public interface AccelerationIncentive
             @Override
             public boolean test(final T t)
             {
+                if (route == null)
+                {
+                    return true; // when there is no route, we are always on it...
+                }
                 OTSLink link = t.getLane().getParentLink();
                 if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
                 {
