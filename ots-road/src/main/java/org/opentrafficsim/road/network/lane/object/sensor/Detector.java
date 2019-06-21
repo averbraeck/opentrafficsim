@@ -339,7 +339,8 @@ public class Detector extends AbstractSensor
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.aggregation = aggregation;
-        Try.execute(() -> simulator.scheduleEventAbs(Time.createSI(aggregation.si), this, this, "aggregate", null), "");
+        Try.execute(() -> simulator.scheduleEventAbs(Time.createSI(aggregation.si), this, this, "aggregate", null),
+                "");
         for (DetectorMeasurement<?, ?> measurement : measurements)
         {
             this.cumulDataMap.put(measurement, measurement.identity());
@@ -404,7 +405,7 @@ public class Detector extends AbstractSensor
     {
         return this.length;
     }
-
+    
     /** {@inheritDoc} */
     @Override
     protected void triggerResponse(final LaneBasedGTU gtu)
@@ -417,7 +418,7 @@ public class Detector extends AbstractSensor
         }
         if (this.listeners.containsKey(DETECTOR_TRIGGERED))
         {
-            this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] {gtu}, getSimulator().getSimulatorTime());
+            this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] { gtu }, getSimulator().getSimulatorTime());
         }
     }
 
@@ -444,7 +445,6 @@ public class Detector extends AbstractSensor
     /**
      * Aggregation.
      */
-    @SuppressWarnings("unused") // scheduled
     private void aggregate()
     {
         Frequency frequency = Frequency.createSI(this.periodCount / this.aggregation.si);
@@ -474,6 +474,15 @@ public class Detector extends AbstractSensor
         Try.execute(() -> getSimulator().scheduleEventAbs(time, this, this, "aggregate", null), "");
     }
 
+    /**
+     * Returns whether the detector has aggregated data available.
+     * @return boolean; whether the detector has aggregated data available
+     */
+    public boolean hasLastValue()
+    {
+        return !this.count.isEmpty();
+    }
+    
     /**
      * Returns the last flow.
      * @return last flow
@@ -635,6 +644,7 @@ public class Detector extends AbstractSensor
                 else
                 {
                     // periodic
+                    detector.aggregate();
                     double t = 0.0;
                     for (int i = 0; i < detector.count.size(); i++)
                     {
