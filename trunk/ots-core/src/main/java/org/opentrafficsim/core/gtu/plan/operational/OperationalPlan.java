@@ -430,12 +430,12 @@ public class OperationalPlan implements Serializable
         double distanceTraveledInSegment = segment.distanceSI(deltaT.si);
         double startDistance = sp.getSegmentStartPosition().si;
         double fraction = (startDistance + distanceTraveledInSegment) / this.path.getLengthSI();
-//        if (this.gtu.getId().equals("2"))
-//        {
-//            System.out.println(time.si + "\t" + fraction + "\t" + this.gtu.getOdometer().si + "\t" + startDistance + "\t"
-//                    + distanceTraveledInSegment + "\t " + this.path.getLengthSI() + "\t" + deltaT.si + "\t"
-//                    + System.nanoTime());
-//        }
+        // if (this.gtu.getId().equals("2"))
+        // {
+        // System.out.println(time.si + "\t" + fraction + "\t" + this.gtu.getOdometer().si + "\t" + startDistance + "\t"
+        // + distanceTraveledInSegment + "\t " + this.path.getLengthSI() + "\t" + deltaT.si + "\t"
+        // + System.nanoTime());
+        // }
         DirectedPoint p = new DirectedPoint();
         try
         {
@@ -614,7 +614,8 @@ public class OperationalPlan implements Serializable
                     traveledDistanceAlongPath += this.path.get(i).distance(p).si;
                     if (traveledDistanceAlongPath > this.path.getLengthSI())
                     {
-                        return Time.createSI(getEndTime().si - 1e-9); // -1e-9 prevents that next move() reschedules enter
+                        return Time.createSI(Double.NaN); // Time.createSI(getEndTime().si - 1e-9); // -1e-9 prevents that next
+                                                          // move() reschedules enter
                     }
                     return timeAtDistance(Length.createSI(traveledDistanceAlongPath));
                 }
@@ -658,7 +659,7 @@ public class OperationalPlan implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
     @Override
     public boolean equals(final Object obj)
     {
@@ -831,7 +832,7 @@ public class OperationalPlan implements Serializable
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+        @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
         @Override
         public boolean equals(final Object obj)
         {

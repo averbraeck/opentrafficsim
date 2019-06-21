@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.vecmath.Point3d;
+
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -25,8 +27,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
@@ -83,13 +83,17 @@ public final class NetworkParser
      * Parse the Nodes.
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param network NETWORK; the NETWORK tag
+     * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseNodes(final OTSRoadNetwork otsNetwork, final NETWORK network) throws NetworkException
+    public static void parseNodes(final OTSRoadNetwork otsNetwork, final NETWORK network,
+            final Map<String, Direction> nodeDirections) throws NetworkException
     {
         for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
-            new OTSRoadNode(otsNetwork, xmlNode.getID(), new OTSPoint3D(xmlNode.getCOORDINATE()), xmlNode.getDIRECTION());
+            new OTSRoadNode(otsNetwork, xmlNode.getID(),
+                    new OTSPoint3D(xmlNode.getCOORDINATE().x, xmlNode.getCOORDINATE().y, xmlNode.getCOORDINATE().z),
+                    nodeDirections.get(xmlNode.getID()));
         }
     }
 
@@ -103,29 +107,30 @@ public final class NetworkParser
     public static Map<String, Direction> calculateNodeAngles(final OTSRoadNetwork otsNetwork, final NETWORK network)
     {
         Map<String, Direction> nodeDirections = new HashMap<>();
+        Map<String, Point3d> points = new HashMap<>();
         for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
             if (xmlNode.getDIRECTION() != null)
             {
                 nodeDirections.put(xmlNode.getID(), xmlNode.getDIRECTION());
             }
+            points.put(xmlNode.getID(), xmlNode.getCOORDINATE());
         }
 
         for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
         {
             if (xmlLink.getSTRAIGHT() != null)
             {
-                Node startNode = otsNetwork.getNode(xmlLink.getNODESTART());
-                Node endNode = otsNetwork.getNode(xmlLink.getNODEEND());
-                double direction = Math.atan2(endNode.getPoint().y - startNode.getPoint().y,
-                        endNode.getPoint().x - startNode.getPoint().x);
-                if (!nodeDirections.containsKey(startNode.getId()))
+                Point3d startPoint = points.get(xmlLink.getNODESTART());
+                Point3d endPoint = points.get(xmlLink.getNODEEND());
+                double direction = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
+                if (!nodeDirections.containsKey(xmlLink.getNODESTART()))
                 {
-                    nodeDirections.put(startNode.getId(), new Direction(direction, DirectionUnit.EAST_RADIAN));
+                    nodeDirections.put(xmlLink.getNODESTART(), new Direction(direction, DirectionUnit.EAST_RADIAN));
                 }
-                if (!nodeDirections.containsKey(endNode.getId()))
+                if (!nodeDirections.containsKey(xmlLink.getNODEEND()))
                 {
-                    nodeDirections.put(endNode.getId(), new Direction(direction, DirectionUnit.EAST_RADIAN));
+                    nodeDirections.put(xmlLink.getNODEEND(), new Direction(direction, DirectionUnit.EAST_RADIAN));
                 }
             }
         }
@@ -459,9 +464,9 @@ public final class NetworkParser
                 Length position = Transformer.parseLengthBeginEnd(trafficLight.getPOSITION(), lane.getLength());
                 try
                 {
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(),
-                            new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
-                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getID(), lane, position, simulator});
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(), new Class[] {
+                            String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
+                    trafficLightConstructor.newInstance(new Object[] { trafficLight.getID(), lane, position, simulator });
                 }
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException exception)

@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -24,10 +25,10 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.control.rampmetering.MeteringLightController;
 import org.opentrafficsim.road.network.control.rampmetering.RampMetering;
 import org.opentrafficsim.road.network.control.rampmetering.RampMeteringLightController;
 import org.opentrafficsim.road.network.control.rampmetering.RampMeteringSwitch;
-import org.opentrafficsim.road.network.control.rampmetering.RwsController;
 import org.opentrafficsim.road.network.control.rampmetering.RwsSwitch;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -78,7 +79,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         SimLogger.setSimulator(sim);
-        
+
         OTSRoadNetwork network = new OTSRoadNetwork("CIE5805", true);
         GTUType car = network.getGtuType(GTUType.DEFAULTS.CAR);
 
@@ -111,7 +112,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
         Detector det2 = new Detector("2", lanesAB.get(1), Length.createSI(2900), sim);
         Detector det3 = new Detector("3", lanesCD.get(0), Length.createSI(100), sim);
         Detector det4 = new Detector("4", lanesCD.get(1), Length.createSI(100), sim);
-        Detector det5 = new Detector("5", lanesEB.get(0), Length.createSI(890), sim);
         List<Detector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);
@@ -124,7 +124,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         lightList.add(light);
         // ramp metering
         RampMeteringSwitch rampSwitch = new RwsSwitch(detectors12);
-        RampMeteringLightController rampLightController = new RwsController(sim, lightList, det5);
+        RampMeteringLightController rampLightController = new MeteringLightController(sim, lightList, Compatible.EVERYTHING);
         new RampMetering(sim, rampSwitch, rampLightController);
 
         // OD
@@ -133,24 +133,24 @@ public class RampMeteringDemo extends AbstractSimulationScript
         origins.add(nodeE);
         List<OTSRoadNode> destinations = new ArrayList<>();
         destinations.add(nodeD);
-        Categorization categorization = new Categorization("cat", GTUType.class);//, Lane.class);
+        Categorization categorization = new Categorization("cat", GTUType.class);// , Lane.class);
         TimeVector globalTimeVector = new TimeVector(new double[] { 0, 3600 }, TimeUnit.BASE, StorageType.DENSE);
         Interpolation globalInterpolation = Interpolation.LINEAR;
         ODMatrix od =
                 new ODMatrix("rampMetering", origins, destinations, categorization, globalTimeVector, globalInterpolation);
-        //Category carCatMainLeft = new Category(categorization, car, lanesAB.get(0));
-        //Category carCatMainRight = new Category(categorization, car, lanesAB.get(1));
-        Category carCatRamp = new Category(categorization, car);//, lanesEB.get(0));
+        // Category carCatMainLeft = new Category(categorization, car, lanesAB.get(0));
+        // Category carCatMainRight = new Category(categorization, car, lanesAB.get(1));
+        Category carCatRamp = new Category(categorization, car);// , lanesEB.get(0));
         FrequencyVector mainDemand =
                 new FrequencyVector(new double[] { 2000, 4000 }, FrequencyUnit.PER_HOUR, StorageType.DENSE);
         FrequencyVector rampDemand = new FrequencyVector(new double[] { 250, 750 }, FrequencyUnit.PER_HOUR, StorageType.DENSE);
         double fLeft = 0.6;
         od.putDemandVector(nodeA, nodeD, carCatRamp, mainDemand);
-        //od.putDemandVector(nodeA, nodeD, carCatMainLeft, mainDemand, fLeft);
-        //od.putDemandVector(nodeA, nodeD, carCatMainRight, mainDemand, 1.0 - fLeft);
+        // od.putDemandVector(nodeA, nodeD, carCatMainLeft, mainDemand, fLeft);
+        // od.putDemandVector(nodeA, nodeD, carCatMainRight, mainDemand, 1.0 - fLeft);
         od.putDemandVector(nodeE, nodeD, carCatRamp, rampDemand);
         ODApplier.applyOD(network, od, sim, new ODOptions());
-        
+
         return network;
     }
 

@@ -50,7 +50,7 @@ public class RampMetering
         if (this.rampSwitch.isEnabled())
         {
             SimLogger.always().info("Ramp-metering enabled.");
-            this.rampLightController.enable(this.rampSwitch);
+            this.rampLightController.enable(this.rampSwitch.getCycleTime());
         }
         else
         {

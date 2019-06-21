@@ -46,6 +46,9 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** The point. */
     private final OTSPoint3D point;
+    
+    /** Heading. */
+    private final double heading;
 
     /** The links connected to the Node. */
     private final Set<Link> links = new LinkedHashSet<>();
@@ -70,6 +73,19 @@ public class OTSNode implements Node, Locatable, Serializable
      */
     public OTSNode(final Network network, final String id, final OTSPoint3D point) throws NetworkException
     {
+        this(network, id, point, Double.NaN);
+    }
+    
+    /**
+     * Construction of a Node.
+     * @param network Network; the network.
+     * @param id String; the id of the Node.
+     * @param point OTSPoint3D; the point with usually an x and y setting.
+     * @param heading double; heading
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
+     */
+    public OTSNode(final Network network, final String id, final OTSPoint3D point, final double heading) throws NetworkException
+    {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
         Throw.whenNull(point, "point cannot be null");
@@ -77,6 +93,7 @@ public class OTSNode implements Node, Locatable, Serializable
         this.network = network;
         this.id = id;
         this.point = new OTSPoint3D(point.x, point.y, point.z);
+        this.heading = heading;
 
         this.network.addNode(this);
     }
@@ -104,6 +121,14 @@ public class OTSNode implements Node, Locatable, Serializable
     public final OTSPoint3D getPoint()
     {
         return this.point;
+    }
+
+    /**
+     * @return heading.
+     */
+    public double getHeading()
+    {
+        return this.heading;
     }
 
     /** {@inheritDoc} */

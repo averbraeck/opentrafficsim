@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +13,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -23,9 +23,11 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
@@ -79,9 +81,8 @@ public class LaneChange implements Serializable
     /**
      * Constructor.
      * @param gtu LaneBasedGTU; gtu
-     * @throws ParameterException if LCDUR parameter is not defined
      */
-    public LaneChange(final LaneBasedGTU gtu) throws ParameterException
+    public LaneChange(final LaneBasedGTU gtu)
     {
         this.minimumLaneChangeDistance = gtu.getLength().multiplyBy(MIN_LC_LENGTH_FACTOR);
     }
@@ -229,8 +230,10 @@ public class LaneChange implements Serializable
     {
 
         // initiate lane change
+        boolean favoured = false;
         if (!isChangingLane())
         {
+            favoured = true;
             this.laneChangeDirectionality = laneChangeDirection;
             Try.execute(() -> ((AbstractLaneBasedGTU) gtu).initLaneChange(laneChangeDirection),
                     "Error during lane change initialization.");
@@ -258,6 +261,11 @@ public class LaneChange implements Serializable
         double fromDist = (1.0 - this.fraction) * totalLength; // remaining distance along from lanes to lane change end
         Throw.when(fromDist < 0.0, RuntimeException.class, "Lane change results in negative distance along from lanes.");
 
+         Break.on(gtu, "443", 9 * 60 + 37.99, true);
+        // Break.on(gtu, "362", 8 * 60 + 5.49, true);
+        // TODO: position 'from' is not necessarily 'ref', hence it may be beyond the lane length, and may need to be left out
+        // of the lane lists, and with adjusted 'from' on the next lane. We may simply alter this after the lists are created.
+
         // get fractional location there, build lane lists as we search over the distance
         LaneDirection fromLane = from.getLaneDirection();
         List<LaneDirection> fromLanes = new ArrayList<>();
@@ -267,7 +275,29 @@ public class LaneChange implements Serializable
         double endPosFrom = from.getPosition().si + fromDist;
         while (endPosFrom + gtu.getFront().getDx().si > fromLane.getLane().getLength().si)
         {
-            LaneDirection nextFromLane = fromLane.getNextLaneDirection(gtu);
+            LaneDirection nextFromLane;
+            if (!favoured)
+            {
+                nextFromLane = fromLane.getNextLaneDirection(gtu);
+            }
+            else
+            {
+                Set<LaneDirection> nexts = fromLane.getNextForRoute(gtu);
+                if (!(nexts == null) && !nexts.isEmpty())
+                {
+                    Iterator<LaneDirection> it = nexts.iterator();
+                    nextFromLane = it.next();
+                    while (it.hasNext())
+                    {
+                        nextFromLane =
+                                LaneBasedTacticalPlanner.mostOnSide(nextFromLane, it.next(), this.laneChangeDirectionality);
+                    }
+                }
+                else
+                {
+                    nextFromLane = null;
+                }
+            }
             if (nextFromLane == null)
             {
                 // there are no lanes to move on, restrict lane change length/duration (given fixed mean speed)
@@ -303,8 +333,25 @@ public class LaneChange implements Serializable
         // finally, get location at the final lane available
         double endFraction = fromLane.fractionAtCoveredDistance(Length.createSI(endPosFrom));
 
+        // TODO: see previous todo, can be done here
+        DirectedLanePosition fromAdjusted = from;
+        while (fromAdjusted.getGtuDirection().isPlus() ? fromAdjusted.getPosition().gt(fromAdjusted.getLane().getLength())
+                : fromAdjusted.getPosition().lt0())
+        {
+            // the from position is beyond the first lane (can occur if it is not the ref position)
+            fromLanes.remove(0);
+            toLanes.remove(0);
+            Length beyond = fromAdjusted.getGtuDirection().isPlus()
+                    ? fromAdjusted.getPosition().minus(fromAdjusted.getLane().getLength()) : fromAdjusted.getPosition().neg();
+            Length pos =
+                    fromLanes.get(0).getDirection().isPlus() ? beyond : fromLanes.get(0).getLane().getLength().minus(beyond);
+            fromAdjusted =
+                    Try.assign(() -> new DirectedLanePosition(fromLanes.get(0).getLane(), pos, fromLanes.get(0).getDirection()),
+                            OTSGeometryException.class, "Info for lane is null.");
+        }
+
         // get path from shape
-        OTSLine3D path = this.laneChangePath.getPath(timeStep, planDistance, meanSpeed, from, startPosition,
+        OTSLine3D path = this.laneChangePath.getPath(timeStep, planDistance, meanSpeed, fromAdjusted, startPosition,
                 laneChangeDirection, fromLanes, toLanes, endFraction, Duration.createSI(laneChangeDuration), this.fraction);
 
         // update
@@ -339,13 +386,16 @@ public class LaneChange implements Serializable
                     requiredLength = planDistance.si - path.getLength().si;
                 }
                 // add further lanes
-                while (requiredLength > 0.0)
+                while (toLane != null && requiredLength > 0.0)
                 {
                     toLane = toLane.getNextLaneDirection(gtu);
-                    OTSLine3D remainder = toLane.getDirection().isPlus() ? toLane.getLane().getCenterLine()
-                            : toLane.getLane().getCenterLine().reverse();
-                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, remainder);
-                    requiredLength = planDistance.si - path.getLength().si + Lane.MARGIN.si;
+                    if (toLane != null) // let's hope we will move on to a sink
+                    {
+                        OTSLine3D remainder = toLane.getDirection().isPlus() ? toLane.getLane().getCenterLine()
+                                : toLane.getLane().getCenterLine().reverse();
+                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, remainder);
+                        requiredLength = planDistance.si - path.getLength().si + Lane.MARGIN.si;
+                    }
                 }
                 // filter near-duplicate point which results in projection exceptions
                 if (this.fraction > 0.999) // this means point 'target' is essentially at the design line

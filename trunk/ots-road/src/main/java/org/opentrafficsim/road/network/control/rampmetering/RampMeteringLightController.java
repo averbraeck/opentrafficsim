@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.control.rampmetering;
 
+import org.djunits.value.vdouble.scalar.Duration;
+
 /**
  * Interface for controllers of traffic lights for ramp metering.
  * <p>
@@ -21,8 +23,8 @@ public interface RampMeteringLightController
     
     /**
      * Enables, or keep enabled, the controller.
-     * @param rampMeteringSwitch RampMeteringSwitch; ramp metering switch which supplies the red time
+     * @param cycleTime Duration; cycle time
      */
-    void enable(RampMeteringSwitch rampMeteringSwitch);
+    void enable(Duration cycleTime);
     
 }

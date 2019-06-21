@@ -1,6 +1,8 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -17,12 +19,14 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneDirectionRecord;
+import org.opentrafficsim.road.gtu.lane.perception.LaneRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
@@ -111,11 +115,17 @@ public final class Conflict extends AbstractLaneBasedObject
     /** Upstream GTUs update time. */
     private Time upstreamTime;
 
+    /** Lanes on which upstream GTUs are found. */
+    private Map<LaneBasedGTU, Lane> upstreamLanes;
+
     /** Current downstream GTUs provider. */
     private AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> downstreamGtus;
 
     /** Downstream GTUs update time. */
     private Time downstreamTime;
+
+    /** Lanes on which downstream GTUs are found. */
+    private Map<LaneBasedGTU, Lane> downstreamLanes;
 
     /** Headway type for the provided GTUs. */
     private final HeadwayGtuType conflictGtuType = new ConflictGtuType();
@@ -226,10 +236,26 @@ public final class Conflict extends AbstractLaneBasedObject
         if (this.upstreamTime == null || !time.eq(this.upstreamTime))
         {
             // setup a base iterable to provide the GTUs
-            this.upstreamGtus =
-                    new UpstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition, this.maxUpstreamVisibility,
-                            RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT);
+            this.upstreamGtus = new UpstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition,
+                    this.maxUpstreamVisibility, RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT)
+            {
+                /** {@inheritDoc} */
+                @SuppressWarnings("synthetic-access")
+                @Override
+                protected AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry getNext(
+                        final LaneRecord<?> record, final Length position, final Integer counter) throws GTUException
+                {
+                    AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry entry =
+                            super.getNext(record, position, counter);
+                    if (entry != null)
+                    {
+                        Conflict.this.upstreamLanes.put(entry.getObject(), record.getLane());
+                    }
+                    return entry;
+                }
+            };
             this.upstreamTime = time;
+            this.upstreamLanes = new LinkedHashMap<>();
         }
         // return iterable that uses the base iterable
         return new ConflictGtuIterable(perceivingGtu, headwayGtuType, visibility, false, this.upstreamGtus);
@@ -253,8 +279,25 @@ public final class Conflict extends AbstractLaneBasedObject
             boolean ignoreIfUpstream = false;
             this.downstreamGtus =
                     new DownstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition, this.maxDownstreamVisibility,
-                            RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT, ignoreIfUpstream);
+                            RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT, ignoreIfUpstream)
+                    {
+                        /** {@inheritDoc} */
+                        @SuppressWarnings("synthetic-access")
+                        @Override
+                        protected AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry getNext(
+                                final LaneRecord<?> record, final Length position, final Integer counter) throws GTUException
+                        {
+                            AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry entry =
+                                    super.getNext(record, position, counter);
+                            if (entry != null)
+                            {
+                                Conflict.this.downstreamLanes.put(entry.getObject(), record.getLane());
+                            }
+                            return entry;
+                        }
+                    };
             this.downstreamTime = time;
+            this.downstreamLanes = new LinkedHashMap<>();
         }
         // return iterable that uses the base iterable
         return new ConflictGtuIterable(perceivingGtu, new OverlapHeadway(headwayGtuType), visibility, true,
@@ -650,7 +693,10 @@ public final class Conflict extends AbstractLaneBasedObject
             {
                 Length overlapRear = dist;
                 Length overlap = getLength(); // start with conflict length
-                Length overlapFront = dist.plus(perceivedGtu.getLength()).minus(getLength());
+                @SuppressWarnings("synthetic-access")
+                Lane lane = downstream ? Conflict.this.downstreamLanes.get(perceivedGtu)
+                        : Conflict.this.upstreamLanes.get(perceivedGtu);
+                Length overlapFront = dist.plus(perceivedGtu.getProjectedLength(lane)).minus(getLength());
                 if (overlapFront.lt0())
                 {
                     overlap = overlap.plus(overlapFront); // subtract front being before the conflict end

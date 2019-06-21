@@ -23,6 +23,9 @@ import org.opentrafficsim.road.network.lane.object.sensor.Detector;
 public class AlineaSwitch extends SingleCrossSectionSwitch
 {
     
+    /** Maximum cycle time. */
+    private static final Duration MAX_CYCLE_TIME = Duration.createSI(15);
+    
     /** Capacity. */
     private final Frequency capacity;
 
@@ -32,8 +35,8 @@ public class AlineaSwitch extends SingleCrossSectionSwitch
     /** Speed threshold. */
     private final Speed speedThreshold = new Speed(70, SpeedUnit.KM_PER_HOUR);
 
-    /** Red time. */
-    private Duration redTime;
+    /** Cycle time. */
+    private Duration cycleTime;
     
     /** Flow in previous time step. */
     private Frequency lastFlow;
@@ -57,7 +60,8 @@ public class AlineaSwitch extends SingleCrossSectionSwitch
                 || (this.lastFlow != null && flow.lt(this.lastFlow) && flow.gt(this.flowThreshold)))
         {
             // TODO: what if flow is larger than capacity, shouldn't there be a minimum?
-            this.redTime = Duration.createSI(1.0 / this.capacity.minus(flow).si);
+            this.cycleTime = Duration.createSI(1.0 / this.capacity.minus(flow).si);
+            this.cycleTime = Duration.min(this.cycleTime, MAX_CYCLE_TIME);
             this.lastFlow = flow;
             return true;
         }
@@ -67,9 +71,9 @@ public class AlineaSwitch extends SingleCrossSectionSwitch
 
     /** {@inheritDoc} */
     @Override
-    public Duration getRedTime()
+    public Duration getCycleTime()
     {
-        return this.redTime;
+        return this.cycleTime;
     }
     
 }

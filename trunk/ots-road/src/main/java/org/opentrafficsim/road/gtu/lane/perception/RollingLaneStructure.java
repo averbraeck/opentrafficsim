@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,13 +29,18 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord.RecordLink;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * This data structure can clearly indicate the lane structure ahead of us, e.g. in the following situation:
@@ -101,7 +107,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * initial version Feb 20, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class RollingLaneStructure implements LaneStructure, Serializable
+public class RollingLaneStructure implements LaneStructure, Serializable, EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -114,6 +120,9 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /** Route the structure is based on. */
     private Route previousRoute;
+
+    /** Whether the previous plan was deviative. */
+    private boolean previouslyDeviative = false;
 
     /** Lane structure records of the cross section. */
     private TreeMap<RelativeLane, RollingLaneStructureRecord> crossSectionRecords = new TreeMap<>();
@@ -175,6 +184,14 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         this.downSplit = downSplit;
         this.upMerge = upMerge;
         this.containingGtu = gtu;
+        try
+        {
+            gtu.addListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
+        }
+        catch (RemoteException exception)
+        {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**
@@ -202,9 +219,11 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         GTUDirectionality direction = pos.getGtuDirection();
         Length position = pos.getPosition();
         double fracPos = direction.isPlus() ? position.si / lane.getLength().si : 1.0 - position.si / lane.getLength().si;
+        boolean deviative = this.containingGtu.getOperationalPlan() instanceof LaneBasedOperationalPlan
+                && ((LaneBasedOperationalPlan) this.containingGtu.getOperationalPlan()).isDeviative();
 
         // TODO on complex networks, e.g. with sections connectors where lane changes are not possible, the update may fail
-        if (this.previousRoute != route || this.root.get() == null)
+        if (this.previousRoute != route || this.root.get() == null || deviative != this.previouslyDeviative)
         {
             // create new LaneStructure
             this.previousRoute = route;
@@ -359,6 +378,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             deriveFirstRecords();
 
         }
+
+        this.previouslyDeviative = deviative;
 
         // update downstream edges
         expandDownstreamEdge(gtuType, fracPos, route);
@@ -1524,5 +1545,13 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         {
             return RollingLaneStructure.this.downstreamEdge;
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        // triggers an update of the lane structure at the end of the final plan during the lane change, which is deviative
+        this.previouslyDeviative = false;
     }
 }

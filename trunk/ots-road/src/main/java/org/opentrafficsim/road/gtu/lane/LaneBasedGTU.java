@@ -100,6 +100,19 @@ public interface LaneBasedGTU extends GTU
     void setFinalizeLaneChangeEvent(SimEventInterface<SimTimeDoubleUnit> event);
 
     /**
+     * Get projected length on the lane.
+     * @param lane Lane; lane to project the vehicle on
+     * @return Length; the length on the lane, which is different from the actual length during deviative tactical plans
+     * @throws GTUException when the vehicle is not on the given lane
+     */
+    default Length getProjectedLength(final Lane lane) throws GTUException
+    {
+        Length front = position(lane, getFront());
+        Length rear = position(lane, getRear());
+        return getDirection(lane).isPlus() ? front.minus(rear) : rear.minus(front);
+    }
+    
+    /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered. <br>
      * <b>Note:</b> If a GTU is registered in multiple parallel lanes, the lateralLaneChangeModel is used to determine the

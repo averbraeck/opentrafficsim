@@ -53,7 +53,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     
     /** @return the maximum length of the GTU (parallel with driving direction). */
     Length getLength();
-
+    
     /** @return the maximum width of the GTU (perpendicular to driving direction). */
     Length getWidth();
 

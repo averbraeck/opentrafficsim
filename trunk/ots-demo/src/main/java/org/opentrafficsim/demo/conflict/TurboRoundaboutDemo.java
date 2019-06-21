@@ -127,7 +127,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 // add trafficlights
-                for (Lane lane : ((CrossSectionLink) this.network.getLink("SEXITS")).getLanes())
+                for (Lane lane : ((CrossSectionLink) this.network.getLink("SEXITS2")).getLanes())
                 {
                     SimpleTrafficLight trafficLight = new SimpleTrafficLight("light" + lane.getId(), lane,
                             new Length(150.0, LengthUnit.SI), this.simulator);

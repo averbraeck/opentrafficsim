@@ -156,41 +156,51 @@ public class LaneBasedOperationalPlan extends OperationalPlan
             // check if the GTU is adjacent to the bit between the lanes (if there is such a bit)
             if (Double.isNaN(f))
             {
-                try
+                if (nextLane == null)
                 {
-                    // compose gap line
-                    OTSPoint3D last = lane.getDirection().isPlus() ? lane.getLane().getCenterLine().getLast()
-                            : lane.getLane().getCenterLine().get(0);
-                    OTSPoint3D first = nextLane.getDirection().isPlus() ? nextLane.getLane().getCenterLine().get(0)
-                            : nextLane.getLane().getCenterLine().getLast();
-                    if (!(last).equals(first))
+                    // projection error on dad-end lane, add the length of the lane
+                    f = 1.0;
+                    length += lane.coveredDistance(f).si;
+                }
+                else
+                {
+                    try
                     {
-                        OTSLine3D gap = new OTSLine3D(last, first);
-                        double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
-                        if (!Double.isNaN(fGap))
+                        // compose gap line
+                        OTSPoint3D last = lane.getDirection().isPlus() ? lane.getLane().getCenterLine().getLast()
+                                : lane.getLane().getCenterLine().get(0);
+                        OTSPoint3D first = nextLane.getDirection().isPlus() ? nextLane.getLane().getCenterLine().get(0)
+                                : nextLane.getLane().getCenterLine().getLast();
+                        if (!(last).equals(first))
                         {
-                            f = (lane.getLength().si + fGap * gap.getLengthSI()) / lane.getLength().si;
+                            OTSLine3D gap = new OTSLine3D(last, first);
+                            double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
+                            if (!Double.isNaN(fGap))
+                            {
+                                f = (lane.getLength().si + fGap * gap.getLengthSI()) / lane.getLength().si;
+                            }
+                            else
+                            {
+                                // gap, but no successful projection, use next lane in next loop, increase length so far
+                                length += lane.getLength().si;
+                                lane = nextLane;
+                                prevDir = nextDir;
+                            }
                         }
                         else
                         {
-                            // gap, but no successful projection, use next lane in next loop, increase length so far
+                            // no gap, use next lane in next loop, increase length so far
                             length += lane.getLength().si;
                             lane = nextLane;
                             prevDir = nextDir;
                         }
                     }
-                    else
+                    catch (OTSGeometryException exception)
                     {
-                        // no gap, use next lane in next loop, increase length so far
-                        length += lane.getLength().si;
-                        lane = nextLane;
-                        prevDir = nextDir;
+                        // should not occur, we use get(0) and getLast()
+                        throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.",
+                                exception);
                     }
-                }
-                catch (OTSGeometryException exception)
-                {
-                    // should not occur, we use get(0) and getLast()
-                    throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.", exception);
                 }
             }
             else

@@ -26,6 +26,9 @@ import nl.tudelft.simulation.dsol.logger.SimLogger;
 public class RwsSwitch extends SingleCrossSectionSwitch
 {
 
+    /** Maximum cycle time. */
+    private static final Duration MAX_CYCLE_TIME = Duration.createSI(15);
+
     /** Capacity. */
     private final Frequency capacity;
 
@@ -36,10 +39,7 @@ public class RwsSwitch extends SingleCrossSectionSwitch
     private final Speed speedThreshold = new Speed(70, SpeedUnit.KM_PER_HOUR);
 
     /** Red time. */
-    private Duration redTime;
-    
-    /** Maximum red time. */
-    private static Duration maxRedTime = Duration.createSI(10);
+    private Duration cycleTime;
 
     /** Flow in previous time step. */
     private Frequency lastFlow;
@@ -63,15 +63,14 @@ public class RwsSwitch extends SingleCrossSectionSwitch
         if (meanSpeed().le(this.speedThreshold)
                 || (this.lastFlow != null && flow.gt(this.lastFlow) && flow.gt(this.flowThreshold)))
         {
-            // TODO: what if flow is larger than capacity, shouldn't there be a maximum red time?
             if (flow.lt(this.capacity))
             {
-                this.redTime = Duration.createSI(1.0 / this.capacity.minus(flow).si);
-                this.redTime = Duration.max(this.redTime, maxRedTime);
+                this.cycleTime = Duration.createSI(1.0 / this.capacity.minus(flow).si);
+                this.cycleTime = Duration.min(this.cycleTime, MAX_CYCLE_TIME);
             }
             else
             {
-                this.redTime = maxRedTime;
+                this.cycleTime = MAX_CYCLE_TIME;
             }
             this.lastFlow = flow;
             return true;
@@ -82,10 +81,10 @@ public class RwsSwitch extends SingleCrossSectionSwitch
 
     /** {@inheritDoc} */
     @Override
-    public Duration getRedTime()
+    public Duration getCycleTime()
     {
-        Throw.whenNull(this.redTime, "The method isEnabled() in a RwsSwitch should set a red time.");
-        return this.redTime;
+        Throw.whenNull(this.cycleTime, "The method isEnabled() in a RwsSwitch should set a cycle time.");
+        return this.cycleTime;
     }
 
 }

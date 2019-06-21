@@ -297,6 +297,7 @@ public final class ODParser
                             TimeVector timeVector = timeTags == null ? globalTimeVector : parseTimeVector(timeTags);
 
                             // Interpolation: demand > main demand > global
+                            // TODO: LINEAR follows when only global STEPWISE is defined
                             String interpolationString = demand.getINTERPOLATION() == null
                                     ? (main == null || main.getINTERPOLATION() == null ? null : main.getINTERPOLATION())
                                     : demand.getINTERPOLATION();

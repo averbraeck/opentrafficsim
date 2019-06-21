@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -121,6 +123,27 @@ public class LaneDirection implements Serializable
             return null;
         }
         // ask strategical planner
+        Set<LaneDirection> set = getNextForRoute(gtu);
+        if (set.size() == 1)
+        {
+            return set.iterator().next();
+        }
+        // ask tactical planner
+        return Try.assign(() -> gtu.getTacticalPlanner().chooseLaneAtSplit(this, set), "Missing parameter.");
+    }
+    
+    /**
+     * Returns a set of {@code LaneDirection}'s that can be followed considering the route.
+     * @param gtu LaneBasedGTU; GTU
+     * @return set of {@code LaneDirection}'s that can be followed considering the route
+     */
+    public Set<LaneDirection> getNextForRoute(final LaneBasedGTU gtu)
+    {
+        ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGTUType());
+        if (next.isEmpty())
+        {
+            return null;
+        }
         LinkDirection ld;
         try
         {
@@ -139,19 +162,7 @@ public class LaneDirection implements Serializable
                 out.add(new LaneDirection(l, dir));
             }
         }
-        if (out.isEmpty())
-        {
-            return null;
-        }
-        else if (out.size() == 1)
-        {
-            return out.iterator().next();
-        }
-        else
-        {
-            // ask tactical planner
-            return Try.assign(() -> gtu.getTacticalPlanner().chooseLaneAtSplit(out), "Missing parameter.");
-        }
+        return out;
     }
 
     /**
