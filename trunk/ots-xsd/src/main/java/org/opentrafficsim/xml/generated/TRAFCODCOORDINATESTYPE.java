@@ -13,51 +13,50 @@ import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.xml.bindings.SpeedAdapter;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for TRAFCODCOORDINATESTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;attribute name="GTUTYPE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="LEGALSPEEDLIMIT" type="{http://www.opentrafficsim.org/ots}SPEEDTYPE" /&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
+ * &lt;complexType name="TRAFCODCOORDINATESTYPE"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;string"&gt;
+ *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}space default="preserve""/&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "SPEEDLIMIT")
+@XmlType(name = "TRAFCODCOORDINATESTYPE", propOrder = {
+    "value"
+})
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-06-01T12:39:05+02:00", comments = "JAXB RI v2.3.0")
-public class SPEEDLIMIT
+public class TRAFCODCOORDINATESTYPE
     implements Serializable
 {
 
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-06-01T12:39:05+02:00", comments = "JAXB RI v2.3.0")
     private final static long serialVersionUID = 10102L;
-    @XmlAttribute(name = "GTUTYPE", required = true)
+    @XmlValue
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-06-01T12:39:05+02:00", comments = "JAXB RI v2.3.0")
-    protected String gtutype;
-    @XmlAttribute(name = "LEGALSPEEDLIMIT")
-    @XmlJavaTypeAdapter(SpeedAdapter.class)
+    protected String value;
+    @XmlAttribute(name = "space", namespace = "http://www.w3.org/XML/1998/namespace")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-06-01T12:39:05+02:00", comments = "JAXB RI v2.3.0")
-    protected Speed legalspeedlimit;
+    protected String space;
 
     /**
-     * Gets the value of the gtutype property.
+     * Gets the value of the value property.
      * 
      * @return
      *     possible object is
@@ -65,12 +64,12 @@ public class SPEEDLIMIT
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-06-01T12:39:05+02:00", comments = "JAXB RI v2.3.0")
-    public String getGTUTYPE() {
-        return gtutype;
+    public String getValue() {
+        return value;
     }
 
     /**
-     * Sets the value of the gtutype property.
+     * Sets the value of the value property.
      * 
      * @param value
      *     allowed object is
@@ -78,12 +77,12 @@ public class SPEEDLIMIT
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-06-01T12:39:05+02:00", comments = "JAXB RI v2.3.0")
-    public void setGTUTYPE(String value) {
-        this.gtutype = value;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**
-     * Gets the value of the legalspeedlimit property.
+     * Gets the value of the space property.
      * 
      * @return
      *     possible object is
@@ -91,12 +90,16 @@ public class SPEEDLIMIT
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-06-01T12:39:05+02:00", comments = "JAXB RI v2.3.0")
-    public Speed getLEGALSPEEDLIMIT() {
-        return legalspeedlimit;
+    public String getSpace() {
+        if (space == null) {
+            return "preserve";
+        } else {
+            return space;
+        }
     }
 
     /**
-     * Sets the value of the legalspeedlimit property.
+     * Sets the value of the space property.
      * 
      * @param value
      *     allowed object is
@@ -104,8 +107,8 @@ public class SPEEDLIMIT
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-06-01T12:39:05+02:00", comments = "JAXB RI v2.3.0")
-    public void setLEGALSPEEDLIMIT(Speed value) {
-        this.legalspeedlimit = value;
+    public void setSpace(String value) {
+        this.space = value;
     }
 
 }
