@@ -22,6 +22,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -163,6 +164,7 @@ public final class LmrsUtil implements LmrsParameters
             turnIndicatorStatus = TurnIndicatorIntent.NONE;
             if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree)
             {
+                // TODO: GTU 443 in Aimsum demo does not accept the left lane change!
                 if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getLeft(), speed, a,
                         LateralDirectionality.LEFT, lmrsData.getGapAcceptance(), laneChange))
                 {

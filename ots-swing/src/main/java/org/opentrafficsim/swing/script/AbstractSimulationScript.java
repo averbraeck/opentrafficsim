@@ -84,7 +84,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         setDefaultProperties();
         for (int i = 0; i < properties.length; i += 2)
         {
-            System.out.println("Adding argument " + properties[i] + " with argument " + properties[i + 1]);
+            System.out.println("Adding " + properties[i] + " with argument " + properties[i + 1]);
             this.props.put(properties[i], properties[i + 1]);
         }
     }
@@ -287,10 +287,18 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void notify(final EventInterface event) throws RemoteException
+    public void notify(final EventInterface event) throws RemoteException
     {
         if (event.getType().equals(SimulatorInterface.END_REPLICATION_EVENT))
         {
+//            try
+//            {
+//                getSimulator().scheduleEventNow(this, this, "onSimulationEnd", null);
+//            }
+//            catch (SimRuntimeException exception)
+//            {
+//                throw new RuntimeException(exception);
+//            }
             onSimulationEnd();
             // solve bug that event is fired twice
             AbstractSimulationScript.this.simulator.removeListener(AbstractSimulationScript.this,

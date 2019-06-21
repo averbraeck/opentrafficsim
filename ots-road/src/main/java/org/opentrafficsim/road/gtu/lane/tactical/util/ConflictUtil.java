@@ -31,6 +31,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
@@ -142,7 +143,7 @@ public final class ConflictUtil
             final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGTU gtu,
             final RelativeLane lane) throws GTUException, ParameterException
     {
-
+        
         conflictPlans.cleanPlans();
 
         Acceleration a = Acceleration.POS_MAXVALUE;
@@ -719,7 +720,7 @@ public final class ConflictUtil
         }
         else
         {
-            if (conflict.getConflictingTrafficLightDistance() != null
+            if (conflict.getConflictingTrafficLightDistance() != null && conflictingVehiclesCollectable.first().isAhead()
                     && conflict.getConflictingTrafficLightDistance().lt(conflictingVehiclesCollectable.first().getDistance()))
             {
                 // conflicting traffic upstream of traffic light
@@ -743,8 +744,8 @@ public final class ConflictUtil
             // time till conflict vehicle will enter, under free acceleration and safe deceleration
             AnticipationInfo tteCa;
             AnticipationInfo tteCs;
-            if (first && conflictingVehicle.getSpeed().eq0() && conflictingVehicle.isAhead()
-                    && conflictingVehicle.getDistance().lt(parameters.getParameter(S0_CONF)))
+            if (first && conflictingVehicle.getSpeed().eq0() && conflictingVehicle.isAhead())
+                    //&& conflictingVehicle.getDistance().lt(parameters.getParameter(S0_CONF)))
             {
                 // do not stop if conflicting vehicle is standing still
                 tteCa = new AnticipationInfo(Duration.POSITIVE_INFINITY, Speed.ZERO);

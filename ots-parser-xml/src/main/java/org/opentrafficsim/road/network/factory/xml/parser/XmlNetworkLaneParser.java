@@ -194,8 +194,8 @@ public final class XmlNetworkLaneParser implements Serializable
                 linkTypeSpeedLimitMap);
 
         NETWORK network = ots.getNETWORK();
-        NetworkParser.parseNodes(otsNetwork, network);
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
+        NetworkParser.parseNodes(otsNetwork, network, nodeDirections);
         NetworkParser.parseLinks(otsNetwork, network, nodeDirections, simulator);
         NetworkParser.applyRoadLayout(otsNetwork, network, simulator, roadLayoutMap, linkTypeSpeedLimitMap);
 

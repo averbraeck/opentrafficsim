@@ -37,6 +37,9 @@ public interface Node extends Locatable, Serializable, Identifiable, Drawable
 
     /** @return point. */
     OTSPoint3D getPoint();
+    
+    /** @return heading. */
+    double getHeading();
 
     /**
      * Add a link to this Node.

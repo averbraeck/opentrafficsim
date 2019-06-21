@@ -29,6 +29,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -272,10 +273,10 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, false);
         }
 
-        Acceleration acc = gtuCapabilities(acceleration, gtu);
-        Duration brakingTime = brakingTime(acc, startSpeed, timeStep);
-        Length distance = Length.createSI(startSpeed.si * brakingTime.si + .5 * acc.si * brakingTime.si * brakingTime.si);
-        List<Segment> segmentList = createAccelerationSegments(startSpeed, acc, brakingTime, timeStep);
+        Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
+        Length distance =
+                Length.createSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
+        List<Segment> segmentList = createAccelerationSegments(startSpeed, acceleration, brakingTime, timeStep);
         if (distance.le(MINIMUM_CREDIBLE_PATH_LENGTH))
         {
             return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, false);
@@ -300,11 +301,25 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             double f = ref.getLane().fraction(ref.getPosition());
             if (ref.getGtuDirection().isPlus() && f < 1.0)
             {
-                path = ref.getLane().getCenterLine().extractFractional(f, 1.0);
+                if (f >= 0.0)
+                {
+                    path = ref.getLane().getCenterLine().extractFractional(f, 1.0);
+                }
+                else
+                {
+                    path = ref.getLane().getCenterLine().extractFractional(0.0, 1.0);
+                }
             }
             else if (ref.getGtuDirection().isMinus() && f > 0.0)
             {
-                path = ref.getLane().getCenterLine().extractFractional(0.0, f).reverse();
+                if (f <= 1.0)
+                {
+                    path = ref.getLane().getCenterLine().extractFractional(0.0, f).reverse();
+                }
+                else
+                {
+                    path = ref.getLane().getCenterLine().extractFractional(0.0, 1.0).reverse();
+                }
             }
             LaneDirection prevFrom = null;
             LaneDirection from = ref.getLaneDirection();
@@ -423,19 +438,6 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         {
             throw new RuntimeException("Error during creation of lane change plan.", exception);
         }
-    }
-
-    /**
-     * Makes the acceleration adhere to GTU capabilities.
-     * @param acceleration Acceleration; desired acceleration
-     * @param gtu LaneBasedGTU; gtu
-     * @return Acceleration; possible acceleration
-     */
-    private static Acceleration gtuCapabilities(final Acceleration acceleration, final LaneBasedGTU gtu)
-    {
-        return acceleration; // .gt(gtu.getMaximumDeceleration())
-        // ? (acceleration.lt(gtu.getMaximumAcceleration()) ? acceleration : gtu.getMaximumAcceleration())
-        // : gtu.getMaximumDeceleration();
     }
 
     /**

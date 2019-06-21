@@ -306,8 +306,8 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         OTSRoadNetwork network = new OTSRoadNetwork("Distraction", true);
         XmlNetworkLaneParser.build(stream, network, sim);
 
-        new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000),
-                sim, new TrapezoidProfile(0.2, Length.createSI(-400), Length.createSI(200), Length.createSI(400)));
+        // new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000),
+        // sim, new TrapezoidProfile(0.2, Length.createSI(-400), Length.createSI(200), Length.createSI(400)));
 
         // OD
         List<Node> origins = new ArrayList<>();

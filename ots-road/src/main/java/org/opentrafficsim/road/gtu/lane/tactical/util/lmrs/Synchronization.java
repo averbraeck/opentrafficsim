@@ -88,9 +88,10 @@ public interface Synchronization extends LmrsParameters
                 if (!laneChange.isChangingLane() && initiatedLaneChange.isNone())
                 {
                     // TODO replace this hack with something that properly accounts for overshoot
-                    // this method also introduces very strong deceleration at low speeds, as the time step makes bMin go from 3.4
+                    // this method also introduces very strong deceleration at low speeds, as the time step makes bMin go from
+                    // 3.4
                     // (ignored, so maybe 1.25 acceleration applied) to >10
-                    //remainingDist = remainingDist.minus(Length.createSI(10));
+                    // remainingDist = remainingDist.minus(Length.createSI(10));
                     remainingDist = remainingDist.minus(laneChange.getMinimumLaneChangeDistance().multiplyBy(nCur));
                 }
                 if (remainingDist.le0())

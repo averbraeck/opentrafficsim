@@ -48,14 +48,29 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
 
+    /** Headway GTU type that should be used to assess gaps. */
+    private final HeadwayGtuType headwayGtuTypeGap;
+
     /**
      * @param perception LanePerception; perception
      * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
      */
     public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {
+        this(perception, headwayGtuType, headwayGtuType);
+    }
+
+    /**
+     * @param perception LanePerception; perception
+     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
+     * @param headwayGtuTypeGap HeadwayGtuType; type of headway gtu to assess gaps
+     */
+    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType,
+            final HeadwayGtuType headwayGtuTypeGap)
+    {
         super(perception);
         this.headwayGtuType = headwayGtuType;
+        this.headwayGtuTypeGap = headwayGtuTypeGap;
     }
 
     /** {@inheritDoc} */
@@ -87,7 +102,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                     NeighborsUtil.getFirstDownstreamGTUs(
                             getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getFront(),
                             getGtu().getFront(), RelativePosition.REAR, getTimestamp()),
-                    this.headwayGtuType, getGtu(), true);
+                    this.headwayGtuTypeGap, getGtu(), true);
         }
         catch (ParameterException | GTUException | IllegalArgumentException exception)
         {
@@ -117,7 +132,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                     NeighborsUtil.getFirstUpstreamGTUs(
                             getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getRear(),
                             getGtu().getRear(), RelativePosition.FRONT, getTimestamp()),
-                    this.headwayGtuType, getGtu(), false);
+                    this.headwayGtuTypeGap, getGtu(), false);
         }
         catch (ParameterException | GTUException | IllegalArgumentException exception)
         {

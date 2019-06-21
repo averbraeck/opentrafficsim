@@ -29,9 +29,9 @@ public interface RampMeteringSwitch
     boolean isEnabled();
     
     /**
-     * Returns the red time.
-     * @return Duration; the red time
+     * Returns the cycle time.
+     * @return Duration; the cycle time
      */
-    Duration getRedTime();
+    Duration getCycleTime();
 
 }
