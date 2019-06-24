@@ -39,8 +39,8 @@ public class OTSPoint3DTest
     {
         OTSPoint3D previousPoint = null;
         int previousHashCode = 0;
-        double[] values = {Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
-                Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN};
+        double[] values = { Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
+                Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN };
         for (double x : values)
         {
             for (double y : values)
@@ -49,9 +49,9 @@ public class OTSPoint3DTest
                 {
                     OTSPoint3D p = new OTSPoint3D(x, y, z);
                     checkXYZ(p, x, y, z);
-                    checkXYZ(new OTSPoint3D(new double[] {x, y, z}), x, y, z);
+                    checkXYZ(new OTSPoint3D(new double[] { x, y, z }), x, y, z);
                     checkXYZ(new OTSPoint3D(p), x, y, z);
-                    checkXYZ(new OTSPoint3D(new double[] {x, y}), x, y, 0d);
+                    checkXYZ(new OTSPoint3D(new double[] { x, y }), x, y, 0d);
                     checkXYZ(new OTSPoint3D(new Point3d(x, y, z)), x, y, z);
                     checkXYZ(new OTSPoint3D(new CartesianPoint(x, y, z)), x, y, z);
                     checkXYZ(new OTSPoint3D(new DirectedPoint(x, y, z)), x, y, z);
@@ -140,7 +140,7 @@ public class OTSPoint3DTest
     {
         OTSPoint3D p0 = new OTSPoint3D(123, 234, 345);
         OTSPoint3D p1 = new OTSPoint3D(567, 678, 789);
-        for (double ratio : new double[] {0, 1, 0.5, 0.1, -10, 10})
+        for (double ratio : new double[] { 0, 1, 0.5, 0.1, -10, 10 })
         {
             OTSPoint3D pi = OTSPoint3D.interpolate(ratio, p0, p1);
             assertTrue("result of interpolate is not null", null != pi);
@@ -277,7 +277,42 @@ public class OTSPoint3DTest
             }
             assertNotNull("There should not be an intersection", point);
         }
+    }
 
+    /**
+     * Test the horizontalDirection and horizontalDirectionSI methods.
+     */
+    @Test
+    public void directionTest()
+    {
+        for (OTSPoint3D reference : new OTSPoint3D[] { new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 200, 300),
+                new OTSPoint3D(-50, -80, 20) })
+        {
+            for (double actualDirectionDegrees : new double[] { 0, 0.1, 10, 30, 89, 90, 91, 150, 179, 181, 269, 271, 359 })
+            {
+                double actualDirectionRadians = Math.toRadians(actualDirectionDegrees);
+                for (double actualDistance : new double[] { 0.001, 10, 999, 99999 })
+                {
+                    for (double dZ : new double[] { 0, 123, 98766, -876 })
+                    {
+                        OTSPoint3D other = new OTSPoint3D(reference.x + Math.cos(actualDirectionRadians) * actualDistance,
+                                reference.y + Math.sin(actualDirectionRadians) * actualDistance, reference.z + dZ);
+                        double angle = reference.horizontalDirectionSI(other);
+                        double angle2 = reference.horizontalDirection(other).si;
+                        if (angle < 0)
+                        {
+                            angle += 2 * Math.PI;
+                        }
+                        if (angle2 < 0)
+                        {
+                            angle2 += 2 * Math.PI;
+                        }
+                        assertEquals("horizontalDirectionSI returns correct direction", actualDirectionRadians, angle, 0.01);
+                        assertEquals("horizontalDirection returns correct direction", actualDirectionRadians, angle2, 0.01);
+                    }
+                }
+            }
+        }
     }
 
 }
