@@ -391,7 +391,8 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * Return the possible center points of a circle when two points and a radius are given.
+     * Return the possible center points of a circle when two points and a radius are given. Z-coordinates are ignored (else the
+     * result might have to be infinitely long). Any points in the result <b>do</b> have the mean elevation of the given points.
      * @param point1 OTSPoint3D; the first point
      * @param point2 OTSPoint3D; the second point
      * @param radius double; the radius
@@ -491,7 +492,7 @@ public class OTSPoint3D implements Locatable, Serializable
     {
         return new Length(distanceSI(point), LengthUnit.SI);
     }
-    
+
     /**
      * Compute the horizontal direction to another point.
      * @param point OTSPoint3D; the other point
@@ -579,7 +580,7 @@ public class OTSPoint3D implements Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
