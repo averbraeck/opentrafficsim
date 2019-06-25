@@ -25,7 +25,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.control.rampmetering.MeteringLightController;
+import org.opentrafficsim.road.network.control.rampmetering.CycleTimeLightController;
 import org.opentrafficsim.road.network.control.rampmetering.RampMetering;
 import org.opentrafficsim.road.network.control.rampmetering.RampMeteringLightController;
 import org.opentrafficsim.road.network.control.rampmetering.RampMeteringSwitch;
@@ -76,6 +76,13 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
+    protected void setDefaultProperties()
+    {
+        setProperty("rampMetering", true);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         SimLogger.setSimulator(sim);
@@ -88,21 +95,26 @@ public class RampMeteringDemo extends AbstractSimulationScript
         OTSRoadNode nodeC = new OTSRoadNode(network, "C", new OTSPoint3D(3250, 0), Direction.ZERO);
         OTSRoadNode nodeD = new OTSRoadNode(network, "D", new OTSPoint3D(6000, 0), Direction.ZERO);
         OTSRoadNode nodeE = new OTSRoadNode(network, "E", new OTSPoint3D(2000, -25), Direction.ZERO);
+        OTSRoadNode nodeF = new OTSRoadNode(network, "F", new OTSPoint3D(2750, 0.0), Direction.ZERO);
 
         LinkType freeway = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.createSI(3.6);
         LaneType freewayLane = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
+        Speed rampSpeedLimit = new Speed(70, SpeedUnit.KM_PER_HOUR);
         List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, sim, policy)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Permeable.BOTH).getLanes();
         List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, sim, policy)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Permeable.BOTH, Permeable.LEFT).getLanes();
         List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Permeable.BOTH).getLanes();
-        List<Lane> lanesEB =
-                new LaneFactory(network, nodeE, nodeB, freeway, sim, policy).setOffsetEnd(laneWidth.multiplyBy(1.5).neg())
-                        .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
+        List<Lane> lanesEF =
+                new LaneFactory(network, nodeE, nodeF, freeway, sim, policy).setOffsetEnd(laneWidth.multiplyBy(1.5).neg())
+                        .leftToRight(0.5, laneWidth, freewayLane, rampSpeedLimit).addLanes().getLanes();
+        List<Lane> lanesFB = new LaneFactory(network, nodeF, nodeB, freeway, sim, policy)
+                .setOffsetStart(laneWidth.multiplyBy(1.5).neg()).setOffsetEnd(laneWidth.multiplyBy(1.5).neg())
+                .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         for (Lane lane : lanesCD)
         {
             new SinkSensor(lane, lane.getLength().minus(Length.createSI(50)), GTUDirectionality.DIR_PLUS, sim);
@@ -118,14 +130,18 @@ public class RampMeteringDemo extends AbstractSimulationScript
         List<Detector> detectors34 = new ArrayList<>();
         detectors34.add(det3);
         detectors34.add(det4);
-        // traffic light
-        TrafficLight light = new SimpleTrafficLight("light", lanesEB.get(0), Length.createSI(900), sim);
-        List<TrafficLight> lightList = new ArrayList<>();
-        lightList.add(light);
-        // ramp metering
-        RampMeteringSwitch rampSwitch = new RwsSwitch(detectors12);
-        RampMeteringLightController rampLightController = new MeteringLightController(sim, lightList, Compatible.EVERYTHING);
-        new RampMetering(sim, rampSwitch, rampLightController);
+        if (getBooleanProperty("rampMetering"))
+        {
+            // traffic light
+            TrafficLight light = new SimpleTrafficLight("light", lanesEF.get(0), lanesEF.get(0).getLength(), sim);
+            List<TrafficLight> lightList = new ArrayList<>();
+            lightList.add(light);
+            // ramp metering
+            RampMeteringSwitch rampSwitch = new RwsSwitch(detectors12);
+            RampMeteringLightController rampLightController =
+                    new CycleTimeLightController(sim, lightList, Compatible.EVERYTHING);
+            new RampMetering(sim, rampSwitch, rampLightController);
+        }
 
         // OD
         List<OTSRoadNode> origins = new ArrayList<>();

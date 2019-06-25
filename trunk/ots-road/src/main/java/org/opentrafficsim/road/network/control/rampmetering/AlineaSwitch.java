@@ -59,7 +59,6 @@ public class AlineaSwitch extends SingleCrossSectionSwitch
         if (meanSpeed().le(this.speedThreshold)
                 || (this.lastFlow != null && flow.lt(this.lastFlow) && flow.gt(this.flowThreshold)))
         {
-            // TODO: what if flow is larger than capacity, shouldn't there be a minimum?
             this.cycleTime = Duration.createSI(1.0 / this.capacity.minus(flow).si);
             this.cycleTime = Duration.min(this.cycleTime, MAX_CYCLE_TIME);
             this.lastFlow = flow;
