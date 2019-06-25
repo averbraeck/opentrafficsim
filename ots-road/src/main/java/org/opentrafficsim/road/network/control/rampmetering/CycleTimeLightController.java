@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.control.rampmetering;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,9 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface.TimeDoubleUnit;
 
 /**
@@ -32,7 +35,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface.TimeDoubleUn
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MeteringLightController implements RampMeteringLightController
+public class CycleTimeLightController implements RampMeteringLightController
 {
 
     /** Minimum red duration. */
@@ -53,12 +56,18 @@ public class MeteringLightController implements RampMeteringLightController
     /** Traffic lights. */
     private final List<TrafficLight> trafficLights;
 
+    /** Scheduled red event. */
+    private Map<TrafficLight, SimEventInterface<SimTimeDoubleUnit>> redEvents = new LinkedHashMap<>();
+
+    /** Scheduled green event. */
+    private Map<TrafficLight, SimEventInterface<SimTimeDoubleUnit>> greenEvents = new LinkedHashMap<>();
+
     /**
      * @param simulator OTSSimulatorInterface; simulator
      * @param trafficLights List&lt;TrafficLight&gt;; traffic lights
      * @param compatible Compatible; GTU types that trigger the detector, and hence the light to red
      */
-    public MeteringLightController(final OTSSimulatorInterface simulator, final List<TrafficLight> trafficLights,
+    public CycleTimeLightController(final OTSSimulatorInterface simulator, final List<TrafficLight> trafficLights,
             final Compatible compatible)
     {
         this.simulator = simulator;
@@ -75,6 +84,20 @@ public class MeteringLightController implements RampMeteringLightController
     @Override
     public void disable()
     {
+        Iterator<TrafficLight> it = this.redEvents.keySet().iterator();
+        while (it.hasNext())
+        {
+            TrafficLight trafficLight = it.next();
+            this.simulator.cancelEvent(this.redEvents.get(trafficLight));
+            it.remove();
+        }
+        it = this.greenEvents.keySet().iterator();
+        while (it.hasNext())
+        {
+            TrafficLight trafficLight = it.next();
+            this.simulator.cancelEvent(this.greenEvents.get(trafficLight));
+            it.remove();
+        }
         this.enabled = false;
         for (TrafficLight trafficLight : this.trafficLights)
         {
@@ -102,11 +125,23 @@ public class MeteringLightController implements RampMeteringLightController
     }
 
     /**
+     * Sets the traffic light to red. Can be scheduled.
+     * @param trafficLight TrafficLight; traffic light
+     */
+    protected void setRed(final TrafficLight trafficLight)
+    {
+        this.redEvents.remove(trafficLight);
+        SimLogger.always().info("Traffic light set to RED");
+        trafficLight.setTrafficLightColor(TrafficLightColor.RED);
+    }
+
+    /**
      * Sets the traffic light to green. Can be scheduled and remembers the green time.
      * @param trafficLight TrafficLight; traffic light
      */
     protected void setGreen(final TrafficLight trafficLight)
     {
+        this.greenEvents.remove(trafficLight);
         this.greenStarts.put(trafficLight, this.simulator.getSimulatorTime());
         SimLogger.always().info("Traffic light set to GREEN");
         trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
@@ -141,14 +176,14 @@ public class MeteringLightController implements RampMeteringLightController
         @Override
         protected void triggerResponse(final LaneBasedGTU gtu)
         {
-            if (MeteringLightController.this.enabled && this.trafficLight.getTrafficLightColor().isGreen())
+            if (CycleTimeLightController.this.enabled && this.trafficLight.getTrafficLightColor().isGreen())
             {
                 try
                 {
                     // schedule green
-                    Time minRedTime = MeteringLightController.this.simulator.getSimulatorTime().plus(MIN_RED_TIME);
-                    Time cycleRedTime = MeteringLightController.this.greenStarts.get(this.trafficLight)
-                            .plus(MeteringLightController.this.cTime);
+                    Time minRedTime = CycleTimeLightController.this.simulator.getSimulatorTime().plus(MIN_RED_TIME);
+                    Time cycleRedTime = CycleTimeLightController.this.greenStarts.get(this.trafficLight)
+                            .plus(CycleTimeLightController.this.cTime);
                     Time green;
                     if (minRedTime.ge(cycleRedTime))
                     {
@@ -160,12 +195,14 @@ public class MeteringLightController implements RampMeteringLightController
                     {
                         SimLogger.always().info("Traffic light set to YELLOW (RED over 'MIN_RED_TIME')");
                         this.trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
-                        MeteringLightController.this.simulator.scheduleEventRel(MIN_RED_TIME, this, this.trafficLight,
-                                "setTrafficLightColor", new Object[] { TrafficLightColor.RED });
+                        CycleTimeLightController.this.redEvents.put(this.trafficLight,
+                                CycleTimeLightController.this.simulator.scheduleEventRel(MIN_RED_TIME, this,
+                                        CycleTimeLightController.this, "setRed", new Object[] { this.trafficLight }));
                         green = cycleRedTime;
                     }
-                    MeteringLightController.this.simulator.scheduleEventAbs(green, this, MeteringLightController.this,
-                            "setGreen", new Object[] { this.trafficLight });
+                    CycleTimeLightController.this.greenEvents.put(this.trafficLight,
+                            CycleTimeLightController.this.simulator.scheduleEventAbs(green, this, CycleTimeLightController.this,
+                                    "setGreen", new Object[] { this.trafficLight }));
                 }
                 catch (SimRuntimeException exception)
                 {
