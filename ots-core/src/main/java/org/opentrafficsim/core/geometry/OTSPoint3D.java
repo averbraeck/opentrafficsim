@@ -391,8 +391,9 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * Return the possible center points of a circle when two points and a radius are given. Z-coordinates are ignored (else the
-     * result might have to be infinitely long). Any points in the result <b>do</b> have the mean elevation of the given points.
+     * Return the possible center points of a circle (sphere), given two points and a radius. Only points with Z-coordinate equal
+     * to the mean of the given points are returned. (Without this restriction on the Z-coordinate, the result set would be either
+     * empty, a single point, or all points on a circle.)
      * @param point1 OTSPoint3D; the first point
      * @param point2 OTSPoint3D; the second point
      * @param radius double; the radius
@@ -400,23 +401,24 @@ public class OTSPoint3D implements Locatable, Serializable
      */
     public static final List<OTSPoint3D> circleCenter(final OTSPoint3D point1, final OTSPoint3D point2, final double radius)
     {
-        List<OTSPoint3D> center = new ArrayList<>();
+        List<OTSPoint3D> result = new ArrayList<>();
         OTSPoint3D m = interpolate(0.5, point1, point2);
         double h = point1.distanceSI(m);
         if (radius < h) // no intersection
         {
-            return center;
+            return result;
         }
         if (radius == h) // intersection at m
         {
-            center.add(m);
-            return center;
+            result.add(m);
+            return result;
         }
         OTSPoint3D p = new OTSPoint3D(point2.y - point1.y, point1.x - point2.x).normalize();
         double d = Math.sqrt(radius * radius - h * h); // distance of center from m
-        center.add(new OTSPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
-        center.add(new OTSPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
-        return center;
+        d = Math.sqrt(radius * radius - h * h);
+        result.add(new OTSPoint3D(m.x + d * p.x, m.y + d * p.y, m.z));
+        result.add(new OTSPoint3D(m.x - d * p.x, m.y - d * p.y, m.z));
+        return result;
     }
 
     /**
