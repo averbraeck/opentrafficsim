@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Point2D;
+import java.util.List;
 import java.util.Random;
 
 import javax.media.j3d.Bounds;
@@ -309,6 +310,55 @@ public class OTSPoint3DTest
                         }
                         assertEquals("horizontalDirectionSI returns correct direction", actualDirectionRadians, angle, 0.01);
                         assertEquals("horizontalDirection returns correct direction", actualDirectionRadians, angle2, 0.01);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Test the circleCenter method (and, implicitly, the normalize method).
+     */
+    @Test
+    public void circleCenterTest()
+    {
+        OTSPoint3D p1 = new OTSPoint3D(1, 0, 0);
+        OTSPoint3D p2 = new OTSPoint3D(-1, 0, 0);
+        assertEquals("Radius too short returns empty list", 0, OTSPoint3D.circleCenter(p1, p2, 0.999).size());
+        List<OTSPoint3D> list = OTSPoint3D.circleCenter(p1, p2, 1);
+        assertEquals("Radius exactly right and nice integer coordinates returns list with one point", 1, list.size());
+        // Now try it with less neat values (but don't expect to get a list of one point)
+        for (OTSPoint3D reference : new OTSPoint3D[] { new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 200, 300),
+                new OTSPoint3D(-50, -80, 20) })
+        {
+            for (double actualDirectionDegrees : new double[] { 0, 0.1, 10, 30, 89, 90, 91, 150, 179, 181, 269, 271, 359 })
+            {
+                double actualDirectionRadians = Math.toRadians(actualDirectionDegrees);
+                for (double horizontalDistance : new double[] { 0.1, 10, 999, 99999 })
+                {
+                    for (double dZ : new double[] { 0, 123, -876 })
+                    {
+                        OTSPoint3D other = new OTSPoint3D(reference.x + Math.cos(actualDirectionRadians) * horizontalDistance,
+                                reference.y + Math.sin(actualDirectionRadians) * horizontalDistance, reference.z + dZ);
+                        double actualDistance = reference.distanceSI(other);
+                        list = OTSPoint3D.circleCenter(reference, other, actualDistance * 0.499);
+                        assertEquals("Radius too short returns empty list", 0, list.size());
+                        System.out.println(String.format("actualDistance=%f", actualDistance));
+                        double factor = Math.sqrt(0.5);
+                        list = OTSPoint3D.circleCenter(reference, other, actualDistance * factor);
+                        assertEquals("Radius slightly larger returns list with 2 elements", 2, list.size());
+                        for (OTSPoint3D p : list)
+                        {
+                            System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", 
+                                    reference, other, p, actualDistance * factor, reference.distanceSI(p)));
+                            assertEquals("Z is average of input points", (reference.z + other.z) / 2, p.z, 0.001);
+                            assertEquals("horizontal distance from reference is R", actualDistance * factor,
+                                    reference.distanceSI(p), 0.001);
+                            System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", 
+                                    reference, other, p, actualDistance * factor, other.distanceSI(p)));
+                            assertEquals("horizontal distance from other is R", actualDistance * factor,
+                                    other.distanceSI(p), 0.001);
+                        }
                     }
                 }
             }
