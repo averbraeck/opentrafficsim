@@ -22,9 +22,9 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
@@ -39,6 +39,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDoubleScalar;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
@@ -132,6 +133,8 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             genericMap.add(new InputParameterDouble("densityVariability", "Density variability",
                     "Variability of the denisty: variability * (headway - 20) meters", 0.0, 0.0, 1.0, true, true, "%.00f",
                     3.0));
+            genericMap.add(new InputParameterBoolean("gradualLaneChange", "Gradual lane change",
+                    "Gradual lane change when true; instantaneous lane change when false", true, 4.0));
         }
         catch (InputParameterException exception)
         {
@@ -154,6 +157,8 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     {
         try
         {
+            LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = !((boolean) getInputParameter("generic.gradualLaneChange"));
+            
             final int laneCount = 2;
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
@@ -175,7 +180,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
 
             GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OTSPoint3D(radius, 0, 0), 
+            OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OTSPoint3D(radius, 0, 0),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
             OTSRoadNode halfway = new OTSRoadNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0),
                     new Direction(270, DirectionUnit.EAST_DEGREE));

@@ -25,6 +25,9 @@ import javax.swing.WindowConstants;
 
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.demo.conflict.BusStreetDemo;
+import org.opentrafficsim.demo.conflict.TJunctionDemo;
+import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
@@ -77,6 +80,12 @@ public class SuperDemo extends JFrame
                 "Creating fundamental diagrams for a straight road.\n"));
         this.demos.add(new Demo("ShortMerge", ShortMerge.class, "Short merge on a highway, followed by a destination split,\n"
                 + "forcing cars to change lanes in a relative short distance."));
+        this.demos.add(new Demo("TJunction", TJunctionDemo.class, "Complex crossing traffic on a T-junction with\n"
+                + "automated conflict resolution."));
+        this.demos.add(new Demo("TurboRoundabout", TurboRoundaboutDemo.class, "Turbo Roundabout without traffic lights,\n"
+                + "conflict resolution is fully automated."));
+        this.demos.add(new Demo("BusStreet", BusStreetDemo.class, "Interaction between bus traffic and normal road traffic,\n"
+                + "several types of bus stops and busses."));
         this.demos.add(new Demo("Networks", NetworksSwing.class,
                 "A number of different networks with merging and splitting,\n" + "forcing cars to change lanes and to merge."));
         this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,
