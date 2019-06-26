@@ -108,10 +108,10 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
 
     /** Strategical planner generator for cars. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
+    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryCars = null;
 
     /** Strategical planner generator for trucks. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
+    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryTrucks = null;
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -196,9 +196,9 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             this.carProbability = (double) getInputParameter("generic.carProbability");
 
             ParameterFactory params = new InputParameterHelper(getInputParameterMap());
-            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+            this.strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
-            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+            this.strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
 
             OTSPoint3D pFrom2a = new OTSPoint3D(0, -50, 0);
@@ -385,14 +385,14 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 3, 6), METER),
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 1.6, 2.0), METER),
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(this.stream, 140, 180), KM_PER_HOUR),
-                initialPositions, this.strategicalPlannerGeneratorCars);
+                initialPositions, this.strategicalPlannerFactoryCars);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(this.carProbability, template));
         template = makeTemplate(this.stream, lane,
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 8, 14), METER),
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 2.0, 2.5), METER),
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(this.stream, 100, 140), KM_PER_HOUR),
-                initialPositions, this.strategicalPlannerGeneratorTrucks);
+                initialPositions, this.strategicalPlannerFactoryTrucks);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
         LaneBasedTemplateGTUTypeDistribution templateDistribution = new LaneBasedTemplateGTUTypeDistribution(distribution);
