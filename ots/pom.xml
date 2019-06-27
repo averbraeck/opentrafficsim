@@ -1165,7 +1165,7 @@
     <repository>
       <name>djunits Public Repository</name>
       <id>djunits</id>
-      <url>https://djunits.org/maven</url>
+      <url>https://djunits.org/maven/</url>
     </repository>
 
     <repository>
