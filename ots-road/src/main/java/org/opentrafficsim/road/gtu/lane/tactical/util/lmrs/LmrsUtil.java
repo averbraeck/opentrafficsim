@@ -522,10 +522,46 @@ public final class LmrsUtil implements LmrsParameters
                 {
                     return false;
                 }
+                // gap-acceptance on merge conflicts
+                // TODO: this approach is a hack
+                for (HeadwayConflict conflict : conflicts)
+                {
+                    if (conflict.isMerge() && conflict.getDistance().si < 10.0)
+                    {
+                        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> down = conflict.getDownstreamConflictingGTUs();
+                        if (!down.isEmpty() && down.first().isParallel())
+                        {
+                            return false; // GTU on conflict
+                        }
+                        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> up = conflict.getUpstreamConflictingGTUs();
+                        if (!up.isEmpty() && up.first().isParallel())
+                        {
+                            return false; // GTU on conflict
+                        }
+                    }
+                }
             }
             catch (GTUException exception)
             {
                 throw new OperationalPlanException(exception);
+            }
+            conflicts = intersection.getConflicts(RelativeLane.CURRENT);
+            for (HeadwayConflict conflict : conflicts)
+            {
+                // TODO: removed this check as a GTU misses a split, perception of multiple splits at start of lane wrong?
+                //if (conflict.getLane().getParentLink().equals(conflict.getConflictingLink()))
+                //{
+                    if (conflict.isMerge() && conflict.getDistance().le0()
+                            && conflict.getDistance().neg().gt(conflict.getLength()))
+                    {
+                        return false; // partially past the merge; adjacent lane might be ambiguous
+                    }
+                    else if (conflict.isSplit() && conflict.getDistance().le0()
+                            && conflict.getDistance().neg().lt(gtu.getLength()))
+                    {
+                        return false; // partially before the split; adjacent lane might be ambiguous
+                    }
+                //}
             }
 
             // traffic lights

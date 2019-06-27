@@ -109,7 +109,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
             final RelativePosition.TYPE positionType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final Compatible detectedGTUTypes) throws NetworkException
     {
-        this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition),
+        this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition, 0.9),
                 detectedGTUTypes);
     }
 
@@ -117,18 +117,20 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * Make a geometry perpendicular to the center line of the lane with a length of 90% of the width of the lane.
      * @param lane Lane; the lane for which to make a perpendicular geometry
      * @param longitudinalPosition Length; the position on the lane
+     * @param relativeWidth double; lane width to use
      * @return an OTSLine3D that describes the line
      * @throws NetworkException in case the sensor point on the center line of the lane cannot be found
      */
-    private static OTSLine3D makeGeometry(final Lane lane, final Length longitudinalPosition) throws NetworkException
+    protected static OTSLine3D makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
+            throws NetworkException
     {
         try
         {
-            double w45 = lane.getWidth(longitudinalPosition).si * 0.45;
+            double w50 = lane.getWidth(longitudinalPosition).si * 0.5 * relativeWidth;
             DirectedPoint c = lane.getCenterLine().getLocation(longitudinalPosition);
             double a = c.getRotZ();
-            OTSPoint3D p1 = new OTSPoint3D(c.x + w45 * Math.cos(a + Math.PI / 2), c.y - w45 * Math.sin(a + Math.PI / 2), c.z);
-            OTSPoint3D p2 = new OTSPoint3D(c.x - w45 * Math.cos(a + Math.PI / 2), c.y + w45 * Math.sin(a + Math.PI / 2), c.z);
+            OTSPoint3D p1 = new OTSPoint3D(c.x + w50 * Math.cos(a + Math.PI / 2), c.y - w50 * Math.sin(a + Math.PI / 2), c.z);
+            OTSPoint3D p2 = new OTSPoint3D(c.x - w50 * Math.cos(a + Math.PI / 2), c.y + w50 * Math.sin(a + Math.PI / 2), c.z);
             return new OTSLine3D(p1, p2);
         }
         catch (OTSGeometryException exception)
@@ -141,7 +143,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     @Override
     public final void trigger(final LaneBasedGTU gtu)
     {
-        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] {getId(), this, gtu, this.positionType},
+        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType },
                 getSimulator().getSimulatorTime());
         triggerResponse(gtu);
     }
@@ -182,7 +184,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
     @Override
     public boolean equals(final Object obj)
     {

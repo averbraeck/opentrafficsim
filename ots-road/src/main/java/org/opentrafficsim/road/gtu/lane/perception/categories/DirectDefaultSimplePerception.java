@@ -24,6 +24,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
@@ -35,6 +36,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayObject;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
@@ -786,15 +788,15 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     {
         if (gtu.getTurnIndicatorStatus().isLeft())
         {
-            return new GTUStatus[] {GTUStatus.LEFT_TURNINDICATOR};
+            return new GTUStatus[] { GTUStatus.LEFT_TURNINDICATOR };
         }
         if (gtu.getTurnIndicatorStatus().isRight())
         {
-            return new GTUStatus[] {GTUStatus.RIGHT_TURNINDICATOR};
+            return new GTUStatus[] { GTUStatus.RIGHT_TURNINDICATOR };
         }
         if (gtu.getTurnIndicatorStatus().isHazard())
         {
-            return new GTUStatus[] {GTUStatus.EMERGENCY_LIGHTS};
+            return new GTUStatus[] { GTUStatus.EMERGENCY_LIGHTS };
         }
         return new GTUStatus[0];
     }
@@ -1029,11 +1031,15 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         }
 
         // backward
-        Lane lane = getGtu().getReferencePosition().getLane();
+        DirectedLanePosition ref = getGtu().getReferencePosition();
+        Lane lane = ref.getLane();
         for (Lane adjacentLane : getAccessibleAdjacentLanes(directionality).get(lane))
         {
-            Headway follower = headwayRecursiveBackwardSI(adjacentLane, getGtu().getDirection(lane),
-                    getGtu().translatedPosition(adjacentLane, getGtu().getRear(), when).getSI(), 0.0,
+
+            double pos = adjacentLane.getLength().si * ref.getPosition().si / ref.getLane().getLength().si;
+            pos = ref.getGtuDirection().isPlus() ? pos + getGtu().getRear().getDx().si : pos - getGtu().getRear().getDx().si;
+
+            Headway follower = headwayRecursiveBackwardSI(adjacentLane, getGtu().getDirection(lane), pos, 0.0,
                     -maximumReverseHeadway.getSI(), when);
             if (follower instanceof AbstractHeadwayGTU)
             {
@@ -1085,7 +1091,9 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         LanePathInfo lpi = getLanePathInfo();
         List<LaneDirection> laneDirectionList = new ArrayList<>();
         laneDirectionList.add(new LaneDirection(adjacentLane, lpi.getReferenceLaneDirection().getDirection()));
-        Length referencePosition = getGtu().translatedPosition(adjacentLane, getGtu().getReference(), when);
+        DirectedLanePosition ref = getGtu().getReferencePosition();
+        Length referencePosition =
+                Length.createSI(adjacentLane.getLength().si * ref.getPosition().si / ref.getLane().getLength().si);
         for (int i = 1; i < lpi.getLaneDirectionList().size(); i++)
         {
             LaneDirection ld = lpi.getLaneDirectionList().get(i);

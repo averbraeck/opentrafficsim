@@ -306,8 +306,16 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         return this.fractionalLinkPositions.get(getReferencePosition().getLane().getParentLink()) > 0.0;
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
+     * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
+     * are relative towards this position.
+     * @param lane Lane; the lane to add to the list of lanes on which the GTU is registered.
+     * @param gtuDirection GTUDirectionality; the direction of the GTU on the lane (which can be bidirectional). If the GTU has
+     *            a positive speed, it is moving in this direction.
+     * @param position Length; the position on the lane.
+     * @throws GTUException when positioning the GTU on the lane causes a problem
+     */
     @SuppressWarnings("checkstyle:designforextension")
     public void enterLane(final Lane lane, final Length position, final GTUDirectionality gtuDirection) throws GTUException
     {
@@ -374,8 +382,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         lane.addGTU(this, position);
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Unregister the GTU from a lane.
+     * @param lane Lane; the lane to remove from the list of lanes on which the GTU is registered.
+     * @throws GTUException when leaveLane should not be called
+     */
     @SuppressWarnings("checkstyle:designforextension")
     public void leaveLane(final Lane lane) throws GTUException
     {
@@ -588,6 +599,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param laneChangeDirection LateralDirectionality; direction of lane change
      * @throws GTUException exception
      */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public void initLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
     {
@@ -891,8 +903,16 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         return position(lane, relativePosition, getSimulator().getSimulatorTime());
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Return the longitudinal position that the indicated relative position of this GTU would have if it were to change to
+     * another Lane with a / the current CrossSectionLink. This point may be before the begin or after the end of the link of
+     * the projection lane of the GTU. This preserves the length of the GTU.
+     * @param projectionLane Lane; the lane onto which the position of this GTU must be projected
+     * @param relativePosition RelativePosition; the point on this GTU that must be projected
+     * @param when Time; the time for which to project the position of this GTU
+     * @return Length; the position of this GTU in the projectionLane
+     * @throws GTUException when projectionLane it not in any of the CrossSectionLink that the GTU is on
+     */
     @SuppressWarnings("checkstyle:designforextension")
     public Length translatedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
             throws GTUException
@@ -918,8 +938,15 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         throw new GTUException(this + " is not on any lane of Link " + link);
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Return the longitudinal position on the projection lane that has the same fractional position on one of the current lanes
+     * of the indicated relative position. This preserves the fractional positions of all relative positions of the GTU.
+     * @param projectionLane Lane; the lane onto which the position of this GTU must be projected
+     * @param relativePosition RelativePosition; the point on this GTU that must be projected
+     * @param when Time; the time for which to project the position of this GTU
+     * @return Length; the position of this GTU in the projectionLane
+     * @throws GTUException when projectionLane it not in any of the CrossSectionLink that the GTU is on
+     */
     @SuppressWarnings("checkstyle:designforextension")
     public Length projectedPosition(final Lane projectionLane, final RelativePosition relativePosition, final Time when)
             throws GTUException

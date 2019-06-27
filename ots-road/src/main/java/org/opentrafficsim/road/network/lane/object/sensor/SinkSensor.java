@@ -53,7 +53,8 @@ public class SinkSensor extends AbstractSensor
     public SinkSensor(final Lane lane, final Length position, final Compatible compatible,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
-        super("SINK@" + lane.getFullId(), lane, position, RelativePosition.FRONT, simulator, compatible);
+        super("SINK@" + lane.getFullId(), lane, position, RelativePosition.FRONT, simulator, makeGeometry(lane, position, 1.0),
+                compatible);
     }
 
     /** {@inheritDoc} */

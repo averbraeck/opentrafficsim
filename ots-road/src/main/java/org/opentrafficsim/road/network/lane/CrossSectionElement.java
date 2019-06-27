@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.media.j3d.Bounds;
@@ -289,7 +290,22 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             OTSLine3D designLine = this.getParentLink().getDesignLine();
             if (designLine.size() > 2)
             {
-                return designLine.offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
+                // TODO: this produces near-duplicate points on lane 925_J1.FORWARD1 in the Aimsun network
+                // hack: clean nearby points
+                OTSLine3D line = designLine.offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
+                List<OTSPoint3D> points = new ArrayList<>(Arrays.asList(line.getPoints()));
+                Iterator<OTSPoint3D> it = points.iterator();
+                OTSPoint3D prevPoint = null;
+                while (it.hasNext())
+                {
+                    OTSPoint3D point = it.next();
+                    if (prevPoint != null && prevPoint.distance(point).si < 1e-4)
+                    {
+                        it.remove();
+                    }
+                    prevPoint = point;
+                }
+                return new OTSLine3D(points);
             }
             else
             {
