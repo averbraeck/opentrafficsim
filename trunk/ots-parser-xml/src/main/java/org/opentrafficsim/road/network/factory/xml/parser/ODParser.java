@@ -363,7 +363,8 @@ public final class ODParser
                 }
 
                 // OD Options
-                ODOptions odOptions = new ODOptions().set(ODOptions.GTU_ID, idGenerator);
+                ODOptions odOptions =
+                        new ODOptions().set(ODOptions.GTU_ID, idGenerator).set(ODOptions.NO_LC_DIST, Length.createSI(1.0));
                 // templates
                 Set<TemplateGTUType> templates = new LinkedHashSet<>();
                 for (GTUTEMPLATE template : gtuTemplates.values())

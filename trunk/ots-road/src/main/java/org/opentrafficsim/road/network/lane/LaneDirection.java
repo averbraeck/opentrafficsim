@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -128,10 +127,18 @@ public class LaneDirection implements Serializable
         {
             return set.iterator().next();
         }
+        // check of the GTU is registered on any
+        for (LaneDirection l : set)
+        {
+            if (l.getLane().getGtuList().contains(gtu))
+            {
+                return l;
+            }
+        }
         // ask tactical planner
         return Try.assign(() -> gtu.getTacticalPlanner().chooseLaneAtSplit(this, set), "Missing parameter.");
     }
-    
+
     /**
      * Returns a set of {@code LaneDirection}'s that can be followed considering the route.
      * @param gtu LaneBasedGTU; GTU

@@ -100,8 +100,8 @@ public interface HeadwayGtuType
             return createUpstreamGtu(perceivingGtu, perceivedGtu, distance);
         }
         Throw.when(-distance.si > perceivingGtu.getLength().si + perceivedGtu.getLength().si, IllegalStateException.class,
-                "A GTU that is supposedly %s is actually %s.", downstream ? "downstream" : "upstream",
-                downstream ? "upstream" : "downstream");
+                "A GTU (%s) that is supposedly %s is actually %s.", perceivedGtu.getId(),
+                downstream ? "downstream" : "upstream", downstream ? "upstream" : "downstream");
         Length overlapRear = distance.plus(perceivingGtu.getLength());
         Length overlap = distance.neg();
         Length overlapFront = distance.plus(perceivedGtu.getLength());
