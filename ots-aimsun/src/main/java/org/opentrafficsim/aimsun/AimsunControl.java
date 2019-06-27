@@ -11,6 +11,8 @@ import java.net.Socket;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.xml.bind.JAXBException;
@@ -21,6 +23,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Position;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.logger.LogCategory;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
@@ -163,6 +166,41 @@ public class AimsunControl
     {
         OTSSimulatorInterface simulator = this.model.getSimulator();
         Time stopTime = simulator.getSimulatorTime();
+        // Experiment to see if we can rid ourselves of the protobuf stuff: equivalent code in Sim0MQ
+        List<Object> messageBuffer = new ArrayList<>();
+        // Insert message prefix
+        messageBuffer.add("PluginVersion=01");
+        messageBuffer.add("Status=OK");
+        for (GTU gtu : this.model.getNetwork().getGTUs())
+        {
+            messageBuffer.add("GTU");
+            messageBuffer.add(gtu.getId());
+            try
+            {
+                DirectedPoint dp = gtu.getOperationalPlan().getLocation(stopTime);
+                messageBuffer.add(Position.createSI(dp.x));
+                messageBuffer.add(Position.createSI(dp.y));
+                messageBuffer.add(Position.createSI(dp.z));
+                messageBuffer.add(dp.getRotZ());
+                messageBuffer.add(gtu.getLength());
+                messageBuffer.add(gtu.getWidth());
+                messageBuffer.add(Integer.parseInt(gtu.getGTUType().getId().split("\\.")[1]));
+                messageBuffer.add(gtu.getSpeed());
+            }
+            catch (OperationalPlanException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+        // try
+        // {
+        // TypedMessage.encode0MQMessageUTF16(messageBuffer.toArray(new Object[] {}));
+        // }
+        // catch (Sim0MQException e)
+        // {
+        // e.printStackTrace();
+        // }
+        
         // System.err.println("Entering sendGTUPositionsToAimsun: simulator time is " + stopTime);
         AimsunControlProtoBuf.GTUPositions.Builder builder = AimsunControlProtoBuf.GTUPositions.newBuilder();
         for (GTU gtu : this.model.getNetwork().getGTUs())
@@ -170,10 +208,9 @@ public class AimsunControl
             AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder gpb =
                     AimsunControlProtoBuf.GTUPositions.GTUPosition.newBuilder();
             gpb.setGtuId(gtu.getId());
-            DirectedPoint dp;
             try
             {
-                dp = gtu.getOperationalPlan().getLocation(stopTime);
+                DirectedPoint dp = gtu.getOperationalPlan().getLocation(stopTime);
                 gpb.setX(dp.x);
                 gpb.setY(dp.y);
                 gpb.setZ(dp.z);
