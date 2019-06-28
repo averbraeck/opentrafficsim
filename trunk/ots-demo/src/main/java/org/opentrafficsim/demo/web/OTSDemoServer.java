@@ -188,7 +188,8 @@ public class OTSDemoServer
                     else if (modelId.toLowerCase().contains("crossingtrafficlights"))
                         model = new CrossingTrafficLightsModel(simulator);
                     else if (modelId.toLowerCase().contains("trafcoddemosimple"))
-                        model = new TrafCODDemo1.TrafCODModel(simulator);
+                        model = new TrafCODDemo1.TrafCODModel(simulator, "TrafCODDemo1", "TrafCODDemo2",
+                                "/TrafCODDemo1/TrafCODDemo1.xml");
                     else if (modelId.toLowerCase().contains("trafcoddemocomplex"))
                         model = new TrafCODDemo2.TrafCODModel(simulator, "TrafCODDemo2", "TrafCODDemo2",
                                 "/TrafCODDemo2/TrafCODDemo2.xml");
