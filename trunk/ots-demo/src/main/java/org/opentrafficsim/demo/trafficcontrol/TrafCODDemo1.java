@@ -2,17 +2,29 @@ package org.opentrafficsim.demo.trafficcontrol;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.xml.bind.DatatypeConverter;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -33,6 +45,9 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.opentrafficsim.xml.generated.CONTROL;
+import org.opentrafficsim.xml.generated.OTS;
+import org.opentrafficsim.xml.generated.CONTROL.TRAFCOD;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.event.EventInterface;
@@ -55,7 +70,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
     private static final long serialVersionUID = 20161118L;
 
     /**
-     * Create a TrafcodAndTurbo demo.
+     * Create a Trafcod demo.
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model TrafCODModel; the model
@@ -69,22 +84,42 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
+     * @throws IOException ...
      */
-    public static void main(final String[] args)
+    public static void main(final String[] args) throws IOException
     {
         demo(true);
     }
 
     /**
+     * Open an URL, read it and store the contents in a string. Adapted from
+     * https://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code
+     * @param url URL; the URL
+     * @return String
+     * @throws IOException when reading the file fails
+     */
+    public static String readStringFromURL(final URL url) throws IOException
+    {
+        try (Scanner scanner = new Scanner(url.openStream(), StandardCharsets.UTF_8.toString()))
+        {
+            scanner.useDelimiter("\\A");
+            return scanner.hasNext() ? scanner.next() : "";
+        }
+    }
+
+    /**
      * Start the demo.
      * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     * @throws IOException when reading the file fails 
      */
-    public static void demo(final boolean exitOnClose)
+    public static void demo(final boolean exitOnClose) throws IOException
     {
         try
         {
             OTSAnimator simulator = new OTSAnimator();
-            final TrafCODModel trafcodModel = new TrafCODModel(simulator);
+            URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
+            String xml = readStringFromURL(url);
+            final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), trafcodModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
@@ -118,7 +153,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
         /** */
         private static final long serialVersionUID = 20161020L;
 
-        /** the model. */
+        /** The network. */
         private OTSRoadNetwork network;
 
         /** The TrafCOD controller. */
@@ -127,12 +162,20 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
         /** TrafCOD controller display. */
         private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
 
+        /** The XML. */
+        private final String xml;
+
         /**
-         * @param simulator OTSSimulatorInterface; the simulator for this model
+         * @param simulator OTSSimulatorInterface; the simulator
+         * @param shortName String; name of the model
+         * @param description String; description of the model
+         * @param xml String; the XML string
          */
-        public TrafCODModel(final OTSSimulatorInterface simulator)
+        public TrafCODModel(final OTSSimulatorInterface simulator, final String shortName, final String description,
+                final String xml)
         {
             super(simulator);
+            this.xml = xml;
         }
 
         /** {@inheritDoc} */
@@ -141,14 +184,55 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
         {
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/TrafCODDemo1/TrafCODDemo1.xml");
-                this.network = new OTSRoadNetwork("TrafCODDemo1", true);
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                this.network = new OTSRoadNetwork(getShortName(), true);
+                OTS ots = XmlNetworkLaneParser.parseXML(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
+                XmlNetworkLaneParser.build(ots, this.network, getSimulator());
 
                 String controllerName = "TrafCOD_simple";
+                List<CONTROL> trafficControllerList = ots.getCONTROL();
+                Throw.when(trafficControllerList.size() != 1, NetworkException.class,
+                        "OTS contains wrong number of traffic controllers (should be 1, got %1)", trafficControllerList.size());
+                CONTROL controller = trafficControllerList.get(0);
+                List<TRAFCOD> trafCodList = controller.getTRAFCOD();
+                Throw.when(trafCodList.size() != 1, NetworkException.class, "Controller should contain one TRAFCOD (got %1)",
+                        trafCodList.size());
+                TRAFCOD trafCod = trafCodList.get(0);
+                String programString = trafCod.getPROGRAM().getValue();
+                List<String> program = null == programString ? TrafCOD.loadTextFromURL(new URL(trafCod.getPROGRAMFILE()))
+                        : Arrays.asList(programString.split("\n"));
+                TRAFCOD.CONSOLE.MAP mapData = trafCod.getCONSOLE().getMAP();
+                BufferedImage backgroundImage = null;
+                if (null != mapData)
+                {
+                    String graphicsType = mapData.getTYPE();
+                    String encoding = mapData.getENCODING();
+                    String encodedData = mapData.getValue();
+                    if (!"base64".contentEquals(encoding))
+                    {
+                        throw new RuntimeException("Unexpected image encoding: " + encoding);
+                    }
+                    byte[] imageBytes = DatatypeConverter.parseBase64Binary(encodedData);
+                    switch (graphicsType)
+                    {
+                        case "PNG":
+                            backgroundImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+                            // javax.imageio.ImageIO.write(backgroundImage, "png", new File("c:\\temp\\test.png"));
+                            break;
 
-                Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "X")).getCrossSectionElement("FORWARD");
-                Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "X")).getCrossSectionElement("FORWARD");
+                        default:
+                            throw new RuntimeException("Unexpected image type: " + graphicsType);
+                    }
+                }
+                String objectLocationsString = trafCod.getCONSOLE().getCOORDINATES().getValue();
+                List<String> displayObjectLocations = null == objectLocationsString
+                        ? TrafCOD.loadTextFromURL(new URL(trafCod.getCONSOLE().getCOORDINATESFILE()))
+                        : Arrays.asList(objectLocationsString.split("\n"));
+                this.trafCOD = new TrafCOD(controllerName, program, getSimulator(), this.controllerDisplayPanel,
+                        backgroundImage, displayObjectLocations);
+
+                
+                Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "XS")).getCrossSectionElement("FORWARD");
+                Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "XE")).getCrossSectionElement("FORWARD");
                 SimpleTrafficLight tl08 = new SimpleTrafficLight(String.format("%s.%02d", controllerName, 8), laneWX,
                         new Length(296, LengthUnit.METER), getSimulator());
                 try
@@ -171,20 +255,8 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
                     throw new NetworkException(exception);
                 }
 
-                new TrafficLightSensor(String.format("D%02d1", 8), laneWX, new Length(292, LengthUnit.METER),
-                        laneWX, new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        getSimulator(), Compatible.EVERYTHING);
-                new TrafficLightSensor(String.format("D%02d2", 8), laneWX, new Length(260, LengthUnit.METER),
-                        laneWX, new Length(285, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        getSimulator(), Compatible.EVERYTHING);
-                new TrafficLightSensor(String.format("D%02d1", 11), laneNX,
-                        new Length(292, LengthUnit.METER), laneNX, new Length(294, LengthUnit.METER), null,
-                        RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
-                new TrafficLightSensor(String.format("D%02d2", 11), laneNX,
-                        new Length(260, LengthUnit.METER), laneNX, new Length(285, LengthUnit.METER), null,
-                        RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
-                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
-                        getSimulator(), this.controllerDisplayPanel, null, null);
+                this.trafCOD = new TrafCOD(controllerName, program, getSimulator(), this.controllerDisplayPanel,
+                        backgroundImage, displayObjectLocations);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
