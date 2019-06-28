@@ -60,7 +60,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
     private static final long serialVersionUID = 20161118L;
 
     /**
-     * Create a TrafcodAndTurbo demo.
+     * Create a Trafcod demo.
      * @param title String; the title of the Frame
      * @param panel OTSAnimationPanel; the tabbed panel to display
      * @param model TrafCODModel; the model
@@ -146,14 +146,14 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
         /** The network. */
         private OTSRoadNetwork network;
 
-        /** The XML. */
-        private final String xml;
-
         /** The TrafCOD controller. */
         private TrafCOD trafCOD;
 
         /** TrafCOD controller display. */
         private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
+
+        /** The XML. */
+        private final String xml;
 
         /**
          * @param simulator OTSSimulatorInterface; the simulator
@@ -207,7 +207,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                     {
                         case "PNG":
                             backgroundImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
-                            javax.imageio.ImageIO.write(backgroundImage, "png", new File("c:\\temp\\test.png"));
+                            // javax.imageio.ImageIO.write(backgroundImage, "png", new File("c:\\temp\\test.png"));
                             break;
 
                         default:
