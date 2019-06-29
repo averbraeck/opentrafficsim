@@ -4,9 +4,21 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <DEFINITIONS>
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml" />
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml" />
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml" />
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_gtutypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_linktypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_lanetypes.xml" />
+      </xi:fallback>
+    </xi:include>
 
     <GTUTEMPLATES>
       <GTUTEMPLATE DEFAULT="true" GTUTYPE="CAR" ID="CAR">
@@ -166,17 +178,17 @@
 
   <NETWORK>
 
-    <NODE ID="E" COORDINATE="(300,0)" DIRECTION="180 deg"/>
-    <NODE ID="N" COORDINATE="(0,300)" DIRECTION="-90 deg"/>
-    <NODE ID="W" COORDINATE="(-300,0)" DIRECTION="0 deg"/>
-    <NODE ID="S" COORDINATE="(0,-300)" DIRECTION="90 deg"/>
-    <NODE ID="E2" COORDINATE="(300,0)" DIRECTION="0 deg"/>
-    <NODE ID="N2" COORDINATE="(0,300)" DIRECTION="90 deg"/>
-    <NODE ID="W2" COORDINATE="(-300,0)" DIRECTION="180 deg"/>
-    <NODE ID="S2" COORDINATE="(0,-300)" DIRECTION="-90 deg"/>
-    <NODE ID="EP" COORDINATE="(100,0)" DIRECTION="180 deg"/>
-    <NODE ID="NP" COORDINATE="(0,100)" DIRECTION="90 deg"/>
-    <NODE ID="WP" COORDINATE="(-100,0)" DIRECTION="0 deg"/>
+    <NODE ID="E" COORDINATE="(300,0)" DIRECTION="180 deg" />
+    <NODE ID="N" COORDINATE="(0,300)" DIRECTION="-90 deg" />
+    <NODE ID="W" COORDINATE="(-300,0)" DIRECTION="0 deg" />
+    <NODE ID="S" COORDINATE="(0,-300)" DIRECTION="90 deg" />
+    <NODE ID="E2" COORDINATE="(300,0)" DIRECTION="0 deg" />
+    <NODE ID="N2" COORDINATE="(0,300)" DIRECTION="90 deg" />
+    <NODE ID="W2" COORDINATE="(-300,0)" DIRECTION="180 deg" />
+    <NODE ID="S2" COORDINATE="(0,-300)" DIRECTION="-90 deg" />
+    <NODE ID="EP" COORDINATE="(100,0)" DIRECTION="180 deg" />
+    <NODE ID="NP" COORDINATE="(0,100)" DIRECTION="90 deg" />
+    <NODE ID="WP" COORDINATE="(-100,0)" DIRECTION="0 deg" />
 
     <LINK ID="EEP" NODESTART="E" NODEEND="EP" TYPE="URBAN" OFFSETSTART="-5.25m" OFFSETEND="-5.25m">
       <STRAIGHT />
@@ -413,14 +425,14 @@
       <FREQUENCY>12.5/min</FREQUENCY>
       <ROOMCHECKER>CF</ROOMCHECKER>
     </GENERATOR>
-      
+
     <GENERATOR LINK="NNENTER" LANE="RIGHT" POSITION="10m" DIRECTION="DIR_PLUS">
       <GTUTEMPLATE>CAR</GTUTEMPLATE>
       <SHORTESTROUTEMIX>N</SHORTESTROUTEMIX>
       <FREQUENCY>12.5/min</FREQUENCY>
       <ROOMCHECKER>CF</ROOMCHECKER>
     </GENERATOR>
-      
+
     <GENERATOR LINK="WWP" LANE="LANE" POSITION="10m" DIRECTION="DIR_PLUS">
       <GTUTEMPLATE>CAR</GTUTEMPLATE>
       <SHORTESTROUTEMIX>W</SHORTESTROUTEMIX>
@@ -434,7 +446,7 @@
       <FREQUENCY>12.5/min</FREQUENCY>
       <ROOMCHECKER>CF</ROOMCHECKER>
     </GENERATOR>
-      
+
     <GENERATOR LINK="SSENTER" LANE="RIGHT" POSITION="10m" DIRECTION="DIR_PLUS">
       <GTUTEMPLATE>CAR</GTUTEMPLATE>
       <SHORTESTROUTEMIX>S</SHORTESTROUTEMIX>

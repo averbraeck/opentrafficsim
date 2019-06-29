@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
-import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -126,9 +126,9 @@ public class NetworkTest extends OTSSimulationApplication<OTSModelInterface>
         {
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/Test-Network-14.xml");
+                URL xmlURL = URLResource.getResource("/Test-Network-14.xml");
                 this.network = new OTSRoadNetwork("Test-Network-14", true);
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
             }
             catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
                     | JAXBException | URISyntaxException | XmlParserException exception)

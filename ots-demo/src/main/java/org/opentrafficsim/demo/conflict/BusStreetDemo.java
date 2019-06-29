@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.io.InputStream;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -174,9 +174,9 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             this.simulator.getReplication().setStreams(streams);
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/conflict/BusStreet.xml");
+                URL xmlURL = URLResource.getResource("/conflict/BusStreet.xml");
                 this.network = new OTSRoadNetwork("BusStreet", true);
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
 
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));

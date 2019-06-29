@@ -4,10 +4,45 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <DEFINITIONS>
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml" />
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml" />
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml" />
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutemplates.xml" />
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_gtutypes.xml">
+          <xi:fallback>
+            <xi:include href="xsd/1.02.01/defaults/default_gtutypes.xml" />
+          </xi:fallback>
+        </xi:include>
+      </xi:fallback>
+    </xi:include>
+    
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_linktypes.xml">
+          <xi:fallback>
+            <xi:include href="xsd/1.02.01/defaults/default_linktypes.xml" />
+          </xi:fallback>
+        </xi:include>
+      </xi:fallback>
+    </xi:include>
+
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_lanetypes.xml">
+          <xi:fallback>
+            <xi:include href="xsd/1.02.01/defaults/default_lanetypes.xml" />
+          </xi:fallback>
+        </xi:include>
+      </xi:fallback>
+    </xi:include>
+
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutemplates.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_gtutemplates.xml">
+          <xi:fallback>
+            <xi:include href="xsd/1.02.01/defaults/default_gtutemplates.xml" />
+          </xi:fallback>
+        </xi:include>
+      </xi:fallback>
+    </xi:include>
 
     <LANETYPES>
       <LANETYPE ID="STREET">
