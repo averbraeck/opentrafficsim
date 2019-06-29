@@ -57,9 +57,9 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
 
     /**
      * Construct a viewer for imported NWB data.
-     * @param model
-     * @param animationPanel
-     * @throws OTSDrawingException
+     * @param model model
+     * @param animationPanel animation panel
+     * @throws OTSDrawingException when animation panel cannot be drawn
      */
     public Importer(OTSModelInterface model, OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
@@ -75,10 +75,10 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
      * @throws IOException When a file could not be read
      * @throws OTSGeometryException When the geometry of a design line contains duplicate points
      * @throws NetworkException Should not happen
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws SecurityException
-     * @throws NoSuchFieldException
+     * @throws IllegalAccessException on error
+     * @throws IllegalArgumentException on error
+     * @throws SecurityException on error
+     * @throws NoSuchFieldException on error
      */
     public static void main(final String[] args)
             throws OTSDrawingException, SimRuntimeException, NamingException, IOException, OTSGeometryException,

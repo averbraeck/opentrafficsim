@@ -3,7 +3,7 @@ package org.opentrafficsim.ahfe;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -127,8 +127,6 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.object.Distraction;
-import org.opentrafficsim.road.network.lane.object.Distraction.TrapezoidProfile;
 import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
@@ -302,9 +300,9 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 
         // Network
-        InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
+        URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
         OTSRoadNetwork network = new OTSRoadNetwork("Distraction", true);
-        XmlNetworkLaneParser.build(stream, network, sim);
+        XmlNetworkLaneParser.build(xmlURL, network, sim);
 
         // new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000),
         // sim, new TrapezoidProfile(0.2, Length.createSI(-400), Length.createSI(200), Length.createSI(400)));

@@ -61,6 +61,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -749,10 +750,10 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
             try
             {
                 CrossSectionLink sLink = (CrossSectionLink) network.getLink(sLinkStr);
-                OTSNode sNode = (OTSNode) network.getNode(sNodeStr);
+                OTSRoadNode sNode = (OTSRoadNode) network.getNode(sNodeStr);
                 Lane sLane = (Lane) sLink.getCrossSectionElement(sLaneStr);
                 CrossSectionLink eLink = (CrossSectionLink) network.getLink(eLinkStr);
-                OTSNode eNode = (OTSNode) network.getNode(eNodeStr);
+                OTSRoadNode eNode = (OTSRoadNode) network.getNode(eNodeStr);
                 Lane eLane = (Lane) eLink.getCrossSectionElement(eLaneStr);
                 DirectedPoint sp, ep;
                 Length beginWidth, endWidth;

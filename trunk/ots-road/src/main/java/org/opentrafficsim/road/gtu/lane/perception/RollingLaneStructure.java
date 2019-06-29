@@ -1502,6 +1502,29 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
         }
     }
 
+
+    /**
+     * Print the lane structure as a number of lines in a String.
+     * @param ls RollingLaneStructure; the lane structure to print
+     * @param gtu LaneBasedGTU; the GTTU for which the lane structure is printed
+     * @return a String with information about the RollingLaneStructire
+     */
+    public static String print(final RollingLaneStructure ls, final LaneBasedGTU gtu)
+    {
+        StringBuffer s = new StringBuffer();
+        s.append(gtu.getSimulator().getSimulatorTime() + " " + gtu.getId() + " LANESTRUCTURE: ");
+        for (LaneStructureRecord lsr : ls.relativeLanes.keySet())
+        {
+            s.append(lsr.toString() + "  ");
+        }
+        int totSize = 0;
+        for (Set<RollingLaneStructureRecord> set : ls.relativeLaneMap.values())
+        {
+            totSize += set.size();
+        }
+        s.append("\n  relativeLanes.size()=" + ls.relativeLanes.size() + "  relativeLaneMap.totalSize()=" + totSize);
+        return s.toString();
+    }
     /** {@inheritDoc} */
     @Override
     public final String toString()

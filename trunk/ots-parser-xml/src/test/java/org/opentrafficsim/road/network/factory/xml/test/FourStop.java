@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
-import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -130,9 +130,9 @@ public class FourStop extends OTSSimulationApplication<OTSModelInterface>
         {
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/4-stop-3-1.xml");
+                URL xmlURL = URLResource.getResource("/4-stop-3-1.xml");
                 this.network = new OTSRoadNetwork("4-stop-3-1", true);
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
             }

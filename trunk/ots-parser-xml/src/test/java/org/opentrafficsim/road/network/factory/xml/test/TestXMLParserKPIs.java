@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -149,11 +148,11 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
         @Override
         public final void constructModel() throws SimRuntimeException
         {
-            InputStream stream = URLResource.getResourceAsStream("/N201.xml");
+            URL xmlURL = URLResource.getResource("/N201.xml");
             this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
 
                 for (TrafficLight tl : this.network.getObjectMap(TrafficLight.class).values())
                 {

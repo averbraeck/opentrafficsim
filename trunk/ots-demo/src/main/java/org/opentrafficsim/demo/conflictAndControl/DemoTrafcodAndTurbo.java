@@ -2,7 +2,7 @@ package org.opentrafficsim.demo.conflictAndControl;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.io.InputStream;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
@@ -151,9 +151,9 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
         {
             try
             {
-                InputStream inputStream = URLResource.getResourceAsStream("/conflictAndControl/TurboRoundaboutAndSignal.xml");
+                URL xmlURL = URLResource.getResource("/conflictAndControl/TurboRoundaboutAndSignal.xml");
                 this.network = new OTSRoadNetwork("TurboRoundaboutAndSignal", true);
-                XmlNetworkLaneParser.build(inputStream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
 
                 // add conflicts
                 ((CrossSectionLink) this.network.getLink("EBNA")).setPriority(Priority.PRIORITY);

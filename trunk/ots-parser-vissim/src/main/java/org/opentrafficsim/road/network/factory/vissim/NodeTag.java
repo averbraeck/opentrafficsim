@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Direction;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -16,6 +17,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.xml.sax.SAXException;
 
 /**
@@ -40,9 +42,14 @@ class NodeTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSPoint3D coordinate = null;
 
+    /** Coordinate (null at first, can be calculated later when connected to a link. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    // TODO: The direction is not yet calculated
+    Direction direction = null;
+
     /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    OTSNode node = null;
+    OTSRoadNode node = null;
 
     /**
      * @param parser VissimNetworkLaneParser; VissimParser
@@ -124,7 +131,7 @@ class NodeTag implements Serializable
      * @throws NetworkException when point cannot be instantiated
      * @throws NamingException when animation context cannot be found.
      */
-    static OTSNode makeOTSNode(final NodeTag nodeTag, final VissimNetworkLaneParser parser)
+    static OTSRoadNode makeOTSNode(final NodeTag nodeTag, final VissimNetworkLaneParser parser)
             throws NetworkException, NamingException
     {
         if (nodeTag.node != null)
@@ -132,7 +139,7 @@ class NodeTag implements Serializable
             nodeTag.node.getNetwork().removeNode(nodeTag.node);
         }
         String id = nodeTag.name;
-        OTSNode node = new OTSNode(parser.getNetwork(), id, nodeTag.coordinate);
+        OTSRoadNode node = new OTSRoadNode(parser.getNetwork(), id, nodeTag.coordinate, nodeTag.direction);
         nodeTag.node = node;
         return node;
     }

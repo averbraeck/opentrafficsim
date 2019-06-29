@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.io.InputStream;
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -116,9 +116,9 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
         {
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/conflict/TJunction.xml");
+                URL xmlURL = URLResource.getResource("/conflict/TJunction.xml");
                 this.network = new OTSRoadNetwork("TJunction", true);
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
 
                 // add conflicts
                 // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);

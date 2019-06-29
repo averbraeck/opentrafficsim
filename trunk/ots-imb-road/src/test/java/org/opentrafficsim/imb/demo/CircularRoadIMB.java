@@ -11,9 +11,11 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -76,6 +78,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
@@ -405,8 +408,10 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
 
             GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
             LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            OTSNode start = new OTSNode(this.network, "Start", new OTSPoint3D(radius, 0, 0));
-            OTSNode halfway = new OTSNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0));
+            OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OTSPoint3D(radius, 0, 0), 
+                    new Direction(90, DirectionUnit.EAST_DEGREE));
+            OTSRoadNode halfway = new OTSRoadNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0), 
+                    new Direction(270, DirectionUnit.EAST_DEGREE));
 
             OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf1.length; i++)

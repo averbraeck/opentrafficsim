@@ -6,8 +6,8 @@ import java.awt.geom.Rectangle2D.Double;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -493,9 +493,9 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
             this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
+                URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
                 this.network = new OTSRoadNetwork("AHFE", true);
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
 
                 // Space-time regions for sampler
                 LinkData linkData = new LinkData((CrossSectionLink) this.network.getLink("LEFTIN"));

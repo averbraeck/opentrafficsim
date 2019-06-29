@@ -176,7 +176,7 @@ public class OTSDemoServer
                     OTSAnimator simulator = new OTSAnimator();
                     simulator.setAnimation(false);
                     OTSModelInterface model = null;
-                    
+
                     if (modelId.toLowerCase().contains("circularroad"))
                         model = new CircularRoadModel(simulator);
                     else if (modelId.toLowerCase().contains("straight"))
@@ -188,11 +188,17 @@ public class OTSDemoServer
                     else if (modelId.toLowerCase().contains("crossingtrafficlights"))
                         model = new CrossingTrafficLightsModel(simulator);
                     else if (modelId.toLowerCase().contains("trafcoddemosimple"))
-                        model = new TrafCODDemo1.TrafCODModel(simulator, "TrafCODDemo1", "TrafCODDemo2",
-                                "/TrafCODDemo1/TrafCODDemo1.xml");
+                    {
+                        URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
+                        String xml = TrafCODDemo2.readStringFromURL(url);
+                        model = new TrafCODDemo1.TrafCODModel(simulator, "TrafCODDemo1", "TrafCODDemo1", xml);
+                    }
                     else if (modelId.toLowerCase().contains("trafcoddemocomplex"))
-                        model = new TrafCODDemo2.TrafCODModel(simulator, "TrafCODDemo2", "TrafCODDemo2",
-                                "/TrafCODDemo2/TrafCODDemo2.xml");
+                    {
+                        URL url = URLResource.getResource("/TrafCODDemo2/TrafCODDemo2.xml");
+                        String xml = TrafCODDemo2.readStringFromURL(url);
+                        model = new TrafCODDemo2.TrafCODModel(simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
+                    }
                     else if (modelId.toLowerCase().contains("tjunction"))
                         model = new TJunctionDemo.TJunctionModel(simulator);
                     else if (modelId.toLowerCase().contains("busstreet"))

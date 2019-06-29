@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.awt.Dimension;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -132,11 +131,11 @@ public class TestXMLParserWriteXstream extends OTSSimulationApplication<OTSModel
         public final void constructModel() throws SimRuntimeException
         {
             long millis = System.currentTimeMillis();
-            InputStream stream = URLResource.getResourceAsStream("/N201.xml");
+            URL xmlURL = URLResource.getResource("/N201.xml");
             this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
 
                 System.out.println("parsing took : " + (System.currentTimeMillis() - millis) + " ms");
 

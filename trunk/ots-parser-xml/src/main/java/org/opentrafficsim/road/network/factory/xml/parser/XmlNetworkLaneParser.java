@@ -1,11 +1,9 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -102,16 +100,52 @@ public final class XmlNetworkLaneParser implements Serializable
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GTUException
     {
-        File xml = new File(URLResource.getResource(filename).toURI().getPath());
-        try
-        {
-            build(new FileInputStream(xml), otsNetwork, simulator);
-        }
-        catch (FileNotFoundException exception)
-        {
-            throw new XmlParserException("File could not be found.", exception);
-        }
+        URL xmlURL = URLResource.getResource(filename);
+        build(xmlURL, otsNetwork, simulator);
         return otsNetwork;
+    }
+
+    /**
+     * Parse the XML input stream and build the network.
+     * @param xmlStream InputStream; the xml input stream
+     * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @return the experiment based on the information in the RUN tag
+     * @throws JAXBException when the parsing fails
+     * @throws URISyntaxException when the filename is not valid
+     * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
+     * @throws OTSGeometryException when the design line of a link is invalid
+     * @throws XmlParserException when the stripe type cannot be recognized
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws SAXException on error creating SAX parser
+     * @throws SimRuntimeException in case of simulation problems building the car generator
+     * @throws GTUException when construction of the Strategical Planner failed
+     */
+    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final InputStream xmlStream,
+            final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator)
+            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
+            ParserConfigurationException, SimRuntimeException, GTUException
+    {
+        return build(parseXML(xmlStream), otsNetwork, simulator);
+    }
+
+    /**
+     * Parse an OTS XML input stream and build an OTS object.
+     * @param xmlURL URL; the URL for the xml file or stream
+     * @return OTS; the constructed OTS object
+     * @throws JAXBException when the parsing fails
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws SAXException on error creating SAX parser
+     */
+    public static OTS parseXML(final URL xmlURL) throws JAXBException, SAXException, ParserConfigurationException
+    {
+        JAXBContext jc = JAXBContext.newInstance(OTS.class);
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setXIncludeAware(true);
+        spf.setNamespaceAware(true);
+        spf.setValidating(true);
+        return (OTS) unmarshaller.unmarshal(xmlURL);
     }
 
     /**
@@ -137,7 +171,7 @@ public final class XmlNetworkLaneParser implements Serializable
 
     /**
      * Parse the XML file and build the network.
-     * @param xmlStream InputStream; the xml input stream
+     * @param xmlURL URL; the URL for the xml input file
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param simulator OTSSimulatorInterface; the simulator
      * @return the experiment based on the information in the RUN tag
@@ -151,12 +185,12 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GTUException when construction of the Strategical Planner failed
      */
-    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final InputStream xmlStream,
-            final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator)
+    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
+            final OTSSimulatorInterface simulator)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GTUException
     {
-        return build(parseXML(xmlStream), otsNetwork, simulator);
+        return build(parseXML(xmlURL), otsNetwork, simulator);
     }
 
     /**
@@ -175,8 +209,8 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GTUException when construction of the Strategical Planner failed
      */
-    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final OTS ots,
-            final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator)
+    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final OTS ots, final OTSRoadNetwork otsNetwork,
+            final OTSSimulatorInterface simulator)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GTUException
     {

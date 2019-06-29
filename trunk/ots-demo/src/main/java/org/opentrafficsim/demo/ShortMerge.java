@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo;
 
 import java.awt.Dimension;
-import java.io.InputStream;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -238,9 +238,9 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         {
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
+                URL xmlURL = URLResource.getResource("/lmrs/" + NETWORK + ".xml");
                 this.network = new OTSRoadNetwork("ShortMerge", true);
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
 
                 addGenerator();
 

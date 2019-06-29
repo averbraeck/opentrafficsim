@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
-import java.io.InputStream;
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -118,9 +118,9 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
         {
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/conflict/TurboRoundabout.xml");
+                URL xmlURL = URLResource.getResource("/conflict/TurboRoundabout.xml");
                 this.network = new OTSRoadNetwork("TurboRoundabout", true);
-                XmlNetworkLaneParser.build(stream, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
 
                 // add conflicts
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
