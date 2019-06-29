@@ -85,12 +85,17 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         if (0 == args.length)
         {
             JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             fileChooser.addChoosableFileFilter(new FileFilter()
             {
 
                 @Override
                 public boolean accept(final File f)
                 {
+                    if (f.isDirectory())
+                    {
+                        return true;
+                    }
                     String name = f.getName();
                     int length = name.length();
                     if (length < 5)
