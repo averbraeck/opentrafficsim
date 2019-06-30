@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.old;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Speed;
@@ -171,7 +171,7 @@ public final class LaneAttributes
      */
     private static Set<GTUType> parseGTUTypeSet(final String set, final XmlNetworkLaneParserOld parser)
     {
-        Set<GTUType> gtuTypeSet = new HashSet<GTUType>();
+        Set<GTUType> gtuTypeSet = new LinkedHashSet<GTUType>();
         String[] types = set.trim().split(",");
         for (String type : types)
         {

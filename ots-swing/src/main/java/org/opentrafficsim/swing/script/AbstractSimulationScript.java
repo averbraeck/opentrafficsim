@@ -2,7 +2,7 @@ package org.opentrafficsim.swing.script;
 
 import java.awt.Dimension;
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +61,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     private OTSRoadNetwork network;
 
     /** Properties as String value, e.g. from command line. */
-    private final Map<String, String> props = new HashMap<>();
+    private final Map<String, String> props = new LinkedHashMap<>();
 
     /** GTU colorer. */
     private GTUColorer gtuColorer = OTSSwingApplication.DEFAULT_COLORER;
@@ -430,7 +430,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            Map<String, StreamInterface> streams = new HashMap<>();
+            Map<String, StreamInterface> streams = new LinkedHashMap<>();
             long seed = getLongProperty("seed");
             StreamInterface stream = new MersenneTwister(seed);
             streams.put("generation", stream);

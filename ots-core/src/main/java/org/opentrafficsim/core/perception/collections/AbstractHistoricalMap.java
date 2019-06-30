@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -92,7 +92,7 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
     @Override
     public void clear()
     {
-        new HashSet<>(this.current.keySet()).forEach(this::remove);
+        new LinkedHashSet<>(this.current.keySet()).forEach(this::remove);
     }
 
     /** {@inheritDoc} */

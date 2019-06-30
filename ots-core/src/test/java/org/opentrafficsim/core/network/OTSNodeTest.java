@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.media.j3d.BoundingSphere;
@@ -438,7 +438,7 @@ public class OTSNodeTest
      */
     private Set<Link> wrap(final Link... links)
     {
-        Set<Link> result = new HashSet<>();
+        Set<Link> result = new LinkedHashSet<>();
         for (Link link : links)
         {
             result.add(link);

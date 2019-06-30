@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -9,7 +9,6 @@ import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -160,7 +159,7 @@ public class LaneDirection implements Serializable
         {
             throw new RuntimeException("Strategical planner experiences exception on network.", exception);
         }
-        Set<LaneDirection> out = new HashSet<>();
+        Set<LaneDirection> out = new LinkedHashSet<>();
         for (Lane l : next.keySet())
         {
             GTUDirectionality dir = next.get(l);

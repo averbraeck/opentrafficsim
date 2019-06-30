@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -169,7 +169,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     /**
      * Headways that are causing the dead-lock.
      */
-    private Collection<Headway> blockingHeadways = new HashSet<>();
+    private Collection<Headway> blockingHeadways = new LinkedHashSet<>();
 
     /** {@inheritDoc} */
     @Override
@@ -293,7 +293,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                 simplePerception.updateNeighboringHeadwaysLeft();
                 if (simplePerception.getParallelHeadwaysLeft().isEmpty())
                 {
-                    Collection<Headway> sameLaneTraffic = new HashSet<>();
+                    Collection<Headway> sameLaneTraffic = new LinkedHashSet<>();
                     // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
                     // XXX Object & GTU
                     if (simplePerception.getForwardHeadwayGTU() != null
@@ -340,7 +340,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                 simplePerception.updateNeighboringHeadwaysRight();
                 if (simplePerception.getParallelHeadwaysRight().isEmpty())
                 {
-                    Collection<Headway> sameLaneTraffic = new HashSet<>();
+                    Collection<Headway> sameLaneTraffic = new LinkedHashSet<>();
                     // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
                     // XXX GTU & Object
                     if (simplePerception.getForwardHeadwayGTU() != null
@@ -556,7 +556,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             return false;
         }
 
-        Collection<Headway> sameLaneTraffic = new HashSet<>();
+        Collection<Headway> sameLaneTraffic = new LinkedHashSet<>();
         // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
         // XXX Object & GTU
         if (simplePerception.getForwardHeadwayGTU() != null && simplePerception.getForwardHeadwayGTU().getObjectType().isGtu())

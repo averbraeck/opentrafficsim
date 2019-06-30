@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.unit.PositionUnit;
@@ -20,7 +20,7 @@ import org.opentrafficsim.core.network.NetworkException;
 public final class PositionUnits
 {
     /** The position units. */
-    public static final Map<String, PositionUnit> POSITION_UNITS = new HashMap<>();
+    public static final Map<String, PositionUnit> POSITION_UNITS = new LinkedHashMap<>();
 
     static
     {

@@ -45,7 +45,7 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Array;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -528,7 +528,7 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
             {
                 if (revise)
                 {
-                    final Set<Integer> processedThumbs = new HashSet<Integer>();
+                    final Set<Integer> processedThumbs = new LinkedHashSet<Integer>();
                     processedThumbs.add(-1);
 
                     class NudgeRequest

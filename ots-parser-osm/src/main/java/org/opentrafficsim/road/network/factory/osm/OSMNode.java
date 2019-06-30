@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 /**

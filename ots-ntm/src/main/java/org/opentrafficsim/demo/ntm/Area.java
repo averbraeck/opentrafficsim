@@ -2,7 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.awt.geom.Path2D;
 import java.rmi.RemoteException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.media.j3d.Bounds;
@@ -188,7 +188,7 @@ public class Area extends GeoObject implements Locatable
         {
             double dx = this.getLocation().x;
             double dy = this.getLocation().y;
-            this.polygons = new HashSet<Path2D>();
+            this.polygons = new LinkedHashSet<Path2D>();
             for (int i = 0; i < this.getGeometry().getNumGeometries(); i++)
             {
                 Path2D polygon = new Path2D.Double();

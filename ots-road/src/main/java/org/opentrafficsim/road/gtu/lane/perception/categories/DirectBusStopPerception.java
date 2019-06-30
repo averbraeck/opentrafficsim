@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -77,7 +77,7 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
                             public HeadwayBusStop perceive(final LaneBasedGTU perceivingGtu, final BusStop busStop,
                                     final Length distance)
                             {
-                                Set<String> conflictIds = new HashSet<>();
+                                Set<String> conflictIds = new LinkedHashSet<>();
                                 for (Conflict conflict : busStop.getConflicts())
                                 {
                                     conflictIds.add(conflict.getId());

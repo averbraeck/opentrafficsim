@@ -1,6 +1,6 @@
 package org.opentrafficsim.demo.geometry.shape;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Time;
@@ -52,7 +52,7 @@ public class ShapeModel extends AbstractOTSModel
         {
             // Read the shape files with the function:
             this.nodes = ShapeFileReader.readNodes(network, "/gis/TESTcordonnodes.shp", "NODENR", true, true);
-            this.shpLinks = new HashMap<>();
+            this.shpLinks = new LinkedHashMap<>();
             ShapeFileReader.readLinks(network, "/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.nodes, this.simulator);
 
             this.simulator.scheduleEventAbs(Time.ZERO, this, this, "ntmFlowTimestep", null);

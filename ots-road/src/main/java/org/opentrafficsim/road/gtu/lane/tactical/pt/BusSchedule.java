@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.pt;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,13 +31,13 @@ public class BusSchedule extends Route
     private final String line;
 
     /** List of bus stops. */
-    private final Map<String, BusStopInfo> schedule = new HashMap<>();
+    private final Map<String, BusStopInfo> schedule = new LinkedHashMap<>();
 
     /** Map of actual departures stored per bus stop. */
-    private final Map<String, Time> actualDeparturesBusStop = new HashMap<>();
+    private final Map<String, Time> actualDeparturesBusStop = new LinkedHashMap<>();
 
     /** Map of actual departures stored per conflict. */
-    private final Map<String, Time> actualDeparturesConflict = new HashMap<>();
+    private final Map<String, Time> actualDeparturesConflict = new LinkedHashMap<>();
 
     /**
      * @param id String; id

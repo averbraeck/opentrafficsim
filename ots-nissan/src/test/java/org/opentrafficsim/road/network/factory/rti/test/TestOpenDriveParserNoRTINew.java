@@ -8,7 +8,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +41,6 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -470,7 +469,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 DirectedLanePosition directedLanePosition =
                     new DirectedLanePosition(lane,
                         initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
-                Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
+                Set<DirectedLanePosition> lanepositionSet = new LinkedHashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
                 Length carLength = lengthDist.draw();
             
@@ -561,7 +560,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 {
                     exception1.printStackTrace();
                 }
-                Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
+                Set<DirectedLanePosition> lanepositionSet = new LinkedHashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
             
                 Length carLength = lengthDist.draw();
@@ -666,7 +665,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
         {
             DirectedLanePosition directedLanePosition = new DirectedLanePosition(lane,
                     this.initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
-            Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
+            Set<DirectedLanePosition> lanepositionSet = new LinkedHashSet<DirectedLanePosition>();
             lanepositionSet.add(directedLanePosition);
             Length carLength = this.lengthDist.draw();
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, carLength,

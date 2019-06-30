@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.animation.network;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.opentrafficsim.core.animation.Drawable;
@@ -29,13 +29,13 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
     private final Network network;
 
     /** drawing info: base information per class. */
-    private Map<Class<? extends Drawable>, DrawingInfo> classDrawingInfoMap = new HashMap<>();
+    private Map<Class<? extends Drawable>, DrawingInfo> classDrawingInfoMap = new LinkedHashMap<>();
 
     /** drawing info: base information per instance. */
-    private Map<Drawable, DrawingInfo> baseDrawingInfoMap = new HashMap<>();
+    private Map<Drawable, DrawingInfo> baseDrawingInfoMap = new LinkedHashMap<>();
 
     /** drawing info: dynamic information per instance. */
-    private Map<Drawable, DrawingInfo> dynamicDrawingInfoMap = new HashMap<>();
+    private Map<Drawable, DrawingInfo> dynamicDrawingInfoMap = new LinkedHashMap<>();
 
     /**
      * Construct this NetworkAnimation object with a connection to the Network.

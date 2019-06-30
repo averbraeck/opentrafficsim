@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,10 +66,10 @@ public class TrafficLightSensor extends EventProducer
     private final FlankSensor exitB;
 
     /** GTUs detected by the upSensor, but not yet removed by the downSensor. */
-    private final Set<LaneBasedGTU> currentGTUs = new HashSet<>();
+    private final Set<LaneBasedGTU> currentGTUs = new LinkedHashSet<>();
 
     /** The lanes that the detector (partly) covers. */
-    private final Set<Lane> lanes = new HashSet<>();
+    private final Set<Lane> lanes = new LinkedHashSet<>();
 
     /** Which side of the position of flank sensor A is the TrafficLightSensor. */
     private final GTUDirectionality directionalityA;
@@ -268,7 +268,7 @@ public class TrafficLightSensor extends EventProducer
             try
             {
                 Map<Lane, Length> frontPositions = gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
-                Set<Lane> remainingLanes = new HashSet<>(frontPositions.keySet());
+                Set<Lane> remainingLanes = new LinkedHashSet<>(frontPositions.keySet());
                 remainingLanes.retainAll(this.lanes);
                 if (remainingLanes.size() == 0)
                 {
@@ -294,7 +294,7 @@ public class TrafficLightSensor extends EventProducer
             try
             {
                 Map<Lane, Length> frontPositions = gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
-                Set<Lane> remainingLanes = new HashSet<>(frontPositions.keySet());
+                Set<Lane> remainingLanes = new LinkedHashSet<>(frontPositions.keySet());
                 remainingLanes.retainAll(this.lanes);
                 if (remainingLanes.size() == 0)
                 {

@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class SplitFraction
     private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Map of fractions by GTUType and Link. */
-    private final Map<GTUType, Map<Link, Map<Duration, Double>>> fractions = new HashMap<>();
+    private final Map<GTUType, Map<Link, Map<Duration, Double>>> fractions = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -132,7 +131,7 @@ public class SplitFraction
         }
         if (this.fractions.containsKey(gtuType))
         {
-            this.fractions.put(gtuType, new HashMap<>());
+            this.fractions.put(gtuType, new LinkedHashMap<>());
         }
         this.fractions.get(gtuType).put(link, new TreeMap<>());
         for (int i = 0; i <= time.size(); i++)

@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.compatibility;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.exceptions.Throw;
@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.logger.SimLogger;
 public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUType, I>> implements Compatibility<GTUType, I>
 {
     /** The map of GTUTypes to permitted directions of movement. */
-    private final Map<GTUType, LongitudinalDirectionality> allowanceMap = new HashMap<>();
+    private final Map<GTUType, LongitudinalDirectionality> allowanceMap = new LinkedHashMap<>();
 
     /** Infrastructure type, e.g. LinkType, LaneType, SensorType. */
     private final I infrastructure;

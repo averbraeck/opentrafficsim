@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator.od;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -58,7 +57,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
      */
     public DefaultGTUCharacteristicsGeneratorOD()
     {
-        this(null, RouteGeneratorOD.NULL, new HashSet<>(), StrategicalPlannerFactorySupplierOD.lmrs());
+        this(null, RouteGeneratorOD.NULL, new LinkedHashSet<>(), StrategicalPlannerFactorySupplierOD.lmrs());
     }
 
     /**
@@ -67,7 +66,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
      */
     public DefaultGTUCharacteristicsGeneratorOD(final RouteGeneratorOD routeGenerator)
     {
-        this(null, routeGenerator, new HashSet<>(), StrategicalPlannerFactorySupplierOD.lmrs());
+        this(null, routeGenerator, new LinkedHashSet<>(), StrategicalPlannerFactorySupplierOD.lmrs());
     }
 
     /**
@@ -88,7 +87,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
     public DefaultGTUCharacteristicsGeneratorOD(final RouteGeneratorOD routeGenerator,
             final StrategicalPlannerFactorySupplierOD factorySupplier)
     {
-        this(null, routeGenerator, new HashSet<>(), factorySupplier);
+        this(null, routeGenerator, new LinkedHashSet<>(), factorySupplier);
     }
 
     /**
@@ -149,7 +148,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
      */
     public DefaultGTUCharacteristicsGeneratorOD(final StrategicalPlannerFactorySupplierOD factorySupplier)
     {
-        this(null, RouteGeneratorOD.NULL, new HashSet<>(), factorySupplier);
+        this(null, RouteGeneratorOD.NULL, new LinkedHashSet<>(), factorySupplier);
     }
 
     // TODO: remove above constructors and use factory always

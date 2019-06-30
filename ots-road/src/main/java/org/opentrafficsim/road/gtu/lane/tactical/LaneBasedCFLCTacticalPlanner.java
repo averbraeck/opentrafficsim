@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -557,7 +557,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         }
         // We have now found the first upcoming branching Node
         // Which continuing link is the one we need?
-        Map<Lane, Length> suitabilityOfLanesBeforeBranch = new HashMap<>();
+        Map<Lane, Length> suitabilityOfLanesBeforeBranch = new LinkedHashMap<>();
         Link linkAfterBranch =
                 gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink, gtu.getGTUType()).getLink();
         GTUDirectionality drivingDirectionOnNextLane =

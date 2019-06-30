@@ -31,7 +31,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.text.AttributedCharacterIterator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.logger.CategoryLogger;
@@ -71,7 +71,7 @@ public class HTMLGraphics2D extends Graphics2D
     Stroke stroke = new BasicStroke();
 
     /** TODO: the current rendering hints. */
-    RenderingHints renderingHints = new RenderingHints(new HashMap<Key, Object>());
+    RenderingHints renderingHints = new RenderingHints(new LinkedHashMap<Key, Object>());
 
     /** the current affine transform. */
     AffineTransform affineTransform = new AffineTransform();

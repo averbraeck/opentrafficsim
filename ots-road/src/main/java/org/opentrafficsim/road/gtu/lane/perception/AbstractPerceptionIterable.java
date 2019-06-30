@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -16,7 +16,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
@@ -146,16 +145,16 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         private SortedMap<PrimaryIteratorEntry, LaneRecord<?>> map;
 
         /** Position per record where the search was halted. */
-        private Map<LaneRecord<?>, Length> positions = new HashMap<>();
+        private Map<LaneRecord<?>, Length> positions = new LinkedHashMap<>();
 
         /** Items returned to prevent duplicates. */
-        private Set<U> returnedItems = new HashSet<>();
+        private Set<U> returnedItems = new LinkedHashSet<>();
 
         /** Sets of remaining objects at the same location. */
-        private Map<LaneRecord<?>, Queue<PrimaryIteratorEntry>> queues = new HashMap<>();
+        private Map<LaneRecord<?>, Queue<PrimaryIteratorEntry>> queues = new LinkedHashMap<>();
 
         /** Counter objects per lane. */
-        private Map<LaneRecord<?>, C> counters = new HashMap<>();
+        private Map<LaneRecord<?>, C> counters = new LinkedHashMap<>();
 
         /** Record regarding a postponed call to {@code getNext()}. */
         private LaneRecord<?> postponedRecord = null;

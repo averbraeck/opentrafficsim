@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +160,7 @@ public final class GeneratorSinkParser
     static Map<String, List<FrequencyAndObject<Route>>> parseRouteMix(final OTSRoadNetwork otsNetwork,
             final NETWORKDEMAND demand) throws NetworkException
     {
-        Map<String, List<FrequencyAndObject<Route>>> routeMixMap = new HashMap<>();
+        Map<String, List<FrequencyAndObject<Route>>> routeMixMap = new LinkedHashMap<>();
         for (ROUTEMIX routeMixTag : demand.getROUTEMIX())
         {
             List<FrequencyAndObject<Route>> probRoutes = new ArrayList<>();
@@ -190,7 +190,7 @@ public final class GeneratorSinkParser
     static Map<String, List<FrequencyAndObject<Route>>> parseShortestRouteMix(final OTSRoadNetwork otsNetwork,
             final NETWORKDEMAND demand) throws NetworkException
     {
-        Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap = new HashMap<>();
+        Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap = new LinkedHashMap<>();
         for (SHORTESTROUTEMIX routeMixTag : demand.getSHORTESTROUTEMIX())
         {
             List<FrequencyAndObject<Route>> probRoutes = new ArrayList<>();

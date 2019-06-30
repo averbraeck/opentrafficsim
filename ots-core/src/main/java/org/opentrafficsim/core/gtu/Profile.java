@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -23,10 +23,10 @@ public final class Profile
 {
 
     /** Map containing ProfileInfo objects. */
-    private static final Map<String, ProfileInfo> INFOS = new HashMap<>();
+    private static final Map<String, ProfileInfo> INFOS = new LinkedHashMap<>();
 
     /** Map containing most recent part id's as line numbers. */
-    private static final Map<String, String> LINES = new HashMap<>();
+    private static final Map<String, String> LINES = new LinkedHashMap<>();
 
     /** Minimum print interval [ms]; during this time after a print, prints are suppressed. */
     private static long printInterval = 1000;

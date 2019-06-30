@@ -7,8 +7,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -238,7 +237,7 @@ public class LmrsStrategies implements EventListenerInterface
     private String folder;
 
     /** Strategical planner factories per GTU type. */
-    private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new HashMap<>();
+    private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
 
     /** The simulator. */
     private DEVSSimulatorInterface.TimeDoubleUnit simulator;
@@ -558,7 +557,7 @@ public class LmrsStrategies implements EventListenerInterface
             LmrsStrategies.this.network = net;
             net.addListener(LmrsStrategies.this, Network.GTU_ADD_EVENT);
             net.addListener(LmrsStrategies.this, Network.GTU_REMOVE_EVENT);
-            Map<String, StreamInterface> streams = new HashMap<>();
+            Map<String, StreamInterface> streams = new LinkedHashMap<>();
             StreamInterface stream = new MersenneTwister(LmrsStrategies.this.seed);
             streams.put("generation", stream);
             getSimulator().getReplication().setStreams(streams);
@@ -741,7 +740,7 @@ public class LmrsStrategies implements EventListenerInterface
                 Lane laneBC2 = new Lane(linkBC, "laneBC2", Length.createSI(3.5), Length.createSI(3.5),
                         LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
                         new Speed(120, SpeedUnit.KM_PER_HOUR));
-                Set<GTUType> gtuTypes = new HashSet<>();
+                Set<GTUType> gtuTypes = new LinkedHashSet<>();
                 gtuTypes.add(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
                 Stripe stripeAB1 = new Stripe(linkAB, Length.createSI(-1.75), Length.createSI(-1.75), Length.createSI(0.2));
                 Stripe stripeAB2 = new Stripe(linkAB, Length.createSI(1.75), Length.createSI(1.75), Length.createSI(0.2),

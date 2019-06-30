@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.LinearDensity;
@@ -45,19 +45,19 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
     private Time lastSpeedTime = null;
 
     /** Anticipated speed by vehicles in the left lane. */
-    private Map<RelativeLane, Double> antFromLeft = new HashMap<>();
+    private Map<RelativeLane, Double> antFromLeft = new LinkedHashMap<>();
 
     /** Anticipated speed by vehicles in the lane. */
-    private Map<RelativeLane, Double> antInLane = new HashMap<>();
+    private Map<RelativeLane, Double> antInLane = new LinkedHashMap<>();
 
     /** Anticipated speed by vehicles in the right lane. */
-    private Map<RelativeLane, Double> antFromRight = new HashMap<>();
+    private Map<RelativeLane, Double> antFromRight = new LinkedHashMap<>();
 
     /** Anticipated speed combined. */
-    private Map<RelativeLane, Speed> speed = new HashMap<>();
+    private Map<RelativeLane, Speed> speed = new LinkedHashMap<>();
 
     /** Anticipated density combined. */
-    private Map<RelativeLane, TimeStampedObject<LinearDensity>> density = new HashMap<>();
+    private Map<RelativeLane, TimeStampedObject<LinearDensity>> density = new LinkedHashMap<>();
 
     /** Density collector. */
     private static final AnticipationDensity DENSITY = new AnticipationDensity();

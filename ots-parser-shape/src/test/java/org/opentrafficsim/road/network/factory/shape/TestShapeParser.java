@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -306,7 +306,7 @@ public class TestShapeParser extends DSOLApplication
         private Map<String, AbstractNWBRoadElement> getFeatureAttributes(final FeatureIterator feautureIterator,
                 String shapeIdentifier) throws NetworkException
         {
-            Map<String, AbstractNWBRoadElement> roadMap = new HashMap<>();
+            Map<String, AbstractNWBRoadElement> roadMap = new LinkedHashMap<>();
             while (feautureIterator.hasNext())
             {
                 Feature feature = feautureIterator.next();

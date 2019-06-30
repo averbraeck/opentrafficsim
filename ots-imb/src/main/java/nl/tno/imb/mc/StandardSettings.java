@@ -1,7 +1,7 @@
 package nl.tno.imb.mc;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +18,7 @@ import java.util.Map;
 public class StandardSettings
 {
     /** Map of collected switches. */
-    Map<String, String> switches = new HashMap<>();
+    Map<String, String> switches = new LinkedHashMap<>();
 
     /** Non-switch command line arguments. */
     List<String> arguments = new ArrayList<>();

@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -31,7 +31,7 @@ public class PerceptionIterableSet<H extends Headway> implements PerceptionItera
      */
     public PerceptionIterableSet()
     {
-        this.set = new HashSet<>();
+        this.set = new LinkedHashSet<>();
     }
 
     /**
@@ -40,7 +40,7 @@ public class PerceptionIterableSet<H extends Headway> implements PerceptionItera
      */
     public PerceptionIterableSet(final H headway)
     {
-        this.set = new HashSet<>();
+        this.set = new LinkedHashSet<>();
         this.set.add(headway);
     }
 

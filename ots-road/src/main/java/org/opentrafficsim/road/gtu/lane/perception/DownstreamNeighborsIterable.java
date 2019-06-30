@@ -1,13 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -54,7 +53,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
     private final HeadwayGtuType headwayGtuType;
 
     /** Added GTU's so far. */
-    private final Set<String> ids = new HashSet<>();
+    private final Set<String> ids = new LinkedHashSet<>();
 
     /**
      * Margin used for neighbor search in some cases to prevent possible deadlock. This does not affect calculated distances to

@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.immutablecollections.Immutable;
@@ -26,7 +26,7 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
     private static final long serialVersionUID = 1L;
 
     /** LaneTypes registered for this network. */
-    private Map<String, LaneType> laneTypeMap = new HashMap<>();
+    private Map<String, LaneType> laneTypeMap = new LinkedHashMap<>();
 
     /**
      * Construction of an empty network.

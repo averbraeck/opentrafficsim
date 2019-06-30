@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.factory.nwb;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.opengis.feature.Feature;
@@ -30,7 +30,7 @@ public class ExtendedCrossSectionLink extends CrossSectionLink
     private static final long serialVersionUID = 20190515L;
 
     /** Features on which this extended cross section link is based. */
-    private final Map<String, Feature> features = new HashMap<>();
+    private final Map<String, Feature> features = new LinkedHashMap<>();
 
     /**
      * Construction of a cross section link with some extra data.

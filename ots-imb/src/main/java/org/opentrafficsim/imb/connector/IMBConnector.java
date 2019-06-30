@@ -1,6 +1,6 @@
 package org.opentrafficsim.imb.connector;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.exceptions.Throw;
@@ -28,7 +28,7 @@ public class IMBConnector implements Connector
     private final TConnection connection;
 
     /** Registration of callback ids from IMB to OTS. */
-    protected Map<String, Transceiver> imbTransceiverMap = new HashMap<>();
+    protected Map<String, Transceiver> imbTransceiverMap = new LinkedHashMap<>();
 
     /**
      * Construct a new connection for sending events to IMB

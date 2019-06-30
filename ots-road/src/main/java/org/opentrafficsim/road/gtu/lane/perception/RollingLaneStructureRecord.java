@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -208,7 +207,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
             // if the end is a split, it's out of range
             return false;
         }
-        Set<Node> toNodes = new HashSet<>();
+        Set<Node> toNodes = new LinkedHashSet<>();
         LaneStructureRecord lsr = this;
         while (lsr != null)
         {
@@ -241,7 +240,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
             // if the start is a merge, it's out of range
             return false;
         }
-        Set<Node> fromNodes = new HashSet<>();
+        Set<Node> fromNodes = new LinkedHashSet<>();
         LaneStructureRecord lsr = this;
         while (lsr != null)
         {

@@ -3,8 +3,7 @@ package org.opentrafficsim.trafficcontrol;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -93,9 +92,9 @@ public class FixedTimeController extends AbstractTrafficController
         */
         this.cycleTime = cycleTime;
         this.offset = offset;
-        this.signalGroups = new HashSet<>(signalGroups); // make a copy so we can modify it.
+        this.signalGroups = new LinkedHashSet<>(signalGroups); // make a copy so we can modify it.
         // Identify traffic lights that are present in more than one signal group
-        Map<String, List<SignalGroup>> signalGroupsOfTrafficLight = new HashMap<>();
+        Map<String, List<SignalGroup>> signalGroupsOfTrafficLight = new LinkedHashMap<>();
         for (SignalGroup sg : this.signalGroups)
         {
             for (String trafficLightId : sg.getTrafficLightIds())
@@ -199,7 +198,7 @@ public class FixedTimeController extends AbstractTrafficController
                     {
                         // System.out.println("Reducing " + sg);
                         newSignalGroupName = newSignalGroupName + "_" + sg.getId();
-                        Set<String> trafficLightIds = new HashSet<>();
+                        Set<String> trafficLightIds = new LinkedHashSet<>();
                         for (String tlId : sg.getTrafficLightIds())
                         {
                             if (!tlId.equals(trafficLightId))
@@ -247,7 +246,7 @@ public class FixedTimeController extends AbstractTrafficController
                         {
                             nextNumber++;
                             yellow = Duration.createSI(flank.getOffset() - cumulativeOffset);
-                            Set<String> trafficLightIds = new HashSet<>(1);
+                            Set<String> trafficLightIds = new LinkedHashSet<>(1);
                             trafficLightIds.add(trafficLightId);
                             SignalGroup newSignalGroup = new SignalGroup(newSignalGroupName + "_" + nextNumber, trafficLightIds,
                                     sgOffset, preGreen, green, yellow);

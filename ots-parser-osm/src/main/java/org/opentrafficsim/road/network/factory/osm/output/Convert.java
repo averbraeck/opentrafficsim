@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.factory.osm.output;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,7 +31,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.osm.OSMLink;
 import org.opentrafficsim.road.network.factory.osm.OSMNetwork;
@@ -506,7 +505,7 @@ public final class Convert
             final SortedMap<Integer, LaneAttributes> structure, final OSMLink osmLink, final Integer forwards,
             final Integer backwards, final WarningListener warningListener) throws NetworkException
     {
-        HashMap<Double, LaneAttributes> structurewithOffset = new HashMap<Double, LaneAttributes>();
+        LinkedHashMap<Double, LaneAttributes> structurewithOffset = new LinkedHashMap<Double, LaneAttributes>();
         LaneAttributes laneAttributes;
         double currentOffset = 0.0D;
         if (structure.isEmpty())
@@ -669,7 +668,7 @@ public final class Convert
             Color color = Color.LIGHT_GRAY;
             LaneType laneType = laneAttributes.getLaneType();
             Length latPos = new Length(offset, LengthUnit.METER);
-            Map<GTUType, Speed> speedLimit = new HashMap<>();
+            Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
             speedLimit.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, SpeedUnit.KM_PER_HOUR));
             Lane newLane = null;
             // FIXME the following code assumes right-hand-side driving.

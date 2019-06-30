@@ -8,7 +8,7 @@
 package org.opentrafficsim.road.network.factory.vissim.xsd;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +83,7 @@ public class IncludeType
     protected String acceptLanguage;
 
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = new LinkedHashMap<QName, String>();
 
     /**
      * Gets the value of the content property.

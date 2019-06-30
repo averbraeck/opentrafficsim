@@ -9,8 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -115,7 +115,7 @@ public class DataIO
             boolean dataTNO) throws IOException
     {
         ShapeStore roads = null;
-        // Map<String, Area> areas = new HashMap<String, Area>();
+        // Map<String, Area> areas = new LinkedHashMap<String, Area>();
         ShapeStore areas = null;
         File file = new File(fileArea);
         areas = ShapeStore.openGISFile(file);
@@ -203,7 +203,7 @@ public class DataIO
             boolean dataTNO) throws IOException
     {
         ShapeStore roads = null;
-        // Map<String, Area> areas = new HashMap<String, Area>();
+        // Map<String, Area> areas = new LinkedHashMap<String, Area>();
         ShapeStore areas = null;
         File file = new File(fileArea);
         areas = ShapeStore.openGISFile(file);
@@ -300,11 +300,11 @@ public class DataIO
              * out = new BufferedWriter(new FileWriter(fileNew)); // add data to the point/line (road) file of attributes within
              * a polygon int indexAttributeAdded0 = objectsToDetect.getVariableNames().size() - 1; // add data to the area
              * (polygon) file int indexAttributeAdded1 = searchLocations.getVariableNames().size() - 1; // we are looking for
-             * roads with a specific ID that is included in the data from TNO // step 1: create a HashMap to find the geometry
-             * of a road with a specific ID // step 2: find the corresponding Area HashMap<String, ShapeObject> mapRoads = new
-             * HashMap<String, ShapeObject>(); HashMap<String, String> mapRoadLengths = new HashMap<String, String>();
-             * HashMap<String, String> mapRoadCTM = new HashMap<String, String>(); HashMap<String, String> mapRoadSTT_NAAM = new
-             * HashMap<String, String>(); int indexFieldNameToDetect = -1; for (String name :
+             * roads with a specific ID that is included in the data from TNO // step 1: create a LinkedHashMap to find the geometry
+             * of a road with a specific ID // step 2: find the corresponding Area LinkedHashMap<String, ShapeObject> mapRoads = new
+             * LinkedHashMap<String, ShapeObject>(); LinkedHashMap<String, String> mapRoadLengths = new LinkedHashMap<String, String>();
+             * LinkedHashMap<String, String> mapRoadCTM = new LinkedHashMap<String, String>(); LinkedHashMap<String, String> mapRoadSTT_NAAM = new
+             * LinkedHashMap<String, String>(); int indexFieldNameToDetect = -1; for (String name :
              * objectsToDetect.getVariableNames()) { if (name.equals(fieldNameToDetect)) // "LINK_ID" { indexFieldNameToDetect =
              * objectsToDetect.getVariableNames().indexOf(name); break; } } for (ShapeObject road :
              * objectsToDetect.getGeoObjects()) { mapRoads.put(road.getValues().get(indexFieldNameToDetect), road); } int
@@ -368,7 +368,7 @@ public class DataIO
     public static Map<String, ArrayList<Double>> readData(String inputFile, String csvSplitBy, String path, String year,
             Integer aggregateBy) throws FileNotFoundException
     {
-        Map<String, ArrayList<Double>> countMap = new HashMap<String, ArrayList<Double>>();
+        Map<String, ArrayList<Double>> countMap = new LinkedHashMap<String, ArrayList<Double>>();
         BufferedReader in = null;
         String line = "";
 
@@ -499,12 +499,12 @@ public class DataIO
         searchLocations.addAttribute("CountedIDs", "String");
 
         // we are looking for roads with a specific ID that is included in the data from TNO
-        // step 1: create a HashMap to find the geometry of a road with a specific ID
+        // step 1: create a LinkedHashMap to find the geometry of a road with a specific ID
         // step 2: find the corresponding Area
-        HashMap<String, ShapeObject> mapRoads = new HashMap<String, ShapeObject>();
-        HashMap<String, String> mapRoadLengths = new HashMap<String, String>();
-        HashMap<String, String> mapRoadCTM = new HashMap<String, String>();
-        HashMap<String, String> mapRoadSTT_NAAM = new HashMap<String, String>();
+        LinkedHashMap<String, ShapeObject> mapRoads = new LinkedHashMap<String, ShapeObject>();
+        LinkedHashMap<String, String> mapRoadLengths = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> mapRoadCTM = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> mapRoadSTT_NAAM = new LinkedHashMap<String, String>();
         int indexFieldNameToDetect = -1;
 
         for (String name : objectsToDetect.getVariableNames())

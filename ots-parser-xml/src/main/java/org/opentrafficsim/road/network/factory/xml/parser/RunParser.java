@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,12 +54,12 @@ public final class RunParser
         Duration warmupPeriod = run.getWARMUPPERIOD() == null ? Duration.ZERO : run.getWARMUPPERIOD();
         Duration runLength = run.getRUNLENGTH() == null ? Duration.ZERO : run.getRUNLENGTH();
 
-        Map<String, StreamInterface> streams = new HashMap<>();
+        Map<String, StreamInterface> streams = new LinkedHashMap<>();
         if (run.getRANDOMSTREAMS() == null)
         {
             for (String streamId : new String[] {"default", "generation"})
             {
-                Map<Integer, Long> seedMap = new HashMap<>();
+                Map<Integer, Long> seedMap = new LinkedHashMap<>();
                 for (int rep = 1; rep <= numberReplications; rep++)
                 {
                     seedMap.put(rep, (long) streamId.hashCode() + rep);
@@ -75,7 +75,7 @@ public final class RunParser
             for (RANDOMSTREAM streamTag : streamTags)
             {
                 String streamId = streamTag.getID();
-                Map<Integer, Long> seedMap = new HashMap<>();
+                Map<Integer, Long> seedMap = new LinkedHashMap<>();
                 for (REPLICATION rep : streamTag.getREPLICATION())
                 {
                     seedMap.put(rep.getID().intValue(), rep.getSEED().longValue());

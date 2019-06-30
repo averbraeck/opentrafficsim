@@ -6,8 +6,8 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,7 +100,7 @@ public class ODApplierTest
     HistoryManager historyManager;
 
     /** Lanes. */
-    private final Map<String, Lane> lanes = new HashMap<>();
+    private final Map<String, Lane> lanes = new LinkedHashMap<>();
 
     /**
      * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
@@ -173,7 +173,7 @@ public class ODApplierTest
                 this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR)));
         this.lanes.put("lane2", new Lane(linkAB, "lane2", Length.createSI(-1.75), Length.createSI(3.5),
                 this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        Set<GTUType> gtuTypes = new HashSet<>();
+        Set<GTUType> gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
     }
 
@@ -503,7 +503,7 @@ public class ODApplierTest
         {
             for (double t = 40; t < 200; t += 100)
             {
-                Map<GTUType, Integer> counts = new HashMap<>();
+                Map<GTUType, Integer> counts = new LinkedHashMap<>();
                 counts.put(this.network.getGtuType(GTUType.DEFAULTS.CAR), 0);
                 counts.put(this.network.getGtuType(GTUType.DEFAULTS.TRUCK), 0);
                 for (int j = 0; j < nTot; j++)

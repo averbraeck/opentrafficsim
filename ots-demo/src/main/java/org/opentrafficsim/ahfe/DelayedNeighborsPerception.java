@@ -1,7 +1,7 @@
 package org.opentrafficsim.ahfe;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -85,22 +85,22 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
     private Time rearrangeTime;
 
     /** Set of followers per relative lane. */
-    private final Map<RelativeLane, PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> followers = new HashMap<>();
+    private final Map<RelativeLane, PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> followers = new LinkedHashMap<>();
 
     /** Set of leaders per relative lane. */
-    private final Map<RelativeLane, PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> leaders = new HashMap<>();
+    private final Map<RelativeLane, PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> leaders = new LinkedHashMap<>();
 
     /** Set of first followers per lane upstream of merge per lateral direction, i.e. in the left or right lane. */
-    private final Map<LateralDirectionality, SortedSet<HeadwayGTU>> firstFollowers = new HashMap<>();
+    private final Map<LateralDirectionality, SortedSet<HeadwayGTU>> firstFollowers = new LinkedHashMap<>();
 
     /** Set of first leaders per lane downstream of split per lateral direction, i.e. in the left or right lane. */
-    private final Map<LateralDirectionality, SortedSet<HeadwayGTU>> firstLeaders = new HashMap<>();
+    private final Map<LateralDirectionality, SortedSet<HeadwayGTU>> firstLeaders = new LinkedHashMap<>();
 
     /** Whether a GTU is alongside per lateral direction, i.e. in the left or right lane. */
-    private final Map<LateralDirectionality, Boolean> gtuAlongside = new HashMap<>();
+    private final Map<LateralDirectionality, Boolean> gtuAlongside = new LinkedHashMap<>();
 
     /** Map of errors by a Wiener process for each GTU. */
-    private HashMap<String, ErrorValue> errors = new HashMap<>();
+    private LinkedHashMap<String, ErrorValue> errors = new LinkedHashMap<>();
 
     /** Random numbers for perception errors. */
     private final DistNormal norm;

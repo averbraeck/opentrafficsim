@@ -3,7 +3,7 @@ package org.opentrafficsim.demo.web;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,10 +74,10 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
 public class OTSDemoServer
 {
     /** the map of sessionIds to OTSModelInterface that handles the animation and updates for the started model. */
-    final Map<String, OTSModelInterface> sessionModelMap = new HashMap<>();
+    final Map<String, OTSModelInterface> sessionModelMap = new LinkedHashMap<>();
 
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */
-    final Map<String, OTSWebModel> sessionWebModelMap = new HashMap<>();
+    final Map<String, OTSWebModel> sessionWebModelMap = new LinkedHashMap<>();
 
     /**
      * Run a SuperDemo OTS Web server.
@@ -522,7 +522,7 @@ public class OTSDemoServer
             String errors = "OK";
             InputParameterMap inputParameters = model.getInputParameterMap();
             String[] parts = message.split("\\|");
-            Map<String, String> unitMap = new HashMap<>();
+            Map<String, String> unitMap = new LinkedHashMap<>();
             for (int i = 1; i < parts.length - 3; i += 3)
             {
                 String id = parts[i].trim().replaceFirst("model.", "");

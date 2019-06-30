@@ -1,6 +1,6 @@
 package nl.tno.imb.mc;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -27,7 +27,7 @@ public enum ModelState
     REMOVED(-1);
 
     /** Map to translate numeric value to enum. */
-    protected static Map<Integer, ModelState> commandMap = new HashMap<>();
+    protected static Map<Integer, ModelState> commandMap = new LinkedHashMap<>();
 
     static
     {

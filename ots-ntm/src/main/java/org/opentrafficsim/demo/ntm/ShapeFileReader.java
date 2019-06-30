@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.unit.FrequencyUnit;
@@ -79,7 +79,7 @@ public class ShapeFileReader
         }
         ShapefileDataStore storeAreas = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<String, Area> areas = new HashMap<>();
+        Map<String, Area> areas = new LinkedHashMap<>();
 
         SimpleFeatureSource featureSourceAreas = storeAreas.getFeatureSource();
         SimpleFeatureCollection featureCollectionAreas = featureSourceAreas.getFeatures();
@@ -228,7 +228,7 @@ public class ShapeFileReader
         }
         ShapefileDataStore storeNodes = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<String, NTMNode> nodes = new HashMap<>();
+        Map<String, NTMNode> nodes = new LinkedHashMap<>();
 
         SimpleFeatureSource featureSourceNodes = storeNodes.getFeatureSource();
         SimpleFeatureCollection featureCollectionNodes = featureSourceNodes.getFeatures();

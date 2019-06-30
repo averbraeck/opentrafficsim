@@ -125,7 +125,7 @@ public class NTMModel extends AbstractOTSModel
     private SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>> areaGraph;
 
     /** */
-    private Map<String, NTMNode> nodeAreaGraphMap = new HashMap<>();
+    private Map<String, NTMNode> nodeAreaGraphMap = new LinkedHashMap<>();
 
     /** Subset of links from shape file used as flow links. */
     private LinkedHashMap<String, NTMLink> debugLinkList;
@@ -163,8 +163,8 @@ public class NTMModel extends AbstractOTSModel
             Duration durationOfSimulation = new Duration(10800, DurationUnit.SECOND);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
             Calendar startTime = new GregorianCalendar(2014, 1, 28, 15, 0, 0);
-            this.shpLinks = new HashMap<>();
-            this.shpConnectors = new HashMap<>();
+            this.shpLinks = new LinkedHashMap<>();
+            this.shpConnectors = new LinkedHashMap<>();
 
             this.centroids = ShapeFileReader.ReadNodes(this,
                     this.getInputNTM().getInputMap() + this.getInputNTM().getFileCentroids(), "NODENR",
@@ -222,7 +222,7 @@ public class NTMModel extends AbstractOTSModel
                 // to compress the areas into bigger units TODO //of compressedDemand????????????????
                 File file = new File(this.getInputNTM().getInputMap() + this.getInputNTM().getFileAreasBig());
                 this.compressedAreas = ShapeStore.openGISFile(file);
-                this.bigAreas = new HashMap<String, Area>();
+                this.bigAreas = new LinkedHashMap<String, Area>();
                 for (ShapeObject shape : this.compressedAreas.getGeoObjects())
                 {
                     String areaName = shape.getValues().get(0);
@@ -242,9 +242,9 @@ public class NTMModel extends AbstractOTSModel
                     this.bigAreas.put(bigArea.getCentroidNr(), bigArea);
                 }
                 // create new centroids
-                this.bigCentroids = new HashMap<String, NTMNode>();
+                this.bigCentroids = new LinkedHashMap<String, NTMNode>();
                 // key from small to big areas, and new connectors and new bigCentroids!
-                HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea = connectCentroidsToBigger(this.compressedAreas, this.centroids,
+                LinkedHashMap<NTMNode, NTMNode> mapSmallAreaToBigArea = connectCentroidsToBigger(this.compressedAreas, this.centroids,
                         this.bigCentroids, this.shpConnectors, this.areas);
                 this.setShpBigConnectors(createConnectors(mapSmallAreaToBigArea, this.shpConnectors));
                 this.compressedTripDemand =
@@ -336,7 +336,7 @@ public class NTMModel extends AbstractOTSModel
          * @param centroid
          * @return the additional areas
          */
-        Map<String, Area> areasFlowLink = new HashMap<String, Area>();
+        Map<String, Area> areasFlowLink = new LinkedHashMap<String, Area>();
 
         for (NTMLink link : flowLinks.values())
         {
@@ -376,10 +376,10 @@ public class NTMModel extends AbstractOTSModel
      * @return
      * @throws NetworkException
      */
-    private HashMap<NTMNode, NTMNode> connectCentroidsToBigger(ShapeStore compressedAreas, Map<String, NTMNode> centroids,
+    private LinkedHashMap<NTMNode, NTMNode> connectCentroidsToBigger(ShapeStore compressedAreas, Map<String, NTMNode> centroids,
             Map<String, NTMNode> bigCentroids, Map<String, NTMLink> connectors, Map<String, Area> areas) throws NetworkException
     {
-        HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea = new HashMap<NTMNode, NTMNode>();
+        LinkedHashMap<NTMNode, NTMNode> mapSmallAreaToBigArea = new LinkedHashMap<NTMNode, NTMNode>();
         // ArrayList<Node> centroidsToRemove = new ArrayList<Node>();
         for (ShapeObject bigArea : compressedAreas.getGeoObjects())
         {
@@ -426,7 +426,7 @@ public class NTMModel extends AbstractOTSModel
     public void readOrSetParametersNTM(NTMModel model, Map<String, Area> areasToUse, Map<String, NTMNode> centroidsToUse,
             String file) throws IOException, ParseException
     {
-        HashMap<String, ArrayList<java.lang.Double>> parametersNTMByCentroid = CsvFileReader.readParametersNTM(file, ";", ",");
+        LinkedHashMap<String, ArrayList<java.lang.Double>> parametersNTMByCentroid = CsvFileReader.readParametersNTM(file, ";", ",");
         if (parametersNTMByCentroid.isEmpty())
         {
             CsvFileWriter.writeParametersNTM(this, file);
@@ -485,8 +485,8 @@ public class NTMModel extends AbstractOTSModel
     public void readOrSetCapacityRestraints(NTMModel model, Map<String, Area> areasToUse, String file, String fileFactor)
             throws IOException, ParseException
     {
-        HashMap<String, HashMap<String, Frequency>> borderCapacityAreasMap = CsvFileReader.readCapResNTM(file, ";", ",");
-        HashMap<String, HashMap<String, java.lang.Double>> borderCapacityFactorAreasMap =
+        LinkedHashMap<String, LinkedHashMap<String, Frequency>> borderCapacityAreasMap = CsvFileReader.readCapResNTM(file, ";", ",");
+        LinkedHashMap<String, LinkedHashMap<String, java.lang.Double>> borderCapacityFactorAreasMap =
                 CsvFileReader.readCapResFactorNTM(fileFactor, ";", ",");
 
         if (borderCapacityAreasMap.isEmpty())
@@ -506,7 +506,7 @@ public class NTMModel extends AbstractOTSModel
         {
             if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
             {
-                HashMap<BoundedNode, Frequency> borderCapacity = new HashMap<BoundedNode, Frequency>();
+                LinkedHashMap<BoundedNode, Frequency> borderCapacity = new LinkedHashMap<BoundedNode, Frequency>();
                 BoundedNode node = (BoundedNode) origin;
                 CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
                 Set<LinkEdge<NTMLink>> outGoing = this.getAreaGraph().outgoingEdgesOf(node);
@@ -561,7 +561,7 @@ public class NTMModel extends AbstractOTSModel
     private Map<String, NTMLink> createConnectors(HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea,
             Map<String, NTMLink> connectors) throws NetworkException
     {
-        HashMap<String, NTMLink> mapConnectors = new HashMap<String, NTMLink>();
+        LinkedHashMap<String, NTMLink> mapConnectors = new LinkedHashMap<String, NTMLink>();
         for (NTMLink link : connectors.values())
         {
             NTMNode startNode = null;
@@ -604,7 +604,7 @@ public class NTMModel extends AbstractOTSModel
     private void determineRoadLengthInAreas(Map<String, NTMLink> shpLinks, Map<String, Area> areas)
     {
         Double speedTotal;
-        Map<Area, java.lang.Double> speedTotalByArea = new HashMap<Area, java.lang.Double>();
+        Map<Area, java.lang.Double> speedTotalByArea = new LinkedHashMap<Area, java.lang.Double>();
         for (NTMLink link : shpLinks.values())
         {
             for (Area area : areas.values())
@@ -1074,7 +1074,7 @@ public class NTMModel extends AbstractOTSModel
     public static Map<String, NTMLink> createFlowLinks(final Map<String, NTMLink> shpLinks, Speed maxSpeed,
             Frequency maxCapacity) throws NetworkException
     {
-        Map<String, NTMLink> flowLinks = new HashMap<String, NTMLink>();
+        Map<String, NTMLink> flowLinks = new LinkedHashMap<String, NTMLink>();
         for (NTMLink shpLink : shpLinks.values())
         {
 

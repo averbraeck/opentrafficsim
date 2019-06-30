@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,13 +38,13 @@ public final class LmrsData implements DesireBased, Synchronizable
     private final Tailgating tailgating;
 
     /** Most recent leaders. */
-    private final Set<String> leaders = new HashSet<>();
+    private final Set<String> leaders = new LinkedHashSet<>();
 
     /** Current leaders. */
-    private final Set<String> tempLeaders = new HashSet<>();
+    private final Set<String> tempLeaders = new LinkedHashSet<>();
 
     /** Latest desire value for visualization. */
-    private final Map<Class<? extends Incentive>, Desire> desireMap = new HashMap<>();
+    private final Map<Class<? extends Incentive>, Desire> desireMap = new LinkedHashMap<>();
 
     /** Synchronization state. */
     private Synchronizable.State synchronizationState = Synchronizable.State.NONE;

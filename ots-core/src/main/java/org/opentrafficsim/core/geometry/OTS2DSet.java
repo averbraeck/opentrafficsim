@@ -3,8 +3,8 @@ package org.opentrafficsim.core.geometry;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -38,7 +38,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
     private static final long serialVersionUID = 20170400L;
 
     /** Set of all shapes used for iterators, etc. */
-    private final Set<OTSShape> allShapes = new HashSet<OTSShape>();
+    private final Set<OTSShape> allShapes = new LinkedHashSet<OTSShape>();
 
     /** How fine will this quad tree divide. This one is copied to each sub-node which is somewhat inefficient. */
     private final double minimumCellSize;
@@ -330,7 +330,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
         private static final long serialVersionUID = 20170400L;
 
         /** The OTSShapes stored at this node. */
-        private Set<OTSShape> shapes = new HashSet<OTSShape>();
+        private Set<OTSShape> shapes = new LinkedHashSet<OTSShape>();
 
         /** The bounding box of this QuadTreeNode. */
         private final Rectangle2D boundingBox;
@@ -364,7 +364,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
          */
         public Set<OTSShape> intersectingShapes(final Rectangle2D rectangle)
         {
-            Set<OTSShape> result = new HashSet<OTSShape>();
+            Set<OTSShape> result = new LinkedHashSet<OTSShape>();
             if (!this.boundingBox.intersects(rectangle))
             {
                 return result;

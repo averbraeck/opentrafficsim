@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Speed;
@@ -152,7 +152,7 @@ public final class DefinitionsParser
                 else
                     CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LinkType {}", linkTag.getID());
 
-                linkTypeSpeedLimitMap.put(networkLinkType, new HashMap<>());
+                linkTypeSpeedLimitMap.put(networkLinkType, new LinkedHashMap<>());
                 for (SPEEDLIMIT speedLimitTag : linkTag.getSPEEDLIMIT())
                 {
                     GTUType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());

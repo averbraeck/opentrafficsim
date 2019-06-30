@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.lane;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -983,7 +982,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     private double cachePositionsTime = Double.NaN;
 
     /** caching of last stored position(s). */
-    private Map<Integer, Length> cachedPositions = new HashMap<>();
+    private Map<Integer, Length> cachedPositions = new LinkedHashMap<>();
 
     /** {@inheritDoc} */
     @Override

@@ -1,7 +1,7 @@
 package org.opentrafficsim.base.parameters.constraint;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import org.djutils.exceptions.Throw;
 
@@ -58,7 +58,7 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
     @SafeVarargs
     public static <T> SubCollectionConstraint<T> newInstance(final T... objs)
     {
-        Collection<T> collection = new HashSet<>();
+        Collection<T> collection = new LinkedHashSet<>();
         for (T t : objs)
         {
             collection.add(t);

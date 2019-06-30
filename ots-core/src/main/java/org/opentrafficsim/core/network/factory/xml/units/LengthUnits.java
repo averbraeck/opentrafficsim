@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
@@ -23,10 +23,10 @@ import org.opentrafficsim.core.network.NetworkException;
 public final class LengthUnits implements UNITS
 {
     /** The length units. */
-    public static final Map<String, LengthUnit> LENGTH_UNITS = new HashMap<>();
+    public static final Map<String, LengthUnit> LENGTH_UNITS = new LinkedHashMap<>();
 
     /** The per-length units. */
-    public static final Map<String, LinearDensityUnit> PER_LENGTH_UNITS = new HashMap<>();
+    public static final Map<String, LinearDensityUnit> PER_LENGTH_UNITS = new LinkedHashMap<>();
 
     static
     {

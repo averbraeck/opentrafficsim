@@ -286,7 +286,7 @@ final class Links
         CrossSectionLink csl = linkTag.link;
         List<CrossSectionElement> cseList = new ArrayList<>();
         List<Lane> lanes = new ArrayList<>();
-        // TODO Map<GTUType, LongitudinalDirectionality> linkDirections = new HashMap<>();
+        // TODO Map<GTUType, LongitudinalDirectionality> linkDirections = new LinkedHashMap<>();
         LongitudinalDirectionality linkDirection = LongitudinalDirectionality.DIR_NONE;
         for (CrossSectionElementTag cseTag : linkTag.roadLayoutTag.cseTags.values())
         {

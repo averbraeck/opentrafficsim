@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.unit.DurationUnit;
@@ -23,10 +23,10 @@ import org.opentrafficsim.core.network.NetworkException;
 public final class DurationUnits implements UNITS
 {
     /** The time units. */
-    public static final Map<String, DurationUnit> DURATION_UNITS = new HashMap<>();
+    public static final Map<String, DurationUnit> DURATION_UNITS = new LinkedHashMap<>();
 
     /** The per time units. */
-    public static final Map<String, FrequencyUnit> FREQUENCY_UNITS = new HashMap<>();
+    public static final Map<String, FrequencyUnit> FREQUENCY_UNITS = new LinkedHashMap<>();
 
     static
     {

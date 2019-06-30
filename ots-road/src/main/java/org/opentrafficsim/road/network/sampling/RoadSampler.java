@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.network.sampling;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,10 +53,10 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     private final Duration samplingInterval;
 
     /** Registration of sampling events of each GTU per lane, if interval based. */
-    private final Map<String, Map<LaneDirection, SimEventInterface<SimTimeDoubleUnit>>> eventPerGtu = new HashMap<>();
+    private final Map<String, Map<LaneDirection, SimEventInterface<SimTimeDoubleUnit>>> eventPerGtu = new LinkedHashMap<>();
 
     /** List of lane the sampler is listening to for each GTU. Usually 1, could be 2 during a trajectory transition. */
-    private final Map<String, Set<LaneDirection>> listenersPerGtu = new HashMap<>();
+    private final Map<String, Set<LaneDirection>> listenersPerGtu = new LinkedHashMap<>();
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
@@ -248,7 +248,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             {
                 if (!this.listenersPerGtu.containsKey(gtu.getId()))
                 {
-                    this.listenersPerGtu.put(gtu.getId(), new HashSet<>());
+                    this.listenersPerGtu.put(gtu.getId(), new LinkedHashSet<>());
                 }
                 this.listenersPerGtu.get(gtu.getId()).add(lDirection);
                 gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
@@ -328,7 +328,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
         String gtuId = gtu.getId();
         if (!this.eventPerGtu.containsKey(gtuId))
         {
-            Map<LaneDirection, SimEventInterface<SimTimeDoubleUnit>> map = new HashMap<>();
+            Map<LaneDirection, SimEventInterface<SimTimeDoubleUnit>> map = new LinkedHashMap<>();
             this.eventPerGtu.put(gtuId, map);
         }
         this.eventPerGtu.get(gtuId).put(laneDirection, simEvent);

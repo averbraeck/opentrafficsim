@@ -4,8 +4,8 @@ import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -169,7 +169,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            Map<String, StreamInterface> streams = new HashMap<>();
+            Map<String, StreamInterface> streams = new LinkedHashMap<>();
             streams.put("generation", new MersenneTwister(100L));
             this.simulator.getReplication().setStreams(streams);
             try
@@ -184,13 +184,13 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                 // Add bus stops
                 Lane lane = ((CrossSectionLink) this.network.getLink("B1B2")).getLanes().get(0);
                 BusStop stop = new BusStop("Cafe Boszicht.1", lane, lane.getLength(), "Cafe Boszicht", this.simulator);
-                Set<String> lines1 = new HashSet<>();
+                Set<String> lines1 = new LinkedHashSet<>();
                 lines1.add("1");
                 stop.setLines(lines1);
 
                 lane = ((CrossSectionLink) this.network.getLink("C1C2")).getLanes().get(0);
                 stop = new BusStop("Cafe Boszicht.2", lane, lane.getLength(), "Cafe Boszicht", this.simulator);
-                Set<String> lines2 = new HashSet<>();
+                Set<String> lines2 = new LinkedHashSet<>();
                 lines2.add("2");
                 stop.setLines(lines2);
 
@@ -201,7 +201,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
 
                 lane = ((CrossSectionLink) this.network.getLink("FG")).getLanes().get(1);
                 stop = new BusStop("De Vleeshoeve", lane, new Length(75.0, LengthUnit.SI), "De Vleeshoeve", this.simulator);
-                Set<String> lines12 = new HashSet<>();
+                Set<String> lines12 = new LinkedHashSet<>();
                 lines12.add("1");
                 lines12.add("2");
                 stop.setLines(lines12);
@@ -248,7 +248,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         {
             Lane lane = ((CrossSectionLink) this.network.getLink("AB")).getLanes().get(0);
             String id = lane.getId();
-            Set<DirectedLanePosition> initialLongitudinalPositions = new HashSet<>();
+            Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions
                     .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
             Generator<Duration> headwayGenerator =

@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
@@ -69,10 +69,10 @@ public final class OTSNetworkUtils
         }
 
         // clone the routes
-        Map<GTUType, Map<String, Route>> newRouteMap = new HashMap<>();
+        Map<GTUType, Map<String, Route>> newRouteMap = new LinkedHashMap<>();
         for (GTUType gtuType : network.getRouteMap().keySet())
         {
-            Map<String, Route> newRoutes = new HashMap<>();
+            Map<String, Route> newRoutes = new LinkedHashMap<>();
             for (Route route : network.getRouteMap().get(gtuType).values())
             {
                 newRoutes.put(route.getId(), route.clone(newNetwork, newSimulator));

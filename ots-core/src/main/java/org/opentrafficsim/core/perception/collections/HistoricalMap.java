@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.perception.collections;
 
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -42,7 +42,7 @@ public interface HistoricalMap<K, V> extends Map<K, V>
     default void replaceAll(final BiFunction<? super K, ? super V, ? extends V> function)
     {
         Objects.requireNonNull(function);
-        Map<K, V> puts = new HashMap<>();
+        Map<K, V> puts = new LinkedHashMap<>();
         for (Entry<K, V> entry : entrySet())
         {
             K k;

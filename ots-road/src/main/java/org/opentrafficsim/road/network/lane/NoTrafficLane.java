@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class NoTrafficLane extends Lane
      */
     private static Map<GTUType, LongitudinalDirectionality> directionalityNone(final RoadNetwork network)
     {
-        Map<GTUType, LongitudinalDirectionality> dirNone = new HashMap<>();
+        Map<GTUType, LongitudinalDirectionality> dirNone = new LinkedHashMap<>();
         dirNone.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_NONE);
         return dirNone;
     }
@@ -46,7 +46,7 @@ public class NoTrafficLane extends Lane
      */
     private static Map<GTUType, Speed> speedNull(final RoadNetwork network)
     {
-        Map<GTUType, Speed> speedMap = new HashMap<>();
+        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Speed.ZERO);
         return speedMap;
     }

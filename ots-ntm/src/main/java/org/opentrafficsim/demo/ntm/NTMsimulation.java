@@ -1,6 +1,6 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +41,7 @@ public class NTMsimulation
     static int MAXSTEPS = 1080;
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, Double[]>> fluxAreaToNeighbours = new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>> fluxAreaToNeighbours = new LinkedHashMap<>();
 
     /**
      * @param model NTMModel;
@@ -146,7 +146,7 @@ public class NTMsimulation
         // destinations.
         // This origin can be the real origin or an intermediate area on the path to destination
         // (neighbours).
-        // The structure (or Class in Java) named TripInfoDynamic is stored in a HashMap (lookup array) that
+        // The structure (or Class in Java) named TripInfoDynamic is stored in a LinkedHashMap (lookup array) that
         // contains this information for all destinations separately.
 
         for (NTMNode node : model.getAreaGraph().vertexSet())
@@ -258,7 +258,7 @@ public class NTMsimulation
                     if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
                     {
                         CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) origin.getCellBehaviour();
-                        HashMap<BoundedNode, Frequency> borderDemand = new HashMap<BoundedNode, Frequency>();
+                        LinkedHashMap<BoundedNode, Frequency> borderDemand = new LinkedHashMap<BoundedNode, Frequency>();
                         cellBehaviour.setBorderDemand(borderDemand);
                         for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByDestinationMap().values())
                         {

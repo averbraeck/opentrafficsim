@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -124,7 +124,7 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
         long end = System.nanoTime();
         System.out.println(String.format("Data collection time %.3fs", (end - start) / 1e9));
         System.out.println("Retrieved " + roadData.size() + " records");
-        Map<String, Map<Long, Feature>> additionalData = new HashMap<>();
+        Map<String, Map<Long, Feature>> additionalData = new LinkedHashMap<>();
         List<String> databases = Arrays.asList(new String[] { "adv_snelheden", "beb_kommen", "convergenties", "divergenties",
                 "doelgroepstroken", "gel_beperkingen", "inhaalverboden", "kantstroken", "kruispunten", "kunstinweg",
                 "kunstoverweg", "lichtmasten", "max_snelheden", "mengstroken", "portalen", "rijbanen", "rijstroken",
@@ -176,7 +176,7 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
         LaneType highWay = network.getLaneType(LaneType.DEFAULTS.HIGHWAY);
         LaneType urbanWay = network.getLaneType(LaneType.DEFAULTS.URBAN_ROAD_LANE);
 
-        Map<GTUType, Speed> speedLimitMap = new HashMap<>();
+        Map<GTUType, Speed> speedLimitMap = new LinkedHashMap<>();
 
         for (Long wvkId : roadData.keySet())
         {

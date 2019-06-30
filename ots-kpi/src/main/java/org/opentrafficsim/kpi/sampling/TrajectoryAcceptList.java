@@ -1,8 +1,8 @@
 package org.opentrafficsim.kpi.sampling;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +33,7 @@ public class TrajectoryAcceptList
     private final List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();
 
     /** Map of trajectory's and acceptance boolean. */
-    private final Map<Trajectory<?>, Boolean> trajectoryMap = new HashMap<>();
+    private final Map<Trajectory<?>, Boolean> trajectoryMap = new LinkedHashMap<>();
 
     /**
      * Adds a {@code Trajectory} with the {@code TrajectoryGroup} it is from to the accept list.

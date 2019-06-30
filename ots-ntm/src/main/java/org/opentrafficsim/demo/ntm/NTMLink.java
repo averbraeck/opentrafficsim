@@ -4,8 +4,8 @@ import java.awt.geom.Path2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -293,15 +293,15 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param links Map&lt;String,NTMLink&gt;; HashMap
+     * @param links Map&lt;String,NTMLink&gt;; LinkedHashMap
      */
     public static void findSequentialLinks(final Map<String, NTMLink> links, Map<String, NTMNode> nodes)
     {
         // compare all links
-        HashMap<org.opentrafficsim.core.network.Node, ArrayList<NTMLink>> linksStartAtNode = new HashMap<>();
-        HashMap<org.opentrafficsim.core.network.Node, ArrayList<NTMLink>> linksEndAtNode = new HashMap<>();
-        // HashMap<Node, Link> endNodeToLinkMap = new HashMap<Node, Link>();
-        // HashMap<Node, Integer> numberOfLinksFromStartNodeMap = new HashMap<Node, Integer>();
+        LinkedHashMap<org.opentrafficsim.core.network.Node, ArrayList<NTMLink>> linksStartAtNode = new LinkedHashMap<>();
+        LinkedHashMap<org.opentrafficsim.core.network.Node, ArrayList<NTMLink>> linksEndAtNode = new LinkedHashMap<>();
+        // LinkedHashMap<Node, Link> endNodeToLinkMap = new LinkedHashMap<Node, Link>();
+        // LinkedHashMap<Node, Integer> numberOfLinksFromStartNodeMap = new LinkedHashMap<Node, Integer>();
         // find out how many links start from the endNode of a link
         for (NTMLink link : links.values())
         {
@@ -342,8 +342,8 @@ public class NTMLink extends CapacityOTSLink
 
         }
 
-        HashMap<NTMLink, ArrayList<NTMLink>> upLinks = new HashMap<NTMLink, ArrayList<NTMLink>>();
-        HashMap<NTMLink, ArrayList<NTMLink>> downLinks = new HashMap<NTMLink, ArrayList<NTMLink>>();
+        LinkedHashMap<NTMLink, ArrayList<NTMLink>> upLinks = new LinkedHashMap<NTMLink, ArrayList<NTMLink>>();
+        LinkedHashMap<NTMLink, ArrayList<NTMLink>> downLinks = new LinkedHashMap<NTMLink, ArrayList<NTMLink>>();
         for (NTMLink link : links.values())
         {
             if (link.getEndNode().getId().equals("1090639793"))
@@ -560,7 +560,7 @@ public class NTMLink extends CapacityOTSLink
             double dy = this.getLocation().y;
             // double dx = 0;
             // double dy = 0;
-            this.lines = new HashSet<Path2D>();
+            this.lines = new LinkedHashSet<Path2D>();
             for (int i = 0; i < this.getDesignLine().getLineString().getNumGeometries(); i++)
             {
                 Path2D line = new Path2D.Double();

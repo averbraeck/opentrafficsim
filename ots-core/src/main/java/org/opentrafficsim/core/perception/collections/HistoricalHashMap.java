@@ -1,13 +1,13 @@
 package org.opentrafficsim.core.perception.collections;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 /**
- * HashMap-valued historical state. The current hash map is always maintained, and past states of the hash map are obtained by
+ * LinkedHashMap-valued historical state. The current hash map is always maintained, and past states of the hash map are obtained by
  * applying the events between now and the requested time in reverse.<br>
  * <br>
  * The set views returned by this class are unmodifiable.
@@ -22,7 +22,7 @@ import org.opentrafficsim.core.perception.HistoryManager;
  * @param <K> key type
  * @param <V> value type
  */
-public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, HashMap<K, V>>
+public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, LinkedHashMap<K, V>>
 {
 
     /**
@@ -31,7 +31,7 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, HashMap
      */
     public HistoricalHashMap(final HistoryManager historyManager)
     {
-        super(historyManager, new HashMap<>());
+        super(historyManager, new LinkedHashMap<>());
     }
 
     /**
@@ -41,25 +41,25 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, HashMap
      */
     public HistoricalHashMap(final HistoryManager historyManager, final Map<? extends K, ? extends V> m)
     {
-        super(historyManager, new HashMap<>(m));
+        super(historyManager, new LinkedHashMap<>(m));
     }
 
     /** {@inheritDoc} */
     @Override
-    public HashMap<K, V> get()
+    public LinkedHashMap<K, V> get()
     {
         return getMap();
     }
 
     /** {@inheritDoc} */
     @Override
-    public HashMap<K, V> get(final Time time)
+    public LinkedHashMap<K, V> get(final Time time)
     {
         if (isLastState(time))
         {
             return getMap();
         }
-        return fill(time, new HashMap<>());
+        return fill(time, new LinkedHashMap<>());
     }
 
     /** {@inheritDoc} */

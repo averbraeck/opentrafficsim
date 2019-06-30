@@ -7,7 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -196,7 +196,7 @@ public class GTUFollowingModelTest implements UNITS
                 gtuFollowingModel.computeAccelerationStep(gtu50m, gtu50m.getSpeed(), headway50m, maxHeadway, speedLimit);
         checkAccelerationStep("leader at " + headway50m, as50m, a50.getAcceleration(), noLeader.getAcceleration(),
                 expectedValidUntil);
-        Map<Lane, Length> initialLongitudinalPositions100 = new HashMap<>();
+        Map<Lane, Length> initialLongitudinalPositions100 = new LinkedHashMap<>();
         Length headway100m = new Length(100, METER);
         initialLongitudinalPositions100.put(lane, initialPosition.plus(headway100m));
         LaneBasedIndividualGTU gtu100m = new LaneBasedIndividualGTU("100100", carType, length, width, maxSpeed,
@@ -233,7 +233,7 @@ public class GTUFollowingModelTest implements UNITS
         checkAccelerationStep("leader at " + headway100m, as100m, a100.getAcceleration(), noLeader.getAcceleration(),
                 expectedValidUntil);
         // Add an overlapping GTU. Immediate collision situation should return TOODANGEROUS
-        Map<Lane, Length> initialLongitudinalPositionsOverlapping = new HashMap<>();
+        Map<Lane, Length> initialLongitudinalPositionsOverlapping = new LinkedHashMap<>();
         Length ahead = new Length(1, METER);
         initialLongitudinalPositionsOverlapping.put(lane, initialPosition.plus(ahead));
         LaneBasedIndividualGTU gtu1m = new LaneBasedIndividualGTU("100100" + this.gtuIdGenerator.nextId(), carType, length,

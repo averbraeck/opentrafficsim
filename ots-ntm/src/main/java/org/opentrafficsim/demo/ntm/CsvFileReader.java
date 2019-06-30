@@ -10,7 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -63,7 +63,7 @@ public class CsvFileReader
      * @param settingsNTM NTMSettings; the parameters of the NTM
      * @param profiles ArrayList&lt;DepartureTimeProfile&gt;; departure profile of Trips
      * @param areas Map&lt;String,Area&gt;; the NTM model areas
-     * @return the TripDemand (nested HashMap: <origin, map<destination, tripinformation>>
+     * @return the TripDemand (nested LinkedHashMap: <origin, map<destination, tripinformation>>
      * @throws IOException
      * @throws Throwable
      */
@@ -86,8 +86,8 @@ public class CsvFileReader
 
         String path = url.getPath();
         TripDemand<TripInfoTimeDynamic> tripDemand = new TripDemand<TripInfoTimeDynamic>();
-        Map<String, Map<String, TripInfoTimeDynamic>> demand = new HashMap<>();
-        Map<String, NTMNode> centroidsAndCordonConnectors = new HashMap<>();
+        Map<String, Map<String, TripInfoTimeDynamic>> demand = new LinkedHashMap<>();
+        Map<String, NTMNode> centroidsAndCordonConnectors = new LinkedHashMap<>();
         try
         {
 
@@ -137,7 +137,7 @@ public class CsvFileReader
             // have the link number plus (sometimes) a name of the road
             // "Links + Centroids";"3569";"11212";"95014";"95608";"116117";"116738";...................";
             // ..... "563089";"563430";"C1";"C2";"C3";"C4";"C5";"C6";".........."
-            HashMap<Integer, String> orderedZones = new HashMap<Integer, String>();
+            LinkedHashMap<Integer, String> orderedZones = new LinkedHashMap<Integer, String>();
             if ((line = bufferedReader.readLine()) != null)
             {
                 String[] namesZone = line.split(csvSplitBy);
@@ -330,7 +330,7 @@ public class CsvFileReader
             int indexRow = 0;
             while ((line = bufferedReader.readLine()) != null && !line.isEmpty())
             {
-                Map<String, TripInfoTimeDynamic> tripDemandRow = new HashMap<String, TripInfoTimeDynamic>();
+                Map<String, TripInfoTimeDynamic> tripDemandRow = new LinkedHashMap<String, TripInfoTimeDynamic>();
                 String[] tripData = line.split(csvSplitBy);
                 boolean firstElement = true;
                 NTMNode origin = null;
@@ -562,7 +562,7 @@ public class CsvFileReader
      * @throws IOException
      * @throws ParseException
      */
-    public static HashMap<String, ArrayList<Double>> readParametersNTM(final String csvFileName, final String csvSplitBy,
+    public static LinkedHashMap<String, ArrayList<Double>> readParametersNTM(final String csvFileName, final String csvSplitBy,
             final String csvSplitInternalBy) throws IOException, ParseException
     {
         BufferedReader bufferedReader = null;
@@ -577,7 +577,7 @@ public class CsvFileReader
             url = ShapeFileReader.class.getResource(csvFileName);
         }
 
-        HashMap<String, ArrayList<Double>> parametersNTM = new HashMap<String, ArrayList<Double>>();
+        LinkedHashMap<String, ArrayList<Double>> parametersNTM = new LinkedHashMap<String, ArrayList<Double>>();
 
         if (url != null)
         {
@@ -636,7 +636,7 @@ public class CsvFileReader
         return parametersNTM;
     }
 
-    public static HashMap<String, HashMap<String, Frequency>> readCapResNTM(final String csvFileName, final String csvSplitBy,
+    public static LinkedHashMap<String, LinkedHashMap<String, Frequency>> readCapResNTM(final String csvFileName, final String csvSplitBy,
             final String csvSplitInternalBy) throws IOException, ParseException
     {
         BufferedReader bufferedReader = null;
@@ -650,7 +650,7 @@ public class CsvFileReader
         {
             url = ShapeFileReader.class.getResource(csvFileName);
         }
-        HashMap<String, HashMap<String, Frequency>> capResMap = new HashMap<String, HashMap<String, Frequency>>();
+        LinkedHashMap<String, LinkedHashMap<String, Frequency>> capResMap = new LinkedHashMap<String, LinkedHashMap<String, Frequency>>();
         // double OD = capResMap.get("O").get("D");
         if (url != null)
         {
@@ -661,11 +661,11 @@ public class CsvFileReader
                 boolean header = true;
                 // read all lines: first column contains the name of the origin
                 // this can be either a link or a centroid (starts with "C")
-                HashMap<Integer, String> name = new HashMap<Integer, String>();
+                LinkedHashMap<Integer, String> name = new LinkedHashMap<Integer, String>();
                 while ((line = bufferedReader.readLine()) != null)
                 {
                     String centroidName = null;
-                    HashMap<String, Frequency> capRes = new HashMap<String, Frequency>();
+                    LinkedHashMap<String, Frequency> capRes = new LinkedHashMap<String, Frequency>();
                     String[] completeLine = line.split(csvSplitBy);
                     for (String lineSegment : completeLine)
                     {
@@ -728,7 +728,7 @@ public class CsvFileReader
         return capResMap;
     }
 
-    public static HashMap<String, HashMap<String, Double>> readCapResFactorNTM(final String csvFileName,
+    public static LinkedHashMap<String, LinkedHashMap<String, Double>> readCapResFactorNTM(final String csvFileName,
             final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
     {
         BufferedReader bufferedReader = null;
@@ -742,7 +742,7 @@ public class CsvFileReader
         {
             url = ShapeFileReader.class.getResource(csvFileName);
         }
-        HashMap<String, HashMap<String, Double>> capResMap = new HashMap<String, HashMap<String, Double>>();
+        LinkedHashMap<String, LinkedHashMap<String, Double>> capResMap = new LinkedHashMap<String, LinkedHashMap<String, Double>>();
         // double OD = capResMap.get("O").get("D");
         if (url != null)
         {
@@ -753,11 +753,11 @@ public class CsvFileReader
                 boolean header = true;
                 // read all lines: first column contains the name of the origin
                 // this can be either a link or a centroid (starts with "C")
-                HashMap<Integer, String> name = new HashMap<Integer, String>();
+                LinkedHashMap<Integer, String> name = new LinkedHashMap<Integer, String>();
                 while ((line = bufferedReader.readLine()) != null)
                 {
                     String centroidName = null;
-                    HashMap<String, Double> capRes = new HashMap<String, Double>();
+                    LinkedHashMap<String, Double> capRes = new LinkedHashMap<String, Double>();
                     String[] completeLine = line.split(csvSplitBy);
                     for (String lineSegment : completeLine)
                     {

@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.generator.od;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -65,7 +65,7 @@ public class ODOptions
     private OptionSet<LinkType> linkTypeOptions = new OptionSet<>();
 
     /** cache for lane biases per network. */
-    private static final Map<RoadNetwork, Option<LaneBiases>> LANE_BIAS_CACHE = new HashMap<>();
+    private static final Map<RoadNetwork, Option<LaneBiases>> LANE_BIAS_CACHE = new LinkedHashMap<>();
 
     /**
      * Lane bias. Default is Truck: truck right (strong right, max 2 lanes), Vehicle (other): weak left.
@@ -291,7 +291,7 @@ public class ODOptions
     {
 
         /** Options. */
-        private Map<C, Map<Option<?>, Object>> optionsSet = new HashMap<>();
+        private Map<C, Map<Option<?>, Object>> optionsSet = new LinkedHashMap<>();
 
         /**
          * Constructor.
@@ -313,7 +313,7 @@ public class ODOptions
             Map<Option<?>, Object> map = this.optionsSet.get(category);
             if (map == null)
             {
-                map = new HashMap<>();
+                map = new LinkedHashMap<>();
                 this.optionsSet.put(category, map);
             }
             map.put(option, value);

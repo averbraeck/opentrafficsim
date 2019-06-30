@@ -1,8 +1,8 @@
 package org.opentrafficsim.ahfe;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -148,7 +148,7 @@ public final class AHFEUtil
     {
 
         Random seedGenerator = new Random(replication);
-        Map<String, StreamInterface> streams = new HashMap<>();
+        Map<String, StreamInterface> streams = new LinkedHashMap<>();
         streams.put("headwayGeneration", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
         streams.put("gtuClass", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
         streams.put("perception", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
@@ -355,7 +355,7 @@ public final class AHFEUtil
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
             throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
     {
-        Set<DirectedLanePosition> initialLongitudinalPositions = new HashSet<>();
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
         // TODO DIR_MINUS
         initialLongitudinalPositions
                 .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));

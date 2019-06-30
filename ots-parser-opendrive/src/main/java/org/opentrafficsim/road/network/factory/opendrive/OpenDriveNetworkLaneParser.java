@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,23 +51,23 @@ public class OpenDriveNetworkLaneParser implements Serializable
 
     /** Junction tags. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, ControllerTag> controllerTags = new HashMap<>();
+    protected Map<String, ControllerTag> controllerTags = new LinkedHashMap<>();
 
     /** Controller tags. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, JunctionTag> junctionTags = new HashMap<>();
+    protected Map<String, JunctionTag> junctionTags = new LinkedHashMap<>();
 
     /** Road tags. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, RoadTag> roadTags = new HashMap<>();
+    protected Map<String, RoadTag> roadTags = new LinkedHashMap<>();
 
     /** The GTUTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, GTUType> gtuTypes = new HashMap<>();
+    protected Map<String, GTUType> gtuTypes = new LinkedHashMap<>();
 
     /** The LaneTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, LaneType> laneTypes = new HashMap<>();
+    protected Map<String, LaneType> laneTypes = new LinkedHashMap<>();
 
     /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
@@ -79,19 +79,19 @@ public class OpenDriveNetworkLaneParser implements Serializable
 
     /** The signalTags that have been created. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, SignalTag> signalTags = new HashMap<>();
+    protected Map<String, SignalTag> signalTags = new LinkedHashMap<>();
 
     /** The trafficLights that have been created, organized by signals */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, Set<SimpleTrafficLight>> trafficLightsBySignals = new HashMap<>();
+    protected Map<String, Set<SimpleTrafficLight>> trafficLightsBySignals = new LinkedHashMap<>();
 
     /** The trafficLights that have been created, organized by lanes */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, Set<SimpleTrafficLight>> trafficLightsByLanes = new HashMap<>();
+    protected Map<String, Set<SimpleTrafficLight>> trafficLightsByLanes = new LinkedHashMap<>();
 
     /** The generated animation per object. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    public Map<Object, Renderable2D<?>> animationMap = new HashMap<>();
+    public Map<Object, Renderable2D<?>> animationMap = new LinkedHashMap<>();
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator for creating the animation. Null if no animation needed.

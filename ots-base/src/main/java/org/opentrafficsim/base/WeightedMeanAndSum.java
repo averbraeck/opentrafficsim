@@ -80,7 +80,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
 
     /**
      * Adds a weighted value for each element. Note that iteration order is pivotal in correct operations. This method should
-     * not be used with instances of {@code HashMap} or {@code HashSet}.
+     * not be used with instances of {@code LinkedHashMap} or {@code LinkedHashSet}.
      * @param values Iterable&lt;V&gt;; values
      * @param weights Iterable&lt;W&gt;; weights
      * @return this WeightedMeanAndSum&lt;V, W&gt; for method chaining

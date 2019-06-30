@@ -2,8 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
@@ -155,10 +153,10 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     public final void updateAccessibleAdjacentLanesLeft() throws GTUException
     {
         Time timestamp = getTimestamp();
-        Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new HashMap<>();
+        Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new LinkedHashMap<>();
         for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
         {
-            Set<Lane> adjacentLanes = new HashSet<>(1);
+            Set<Lane> adjacentLanes = new LinkedHashSet<>(1);
             adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, getGtu().getGTUType(),
                     getGtu().getDirection(lane)));
             accessibleAdjacentLanesMap.put(lane, adjacentLanes);
@@ -171,10 +169,10 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     public final void updateAccessibleAdjacentLanesRight() throws GTUException
     {
         Time timestamp = getTimestamp();
-        Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new HashMap<>();
+        Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new LinkedHashMap<>();
         for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
         {
-            Set<Lane> adjacentLanes = new HashSet<>(1);
+            Set<Lane> adjacentLanes = new LinkedHashSet<>(1);
             adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, getGtu().getGTUType(),
                     getGtu().getDirection(lane)));
             accessibleAdjacentLanesMap.put(lane, adjacentLanes);
@@ -251,7 +249,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         {
             updateAccessibleAdjacentLanesLeft();
         }
-        Set<Headway> parallelHeadwaySet = new HashSet<>();
+        Set<Headway> parallelHeadwaySet = new LinkedHashSet<>();
         for (Lane lane : this.accessibleAdjacentLanesLeft.getObject().keySet())
         {
             for (Lane adjacentLane : this.accessibleAdjacentLanesLeft.getObject().get(lane))
@@ -271,7 +269,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         {
             updateAccessibleAdjacentLanesRight();
         }
-        Set<Headway> parallelHeadwaySet = new HashSet<>();
+        Set<Headway> parallelHeadwaySet = new LinkedHashSet<>();
         for (Lane lane : this.accessibleAdjacentLanesRight.getObject().keySet())
         {
             for (Lane adjacentLane : this.accessibleAdjacentLanesRight.getObject().get(lane))
@@ -1010,7 +1008,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
             final Length maximumForwardHeadway, final Length maximumReverseHeadway)
             throws NetworkException, GTUException, ParameterException
     {
-        Collection<Headway> result = new HashSet<>();
+        Collection<Headway> result = new LinkedHashSet<>();
         for (Headway p : parallel(directionality, when))
         {
             // TODO expand for other types of Headways

@@ -4,8 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -54,31 +53,31 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     private final String id;
 
     /** Map of Nodes. */
-    private Map<String, Node> nodeMap = new HashMap<>();
+    private Map<String, Node> nodeMap = new LinkedHashMap<>();
 
     /** Map of Links. */
-    private Map<String, Link> linkMap = new HashMap<>();
+    private Map<String, Link> linkMap = new LinkedHashMap<>();
 
     /** Map of ObjectInterface. */
-    private Map<String, ObjectInterface> objectMap = new HashMap<>();
+    private Map<String, ObjectInterface> objectMap = new LinkedHashMap<>();
 
     /** Map of InvisibleObjects. */
-    private Map<String, InvisibleObjectInterface> invisibleObjectMap = new HashMap<>();
+    private Map<String, InvisibleObjectInterface> invisibleObjectMap = new LinkedHashMap<>();
 
     /** Map of Routes. */
-    private Map<GTUType, Map<String, Route>> routeMap = new HashMap<>();
+    private Map<GTUType, Map<String, Route>> routeMap = new LinkedHashMap<>();
 
     /** Graphs to calculate shortest paths per GTUType. */
-    private Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new HashMap<>();
+    private Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new LinkedHashMap<>();
 
     /** GTUTypes registered for this network. */
-    private Map<String, GTUType> gtuTypeMap = new HashMap<>();
+    private Map<String, GTUType> gtuTypeMap = new LinkedHashMap<>();
 
     /** LinkTypes registered for this network. */
-    private Map<String, LinkType> linkTypeMap = new HashMap<>();
+    private Map<String, LinkType> linkTypeMap = new LinkedHashMap<>();
 
     /** GTUs registered in this network. */
-    private Map<String, GTU> gtuMap = new HashMap<>();
+    private Map<String, GTU> gtuMap = new LinkedHashMap<>();
 
     /**
      * Construction of an empty network.
@@ -301,7 +300,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final <T extends ObjectInterface> ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
     {
-        Map<String, T> result = new HashMap<>();
+        Map<String, T> result = new LinkedHashMap<>();
         for (String key : this.objectMap.keySet())
         {
             ObjectInterface o = this.objectMap.get(key);
@@ -401,7 +400,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap(
             final Class<InvisibleObjectInterface> objectType)
     {
-        Map<String, InvisibleObjectInterface> result = new HashMap<>();
+        Map<String, InvisibleObjectInterface> result = new LinkedHashMap<>();
         for (String key : this.objectMap.keySet())
         {
             InvisibleObjectInterface o = this.invisibleObjectMap.get(key);
@@ -471,7 +470,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final ImmutableMap<String, Route> getDefinedRouteMap(final GTUType gtuType)
     {
-        Map<String, Route> routes = new HashMap<>();
+        Map<String, Route> routes = new LinkedHashMap<>();
         if (this.routeMap.containsKey(gtuType))
         {
             routes.putAll(this.routeMap.get(gtuType));
@@ -503,7 +502,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         if (!this.routeMap.containsKey(gtuType))
         {
-            this.routeMap.put(gtuType, new HashMap<String, Route>());
+            this.routeMap.put(gtuType, new LinkedHashMap<String, Route>());
         }
         this.routeMap.get(gtuType).put(route.getId(), route);
         fireEvent(Network.ROUTE_ADD_EVENT, new Object[] {gtuType.getId(), route.getId()});
@@ -960,7 +959,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final Set<GTU> getGTUs()
     {
         // defensive copy
-        return new HashSet<>(this.gtuMap.values());
+        return new LinkedHashSet<>(this.gtuMap.values());
     }
 
     /** {@inheritDoc} */

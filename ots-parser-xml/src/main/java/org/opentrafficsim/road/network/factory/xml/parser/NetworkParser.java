@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.factory.xml.parser;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -106,8 +106,8 @@ public final class NetworkParser
      */
     public static Map<String, Direction> calculateNodeAngles(final OTSRoadNetwork otsNetwork, final NETWORK network)
     {
-        Map<String, Direction> nodeDirections = new HashMap<>();
-        Map<String, Point3d> points = new HashMap<>();
+        Map<String, Direction> nodeDirections = new LinkedHashMap<>();
+        Map<String, Point3d> points = new LinkedHashMap<>();
         for (NODE xmlNode : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), NODE.class))
         {
             if (xmlNode.getDIRECTION() != null)
@@ -334,7 +334,7 @@ public final class NetworkParser
         {
             CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getID());
             List<CrossSectionElement> cseList = new ArrayList<>();
-            Map<String, Lane> lanes = new HashMap<>();
+            Map<String, Lane> lanes = new LinkedHashMap<>();
 
             CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
 
@@ -382,7 +382,7 @@ public final class NetworkParser
 
             // calculate for each lane and stripe what the start and end offset is
             List<CSEData> cseDataList = new ArrayList<>();
-            Map<Object, Integer> cseTagMap = new HashMap<>();
+            Map<Object, Integer> cseTagMap = new LinkedHashMap<>();
             calculateOffsets(roadLayoutTag, xmlLink, cseDataList, cseTagMap);
             boolean fixGradualLateralOffset = xmlLink.isFIXGRADUALOFFSET();
 
@@ -408,11 +408,11 @@ public final class NetworkParser
                     boolean direction = laneTag.isDESIGNDIRECTION();
                     LaneType laneType = otsNetwork.getLaneType(laneTag.getLANETYPE());
                     // TODO: Use the DESIGNDIRECTION
-                    Map<GTUType, Speed> speedLimitMap = new HashMap<>();
+                    Map<GTUType, Speed> speedLimitMap = new LinkedHashMap<>();
                     LinkType linkType = csl.getLinkType();
                     if (!linkTypeSpeedLimitMap.containsKey(linkType))
                     {
-                        linkTypeSpeedLimitMap.put(linkType, new HashMap<>());
+                        linkTypeSpeedLimitMap.put(linkType, new LinkedHashMap<>());
                     }
                     speedLimitMap.putAll(linkTypeSpeedLimitMap.get(linkType));
                     for (SPEEDLIMIT speedLimitTag : roadLayoutTag.getSPEEDLIMIT())

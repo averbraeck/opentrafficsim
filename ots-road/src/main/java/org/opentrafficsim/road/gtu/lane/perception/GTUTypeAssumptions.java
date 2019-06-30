@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Speed;
@@ -28,13 +28,13 @@ public class GTUTypeAssumptions implements Serializable
     private static final long serialVersionUID = 20160527L;
 
     /** stored car following model of the observed GTU. */
-    private final Map<GTUType, CarFollowingModel> carFollowingModelMap = new HashMap<>();
+    private final Map<GTUType, CarFollowingModel> carFollowingModelMap = new LinkedHashMap<>();
 
     /** stored parameters of the observed GTU. */
-    private final Map<GTUType, Parameters> parametersMap = new HashMap<>();
+    private final Map<GTUType, Parameters> parametersMap = new LinkedHashMap<>();
 
     /** stored speed limit info of the observed GTU. */
-    private final Map<GTUType, Map<LaneType, Speed>> laneTypeSpeedMap = new HashMap<>();
+    private final Map<GTUType, Map<LaneType, Speed>> laneTypeSpeedMap = new LinkedHashMap<>();
 
     /**
      * Set the car following model for a certain GTUType as an assumption for that GTUType.
@@ -74,7 +74,7 @@ public class GTUTypeAssumptions implements Serializable
         Map<LaneType, Speed> maxLaneTypeSpeed = this.laneTypeSpeedMap.get(gtuType);
         if (maxLaneTypeSpeed == null)
         {
-            maxLaneTypeSpeed = new HashMap<>();
+            maxLaneTypeSpeed = new LinkedHashMap<>();
             this.laneTypeSpeedMap.put(gtuType, maxLaneTypeSpeed);
         }
         maxLaneTypeSpeed.put(laneType, maxSpeed);
@@ -128,7 +128,7 @@ public class GTUTypeAssumptions implements Serializable
         {
             return null;
         }
-        Map<LaneType, Speed> maxSpeeds = new HashMap<>();
+        Map<LaneType, Speed> maxSpeeds = new LinkedHashMap<>();
         maxSpeeds.putAll(this.laneTypeSpeedMap.get(gtuType));
         return maxSpeeds;
     }

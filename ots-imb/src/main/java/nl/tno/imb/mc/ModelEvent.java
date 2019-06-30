@@ -1,6 +1,6 @@
 package nl.tno.imb.mc;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.opentrafficsim.imb.SelfWrapper;
@@ -178,7 +178,7 @@ public abstract class ModelEvent implements SelfWrapper
         private final int value;
 
         /** Map to translate numeric value to enum. */
-        protected static Map<Integer, ModelCommand> commandMap = new HashMap<>();
+        protected static Map<Integer, ModelCommand> commandMap = new LinkedHashMap<>();
 
         static
         {

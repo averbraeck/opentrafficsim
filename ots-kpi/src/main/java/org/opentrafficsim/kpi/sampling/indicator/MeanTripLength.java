@@ -1,6 +1,6 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +31,7 @@ public class MeanTripLength extends AbstractIndicator<Length>
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Length sum = Length.ZERO;
-        Set<String> gtuIds = new HashSet<>();
+        Set<String> gtuIds = new LinkedHashSet<>();
         for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
             for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())

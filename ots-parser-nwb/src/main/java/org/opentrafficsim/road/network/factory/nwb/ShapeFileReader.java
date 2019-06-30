@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.factory.nwb;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.geotools.data.DataStore;
@@ -103,7 +103,7 @@ public class ShapeFileReader
      */
     public Map<Long, Feature> readShapeFile(final FeatureQualifier qualifier) throws IOException
     {
-        Map<Long, Feature> result = new HashMap<>();
+        Map<Long, Feature> result = new LinkedHashMap<>();
         DataStore dataStore = (ShapefileDataStore) FileDataStoreFinder.getDataStore(subDirAndShapeFile);
         FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
 

@@ -21,7 +21,7 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,16 +85,16 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     private JPanel demoPanel = null;
 
     /** Map of toggle names to toggle animation classes. */
-    private Map<String, Class<? extends Locatable>> toggleLocatableMap = new HashMap<>();
+    private Map<String, Class<? extends Locatable>> toggleLocatableMap = new LinkedHashMap<>();
 
     /** Set of animation classes to toggle buttons. */
-    private Map<Class<? extends Locatable>, JToggleButton> toggleButtons = new HashMap<>();
+    private Map<Class<? extends Locatable>, JToggleButton> toggleButtons = new LinkedHashMap<>();
 
     /** Set of GIS layer names to toggle GIS layers . */
-    private Map<String, MapInterface> toggleGISMap = new HashMap<>();
+    private Map<String, MapInterface> toggleGISMap = new LinkedHashMap<>();
 
     /** Set of GIS layer names to toggle buttons. */
-    private Map<String, JToggleButton> toggleGISButtons = new HashMap<>();
+    private Map<String, JToggleButton> toggleGISButtons = new LinkedHashMap<>();
 
     /** The switchableGTUColorer used to color the GTUs. */
     private GTUColorer gtuColorer = null;

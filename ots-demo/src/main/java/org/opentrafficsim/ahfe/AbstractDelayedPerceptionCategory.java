@@ -1,7 +1,7 @@
 package org.opentrafficsim.ahfe;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -52,7 +52,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     }
 
     /** Map of info type and list of time stamped data of that info type. */
-    private final HashMap<DelayedInfoType<?>, HashMap<RelativeLane, List<TimeStampedObject<?>>>> map = new HashMap<>();
+    private final LinkedHashMap<DelayedInfoType<?>, LinkedHashMap<RelativeLane, List<TimeStampedObject<?>>>> map = new LinkedHashMap<>();
 
     /**
      * Set info of given delayed info type, not pertaining to any lane.
@@ -79,7 +79,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
         Throw.whenNull(info, "Info may not be null.");
         if (!this.map.containsKey(delayedInfoType))
         {
-            this.map.put(delayedInfoType, new HashMap<>());
+            this.map.put(delayedInfoType, new LinkedHashMap<>());
         }
         if (!this.map.get(delayedInfoType).containsKey(lane))
         {
@@ -171,7 +171,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     {
         for (DelayedInfoType<?> delayedInfoType : this.map.keySet())
         {
-            HashMap<RelativeLane, List<TimeStampedObject<?>>> newMap = new HashMap<>();
+            LinkedHashMap<RelativeLane, List<TimeStampedObject<?>>> newMap = new LinkedHashMap<>();
             for (RelativeLane lane : this.map.get(delayedInfoType).keySet())
             {
                 if (lane != null)

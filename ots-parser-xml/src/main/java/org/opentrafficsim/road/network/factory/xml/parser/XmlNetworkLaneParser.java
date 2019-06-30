@@ -4,9 +4,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -217,13 +216,13 @@ public final class XmlNetworkLaneParser implements Serializable
         CategoryLogger.setLogCategories(Cat.PARSER);
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
-        Map<String, StreamInformation> streamMap = new HashMap<>();
+        Map<String, StreamInformation> streamMap = new LinkedHashMap<>();
         Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment =
                 RunParser.parseRun(otsNetwork, ots.getRUN(), streamMap, simulator);
 
-        Map<String, ROADLAYOUT> roadLayoutMap = new HashMap<>();
-        Map<String, GTUTEMPLATE> gtuTemplates = new HashMap<>();
-        Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap = new HashMap<>();
+        Map<String, ROADLAYOUT> roadLayoutMap = new LinkedHashMap<>();
+        Map<String, GTUTEMPLATE> gtuTemplates = new LinkedHashMap<>();
+        Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
         DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates, streamMap,
                 linkTypeSpeedLimitMap);
 
@@ -255,7 +254,7 @@ public final class XmlNetworkLaneParser implements Serializable
             @Override
             public <T> Set<T> getObjects(final Class<T> clazz)
             {
-                return new HashSet<>();
+                return new LinkedHashSet<>();
             }
 
             /** {@inheritDoc} */

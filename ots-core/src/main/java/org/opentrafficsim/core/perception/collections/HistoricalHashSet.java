@@ -1,13 +1,13 @@
 package org.opentrafficsim.core.perception.collections;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 /**
- * HashSet-valued historical state. The current hash set is always maintained, and past states of the hash set are obtained by
+ * LinkedHashSet-valued historical state. The current hash set is always maintained, and past states of the hash set are obtained by
  * applying the events between now and the requested time in reverse.<br>
  * <br>
  * The {@code Iterator} returned by this class does not support the {@code remove()} method. Any returned subset is
@@ -22,7 +22,7 @@ import org.opentrafficsim.core.perception.HistoryManager;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <E> element type
  */
-public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, HashSet<E>> implements HistoricalSet<E>
+public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, LinkedHashSet<E>> implements HistoricalSet<E>
 {
 
     /**
@@ -31,7 +31,7 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, HashSe
      */
     public HistoricalHashSet(final HistoryManager historyManager)
     {
-        super(historyManager, new HashSet<>());
+        super(historyManager, new LinkedHashSet<>());
     }
 
     /**
@@ -41,25 +41,25 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, HashSe
      */
     public HistoricalHashSet(final HistoryManager historyManager, final Collection<? extends E> c)
     {
-        super(historyManager, new HashSet<>(c));
+        super(historyManager, new LinkedHashSet<>(c));
     }
 
     /** {@inheritDoc} */
     @Override
-    public HashSet<E> get()
+    public LinkedHashSet<E> get()
     {
         return getCollection();
     }
 
     /** {@inheritDoc} */
     @Override
-    public HashSet<E> get(final Time time)
+    public LinkedHashSet<E> get(final Time time)
     {
         if (isLastState(time))
         {
             return getCollection();
         }
-        return fill(time, new HashSet<>());
+        return fill(time, new LinkedHashSet<>());
     }
 
     /** {@inheritDoc} */

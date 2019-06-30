@@ -2,8 +2,6 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -29,7 +27,6 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord.RecordLink;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
@@ -131,13 +128,13 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     private TreeMap<RelativeLane, RollingLaneStructureRecord> firstRecords = new TreeMap<>();
 
     /** Lane structure records grouped per relative lane. */
-    private Map<RelativeLane, Set<RollingLaneStructureRecord>> relativeLaneMap = new HashMap<>();
+    private Map<RelativeLane, Set<RollingLaneStructureRecord>> relativeLaneMap = new LinkedHashMap<>();
 
     /** Relative lanes storage per record, such that other records can be linked to the correct relative lane. */
-    private Map<LaneStructureRecord, RelativeLane> relativeLanes = new HashMap<>();
+    private Map<LaneStructureRecord, RelativeLane> relativeLanes = new LinkedHashMap<>();
 
     /** Set of lanes that can be ignored as they are beyond build bounds. */
-    private final Set<Lane> ignoreSet = new HashSet<>();
+    private final Set<Lane> ignoreSet = new LinkedHashSet<>();
 
     /** Upstream edges. */
     private final Set<RollingLaneStructureRecord> upstreamEdge = new LinkedHashSet<>();
@@ -338,7 +335,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                     }
                     this.relativeLaneMap = newRelativeLaneMap;
 
-                    Map<LaneStructureRecord, RelativeLane> newRelativeLanes = new HashMap<>();
+                    Map<LaneStructureRecord, RelativeLane> newRelativeLanes = new LinkedHashMap<>();
                     for (LaneStructureRecord record : this.relativeLanes.keySet())
                     {
                         newRelativeLanes.put(record, this.relativeLanes.get(record).add(delta));
@@ -410,7 +407,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     {
 
         // initial cross section
-        Set<RollingLaneStructureRecord> set = new HashSet<>();
+        Set<RollingLaneStructureRecord> set = new LinkedHashSet<>();
         RollingLaneStructureRecord rootRecord = this.root.get();
         set.add(rootRecord);
         rootRecord.changeStartDistanceSource(null, RecordLink.CROSS);
@@ -436,7 +433,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
         while (!set.isEmpty())
         {
             // lateral
-            Set<RollingLaneStructureRecord> newSet = new HashSet<>();
+            Set<RollingLaneStructureRecord> newSet = new LinkedHashSet<>();
             for (RollingLaneStructureRecord record : set)
             {
                 for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
@@ -612,7 +609,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
             final RecordLink recordLink, final GTUType gtuType, final double fractionalPosition)
     {
         Set<RollingLaneStructureRecord> nextSet = new LinkedHashSet<>();
-        Set<Lane> laneSet = new HashSet<>(); // set to check that an adjacent lane is not another lane already in the set
+        Set<Lane> laneSet = new LinkedHashSet<>(); // set to check that an adjacent lane is not another lane already in the set
         for (LaneStructureRecord record : edge)
         {
             laneSet.add(record.getLane());
@@ -915,7 +912,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                         }
                         modifiedEdge.add(next);
                         // expand upstream over any possible other lane that merges in to this
-                        Set<RollingLaneStructureRecord> set = new HashSet<>();
+                        Set<RollingLaneStructureRecord> set = new LinkedHashSet<>();
                         set.add(next);
                         expandUpstreamMerge(set, gtuType, fractionalPosition, route);
                     }
@@ -1240,7 +1237,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(final Class<T> clazz,
             final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
     {
-        Map<RelativeLane, SortedSet<Entry<T>>> out = new HashMap<>();
+        Map<RelativeLane, SortedSet<Entry<T>>> out = new LinkedHashMap<>();
         for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
         {
             out.put(relativeLane, getDownstreamObjects(relativeLane, clazz, gtu, pos));
@@ -1412,7 +1409,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
             final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos, final Route route)
             throws GTUException
     {
-        Map<RelativeLane, SortedSet<Entry<T>>> out = new HashMap<>();
+        Map<RelativeLane, SortedSet<Entry<T>>> out = new LinkedHashMap<>();
         for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
         {
             out.put(relativeLane, getDownstreamObjectsOnRoute(relativeLane, clazz, gtu, pos, route));

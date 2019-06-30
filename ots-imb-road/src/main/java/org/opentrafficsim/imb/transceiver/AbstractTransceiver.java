@@ -1,7 +1,7 @@
 package org.opentrafficsim.imb.transceiver;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.exceptions.Throw;
@@ -41,13 +41,13 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
     private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The map to indicate which IMB message handler to use for a given IMB message type. */
-    private Map<String, IMBMessageHandler> imbMessageHandlerMap = new HashMap<>();
+    private Map<String, IMBMessageHandler> imbMessageHandlerMap = new LinkedHashMap<>();
 
     /** The map to indicate which OTS EventType is mapped to which IMB event name (String). */
-    private Map<EventType, String> otsToIMBMap = new HashMap<>();
+    private Map<EventType, String> otsToIMBMap = new LinkedHashMap<>();
 
     /** The map to indicate which Transformer to use for a given OTS EventType. */
-    private Map<EventType, OTSToIMBTransformer> otsTransformerMap = new HashMap<>();
+    private Map<EventType, OTSToIMBTransformer> otsTransformerMap = new LinkedHashMap<>();
 
     /**
      * Construct a new AbstractTranceiver.

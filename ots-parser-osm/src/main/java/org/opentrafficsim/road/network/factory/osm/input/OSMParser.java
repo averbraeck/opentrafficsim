@@ -3,8 +3,8 @@ package org.opentrafficsim.road.network.factory.osm.input;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -188,7 +188,7 @@ public class OSMParser implements Sink, Serializable
     @Override
     public final void complete()
     {
-        HashMap<Long, OSMNode> usedNodes = new HashMap<Long, OSMNode>();
+        LinkedHashMap<Long, OSMNode> usedNodes = new LinkedHashMap<Long, OSMNode>();
         double total = this.net.getWays().size() + this.net.getRelations().size();
         double counter = 0;
         double percentageStep = 20.0d;

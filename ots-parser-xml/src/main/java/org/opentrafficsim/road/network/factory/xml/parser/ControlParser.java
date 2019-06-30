@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +67,7 @@ public final class ControlParser
                 Duration cycleTime = fixedTime.getCYCLETIME();
                 Duration offset = fixedTime.getOFFSET();
                 Set<SignalGroup> signalGroups = new LinkedHashSet<>();
-                Map<String, CONTROL.FIXEDTIME.CYCLE> cycles = new HashMap<>();
+                Map<String, CONTROL.FIXEDTIME.CYCLE> cycles = new LinkedHashMap<>();
                 for (CONTROL.FIXEDTIME.CYCLE cycle : fixedTime.getCYCLE())
                 {
                     cycles.put(cycle.getSIGNALGROUPID(), cycle);
