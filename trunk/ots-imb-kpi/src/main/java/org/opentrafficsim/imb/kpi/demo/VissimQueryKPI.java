@@ -1,7 +1,7 @@
 package org.opentrafficsim.imb.kpi.demo;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -107,7 +107,7 @@ public class VissimQueryKPI
     {
 
         // nodes
-        Map<String, NodeData> nodes = new HashMap<>();
+        Map<String, NodeData> nodes = new LinkedHashMap<>();
         for (int i = 0; i < net.length; i++)
         {
             for (int j = 0; j < 2; j++)
@@ -120,7 +120,7 @@ public class VissimQueryKPI
         }
 
         // links
-        Map<String, LinkData> links = new HashMap<>();
+        Map<String, LinkData> links = new LinkedHashMap<>();
         for (int i = 0; i < net.length; i++)
         {
             links.put(net[i][2], new LinkData(net[i][2], nodes.get(net[i][0]), nodes.get(net[i][1]),
@@ -128,7 +128,7 @@ public class VissimQueryKPI
         }
 
         // lanes
-        Map<String, LaneData> lanes = new HashMap<>();
+        Map<String, LaneData> lanes = new LinkedHashMap<>();
         for (int i = 0; i < net.length; i++)
         {
             int n = Integer.valueOf(net[i][4]);
@@ -164,7 +164,7 @@ public class VissimQueryKPI
         id = "Equipped";
         queryDescription = "Equipped query for VISSIM model.";
         metaDataSet = new MetaDataSet();
-        gtuTypes = new HashSet<>();
+        gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(new GtuTypeData("car_equipped"));
         gtuTypes.add(new GtuTypeData("truck_equipped"));
         metaDataSet.put(new MetaDataGtuType(), gtuTypes);
@@ -173,7 +173,7 @@ public class VissimQueryKPI
         id = "Not equipped";
         queryDescription = "Not equipped query for VISSIM model.";
         metaDataSet = new MetaDataSet();
-        gtuTypes = new HashSet<>();
+        gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(new GtuTypeData("car"));
         gtuTypes.add(new GtuTypeData("truck"));
         metaDataSet.put(new MetaDataGtuType(), gtuTypes);

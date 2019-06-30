@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -82,22 +82,22 @@ public class WriteOutput
     static int numberOfCells = 0;
 
     /** */
-    static HashMap<NTMLink, Integer> linkIndex = new HashMap<NTMLink, Integer>();
+    static LinkedHashMap<NTMLink, Integer> linkIndex = new LinkedHashMap<NTMLink, Integer>();
 
     /** */
-    static HashMap<Integer, NTMLink> indexLink = new HashMap<Integer, NTMLink>();
+    static LinkedHashMap<Integer, NTMLink> indexLink = new LinkedHashMap<Integer, NTMLink>();
 
     /** */
-    static HashMap<Integer, NTMNode> indexStartNode = new HashMap<Integer, NTMNode>();
+    static LinkedHashMap<Integer, NTMNode> indexStartNode = new LinkedHashMap<Integer, NTMNode>();
 
     /** */
-    static HashMap<Integer, NTMNode> indexEndNode = new HashMap<Integer, NTMNode>();
+    static LinkedHashMap<Integer, NTMNode> indexEndNode = new LinkedHashMap<Integer, NTMNode>();
 
     /** */
-    static HashMap<NTMNode, Integer> nodeIndex = new HashMap<>();
+    static LinkedHashMap<NTMNode, Integer> nodeIndex = new LinkedHashMap<>();
 
     /** */
-    static HashMap<Integer, NTMNode> indexNode = new HashMap<>();
+    static LinkedHashMap<Integer, NTMNode> indexNode = new LinkedHashMap<>();
 
     public static void writeInputData(NTMModel model) throws IOException
     {
@@ -520,29 +520,29 @@ public class WriteOutput
     static Double[][][] fluxToNeighbourNTM = new Double[9][9][MAXSTEPS];
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> fluxToNeighbourNTMMap = new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>>> fluxToNeighbourNTMMap = new LinkedHashMap<>();
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> demandToNeighbourNTMMap = new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>>> demandToNeighbourNTMMap = new LinkedHashMap<>();
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> accumulationToNeighbourNTMMap = new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>>> accumulationToNeighbourNTMMap = new LinkedHashMap<>();
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> routeFractionToNeighbourNTMMap = new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>>> routeFractionToNeighbourNTMMap = new LinkedHashMap<>();
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> demandVersusCapacityToNeighbourNTMMap =
-            new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>>> demandVersusCapacityToNeighbourNTMMap =
+            new LinkedHashMap<>();
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, Double[]>> timeToDestinationNTMMap = new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>> timeToDestinationNTMMap = new LinkedHashMap<>();
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, Double[]>> ODArrivalsNTMMap = new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>> ODArrivalsNTMMap = new LinkedHashMap<>();
 
     /** */
-    static HashMap<NTMNode, HashMap<NTMNode, Double[]>> ODDeparturesNTMMap = new HashMap<>();
+    static LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>> ODDeparturesNTMMap = new LinkedHashMap<>();
 
     /** */
     static Double[][] parametersNFD = new Double[MAXZONES][9];
@@ -814,12 +814,12 @@ public class WriteOutput
      * @param MAXSTEPS int;
      * @param data BufferedWriter;
      * @param nodeDoublemap
-     * @param intNodeMap HashMap&lt;Integer,NTMNode&gt;;
+     * @param intNodeMap LinkedHashMap&lt;Integer,NTMNode&gt;;
      */
     static void writeHashMap(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
-            HashMap<NTMNode, HashMap<NTMNode, Double[]>> nodeNodeDoublemap,
-            HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> nodeNodeNodeDoublemap,
-            HashMap<Integer, NTMNode> intNodeMap, String DATATYPE)
+            LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>> nodeNodeDoublemap,
+            LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>>> nodeNodeNodeDoublemap,
+            LinkedHashMap<Integer, NTMNode> intNodeMap, String DATATYPE)
     {
 
         if (steps < MAXSTEPS)
@@ -853,7 +853,7 @@ public class WriteOutput
                             {
                                 if (nodeNodeDoublemap.get(origin) == null)
                                 {
-                                    HashMap<NTMNode, Double[]> fluxMap = new HashMap<NTMNode, Double[]>();
+                                    LinkedHashMap<NTMNode, Double[]> fluxMap = new LinkedHashMap<NTMNode, Double[]>();
                                     Double[] fluxes = new Double[MAXSTEPS];
                                     fluxes[steps - 1] = trips;
                                     fluxMap.put(destination, fluxes);
@@ -924,9 +924,9 @@ public class WriteOutput
                                 {
                                     if (nodeNodeNodeDoublemap.get(origin) == null)
                                     {
-                                        HashMap<NTMNode, HashMap<NTMNode, Double[]>> nodeFluxMap =
-                                                new HashMap<NTMNode, HashMap<NTMNode, Double[]>>();
-                                        HashMap<NTMNode, Double[]> fluxMap = new HashMap<NTMNode, Double[]>();
+                                        LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>> nodeFluxMap =
+                                                new LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>>();
+                                        LinkedHashMap<NTMNode, Double[]> fluxMap = new LinkedHashMap<NTMNode, Double[]>();
                                         Double[] fluxes = new Double[MAXSTEPS];
                                         fluxes[steps - 1] = trips;
                                         fluxMap.put(neighbour, fluxes);
@@ -937,7 +937,7 @@ public class WriteOutput
                                     {
                                         if (nodeNodeNodeDoublemap.get(origin).get(destination) == null)
                                         {
-                                            HashMap<NTMNode, Double[]> fluxMap = new HashMap<NTMNode, Double[]>();
+                                            LinkedHashMap<NTMNode, Double[]> fluxMap = new LinkedHashMap<NTMNode, Double[]>();
                                             Double[] fluxes = new Double[MAXSTEPS];
                                             fluxes[steps - 1] = trips;
                                             fluxMap.put(neighbour, fluxes);
@@ -977,7 +977,7 @@ public class WriteOutput
                 {
                     for (int i = 0; i < numberOfCells; i++)
                     {
-                        HashMap<NTMNode, Double[]> fluxMap = nodeNodeDoublemap.get(intNodeMap.get(i));
+                        LinkedHashMap<NTMNode, Double[]> fluxMap = nodeNodeDoublemap.get(intNodeMap.get(i));
                         if (fluxMap != null)
                         {
                             for (int j = 0; j < numberOfCells; j++)
@@ -1006,12 +1006,12 @@ public class WriteOutput
                 {
                     for (int i = 0; i < numberOfCells; i++)
                     {
-                        HashMap<NTMNode, HashMap<NTMNode, Double[]>> nodeFluxMap = nodeNodeNodeDoublemap.get(intNodeMap.get(i));
+                        LinkedHashMap<NTMNode, LinkedHashMap<NTMNode, Double[]>> nodeFluxMap = nodeNodeNodeDoublemap.get(intNodeMap.get(i));
                         if (nodeFluxMap != null)
                         {
                             for (int j = 0; j < numberOfCells; j++)
                             {
-                                HashMap<NTMNode, Double[]> fluxMap = nodeFluxMap.get(intNodeMap.get(j));
+                                LinkedHashMap<NTMNode, Double[]> fluxMap = nodeFluxMap.get(intNodeMap.get(j));
                                 if (fluxMap != null)
                                 {
                                     for (int k = 0; k < numberOfCells; k++)

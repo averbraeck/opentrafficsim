@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -75,7 +75,7 @@ public class DataViewer extends AbstractOTSModel
     };
 
     /** */
-    HashMap<String, ShapeObject> mapRoadCounts;
+    LinkedHashMap<String, ShapeObject> mapRoadCounts;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -158,11 +158,11 @@ public class DataViewer extends AbstractOTSModel
      * @return
      * @throws IOException
      */
-    public static HashMap<String, ShapeObject> addArea(String fileArea, String fileRoads, String pathData,
+    public static LinkedHashMap<String, ShapeObject> addArea(String fileArea, String fileRoads, String pathData,
             String fileNameStarts, boolean fileNameDay) throws IOException
     {
         ShapeStore roads = null;
-        // Map<String, Area> areas = new HashMap<String, Area>();
+        // Map<String, Area> areas = new LinkedHashMap<String, Area>();
         ShapeStore areas = null;
         File file = new File(fileArea);
         areas = ShapeStore.openGISFile(file);
@@ -175,7 +175,7 @@ public class DataViewer extends AbstractOTSModel
         String day = null;
         String month = null;
 
-        HashMap<String, ShapeObject> mapRoads = new HashMap<String, ShapeObject>();
+        LinkedHashMap<String, ShapeObject> mapRoads = new LinkedHashMap<String, ShapeObject>();
         // for (int i = 1; i <= 12; i++)
         for (int i = 5; i <= 5; i++)
         {
@@ -245,7 +245,7 @@ public class DataViewer extends AbstractOTSModel
     public static Map<String, ArrayList<java.lang.Double>> readData(String inputFile, String csvSplitBy, String path,
             String year, Integer aggregateBy) throws FileNotFoundException
     {
-        Map<String, ArrayList<java.lang.Double>> countMap = new HashMap<String, ArrayList<java.lang.Double>>();
+        Map<String, ArrayList<java.lang.Double>> countMap = new LinkedHashMap<String, ArrayList<java.lang.Double>>();
         BufferedReader in = null;
         String line = "";
 
@@ -354,7 +354,7 @@ public class DataViewer extends AbstractOTSModel
      * @throws IOException
      */
 
-    public static HashMap<String, ShapeObject> detectLocationOfObject(String outputShapeFile, String outputFile,
+    public static LinkedHashMap<String, ShapeObject> detectLocationOfObject(String outputShapeFile, String outputFile,
             Map<String, ArrayList<java.lang.Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
             String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
     {
@@ -378,9 +378,9 @@ public class DataViewer extends AbstractOTSModel
         int indexAttributeAdded2 = indexAttributeAdded1 + 1;
 
         // we are looking for roads with a specific ID that is included in the data from TNO
-        // step 1: create a HashMap to find the geometry of a road with a specific ID
+        // step 1: create a LinkedHashMap to find the geometry of a road with a specific ID
         // step 2: find the corresponding Area
-        HashMap<String, ShapeObject> mapRoads = new HashMap<String, ShapeObject>();
+        LinkedHashMap<String, ShapeObject> mapRoads = new LinkedHashMap<String, ShapeObject>();
         int indexFieldNameToDetect = -1;
 
         for (String name : objectsToDetect.getVariableNames())

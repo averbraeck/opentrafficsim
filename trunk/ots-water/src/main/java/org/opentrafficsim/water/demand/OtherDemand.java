@@ -4,7 +4,7 @@
 package org.opentrafficsim.water.demand;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.opentrafficsim.water.Dynamic;
@@ -37,7 +37,7 @@ public class OtherDemand implements Dynamic, Serializable
     private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** the demand from and to locations. */
-    private Set<OtherDemandCell> otherDemandSet = new HashSet<OtherDemandCell>();
+    private Set<OtherDemandCell> otherDemandSet = new LinkedHashSet<OtherDemandCell>();
 
     /**
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the finulator

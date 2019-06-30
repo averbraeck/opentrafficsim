@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.unit.SpeedUnit;
@@ -21,7 +21,7 @@ import org.opentrafficsim.core.network.NetworkException;
 public final class SpeedUnits implements UNITS
 {
     /** The speed units. */
-    public static final Map<String, SpeedUnit> SPEED_UNITS = new HashMap<>();
+    public static final Map<String, SpeedUnit> SPEED_UNITS = new LinkedHashMap<>();
     static
     {
         SPEED_UNITS.put("km/h", KM_PER_HOUR);

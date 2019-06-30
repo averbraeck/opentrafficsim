@@ -2,7 +2,6 @@ package org.opentrafficsim.demo;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +37,6 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -485,7 +483,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     }
 
     /** The set of GTUs that we want to sample regularly. */
-    private Set<GTU> knownGTUs = new HashSet<>();
+    private Set<GTU> knownGTUs = new LinkedHashSet<>();
 
     /** {@inheritDoc} */
     @Override

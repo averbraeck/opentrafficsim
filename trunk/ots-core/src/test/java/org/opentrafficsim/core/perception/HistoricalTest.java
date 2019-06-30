@@ -3,9 +3,8 @@ package org.opentrafficsim.core.perception;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -159,7 +158,7 @@ public class HistoricalTest
      */
     private <T> Set<T> asSet(@SuppressWarnings("unchecked") final T... values)
     {
-        Set<T> set = new HashSet<>();
+        Set<T> set = new LinkedHashSet<>();
         for (T t : values)
         {
             set.add(t);
@@ -223,7 +222,7 @@ public class HistoricalTest
         HistoricalMap<Integer, String> hist = new HistoricalHashMap<>(this.historyManager);
         this.time = Time.ZERO;
         String msg = "HistoricalMap contents is incorrect.";
-        assertEquals(msg, new HashMap<>(), hist.get(Time.createSI(-1.0)));
+        assertEquals(msg, new LinkedHashMap<>(), hist.get(Time.createSI(-1.0)));
         hist.put(0, "0.0"); // 0=0.0
         this.time = Time.createSI(1.0);
         hist.put(0, "1.0"); // 0=1.0
@@ -265,7 +264,7 @@ public class HistoricalTest
     @SuppressWarnings("serial")
     private Map<Integer, String> asMap(final int int1, final String str1)
     {
-        return new HashMap<Integer, String>()
+        return new LinkedHashMap<Integer, String>()
         {
             {
                 put(int1, str1);
@@ -284,7 +283,7 @@ public class HistoricalTest
     @SuppressWarnings("serial")
     private Map<Integer, String> asMap(final int int1, final String str1, final int int2, final String str2)
     {
-        return new HashMap<Integer, String>()
+        return new LinkedHashMap<Integer, String>()
         {
             {
                 put(int1, str1);

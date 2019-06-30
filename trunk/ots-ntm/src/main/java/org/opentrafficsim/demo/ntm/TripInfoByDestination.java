@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.ntm;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * <p>
@@ -18,13 +19,13 @@ import java.util.HashMap;
 public class TripInfoByDestination
 {
     /** The first Area/Node encountered on the path to Destination. */
-    private HashMap<BoundedNode, Double> routeFractionToNeighbours;
+    private LinkedHashMap<BoundedNode, Double> routeFractionToNeighbours;
 
     /** The first Area/Node encountered on the path to Destination. */
-    private HashMap<BoundedNode, Double> accumulatedCarsToNeighbour;
+    private LinkedHashMap<BoundedNode, Double> accumulatedCarsToNeighbour;
 
     /** The first Area/Node encountered on the path to Destination. */
-    private HashMap<BoundedNode, Double> demandToNeighbour;
+    private LinkedHashMap<BoundedNode, Double> demandToNeighbour;
 
     /** The first Area/Node encountered on the path to Destination. */
     private NTMNode destination;
@@ -48,13 +49,13 @@ public class TripInfoByDestination
     private double fluxToNeighbour;
 
     /**
-     * @param routeFractionToNeighbours HashMap&lt;BoundedNode,Double&gt;;
-     * @param accumulatedCarsToNeighbour HashMap&lt;BoundedNode,Double&gt;;
-     * @param demandToNeighbour HashMap&lt;BoundedNode,Double&gt;;
+     * @param routeFractionToNeighbours LinkedHashMap&lt;BoundedNode,Double&gt;;
+     * @param accumulatedCarsToNeighbour LinkedHashMap&lt;BoundedNode,Double&gt;;
+     * @param demandToNeighbour LinkedHashMap&lt;BoundedNode,Double&gt;;
      * @param destination NTMNode;
      */
-    public TripInfoByDestination(HashMap<BoundedNode, Double> routeFractionToNeighbours,
-            HashMap<BoundedNode, Double> accumulatedCarsToNeighbour, HashMap<BoundedNode, Double> demandToNeighbour,
+    public TripInfoByDestination(LinkedHashMap<BoundedNode, Double> routeFractionToNeighbours,
+            LinkedHashMap<BoundedNode, Double> accumulatedCarsToNeighbour, LinkedHashMap<BoundedNode, Double> demandToNeighbour,
             NTMNode destination)
     {
         super();
@@ -67,15 +68,15 @@ public class TripInfoByDestination
     /**
      * @return neighbour.
      */
-    public HashMap<BoundedNode, Double> getRouteFractionToNeighbours()
+    public LinkedHashMap<BoundedNode, Double> getRouteFractionToNeighbours()
     {
         return this.routeFractionToNeighbours;
     }
 
     /**
-     * @param neighbour HashMap&lt;BoundedNode,Double&gt;; set neighbour.
+     * @param neighbour LinkedHashMap&lt;BoundedNode,Double&gt;; set neighbour.
      */
-    public void setRouteFractionToNeighbours(HashMap<BoundedNode, Double> neighbour)
+    public void setRouteFractionToNeighbours(LinkedHashMap<BoundedNode, Double> neighbour)
     {
         this.routeFractionToNeighbours = neighbour;
     }
@@ -83,7 +84,7 @@ public class TripInfoByDestination
     /**
      * @return accumulationToNeighbour.
      */
-    public HashMap<BoundedNode, Double> getAccumulatedCarsToNeighbour()
+    public LinkedHashMap<BoundedNode, Double> getAccumulatedCarsToNeighbour()
     {
         return accumulatedCarsToNeighbour;
     }
@@ -91,7 +92,7 @@ public class TripInfoByDestination
     /**
      * @param accumulationToNeighbour set accumulationToNeighbour.
      */
-    public void setAccumulatedCarsToNeighbour(HashMap<BoundedNode, Double> accumulatedCarsToNeighbour)
+    public void setAccumulatedCarsToNeighbour(LinkedHashMap<BoundedNode, Double> accumulatedCarsToNeighbour)
     {
         this.accumulatedCarsToNeighbour = accumulatedCarsToNeighbour;
     }
@@ -99,15 +100,15 @@ public class TripInfoByDestination
     /**
      * @return demandToNeighbour.
      */
-    public HashMap<BoundedNode, Double> getDemandToNeighbour()
+    public LinkedHashMap<BoundedNode, Double> getDemandToNeighbour()
     {
         return demandToNeighbour;
     }
 
     /**
-     * @param demandToNeighbour HashMap&lt;BoundedNode,Double&gt;; set demandToNeighbour.
+     * @param demandToNeighbour LinkedHashMap&lt;BoundedNode,Double&gt;; set demandToNeighbour.
      */
-    public void setDemandToNeighbour(HashMap<BoundedNode, Double> demandToNeighbour)
+    public void setDemandToNeighbour(LinkedHashMap<BoundedNode, Double> demandToNeighbour)
     {
         this.demandToNeighbour = demandToNeighbour;
     }

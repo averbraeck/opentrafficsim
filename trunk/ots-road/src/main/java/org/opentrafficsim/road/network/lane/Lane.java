@@ -3,7 +3,6 @@ package org.opentrafficsim.road.network.lane;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -40,7 +39,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
@@ -114,7 +112,7 @@ public class Lane extends CrossSectionElement implements Serializable
     private Map<GTUType, Speed> speedLimitMap;
 
     /** Cached speed limits; these are cleared when a speed limit is changed. */
-    private final Map<GTUType, Speed> cachedSpeedLimits = new HashMap<>();
+    private final Map<GTUType, Speed> cachedSpeedLimits = new LinkedHashMap<>();
 
     /**
      * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
@@ -434,7 +432,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(newParentLink, newSimulator, cse);
         this.laneType = cse.laneType;
-        this.speedLimitMap = new HashMap<>(cse.speedLimitMap);
+        this.speedLimitMap = new LinkedHashMap<>(cse.speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(newParentLink));
     }
 

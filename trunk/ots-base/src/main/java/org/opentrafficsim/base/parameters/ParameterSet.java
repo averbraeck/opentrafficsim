@@ -2,7 +2,7 @@ package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,8 +44,8 @@ public class ParameterSet implements Parameters, Serializable
      */
     public ParameterSet()
     {
-        this.parameters = new HashMap<>();
-        this.previous = new HashMap<>();
+        this.parameters = new LinkedHashMap<>();
+        this.previous = new LinkedHashMap<>();
     }
 
     /**
@@ -147,8 +147,8 @@ public class ParameterSet implements Parameters, Serializable
     {
         if (this.copyOnWrite)
         {
-            this.parameters = new HashMap<>(this.parameters);
-            this.previous = new HashMap<>(this.previous);
+            this.parameters = new LinkedHashMap<>(this.parameters);
+            this.previous = new LinkedHashMap<>(this.previous);
             this.copyOnWrite = false;
         }
     }
@@ -188,7 +188,7 @@ public class ParameterSet implements Parameters, Serializable
      */
     public final Map<ParameterType<?>, Object> getParameters()
     {
-        return new HashMap<>(this.parameters);
+        return new LinkedHashMap<>(this.parameters);
     }
 
     /**

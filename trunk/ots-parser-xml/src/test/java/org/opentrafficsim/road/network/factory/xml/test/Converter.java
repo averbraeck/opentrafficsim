@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +35,7 @@ public class Converter
     private final String fName = "/EindhovenOld.xml"; // "/A58Old.xml";
 
     /** map from roadType to LinkType. */
-    private Map<String, String> roadTypeToLinkTypeMap = new HashMap<>();
+    private Map<String, String> roadTypeToLinkTypeMap = new LinkedHashMap<>();
 
     /**
      * @throws ParserConfigurationException on error

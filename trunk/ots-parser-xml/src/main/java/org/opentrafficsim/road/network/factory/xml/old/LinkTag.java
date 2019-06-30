@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.old;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,35 +85,35 @@ final class LinkTag implements Serializable
 
     /** Map of lane name to lane override. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, LaneOverrideTag> laneOverrideTags = new HashMap<>();
+    Map<String, LaneOverrideTag> laneOverrideTags = new LinkedHashMap<>();
 
     /** Map of lane name to generators. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, GeneratorTag> generatorTags = new HashMap<>();
+    Map<String, GeneratorTag> generatorTags = new LinkedHashMap<>();
 
     /** Map of lane name to list generators. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, ListGeneratorTag> listGeneratorTags = new HashMap<>();
+    Map<String, ListGeneratorTag> listGeneratorTags = new LinkedHashMap<>();
 
     /** Map of lane name to list of sensors. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, List<SensorTag>> sensorTags = new HashMap<>();
+    Map<String, List<SensorTag>> sensorTags = new LinkedHashMap<>();
 
     /** Map of lane name to traffic lights. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, List<TrafficLightTag>> trafficLightTags = new HashMap<>();
+    Map<String, List<TrafficLightTag>> trafficLightTags = new LinkedHashMap<>();
 
     /** Map of lane name to fill at t=0. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, FillTag> fillTags = new HashMap<>();
+    Map<String, FillTag> fillTags = new LinkedHashMap<>();
 
     /** Map of lane name to sink tags. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, SinkTag> sinkTags = new HashMap<>();
+    Map<String, SinkTag> sinkTags = new LinkedHashMap<>();
 
     /** Map of lane name to generated lanes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, Lane> lanes = new HashMap<>();
+    Map<String, Lane> lanes = new LinkedHashMap<>();
 
     /** The calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

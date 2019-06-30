@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -172,8 +172,8 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
 
                 String[] directions = {"E", "S", "W", "N"};
                 // Add the traffic lights and the detectors
-                Set<TrafficLight> trafficLights = new HashSet<>();
-                Set<TrafficLightSensor> sensors = new HashSet<>();
+                Set<TrafficLight> trafficLights = new LinkedHashSet<>();
+                Set<TrafficLightSensor> sensors = new LinkedHashSet<>();
                 Length stopLineMargin = new Length(0.1, LengthUnit.METER);
                 Length headDetectorLength = new Length(1, LengthUnit.METER);
                 Length headDetectorMargin = stopLineMargin.plus(headDetectorLength).plus(new Length(3, LengthUnit.METER));

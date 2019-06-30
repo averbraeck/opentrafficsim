@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -20,7 +19,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
@@ -54,18 +52,18 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /** Infrastructure lane change info per relative lane. */
     private final Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>>> infrastructureLaneChangeInfo =
-            new HashMap<>();
+            new LinkedHashMap<>();
 
     /** Speed limit prospect per relative lane. */
-    private Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new HashMap<>();
+    private Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new LinkedHashMap<>();
 
     /** Legal Lane change possibilities per relative lane and lateral direction. */
     private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility =
-            new HashMap<>();
+            new LinkedHashMap<>();
 
     /** Physical Lane change possibilities per relative lane and lateral direction. */
     private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
-            new HashMap<>();
+            new LinkedHashMap<>();
 
     /** Cross-section. */
     private TimeStampedObject<SortedSet<RelativeLane>> crossSection;
@@ -404,7 +402,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
         if (possibilityMap.get(lane) == null)
         {
-            possibilityMap.put(lane, new HashMap<>());
+            possibilityMap.put(lane, new LinkedHashMap<>());
         }
         LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
         // check tail

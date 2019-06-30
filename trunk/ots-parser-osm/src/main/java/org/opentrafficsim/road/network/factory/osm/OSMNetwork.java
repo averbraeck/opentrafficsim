@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.factory.osm;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,13 +31,13 @@ public class OSMNetwork implements Serializable
     private final String name;
 
     /** The Nodes of the Network. */
-    private Map<Long, OSMNode> nodes = new HashMap<Long, OSMNode>();
+    private Map<Long, OSMNode> nodes = new LinkedHashMap<Long, OSMNode>();
 
     /** The Ways of the Network. */
-    private Map<Long, OSMWay> ways = new HashMap<Long, OSMWay>();
+    private Map<Long, OSMWay> ways = new LinkedHashMap<Long, OSMWay>();
 
     /** The Relations of the Network. */
-    private Map<Long, OSMRelation> relations = new HashMap<Long, OSMRelation>();
+    private Map<Long, OSMRelation> relations = new LinkedHashMap<Long, OSMRelation>();
 
     /** The Links of the Network. */
     private List<OSMLink> links = new ArrayList<OSMLink>();
@@ -150,9 +150,9 @@ public class OSMNetwork implements Serializable
     /**
      * Set/replace the Nodes of this Network.<br>
      * The provided list is <b>not copied</b>; the caller should not modify the list after setting it.
-     * @param newnodes HashMap&lt;Long, OSMNode&gt;; the (new) Nodes for this Network
+     * @param newnodes LinkedHashMap&lt;Long, OSMNode&gt;; the (new) Nodes for this Network
      */
-    public final void setNodes(final HashMap<Long, OSMNode> newnodes)
+    public final void setNodes(final LinkedHashMap<Long, OSMNode> newnodes)
     {
         this.nodes = newnodes;
     }

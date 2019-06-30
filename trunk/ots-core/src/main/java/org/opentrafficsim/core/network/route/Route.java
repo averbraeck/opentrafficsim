@@ -2,7 +2,7 @@ package org.opentrafficsim.core.network.route;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +35,7 @@ public class Route implements Serializable, Identifiable
     private final List<Node> nodes;
 
     /** The nodes of the route as a Set for quick containsNode() method. */
-    private final Set<Node> nodeSet = new HashSet<>();
+    private final Set<Node> nodeSet = new LinkedHashSet<>();
 
     /** Name of the route. */
     private final String id;
@@ -146,7 +146,7 @@ public class Route implements Serializable, Identifiable
 
     /**
      * @param node Node; the Node to find
-     * @return whether the route contains this node (quick using HashSet);
+     * @return whether the route contains this node (quick using LinkedHashSet);
      */
     public final boolean contains(final Node node)
     {

@@ -2,8 +2,8 @@ package org.opentrafficsim.road.network.factory.vissim;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +16,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.xml.sax.SAXException;
 
@@ -150,7 +149,7 @@ class NodeTag implements Serializable
     public static void removeDuplicateNodes(final VissimNetworkLaneParser parser)
     {
         // the map with NodeTag (key) that should be deleted and replaced by another nodeTag (value)
-        Map<String, String> replaceNodeMap = new HashMap<>();
+        Map<String, String> replaceNodeMap = new LinkedHashMap<>();
         Iterator<NodeTag> nodeTagValues = parser.getNodeTags().values().iterator();
 
         // determine identical nodes
@@ -211,7 +210,7 @@ class NodeTag implements Serializable
         Iterator<LinkTag> linkTagValues;
         Iterator<LinkTag> connectoTagValues;
         // remove redundant nodes from nodeTags
-        Map<String, NodeTag> removeNodeMap = new HashMap<>();
+        Map<String, NodeTag> removeNodeMap = new LinkedHashMap<>();
         nodeTagValues = parser.getNodeTags().values().iterator();
         while (nodeTagValues.hasNext())
         {

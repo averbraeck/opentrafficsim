@@ -11,7 +11,6 @@ import java.util.Scanner;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;

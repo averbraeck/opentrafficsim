@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedSet;
 
@@ -31,7 +31,7 @@ public class TaskRoadSideDistraction extends AbstractTask
 {
 
     /** Odometer values at distraction. */
-    private Map<Distraction, Double> odos = new HashMap<>();
+    private Map<Distraction, Double> odos = new LinkedHashMap<>();
 
     /** Constructor. */
     public TaskRoadSideDistraction()

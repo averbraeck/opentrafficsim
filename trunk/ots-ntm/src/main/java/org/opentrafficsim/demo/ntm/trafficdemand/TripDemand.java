@@ -1,6 +1,6 @@
 package org.opentrafficsim.demo.ntm.trafficdemand;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
@@ -55,14 +55,14 @@ public class TripDemand<TripInformation>
      * Compresses the trip demand from detailed areas to larger areas
      * @param tripDemand TripDemand&lt;TripInfoTimeDynamic&gt;; comprising the original demand
      * @param centroids Map&lt;String,NTMNode&gt;; the detailed areas
-     * @param mapSmallAreaToBigArea HashMap&lt;NTMNode,NTMNode&gt;; provides the key from small to big areas (type Node!!)
+     * @param mapSmallAreaToBigArea LinkedHashMap&lt;NTMNode,NTMNode&gt;; provides the key from small to big areas (type Node!!)
      * @return
      */
     public static TripDemand<TripInfoTimeDynamic> compressTripDemand(TripDemand<TripInfoTimeDynamic> tripDemand,
-            Map<String, NTMNode> centroids, HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea)
+            Map<String, NTMNode> centroids, LinkedHashMap<NTMNode, NTMNode> mapSmallAreaToBigArea)
     {
         TripDemand<TripInfoTimeDynamic> compressedTripDemand = new TripDemand<TripInfoTimeDynamic>();
-        compressedTripDemand.tripInfo = new HashMap<String, Map<String, TripInfoTimeDynamic>>();
+        compressedTripDemand.tripInfo = new LinkedHashMap<String, Map<String, TripInfoTimeDynamic>>();
         compressedTripDemand.startTime = tripDemand.getStartTime();
         compressedTripDemand.timeSpan = tripDemand.getTimeSpan();
         int notFound = 0;
@@ -86,7 +86,7 @@ public class TripDemand<TripInformation>
                 }
                 if (bigTripDemandRow == null)
                 {
-                    bigTripDemandRow = new HashMap<String, TripInfoTimeDynamic>();
+                    bigTripDemandRow = new LinkedHashMap<String, TripInfoTimeDynamic>();
                 }
                 // retrieve the detailled trips
                 tripDemandRow = tripDemand.getTripDemandOriginToAllDestinations(node.getId());
@@ -258,7 +258,7 @@ public class TripDemand<TripInformation>
         Map<String, TripInformation> map = tripInfoAll.get(origin);
         if (map == null)
         {
-            map = new HashMap<String, TripInformation>();
+            map = new LinkedHashMap<String, TripInformation>();
         }
         map.put(destination, tripInfo);
         return tripInfoAll;

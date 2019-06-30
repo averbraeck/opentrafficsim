@@ -1,7 +1,7 @@
 package org.opentrafficsim.ahfe;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -205,7 +205,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
     private boolean newFirstLeaderOrFollower(final Iterable<? extends HeadwayGTU> delayedSet,
             final Set<? extends HeadwayGTU> currentSet)
     {
-        Set<String> set = new HashSet<>();
+        Set<String> set = new LinkedHashSet<>();
         for (HeadwayGTU gtu : delayedSet)
         {
             set.add(gtu.getId());
@@ -281,7 +281,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
     {
 
         /** Map of id's and lane info types. */
-        private static final Map<String, NeighborsInfoType<?>> LANEINFOTYPES = new HashMap<>();
+        private static final Map<String, NeighborsInfoType<?>> LANEINFOTYPES = new LinkedHashMap<>();
 
         /**
          * Construct new info.

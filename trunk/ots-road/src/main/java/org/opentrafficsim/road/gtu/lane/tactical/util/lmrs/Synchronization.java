@@ -9,7 +9,7 @@ import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronizatio
 import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
 import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedSet;
 
@@ -26,7 +26,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -553,7 +552,7 @@ public interface Synchronization extends LmrsParameters
         {
             return set;
         }
-        Map<String, HeadwayGTU> map = new HashMap<>();
+        Map<String, HeadwayGTU> map = new LinkedHashMap<>();
         for (HeadwayGTU gtu : set)
         {
             map.put(gtu.getId(), gtu);

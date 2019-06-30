@@ -1,6 +1,6 @@
 package org.opentrafficsim.imb.demo.generators;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.ValueException;
@@ -46,10 +46,10 @@ public class RouteGeneratorProbability implements Generator<Route>
     private final static String GTU_ROUTE_STREAM = "gtuRoute";
 
     /** Demand map. */
-    private final HashMap<OTSNode, Object> demandMap = new HashMap<>();
+    private final LinkedHashMap<OTSNode, Object> demandMap = new LinkedHashMap<>();
 
     /** Route map. */
-    private final HashMap<OTSNode, Route> routeMap = new HashMap<>();
+    private final LinkedHashMap<OTSNode, Route> routeMap = new LinkedHashMap<>();
 
     /**
      * @param network OTSNetwork; the network
@@ -116,7 +116,7 @@ public class RouteGeneratorProbability implements Generator<Route>
 
             // draw destination
             double sum = 0.0;
-            Map<OTSNode, Double> probMap = new HashMap<>();
+            Map<OTSNode, Double> probMap = new LinkedHashMap<>();
             for (OTSNode to : this.demandMap.keySet())
             {
                 double p = ((double[]) this.demandMap.get(to))[i];

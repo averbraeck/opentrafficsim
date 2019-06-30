@@ -10,8 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,7 +105,7 @@ public class Diagram
     final List<Short> streams;
 
     /** The routes through the intersection. */
-    final Map<Short, XYPair[]> routes = new HashMap<>();
+    final Map<Short, XYPair[]> routes = new LinkedHashMap<>();
 
     /**
      * Construct a new diagram.
@@ -880,7 +880,7 @@ public class Diagram
     static void rebuildTestPanel()
     {
         testPanel.removeAll();
-        Set<Short> streamList = new HashSet<>();
+        Set<Short> streamList = new LinkedHashSet<>();
         for (Component c : checkBoxPanel.getComponents())
         {
             if (c instanceof JCheckBox)

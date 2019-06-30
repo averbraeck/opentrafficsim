@@ -18,8 +18,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -733,7 +733,7 @@ public class OTSControlPanel extends JPanel
         private final int[] ratios;
 
         /** The values at each tick. */
-        private Map<Integer, Double> tickValues = new HashMap<>();
+        private Map<Integer, Double> tickValues = new LinkedHashMap<>();
 
         /**
          * Construct a new TimeWarpPanel.

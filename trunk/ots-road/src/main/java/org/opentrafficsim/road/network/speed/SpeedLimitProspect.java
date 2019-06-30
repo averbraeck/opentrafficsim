@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.speed;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -35,10 +35,10 @@ public class SpeedLimitProspect implements Serializable
     private final SortedSet<SpeedLimitEntry<?>> prospect = new TreeSet<>();
 
     /** Source objects for the speed info additions. */
-    private final Map<Object, SpeedLimitEntry<?>> addSources = new HashMap<>();
+    private final Map<Object, SpeedLimitEntry<?>> addSources = new LinkedHashMap<>();
 
     /** Source objects for the speed info removals. */
-    private final Map<Object, SpeedLimitEntry<?>> removeSources = new HashMap<>();
+    private final Map<Object, SpeedLimitEntry<?>> removeSources = new LinkedHashMap<>();
 
     /** Last odometer value. */
     private Length odometer;

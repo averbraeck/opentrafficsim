@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.speed;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.exceptions.Throw;
@@ -25,7 +25,7 @@ public class SpeedLimitInfo implements Serializable
     private static final long serialVersionUID = 20160501L;
 
     /** Set of current speed info's mapped to speed limit types. */
-    private final Map<SpeedLimitType<?>, Object> speedInfoMap = new HashMap<>();
+    private final Map<SpeedLimitType<?>, Object> speedInfoMap = new LinkedHashMap<>();
 
     /**
      * Adds or overwrites the speed info of the given speed limit type.

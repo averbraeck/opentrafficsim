@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
@@ -38,10 +38,10 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
     private final SortedMap<Integer, Set<TrafficLight>> phases = new TreeMap<>();
 
     /** the fixed yellow duration per phase. */
-    private final Map<Integer, Duration> yellowDurations = new HashMap<>();
+    private final Map<Integer, Duration> yellowDurations = new LinkedHashMap<>();
 
     /** the fixed green duration per phase. */
-    private final Map<Integer, Duration> greenDurations = new HashMap<>();
+    private final Map<Integer, Duration> greenDurations = new LinkedHashMap<>();
 
     /** the current phase. */
     private int currentPhase;
@@ -153,7 +153,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
         {
             throw new TrafficLightException("Phase " + phaseId + " for traffic light " + this.id + " was already defined");
         }
-        this.phases.put(phaseId, new HashSet<TrafficLight>());
+        this.phases.put(phaseId, new LinkedHashSet<TrafficLight>());
         this.yellowDurations.put(phaseId, yellowDuration);
         this.greenDurations.put(phaseId, greenDuration);
     }

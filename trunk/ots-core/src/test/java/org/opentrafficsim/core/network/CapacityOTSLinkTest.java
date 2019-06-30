@@ -2,7 +2,7 @@ package org.opentrafficsim.core.network;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.unit.FrequencyUnit;
@@ -46,7 +46,7 @@ public class CapacityOTSLinkTest
         OTSSimulatorInterface simulator = MockSimulator.createMock();
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
-        Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
+        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
         CapacityOTSLink link =
                 new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator, initialCapacity);

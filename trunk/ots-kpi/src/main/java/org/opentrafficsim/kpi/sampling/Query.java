@@ -1,9 +1,9 @@
 package org.opentrafficsim.kpi.sampling;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -322,7 +322,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         Throw.whenNull(startTime, "Start t may not be null.");
         Throw.whenNull(endTime, "End t may not be null.");
         // Step 1) gather trajectories per GTU, truncated over space and time
-        Map<String, TrajectoryAcceptList> trajectoryAcceptLists = new HashMap<>();
+        Map<String, TrajectoryAcceptList> trajectoryAcceptLists = new LinkedHashMap<>();
         List<TrajectoryGroup<G>> trajectoryGroupList = new ArrayList<>();
         for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
         {
@@ -367,7 +367,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
                 }
                 // request meta data type to accept or reject
                 ((MetaDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
-                        (Set<T>) new HashSet<>(this.metaDataSet.get(metaDataType)));
+                        (Set<T>) new LinkedHashSet<>(this.metaDataSet.get(metaDataType)));
                 // combine acceptance/rejection of meta data type so far
                 for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
                 {

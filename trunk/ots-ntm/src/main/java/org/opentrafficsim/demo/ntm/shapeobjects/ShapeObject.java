@@ -54,7 +54,7 @@ public class ShapeObject implements Locatable
     /*
      * public Set<Path2D> getLines() throws RemoteException { // create the polygon if it did not exist before if (this.lines ==
      * null) { double dx = this.getLocation().getX(); double dy = this.getLocation().getY(); // double dx = 0; // double dy = 0;
-     * this.lines = new HashSet<Path2D>(); for (int i = 0; i < this.getDesignLine().getLineString().getNumGeometries(); i++) {
+     * this.lines = new LinkedHashSet<Path2D>(); for (int i = 0; i < this.getDesignLine().getLineString().getNumGeometries(); i++) {
      * Path2D line = new Path2D.Double(); Geometry g = this.getDesignLine().getLineString().getDesignLineN(i); boolean start =
      * true; for (Coordinate c : g.getCoordinates()) { if (start) { line.moveTo(c.x - dx, dy - c.y); start = false; } else {
      * line.lineTo(c.x - dx, dy - c.y); } } this.lines.add(line); } } return this.lines; }

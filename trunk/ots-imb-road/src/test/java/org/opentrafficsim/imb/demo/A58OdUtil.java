@@ -3,8 +3,8 @@ package org.opentrafficsim.imb.demo;
 import static org.djunits.value.StorageType.DENSE;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -120,7 +120,7 @@ public class A58OdUtil
             final OTSSimulatorInterface simulator, double penetrationRate) throws ProbabilityException
     {
 
-        Map<String, StreamInterface> streams = new HashMap<>();
+        Map<String, StreamInterface> streams = new LinkedHashMap<>();
         long j = 3;
         streams.put("headwayGeneration", new MersenneTwister(100L + j));
         streams.put("gtuClass", new MersenneTwister(101L + j));
@@ -270,7 +270,7 @@ public class A58OdUtil
             gtuTypeRight.add(new FrequencyAndObject<>((1.0 - penetrationRate) * truckFrac, truck));
             gtuTypeRight.add(new FrequencyAndObject<>(penetrationRate * truckFrac, truckEquipped));
 
-            Map<String, Lane> lanesById = new HashMap<>();
+            Map<String, Lane> lanesById = new LinkedHashMap<>();
             for (Lane lane : link.getLanes())
             {
                 lanesById.put(lane.getId(), lane);
@@ -302,7 +302,7 @@ public class A58OdUtil
     /**
      * Nodes that have received sinks on the incoming link.
      */
-    private static Set<OTSNode> sinks = new HashSet<>();
+    private static Set<OTSNode> sinks = new LinkedHashSet<>();
 
     /**
      * Add sinks to network.
@@ -357,7 +357,7 @@ public class A58OdUtil
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final StreamInterface stream)
             throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
     {
-        Set<DirectedLanePosition> initialLongitudinalPositions = new HashSet<>();
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
         // TODO DIR_MINUS
         initialLongitudinalPositions
                 .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
@@ -397,17 +397,17 @@ public class A58OdUtil
     }
 
     /** Map of demand. */
-    private static HashMap<String, HashMap<String, Object>> demandMap = new HashMap<>();
+    private static LinkedHashMap<String, LinkedHashMap<String, Object>> demandMap = new LinkedHashMap<>();
 
     /** Conversion table of origin and destination names and node ids. */
-    private static HashMap<String, String> nodeMap = new HashMap<>();
+    private static LinkedHashMap<String, String> nodeMap = new LinkedHashMap<>();
 
     /** Overall demand factor. */
     private static double demandFactor;
 
     static
     {
-        demandMap.put("Junction De Baars South E", new HashMap<>());
+        demandMap.put("Junction De Baars South E", new LinkedHashMap<>());
         demandMap.get("Junction De Baars South E").put("Restplace Kerkeind",
                 new double[] {50.0, 49.0, 54.0, 56.0, 43.0, 53.0, 32.0, 34.0, 44.0, 47.0, 55.0, 43.0, 35.0, 68.0, 42.0, 42.0,
                         42.0, 30.0, 38.0, 47.0, 41.0, 32.0, 35.0, 43.0, 52.0, 37.0, 49.0, 31.0, 40.0, 59.0, 66.0, 29.0, 40.0,
@@ -447,7 +447,7 @@ public class A58OdUtil
                         670.0, 851.0, 1263.0, 1418.0, 619.0, 851.0, 1031.0, 928.0, 774.0, 722.0, 1083.0, 1031.0, 722.0, 1005.0,
                         1237.0, 903.0, 825.0, 954.0, 1005.0, 748.0, 1315.0, 928.0, 954.0, 928.0, 748.0, 851.0, 567.0, 928.0,
                         670.0, 825.0, 670.0, 903.0, 748.0, 0.0});
-        demandMap.put("Junction De Baars North E", new HashMap<>());
+        demandMap.put("Junction De Baars North E", new LinkedHashMap<>());
         demandMap.get("Junction De Baars North E").put("Restplace Kerkeind",
                 new double[] {22.0, 10.0, 2.0, 13.0, 14.0, 17.0, 17.0, 12.0, 7.0, 6.0, 16.0, 12.0, 13.0, 0.0, 2.0, 7.0, 25.0,
                         0.0, 16.0, 0.0, 17.0, 14.0, 12.0, 0.0, 18.0, 25.0, 0.0, 18.0, 0.0, 17.0, 0.0, 14.0, 7.0, 0.0, 0.0, 0.0,
@@ -483,7 +483,7 @@ public class A58OdUtil
                         51.0, 155.0, 542.0, 0.0, 335.0, 0.0, 361.0, 310.0, 258.0, 0.0, 387.0, 542.0, 0.0, 387.0, 0.0, 361.0,
                         0.0, 310.0, 155.0, 0.0, 0.0, 0.0, 0.0, 310.0, 258.0, 774.0, 283.0, 26.0, 387.0, 283.0, 104.0, 129.0,
                         412.0, 0.0, 155.0, 310.0, 0.0, 387.0, 77.0, 567.0, 0.0, 567.0, 77.0, 335.0, 0.0, 206.0, 0.0});
-        demandMap.put("Restplace Kerkeind", new HashMap<>());
+        demandMap.put("Restplace Kerkeind", new LinkedHashMap<>());
         demandMap.get("Restplace Kerkeind").put("Petrol station",
                 new double[] {4.0, 4.0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0,
                         0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0, 0.0,
@@ -509,7 +509,7 @@ public class A58OdUtil
                         0.0, 0.0, 0.0, 0.0, 0.0, 48.0, 0.0, 0.0, 0.0, 0.0, 11.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 143.0, 0.0, 0.0,
                         0.0, 0.0, 0.0, 0.0, 114.0, 0.0, 0.0, 0.0, 0.0, 0.0, 37.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 67.0, 0.0,
                         0.0, 3.0, 0.0});
-        demandMap.put("Petrol station", new HashMap<>());
+        demandMap.put("Petrol station", new LinkedHashMap<>());
         demandMap.get("Petrol station").put("Connection Moergestel E",
                 new double[] {0.0, 87.0, 165.0, 0.0, 0.0, 39.0, 0.0, 71.0, 0.0, 0.0, 18.0, 72.0, 24.0, 8.0, 0.0, 0.0, 0.0, 45.0,
                         0.0, 0.0, 0.0, 51.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 16.0, 10.0, 48.0, 22.0, 0.0, 48.0, 46.0,
@@ -535,7 +535,7 @@ public class A58OdUtil
                         101.0, 0.0, 0.0, 0.0, 114.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0, 0.0, 0.0, 36.0, 22.0, 108.0, 50.0, 0.0,
                         107.0, 103.0, 51.0, 0.0, 0.0, 114.0, 0.0, 33.0, 51.0, 290.0, 50.0, 210.0, 0.0, 0.0, 125.0, 0.0, 0.0,
                         200.0, 0.0, 0.0, 0.0, 34.0, 0.0, 222.0, 0.0, 0.0});
-        demandMap.put("Connection Moergestel E", new HashMap<>());
+        demandMap.put("Connection Moergestel E", new LinkedHashMap<>());
         demandMap.get("Connection Moergestel E").put("Connection Oirschot E",
                 new double[] {178.0, 204.0, 175.0, 206.0, 0.0, 221.0, 238.0, 132.0, 89.0, 130.0, 67.0, 130.0, 154.0, 197.0,
                         86.0, 53.0, 156.0, 96.0, 86.0, 173.0, 0.0, 0.0, 0.0, 0.0, 156.0, 170.0, 211.0, 120.0, 182.0, 94.0,
@@ -559,7 +559,7 @@ public class A58OdUtil
                         349.0, 436.0, 370.0, 329.0, 543.0, 255.0, 422.0, 27.0, 422.0, 376.0, 390.0, 523.0, 370.0, 537.0, 329.0,
                         483.0, 449.0, 410.0, 228.0, 114.0, 698.0, 81.0, 417.0, 449.0, 296.0, 0.0, 429.0, 343.0, 155.0, 343.0,
                         0.0});
-        demandMap.put("Connection Oirschot E", new HashMap<>());
+        demandMap.put("Connection Oirschot E", new LinkedHashMap<>());
         demandMap.get("Connection Oirschot E").put("Restplace Kloosters",
                 new double[] {3.0, 1.0, 1.0, 3.0, 2.0, 0.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 1.0,
                         0.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 0.0, 2.0, 0.0, 2.0, 1.0, 0.0, 2.0, 1.0, 2.0,
@@ -577,7 +577,7 @@ public class A58OdUtil
                         520.0, 940.0, 654.0, 781.0, 84.0, 1082.0, 0.0, 1325.0, 721.0, 58.0, 1091.0, 721.0, 873.0, 260.0, 1032.0,
                         495.0, 990.0, 50.0, 755.0, 621.0, 897.0, 587.0, 831.0, 512.0, 906.0, 0.0, 772.0, 990.0, 478.0, 755.0,
                         797.0, 377.0, 856.0, 0.0});
-        demandMap.put("Restplace Kloosters", new HashMap<>());
+        demandMap.put("Restplace Kloosters", new LinkedHashMap<>());
         demandMap.get("Restplace Kloosters").put("Connection Best E",
                 new double[] {127.0, 128.0, 289.0, 20.0, 0.0, 0.0, 346.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 299.0, 0.0,
                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 244.0, 217.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -588,14 +588,14 @@ public class A58OdUtil
                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 569.0, 506.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 53.0, 421.0, 87.0, 0.0, 0.0, 0.0, 977.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         0.0, 0.0, 358.0, 128.0, 0.0});
-        demandMap.put("Connection Best E", new HashMap<>());
+        demandMap.put("Connection Best E", new LinkedHashMap<>());
         demandMap.get("Connection Best E").put("Junction Batadorp E",
                 new double[] {1002.0, 1092.0, 1560.0, 1356.0, 2136.0, 588.0, 2244.0, 2328.0, 864.0, 786.0, 1656.0, 1674.0, 0.0,
                         2154.0, 1056.0, 1152.0, 1002.0, 1314.0, 1674.0, 594.0, 2358.0, 1020.0, 1824.0, 726.0, 1404.0, 1314.0,
                         396.0, 1986.0, 840.0, 1422.0, 1434.0, 702.0, 1530.0, 912.0, 1764.0, 1350.0, 1224.0, 660.0, 1650.0,
                         714.0, 2202.0, 0.0, 1416.0, 2070.0, 18.0, 1902.0, 1290.0, 486.0, 1548.0, 978.0, 1530.0, 1836.0, 0.0,
                         672.0, 1998.0, 1644.0, 1746.0, 1518.0, 0.0, 1686.0, 0.0});
-        demandMap.put("Junction Batadorp South W", new HashMap<>());
+        demandMap.put("Junction Batadorp South W", new LinkedHashMap<>());
         demandMap.get("Junction Batadorp South W").put("Connection Best W",
                 new double[] {645.0, 570.0, 564.0, 570.0, 465.0, 558.0, 507.0, 603.0, 624.0, 525.0, 597.0, 504.0, 462.0, 447.0,
                         525.0, 483.0, 600.0, 552.0, 453.0, 543.0, 522.0, 486.0, 456.0, 423.0, 537.0, 489.0, 582.0, 600.0, 525.0,
@@ -635,7 +635,7 @@ public class A58OdUtil
                         1018.0, 1211.0, 1249.0, 1093.0, 855.0, 1068.0, 887.0, 999.0, 899.0, 880.0, 687.0, 893.0, 1155.0, 849.0,
                         974.0, 1111.0, 968.0, 930.0, 1224.0, 924.0, 1099.0, 943.0, 930.0, 1130.0, 999.0, 774.0, 905.0, 993.0,
                         1080.0, 1136.0, 855.0, 1049.0, 774.0, 693.0, 1024.0, 0.0});
-        demandMap.put("Junction Batadorp North W", new HashMap<>());
+        demandMap.put("Junction Batadorp North W", new LinkedHashMap<>());
         demandMap.get("Junction Batadorp North W").put("Connection Best W",
                 new double[] {48.0, 60.0, 57.0, 42.0, 21.0, 72.0, 33.0, 72.0, 60.0, 33.0, 42.0, 27.0, 42.0, 30.0, 24.0, 39.0,
                         39.0, 42.0, 15.0, 24.0, 45.0, 45.0, 30.0, 27.0, 48.0, 33.0, 39.0, 39.0, 24.0, 39.0, 27.0, 33.0, 15.0,
@@ -671,7 +671,7 @@ public class A58OdUtil
                         81.0, 81.0, 87.0, 31.0, 50.0, 94.0, 94.0, 62.0, 56.0, 100.0, 69.0, 81.0, 81.0, 50.0, 81.0, 56.0, 69.0,
                         31.0, 75.0, 56.0, 25.0, 44.0, 62.0, 106.0, 75.0, 87.0, 119.0, 81.0, 125.0, 50.0, 100.0, 87.0, 62.0,
                         87.0, 87.0, 50.0, 69.0, 94.0, 119.0, 81.0, 81.0, 94.0, 31.0, 37.0, 119.0, 0.0});
-        demandMap.put("Connection Best W", new HashMap<>());
+        demandMap.put("Connection Best W", new LinkedHashMap<>());
         demandMap.get("Connection Best W").put("Restplace Brehees",
                 new double[] {8.0, 18.0, 27.0, 18.0, 0.0, 15.0, 0.0, 32.0, 10.0, 0.0, 16.0, 13.0, 16.0, 18.0, 0.0, 10.0, 9.0,
                         10.0, 7.0, 6.0, 10.0, 18.0, 24.0, 10.0, 13.0, 21.0, 13.0, 0.0, 17.0, 19.0, 14.0, 10.0, 17.0, 17.0, 29.0,
@@ -704,7 +704,7 @@ public class A58OdUtil
                         375.0, 262.0, 437.0, 431.0, 749.0, 225.0, 250.0, 250.0, 543.0, 387.0, 362.0, 787.0, 331.0, 712.0, 524.0,
                         206.0, 843.0, 350.0, 219.0, 631.0, 924.0, 0.0, 718.0, 487.0, 250.0, 843.0, 793.0, 381.0, 706.0, 231.0,
                         0.0});
-        demandMap.put("Restplace Brehees", new HashMap<>());
+        demandMap.put("Restplace Brehees", new LinkedHashMap<>());
         demandMap.get("Restplace Brehees").put("Connection Oirschot W",
                 new double[] {19.0, 32.0, 0.0, 21.0, 40.0, 0.0, 30.0, 0.0, 85.0, 21.0, 0.0, 24.0, 65.0, 0.0, 11.0, 0.0, 43.0,
                         0.0, 0.0, 5.0, 31.0, 12.0, 51.0, 26.0, 26.0, 51.0, 0.0, 51.0, 13.0, 0.0, 31.0, 25.0, 0.0, 44.0, 25.0,
@@ -730,7 +730,7 @@ public class A58OdUtil
                         208.0, 0.0, 0.0, 23.0, 150.0, 57.0, 248.0, 125.0, 127.0, 250.0, 0.0, 248.0, 64.0, 0.0, 150.0, 122.0,
                         0.0, 213.0, 124.0, 118.0, 0.0, 0.0, 110.0, 0.0, 114.0, 315.0, 65.0, 0.0, 150.0, 75.0, 185.0, 156.0,
                         62.0, 245.0, 95.0, 351.0, 0.0, 181.0, 255.0, 0.0, 0.0, 70.0, 0.0, 91.0, 0.0});
-        demandMap.put("Connection Oirschot W", new HashMap<>());
+        demandMap.put("Connection Oirschot W", new LinkedHashMap<>());
         demandMap.get("Connection Oirschot W").put("Connection Moergestel W",
                 new double[] {0.0, 20.0, 4.0, 0.0, 12.0, 4.0, 13.0, 10.0, 0.0, 3.0, 6.0, 20.0, 6.0, 0.0, 8.0, 13.0, 8.0, 4.0,
                         9.0, 0.0, 7.0, 3.0, 16.0, 0.0, 3.0, 14.0, 1.0, 11.0, 5.0, 11.0, 11.0, 6.0, 7.0, 3.0, 5.0, 6.0, 14.0,
@@ -751,7 +751,7 @@ public class A58OdUtil
                         478.0, 275.0, 136.0, 315.0, 0.0, 267.0, 120.0, 601.0, 0.0, 125.0, 505.0, 32.0, 390.0, 187.0, 393.0,
                         387.0, 211.0, 272.0, 104.0, 191.0, 211.0, 494.0, 326.0, 494.0, 0.0, 471.0, 48.0, 0.0, 104.0, 660.0,
                         259.0, 0.0, 218.0, 282.0, 239.0, 486.0, 4.0, 154.0, 418.0, 736.0, 0.0, 28.0, 390.0, 60.0, 656.0, 0.0});
-        demandMap.put("Connection Moergestel W", new HashMap<>());
+        demandMap.put("Connection Moergestel W", new LinkedHashMap<>());
         demandMap.get("Connection Moergestel W").put("Restplace Kriekampen",
                 new double[] {14.0, 0.0, 0.0, 0.0, 1.0, 0.0, 2.0, 6.0, 0.0, 2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 9.0, 0.0,
                         0.0, 0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8.0, 4.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 6.0, 0.0, 0.0,
@@ -767,7 +767,7 @@ public class A58OdUtil
                         260.0, 0.0, 0.0, 0.0, 0.0, 157.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 243.0, 127.0, 0.0, 52.0, 0.0, 0.0, 0.0,
                         0.0, 176.0, 0.0, 0.0, 62.0, 0.0, 246.0, 0.0, 48.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         41.0, 0.0, 21.0, 59.0, 0.0, 0.0});
-        demandMap.put("Restplace Kriekampen", new HashMap<>());
+        demandMap.put("Restplace Kriekampen", new LinkedHashMap<>());
         demandMap.get("Restplace Kriekampen").put("Junction De Baars South W",
                 new double[] {30.0, 231.0, 332.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 47.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         50.0, 0.0, 0.0, 0.0, 0.0, 74.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 155.0, 0.0, 0.0, 0.0, 0.0, 191.0,

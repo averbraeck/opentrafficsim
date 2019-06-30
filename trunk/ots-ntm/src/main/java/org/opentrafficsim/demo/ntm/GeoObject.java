@@ -1,6 +1,6 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.locationtech.jts.geom.Geometry;
@@ -39,7 +39,7 @@ public class GeoObject
     private Geometry geometry;
 
     /** Touching areas. */
-    private final Set<GeoObject> touchingAreas = new HashSet<>();
+    private final Set<GeoObject> touchingAreas = new LinkedHashSet<>();
 
     /**
      * @param geometry Geometry;

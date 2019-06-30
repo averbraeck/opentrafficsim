@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -71,7 +69,7 @@ public final class GeneratorPositions implements Locatable
     private final Bounds bounds;
 
     /** Set of all positions. */
-    private final Set<GeneratorLanePosition> allPositions = new HashSet<>();
+    private final Set<GeneratorLanePosition> allPositions = new LinkedHashSet<>();
 
     /**
      * Constructor. Private to facilitate easier creation methods using static factories, and to hide underlying classes.
@@ -679,7 +677,7 @@ public final class GeneratorPositions implements Locatable
     {
 
         /** Biases per GTU type. */
-        private final Map<GTUType, LaneBias> biases = new HashMap<>();
+        private final Map<GTUType, LaneBias> biases = new LinkedHashMap<>();
 
         /**
          * Adds a GTU bias for randomly drawing a lane.

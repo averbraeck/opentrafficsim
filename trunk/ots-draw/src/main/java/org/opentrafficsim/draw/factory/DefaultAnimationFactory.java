@@ -2,7 +2,7 @@ package org.opentrafficsim.draw.factory;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -67,10 +67,10 @@ public class DefaultAnimationFactory implements EventListenerInterface
     private final GTUColorer gtuColorer;
 
     /** rendered gtus. */
-    private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = new HashMap<>();
+    private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = new LinkedHashMap<>();
 
     /** rendered static objects. */
-    private Map<ObjectInterface, Renderable2D<?>> animatedObjects = new HashMap<>();
+    private Map<ObjectInterface, Renderable2D<?>> animatedObjects = new LinkedHashMap<>();
 
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the

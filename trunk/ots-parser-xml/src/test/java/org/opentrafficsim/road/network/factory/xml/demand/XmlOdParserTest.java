@@ -5,8 +5,8 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -27,7 +27,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
@@ -58,7 +57,7 @@ public class XmlOdParserTest
     OTSRoadNetwork network = new OTSRoadNetwork("OD test", true);
 
     /** GTU types. */
-    private Set<GTUType> gtuTypes = new HashSet<>();
+    private Set<GTUType> gtuTypes = new LinkedHashSet<>();
 
     /** Simulator. */
     OTSSimulatorInterface simulator;
@@ -121,7 +120,7 @@ public class XmlOdParserTest
         CrossSectionLink AB =
                 new CrossSectionLink(this.network, "AB", A, B, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
                         new OTSLine3D(A.getPoint(), B.getPoint()), this.simulator, LaneKeepingPolicy.KEEPRIGHT);
-        new Lane(AB, "left", Length.ZERO, Length.ZERO, this.network.getLaneType(LaneType.DEFAULTS.FREEWAY), new HashMap<>());
+        new Lane(AB, "left", Length.ZERO, Length.ZERO, this.network.getLaneType(LaneType.DEFAULTS.FREEWAY), new LinkedHashMap<>());
     }
 
     /**

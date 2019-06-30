@@ -1,7 +1,5 @@
 package org.opentrafficsim.web.test;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.rmi.RemoteException;
 

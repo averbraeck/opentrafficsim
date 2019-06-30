@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.sampling.indicator;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +40,8 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
     protected final <G extends GtuDataInterface> Duration calculate(final Query<G> query, final Time startTime,
             final Time endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
     {
-        Map<String, Duration> gtuTimes = new HashMap<>();
-        Map<String, Duration> gtuRefTimes = new HashMap<>();
+        Map<String, Duration> gtuTimes = new LinkedHashMap<>();
+        Map<String, Duration> gtuRefTimes = new LinkedHashMap<>();
         for (TrajectoryGroup<? extends GtuDataInterface> trajectoryGroup : trajectoryGroups)
         {
             try

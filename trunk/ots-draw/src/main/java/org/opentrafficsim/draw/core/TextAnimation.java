@@ -14,8 +14,6 @@ import java.rmi.RemoteException;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
-import org.opentrafficsim.draw.core.TextAnimation.ScaleDependentRendering;
-
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.logger.SimLogger;

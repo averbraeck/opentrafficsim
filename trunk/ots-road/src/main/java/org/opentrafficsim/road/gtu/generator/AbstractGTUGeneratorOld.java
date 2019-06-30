@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.generator;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -615,7 +615,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
     @Override
     public Map<DirectedPoint, Integer> getQueueLengths()
     {
-        Map<DirectedPoint, Integer> map = new HashMap<>();
+        Map<DirectedPoint, Integer> map = new LinkedHashMap<>();
         try
         {
             map.put(getLocation(), this.carBuilderList.size());

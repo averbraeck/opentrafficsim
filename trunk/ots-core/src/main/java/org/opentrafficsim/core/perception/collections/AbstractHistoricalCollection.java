@@ -2,8 +2,8 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Time;
@@ -115,7 +115,7 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
     @Override
     public void clear()
     {
-        new HashSet<>(this.current).forEach(this::remove);
+        new LinkedHashSet<>(this.current).forEach(this::remove);
     }
 
     /** {@inheritDoc} */
@@ -148,7 +148,7 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
     public boolean retainAll(final Collection<?> c)
     {
         boolean changed = false;
-        Set<E> values = new HashSet<>(this.current);
+        Set<E> values = new LinkedHashSet<>(this.current);
         for (E value : values)
         {
             if (!c.contains(value))

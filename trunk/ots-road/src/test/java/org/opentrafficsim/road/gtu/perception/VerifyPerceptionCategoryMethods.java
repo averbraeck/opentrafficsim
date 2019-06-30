@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -70,7 +70,7 @@ public class VerifyPerceptionCategoryMethods
         {
             if (AbstractPerceptionCategory.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers()))
             {
-                Set<String> fieldsDone = new HashSet<>();
+                Set<String> fieldsDone = new LinkedHashSet<>();
                 List<String> fieldNames = new ArrayList<>();
                 List<String> methodNames = new ArrayList<>();
                 List<Class<?>> methodReturnTypes = new ArrayList<>();

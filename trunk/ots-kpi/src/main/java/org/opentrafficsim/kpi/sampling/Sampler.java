@@ -3,7 +3,6 @@ package org.opentrafficsim.kpi.sampling;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -399,7 +398,7 @@ public abstract class Sampler<G extends GtuDataInterface>
                     float[] x = trajectory.getX();
                     float[] v = trajectory.getV();
                     float[] a = trajectory.getA();
-                    Map<ExtendedDataType<?, ?, ?, ?>, Object> extendedData = new HashMap<>();
+                    Map<ExtendedDataType<?, ?, ?, ?>, Object> extendedData = new LinkedHashMap<>();
                     for (ExtendedDataType<?, ?, ?, ?> extendedDataType : allExtendedDataTypes)
                     {
                         if (trajectory.contains(extendedDataType))

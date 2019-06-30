@@ -2,7 +2,7 @@ package org.opentrafficsim.demo;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -189,7 +189,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
 
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 
-            Map<Lane, SimpleTrafficLight> trafficLights = new HashMap<>();
+            Map<Lane, SimpleTrafficLight> trafficLights = new LinkedHashMap<>();
 
             this.carProbability = (double) getInputParameter("generic.carProbability");
             ParameterFactory params = new InputParameterHelper(getInputParameterMap());

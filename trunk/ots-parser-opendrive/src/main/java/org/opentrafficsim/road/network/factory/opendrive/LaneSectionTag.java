@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,19 +39,19 @@ class LaneSectionTag implements Serializable
 
     /** Left lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<Integer, LaneTag> leftLaneTags = new HashMap<Integer, LaneTag>();
+    Map<Integer, LaneTag> leftLaneTags = new LinkedHashMap<Integer, LaneTag>();
 
     /** Center lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<Integer, LaneTag> centerLaneTags = new HashMap<Integer, LaneTag>();
+    Map<Integer, LaneTag> centerLaneTags = new LinkedHashMap<Integer, LaneTag>();
 
     /** Right lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<Integer, LaneTag> rightLaneTags = new HashMap<Integer, LaneTag>();
+    Map<Integer, LaneTag> rightLaneTags = new LinkedHashMap<Integer, LaneTag>();
 
     /** All lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<Integer, Lane> lanes = new HashMap<Integer, Lane>();
+    Map<Integer, Lane> lanes = new LinkedHashMap<Integer, Lane>();
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.

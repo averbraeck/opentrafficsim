@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -47,55 +48,55 @@ public class VissimNetworkLaneParser implements Serializable
     private GlobalTag globalTag;
 
     /** The UNprocessed links for further reference. */
-    private Map<String, NodeTag> nodeTags = new HashMap<>();
+    private Map<String, NodeTag> nodeTags = new LinkedHashMap<>();
 
     /** The UNprocessed links for further reference. */
-    private Map<String, LinkTag> linkTags = new HashMap<>();
+    private Map<String, LinkTag> linkTags = new LinkedHashMap<>();
 
     /** The UNprocessed links for further reference. */
-    private Map<String, LinkTag> connectorTags = new HashMap<>();
+    private Map<String, LinkTag> connectorTags = new LinkedHashMap<>();
 
     /** The UNprocessed links for further reference. */
-    private Map<String, LinkTag> realLinkTags = new HashMap<>();
+    private Map<String, LinkTag> realLinkTags = new LinkedHashMap<>();
 
     /** The UNprocessed links for further reference. */
-    private Map<String, SignalHeadTag> signalHeadTags = new HashMap<>();
+    private Map<String, SignalHeadTag> signalHeadTags = new LinkedHashMap<>();
 
     /** The UNprocessed links for further reference. */
-    private Map<String, SensorTag> sensorTags = new HashMap<>();
+    private Map<String, SensorTag> sensorTags = new LinkedHashMap<>();
 
     /** The gtu tags for further reference. */
-    private Map<String, GTUTag> gtuTags = new HashMap<>();
+    private Map<String, GTUTag> gtuTags = new LinkedHashMap<>();
 
     /** The gtumix tags for further reference. */
-    private Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
+    private Map<String, GTUMixTag> gtuMixTags = new LinkedHashMap<>();
 
     /** The road type tags for further reference. */
-    private Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
+    private Map<String, RoadTypeTag> roadTypeTags = new LinkedHashMap<>();
 
     /** The GTUTypes that have been created. public to make it accessible from LaneAttributes. */
-    private Map<String, GTUType> gtuTypes = new HashMap<>();
+    private Map<String, GTUType> gtuTypes = new LinkedHashMap<>();
 
     /** The LaneType tags that have been created. */
-    private Map<String, LaneTypeTag> laneTypeTags = new HashMap<>();
+    private Map<String, LaneTypeTag> laneTypeTags = new LinkedHashMap<>();
 
     /** The LaneType tags that have been created. */
-    private Map<String, RoadLayoutTag> roadLayoutTags = new HashMap<>();
+    private Map<String, RoadLayoutTag> roadLayoutTags = new LinkedHashMap<>();
 
     /** The RouteMix tags that have been created. */
-    private Map<String, RouteMixTag> routeMixTags = new HashMap<>();
+    private Map<String, RouteMixTag> routeMixTags = new LinkedHashMap<>();
 
     /** The RouteMix tags that have been created. */
-    private Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
+    private Map<String, ShortestRouteMixTag> shortestRouteMixTags = new LinkedHashMap<>();
 
     /** The RouteMix tags that have been created. */
-    private Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
+    private Map<String, ShortestRouteTag> shortestRouteTags = new LinkedHashMap<>();
 
     /** The RouteMix tags that have been created. */
-    private Map<String, RouteTag> routeTags = new HashMap<>();
+    private Map<String, RouteTag> routeTags = new LinkedHashMap<>();
 
     /** The LaneTypes that have been created. */
-    private Map<String, LaneType> laneTypes = new HashMap<>();
+    private Map<String, LaneType> laneTypes = new LinkedHashMap<>();
 
     /** The simulator for creating the animation. Null if no animation needed. */
     private OTSSimulatorInterface simulator;
@@ -224,7 +225,7 @@ public class VissimNetworkLaneParser implements Serializable
         splitLinkAtSignalAndDetector(this.linkTags, margin, splitMetersAfterSignalHead);
 
         // remove double links with the same start and end node
-        HashMap<String, LinkTag> removeConnectorTags = new HashMap<>();
+        LinkedHashMap<String, LinkTag> removeConnectorTags = new LinkedHashMap<>();
         removeDoubleConnectors(removeConnectorTags);
 
         // build links
@@ -368,7 +369,7 @@ public class VissimNetworkLaneParser implements Serializable
             Double splitMetersAfterSignalHead) throws OTSGeometryException, NetworkException
     {
 
-        Map<String, LinkTag> newLinkTags = new HashMap<>();
+        Map<String, LinkTag> newLinkTags = new LinkedHashMap<>();
         // Loops through all links
         splitLinksAtSignal(margin, splitMetersAfterSignalHead, inputLinkTags, newLinkTags);
 
@@ -402,7 +403,7 @@ public class VissimNetworkLaneParser implements Serializable
         }
 
         // run again for the newly created linkTags
-        Map<String, LinkTag> new2LinkTags = new HashMap<>();
+        Map<String, LinkTag> new2LinkTags = new LinkedHashMap<>();
         if (newLinkTags.size() > 0)
         {
             splitLinksAtSignal(margin, splitMetersAfterSignalHead, newLinkTags, new2LinkTags);

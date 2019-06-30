@@ -2,8 +2,6 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -128,10 +126,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private final Set<Lane> enteredLanes = new LinkedHashSet<>();
 
     /** Pending leave triggers for each lane. */
-    private Map<Lane, List<SimEventInterface<SimTimeDoubleUnit>>> pendingLeaveTriggers = new HashMap<>();
+    private Map<Lane, List<SimEventInterface<SimTimeDoubleUnit>>> pendingLeaveTriggers = new LinkedHashMap<>();
 
     /** Pending enter triggers for each lane. */
-    private Map<Lane, List<SimEventInterface<SimTimeDoubleUnit>>> pendingEnterTriggers = new HashMap<>();
+    private Map<Lane, List<SimEventInterface<SimTimeDoubleUnit>>> pendingEnterTriggers = new LinkedHashMap<>();
 
     /** Event to finalize lane change. */
     private SimEventInterface<SimTimeDoubleUnit> finalizeLaneChangeEvent = null;
@@ -275,7 +273,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public void setParent(final GTU gtu) throws GTUException
     {
-        for (Lane lane : new HashSet<>(this.currentLanes.keySet())) // copy for concurrency problems
+        for (Lane lane : new LinkedHashSet<>(this.currentLanes.keySet())) // copy for concurrency problems
         {
             leaveLane(lane);
         }
@@ -604,7 +602,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public void initLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
     {
         Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.currentLanes);
-        Map<Lane, Double> fractionalLanePositions = new HashMap<>();
+        Map<Lane, Double> fractionalLanePositions = new LinkedHashMap<>();
         for (Lane lane : lanesCopy.keySet())
         {
             fractionalLanePositions.put(lane, fractionalPosition(lane, getReference()));
@@ -971,7 +969,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private double cachePositionsTime = Double.NaN;
 
     /** caching of last stored position(s). */
-    private Map<Integer, Length> cachedPositions = new HashMap<>();
+    private Map<Integer, Length> cachedPositions = new LinkedHashMap<>();
 
     /** {@inheritDoc} */
     @Override
@@ -1136,7 +1134,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private double getDistanceAtOtherLane(final Lane lane, final Time when, final boolean upstream, final double distance,
             final DirectedPoint point, final Set<Lane> otherLanesToConsider) throws GTUException
     {
-        Set<Lane> nextLanes = new HashSet<>(upstream == getDirection(lane).isPlus() ? lane.prevLanes(getGTUType()).keySet()
+        Set<Lane> nextLanes = new LinkedHashSet<>(upstream == getDirection(lane).isPlus() ? lane.prevLanes(getGTUType()).keySet()
                 : lane.nextLanes(getGTUType()).keySet()); // safe copy
         nextLanes.retainAll(otherLanesToConsider); // as we delete here
         if (!upstream && nextLanes.size() > 1)

@@ -6,7 +6,7 @@ package org.opentrafficsim.water;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.reflection.ClassUtil;
@@ -45,7 +45,7 @@ public class SchedulableMethod implements Serializable
     protected Object[] args = null;
 
     /** cache. */
-    private static Map<String, Method> cacheMethods = new HashMap<String, Method>();
+    private static Map<String, Method> cacheMethods = new LinkedHashMap<String, Method>();
 
     /**
      * The constructor of the schedulable method stores the object and method to invoke with its arguments.

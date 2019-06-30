@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +23,7 @@ public class LaneCombinationList
 {
 
     /** Lane combinations. Each combination is contained in both directions. */
-    private final Map<Lane, Set<Lane>> map = new HashMap<>();
+    private final Map<Lane, Set<Lane>> map = new LinkedHashMap<>();
 
     /**
      * Add any combination of lanes on both links to the list. Order of the links does not matter.
@@ -50,12 +50,12 @@ public class LaneCombinationList
     {
         if (!this.map.containsKey(lane1))
         {
-            this.map.put(lane1, new HashSet<>());
+            this.map.put(lane1, new LinkedHashSet<>());
         }
         this.map.get(lane1).add(lane2);
         if (!this.map.containsKey(lane2))
         {
-            this.map.put(lane2, new HashSet<>());
+            this.map.put(lane2, new LinkedHashSet<>());
         }
         this.map.get(lane2).add(lane1);
     }

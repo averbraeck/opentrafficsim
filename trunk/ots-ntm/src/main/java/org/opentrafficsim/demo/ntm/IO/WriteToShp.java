@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +82,7 @@ public class WriteToShp
         boolean DEBUG = false;
         ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
 
-        Map<String, Serializable> params = new HashMap<String, Serializable>();
+        Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         try
         {
             params.put("url", newFile.toURI().toURL());

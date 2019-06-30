@@ -3,7 +3,6 @@ package org.opentrafficsim.core.parameters;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -40,10 +39,10 @@ public class ParameterFactoryByType implements ParameterFactory
 {
 
     /** Parameters. */
-    private final Map<GTUType, Set<ParameterEntry<?>>> map = new HashMap<>();
+    private final Map<GTUType, Set<ParameterEntry<?>>> map = new LinkedHashMap<>();
 
     /** Map of correlations. */
-    private Map<GTUType, Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>>> correlations = new HashMap<>();
+    private Map<GTUType, Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>>> correlations = new LinkedHashMap<>();
 
     /** {@inheritDoc} */
     @Override

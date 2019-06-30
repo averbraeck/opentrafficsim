@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,19 +58,19 @@ public class ShapeStore
     private ArrayList<String> variableNames;
 
     /** */
-    private HashMap<String, String> variableTypeMap;
+    private LinkedHashMap<String, String> variableTypeMap;
 
     /** */
-    private HashMap<String, Class<? extends Object>> attributeClassTypes;
+    private LinkedHashMap<String, Class<? extends Object>> attributeClassTypes;
 
     /**
      * @param variableName
      * @param geometries
-     * @param variableTypeMap HashMap&lt;String,String&gt;;
-     * @param attributeClassTypes HashMap&lt;String,Class&lt;? extends Object&gt;&gt;;
+     * @param variableTypeMap LinkedHashMap&lt;String,String&gt;;
+     * @param attributeClassTypes LinkedHashMap&lt;String,Class&lt;? extends Object&gt;&gt;;
      */
     public ShapeStore(ArrayList<ShapeObject> geoObjects, ArrayList<String> variableNames,
-            HashMap<String, String> variableTypeMap, HashMap<String, Class<? extends Object>> attributeClassTypes)
+            LinkedHashMap<String, String> variableTypeMap, LinkedHashMap<String, Class<? extends Object>> attributeClassTypes)
     {
         super();
         this.geoObjects = geoObjects;
@@ -150,8 +151,8 @@ public class ShapeStore
             boolean attribute = true;
             ArrayList<ShapeObject> shapeObjects = new ArrayList<ShapeObject>();
             ArrayList<String> attributeNames = new ArrayList<String>();
-            HashMap<String, String> attributeTypes = new HashMap<String, String>();
-            HashMap<String, Class<? extends Object>> attributeClassTypes = new HashMap<String, Class<? extends Object>>();
+            LinkedHashMap<String, String> attributeTypes = new LinkedHashMap<String, String>();
+            LinkedHashMap<String, Class<? extends Object>> attributeClassTypes = new LinkedHashMap<String, Class<? extends Object>>();
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
@@ -227,7 +228,7 @@ public class ShapeStore
      */
     public static void createShapeFile(ShapeStore shapes, File newFile) throws IOException
     {
-        Map<String, Serializable> params = new HashMap<String, Serializable>();
+        Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         params.put("url", newFile.toURI().toURL());
         params.put("create spatial index", Boolean.TRUE);
 
@@ -416,15 +417,15 @@ public class ShapeStore
     /**
      * @return variableTypeMap.
      */
-    public HashMap<String, String> getVariableTypeMap()
+    public LinkedHashMap<String, String> getVariableTypeMap()
     {
         return this.variableTypeMap;
     }
 
     /**
-     * @param variableTypeMap HashMap&lt;String,String&gt;; set variableTypeMap.
+     * @param variableTypeMap LinkedHashMap&lt;String,String&gt;; set variableTypeMap.
      */
-    public void setVariableTypeMap(HashMap<String, String> variableTypeMap)
+    public void setVariableTypeMap(LinkedHashMap<String, String> variableTypeMap)
     {
         this.variableTypeMap = variableTypeMap;
     }
@@ -432,15 +433,15 @@ public class ShapeStore
     /**
      * @return attributeClassTypes.
      */
-    public HashMap<String, Class<? extends Object>> getAttributeClassTypes()
+    public LinkedHashMap<String, Class<? extends Object>> getAttributeClassTypes()
     {
         return attributeClassTypes;
     }
 
     /**
-     * @param attributeClassTypes HashMap&lt;String,Class&lt;? extends Object&gt;&gt;; set attributeClassTypes.
+     * @param attributeClassTypes LinkedHashMap&lt;String,Class&lt;? extends Object&gt;&gt;; set attributeClassTypes.
      */
-    public void setAttributeClassTypes(HashMap<String, Class<? extends Object>> attributeClassTypes)
+    public void setAttributeClassTypes(LinkedHashMap<String, Class<? extends Object>> attributeClassTypes)
     {
         this.attributeClassTypes = attributeClassTypes;
     }

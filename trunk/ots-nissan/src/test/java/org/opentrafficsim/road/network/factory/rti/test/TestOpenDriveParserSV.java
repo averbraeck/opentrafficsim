@@ -7,7 +7,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -449,7 +449,7 @@ public class TestOpenDriveParserSV extends OTSSimulationApplication<OTSModelInte
                 {
                     exception1.printStackTrace();
                 }
-                Set<DirectedLanePosition> lanepositionSet = new HashSet<>();
+                Set<DirectedLanePosition> lanepositionSet = new LinkedHashSet<>();
                 lanepositionSet.add(directedLanePosition);
 
                 Length carLength = lengthDist.draw();

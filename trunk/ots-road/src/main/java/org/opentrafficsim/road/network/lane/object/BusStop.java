@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane.object;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +42,7 @@ public class BusStop extends AbstractLaneBasedObject
     private static final long serialVersionUID = 20170124L;
 
     /** Line numbers. */
-    private final Set<String> lines = new HashSet<>();
+    private final Set<String> lines = new LinkedHashSet<>();
 
     /** Stop name. */
     private final String name;

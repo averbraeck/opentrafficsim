@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -39,11 +39,11 @@ class JunctionTag implements Serializable
 
     /** A map of connections in the junction */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, ConnectionTag> connectionTags = new HashMap<String, ConnectionTag>();
+    Map<String, ConnectionTag> connectionTags = new LinkedHashMap<String, ConnectionTag>();
 
     /** A map of controller in the junction */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, ControllerTag> controllerTags = new HashMap<String, ControllerTag>();
+    Map<String, ControllerTag> controllerTags = new LinkedHashMap<String, ControllerTag>();
 
     /**
      * Parse the attributes of the junction tag. The sub-elements are parsed in separate classes.

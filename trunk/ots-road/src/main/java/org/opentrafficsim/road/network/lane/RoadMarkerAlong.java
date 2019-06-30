@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +31,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
     private static final long serialVersionUID = 20141025L;
 
     /** Lateral permeability per GTU type and direction. */
-    private final Map<GTUType, Set<LateralDirectionality>> permeabilityMap = new HashMap<>();
+    private final Map<GTUType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
 
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
@@ -170,7 +170,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
     {
         if (!this.permeabilityMap.containsKey(gtuType))
         {
-            this.permeabilityMap.put(gtuType, new HashSet<LateralDirectionality>(2));
+            this.permeabilityMap.put(gtuType, new LinkedHashSet<LateralDirectionality>(2));
         }
         this.permeabilityMap.get(gtuType).add(lateralDirection);
     }

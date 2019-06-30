@@ -10,7 +10,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.media.j3d.Bounds;
@@ -48,7 +48,7 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
     private final BufferedImage image;
 
     /** The set of objects drawn on the image. */
-    private Set<TrafCODObject> trafCODObjects = new HashSet<>();
+    private Set<TrafCODObject> trafCODObjects = new LinkedHashSet<>();
 
     /** Store the tool tip delay so we can restore it when the mouse exits this TrafCODDisplay. */
     final int defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();

@@ -1,7 +1,7 @@
 package org.opentrafficsim.draw.network;
 
 import java.rmi.RemoteException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.naming.Binding;
@@ -128,7 +128,7 @@ public final class OTSNetworkAnimationUtils
     @SuppressWarnings("checkstyle:designforextension")
     public static void destroy(final OTSNetwork network, final SimulatorInterface.TimeDoubleUnit simulator)
     {
-        Set<Renderable2DInterface<?>> animationObjects = new HashSet<>();
+        Set<Renderable2DInterface<?>> animationObjects = new LinkedHashSet<>();
         try
         {
             EventContext context = (EventContext) ContextUtil.lookup(simulator.getReplication().getContext(), "/animation/2D");

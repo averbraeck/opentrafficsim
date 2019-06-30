@@ -2,7 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,11 +52,11 @@ public class BuildGraph
         /** Debug information?. */
         final boolean DEBUG = false;
         // temporary storage for nodes and edges mapped from the number to the node
-        Map<String, NTMNode> nodeMap = new HashMap<>();
-        // Map<String, Node> nodeAreaGraphMap = new HashMap<>();
+        Map<String, NTMNode> nodeMap = new LinkedHashMap<>();
+        // Map<String, Node> nodeAreaGraphMap = new LinkedHashMap<>();
 
-        Map<Area, NTMNode> areaNodeCentroidMap = new HashMap<>();
-        Map<String, LinkEdge<NTMLink>> linkMap = new HashMap<>();
+        Map<Area, NTMNode> areaNodeCentroidMap = new LinkedHashMap<>();
+        Map<String, LinkEdge<NTMLink>> linkMap = new LinkedHashMap<>();
         ArrayList<NTMLink> allLinks = new ArrayList<NTMLink>();
 
         allLinks.addAll(model.getShpLinks().values());

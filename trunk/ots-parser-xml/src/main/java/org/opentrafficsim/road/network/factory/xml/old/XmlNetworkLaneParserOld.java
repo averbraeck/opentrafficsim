@@ -6,8 +6,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -83,59 +82,59 @@ public class XmlNetworkLaneParserOld implements Serializable
 
     /** The UNprocessed nodes for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, NodeTag> nodeTags = new HashMap<>();
+    protected Map<String, NodeTag> nodeTags = new LinkedHashMap<>();
 
     /** The UNprocessed connectors for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, ConnectorTag> connectorTags = new HashMap<>();
+    protected Map<String, ConnectorTag> connectorTags = new LinkedHashMap<>();
 
     /** The UNprocessed links for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, LinkTag> linkTags = new HashMap<>();
+    protected Map<String, LinkTag> linkTags = new LinkedHashMap<>();
 
     /** The GTU tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    public Map<String, GTUTag> gtuTags = new HashMap<>();
+    public Map<String, GTUTag> gtuTags = new LinkedHashMap<>();
 
     /** The GTUmix tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
+    protected Map<String, GTUMixTag> gtuMixTags = new LinkedHashMap<>();
 
     /** The route tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, RouteTag> routeTags = new HashMap<>();
+    protected Map<String, RouteTag> routeTags = new LinkedHashMap<>();
 
     /** The route mix tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
+    protected Map<String, RouteMixTag> routeMixTags = new LinkedHashMap<>();
 
     /** The shortest route tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
+    protected Map<String, ShortestRouteTag> shortestRouteTags = new LinkedHashMap<>();
 
     /** The shortest route mix tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
+    protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new LinkedHashMap<>();
 
     /** The road type tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
+    protected Map<String, RoadTypeTag> roadTypeTags = new LinkedHashMap<>();
 
     /** The road layout tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, RoadLayoutTag> roadLayoutTags = new HashMap<>();
+    protected Map<String, RoadLayoutTag> roadLayoutTags = new LinkedHashMap<>();
 
     /** The GTUTypes that have been created. public to make it accessible from LaneAttributes. */
     @SuppressWarnings("visibilitymodifier")
-    public Map<String, GTUType> gtuTypes = new HashMap<>();
+    public Map<String, GTUType> gtuTypes = new LinkedHashMap<>();
 
     /** The LaneType tags that have been created. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, LaneTypeTag> laneTypeTags = new HashMap<>();
+    protected Map<String, LaneTypeTag> laneTypeTags = new LinkedHashMap<>();
 
     /** The LaneTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, LaneType> laneTypes = new HashMap<>();
+    protected Map<String, LaneType> laneTypes = new LinkedHashMap<>();
 
     /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
@@ -408,7 +407,7 @@ public class XmlNetworkLaneParserOld implements Serializable
             NamingException, ValueException, ParameterException, SimRuntimeException
     {
         // Reduce the list to only OD comments and strip the OD header and parse each into a key-value map.
-        Map<String, Map<String, String>> odInfo = new HashMap<>();
+        Map<String, Map<String, String>> odInfo = new LinkedHashMap<>();
         for (String comment : getXMLComments())
         {
             if (comment.startsWith("OD "))
@@ -443,10 +442,10 @@ public class XmlNetworkLaneParserOld implements Serializable
             throw new NetworkException("Cannot find start time XML comment");
         }
         // Construct the centroid nodes and the links between the centroid nodes and the generation and extraction nodes
-        Set<org.opentrafficsim.core.network.Node> origins = new HashSet<>();
-        Set<org.opentrafficsim.core.network.Node> destinations = new HashSet<>();
-        Set<String> startTimeStrings = new HashSet<>();
-        Map<String, String> durations = new HashMap<>();
+        Set<org.opentrafficsim.core.network.Node> origins = new LinkedHashSet<>();
+        Set<org.opentrafficsim.core.network.Node> destinations = new LinkedHashSet<>();
+        Set<String> startTimeStrings = new LinkedHashSet<>();
+        Map<String, String> durations = new LinkedHashMap<>();
         for (Map<String, String> map : odInfo.values())
         {
             String od = map.get("od");
@@ -560,7 +559,7 @@ public class XmlNetworkLaneParserOld implements Serializable
             System.out.println(
                     "Adding demand from " + from.getId() + " to " + to.getId() + " category " + category + ": " + demand);
         }
-        Set<TemplateGTUType> templates = new HashSet<>();
+        Set<TemplateGTUType> templates = new LinkedHashSet<>();
         for (GTUType gtuType : odGTUTypes)
         {
             GTUTag gtuTag = this.gtuTags.get(gtuType.getId());
@@ -576,7 +575,7 @@ public class XmlNetworkLaneParserOld implements Serializable
      */
     private Map<String, String> parseODLine(final String line)
     {
-        Map<String, String> result = new HashMap<>();
+        Map<String, String> result = new LinkedHashMap<>();
         // For now we'll assume that names of centroids, links and nodes do not contain spaces.
         for (String pair : line.split(" "))
         {

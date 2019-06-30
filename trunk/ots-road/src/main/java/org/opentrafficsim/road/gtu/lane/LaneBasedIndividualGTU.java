@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,7 +45,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     private static final long serialVersionUID = 20141025L;
 
     /** Sensing positions. */
-    private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new HashMap<>();
+    private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
 
     /** cached front. */
     private final RelativePosition frontPos;
@@ -54,7 +54,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     private final RelativePosition rearPos;
 
     /** contour points. */
-    private final Set<RelativePosition> contourPoints = new HashSet<>();
+    private final Set<RelativePosition> contourPoints = new LinkedHashSet<>();
 
     /**
      * Construct a new LaneBasedIndividualGTU.

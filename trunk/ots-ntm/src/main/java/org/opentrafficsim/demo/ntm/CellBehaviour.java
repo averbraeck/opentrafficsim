@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.ntm;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -26,11 +27,11 @@ public class CellBehaviour
     public CellBehaviour()
     {
         super();
-        this.tripInfoByDestinationMap = new HashMap<NTMNode, TripInfoByDestination>();
+        this.tripInfoByDestinationMap = new LinkedHashMap<NTMNode, TripInfoByDestination>();
     }
 
     /** The first Area/Node encountered on the path to Destination. */
-    private HashMap<NTMNode, TripInfoByDestination> tripInfoByDestinationMap;
+    private LinkedHashMap<NTMNode, TripInfoByDestination> tripInfoByDestinationMap;
 
     /** Maximum in-flow */
     private double supply;
@@ -51,10 +52,10 @@ public class CellBehaviour
     private double departures;
 
     /** */
-    private HashMap<BoundedNode, Frequency> borderCapacity;
+    private LinkedHashMap<BoundedNode, Frequency> borderCapacity;
 
     /** */
-    private HashMap<BoundedNode, Frequency> borderDemand;
+    private LinkedHashMap<BoundedNode, Frequency> borderDemand;
 
     /**
      * @return supply.
@@ -168,15 +169,15 @@ public class CellBehaviour
     /**
      * @return tripInfoNode.
      */
-    public final HashMap<NTMNode, TripInfoByDestination> getTripInfoByDestinationMap()
+    public final LinkedHashMap<NTMNode, TripInfoByDestination> getTripInfoByDestinationMap()
     {
         return this.tripInfoByDestinationMap;
     }
 
     /**
-     * @param tripInfoByDestinationMap HashMap&lt;NTMNode,TripInfoByDestination&gt;; set tripInfoNode.
+     * @param tripInfoByDestinationMap LinkedHashMap&lt;NTMNode,TripInfoByDestination&gt;; set tripInfoNode.
      */
-    public final void setTripInfoByDestinationMap(final HashMap<NTMNode, TripInfoByDestination> tripInfoByDestinationMap)
+    public final void setTripInfoByDestinationMap(final LinkedHashMap<NTMNode, TripInfoByDestination> tripInfoByDestinationMap)
     {
         this.tripInfoByDestinationMap = tripInfoByDestinationMap;
     }
@@ -208,15 +209,15 @@ public class CellBehaviour
     /**
      * @return borderCapacity.
      */
-    public HashMap<BoundedNode, Frequency> getBorderCapacity()
+    public LinkedHashMap<BoundedNode, Frequency> getBorderCapacity()
     {
         return borderCapacity;
     }
 
     /**
-     * @param borderCapacity HashMap&lt;BoundedNode,Frequency&gt;; set borderCapacity.
+     * @param borderCapacity LinkedHashMap&lt;BoundedNode,Frequency&gt;; set borderCapacity.
      */
-    public void setBorderCapacity(HashMap<BoundedNode, Frequency> borderCapacity)
+    public void setBorderCapacity(LinkedHashMap<BoundedNode, Frequency> borderCapacity)
     {
         this.borderCapacity = borderCapacity;
     }
@@ -242,15 +243,15 @@ public class CellBehaviour
     /**
      * @return borderDemand.
      */
-    public HashMap<BoundedNode, Frequency> getBorderDemand()
+    public LinkedHashMap<BoundedNode, Frequency> getBorderDemand()
     {
         return borderDemand;
     }
 
     /**
-     * @param borderDemand HashMap&lt;BoundedNode,Frequency&gt;; set borderDemand.
+     * @param borderDemand LinkedHashMap&lt;BoundedNode,Frequency&gt;; set borderDemand.
      */
-    public void setBorderDemand(HashMap<BoundedNode, Frequency> borderDemand)
+    public void setBorderDemand(LinkedHashMap<BoundedNode, Frequency> borderDemand)
     {
         this.borderDemand = borderDemand;
     }

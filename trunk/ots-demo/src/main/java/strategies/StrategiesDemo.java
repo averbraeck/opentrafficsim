@@ -5,9 +5,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +117,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class StrategiesDemo extends AbstractSimulationScript
 {
     /** Factories. */
-    private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new HashMap<>();
+    private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
 
     /** GTU id number. */
     private int gtuIdNum = 0;

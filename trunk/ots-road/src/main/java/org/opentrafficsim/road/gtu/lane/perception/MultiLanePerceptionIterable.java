@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.SortedMap;
@@ -30,13 +30,13 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
 {
 
     /** Set of iterators per lane. */
-    private final Map<RelativeLane, Iterator<PrimaryIteratorEntry>> iterators = new HashMap<>();
+    private final Map<RelativeLane, Iterator<PrimaryIteratorEntry>> iterators = new LinkedHashMap<>();
 
     /** Map of lane per object. */
-    private final Map<U, RelativeLane> laneMap = new HashMap<>();
+    private final Map<U, RelativeLane> laneMap = new LinkedHashMap<>();
 
     /** Map of iterable per lane. */
-    private final Map<RelativeLane, AbstractPerceptionReiterable<H, U>> iterables = new HashMap<>();
+    private final Map<RelativeLane, AbstractPerceptionReiterable<H, U>> iterables = new LinkedHashMap<>();
 
     /**
      * Constructor.

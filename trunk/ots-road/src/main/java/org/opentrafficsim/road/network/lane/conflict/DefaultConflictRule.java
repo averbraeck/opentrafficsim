@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -76,7 +76,7 @@ public class DefaultConflictRule implements ConflictRule
             ConflictPriority[] conflictPriorities = getConflictRules(conflict.getLane(), conflict.getLongitudinalPosition(),
                     conflict.getOtherConflict().getLane(), conflict.getOtherConflict().getLongitudinalPosition(),
                     conflict.getConflictType());
-            this.map = new HashMap<>();
+            this.map = new LinkedHashMap<>();
             this.map.put(conflict.getId(), conflictPriorities[0]);
             this.map.put(conflict.getOtherConflict().getId(), conflictPriorities[1]);
         }

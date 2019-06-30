@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml.units;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.unit.TimeUnit;
@@ -20,7 +20,7 @@ import org.opentrafficsim.core.network.NetworkException;
 public final class TimeUnits
 {
     /** The time units. */
-    public static final Map<String, TimeUnit> TIME_UNITS = new HashMap<>();
+    public static final Map<String, TimeUnit> TIME_UNITS = new LinkedHashMap<>();
 
     static
     {

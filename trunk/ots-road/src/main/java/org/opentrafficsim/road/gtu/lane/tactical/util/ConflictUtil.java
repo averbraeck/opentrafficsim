@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu.lane.tactical.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -31,7 +31,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
@@ -958,10 +957,10 @@ public final class ConflictUtil
         private static final long serialVersionUID = 20160811L;
 
         /** Phases of navigating an all-stop intersection per intersection. */
-        private final HashMap<String, StopPhase> stopPhases = new HashMap<>();
+        private final LinkedHashMap<String, StopPhase> stopPhases = new LinkedHashMap<>();
 
         /** Estimated arrival times of vehicles at all-stop intersection. */
-        private final HashMap<String, Time> arrivalTimes = new HashMap<>();
+        private final LinkedHashMap<String, Time> arrivalTimes = new LinkedHashMap<>();
 
         /** Indicator intent. */
         private TurnIndicatorIntent indicatorIntent = TurnIndicatorIntent.NONE;

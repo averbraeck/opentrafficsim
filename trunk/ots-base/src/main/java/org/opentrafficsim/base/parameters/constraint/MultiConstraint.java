@@ -1,6 +1,6 @@
 package org.opentrafficsim.base.parameters.constraint;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -36,7 +36,7 @@ public class MultiConstraint<T> implements Constraint<T>
     @SafeVarargs
     public static final <T> MultiConstraint<T> create(final Constraint<T>... constraints)
     {
-        Set<Constraint<T>> set = new HashSet<>();
+        Set<Constraint<T>> set = new LinkedHashSet<>();
         for (Constraint<T> constraint : constraints)
         {
             set.add(constraint);

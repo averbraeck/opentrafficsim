@@ -4,8 +4,8 @@
 package org.opentrafficsim.water.demand;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +41,7 @@ public class TransportDemand implements Serializable
     private Region operatingArea;
 
     /** the demand from and to terminals. */
-    private Map<Terminal, Map<Terminal, DemandCell>> demandMap = new HashMap<Terminal, Map<Terminal, DemandCell>>();
+    private Map<Terminal, Map<Terminal, DemandCell>> demandMap = new LinkedHashMap<Terminal, Map<Terminal, DemandCell>>();
 
     /**
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator for scheduling the demand
@@ -78,7 +78,7 @@ public class TransportDemand implements Serializable
         Map<Terminal, DemandCell> partMap = this.demandMap.get(demandCell.getTerminalFrom());
         if (partMap == null)
         {
-            partMap = new HashMap<Terminal, DemandCell>();
+            partMap = new LinkedHashMap<Terminal, DemandCell>();
             this.demandMap.put(demandCell.getTerminalFrom(), partMap);
         }
         partMap.put(demandCell.getTerminalTo(), demandCell);
@@ -131,7 +131,7 @@ public class TransportDemand implements Serializable
      */
     public final Map<Terminal, DemandCell> getDemandMapTo(final Terminal terminalTo)
     {
-        Map<Terminal, DemandCell> toMap = new HashMap<Terminal, DemandCell>();
+        Map<Terminal, DemandCell> toMap = new LinkedHashMap<Terminal, DemandCell>();
         for (Terminal from : this.demandMap.keySet())
         {
             for (Terminal to : this.demandMap.get(from).keySet())
@@ -151,7 +151,7 @@ public class TransportDemand implements Serializable
      */
     public final Set<DemandCell> getDemandSetFrom(final Terminal terminalFrom)
     {
-        return new HashSet<DemandCell>(this.demandMap.get(terminalFrom).values());
+        return new LinkedHashSet<DemandCell>(this.demandMap.get(terminalFrom).values());
     }
 
     /**
@@ -160,7 +160,7 @@ public class TransportDemand implements Serializable
      */
     public final Set<DemandCell> getDemandSetTo(final Terminal terminalTo)
     {
-        Set<DemandCell> toSet = new HashSet<DemandCell>();
+        Set<DemandCell> toSet = new LinkedHashSet<DemandCell>();
         for (Terminal from : this.demandMap.keySet())
         {
             for (Terminal to : this.demandMap.get(from).keySet())
@@ -216,7 +216,7 @@ public class TransportDemand implements Serializable
         private double fractionEmpty;
 
         /** table with fractions (adding up to 1.0) who owns the containers. */
-        private Map<Company, Double> fractionOwners = new HashMap<Company, Double>();
+        private Map<Company, Double> fractionOwners = new LinkedHashMap<Company, Double>();
 
         /**
          * @param terminalFrom Terminal; origin terminal

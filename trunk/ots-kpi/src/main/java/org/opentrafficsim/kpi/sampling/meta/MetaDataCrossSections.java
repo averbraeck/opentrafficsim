@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.sampling.meta;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -67,7 +67,7 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
     {
         Throw.whenNull(trajectoryAcceptList, "Trajectory accept list may not be null.");
         Throw.whenNull(querySet, "Qeury set may not be null.");
-        Set<CrossSection> crossedCrossSections = new HashSet<>();
+        Set<CrossSection> crossedCrossSections = new LinkedHashSet<>();
         // Loop over trajectoryList/trajectoryGroupList combo
         for (int i = 0; i < trajectoryAcceptList.size(); i++)
         {

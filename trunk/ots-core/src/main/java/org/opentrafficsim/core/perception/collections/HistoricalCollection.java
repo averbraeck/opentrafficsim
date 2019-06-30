@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.perception.collections;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -42,7 +42,7 @@ public interface HistoricalCollection<E> extends Collection<E>
     {
         Objects.requireNonNull(filter);
         boolean removed = false;
-        HashSet<E> removes = new HashSet<>();
+        LinkedHashSet<E> removes = new LinkedHashSet<>();
         final Iterator<E> each = iterator();
         while (each.hasNext())
         {

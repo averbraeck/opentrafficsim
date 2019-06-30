@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -272,7 +272,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         {
 
             Random seedGenerator = new Random(1L);
-            Map<String, StreamInterface> streams = new HashMap<>();
+            Map<String, StreamInterface> streams = new LinkedHashMap<>();
             StreamInterface stream = new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1);
             streams.put("headwayGeneration", stream);
             streams.put("gtuClass", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));

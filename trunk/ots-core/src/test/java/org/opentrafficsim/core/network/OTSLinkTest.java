@@ -63,7 +63,7 @@ public class OTSLinkTest implements EventListenerInterface
         LinkType linkType = new LinkType("myLinkType", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
         OTSSimulatorInterface simulator = MockSimulator.createMock();
-        // Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
+        // Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine, simulator);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         // directionalityMap is currently empty

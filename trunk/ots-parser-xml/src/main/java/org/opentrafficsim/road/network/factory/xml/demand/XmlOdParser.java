@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -71,7 +70,7 @@ public class XmlOdParser implements Serializable
     final OTSRoadNetwork network;
 
     /** GTU types. */
-    private final Map<String, GTUType> gtuTypes = new HashMap<>();
+    private final Map<String, GTUType> gtuTypes = new LinkedHashMap<>();
 
     /** Categorization. */
     Categorization categorization;

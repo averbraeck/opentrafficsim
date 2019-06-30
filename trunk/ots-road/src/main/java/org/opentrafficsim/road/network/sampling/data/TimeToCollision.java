@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,8 +50,8 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
         try
         {
             DirectedLanePosition ref = gtuObj.getReferencePosition();
-            Map<Lane, GTUDirectionality> map = new HashMap<>();
-            Set<LaneDirection> visited = new HashSet<>();
+            Map<Lane, GTUDirectionality> map = new LinkedHashMap<>();
+            Set<LaneDirection> visited = new LinkedHashSet<>();
             map.put(ref.getLane(), ref.getGtuDirection());
             Length pos = ref.getPosition();
             Length cumulDist = Length.ZERO; // from start of lane

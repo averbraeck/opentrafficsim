@@ -10,8 +10,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -80,13 +80,13 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     final List<Object[]> tokenisedRules = new ArrayList<>();
 
     /** The TrafCOD variables. */
-    final Map<String, Variable> variables = new HashMap<>();
+    final Map<String, Variable> variables = new LinkedHashMap<>();
 
     /** The TrafCOD variables in order of definition. */
     final List<Variable> variablesInDefinitionOrder = new ArrayList<>();
 
     /** The detectors. */
-    final Map<String, Variable> detectors = new HashMap<>();
+    final Map<String, Variable> detectors = new LinkedHashMap<>();
 
     /** Comment starter in TrafCOD. */
     final static String COMMENT_PREFIX = "#";
@@ -446,7 +446,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             throw new SimRuntimeException("Model is not an OTSModelInterface");
         }
         ImmutableCollection<TrafficLight> trafficLights = network.getObjectMap(TrafficLight.class).values();
-        Map<String, List<TrafficLight>> trafficLightMap = new HashMap<>();
+        Map<String, List<TrafficLight>> trafficLightMap = new LinkedHashMap<>();
         for (TrafficLight tl : trafficLights)
         {
             String trafficLightName = tl.getId();
@@ -470,7 +470,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             }
             list.add(tl);
         }
-        Map<String, TrafficLightSensor> sensors = new HashMap<>();
+        Map<String, TrafficLightSensor> sensors = new LinkedHashMap<>();
         // Look up all the flank sensors and collect their parents (the traffic light sensors)
         for (FlankSensor flankSensor : network.getObjectMap(FlankSensor.class).values())
         {
@@ -2497,7 +2497,7 @@ class Variable implements EventListenerInterface
         }
         if (null == this.trafficLights)
         {
-            this.trafficLights = new HashSet<>();
+            this.trafficLights = new LinkedHashSet<>();
         }
         // Convert the TrafCOD color value to the corresponding TrafficLightColor
         TrafficLightColor newColor;

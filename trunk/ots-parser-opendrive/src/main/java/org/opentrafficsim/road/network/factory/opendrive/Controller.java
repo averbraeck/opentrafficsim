@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +43,7 @@ public class Controller implements Serializable
     private String id;
 
     /** */
-    private Map<Integer, Set<SimpleTrafficLight>> trafficLights = new HashMap<Integer, Set<SimpleTrafficLight>>();
+    private Map<Integer, Set<SimpleTrafficLight>> trafficLights = new LinkedHashMap<Integer, Set<SimpleTrafficLight>>();
 
     /**
      * @param name String; the name of the OnOffTrafficLight
@@ -258,7 +258,7 @@ public class Controller implements Serializable
     {
         if (!this.trafficLights.containsKey(sequence2))
         {
-            Set<SimpleTrafficLight> trafficLightsSet = new HashSet<SimpleTrafficLight>();
+            Set<SimpleTrafficLight> trafficLightsSet = new LinkedHashSet<SimpleTrafficLight>();
             this.trafficLights.put(sequence2, trafficLightsSet);
         }
         this.trafficLights.get(sequence2).add(trafficLight);

@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Random;
 
 import org.djunits.unit.DurationUnit;
@@ -128,7 +128,7 @@ public class Routes
 
             FloydWarshallShortestPaths<NTMNode, LinkEdge<NTMLink>> allPaths =
                     new FloydWarshallShortestPaths<>(model.getAreaGraph());
-            Collection<GraphPath<NTMNode, LinkEdge<NTMLink>>> sp1 = new HashSet<>();
+            Collection<GraphPath<NTMNode, LinkEdge<NTMLink>>> sp1 = new LinkedHashSet<>();
             for (NTMNode source : model.getAreaGraph().vertexSet())
             {
                 for (NTMNode sink : model.getAreaGraph().vertexSet())
@@ -168,11 +168,11 @@ public class Routes
                         weightNew = 1.0;
                         if (i == 0)
                         {
-                            HashMap<BoundedNode, java.lang.Double> neighbours = new HashMap<BoundedNode, java.lang.Double>();
-                            HashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
-                                    new HashMap<BoundedNode, java.lang.Double>();
-                            HashMap<BoundedNode, java.lang.Double> demandToNeighbour =
-                                    new HashMap<BoundedNode, java.lang.Double>();
+                            LinkedHashMap<BoundedNode, java.lang.Double> neighbours = new LinkedHashMap<BoundedNode, java.lang.Double>();
+                            LinkedHashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
+                                    new LinkedHashMap<BoundedNode, java.lang.Double>();
+                            LinkedHashMap<BoundedNode, java.lang.Double> demandToNeighbour =
+                                    new LinkedHashMap<BoundedNode, java.lang.Double>();
                             TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours,
                                     accumulatedCarsToNeighbour, demandToNeighbour, destination);
                             origin.getCellBehaviour().getTripInfoByDestinationMap().put(destination, tripInfoByNode);
@@ -242,12 +242,12 @@ public class Routes
                             // only at first step: initiate variables
                             if (initiateSimulation)
                             {
-                                HashMap<BoundedNode, java.lang.Double> neighbours =
-                                        new HashMap<BoundedNode, java.lang.Double>();
-                                HashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
-                                        new HashMap<BoundedNode, java.lang.Double>();
-                                HashMap<BoundedNode, java.lang.Double> demandToNeighbour =
-                                        new HashMap<BoundedNode, java.lang.Double>();
+                                LinkedHashMap<BoundedNode, java.lang.Double> neighbours =
+                                        new LinkedHashMap<BoundedNode, java.lang.Double>();
+                                LinkedHashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
+                                        new LinkedHashMap<BoundedNode, java.lang.Double>();
+                                LinkedHashMap<BoundedNode, java.lang.Double> demandToNeighbour =
+                                        new LinkedHashMap<BoundedNode, java.lang.Double>();
                                 TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours,
                                         accumulatedCarsToNeighbour, demandToNeighbour, destination);
                                 cell.getCellBehaviourFlow().getTripInfoByDestinationMap().put(destination, tripInfoByNode);
@@ -256,12 +256,12 @@ public class Routes
                             {
                                 if (cell.getCellBehaviourFlow().getTripInfoByDestinationMap().get(destination) == null)
                                 {
-                                    HashMap<BoundedNode, java.lang.Double> neighbours =
-                                            new HashMap<BoundedNode, java.lang.Double>();
-                                    HashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
-                                            new HashMap<BoundedNode, java.lang.Double>();
-                                    HashMap<BoundedNode, java.lang.Double> demandToNeighbour =
-                                            new HashMap<BoundedNode, java.lang.Double>();
+                                    LinkedHashMap<BoundedNode, java.lang.Double> neighbours =
+                                            new LinkedHashMap<BoundedNode, java.lang.Double>();
+                                    LinkedHashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
+                                            new LinkedHashMap<BoundedNode, java.lang.Double>();
+                                    LinkedHashMap<BoundedNode, java.lang.Double> demandToNeighbour =
+                                            new LinkedHashMap<BoundedNode, java.lang.Double>();
                                     TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours,
                                             accumulatedCarsToNeighbour, demandToNeighbour, destination);
                                     cell.getCellBehaviourFlow().getTripInfoByDestinationMap().put(destination, tripInfoByNode);

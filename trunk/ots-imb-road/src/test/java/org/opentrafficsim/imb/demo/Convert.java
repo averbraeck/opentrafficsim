@@ -5,8 +5,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,13 +30,13 @@ public class Convert
 
     private static List<String> nodesWB = new ArrayList<>();
 
-    private static Map<Coordinate, String> coordinateMap = new HashMap<>();
+    private static Map<Coordinate, String> coordinateMap = new LinkedHashMap<>();
 
-    private static Map<String, Integer> nodeMaxLanesMap = new HashMap<>();
+    private static Map<String, Integer> nodeMaxLanesMap = new LinkedHashMap<>();
 
     private static List<String> linksEB = new ArrayList<>();
 
-    private static Set<String> mainNodes = new HashSet<>();
+    private static Set<String> mainNodes = new LinkedHashSet<>();
 
     private static List<String> linksWB = new ArrayList<>();
 

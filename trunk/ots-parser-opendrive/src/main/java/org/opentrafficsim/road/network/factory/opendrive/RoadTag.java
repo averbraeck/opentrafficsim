@@ -6,8 +6,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +28,6 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.ShoulderAnimation;
@@ -945,13 +944,13 @@ class RoadTag implements Serializable
 
                     if (!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
                     {
-                        Set<SimpleTrafficLight> lights = new HashSet<SimpleTrafficLight>();
+                        Set<SimpleTrafficLight> lights = new LinkedHashSet<SimpleTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsBySignals.put(signalTag.id, lights);
                     }
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
-                        Set<SimpleTrafficLight> lights = new HashSet<SimpleTrafficLight>();
+                        Set<SimpleTrafficLight> lights = new LinkedHashSet<SimpleTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
                     }
 
@@ -1013,7 +1012,7 @@ class RoadTag implements Serializable
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
-                        Set<SimpleTrafficLight> lights = new HashSet<SimpleTrafficLight>();
+                        Set<SimpleTrafficLight> lights = new LinkedHashSet<SimpleTrafficLight>();
                         openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
                     }
 

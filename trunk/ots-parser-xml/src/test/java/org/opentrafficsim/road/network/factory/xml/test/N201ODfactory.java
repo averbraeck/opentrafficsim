@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -235,7 +235,7 @@ public class N201ODfactory
                 "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
                 "L6b", "L5b", "L4b3b", "L2b", "L1b"};
         MetaDataSet metaDataSet = new MetaDataSet();
-        Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
+        Set<GtuTypeDataInterface> gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(new GtuTypeData(network.getGtuType(GTUType.DEFAULTS.CAR)));
         gtuTypes.add(new GtuTypeData(network.getGtuType(GTUType.DEFAULTS.BUS)));
         metaDataSet.put(new MetaDataGtuType(), gtuTypes);

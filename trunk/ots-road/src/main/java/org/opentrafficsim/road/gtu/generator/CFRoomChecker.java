@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -101,7 +101,7 @@ public class CFRoomChecker implements RoomChecker
         }
         else
         {
-            generationPosition = new HashSet<>();
+            generationPosition = new LinkedHashSet<>();
             for (DirectedLanePosition dirPos : initialPosition)
             {
                 Lane lane = dirPos.getLane();

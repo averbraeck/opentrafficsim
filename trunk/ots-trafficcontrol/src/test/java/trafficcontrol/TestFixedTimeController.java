@@ -6,8 +6,8 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +56,7 @@ public class TestFixedTimeController
     public void testConstructors() throws SimRuntimeException, NamingException, NetworkException
     {
         String signalGroupId = "sgId";
-        Set<String> trafficLightIds = new HashSet<>();
+        Set<String> trafficLightIds = new LinkedHashSet<>();
         String trafficLightId = "08.1";
         trafficLightIds.add(trafficLightId);
         Duration signalGroupOffset = Duration.createSI(5);
@@ -119,7 +119,7 @@ public class TestFixedTimeController
         }
         try
         {
-            new SignalGroup(signalGroupId, new HashSet<String>(), signalGroupOffset, preGreen, green, yellow);
+            new SignalGroup(signalGroupId, new LinkedHashSet<String>(), signalGroupOffset, preGreen, green, yellow);
             fail("Empty list of traffic light ids should have thrown an illegal argument exception");
         }
         catch (IllegalArgumentException iae)
@@ -139,7 +139,7 @@ public class TestFixedTimeController
         String ftcId = "FTCid";
         OTSSimulatorInterface simulator = new OTSSimulator();
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600), createModelMock());
-        Map<String, TrafficLight> trafficLightMap = new HashMap<String, TrafficLight>();
+        Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
         trafficLightMap.put(trafficLightId, createTrafficLightMock(trafficLightId, networkId, simulator));
         OTSNetwork network = new OTSNetwork(networkId, true);
@@ -147,7 +147,7 @@ public class TestFixedTimeController
 
         Duration cycleTime = Duration.createSI(90);
         Duration offset = Duration.createSI(20);
-        Set<SignalGroup> signalGroups = new HashSet<>();
+        Set<SignalGroup> signalGroups = new LinkedHashSet<>();
         ImmutableSet<String> ids = sg.getTrafficLightIds();
         for (String tlId : ids)
         {
@@ -214,7 +214,7 @@ public class TestFixedTimeController
         }
         try
         {
-            new FixedTimeController(ftcId, simulator, network, cycleTime, offset, new HashSet<SignalGroup>());
+            new FixedTimeController(ftcId, simulator, network, cycleTime, offset, new LinkedHashSet<SignalGroup>());
             fail("Empty signal groups should have thrown an exception");
         }
         catch (IllegalArgumentException iae)
@@ -275,7 +275,7 @@ public class TestFixedTimeController
     public void testDisjoint() throws SimRuntimeException, NamingException, NetworkException
     {
         String signalGroupId = "sgId1";
-        Set<String> trafficLightIds1 = new HashSet<>();
+        Set<String> trafficLightIds1 = new LinkedHashSet<>();
         String trafficLightId = "08.1";
         trafficLightIds1.add(trafficLightId);
         Duration signalGroupOffset = Duration.createSI(5);
@@ -284,14 +284,14 @@ public class TestFixedTimeController
         Duration yellow = Duration.createSI(3.5);
         SignalGroup sg1 = new SignalGroup(signalGroupId, trafficLightIds1, signalGroupOffset, preGreen, green, yellow);
         String signalGroupId2 = "sgId2";
-        Set<String> trafficLightIds2 = new HashSet<>();
+        Set<String> trafficLightIds2 = new LinkedHashSet<>();
         trafficLightIds2.add(trafficLightId);
         SignalGroup sg2 = new SignalGroup(signalGroupId2, trafficLightIds2, signalGroupOffset, preGreen, green, yellow);
 
         String ftcId = "FTCid";
         OTSSimulatorInterface simulator = new OTSSimulator();
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600), createModelMock());
-        Map<String, TrafficLight> trafficLightMap = new HashMap<String, TrafficLight>();
+        Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
         trafficLightMap.put(trafficLightId, createTrafficLightMock(trafficLightId, networkId, simulator));
         OTSNetwork network = new OTSNetwork(networkId, true);
@@ -299,7 +299,7 @@ public class TestFixedTimeController
 
         Duration cycleTime = Duration.createSI(90);
         Duration offset = Duration.createSI(20);
-        Set<SignalGroup> signalGroups = new HashSet<>();
+        Set<SignalGroup> signalGroups = new LinkedHashSet<>();
         signalGroups.add(sg1);
         signalGroups.add(sg2);
         try
@@ -323,10 +323,10 @@ public class TestFixedTimeController
     public void testTimings() throws SimRuntimeException, NamingException, NetworkException
     {
         String signalGroupId = "sgId";
-        Set<String> trafficLightIds = new HashSet<>();
+        Set<String> trafficLightIds = new LinkedHashSet<>();
         String trafficLightId = "08.1";
         trafficLightIds.add(trafficLightId);
-        Set<SignalGroup> signalGroups = new HashSet<>();
+        Set<SignalGroup> signalGroups = new LinkedHashSet<>();
         for (int cycleTime : new int[] {60, 90})
         {
             Duration cycle = Duration.createSI(cycleTime);
@@ -353,7 +353,7 @@ public class TestFixedTimeController
                                 String ftcId = "FTCid";
                                 OTSSimulatorInterface simulator = new OTSSimulator();
                                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600), createModelMock());
-                                Map<String, TrafficLight> trafficLightMap = new HashMap<String, TrafficLight>();
+                                Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
                                 String networkId = "networkID";
                                 trafficLightMap.put(trafficLightId,
                                         createTrafficLightMock(trafficLightId, networkId, simulator));
@@ -508,7 +508,7 @@ public class TestFixedTimeController
     }
 
     /** Remember current state of all mocked traffic lights. */
-    Map<String, TrafficLightColor> currentTrafficLightColors = new HashMap<>();
+    Map<String, TrafficLightColor> currentTrafficLightColors = new LinkedHashMap<>();
 
     /**
      * Mock a traffic light.

@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.animation;
 
 import java.awt.Color;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -19,7 +19,7 @@ public class FixedColorer<D extends Drawable> implements Colorer<D>
     private final Color color;
 
     /** cache for colors, so they're only stored once. */
-    private static final Map<Color, FixedColorer<?>> CACHE = new HashMap<>();
+    private static final Map<Color, FixedColorer<?>> CACHE = new LinkedHashMap<>();
 
     /** The color white. */
     private static final FixedColorer<? extends Drawable> WHITE = new FixedColorer<>(Color.WHITE);

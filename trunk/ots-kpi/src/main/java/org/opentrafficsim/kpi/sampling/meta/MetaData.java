@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.sampling.meta;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class MetaData
 {
 
     /** Meta data. */
-    private final Map<MetaDataType<?>, Object> metaDataMap = new HashMap<>();
+    private final Map<MetaDataType<?>, Object> metaDataMap = new LinkedHashMap<>();
 
     /**
      * Default constructor.

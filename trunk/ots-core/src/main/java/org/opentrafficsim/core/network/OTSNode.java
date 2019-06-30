@@ -1,8 +1,7 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -188,18 +187,18 @@ public class OTSNode implements Node, Locatable, Serializable
         // ------------------------------------------- make datasets if needed
         if (this.connections == null)
         {
-            this.connections = new HashMap<>();
+            this.connections = new LinkedHashMap<>();
         }
 
         if (!this.connections.containsKey(gtuType))
         {
-            this.connections.put(gtuType, new HashMap<>());
+            this.connections.put(gtuType, new LinkedHashMap<>());
         }
 
         Map<Link, Set<Link>> gtuMap = this.connections.get(gtuType);
         if (!gtuMap.containsKey(incomingLink))
         {
-            gtuMap.put(incomingLink, new HashSet<>());
+            gtuMap.put(incomingLink, new LinkedHashSet<>());
         }
 
         // ------------------------------------------- add the connection
@@ -251,18 +250,18 @@ public class OTSNode implements Node, Locatable, Serializable
         // ------------------------------------------- make datasets if needed
         if (this.connections == null)
         {
-            this.connections = new HashMap<>();
+            this.connections = new LinkedHashMap<>();
         }
 
         if (!this.connections.containsKey(gtuType))
         {
-            this.connections.put(gtuType, new HashMap<>());
+            this.connections.put(gtuType, new LinkedHashMap<>());
         }
 
         Map<Link, Set<Link>> gtuMap = this.connections.get(gtuType);
         if (!gtuMap.containsKey(incomingLink))
         {
-            gtuMap.put(incomingLink, new HashSet<>());
+            gtuMap.put(incomingLink, new LinkedHashSet<>());
         }
 
         // ------------------------------------------- add the connections
@@ -439,13 +438,13 @@ public class OTSNode implements Node, Locatable, Serializable
         OTSNode clone = (OTSNode) newNetwork.getNode(this.id);
         if (this.connections != null)
         {
-            Map<GTUType, Map<Link, Set<Link>>> newConnections = new HashMap<>();
+            Map<GTUType, Map<Link, Set<Link>>> newConnections = new LinkedHashMap<>();
             for (GTUType gtuType : this.connections.keySet())
             {
-                Map<Link, Set<Link>> newConnMap = new HashMap<>();
+                Map<Link, Set<Link>> newConnMap = new LinkedHashMap<>();
                 for (Link link : this.connections.get(gtuType).keySet())
                 {
-                    Set<Link> newLinkSet = new HashSet<>();
+                    Set<Link> newLinkSet = new LinkedHashSet<>();
                     for (Link setLink : this.connections.get(gtuType).get(link))
                     {
                         newLinkSet.add(newNetwork.getLink(setLink.getId()));

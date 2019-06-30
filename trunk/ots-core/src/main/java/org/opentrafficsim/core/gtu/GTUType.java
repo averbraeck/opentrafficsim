@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -129,7 +128,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     private final Network network;
 
     /** Templates for GTU characteristics within a network. */
-    private static final Map<Network, Map<DEFAULTS, TemplateGTUType>> DEFAULT_TEMPLATES = new HashMap<>();
+    private static final Map<Network, Map<DEFAULTS, TemplateGTUType>> DEFAULT_TEMPLATES = new LinkedHashMap<>();
 
     /**
      * @param id String; The id of the GTUType to make it identifiable.

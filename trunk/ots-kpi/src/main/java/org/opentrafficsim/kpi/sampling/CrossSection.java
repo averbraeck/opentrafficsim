@@ -1,8 +1,8 @@
 package org.opentrafficsim.kpi.sampling;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -38,7 +38,7 @@ public class CrossSection implements Serializable
     public CrossSection(final Set<KpiDirectedLanePosition> directedLanePositions)
     {
         Throw.whenNull(directedLanePositions, "Directed lane positions may not be null.");
-        this.directedLanePositions = new HashSet<>(directedLanePositions);
+        this.directedLanePositions = new LinkedHashSet<>(directedLanePositions);
     }
 
     /**
@@ -53,7 +53,7 @@ public class CrossSection implements Serializable
     {
         Throw.whenNull(link, "Link lane positions may not be null.");
         Throw.whenNull(direction, "Direction may not be null.");
-        this.directedLanePositions = new HashSet<>();
+        this.directedLanePositions = new LinkedHashSet<>();
         for (LaneDataInterface lane : link.getLaneDatas())
         {
             KpiDirectedLanePosition directedLanePosition =
@@ -75,7 +75,7 @@ public class CrossSection implements Serializable
      */
     public final Set<KpiDirectedLanePosition> getDirectedLanePositions()
     {
-        return new HashSet<>(this.directedLanePositions);
+        return new LinkedHashSet<>(this.directedLanePositions);
     }
 
     /**

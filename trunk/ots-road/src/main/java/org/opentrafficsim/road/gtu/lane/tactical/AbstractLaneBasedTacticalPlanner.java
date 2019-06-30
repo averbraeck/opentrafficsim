@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -305,7 +305,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             throws GTUException, NetworkException
     {
         Node nextSplitNode = null;
-        Set<Lane> correctCurrentLanes = new HashSet<>();
+        Set<Lane> correctCurrentLanes = new LinkedHashSet<>();
         DirectedLanePosition dlp = gtu.getReferencePosition();
         Lane referenceLane = dlp.getLane();
         double refFrac = dlp.getPosition().si / referenceLane.getLength().si;
@@ -420,8 +420,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     return new NextSplitInfo(nextSplitNode, correctCurrentLanes);
                 }
                 // split, but no lane on current link to right direction
-                Set<Lane> correctLanes = new HashSet<>();
-                Set<Lane> wrongLanes = new HashSet<>();
+                Set<Lane> correctLanes = new LinkedHashSet<>();
+                Set<Lane> wrongLanes = new LinkedHashSet<>();
                 for (CrossSectionElement cse : ((CrossSectionLink) lastLink).getCrossSectionElementList())
                 {
                     if (cse instanceof Lane)
