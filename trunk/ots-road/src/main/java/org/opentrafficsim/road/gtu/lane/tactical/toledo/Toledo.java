@@ -264,7 +264,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             try
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(getGtu(), startTime, getGtu().getSpeed(), acceleration,
-                        params.getParameter(ToledoLaneChangeParameters.DT));
+                        params.getParameter(ToledoLaneChangeParameters.DT), false);
             }
             catch (OTSGeometryException exception)
             {

@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.swing.JFileChooser;
@@ -40,6 +42,8 @@ import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -129,7 +133,9 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         {
             OTSAnimator simulator = new OTSAnimator();
             XMLModel xmlModel = new XMLModel(simulator, "XML model", "Model built from XML file " + fileName, xml);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel);
+            Map<String, StreamInterface> map = new LinkedHashMap<>();
+            map.put("generation", new MersenneTwister(1L));
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel, map);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             new LoadXML(xmlModel, animationPanel);
@@ -174,8 +180,8 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             this.network = new OTSRoadNetwork(getShortName(), true);
             try
             {
-                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)),
-                        this.network, getSimulator());
+                XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
+                        getSimulator());
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
@@ -195,7 +201,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         {
             return this.network;
         }
-        
+
     }
-    
+
 }
