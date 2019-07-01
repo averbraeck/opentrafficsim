@@ -855,8 +855,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                     linksToExpandFrom.add(record.getLane().getParentLink());
                 }
             }
-            iterator = this.downstreamEdge.iterator();
             Set<RollingLaneStructureRecord> modifiedEdge = new LinkedHashSet<>(this.downstreamEdge);
+            iterator = this.downstreamEdge.iterator();
             while (iterator.hasNext())
             {
                 RollingLaneStructureRecord record = iterator.next();
@@ -1200,9 +1200,14 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                         break;
                     }
                 }
-                Throw.when(chosenNext == null, RuntimeException.class,
-                        "Unexpected exception while deriving first record not on the cross-section.");
+                // Throw.when(chosenNext == null, RuntimeException.class,
+                // "Unexpected exception while deriving first record not on the cross-section.");
                 record = chosenNext;
+                if (record == null)
+                {
+                    // TODO: Temporary fix for Aimsun demo
+                    break;
+                }
             }
             else
             {
@@ -1499,7 +1504,6 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
         }
     }
 
-
     /**
      * Print the lane structure as a number of lines in a String.
      * @param ls RollingLaneStructure; the lane structure to print
@@ -1522,6 +1526,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
         s.append("\n  relativeLanes.size()=" + ls.relativeLanes.size() + "  relativeLaneMap.totalSize()=" + totSize);
         return s.toString();
     }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

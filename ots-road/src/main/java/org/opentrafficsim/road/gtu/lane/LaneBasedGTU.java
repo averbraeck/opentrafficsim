@@ -36,9 +36,9 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public interface LaneBasedGTU extends GTU
 {
-    /** @return the road network to which the LaneBasedGTU belongs*/
+    /** @return the road network to which the LaneBasedGTU belongs */
     RoadNetwork getNetwork();
-    
+
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();
@@ -80,7 +80,7 @@ public interface LaneBasedGTU extends GTU
      * @throws GTUException exception
      */
     void initLaneChange(LateralDirectionality laneChangeDirection) throws GTUException;
-    
+
     /**
      * Sets event to finalize lane change.
      * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; event
@@ -99,7 +99,7 @@ public interface LaneBasedGTU extends GTU
         Length rear = position(lane, getRear());
         return getDirection(lane).isPlus() ? front.minus(rear) : rear.minus(front);
     }
-    
+
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered. <br>
@@ -276,6 +276,14 @@ public interface LaneBasedGTU extends GTU
         double a = getAcceleration(when).si;
         return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 * v - 0.00025 * v * v;
     }
+
+    /**
+     * Returns the lateral position of the GTU relative to the lane center line. Negative values are towards the right.
+     * @param lane Lane; lane to consider (most important regarding left/right, not upstream downstream)
+     * @return Length; lateral position of the GTU relative to the lane center line
+     * @throws GTUException when the vehicle is not on the given lane.
+     */
+    Length getLateralPosition(Lane lane) throws GTUException;
 
     /** @return the status of the turn indicator */
     TurnIndicatorStatus getTurnIndicatorStatus();

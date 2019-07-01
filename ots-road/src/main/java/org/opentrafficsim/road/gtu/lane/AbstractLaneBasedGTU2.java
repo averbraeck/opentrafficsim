@@ -1377,6 +1377,48 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 
     /** {@inheritDoc} */
     @Override
+    public Length getLateralPosition(final Lane lane) throws GTUException
+    {
+        OperationalPlan plan = getOperationalPlan();
+        if (plan instanceof LaneBasedOperationalPlan && !((LaneBasedOperationalPlan) plan).isDeviative())
+        {
+            return Length.ZERO;
+        }
+        DirectedLanePosition ref = getReferencePosition();
+        int latIndex = -1;
+        int longIndex = -1;
+        for (int i = 0; i < this.crossSections.size(); i++)
+        {
+            List<Lane> lanes = this.crossSections.get(i).getLanes();
+            if (lanes.contains(lane))
+            {
+                latIndex = lanes.indexOf(lane);
+            }
+            if (lanes.contains(ref.getLane()))
+            {
+                longIndex = i;
+            }
+        }
+        Throw.when(latIndex == -1 || longIndex == -1, GTUException.class, "GTU %s is not on %s", getId(), lane);
+        Lane refCrossSectionLane = this.crossSections.get(longIndex).getLanes().get(latIndex);
+        DirectedPoint loc = getLocation();
+        double f = refCrossSectionLane.getCenterLine().projectOrthogonal(loc.x, loc.y);
+        DirectedPoint p = Try.assign(() -> refCrossSectionLane.getCenterLine().getLocationFraction(f), GTUException.class,
+                "GTU %s is not orthogonal to the reference lane.", getId());
+        double d = p.distance(loc);
+        d = ref.getGtuDirection().isPlus() ? d : -d;
+        if (this.crossSections.get(0).getLanes().size() > 1)
+        {
+            return Length.createSI(latIndex == 0 ? -d : d);
+        }
+        double x2 = p.x + Math.cos(p.getRotZ());
+        double y2 = p.y + Math.sin(p.getRotZ());
+        double det = (loc.x - p.x) * (y2 - p.y) - (loc.y - p.y) * (x2 - p.x);
+        return Length.createSI(det < 0.0 ? -d : d);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {

@@ -29,6 +29,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -258,18 +259,19 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @param startSpeed Speed; the speed at the start of the path
      * @param acceleration Acceleration; the acceleration to use
      * @param timeStep Duration; time step for the plan
+     * @param deviative boolean; whether the plan is deviative
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
     public static LaneBasedOperationalPlan buildAccelerationPlan(final LaneBasedGTU gtu, final Time startTime,
-            final Speed startSpeed, final Acceleration acceleration, final Duration timeStep)
+            final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final boolean deviative)
             throws OperationalPlanException, OTSGeometryException
     {
         if (startSpeed.si <= OperationalPlan.DRIFTING_SPEED_SI && acceleration.le(Acceleration.ZERO))
         {
-            return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, false);
+            return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, deviative);
         }
 
         Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
@@ -278,10 +280,10 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         List<Segment> segmentList = createAccelerationSegments(startSpeed, acceleration, brakingTime, timeStep);
         if (distance.le(MINIMUM_CREDIBLE_PATH_LENGTH))
         {
-            return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, false);
+            return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, deviative);
         }
         OTSLine3D path = createPathAlongCenterLine(gtu, distance);
-        return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, false);
+        return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, deviative);
     }
 
     /**
@@ -514,7 +516,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             try
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
-                        simplePlan.getDuration());
+                        simplePlan.getDuration(), false);
             }
             catch (OTSGeometryException exception)
             {
@@ -525,10 +527,15 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         // gradual lane change
         try
         {
-            if ((!simplePlan.isLaneChange() && !laneChange.isChangingLane()) || (gtu.getSpeed().si == 0.0 && acc.si <= 0.0))
+            if (!simplePlan.isLaneChange() && !laneChange.isChangingLane())
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
-                        simplePlan.getDuration());
+                        simplePlan.getDuration(), true);
+            }
+            if (gtu.getSpeed().si == 0.0 && acc.si <= 0.0)
+            {
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
+                        simplePlan.getDuration(), false);
             }
             return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, simplePlan.getLaneChangeDirection(),
                     gtu.getLocation(), startTime, gtu.getSpeed(), acc, simplePlan.getDuration(), laneChange);
