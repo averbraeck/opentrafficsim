@@ -2,6 +2,7 @@ package org.opentrafficsim.demo;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -96,7 +97,7 @@ public final class TestController
         // createSimulationBuilder.setWarmUpTime(0d);
         // String network = URLResource.getResource("/aimsun/singleRoad.xml").toString(); // wrong; fix later
         // String networkResource = "/aimsun/singleRoad.xml";
-        String networkResource = "d:/AimsunOtsNetwork.xml";
+        String networkResource = "C:/Temp/AimsunOtsNetwork.xml";
         String network = null; // IOUtils.toString(URLResource.getResource(networkResource));
         URL networkURL = URLResource.getResource(networkResource);
         if (null == networkURL)
@@ -131,19 +132,14 @@ public final class TestController
             System.out.println("Receive reply");
             AimsunControlProtoBuf.OTSMessage reply = receiveProtoMessage(inputStream);
             // System.out.println("Received " + reply);
-            if (reply.getGtuPositions().getStatus().startsWith("FAILED"))
+            if (!reply.getGtuPositions().getStatus().contains("OK"))
             {
+                System.out.println("status is " + reply.getGtuPositions().getStatus());
                 break;
             }
         }
-        try
-        {
-            Thread.sleep(5000);
-        }
-        catch (InterruptedException exception)
-        {
-            exception.printStackTrace();
-        }
+        System.out.println("Simulation stopped. Press return to exit");
+        System.in.read();
         socket.close();
     }
 
