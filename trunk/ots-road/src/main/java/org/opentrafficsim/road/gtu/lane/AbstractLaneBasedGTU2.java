@@ -791,6 +791,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             }
             if (leaveTime != null)
             {
+                Break.on(this, "1375", 0.0,
+                        this.crossSections.get(0).getLanes().get(0).getParentLink().getId().equals("944_J20"));
                 this.pendingLeaveTrigger = getSimulator().scheduleEventAbs(leaveTime, this, this, "leaveCrossSection", null);
             }
         }

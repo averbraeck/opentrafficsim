@@ -142,7 +142,7 @@ public final class ConflictUtil
             final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGTU gtu,
             final RelativeLane lane) throws GTUException, ParameterException
     {
-        
+
         conflictPlans.cleanPlans();
 
         Acceleration a = Acceleration.POS_MAXVALUE;
@@ -744,7 +744,7 @@ public final class ConflictUtil
             AnticipationInfo tteCa;
             AnticipationInfo tteCs;
             if (first && conflictingVehicle.getSpeed().eq0() && conflictingVehicle.isAhead())
-                    //&& conflictingVehicle.getDistance().lt(parameters.getParameter(S0_CONF)))
+            // && conflictingVehicle.getDistance().lt(parameters.getParameter(S0_CONF)))
             {
                 // do not stop if conflicting vehicle is standing still
                 tteCa = new AnticipationInfo(Duration.POSITIVE_INFINITY, Speed.ZERO);
@@ -807,7 +807,8 @@ public final class ConflictUtil
                 // 3) conflict vehicle will be too near after adjusting speed
                 if (ttcOa.getDuration().multiplyBy(f).plus(gap).gt(tteCa.getDuration())
                         || ttcOa.getDuration().plus(additionalTime).multiplyBy(f).plus(gap).gt(tteCs.getDuration())
-                        || ownRear < (followerFront + (tMax.si + gap.si) * vSelf + s0.si) * f)
+                        || (!Double.isInfinite(tteCa.getDuration().si) && tteCa.getDuration().si > 0.0
+                                && ownRear < (followerFront + (tMax.si + gap.si) * vSelf + s0.si) * f))
                 {
                     return true;
                 }

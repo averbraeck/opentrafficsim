@@ -75,7 +75,7 @@ public class LaneChange implements Serializable
     private static final LaneOperationalPlanBuilder BUILDER = new LaneOperationalPlanBuilder();
 
     /** Minimum distance required to perform a lane change as factor on vehicle length. */
-    public static double MIN_LC_LENGTH_FACTOR = 2.0;
+    public static double MIN_LC_LENGTH_FACTOR = 1.5;
 
     /**
      * Constructor.
@@ -358,6 +358,7 @@ public class LaneChange implements Serializable
                 FractionalFallback.ENDPOINT);
         startFractionalPositionTo = startFractionalPositionTo >= 0.0 ? startFractionalPositionTo : 0.0;
         endFractionalPositionTo = endFractionalPositionTo <= 1.0 ? endFractionalPositionTo : 1.0;
+        endFractionalPositionTo = endFractionalPositionTo <= 0.0 ? endFractionalPositionFrom : endFractionalPositionTo;
         // check for poor projection (end location is difficult to project; we have no path yet so we use the from lane)
         if (fromLanes.size() == 1 && endFractionalPositionTo <= startFractionalPositionTo)
         {
@@ -518,6 +519,8 @@ public class LaneChange implements Serializable
         Acceleration egoAcceleration = ego == null ? gtu.getAcceleration() : ego.getAcceleration();
         Speed speed = headway.getSpeed() == null ? Speed.ZERO : headway.getSpeed();
         Acceleration acceleration = headway.getAcceleration() == null ? Acceleration.ZERO : headway.getAcceleration();
+        Length s0 = gtu.getParameters().getParameterOrNull(ParameterTypes.S0);
+        s0 = s0 == null ? Length.ZERO : s0;
 
         Length distanceToStop;
         if (speed.eq0())
@@ -543,7 +546,9 @@ public class LaneChange implements Serializable
         {
             t = Math.min(egoSpeed.si / -egoAcceleration.si, t);
         }
-        Length requiredDistance = Length.createSI(egoSpeed.si * t + .5 * egoAcceleration.si * t * t);
+        Length requiredDistance =
+                Length.max(Length.createSI(egoSpeed.si * t + .5 * egoAcceleration.si * t * t), this.minimumLaneChangeDistance)
+                        .plus(s0);
         return availableDistance.gt(requiredDistance);
     }
 
@@ -791,11 +796,11 @@ public class LaneChange implements Serializable
                         / fromLine.get(0).getLocation().distance(toLine.get(0).getLocation());
                 if (startLateralFraction > 1.0)
                 {
-                    Throw.when(startLateralFraction > 1.1, RuntimeException.class,
-                            "lateral fraction is > 1, and it's not rounding");
                     startLateralFraction = 1.0;
                 }
+                startLateralFraction = lcFraction;
                 double startLongitudinalFractionTotal = longitudinalFraction(startLateralFraction);
+                // double startLongitudinalFractionTotal = longitudinalFraction(lcFraction);
 
                 double nSegments = Math.ceil((64 * (1.0 - lcFraction)));
                 List<OTSPoint3D> pointList = new ArrayList<>();
@@ -805,14 +810,32 @@ public class LaneChange implements Serializable
                     double f = i / nSegments;
                     double longitudinalFraction = startLongitudinalFractionTotal + f * (1.0 - startLongitudinalFractionTotal);
                     double lateralFraction = lateralFraction(longitudinalFraction);
+                    double lateralFractionInv = 1.0 - lateralFraction;
                     DirectedPoint fromPoint = fromLine.getLocationFraction(f);
                     DirectedPoint toPoint = toLine.getLocationFraction(f);
-                    pointList.add(new OTSPoint3D((1.0 - lateralFraction) * fromPoint.x + lateralFraction * toPoint.x,
-                            (1.0 - lateralFraction) * fromPoint.y + lateralFraction * toPoint.y,
-                            (1.0 - lateralFraction) * fromPoint.z + lateralFraction * toPoint.z));
+                    pointList.add(new OTSPoint3D(lateralFractionInv * fromPoint.x + lateralFraction * toPoint.x,
+                            lateralFractionInv * fromPoint.y + lateralFraction * toPoint.y,
+                            lateralFractionInv * fromPoint.z + lateralFraction * toPoint.z));
                 }
 
-                return new OTSLine3D(pointList);
+                OTSLine3D line = new OTSLine3D(pointList);
+                // clean line for projection inconsistencies (position -> center lines -> interpolated new position)
+                double angleChange = Math.abs(line.getLocation(Length.ZERO).getRotZ() - startPosition.getRotZ());
+                int i = 1;
+                while (angleChange > Math.PI / 4)
+                {
+                    i++;
+                    if (i >= pointList.size() - 2)
+                    {
+                        // return original if we can't clean the line, perhaps extreme road curvature or line with 2 points
+                        return new OTSLine3D(pointList);
+                    }
+                    List<OTSPoint3D> newPointList = new ArrayList<>(pointList.subList(i, pointList.size()));
+                    newPointList.add(0, pointList.get(0));
+                    line = new OTSLine3D(newPointList);
+                    angleChange = Math.abs(line.getLocation(Length.ZERO).getRotZ() - startPosition.getRotZ());
+                }
+                return line;
             }
 
             /**

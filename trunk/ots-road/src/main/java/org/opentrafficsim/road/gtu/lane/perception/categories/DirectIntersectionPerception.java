@@ -285,7 +285,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
 
     /** {@inheritDoc} */
     @Override
-    public final Iterable<HeadwayTrafficLight> getTrafficLights(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayTrafficLight, TrafficLight> getTrafficLights(final RelativeLane lane)
     {
         return computeIfAbsent("trafficLights", () -> computeTrafficLights(lane), lane);
     }

@@ -29,6 +29,9 @@ public class Desire implements Serializable
     /** Level of right desire. */
     private final double right;
 
+    /** Easy access and efficient zero desired. */
+    public static final Desire ZERO = new Desire(0.0, 0.0);
+
     /**
      * Constructor which sets the supplied desire. Desire is limited to a maximum of 1.
      * @param left double; Left desire.
