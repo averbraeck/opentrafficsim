@@ -4,6 +4,7 @@ import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronizatio
 import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
 import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
 import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.headwayWithLcSpace;
 import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.removeAllUpstreamOfConflicts;
 import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
 import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
@@ -35,6 +36,7 @@ import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
@@ -156,14 +158,25 @@ public interface Synchronization extends LmrsParameters
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             if (leader != null)
             {
-                Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
-                        params, sli, cfm);
+                Length headway = headwayWithLcSpace(leader, params, laneChange);
+                Acceleration aSingle =
+                        LmrsUtil.singleAcceleration(headway, ownSpeed, leader.getSpeed(), desire, params, sli, cfm);
                 a = Acceleration.min(a, aSingle);
                 a = gentleUrgency(a, desire, params);
                 // dead end
                 a = Acceleration.min(a, DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange,
                         initiatedLaneChange));
-
+            }
+            // keep some space ahead to perform lane change
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+            if (!leaders.isEmpty() && leaders.first().getSpeed().lt(params.getParameter(ParameterTypes.VCONG)))
+            {
+                Length headway = leaders.first().getDistance().minus(laneChange.getMinimumLaneChangeDistance());
+                Acceleration aSingle =
+                        LmrsUtil.singleAcceleration(headway, ownSpeed, leaders.first().getSpeed(), desire, params, sli, cfm);
+                a = Acceleration.min(a, aSingle);
+                a = gentleUrgency(a, desire, params);
             }
 
             // check merge distance
@@ -515,6 +528,24 @@ public interface Synchronization extends LmrsParameters
     Acceleration synchronize(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm,
             double desire, LateralDirectionality lat, LmrsData lmrsData, LaneChange laneChange,
             LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException;
+
+    /**
+     * Returns a headway (length) to allow space to perform a lane change at low speeds.
+     * @param headway Headway; headway
+     * @param parameters Parameters; parameters
+     * @param laneChange LaneChange; lane change
+     * @return Length; distance to allow space to perform a lane change at low speeds
+     * @throws ParameterException if parameter VCONG is not available
+     */
+    static Length headwayWithLcSpace(final Headway headway, final Parameters parameters, final LaneChange laneChange)
+            throws ParameterException
+    {
+        if (headway.getSpeed().gt(parameters.getParameter(ParameterTypes.VCONG)))
+        {
+            return headway.getDistance();
+        }
+        return headway.getDistance().minus(laneChange.getMinimumLaneChangeDistance());
+    }
 
     /**
      * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.

@@ -159,6 +159,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
         // this.mandatoryIncentives.add(new IncentiveGetInLane());
         this.voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
         this.voluntaryIncentives.add(new IncentiveKeep());
+        this.voluntaryIncentives.add(new IncentiveQueue());
         this.accelerationIncentives.add(new AccelerationSpeedLimitTransition());
         this.accelerationIncentives.add(new AccelerationTrafficLights());
         this.accelerationIncentives.add(new AccelerationConflicts());

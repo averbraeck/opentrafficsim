@@ -163,7 +163,6 @@ public final class LmrsUtil implements LmrsParameters
             turnIndicatorStatus = TurnIndicatorIntent.NONE;
             if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree)
             {
-                // TODO: GTU 443 in Aimsum demo does not accept the left lane change!
                 if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getLeft(), speed, a,
                         LateralDirectionality.LEFT, lmrsData.getGapAcceptance(), laneChange))
                 {
@@ -517,7 +516,7 @@ public final class LmrsUtil implements LmrsParameters
             {
                 Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, cfm, ego.getLength(),
                         ego.getWidth(), ownSpeed, ownAcceleration, sli, new ConflictPlans(), perception.getGtu(), lane);
-                if (a.lt(params.getParameter(ParameterTypes.B).neg()))
+                if (a.lt(params.getParameter(ParameterTypes.BCRIT).neg()))
                 {
                     return false;
                 }
@@ -547,9 +546,8 @@ public final class LmrsUtil implements LmrsParameters
             conflicts = intersection.getConflicts(RelativeLane.CURRENT);
             for (HeadwayConflict conflict : conflicts)
             {
-                // TODO: removed this check as a GTU misses a split, perception of multiple splits at start of lane wrong?
-                //if (conflict.getLane().getParentLink().equals(conflict.getConflictingLink()))
-                //{
+                if (conflict.getLane().getParentLink().equals(conflict.getConflictingLink()))
+                {
                     if (conflict.isMerge() && conflict.getDistance().le0()
                             && conflict.getDistance().neg().gt(conflict.getLength()))
                     {
@@ -560,7 +558,7 @@ public final class LmrsUtil implements LmrsParameters
                     {
                         return false; // partially before the split; adjacent lane might be ambiguous
                     }
-                //}
+                }
             }
 
             // traffic lights

@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -696,6 +697,40 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                                 }
                             }
                         }
+                        // connect longitudinally due to merge or split
+                        Set<RollingLaneStructureRecord> adjs = new LinkedHashSet<>();
+                        if (next.getLeft() != null)
+                        {
+                            adjs.add(next.getLeft());
+                        }
+                        if (next.getRight() != null)
+                        {
+                            adjs.add(next.getRight());
+                        }
+                        for (RollingLaneStructureRecord adj : adjs)
+                        {
+                            for (Lane lane : next.getLane().upstreamLanes(next.getDirection(), gtuType).keySet())
+                            {
+                                for (RollingLaneStructureRecord adjPrev : adj.getPrev())
+                                {
+                                    if (lane.equals(adjPrev.getLane()))
+                                    {
+                                        Try.execute(() -> next.addPrev(adjPrev), "Cut-off record added as prev.");
+                                    }
+                                }
+                            }
+                            for (Lane lane : next.getLane().downstreamLanes(next.getDirection(), gtuType).keySet())
+                            {
+                                for (RollingLaneStructureRecord adjNext : adj.getNext())
+                                {
+                                    if (lane.equals(adjNext.getLane()))
+                                    {
+                                        Try.execute(() -> next.addNext(adjNext), "Cut-off record added as next.");
+                                    }
+                                }
+                            }
+                        }
+                        
                         prev = next;
                         adjacentLanes =
                                 prev.getLane().accessibleAdjacentLanesPhysical(latDirection, gtuType, prev.getDirection());

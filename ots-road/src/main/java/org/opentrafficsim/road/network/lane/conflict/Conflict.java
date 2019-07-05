@@ -277,7 +277,7 @@ public final class Conflict extends AbstractLaneBasedObject
             // setup a base iterable to provide the GTUs
             boolean ignoreIfUpstream = false;
             this.downstreamGtus =
-                    new DownstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition, this.maxDownstreamVisibility,
+                    new DownstreamNeighborsIterable(null, this.root, this.rootPosition, this.maxDownstreamVisibility,
                             RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT, ignoreIfUpstream)
                     {
                         /** {@inheritDoc} */
@@ -799,6 +799,17 @@ public final class Conflict extends AbstractLaneBasedObject
                         {
                             // ConflictGtuIterable is a private class, only used with ConflictGtuType
                             ConflictGtu gtu = (ConflictGtu) ConflictGtuIterable.this.baseIterator.next();
+                            if (gtu.gtu.getId().equals(getGtu().getId()))
+                            {
+                                if (ConflictGtuIterable.this.baseIterator.hasNext())
+                                {
+                                    gtu = (ConflictGtu) ConflictGtuIterable.this.baseIterator.next();
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
                             if (gtu.getDistance() == null || gtu.getDistance().le(ConflictGtuIterable.this.visibility))
                             {
                                 this.next = new PrimaryIteratorEntry(gtu.gtu, gtu.getDistance());

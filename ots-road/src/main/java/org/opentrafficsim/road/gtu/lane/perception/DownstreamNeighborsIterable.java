@@ -82,7 +82,10 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
         super(perceivingGtu, root, initialPosition, true, maxDistance, relativePosition, null);
         this.headwayGtuType = headwayGtuType;
         this.margin = lane.getLateralDirectionality().isLeft() ? LEFT : RIGHT;
-        this.ids.add(perceivingGtu.getId());
+        if (perceivingGtu != null)
+        {
+            this.ids.add(perceivingGtu.getId());
+        }
         this.ignoreIfUpstream = ignoreIfUpstream;
     }
 
@@ -130,6 +133,12 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
             }
             next = record.getLane().getGtu(n);
             pos = next.position(record.getLane(), next.getRear());
+            if (this.ids.contains(next.getId()))
+            {
+                // skip self
+                pos = plus ? pos.plus(next.getLength()) : pos.minus(next.getLength());
+                return getNext(record, pos, n);
+            }
         }
         return new Entry(next, n, pos);
     }

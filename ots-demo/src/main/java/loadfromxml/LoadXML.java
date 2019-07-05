@@ -35,7 +35,9 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
+import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
@@ -134,7 +136,8 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             OTSAnimator simulator = new OTSAnimator();
             XMLModel xmlModel = new XMLModel(simulator, "XML model", "Model built from XML file " + fileName, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
-            map.put("generation", new MersenneTwister(1L));
+            // TODO: This seed is Aimsun specific.
+            map.put("generation", new MersenneTwister(6L));
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel, map);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
@@ -182,8 +185,15 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                         getSimulator());
+                // TODO: These links are Aimsun specific.
+                LaneCombinationList ignoreList = new LaneCombinationList();
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
+                        (CrossSectionLink) this.network.getLink("928_J6"));
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
+                        (CrossSectionLink) this.network.getLink("925_J2"));
+                LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
+                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)), ignoreList, permittedList);
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GTUException exception)
