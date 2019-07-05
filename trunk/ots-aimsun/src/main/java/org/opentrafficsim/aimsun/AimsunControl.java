@@ -11,6 +11,8 @@ import java.net.Socket;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.xml.bind.JAXBException;
@@ -29,10 +31,12 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OTSLoggingAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUDumper;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -40,10 +44,13 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
+import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
@@ -56,6 +63,8 @@ import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -86,6 +95,7 @@ public class AimsunControl
     public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueException,
             ParameterException, SimRuntimeException
     {
+        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
         SimLogger.setAllLogLevel(Level.WARNING);
         SimLogger.setLogCategories(LogCategory.ALL);
 
@@ -352,9 +362,12 @@ public class AimsunControl
                         Duration warmupDuration = new Duration(0, DurationUnit.SECOND);
                         try
                         {
-                            OTSAnimator animator = new OTSAnimator();
+                            OTSAnimator animator = new OTSLoggingAnimator("C:/Temp/AimsunEventlog.txt");
                             this.model = new AimsunModel(animator, "Aimsun generated model", "Aimsun model", networkXML);
-                            animator.initialize(Time.ZERO, warmupDuration, runDuration, this.model);
+                            Map<String, StreamInterface> map = new LinkedHashMap<>();
+                            // TODO: This seed is Aimsun specific.
+                            map.put("generation", new MersenneTwister(6L));
+                            animator.initialize(Time.ZERO, warmupDuration, runDuration, this.model, map);
                             OTSAnimationPanel animationPanel =
                                     new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(800, 600),
                                             animator, this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
@@ -363,6 +376,7 @@ public class AimsunControl
                             new AimsunSwingApplication(this.model, animationPanel);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                             animator.setSpeedFactor(1000.0, true);
+                            // animator.setSpeedFactor(0.1, true);
                         }
                         catch (SimRuntimeException | NamingException | OTSDrawingException exception1)
                         {
@@ -558,8 +572,16 @@ public class AimsunControl
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                         getSimulator());
+                // TODO: These links are Aimsun specific.
+                LaneCombinationList ignoreList = new LaneCombinationList();
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
+                        (CrossSectionLink) this.network.getLink("928_J6"));
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
+                        (CrossSectionLink) this.network.getLink("925_J2"));
+                LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
+                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)), ignoreList, permittedList);
+                new GTUDumper(simulator, Time.ZERO, Duration.createSI(60), network, "C:/Temp/aimsun");
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GTUException exception)
