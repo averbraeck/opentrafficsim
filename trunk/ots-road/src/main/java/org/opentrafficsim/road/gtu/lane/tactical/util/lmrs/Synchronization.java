@@ -175,8 +175,8 @@ public interface Synchronization extends LmrsParameters
                 Length headway = leaders.first().getDistance().minus(laneChange.getMinimumLaneChangeDistance());
                 Acceleration aSingle =
                         LmrsUtil.singleAcceleration(headway, ownSpeed, leaders.first().getSpeed(), desire, params, sli, cfm);
+                aSingle = gentleUrgency(aSingle, desire, params);
                 a = Acceleration.min(a, aSingle);
-                a = gentleUrgency(a, desire, params);
             }
 
             // check merge distance

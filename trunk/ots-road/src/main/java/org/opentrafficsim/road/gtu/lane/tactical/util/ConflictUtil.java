@@ -171,19 +171,15 @@ public final class ConflictUtil
             }
             else
             {
+                if (conflict.isMerge() && !lane.isCurrent() && conflict.getConflictPriority().isPriority())
+                {
+                    // probably evaluation for a lane-change
+                    a = Acceleration.min(a,
+                            avoidMergeCollision(parameters, conflict, carFollowingModel, speed, speedLimitInfo));
+                }
                 // follow leading GTUs on merge or split
                 a = Acceleration.min(a, followConflictingLeaderOnMergeOrSplit(conflict, parameters, carFollowingModel, speed,
                         speedLimitInfo, vehicleWidth));
-            }
-            if (conflict.getDistance().lt0() && lane.isCurrent())
-            {
-                if (conflict.getConflictType().isCrossing() && !conflict.getConflictPriority().isPriority())
-                {
-                    // note that we are blocking a conflict
-                    blocking = true;
-                }
-                // ignore conflicts we are on (i.e. negative distance to start of conflict)
-                continue;
             }
 
             // indicator if bus
@@ -202,6 +198,18 @@ public final class ConflictUtil
                         conflictPlans.setIndicatorIntent(TurnIndicatorIntent.LEFT, conflict.getDistance());
                     }
                 }
+            }
+
+            // blocking and ignoring
+            if (conflict.getDistance().lt0() && lane.isCurrent())
+            {
+                if (conflict.getConflictType().isCrossing() && !conflict.getConflictPriority().isPriority())
+                {
+                    // note that we are blocking a conflict
+                    blocking = true;
+                }
+                // ignore conflicts we are on (i.e. negative distance to start of conflict)
+                continue;
             }
 
             // determine if we need to stop
@@ -511,6 +519,35 @@ public final class ConflictUtil
     }
 
     /**
+     * Avoid collision at merge. This method assumes the GTU has priority.
+     * @param parameters Parameters; parameters
+     * @param conflict HeadwayConflict; conflict
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param speed Speed; current speed
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @return acceleration required to avoid a collision
+     * @throws ParameterException if parameter is not defined
+     */
+    private static Acceleration avoidMergeCollision(final Parameters parameters, final HeadwayConflict conflict,
+            final CarFollowingModel carFollowingModel, final Speed speed, final SpeedLimitInfo speedLimitInfo)
+            throws ParameterException
+    {
+        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> conflicting = conflict.getUpstreamConflictingGTUs();
+        if (conflicting.isEmpty() || conflicting.first().isParallel())
+        {
+            return Acceleration.POS_MAXVALUE;
+        }
+        // TODO: this check is simplistic, designed quick and dirty
+        HeadwayGTU conflictingGtu = conflicting.first();
+        double tteC = conflictingGtu.getDistance().si / conflictingGtu.getSpeed().si;
+        if (tteC < conflict.getDistance().si / speed.si + 3.0)
+        {
+            return CarFollowingUtil.stop(carFollowingModel, parameters, speed, speedLimitInfo, conflict.getDistance());
+        }
+        return Acceleration.POS_MAXVALUE;
+    }
+
+    /**
      * Approach a priority conflict. Stopping is applied to give way to conflicting traffic in case congestion is present on the
      * own lane. This is courtesy yielding.
      * @param conflict HeadwayConflict; conflict to approach
@@ -719,8 +756,10 @@ public final class ConflictUtil
         }
         else
         {
-            if (conflict.getConflictingTrafficLightDistance() != null && conflictingVehiclesCollectable.first().isAhead()
-                    && conflict.getConflictingTrafficLightDistance().lt(conflictingVehiclesCollectable.first().getDistance()))
+            HeadwayGTU conflicting = conflictingVehiclesCollectable.first();
+            if (conflict.getConflictingTrafficLightDistance() != null && conflicting.isAhead()
+                    && conflict.getConflictingTrafficLightDistance().lt(conflicting.getDistance())
+                    && (conflicting.getSpeed().eq0() || conflicting.getAcceleration().lt0()))
             {
                 // conflicting traffic upstream of traffic light
                 return false;

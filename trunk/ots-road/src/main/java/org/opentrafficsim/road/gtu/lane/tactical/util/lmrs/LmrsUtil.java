@@ -22,6 +22,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -458,6 +459,8 @@ public final class LmrsUtil implements LmrsParameters
             final LateralDirectionality lat, final GapAcceptance gapAcceptance, final LaneChange laneChange)
             throws ParameterException, OperationalPlanException
     {
+        Break.on(perception, "977", 20 * 60 + 3, true);
+        
         // beyond start distance
         LaneBasedGTU gtu = Try.assign(() -> perception.getGtu(), "Cannot obtain GTU.");
         if (!gtu.laneChangeAllowed())
