@@ -183,10 +183,10 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
         {
             /** Last returned iterator entry. */
             private SecondaryIteratorEntry lastReturned = null;
-            
+
             /** Next iterator entry. */
             private SecondaryIteratorEntry next = firstInContext;
-            
+
             /** {@inheritDoc} */
             @Override
             public boolean hasNext()

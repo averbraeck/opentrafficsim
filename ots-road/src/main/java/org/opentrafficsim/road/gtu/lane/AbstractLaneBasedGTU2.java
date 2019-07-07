@@ -791,8 +791,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             }
             if (leaveTime != null)
             {
-                Break.on(this, "1375", 0.0,
-                        this.crossSections.get(0).getLanes().get(0).getParentLink().getId().equals("944_J20"));
                 this.pendingLeaveTrigger = getSimulator().scheduleEventAbs(leaveTime, this, this, "leaveCrossSection", null);
             }
         }
@@ -1055,7 +1053,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                         if (!Double.isNaN(f))
                         {
                             f = whenCrossSections.get(i).getDirection() == GTUDirectionality.DIR_PLUS ? 1 - f : f;
-                            loc = distance - f * lane.getLength().si;
+                            loc = distance - f * tryLane.getLength().si;
                             break;
                         }
                         distance -= tryLane.getLength().si;

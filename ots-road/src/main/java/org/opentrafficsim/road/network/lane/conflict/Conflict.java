@@ -1,14 +1,18 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -40,6 +44,8 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * Conflicts deal with traffic on different links/roads that need to consider each other as their paths may be in conflict
@@ -59,7 +65,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public final class Conflict extends AbstractLaneBasedObject
+public final class Conflict extends AbstractLaneBasedObject implements EventListenerInterface
 {
 
     /** */
@@ -134,6 +140,12 @@ public final class Conflict extends AbstractLaneBasedObject
 
     /** Distance within which downstreamGTUs are provided (is automatically enlarged). */
     private Length maxDownstreamVisibility = Length.ZERO;
+
+    /** Set of upstream GTU that invalidate the iterable when any changes lane. */
+    private Set<LaneBasedGTU> upstreamListening = new LinkedHashSet<>();
+
+    /** Set of upstream GTU that invalidate the iterable when any changes lane. */
+    private Set<LaneBasedGTU> downstreamListening = new LinkedHashSet<>();
 
     /////////////////////////////////////////////////////////////////
 
@@ -234,6 +246,12 @@ public final class Conflict extends AbstractLaneBasedObject
         Time time = this.getLane().getParentLink().getSimulator().getSimulatorTime();
         if (this.upstreamTime == null || !time.eq(this.upstreamTime))
         {
+            for (LaneBasedGTU gtu : this.upstreamListening)
+            {
+                Try.execute(() -> gtu.removeListener(this, LaneBasedGTU.LANE_CHANGE_EVENT), "Unable to unlisten to GTU %s.",
+                        gtu);
+            }
+            this.upstreamListening.clear();
             // setup a base iterable to provide the GTUs
             this.upstreamGtus = new UpstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition,
                     this.maxUpstreamVisibility, RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT)
@@ -248,6 +266,9 @@ public final class Conflict extends AbstractLaneBasedObject
                             super.getNext(record, position, counter);
                     if (entry != null)
                     {
+                        Conflict.this.upstreamListening.add(entry.getObject());
+                        Try.execute(() -> entry.getObject().addListener(Conflict.this, LaneBasedGTU.LANE_CHANGE_EVENT),
+                                "Unable to listen to GTU %s.", entry.getObject());
                         Conflict.this.upstreamLanes.put(entry.getObject(), record.getLane());
                     }
                     return entry;
@@ -274,6 +295,12 @@ public final class Conflict extends AbstractLaneBasedObject
         Time time = this.getLane().getParentLink().getSimulator().getSimulatorTime();
         if (this.downstreamTime == null || !time.eq(this.downstreamTime))
         {
+            for (LaneBasedGTU gtu : this.downstreamListening)
+            {
+                Try.execute(() -> gtu.removeListener(this, LaneBasedGTU.LANE_CHANGE_EVENT), "Unable to unlisten to GTU %s.",
+                        gtu);
+            }
+            this.downstreamListening.clear();
             // setup a base iterable to provide the GTUs
             boolean ignoreIfUpstream = false;
             this.downstreamGtus =
@@ -290,6 +317,9 @@ public final class Conflict extends AbstractLaneBasedObject
                                     super.getNext(record, position, counter);
                             if (entry != null)
                             {
+                                Conflict.this.downstreamListening.add(entry.getObject());
+                                Try.execute(() -> entry.getObject().addListener(Conflict.this, LaneBasedGTU.LANE_CHANGE_EVENT),
+                                        "Unable to listen to GTU %s.", entry.getObject());
                                 Conflict.this.downstreamLanes.put(entry.getObject(), record.getLane());
                             }
                             return entry;
@@ -301,6 +331,21 @@ public final class Conflict extends AbstractLaneBasedObject
         // return iterable that uses the base iterable
         return new ConflictGtuIterable(perceivingGtu, new OverlapHeadway(headwayGtuType), visibility, true,
                 this.downstreamGtus);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        LaneBasedGTU gtu = (LaneBasedGTU) event.getSource();
+        if (this.upstreamListening.contains(gtu))
+        {
+            this.upstreamTime = null;
+        }
+        if (this.downstreamListening.contains(gtu))
+        {
+            this.downstreamTime = null;
+        }
     }
 
     /**

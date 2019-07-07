@@ -168,7 +168,6 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                 return true;
             }
             // check if any GTU is upstream of the front, within the vehicle length
-            Break.on(getGtu(), "272", 5 * 60 + 18.49, true);
             headwaySet = NeighborsUtil.getFirstUpstreamGTUs(
                     getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getFront(),
                     getGtu().getRear(), RelativePosition.REAR, getTimestamp());
