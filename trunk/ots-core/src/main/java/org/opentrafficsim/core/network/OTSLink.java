@@ -90,10 +90,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.simulator = simulator;
-        if (id.contains("929_J7"))
-        {
-            System.out.println("komt ie");
-        }
         this.network.addLink(this);
     }
 
