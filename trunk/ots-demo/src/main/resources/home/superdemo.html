@@ -28,11 +28,20 @@
   }
 </script>
 
+<style type="text/css">
+body {
+  font-family: sans-serif;
+}
+</style>
 </head>
 
 <!-- This page is stateless and defers all stateful information to the parameters.html / model.html page -->
 
 <body>
+  <h1><img src="dittlab_logo.png" style="width:auto; height:65px;"></img>&nbsp;&nbsp;
+  <img src="tudelft_logo.png" style="width:auto; height:60px;"></img>
+  &nbsp;&nbsp;OPENTRAFFICSIM</h1>
+  <hr>
   <h1>OTS Demo Model launch page</h1>
   <p>You can run the following demos:</p>
   <ul>
@@ -42,20 +51,21 @@
         Model of a two-lane circular road with overtaking.</a></li>
     <li><a href="parameters.html?model=ShortMerge&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('ShortMerge')">
         Short merge on a highway, followed by a destination split.</a></li>
-    <li><a href="parameters.html?model=NetworksDemo&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('NetworksDemo')">
-        A number of different networks with merging and splitting.</a></li>
+    <!-- li><a href="parameters.html?model=NetworksDemo&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('NetworksDemo')">
+        A number of different networks with merging and splitting.</a></li -->
     <li><a href="parameters.html?model=CrossingTrafficLights&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('CrossingTrafficLights')">
         Model of a crossing with traffic lights.</a></li>
     <li><a href="parameters.html?model=TrafCODDemoSimple&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('TrafCODDemoSimple')">
         Model of a simple crossing with traffic lights using a TrafCOD controller</a></li>
     <li><a href="parameters.html?model=TrafCODDemoComplex&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('TrafCODDemoComplex')">
-        Model of a simple crossing with traffic lights using a TrafCOD controller</a></li>
+        Model of a complex crossing with traffic lights using a TrafCOD controller</a></li>
     <li><a href="parameters.html?model=TJunctionDemo&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('TJunctionDemo')">
-        TJunction with complex crossing traffic using perception, no traffic lights.</a></li>
+        T-Junction with complex crossing traffic using perception, no traffic lights.</a></li>
     <li><a href="parameters.html?model=TurboRoudaboutDemo&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('TurboRoundaboutDemo')">
         'Turbo' roundabout with a complex traffic pattern, using perception, no traffic lights.</a></li>
     <li><a href="parameters.html?model=BusStreetDemo&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('BusStreetDemo')">
         Street with different bus lines, where buses have to stop and weave in/out of traffic.</a></li>
   </ul>
+  <br><hr>
 </body>
 </html>
