@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -64,14 +65,14 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionM
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
 
 /**
- * OTSDemoServer.java. <br>
+ * Federated demo server for OTS models that uses Sim0MQ messaging to start and manage the executed models. <br>
  * <br>
  * Copyright (c) 2003-2019 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
  * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class OTSDemoServer
+public class OTSFederatedDemoServer
 {
     /** the map of sessionIds to OTSModelInterface that handles the animation and updates for the started model. */
     final Map<String, OTSModelInterface> sessionModelMap = new LinkedHashMap<>();
@@ -79,145 +80,48 @@ public class OTSDemoServer
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */
     final Map<String, OTSWebModel> sessionWebModelMap = new LinkedHashMap<>();
 
-    /** the map of sessionIds to the time in msec when the model has to be killed. */
-    final Map<String, Long> sessionKillMap = new LinkedHashMap<>();
-
-    /** how many processes max? */
-    final int maxProcesses;
-
-    /** how much time max? */
-    final int maxTimeMinutes;
+    /** command line arguments. */
+    private final Args commandLineArgs;
 
     /**
      * Run a SuperDemo OTS Web server.
-     * @param args String[]; param=value style parameters. Used: maxProcesses=20 maxTimeMinutes=30
-     * @throws Exception on Jetty error
+     * @param args String[]; arguments for demo server, e.g., port=8080
+     * @throws Exception o Jetty error
      */
     public static void main(final String[] args) throws Exception
     {
-        int maxProcesses = 20;
-        int maxTimeMinutes = 30;
-        for (String arg : args)
-        {
-            if (arg.contains("="))
-            {
-                String[] p = arg.split("=");
-                if (p.length == 2)
-                {
-                    if (p[0].toLowerCase().equals("maxprocesses"))
-                    {
-                        try
-                        {
-                            maxProcesses = Integer.parseInt(p[1]);
-                        }
-                        catch (Exception e)
-                        {
-                            System.err.println("Illegal value for maxProcesses. Value " + maxProcesses + " used");
-                        }
-                    }
-                    else if (p[0].toLowerCase().equals("maxtimeminutes"))
-                    {
-                        try
-                        {
-                            maxTimeMinutes = Integer.parseInt(p[1]);
-                        }
-                        catch (Exception e)
-                        {
-                            System.err.println("Illegal value for maxTimeMinutes. Value " + maxTimeMinutes + " used");
-                        }
-                    }
-                    else
-
-                    {
-                        System.err.println("Illegal parameter  " + p[0] + ", ignored");
-                    }
-                }
-                else
-                {
-                    System.err.println("Illegal parameter  " + arg + ", ignored");
-                }
-            }
-            else
-            {
-                System.err.println("Illegal parameter  " + arg + ", ignored");
-            }
-        }
-        new OTSDemoServer(maxProcesses, maxTimeMinutes);
+        new OTSFederatedDemoServer(args);
     }
 
     /**
-     * @param maxProcesses maximum number of processes to start
-     * @param maxTimeMinutes max time of one run in minutes before kill
+     * @param args String[]; arguments for demo server, e.g., port=8080
      * @throws Exception in case jetty crashes
      */
-    public OTSDemoServer(final int maxProcesses, final int maxTimeMinutes) throws Exception
+    public OTSFederatedDemoServer(final String[] args) throws Exception
     {
-        this.maxProcesses = maxProcesses;
-        this.maxTimeMinutes = maxTimeMinutes;
-        System.out.println("maxProcesses=" + this.maxProcesses);
-        new ServerThread().start();
-        new KillThread().start();
-    }
-
-    /** Handle the kills of models that ran maxTime minutes. */
-    class KillThread extends Thread
-    {
-        @Override
-        public void run()
-        {
-            while (true)
-            {
-                try
-                {
-                    Thread.sleep(10000); // 10 seconds
-                    List<String> kills = new ArrayList<>();
-                    long timeNow = System.currentTimeMillis();
-                    for (String sessionId : OTSDemoServer.this.sessionKillMap.keySet())
-                    {
-                        if (timeNow > OTSDemoServer.this.sessionKillMap.get(sessionId))
-                        {
-                            kills.add(sessionId);
-                        }
-                    }
-                    for (String sessionId : kills)
-                    {
-                        OTSWebModel webModel = OTSDemoServer.this.sessionWebModelMap.get(sessionId);
-                        if (webModel != null)
-                        {
-                            webModel.setKilled(true);
-                            OTSDemoServer.this.sessionWebModelMap.remove(sessionId);
-                        }
-                        OTSModelInterface model = OTSDemoServer.this.sessionModelMap.get(sessionId);
-                        if (model != null)
-                        {
-                            try
-                            {
-                                model.getSimulator().stop();
-                            }
-                            catch (Exception e)
-                            {
-                                // ignore
-                            }
-                            OTSDemoServer.this.sessionModelMap.remove(sessionId);
-                        }
-                        OTSDemoServer.this.sessionKillMap.remove(sessionId);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    //
-                }
-            }
-        }
+        this.commandLineArgs = new Args(args);
+        new ServerThread(this.commandLineArgs).start();
     }
 
     /** Handle in separate thread to avoid 'lock' of the main application. */
     class ServerThread extends Thread
     {
+        /** command line arguments. */
+        private final Args args;
+
+        /**
+         * Create the server thread.
+         * @param args String[]; arguments for demo server, e.g., port=8080
+         */
+        ServerThread(final Args args)
+        {
+            this.args = args;
+        }
+
         @Override
         public void run()
         {
-            Server server = new Server(8081);
+            Server server = new Server(this.args.parseInt("port", 8080));
             ResourceHandler resourceHandler = new MyResourceHandler();
 
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
@@ -226,7 +130,7 @@ public class OTSDemoServer
             System.out.println("webRoot is " + webRoot);
 
             resourceHandler.setDirectoriesListed(true);
-            resourceHandler.setWelcomeFiles(new String[] {"superdemo.html"});
+            resourceHandler.setWelcomeFiles(new String[] {this.args.parseString("rootfile", "superdemo.html")});
             resourceHandler.setResourceBase(webRoot);
 
             SessionIdManager idManager = new DefaultSessionIdManager(server);
@@ -239,7 +143,7 @@ public class OTSDemoServer
             sessionHandler.setSessionCache(sessionCache);
 
             HandlerList handlers = new HandlerList();
-            handlers.setHandlers(new Handler[] {resourceHandler, sessionHandler, new XHRHandler(OTSDemoServer.this)});
+            handlers.setHandlers(new Handler[] {resourceHandler, sessionHandler, new XHRHandler(OTSFederatedDemoServer.this)});
             server.setHandler(handlers);
 
             try
@@ -263,14 +167,6 @@ public class OTSDemoServer
         public Resource getResource(final String path)
         {
             System.out.println(path);
-            if (path.contains("/parameters.html"))
-            {
-                if (OTSDemoServer.this.sessionModelMap.size() > OTSDemoServer.this.maxProcesses)
-                {
-                    System.out.println("NO MORE PROCESSES -- MAXMODELS returned");
-                    return super.getResource("/maxmodels.html");
-                }
-            }
             return super.getResource(path);
         }
 
@@ -290,15 +186,9 @@ public class OTSDemoServer
 
             if (target.startsWith("/parameters.html"))
             {
-                if (OTSDemoServer.this.sessionModelMap.size() > OTSDemoServer.this.maxProcesses)
-                {
-                    super.handle(target, baseRequest, request, response);
-                    return;
-                }
-
                 String modelId = request.getParameterMap().get("model")[0];
                 String sessionId = request.getParameterMap().get("sessionId")[0];
-                if (!OTSDemoServer.this.sessionModelMap.containsKey(sessionId))
+                if (!OTSFederatedDemoServer.this.sessionModelMap.containsKey(sessionId))
                 {
                     System.out.println("parameters: " + modelId);
                     OTSAnimator simulator = new OTSAnimator();
@@ -306,25 +196,15 @@ public class OTSDemoServer
                     OTSModelInterface model = null;
 
                     if (modelId.toLowerCase().contains("circularroad"))
-                    {
                         model = new CircularRoadModel(simulator);
-                    }
                     else if (modelId.toLowerCase().contains("straight"))
-                    {
                         model = new StraightModel(simulator);
-                    }
                     else if (modelId.toLowerCase().contains("shortmerge"))
-                    {
                         model = new ShortMerge.ShortMergeModel(simulator);
-                    }
                     else if (modelId.toLowerCase().contains("networksdemo"))
-                    {
                         model = new NetworksModel(simulator);
-                    }
                     else if (modelId.toLowerCase().contains("crossingtrafficlights"))
-                    {
                         model = new CrossingTrafficLightsModel(simulator);
-                    }
                     else if (modelId.toLowerCase().contains("trafcoddemosimple"))
                     {
                         URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
@@ -338,29 +218,16 @@ public class OTSDemoServer
                         model = new TrafCODDemo2.TrafCODModel(simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
                     }
                     else if (modelId.toLowerCase().contains("tjunction"))
-                    {
                         model = new TJunctionDemo.TJunctionModel(simulator);
-                    }
                     else if (modelId.toLowerCase().contains("busstreet"))
-                    {
                         model = new BusStreetDemo.BusStreetModel(simulator);
-                    }
                     else if (modelId.toLowerCase().contains("turboroundabout"))
-                    {
                         model = new TurboRoundaboutDemo.TurboRoundaboutModel(simulator);
-                    }
 
                     if (model != null)
-                    {
-                        OTSDemoServer.this.sessionModelMap.put(sessionId, model);
-                        long currentMsec = System.currentTimeMillis();
-                        long killMsec = currentMsec + OTSDemoServer.this.maxTimeMinutes * 60 * 1000L;
-                        OTSDemoServer.this.sessionKillMap.put(sessionId, killMsec);
-                    }
+                        OTSFederatedDemoServer.this.sessionModelMap.put(sessionId, model);
                     else
-                    {
                         System.err.println("Could not find model " + modelId);
-                    }
                 }
             }
 
@@ -368,17 +235,17 @@ public class OTSDemoServer
             {
                 String modelId = request.getParameterMap().get("model")[0];
                 String sessionId = request.getParameterMap().get("sessionId")[0];
-                if (OTSDemoServer.this.sessionModelMap.containsKey(sessionId)
-                        && !OTSDemoServer.this.sessionWebModelMap.containsKey(sessionId))
+                if (OTSFederatedDemoServer.this.sessionModelMap.containsKey(sessionId)
+                        && !OTSFederatedDemoServer.this.sessionWebModelMap.containsKey(sessionId))
                 {
                     System.out.println("startModel: " + modelId);
-                    OTSModelInterface model = OTSDemoServer.this.sessionModelMap.get(sessionId);
+                    OTSModelInterface model = OTSFederatedDemoServer.this.sessionModelMap.get(sessionId);
                     OTSSimulatorInterface simulator = model.getSimulator();
                     try
                     {
                         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), model);
                         OTSWebModel webModel = new OTSWebModel(model.getShortName(), simulator);
-                        OTSDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
+                        OTSFederatedDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), simulator,
                                 new DefaultSwitchableGTUColorer());
                     }
@@ -405,13 +272,13 @@ public class OTSDemoServer
     public static class XHRHandler extends AbstractHandler
     {
         /** web server for callback of actions. */
-        private final OTSDemoServer webServer;
+        private final OTSFederatedDemoServer webServer;
 
         /**
          * Create the handler for Servlet requests.
          * @param webServer DSOLWebServer; web server for callback of actions
          */
-        public XHRHandler(final OTSDemoServer webServer)
+        public XHRHandler(final OTSFederatedDemoServer webServer)
         {
             this.webServer = webServer;
         }
@@ -426,10 +293,6 @@ public class OTSDemoServer
                 String sessionId = request.getParameterMap().get("sessionId")[0];
                 if (this.webServer.sessionWebModelMap.containsKey(sessionId))
                 {
-                    if (this.webServer.sessionWebModelMap.get(sessionId).isKilled())
-                    {
-                        return;
-                    }
                     this.webServer.sessionWebModelMap.get(sessionId).handle(target, baseRequest, request, response);
                 }
                 else if (this.webServer.sessionModelMap.containsKey(sessionId))

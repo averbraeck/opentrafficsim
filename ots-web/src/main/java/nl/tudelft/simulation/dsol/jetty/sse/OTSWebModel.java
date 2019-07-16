@@ -63,6 +63,9 @@ public class OTSWebModel implements EventListenerInterface
 
     /** Simulation time time. */
     private double prevSimTime = 0;
+    
+    /** has the model been killed? */
+    private boolean killed = false;
 
     /**
      * @param title String; the title for the model window
@@ -116,6 +119,22 @@ public class OTSWebModel implements EventListenerInterface
     public final HTMLAnimationPanel getAnimationPanel()
     {
         return this.animationPanel;
+    }
+
+    /**
+     * @return killed
+     */
+    public final boolean isKilled()
+    {
+        return this.killed;
+    }
+
+    /**
+     * @param killed set killed
+     */
+    public final void setKilled(final boolean killed)
+    {
+        this.killed = killed;
     }
 
     /**
@@ -186,7 +205,7 @@ public class OTSWebModel implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(EventInterface event) throws RemoteException
+    public void notify(final EventInterface event) throws RemoteException
     {
         if (event.getType().equals(SimulatorInterface.START_EVENT))
         {
@@ -207,13 +226,19 @@ public class OTSWebModel implements EventListenerInterface
      * @throws IOException on error
      * @throws ServletException on error
      */
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:methodlength"})
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException, ServletException
     {
         // System.out.println("target=" + target);
         // System.out.println("baseRequest=" + baseRequest);
         // System.out.println("request=" + request);
 
+        if (this.killed)
+        {
+            return;
+        }
+        
         Map<String, String[]> params = request.getParameterMap();
         // System.out.println(params);
 
@@ -490,7 +515,7 @@ public class OTSWebModel implements EventListenerInterface
 
                 default:
                 {
-                    System.err.println("Got unknown message from client: " + command);
+                    System.err.println("OTSWebModel: Got unknown message from client: " + command);
                     answer = "<message>" + request.getParameter("message") + "</message>";
                     break;
                 }
