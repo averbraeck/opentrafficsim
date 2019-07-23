@@ -298,7 +298,7 @@ public class TrafficLightSensor extends EventProducer
                 remainingLanes.retainAll(this.lanes);
                 if (remainingLanes.size() == 0)
                 {
-                    System.err.println("GTU is not in any or our lanes - CANNOT HAPPEN");
+                    System.err.println("GTU is not in any of our lanes - CANNOT HAPPEN");
                 }
                 Map<Lane, Length> rearPositions = gtu.positions(gtu.getRelativePositions().get(this.exitA.getPositionType()));
                 for (Lane remainingLane : remainingLanes)
