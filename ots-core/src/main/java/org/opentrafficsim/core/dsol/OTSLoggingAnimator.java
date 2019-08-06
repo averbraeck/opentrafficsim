@@ -1,21 +1,17 @@
 package org.opentrafficsim.core.dsol;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -30,7 +26,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSLoggingAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTSAnimatorInterface, Serializable
+public class OTSLoggingAnimator extends OTSAnimator
 {
     /** */
     private static final long serialVersionUID = 20150511L;
@@ -40,8 +36,9 @@ public class OTSLoggingAnimator extends DEVSRealTimeClock.TimeDoubleUnit impleme
 
     /**
      * Construct an OTSAnimator.
+     * @param path path for logging
      */
-    public OTSLoggingAnimator()
+    public OTSLoggingAnimator(final String path)
     {
         super();
     }
@@ -57,7 +54,7 @@ public class OTSLoggingAnimator extends DEVSRealTimeClock.TimeDoubleUnit impleme
                 OTSReplication.create("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, model);
         super.initialize(newReplication, ReplicationMode.TERMINATING);
     }
-    
+
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime Time; the start time of the simulation
@@ -69,8 +66,10 @@ public class OTSLoggingAnimator extends DEVSRealTimeClock.TimeDoubleUnit impleme
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when the context for the replication cannot be created
      */
+    @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final Map<String, StreamInterface> streams) throws SimRuntimeException, NamingException
+            final OTSModelInterface model, final Map<String, StreamInterface> streams)
+            throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
@@ -93,33 +92,14 @@ public class OTSLoggingAnimator extends DEVSRealTimeClock.TimeDoubleUnit impleme
 
     /** {@inheritDoc} */
     @Override
-    public final SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
-            final Object target, final String method, final Object[] args) throws SimRuntimeException
-    {
-        SimEvent<SimTimeDoubleUnit> result = new SimEvent<>(
-                new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source, target, method, args);
-        scheduleEvent(result);
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final OTSReplication getReplication()
-    {
-        return (OTSReplication) super.getReplication();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String toString()
     {
-        return "OTSAnimator [lastReplication=" + this.lastReplication + "]";
+        return "OTSLoggingAnimator [lastReplication=" + this.lastReplication + "]";
     }
-
 
     /** the current animation thread; null if none. */
     private AnimationThread animationThread = null;
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:methodlength"})
@@ -324,6 +304,5 @@ public class OTSLoggingAnimator extends DEVSRealTimeClock.TimeDoubleUnit impleme
             }
         }
     }
-    
-    
+
 }
