@@ -31,7 +31,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -85,7 +84,6 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
     public static void main(final String[] args)
             throws IOException, SimRuntimeException, NamingException, OTSSimulationException, InputParameterException
     {
-        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
         String fileName;
         String xml;
         if (0 == args.length)

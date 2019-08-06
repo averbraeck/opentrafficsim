@@ -51,6 +51,9 @@ public class ODOptions
 
     /** Initial distance over which lane changes shouldn't be performed option. */
     public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", null);
+    
+    /** Whether to perform instantaneous lane changes. */
+    public static final Option<Boolean> INSTANT_LC = new Option<>("instant lc", false);
 
     /** Options overall. */
     private OptionSet<Void> options = new OptionSet<>();

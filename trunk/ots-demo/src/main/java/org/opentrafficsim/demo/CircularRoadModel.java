@@ -24,7 +24,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
@@ -157,8 +156,6 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     {
         try
         {
-            LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = !((boolean) getInputParameter("generic.gradualLaneChange"));
-            
             final int laneCount = 2;
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
@@ -242,9 +239,10 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
      * @throws NetworkException on network inconsistency
      * @throws GTUException when something goes wrong during construction of the car
      * @throws OTSGeometryException when the initial position is outside the center line of the lane
+     * @throws InputParameterException when generic.gradualLaneChange is not set
      */
     protected final void generateGTU(final Length initialPosition, final Lane lane, final GTUType gtuType)
-            throws GTUException, NetworkException, SimRuntimeException, OTSGeometryException
+            throws GTUException, NetworkException, SimRuntimeException, OTSGeometryException, InputParameterException
     {
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
@@ -254,6 +252,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
                         new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
+        gtu.setInstantaneousLaneChange(!((boolean) getInputParameter("generic.gradualLaneChange")));
         gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
         gtu.setMaximumDeceleration(Acceleration.createSI(-8.0));
 
