@@ -169,6 +169,9 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 
     /** Vehicle model. */
     private VehicleModel vehicleModel = VehicleModel.MINMAX;
+    
+    /** Whether the GTU perform lane changes instantaneously or not. */
+    private boolean instantaneousLaneChange = false;
 
     /**
      * Construct a Lane Based GTU.
@@ -1417,6 +1420,20 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         double y2 = p.y + Math.sin(p.getRotZ());
         double det = (loc.x - p.x) * (y2 - p.y) - (loc.y - p.y) * (x2 - p.x);
         return Length.createSI(det < 0.0 ? -d : d);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setInstantaneousLaneChange(final boolean instantaneous)
+    {
+        this.instantaneousLaneChange = instantaneous;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isInstantaneousLaneChange()
+    {
+        return this.instantaneousLaneChange;
     }
 
     /** {@inheritDoc} */

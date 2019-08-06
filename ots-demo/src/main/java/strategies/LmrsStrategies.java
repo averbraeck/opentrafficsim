@@ -112,7 +112,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -279,7 +278,6 @@ public class LmrsStrategies implements EventListenerInterface
     public static void main(final String[] args)
     {
         LaneChange.MIN_LC_LENGTH_FACTOR = 1.0;
-        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 
         // default properties
         boolean autorun = false;
@@ -828,6 +826,7 @@ public class LmrsStrategies implements EventListenerInterface
                 ODOptions odOptions = new ODOptions().set(ODOptions.MARKOV, markov)
                         .set(ODOptions.getLaneBiasOption(LmrsStrategies.this.network), biases)
                         .set(ODOptions.NO_LC_DIST, Length.createSI(100.0))
+                        .set(ODOptions.INSTANT_LC, true)
                         .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
                         .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, getSimulator(), odOptions);

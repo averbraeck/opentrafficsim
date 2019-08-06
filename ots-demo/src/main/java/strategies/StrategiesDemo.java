@@ -63,7 +63,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTraffi
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -489,8 +488,6 @@ public class StrategiesDemo extends AbstractSimulationScript
     @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
-        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
-
         OTSRoadNetwork network = new OTSRoadNetwork("Strategies demo", true);
 
         GTUCharacteristics truck =
@@ -640,6 +637,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         gtu.setMaximumAcceleration(gtuCharacteristics.getMaximumAcceleration());
         gtu.setMaximumDeceleration(gtuCharacteristics.getMaximumDeceleration());
         gtu.setNoLaneChangeDistance(Length.createSI(50));
+        gtu.setInstantaneousLaneChange(true);
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner = this.factories.get(gtuType).create(gtu, null, null, null);

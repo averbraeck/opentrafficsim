@@ -59,7 +59,6 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -180,7 +179,6 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
      */
     public static void demo(final boolean exitOnClose)
     {
-        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
         try
         {
             OTSAnimator simulator = new OTSAnimator();

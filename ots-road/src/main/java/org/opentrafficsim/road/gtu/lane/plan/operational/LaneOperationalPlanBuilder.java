@@ -59,9 +59,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 public final class LaneOperationalPlanBuilder // class package private for scheduling static method on an instance
 {
 
-    /** Use instant lane changes. */
-    public static boolean INSTANT_LANE_CHANGES = true;
-
     /** Maximum acceleration for unbounded accelerations: 1E12 m/s2. */
     private static final Acceleration MAX_ACCELERATION = new Acceleration(1E12, AccelerationUnit.SI);
 
@@ -507,7 +504,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
     {
         Acceleration acc = gtu.getVehicleModel().boundAcceleration(simplePlan.getAcceleration(), gtu);
 
-        if (INSTANT_LANE_CHANGES)
+        if (gtu.isInstantaneousLaneChange())
         {
             if (simplePlan.isLaneChange())
             {

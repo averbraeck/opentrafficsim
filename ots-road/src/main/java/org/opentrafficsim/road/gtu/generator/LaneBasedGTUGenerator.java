@@ -113,6 +113,9 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     /** Initial distance over which lane changes shouldn't be performed. */
     private Length noLaneChangeDistance = null;
 
+    /** Whether GTUs change lane instantaneously. */
+    private boolean instantaneousLaneChange = false;
+    
     /** Vehicle generation is ignored on these lanes. */
     private Set<LaneDirection> disabled = new LinkedHashSet<>();
 
@@ -160,6 +163,15 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     public void setNoLaneChangeDistance(final Length noLaneChangeDistance)
     {
         this.noLaneChangeDistance = noLaneChangeDistance;
+    }
+    
+    /**
+     * Sets whether GTUs will change lane instantaneously.
+     * @param instantaneous boolean; whether GTUs will change lane instantaneously
+     */
+    public void setInstantaneousLaneChange(final boolean instantaneous)
+    {
+        this.instantaneousLaneChange = instantaneous;
     }
 
     /**
@@ -356,6 +368,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
         gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
         gtu.setVehicleModel(characteristics.getVehicleModel());
         gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
+        gtu.setInstantaneousLaneChange(this.instantaneousLaneChange);
         gtu.init(characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
                 characteristics.getOrigin(), characteristics.getDestination()), position, speed);
         this.generatedGTUs++;

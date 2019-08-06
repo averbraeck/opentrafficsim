@@ -94,7 +94,6 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
@@ -297,7 +296,6 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         AbstractGTU.ALIGNED = true;
-        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 
         // Network
         URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
@@ -330,8 +328,9 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         od.putDemandVector(network.getNode("LEFTINPRE"), network.getNode("EXIT"), truckCategory, leftDemandPatternTruck);
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), carCategory, rightDemandPatternCar);
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), truckCategory, rightDemandPatternTruck);
-        ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE,
-                new DefaultGTUCharacteristicsGeneratorOD(new DistractionFactorySupplier()));
+        ODOptions odOptions = new ODOptions()
+                .set(ODOptions.GTU_TYPE, new DefaultGTUCharacteristicsGeneratorOD(new DistractionFactorySupplier()))
+                .set(ODOptions.INSTANT_LC, true);
         ODApplier.applyOD(network, od, sim, odOptions);
 
         // History

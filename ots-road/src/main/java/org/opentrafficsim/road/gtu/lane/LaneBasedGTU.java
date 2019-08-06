@@ -101,6 +101,18 @@ public interface LaneBasedGTU extends GTU
     }
 
     /**
+     * Sets whether the GTU perform lane changes instantaneously or not.
+     * @param instantaneous boolean; whether the GTU perform lane changes instantaneously or not
+     */
+    void setInstantaneousLaneChange(boolean instantaneous);
+    
+    /**
+     * Returns whether the GTU perform lane changes instantaneously or not.
+     * @return boolean; whether the GTU perform lane changes instantaneously or not
+     */
+    boolean isInstantaneousLaneChange();
+    
+    /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered. <br>
      * <b>Note:</b> If a GTU is registered in multiple parallel lanes, the lateralLaneChangeModel is used to determine the

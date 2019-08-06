@@ -361,6 +361,7 @@ public final class ODApplier
                             GeneratorPositions.create(initialPosition, stream, biases, linkWeights), network, simulator,
                             roomChecker, idGenerator);
                     generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC_DIST, lane, o, linkType));
+                    generator.setInstantaneousLaneChange(odOptions.get(ODOptions.INSTANT_LC, lane, o, linkType));
                     output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
                 }
                 catch (SimRuntimeException exception)
