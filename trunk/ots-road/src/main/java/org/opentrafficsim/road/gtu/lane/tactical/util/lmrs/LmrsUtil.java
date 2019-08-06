@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.SortedSet;
 
@@ -22,7 +21,6 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -92,8 +90,8 @@ public final class LmrsUtil implements LmrsParameters
      * @param laneChange LaneChange; lane change status
      * @param lmrsData LmrsData; LMRS data
      * @param perception LanePerception; perception
-     * @param mandatoryIncentives LinkedHashSet&lt;MandatoryIncentive&gt;; set of mandatory lane change incentives
-     * @param voluntaryIncentives LinkedHashSet&lt;VoluntaryIncentive&gt;; set of voluntary lane change incentives
+     * @param mandatoryIncentives Iterable&lt;MandatoryIncentive&gt;; set of mandatory lane change incentives
+     * @param voluntaryIncentives Iterable&lt;VoluntaryIncentive&gt;; set of voluntary lane change incentives
      * @return simple operational plan
      * @throws GTUException gtu exception
      * @throws NetworkException network exception
@@ -103,8 +101,8 @@ public final class LmrsUtil implements LmrsParameters
     @SuppressWarnings({ "checkstyle:parameternumber", "checkstyle:methodlength" })
     public static SimpleOperationalPlan determinePlan(final LaneBasedGTU gtu, final Time startTime,
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
-            final LanePerception perception, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
-            final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
+            final LanePerception perception, final Iterable<MandatoryIncentive> mandatoryIncentives,
+            final Iterable<VoluntaryIncentive> voluntaryIncentives)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
         // obtain objects to get info
@@ -357,7 +355,7 @@ public final class LmrsUtil implements LmrsParameters
     }
 
     /**
-     * Determines lane change desire for the given RSU. Mandatory desire is deduced as the maximum of a set of mandatory
+     * Determines lane change desire for the given GtU. Mandatory desire is deduced as the maximum of a set of mandatory
      * incentives, while voluntary desires are added. Depending on the level of mandatory lane change desire, voluntary desire
      * may be included partially. If both are positive or negative, voluntary desire is fully included. Otherwise, voluntary
      * desire is less considered within the range dSync &lt; |mandatory| &lt; dCoop. The absolute value is used as large
@@ -365,8 +363,8 @@ public final class LmrsUtil implements LmrsParameters
      * @param parameters Parameters; parameters
      * @param perception LanePerception; perception
      * @param carFollowingModel CarFollowingModel; car-following model
-     * @param mandatoryIncentives LinkedHashSet&lt;MandatoryIncentive&gt;; mandatory incentives
-     * @param voluntaryIncentives LinkedHashSet&lt;VoluntaryIncentive&gt;; voluntary incentives
+     * @param mandatoryIncentives Iterable&lt;MandatoryIncentive&gt;; mandatory incentives
+     * @param voluntaryIncentives Iterable&lt;VoluntaryIncentive&gt;; voluntary incentives
      * @param desireMap Map&lt;Class&lt;? extends Incentive&gt;,Desire&gt;; map where calculated desires are stored in
      * @return lane change desire for gtu
      * @throws ParameterException if a parameter is not defined
@@ -374,9 +372,8 @@ public final class LmrsUtil implements LmrsParameters
      * @throws OperationalPlanException perception exception
      */
     public static Desire getLaneChangeDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
-            final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives,
-            final Map<Class<? extends Incentive>, Desire> desireMap)
+            final CarFollowingModel carFollowingModel, final Iterable<MandatoryIncentive> mandatoryIncentives,
+            final Iterable<VoluntaryIncentive> voluntaryIncentives, final Map<Class<? extends Incentive>, Desire> desireMap)
             throws ParameterException, GTUException, OperationalPlanException
     {
 
@@ -459,8 +456,6 @@ public final class LmrsUtil implements LmrsParameters
             final LateralDirectionality lat, final GapAcceptance gapAcceptance, final LaneChange laneChange)
             throws ParameterException, OperationalPlanException
     {
-        Break.on(perception, "977", 20 * 60 + 3, true);
-        
         // beyond start distance
         LaneBasedGTU gtu = Try.assign(() -> perception.getGtu(), "Cannot obtain GTU.");
         if (!gtu.laneChangeAllowed())
