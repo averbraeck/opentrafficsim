@@ -30,6 +30,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUErrorHandler;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -115,7 +116,10 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
 
     /** Whether GTUs change lane instantaneously. */
     private boolean instantaneousLaneChange = false;
-    
+
+    /** GTU error handler. */
+    private GTUErrorHandler errorHandler = GTUErrorHandler.THROW;
+
     /** Vehicle generation is ignored on these lanes. */
     private Set<LaneDirection> disabled = new LinkedHashSet<>();
 
@@ -164,7 +168,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     {
         this.noLaneChangeDistance = noLaneChangeDistance;
     }
-    
+
     /**
      * Sets whether GTUs will change lane instantaneously.
      * @param instantaneous boolean; whether GTUs will change lane instantaneously
@@ -172,6 +176,15 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     public void setInstantaneousLaneChange(final boolean instantaneous)
     {
         this.instantaneousLaneChange = instantaneous;
+    }
+
+    /**
+     * Sets the GTU error handler.
+     * @param gtuErrorHandler GTUErrorHandler; GTU error handler
+     */
+    public void setErrorHandler(final GTUErrorHandler gtuErrorHandler)
+    {
+        this.errorHandler = gtuErrorHandler;
     }
 
     /**
@@ -369,6 +382,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
         gtu.setVehicleModel(characteristics.getVehicleModel());
         gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
         gtu.setInstantaneousLaneChange(this.instantaneousLaneChange);
+        gtu.setErrorHandler(this.errorHandler);
         gtu.init(characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
                 characteristics.getOrigin(), characteristics.getDestination()), position, speed);
         this.generatedGTUs++;

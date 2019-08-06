@@ -51,7 +51,13 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * @return Iterator&lt;U&gt;; iterator
      */
     Iterator<U> underlying();
-    
+
+    /**
+     * Returns an iterator over the underlying objects coupled with the distance.
+     * @return Iterator&lt;UnderlyingDistance&lt;U&gt;&gt;; iterator
+     */
+    Iterator<UnderlyingDistance<U>> underlyingWithDistance();
+
     /**
      * Combination of an accumulator and a finalizer.
      * <p>
@@ -221,6 +227,54 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         public boolean isStop()
         {
             return this.stop;
+        }
+    }
+
+    /**
+     * Wrapper for object and its distance.
+     * <p>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 6, 2019 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * @param <U> underlying object type
+     */
+    class UnderlyingDistance<U>
+    {
+        /** Object. */
+        final U object;
+
+        /** Distance. */
+        final Length distance;
+
+        /**
+         * @param object U; object
+         * @param distance Length; distance
+         */
+        public UnderlyingDistance(final U object, final Length distance)
+        {
+            this.object = object;
+            this.distance = distance;
+        }
+
+        /**
+         * @return U; object.
+         */
+        public U getObject()
+        {
+            return this.object;
+        }
+
+        /**
+         * @return Length; distance.
+         */
+        public Length getDistance()
+        {
+            return this.distance;
         }
     }
 

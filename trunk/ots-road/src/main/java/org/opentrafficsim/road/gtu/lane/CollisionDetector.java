@@ -1,88 +1,63 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.util.function.Supplier;
+import java.util.Iterator;
 
-import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Throw;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionCollector;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionFinalizer;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 /**
- * Collision detector that detects a negative headway when used on a {@code PerceptionCollectable<HeadwayGTU, LaneBasedGTU>}.
- * This is done by {@code AbstractLaneBasedGTU.getCarFollowingAcceleration()}.
+ * Checks for collisions.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 feb. 2019 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 6, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class CollisionDetector implements PerceptionCollector<Void, LaneBasedGTU, Void>
+public class CollisionDetector extends AbstractLaneBasedMoveChecker
 {
-
-    /** GTU id. */
-    private final String id;
 
     /**
      * Constructor.
-     * @param id String; GTU id
+     * @param network OTSNetwork; network
      */
-    public CollisionDetector(final String id)
+    public CollisionDetector(final OTSNetwork network)
     {
-        this.id = id;
+        super(network);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Supplier<Void> getIdentity()
+    public void checkMove(final LaneBasedGTU gtu) throws Exception
     {
-        return new Supplier<Void>()
+        try
         {
-            /** {@inheritDoc} */
-            @Override
-            public Void get()
+            NeighborsPerception neighbors =
+                    gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.class);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+            Iterator<UnderlyingDistance<LaneBasedGTU>> gtus = leaders.underlyingWithDistance();
+            if (!gtus.hasNext())
             {
-                return null;
+                return;
             }
-        };
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public PerceptionAccumulator<LaneBasedGTU, Void> getAccumulator()
-    {
-        return new PerceptionAccumulator<LaneBasedGTU, Void>()
+            UnderlyingDistance<LaneBasedGTU> leader = gtus.next();
+            if (leader.getDistance().lt0())
+            {
+                throw new CollisionException("GTU " + gtu.getId() + " collided with GTU " + leader.getObject().getId());
+            }
+        }
+        catch (OperationalPlanException exception)
         {
-            /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public Intermediate<Void> accumulate(final Intermediate<Void> intermediate, final LaneBasedGTU object,
-                    final Length distance)
-            {
-                Throw.when(distance.lt0(), CollisionException.class, "GTU %s collided with GTU %s", CollisionDetector.this.id,
-                        object.getId());
-                intermediate.stop();
-                return intermediate;
-            }
-        };
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public PerceptionFinalizer<Void, Void> getFinalizer()
-    {
-        return new PerceptionFinalizer<Void, Void>()
-        {
-            @Override
-            public Void collect(final Void intermediate)
-            {
-                return null;
-            }
-        };
+            throw new GTUException(exception);
+        }
     }
 
 }

@@ -124,6 +124,9 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /** Children GTU's. */
     private Set<GTU> children = new LinkedHashSet<>();
 
+    /** Error handler. */
+    private GTUErrorHandler errorHandler = GTUErrorHandler.THROW;
+
     /**
      * @param id String; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
@@ -248,6 +251,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * has to take care to handle the situation that the plan gets interrupted.
      * @param fromLocation DirectedPoint; the last known location (initial location, or end location of the previous operational
      *            plan)
+     * @return boolean; whether an exception occurred
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
      * @throws GTUException when there is a problem with the state of the GTU when planning a path
@@ -255,7 +259,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @throws ParameterException in there is a parameter problem
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void move(final DirectedPoint fromLocation)
+    protected boolean move(final DirectedPoint fromLocation)
             throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException, ParameterException
     {
         try
@@ -289,12 +293,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             this.cachedSpeedTime = Double.NaN;
             this.cachedAccelerationTime = Double.NaN;
             this.odometer.set(currentOdometer);
-            if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
-                    && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
-            {
-                SimLogger.always().error("(getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
-                // this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
-            }
 
             // TODO allow alignment at different intervals, also different between GTU's within a single simulation
             if (ALIGNED && newOperationalPlan.getTotalDuration().si == 0.5)
@@ -320,11 +318,19 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             fireTimedEvent(GTU.MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getOdometer() },
                     this.simulator.getSimulatorTime());
 
+            return false;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            // TODO: error handler
-            throw e;
+            try
+            {
+                this.errorHandler.handle(this, ex);
+            }
+            catch (Exception exception)
+            {
+                throw new GTUException(exception);
+            }
+            return true;
         }
     }
 
@@ -663,6 +669,21 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     public Set<GTU> getChildren()
     {
         return new LinkedHashSet<>(this.children); // safe copy
+    }
+
+    /**
+     * @return errorHandler.
+     */
+    protected GTUErrorHandler getErrorHandler()
+    {
+        return this.errorHandler;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setErrorHandler(final GTUErrorHandler errorHandler)
+    {
+        this.errorHandler = errorHandler;
     }
 
     /**
