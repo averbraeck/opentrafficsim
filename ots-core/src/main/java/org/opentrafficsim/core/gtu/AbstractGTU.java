@@ -179,7 +179,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @throws GTUException when the preconditions of the parameters are not met or when the construction of the original
      *             waiting path fails
      */
-    @SuppressWarnings({"checkstyle:hiddenfield", "hiding", "checkstyle:designforextension"})
+    @SuppressWarnings({ "checkstyle:hiddenfield", "hiding", "checkstyle:designforextension" })
     public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint initialLocation, final Speed initialSpeed)
             throws SimRuntimeException, GTUException
     {
@@ -195,7 +195,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.tacticalPlanner.set(strategicalPlanner.getTacticalPlanner());
         Time now = this.simulator.getSimulatorTime();
 
-        fireTimedEvent(GTU.INIT_EVENT, new Object[] {getId(), initialLocation, getLength(), getWidth()}, now);
+        fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth() }, now);
 
         try
         {
@@ -226,7 +226,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
-        fireTimedEvent(GTU.DESTROY_EVENT, new Object[] {getId(), getLocation(), getOdometer()},
+        fireTimedEvent(GTU.DESTROY_EVENT, new Object[] { getId(), getLocation(), getOdometer() },
                 this.simulator.getSimulatorTime());
 
         // cancel the next move
@@ -258,65 +258,74 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     protected void move(final DirectedPoint fromLocation)
             throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException, ParameterException
     {
-        Time now = this.simulator.getSimulatorTime();
+        try
+        {
+            Time now = this.simulator.getSimulatorTime();
 
-        // Add the odometer distance from the currently running operational plan.
-        // Because a plan can be interrupted, we explicitly calculate the covered distance till 'now'
-        Length currentOdometer;
-        if (this.operationalPlan.get() != null)
-        {
-            currentOdometer = this.odometer.get().plus(this.operationalPlan.get().getTraveledDistance(now));
-        }
-        else
-        {
-            currentOdometer = this.odometer.get();
-        }
+            // Add the odometer distance from the currently running operational plan.
+            // Because a plan can be interrupted, we explicitly calculate the covered distance till 'now'
+            Length currentOdometer;
+            if (this.operationalPlan.get() != null)
+            {
+                currentOdometer = this.odometer.get().plus(this.operationalPlan.get().getTraveledDistance(now));
+            }
+            else
+            {
+                currentOdometer = this.odometer.get();
+            }
 
-        // Do we have an operational plan?
-        // TODO discuss when a new tactical planner may be needed
-        TacticalPlanner<?, ?> tactPlanner = this.tacticalPlanner.get();
-        if (tactPlanner == null)
-        {
-            // Tell the strategical planner to provide a tactical planner
-            tactPlanner = this.strategicalPlanner.get().getTacticalPlanner();
-            this.tacticalPlanner.set(tactPlanner);
-        }
-        tactPlanner.getPerception().perceive();
-        OperationalPlan newOperationalPlan = tactPlanner.generateOperationalPlan(now, fromLocation);
-        this.operationalPlan.set(newOperationalPlan);
-        this.cachedSpeedTime = Double.NaN;
-        this.cachedAccelerationTime = Double.NaN;
-        this.odometer.set(currentOdometer);
-        if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
-                && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
-        {
-            SimLogger.always().error("(getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
-            // this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
-        }
+            // Do we have an operational plan?
+            // TODO discuss when a new tactical planner may be needed
+            TacticalPlanner<?, ?> tactPlanner = this.tacticalPlanner.get();
+            if (tactPlanner == null)
+            {
+                // Tell the strategical planner to provide a tactical planner
+                tactPlanner = this.strategicalPlanner.get().getTacticalPlanner();
+                this.tacticalPlanner.set(tactPlanner);
+            }
+            tactPlanner.getPerception().perceive();
+            OperationalPlan newOperationalPlan = tactPlanner.generateOperationalPlan(now, fromLocation);
+            this.operationalPlan.set(newOperationalPlan);
+            this.cachedSpeedTime = Double.NaN;
+            this.cachedAccelerationTime = Double.NaN;
+            this.odometer.set(currentOdometer);
+            if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
+                    && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
+            {
+                SimLogger.always().error("(getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
+                // this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
+            }
 
-        // TODO allow alignment at different intervals, also different between GTU's within a single simulation
-        if (ALIGNED && newOperationalPlan.getTotalDuration().si == 0.5)
-        {
-            // schedule the next move at exactly 0.5 seconds on the clock
-            // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-            double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
-            DirectedPoint p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
-                    : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
-            this.nextMoveEvent =
-                    new SimEvent<>(new SimTimeDoubleUnit(new Time(tNext, TimeUnit.BASE)), this, this, "move", new Object[] {p});
-            ALIGN_COUNT++;
-        }
-        else
-        {
-            // schedule the next move at the end of the current operational plan
-            // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-            this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(now.plus(newOperationalPlan.getTotalDuration())), this,
-                    this, "move", new Object[] {newOperationalPlan.getEndLocation()});
-        }
-        this.simulator.scheduleEvent(this.nextMoveEvent);
+            // TODO allow alignment at different intervals, also different between GTU's within a single simulation
+            if (ALIGNED && newOperationalPlan.getTotalDuration().si == 0.5)
+            {
+                // schedule the next move at exactly 0.5 seconds on the clock
+                // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
+                double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
+                DirectedPoint p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
+                        : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
+                this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(new Time(tNext, TimeUnit.BASE)), this, this, "move",
+                        new Object[] { p });
+                ALIGN_COUNT++;
+            }
+            else
+            {
+                // schedule the next move at the end of the current operational plan
+                // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
+                this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(now.plus(newOperationalPlan.getTotalDuration())),
+                        this, this, "move", new Object[] { newOperationalPlan.getEndLocation() });
+            }
+            this.simulator.scheduleEvent(this.nextMoveEvent);
 
-        fireTimedEvent(GTU.MOVE_EVENT, new Object[] {getId(), fromLocation, getSpeed(), getAcceleration(), getOdometer()},
-                this.simulator.getSimulatorTime());
+            fireTimedEvent(GTU.MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getOdometer() },
+                    this.simulator.getSimulatorTime());
+
+        }
+        catch (Exception e)
+        {
+            // TODO: error handler
+            throw e;
+        }
     }
 
     /**
@@ -679,7 +688,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"designforextension", "needbraces"})
+    @SuppressWarnings({ "designforextension", "needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)

@@ -1237,6 +1237,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                     }
                     catch (GTUException exception)
                     {
+                        // TODO: hard remove over whole network
+                        // TODO: logger notification
                         throw new RuntimeException(exception);
                     }
                     lane.removeGTU(this, removeFromParentLink, position);
