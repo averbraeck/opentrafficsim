@@ -80,5 +80,28 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
 
         };
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Iterator<UnderlyingDistance<LaneBasedGTU>> underlyingWithDistance()
+    {
+        return new Iterator<UnderlyingDistance<LaneBasedGTU>>()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public boolean hasNext()
+            {
+                return false;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public UnderlyingDistance<LaneBasedGTU> next()
+            {
+                throw new NoSuchElementException();
+            }
+
+        };
+    }
 
 }

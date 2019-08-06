@@ -6,6 +6,7 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.gtu.GTUErrorHandler;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
@@ -54,6 +55,9 @@ public class ODOptions
     
     /** Whether to perform instantaneous lane changes. */
     public static final Option<Boolean> INSTANT_LC = new Option<>("instant lc", false);
+    
+    /** Error handler when GTU exceptions occur. */
+    public static final Option<GTUErrorHandler> ERROR_HANDLER = new Option<>("error handler", GTUErrorHandler.THROW);
 
     /** Options overall. */
     private OptionSet<Void> options = new OptionSet<>();

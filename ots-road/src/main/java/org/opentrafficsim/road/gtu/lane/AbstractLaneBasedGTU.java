@@ -104,9 +104,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** */
     private static final long serialVersionUID = 20140822L;
 
-    /** Collision detector. */
-    private final CollisionDetector collisionDetector;
-
     /**
      * Fractional longitudinal positions of the reference point of the GTU on one or more links at the start of the current
      * operational plan. Because the reference point of the GTU might not be on all the links the GTU is registered on, the
@@ -187,7 +184,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(historyManager);
         this.currentLanes = new HistoricalLinkedHashMap<>(historyManager);
         this.turnIndicatorStatus = new HistoricalValue<>(historyManager, TurnIndicatorStatus.NOTPRESENT);
-        this.collisionDetector = new CollisionDetector(id);
     }
 
     /**
@@ -744,7 +740,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    protected void move(final DirectedPoint fromLocation)
+    protected boolean move(final DirectedPoint fromLocation)
             throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
     {
         // DirectedPoint currentPoint = getLocation(); // used for "jump" detection that is also commented out
@@ -753,7 +749,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (this.currentLanes.isEmpty())
         {
             destroy();
-            return; // Done; do not re-schedule execution of this move method.
+            return false; // Done; do not re-schedule execution of this move method.
         }
 
         // remove enter events
@@ -835,6 +831,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // }
         // schedule triggers and determine when to enter lanes with front and leave lanes with rear
         scheduleEnterLeaveTriggers();
+        return false;
     }
 
     /**
@@ -1012,7 +1009,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     double longitudinalPosition;
                     try
                     {
-                        longitudinalPosition = lane.positionSI(this.fractionalLinkPositions.get(when).get(lane.getParentLink()));
+                        longitudinalPosition =
+                                lane.positionSI(this.fractionalLinkPositions.get(when).get(lane.getParentLink()));
                     }
                     catch (NullPointerException exception)
                     {
@@ -1134,8 +1132,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private double getDistanceAtOtherLane(final Lane lane, final Time when, final boolean upstream, final double distance,
             final DirectedPoint point, final Set<Lane> otherLanesToConsider) throws GTUException
     {
-        Set<Lane> nextLanes = new LinkedHashSet<>(upstream == getDirection(lane).isPlus() ? lane.prevLanes(getGTUType()).keySet()
-                : lane.nextLanes(getGTUType()).keySet()); // safe copy
+        Set<Lane> nextLanes = new LinkedHashSet<>(upstream == getDirection(lane).isPlus()
+                ? lane.prevLanes(getGTUType()).keySet() : lane.nextLanes(getGTUType()).keySet()); // safe copy
         nextLanes.retainAll(otherLanesToConsider); // as we delete here
         if (!upstream && nextLanes.size() > 1)
         {
@@ -1692,11 +1690,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
             Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
             PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
-            // check collision
-            if (!leaders.isEmpty())
-            {
-                leaders.collect(this.collisionDetector);
-            }
             // obtain
             this.cachedCarFollowingAcceleration =
                     Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(), speed,

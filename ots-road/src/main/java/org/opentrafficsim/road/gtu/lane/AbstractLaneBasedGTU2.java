@@ -50,7 +50,6 @@ import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -102,9 +101,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 {
     /** */
     private static final long serialVersionUID = 20140822L;
-
-    /** Collision detector. */
-    private final CollisionDetector collisionDetector;
 
     /** Lanes. */
     private final HistoricalList<CrossSection> crossSections;
@@ -169,7 +165,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 
     /** Vehicle model. */
     private VehicleModel vehicleModel = VehicleModel.MINMAX;
-    
+
     /** Whether the GTU perform lane changes instantaneously or not. */
     private boolean instantaneousLaneChange = false;
 
@@ -188,7 +184,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
         this.crossSections = new HistoricalArrayList<>(historyManager);
         this.turnIndicatorStatus = new HistoricalValue<>(historyManager, TurnIndicatorStatus.NOTPRESENT);
-        this.collisionDetector = new CollisionDetector(id);
     }
 
     /**
@@ -560,51 +555,61 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    protected synchronized void move(final DirectedPoint fromLocation)
+    protected synchronized boolean move(final DirectedPoint fromLocation)
             throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
     {
-        if (this.crossSections.isEmpty())
+        try
         {
-            destroy();
-            return; // Done; do not re-schedule execution of this move method.
-        }
-
-        // cancel events, if any
-        cancelAllEvents();
-
-        // generate the next operational plan and carry it out
-        // in case of an instantaneous lane change, fractionalLinkPositions will be accordingly adjusted to the new lane
-        super.move(fromLocation);
-
-        DirectedLanePosition dlp = getReferencePosition();
-        fireTimedEvent(
-                LaneBasedGTU.LANEBASED_MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(),
-                        getTurnIndicatorStatus(), getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection() },
-                getSimulator().getSimulatorTime());
-
-        if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
-                && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
-        {
-            System.err.println("GTU: " + getId() + " - getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
-            if (getTacticalPlanner().getPerception().contains(DefaultSimplePerception.class))
+            if (this.crossSections.isEmpty())
             {
-                DefaultSimplePerception p =
-                        getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class);
-                System.err.println("HeadwayGTU: " + p.getForwardHeadwayGTU());
-                System.err.println("HeadwayObject: " + p.getForwardHeadwayObject());
+                destroy();
+                return false; // Done; do not re-schedule execution of this move method.
             }
-        }
 
-        scheduleEnterEvent();
-        scheduleLeaveEvent();
+            // cancel events, if any
+            cancelAllEvents();
 
-        // sensors
-        for (CrossSection crossSection : this.crossSections)
-        {
-            for (Lane lane : crossSection.getLanes())
+            // generate the next operational plan and carry it out
+            // in case of an instantaneous lane change, fractionalLinkPositions will be accordingly adjusted to the new lane
+            boolean error = super.move(fromLocation);
+            if (error)
             {
-                scheduleTriggers(lane, crossSection.getDirection());
+                return error;
             }
+
+            DirectedLanePosition dlp = getReferencePosition();
+
+            scheduleEnterEvent();
+            scheduleLeaveEvent();
+
+            // sensors
+            for (CrossSection crossSection : this.crossSections)
+            {
+                for (Lane lane : crossSection.getLanes())
+                {
+                    scheduleTriggers(lane, crossSection.getDirection());
+                }
+            }
+
+            fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
+                    new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getTurnIndicatorStatus(),
+                            getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection() },
+                    getSimulator().getSimulatorTime());
+
+            return false;
+
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                getErrorHandler().handle(this, ex);
+            }
+            catch (Exception exception)
+            {
+                throw new GTUException(exception);
+            }
+            return true;
         }
 
     }
@@ -1345,11 +1350,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
             Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
             PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
-            // check collision
-            if (!leaders.isEmpty())
-            {
-                leaders.collect(this.collisionDetector);
-            }
             // obtain
             this.cachedCarFollowingAcceleration =
                     Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(), speed,

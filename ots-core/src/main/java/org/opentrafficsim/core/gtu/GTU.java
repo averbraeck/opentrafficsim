@@ -202,6 +202,12 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * @return Set&lt;GTU&gt;; children GTU's
      */
     Set<GTU> getChildren();
+    
+    /**
+     * Sets the error handler.
+     * @param errorHandler GTUErrorHandler; error handler
+     */
+    void setErrorHandler(GTUErrorHandler errorHandler);
 
     /**
      * The event type for pub/sub indicating the initialization of a new GTU. <br>
