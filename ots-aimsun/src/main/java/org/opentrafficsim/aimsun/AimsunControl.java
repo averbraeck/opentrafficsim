@@ -95,7 +95,7 @@ public class AimsunControl
     public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueException,
             ParameterException, SimRuntimeException
     {
-        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
+        // TODO: LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
         SimLogger.setAllLogLevel(Level.WARNING);
         SimLogger.setLogCategories(LogCategory.ALL);
 
