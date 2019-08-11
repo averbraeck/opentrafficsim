@@ -8,6 +8,12 @@
     
     <release version="1.02.02" date="2019-05-XX" description="xsd-parser, ots-web ready; gradual lane change">
       <action dev="averbraeck" type="update">
+        DJUTILS has been updated to 1.02.00, enabling the CLI utilities in djutils-ext.  
+      </action>
+      <action dev="averbraeck" type="add">
+        CLI utilities built into the demo project.  
+      </action>
+      <action dev="averbraeck" type="update">
         XmlNetworkLaneParser in ots-parser-xml now also takes a URL as basis for the parsing. This helps with the 
         fallback of the imports when no network is available, and with parsing from files from within a jar. 
       </action>
