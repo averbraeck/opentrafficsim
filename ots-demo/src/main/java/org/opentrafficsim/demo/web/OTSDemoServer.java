@@ -16,6 +16,8 @@ import org.djunits.value.vdouble.scalar.AbstractDoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalar;
+import org.djutils.cli.Checkable;
+import org.djutils.cli.CliIUtil;
 import org.djutils.io.URLResource;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -62,6 +64,8 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionMap;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * OTSDemoServer.java. <br>
@@ -71,22 +75,47 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class OTSDemoServer
+@Command(description = "OTSDemoServer is a web server to run the OTS demos in a browser", name = "OTSDemoServer",
+        mixinStandardHelpOptions = true, version = "1.02.02")
+public class OTSDemoServer implements Checkable
 {
     /** the map of sessionIds to OTSModelInterface that handles the animation and updates for the started model. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     final Map<String, OTSModelInterface> sessionModelMap = new LinkedHashMap<>();
 
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     final Map<String, OTSWebModel> sessionWebModelMap = new LinkedHashMap<>();
 
     /** the map of sessionIds to the time in msec when the model has to be killed. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     final Map<String, Long> sessionKillMap = new LinkedHashMap<>();
 
     /** how many processes max? */
-    final int maxProcesses;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-m", "--maxProcesses"}, description = "Maximum number of concurrent demo processes", defaultValue = "10")
+    int maxProcesses;
 
-    /** how much time max? */
-    final int maxTimeMinutes;
+    /** how much time max before being killed? */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-t", "--killDuration"}, description = "Maximum duration a demo process stays alive before being killed",
+            defaultValue = "10min")
+    Duration killDuration;
+
+    /** root directory for the web server. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-r", "--rootDirectory"}, description = "Root directory of the web server", defaultValue = "/home")
+    String rootDirectory;
+
+    /** home page for the web server. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-w", "--homePage"}, description = "Home page for the web server", defaultValue = "superdemo.html")
+    String homePage;
+
+    /** internet port for the web server. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-p", "--port"}, description = "Internet port to use", defaultValue = "8081")
+    int port;
 
     /**
      * Run a SuperDemo OTS Web server.
@@ -95,68 +124,35 @@ public class OTSDemoServer
      */
     public static void main(final String[] args) throws Exception
     {
-        int maxProcesses = 20;
-        int maxTimeMinutes = 30;
-        for (String arg : args)
-        {
-            if (arg.contains("="))
-            {
-                String[] p = arg.split("=");
-                if (p.length == 2)
-                {
-                    if (p[0].toLowerCase().equals("maxprocesses"))
-                    {
-                        try
-                        {
-                            maxProcesses = Integer.parseInt(p[1]);
-                        }
-                        catch (Exception e)
-                        {
-                            System.err.println("Illegal value for maxProcesses. Value " + maxProcesses + " used");
-                        }
-                    }
-                    else if (p[0].toLowerCase().equals("maxtimeminutes"))
-                    {
-                        try
-                        {
-                            maxTimeMinutes = Integer.parseInt(p[1]);
-                        }
-                        catch (Exception e)
-                        {
-                            System.err.println("Illegal value for maxTimeMinutes. Value " + maxTimeMinutes + " used");
-                        }
-                    }
-                    else
+        OTSDemoServer otsDemoServer = new OTSDemoServer();
+        CliIUtil.execute(otsDemoServer, args);
+        otsDemoServer.init();
+    }
 
-                    {
-                        System.err.println("Illegal parameter  " + p[0] + ", ignored");
-                    }
-                }
-                else
-                {
-                    System.err.println("Illegal parameter  " + arg + ", ignored");
-                }
-            }
-            else
-            {
-                System.err.println("Illegal parameter  " + arg + ", ignored");
-            }
+    /** {@inheritDoc} */
+    @Override
+    public void check() throws Exception
+    {
+        if (this.port <= 0 || this.port > 65535)
+        {
+            throw new Exception("Port should be between 1 and 65535");
         }
-        new OTSDemoServer(maxProcesses, maxTimeMinutes);
+    }
+
+    /** Init the server. */
+    private void init()
+    {
+        System.out.println("Kill duration = " + this.killDuration);
+        new ServerThread().start();
+        new KillThread().start();
     }
 
     /**
-     * @param maxProcesses maximum number of processes to start
-     * @param maxTimeMinutes max time of one run in minutes before kill
-     * @throws Exception in case jetty crashes
+     * Constructor to set any variables to default values if needed.
      */
-    public OTSDemoServer(final int maxProcesses, final int maxTimeMinutes) throws Exception
+    public OTSDemoServer()
     {
-        this.maxProcesses = maxProcesses;
-        this.maxTimeMinutes = maxTimeMinutes;
-        System.out.println("maxProcesses=" + this.maxProcesses);
-        new ServerThread().start();
-        new KillThread().start();
+        super();
     }
 
     /** Handle the kills of models that ran maxTime minutes. */
@@ -217,16 +213,16 @@ public class OTSDemoServer
         @Override
         public void run()
         {
-            Server server = new Server(8081);
+            Server server = new Server(OTSDemoServer.this.port);
             ResourceHandler resourceHandler = new MyResourceHandler();
 
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
-            URL homeFolder = URLResource.getResource("/home");
+            URL homeFolder = URLResource.getResource(OTSDemoServer.this.rootDirectory);
             String webRoot = homeFolder.toExternalForm();
             System.out.println("webRoot is " + webRoot);
 
             resourceHandler.setDirectoriesListed(true);
-            resourceHandler.setWelcomeFiles(new String[] {"superdemo.html"});
+            resourceHandler.setWelcomeFiles(new String[] {OTSDemoServer.this.homePage});
             resourceHandler.setResourceBase(webRoot);
 
             SessionIdManager idManager = new DefaultSessionIdManager(server);
@@ -354,7 +350,7 @@ public class OTSDemoServer
                     {
                         OTSDemoServer.this.sessionModelMap.put(sessionId, model);
                         long currentMsec = System.currentTimeMillis();
-                        long killMsec = currentMsec + OTSDemoServer.this.maxTimeMinutes * 60 * 1000L;
+                        long killMsec = currentMsec + (long) OTSDemoServer.this.killDuration.si * 1000L;
                         OTSDemoServer.this.sessionKillMap.put(sessionId, killMsec);
                     }
                     else

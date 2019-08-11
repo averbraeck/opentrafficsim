@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +16,8 @@ import org.djunits.value.vdouble.scalar.AbstractDoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalar;
+import org.djutils.cli.Checkable;
+import org.djutils.cli.CliIUtil;
 import org.djutils.io.URLResource;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -63,6 +64,8 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionMap;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Federated demo server for OTS models that uses Sim0MQ messaging to start and manage the executed models. <br>
@@ -72,7 +75,9 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class OTSFederatedDemoServer
+@Command(description = "OTSDemoServer is a web server to run the OTS demos in a browser", name = "OTSDemoServer",
+        mixinStandardHelpOptions = true, version = "1.02.02")
+public class OTSFederatedDemoServer implements Checkable
 {
     /** the map of sessionIds to OTSModelInterface that handles the animation and updates for the started model. */
     final Map<String, OTSModelInterface> sessionModelMap = new LinkedHashMap<>();
@@ -80,57 +85,65 @@ public class OTSFederatedDemoServer
     /** the map of sessionIds to OTSWebModel that handles the animation and updates for the started model. */
     final Map<String, OTSWebModel> sessionWebModelMap = new LinkedHashMap<>();
 
-    /** command line arguments. */
-    private final Args commandLineArgs;
+    /** root directory for the web server. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-r", "--rootDirectory"}, description = "Root directory of the web server", defaultValue = "/home")
+    String rootDirectory;
+
+    /** home page for the web server. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-h", "--homePage"}, description = "Home page for the web server", defaultValue = "superdemo.html")
+    String homePage;
+
+    /** internet port for the web server. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-p", "--port"}, description = "Internet port to use", defaultValue = "8080")
+    int port;
 
     /**
      * Run a SuperDemo OTS Web server.
      * @param args String[]; arguments for demo server, e.g., port=8080
-     * @throws Exception o Jetty error
+     * @throws Exception on Jetty error
      */
     public static void main(final String[] args) throws Exception
     {
-        new OTSFederatedDemoServer(args);
+        OTSFederatedDemoServer webApp = new OTSFederatedDemoServer();
+        CliIUtil.execute(webApp, args);
+        webApp.init();
     }
 
-    /**
-     * @param args String[]; arguments for demo server, e.g., port=8080
-     * @throws Exception in case jetty crashes
-     */
-    public OTSFederatedDemoServer(final String[] args) throws Exception
+    /** {@inheritDoc} */
+    @Override
+    public void check() throws Exception
     {
-        this.commandLineArgs = new Args(args);
-        new ServerThread(this.commandLineArgs).start();
+        if (this.port < 1 || this.port > 65535)
+        {
+            throw new Exception("Port number should be between 1 and 65535");
+        }
+    }
+
+    /** Init the server. */
+    private void init()
+    {
+        new ServerThread().start();
     }
 
     /** Handle in separate thread to avoid 'lock' of the main application. */
     class ServerThread extends Thread
     {
-        /** command line arguments. */
-        private final Args args;
-
-        /**
-         * Create the server thread.
-         * @param args String[]; arguments for demo server, e.g., port=8080
-         */
-        ServerThread(final Args args)
-        {
-            this.args = args;
-        }
-
         @Override
         public void run()
         {
-            Server server = new Server(this.args.parseInt("port", 8080));
+            Server server = new Server();
             ResourceHandler resourceHandler = new MyResourceHandler();
 
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
-            URL homeFolder = URLResource.getResource("/home");
+            URL homeFolder = URLResource.getResource(OTSFederatedDemoServer.this.rootDirectory);
             String webRoot = homeFolder.toExternalForm();
             System.out.println("webRoot is " + webRoot);
 
             resourceHandler.setDirectoriesListed(true);
-            resourceHandler.setWelcomeFiles(new String[] {this.args.parseString("rootfile", "superdemo.html")});
+            resourceHandler.setWelcomeFiles(new String[] {OTSFederatedDemoServer.this.homePage});
             resourceHandler.setResourceBase(webRoot);
 
             SessionIdManager idManager = new DefaultSessionIdManager(server);

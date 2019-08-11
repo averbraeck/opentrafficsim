@@ -2,13 +2,14 @@ package org.opentrafficsim.demo.web;
 
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.cli.Checkable;
+import org.djutils.cli.CliIUtil;
 import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -34,10 +35,8 @@ import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import picocli.CommandLine.Option;
 
 /**
  * <p>
@@ -49,7 +48,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
  * @version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class SuperDemoWebApplication
+public class SuperDemoWebApplication implements Checkable
 {
     /** */
     private OTSSimulatorInterface simulator;
@@ -78,119 +77,107 @@ public class SuperDemoWebApplication
     /** message count. */
     private long messageCount = 0;
 
-    /** command line args in the form key=value, e.g. modelPort=5100. */
-    private Args args;
+    /** home page for the web server. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-m", "--modelId"}, description = "Id of the model to run", required = true)
+    String homePage;
+
+    /** internet port for the web server. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @Option(names = {"-p", "--port"}, description = "Internet port to use", defaultValue = "8081")
+    int port;
+
+    /** {@inheritDoc} */
+    @Override
+    public void check() throws Exception
+    {
+        if (this.port < 1 || this.port > 65535)
+        {
+            throw new Exception("Port number should be between 1 and 65535");
+        }
+    }
 
     /**
      * Construct a console application.
-     * @param args command line arguments
      * @throws SimRuntimeException on error
      * @throws NamingException on error
      * @throws Sim0MQException on error
      * @throws SerializationException on serialization problem
      * @throws IOException when TRAFCOD file cannot be found
      */
-    protected SuperDemoWebApplication(final String[] args)
+    protected void init()
             throws SimRuntimeException, NamingException, Sim0MQException, SerializationException, IOException
     {
-        this.args = new Args(args);
-        
-        if (args.length < 2)
-        {
-            System.err.println("Use as SuperDemoWebApplication modelid=modelId portnumber=portNumber");
-            System.exit(-1);
-        }
-
-        String modelId = args[0];
-
-        String sPort = args[1];
-        int port = 0;
-        try
-        {
-            port = Integer.parseInt(sPort);
-        }
-        catch (NumberFormatException nfe)
-        {
-            System.err.println("Use as FederateStarter portNumber, where portNumber is a number");
-            System.exit(-1);
-        }
-        if (port == 0 || port > 65535)
-        {
-            System.err.println("PortNumber should be between 1 and 65535");
-            System.exit(-1);
-        }
-
         this.simulator = new OTSAnimator();
-        this.modelId = modelId.trim();
-        if (modelId.toLowerCase().contains("circularroad"))
+        this.modelId = this.modelId.trim();
+        if (this.modelId.toLowerCase().contains("circularroad"))
         {
             this.model = new CircularRoadModel(this.simulator);
         }
-        else if (modelId.toLowerCase().contains("straight"))
+        else if (this.modelId.toLowerCase().contains("straight"))
         {
             this.model = new StraightModel(this.simulator);
         }
-        else if (modelId.toLowerCase().contains("shortmerge"))
+        else if (this.modelId.toLowerCase().contains("shortmerge"))
         {
             this.model = new ShortMerge.ShortMergeModel(this.simulator);
         }
-        else if (modelId.toLowerCase().contains("networksdemo"))
+        else if (this.modelId.toLowerCase().contains("networksdemo"))
         {
             this.model = new NetworksModel(this.simulator);
         }
-        else if (modelId.toLowerCase().contains("crossingtrafficlights"))
+        else if (this.modelId.toLowerCase().contains("crossingtrafficlights"))
         {
             this.model = new CrossingTrafficLightsModel(this.simulator);
         }
-        else if (modelId.toLowerCase().contains("trafcoddemosimple"))
+        else if (this.modelId.toLowerCase().contains("trafcoddemosimple"))
         {
             URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
             String xml = TrafCODDemo2.readStringFromURL(url);
             this.model = new TrafCODDemo1.TrafCODModel(this.simulator, "TrafCODDemo1", "TrafCODDemo1", xml);
         }
-        else if (modelId.toLowerCase().contains("trafcoddemocomplex"))
+        else if (this.modelId.toLowerCase().contains("trafcoddemocomplex"))
         {
             URL url = URLResource.getResource("/TrafCODDemo2/TrafCODDemo2.xml");
             String xml = TrafCODDemo2.readStringFromURL(url);
             this.model = new TrafCODDemo2.TrafCODModel(this.simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
         }
-        else if (modelId.toLowerCase().contains("tjunction"))
+        else if (this.modelId.toLowerCase().contains("tjunction"))
         {
             this.model = new TJunctionDemo.TJunctionModel(this.simulator);
         }
-        else if (modelId.toLowerCase().contains("busstreet"))
+        else if (this.modelId.toLowerCase().contains("busstreet"))
         {
             this.model = new BusStreetDemo.BusStreetModel(this.simulator);
         }
-        else if (modelId.toLowerCase().contains("turboroundabout"))
+        else if (this.modelId.toLowerCase().contains("turboroundabout"))
         {
             this.model = new TurboRoundaboutDemo.TurboRoundaboutModel(this.simulator);
         }
 
         if (this.model == null)
         {
-            System.err.println("Could not find model " + modelId);
+            System.err.println("Could not find model " + this.modelId);
         }
         else
         {
-            startListener(port);
+            startListener();
         }
     }
 
     /**
      * Start listening on a port.
-     * @param port the sim0mq port number on which the model listens
      * @throws Sim0MQException on error
      * @throws SerializationException on serialization problem
      */
-    protected void startListener(final int port) throws Sim0MQException, SerializationException
+    protected void startListener() throws Sim0MQException, SerializationException
     {
         this.fsContext = new ZContext(1);
 
         this.fsSocket = this.fsContext.createSocket(SocketType.ROUTER);
-        this.fsSocket.bind("tcp://*:" + port);
+        this.fsSocket.bind("tcp://*:" + this.port);
 
-        System.out.println("Model started. Listening at port: " + port);
+        System.out.println("Model started. Listening at port: " + this.port);
         System.out.flush();
 
         while (!Thread.currentThread().isInterrupted())
@@ -548,8 +535,7 @@ public class SuperDemoWebApplication
     }
 
     /**
-     * Use as SuperDemoWebApplication model=TJunction modelid=modelId portnumber=portNumber. 
-     * @param args can be left empty
+     * @param args contain e.g., port number, and a model to run: SuperDemoWebpplication --port=8080 -m TJunctionDemo.
      * @throws SimRuntimeException on error
      * @throws NamingException on error
      * @throws Sim0MQException on error
@@ -559,7 +545,9 @@ public class SuperDemoWebApplication
     public static void main(final String[] args)
             throws SimRuntimeException, NamingException, Sim0MQException, SerializationException, IOException
     {
-        new SuperDemoWebApplication(args);
+        SuperDemoWebApplication webApp = new SuperDemoWebApplication();
+        CliIUtil.execute(webApp, args);
+        webApp.init();
     }
 
 }
