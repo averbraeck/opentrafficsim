@@ -86,7 +86,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
     public static void main(final String[] args)
             throws IOException, SimRuntimeException, NamingException, OTSSimulationException, InputParameterException
     {
-        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
+        // TODO: LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
         String fileName;
         String xml;
         if (0 == args.length)
