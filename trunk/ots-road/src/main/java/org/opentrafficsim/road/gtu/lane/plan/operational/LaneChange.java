@@ -592,6 +592,23 @@ public class LaneChange implements Serializable
             }
         };
 
+        /** Linear interpolation between center lines. */
+        LaneChangePath LINEAR = new InterpolatedLaneChangePath()
+        {
+
+            @Override
+            double longitudinalFraction(final double lateralFraction)
+            {
+                return lateralFraction;
+            }
+
+            @Override
+            double lateralFraction(final double longitudinalFraction)
+            {
+                return longitudinalFraction;
+            }
+        };
+
         /** A simple Bezier curve directly to the lane change target position. */
         LaneChangePath BEZIER = new LaneChangePath()
         {
@@ -792,19 +809,24 @@ public class LaneChange implements Serializable
                     final Duration laneChangeDuration, final double lcFraction) throws OTSGeometryException
             {
 
-                double startLateralFraction = fromLine.get(0).getLocation().distance(startPosition)
-                        / fromLine.get(0).getLocation().distance(toLine.get(0).getLocation());
+                double dx = fromLine.get(0).getLocation().x - startPosition.x;
+                double dy = fromLine.get(0).getLocation().y - startPosition.y;
+                double distFromLoc = Math.sqrt(dx * dx + dy * dy);
+                dx = fromLine.get(0).getLocation().x - toLine.get(0).getLocation().x;
+                dy = fromLine.get(0).getLocation().y - toLine.get(0).getLocation().y;
+                double distFromTo = Math.sqrt(dx * dx + dy * dy);
+                double startLateralFraction = distFromLoc / distFromTo;
+                // Location is not on path in z-direction, so using .distance() create bugs 
                 if (startLateralFraction > 1.0)
                 {
                     startLateralFraction = 1.0;
                 }
-                startLateralFraction = lcFraction;
                 double startLongitudinalFractionTotal = longitudinalFraction(startLateralFraction);
-                // double startLongitudinalFractionTotal = longitudinalFraction(lcFraction);
 
                 double nSegments = Math.ceil((64 * (1.0 - lcFraction)));
                 List<OTSPoint3D> pointList = new ArrayList<>();
-                pointList.add(new OTSPoint3D(startPosition));
+                double zStart = (1.0 - startLateralFraction) * fromLine.get(0).z + startLateralFraction * toLine.get(0).z;
+                pointList.add(new OTSPoint3D(startPosition.x, startPosition.y, zStart));
                 for (int i = 1; i <= nSegments; i++)
                 {
                     double f = i / nSegments;
