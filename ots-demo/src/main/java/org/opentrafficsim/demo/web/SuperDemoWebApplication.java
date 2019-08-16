@@ -9,7 +9,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.cli.Checkable;
-import org.djutils.cli.CliIUtil;
+import org.djutils.cli.CliUtil;
 import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -546,7 +546,7 @@ public class SuperDemoWebApplication implements Checkable
             throws SimRuntimeException, NamingException, Sim0MQException, SerializationException, IOException
     {
         SuperDemoWebApplication webApp = new SuperDemoWebApplication();
-        CliIUtil.execute(webApp, args);
+        CliUtil.execute(webApp, args);
         webApp.init();
     }
 
