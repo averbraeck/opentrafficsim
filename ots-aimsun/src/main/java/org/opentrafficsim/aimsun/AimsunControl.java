@@ -1,6 +1,9 @@
 package org.opentrafficsim.aimsun;
 
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.naming.NamingException;
+import javax.swing.JFrame;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -369,14 +373,26 @@ public class AimsunControl
                             map.put("generation", new MersenneTwister(6L));
                             animator.initialize(Time.ZERO, warmupDuration, runDuration, this.model, map);
                             OTSAnimationPanel animationPanel =
-                                    new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(800, 600),
+                                    new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
                                             animator, this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
                             DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), animator,
                                     new DefaultSwitchableGTUColorer());
                             new AimsunSwingApplication(this.model, animationPanel);
+                            JFrame frame = (JFrame) animationPanel.getParent().getParent().getParent();
+                            frame.setExtendedState(Frame.NORMAL);
+                            frame.setSize(new Dimension(1100, 1000));
+                            frame.setBounds(0, 25, 1100, 1000);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                             animator.setSpeedFactor(1000.0, true);
-                            // animator.setSpeedFactor(0.1, true);
+                            try
+                            {
+                                Thread.sleep(300);
+                            }
+                            catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            animationPanel.actionPerformed(new ActionEvent(this, 0, "ZoomAll"));
                         }
                         catch (SimRuntimeException | NamingException | OTSDrawingException exception1)
                         {
@@ -388,10 +404,9 @@ public class AimsunControl
 
                     case SIMULATEUNTIL:
                     {
-                        System.out.println("Received SIMULATEUNTIL message");
                         AimsunControlProtoBuf.SimulateUntil simulateUntilThing = message.getSimulateUntil();
                         Time stopTime = new Time(simulateUntilThing.getTime(), TimeUnit.BASE_SECOND);
-                        // System.err.println("Simulate until " + stopTime);
+                        System.out.println("Received SIMULATEUNTIL " + stopTime + " message");
                         OTSSimulatorInterface simulator = this.model.getSimulator();
                         if (!simulatorStarted)
                         {
@@ -540,8 +555,7 @@ public class AimsunControl
          * @param description String; the model description
          * @param xml String; the XML description of the simulation model
          */
-        AimsunModel(final OTSSimulatorInterface simulator, final String shortName, final String description,
-                final String xml)
+        AimsunModel(final OTSSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {
             super(simulator, shortName, description);
             this.xml = xml;
