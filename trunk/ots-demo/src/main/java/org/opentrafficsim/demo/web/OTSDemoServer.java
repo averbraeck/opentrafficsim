@@ -17,7 +17,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalar;
 import org.djutils.cli.Checkable;
-import org.djutils.cli.CliIUtil;
+import org.djutils.cli.CliUtil;
 import org.djutils.io.URLResource;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -125,7 +125,7 @@ public class OTSDemoServer implements Checkable
     public static void main(final String[] args) throws Exception
     {
         OTSDemoServer otsDemoServer = new OTSDemoServer();
-        CliIUtil.execute(otsDemoServer, args);
+        CliUtil.execute(otsDemoServer, args);
         otsDemoServer.init();
     }
 
