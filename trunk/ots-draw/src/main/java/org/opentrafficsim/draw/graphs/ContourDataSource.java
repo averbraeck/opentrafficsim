@@ -418,7 +418,6 @@ public class ContourDataSource<G extends GtuDataInterface>
      * Sets bi-linear interpolation enabled or disabled. This will invalidate the plot triggering a redraw.
      * @param interpolate boolean; whether to enable interpolation
      */
-    @SuppressWarnings("synthetic-access")
     final void setInterpolate(final boolean interpolate)
     {
         if (this.timeAxis.interpolate != interpolate)

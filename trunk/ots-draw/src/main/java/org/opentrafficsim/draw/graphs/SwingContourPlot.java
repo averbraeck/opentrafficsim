@@ -13,14 +13,24 @@ import javax.swing.JRadioButtonMenuItem;
 
 import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
 
+/**
+ * Embed a ContourPlot in a Swing JPanel.
+ * <P>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ */
 public class SwingContourPlot extends SwingSpaceTimePlot
 {
 
+    /**  */
+    private static final long serialVersionUID = 20190823L;
+
     /** Map to set time granularity. */
-    private Map<JRadioButtonMenuItem, Double> timeGranularityButtons;// = new LinkedHashMap<>();
+    private Map<JRadioButtonMenuItem, Double> timeGranularityButtons;
 
     /** Map to set space granularity. */
-    private Map<JRadioButtonMenuItem, Double> spaceGranularityButtons;// = new LinkedHashMap<>();
+    private Map<JRadioButtonMenuItem, Double> spaceGranularityButtons;
 
     /** Check box for smoothing. */
     private JCheckBoxMenuItem smoothCheckBox;
@@ -28,7 +38,11 @@ public class SwingContourPlot extends SwingSpaceTimePlot
     /** Check box for interpolation. */
     private JCheckBoxMenuItem interpolateCheckBox;
 
-    public SwingContourPlot(AbstractSpaceTimePlot plot)
+    /**
+     * Create a new SwingContourPlot with embedded plot.
+     * @param plot AbstractSpaceTimePlot; the plot to embed
+     */
+    public SwingContourPlot(final AbstractSpaceTimePlot plot)
     {
         super(plot);
     }
@@ -133,9 +147,9 @@ public class SwingContourPlot extends SwingSpaceTimePlot
 
     /** {@inheritDoc} */
     @Override
-    public AbstractContourPlot getPlot()
+    public AbstractContourPlot<?> getPlot()
     {
-        return (AbstractContourPlot) super.getPlot();
+        return (AbstractContourPlot<?>) super.getPlot();
     }
 
     /**

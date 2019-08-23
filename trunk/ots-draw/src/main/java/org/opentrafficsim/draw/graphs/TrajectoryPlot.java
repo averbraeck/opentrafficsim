@@ -16,7 +16,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
-import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
@@ -51,9 +50,6 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  */
 public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 {
-    /** */
-    private static final long serialVersionUID = 20181013L;
-
     /** Single shape to provide due to non-null requirement, but actually not used. */
     private static final Shape NO_SHAPE = new Line2D.Float(0, 0, 0, 0);
 
@@ -583,11 +579,19 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                 + ", legend=" + this.legend + ", laneVisible=" + this.laneVisible + "]";
     }
 
+    /**
+     * Retrieve the legend.
+     * @return LegendItemCollection; the legend
+     */
     public LegendItemCollection getLegend()
     {
         return legend;
     }
 
+    /**
+     * Retrieve the lane visibility flags.
+     * @return List&lt;Boolean&gt;; the lane visibility flags
+     */
     public List<Boolean> getLaneVisible()
     {
         return laneVisible;

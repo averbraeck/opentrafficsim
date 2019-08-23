@@ -22,9 +22,6 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
 {
 
-    /** */
-    private static final long serialVersionUID = 20181010L;
-
     /**
      * Constructor.
      * @param caption String; caption

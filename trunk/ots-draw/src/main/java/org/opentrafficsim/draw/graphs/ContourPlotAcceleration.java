@@ -33,9 +33,6 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
 {
 
-    /** */
-    private static final long serialVersionUID = 20181010L;
-
     /** Quantity for the EGTF. */
     private static final Quantity<Acceleration, AccelerationMatrix> QUANTITY =
             new Quantity<>("acceleration", new Converter<AccelerationMatrix>()

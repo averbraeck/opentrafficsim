@@ -24,9 +24,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
 {
 
-    /** */
-    private static final long serialVersionUID = 20181014L;
-
     /** Initial end time of plot. */
     private final Time initialEnd;
 
@@ -81,7 +78,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
             }
         });
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected void update()
@@ -97,6 +94,11 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
         super.update();
     }
 
+    /**
+     * Update the fixed-ness of the domain range.
+     * @param fixed boolean; if true; the domain range will not update when new data becomes available; if false; the domain
+     *            range will update to show newly available data
+     */
     protected void updateFixedDomainRange(final boolean fixed)
     {
         this.fixedDomainRange = fixed ? getChart().getXYPlot().getDomainAxis().getRange().getLength() : null;

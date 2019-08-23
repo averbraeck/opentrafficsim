@@ -22,9 +22,6 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 public class ContourPlotFlow extends AbstractContourPlot<Frequency>
 {
 
-    /** */
-    private static final long serialVersionUID = 20181010L;
-
     /**
      * Constructor.
      * @param caption String; caption

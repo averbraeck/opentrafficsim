@@ -6,9 +6,23 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 
+/**
+ * Embed a SpaceTimePlot in a Swing JPanel.
+ * <P>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ */
 public class SwingSpaceTimePlot extends SwingPlot
 {
 
+    /**  */
+    private static final long serialVersionUID = 20190823L;
+
+    /**
+     * Construct a new Swing container for SpaceTimePlot.
+     * @param plot SpaceTimePlot; the plot to embed
+     */
     public SwingSpaceTimePlot(final AbstractSpaceTimePlot plot)
     {
         super(plot);
