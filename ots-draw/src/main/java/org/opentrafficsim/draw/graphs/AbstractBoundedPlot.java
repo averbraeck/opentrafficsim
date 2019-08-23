@@ -24,9 +24,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 public abstract class AbstractBoundedPlot extends AbstractPlot
 {
 
-    /** */
-    private static final long serialVersionUID = 20182021L;
-
     /** Lower bound of domain axis. */
     private Double lowerDomainBound = null;
 
@@ -41,15 +38,15 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /**
      * Constructor.
+     * @param simulator OTSSimulatorInterface; simulator
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
-     * @param simulator OTSSimulatorInterface; simulator
-     * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
+     * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
-    public AbstractBoundedPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public AbstractBoundedPlot(final OTSSimulatorInterface simulator, final String caption, final Duration updateInterval,
             final Duration delay)
     {
-        super(caption, updateInterval, simulator, delay);
+        super(simulator, caption, updateInterval, delay);
     }
 
     /** {@inheritDoc} */

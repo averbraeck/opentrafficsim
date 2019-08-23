@@ -191,17 +191,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot, showLegend);
     }
 
-    /** {@inheritDoc} This implementation creates a listener to disable and enable lanes through the legend. */
-    @Override
-    protected ChartMouseListener getChartMouseListener()
-    {
-        if (this.getPath().getNumberOfSeries() < 2)
-        {
-            return null;
-        }
-        return GraphUtil.getToggleSeriesByLegendListener(this.legend, this.laneVisible);
-    }
-
     /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
@@ -592,6 +581,16 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         return "TrajectoryPlot [graphUpdater=" + this.graphUpdater + ", knownTrajectories=" + this.knownTrajectories
                 + ", curves=" + this.curves + ", strokes=" + this.strokes + ", curvesPerLane=" + this.curvesPerLane
                 + ", legend=" + this.legend + ", laneVisible=" + this.laneVisible + "]";
+    }
+
+    public LegendItemCollection getLegend()
+    {
+        return legend;
+    }
+
+    public List<Boolean> getLaneVisible()
+    {
+        return laneVisible;
     }
 
 }

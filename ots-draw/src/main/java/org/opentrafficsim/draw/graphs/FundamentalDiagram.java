@@ -1,10 +1,5 @@
 package org.opentrafficsim.draw.graphs;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -16,31 +11,17 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
-import org.jfree.chart.annotations.XYAnnotation;
-import org.jfree.chart.annotations.XYLineAnnotation;
-import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.entity.AxisEntity;
-import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.DomainOrder;
-import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -64,9 +45,6 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  */
 public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 {
-
-    /** */
-    private static final long serialVersionUID = 20101016L;
 
     /** Aggregation periods. */
     public static final double[] DEFAULT_PERIODS = new double[] {5.0, 10.0, 30.0, 60.0, 120.0, 300.0, 900.0};
@@ -112,15 +90,15 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     public FundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
             final OTSSimulatorInterface simulator, final FdSource source)
     {
-        super(caption, source.getUpdateInterval(), simulator, source.getDelay());
+        super(simulator, caption, source.getUpdateInterval(), source.getDelay());
         Throw.when(domainQuantity.equals(rangeQuantity), IllegalArgumentException.class,
                 "Domain and range quantity should not be equal.");
-        this.domainQuantity = domainQuantity;
-        this.rangeQuantity = rangeQuantity;
+        this.setDomainQuantity(domainQuantity);
+        this.setRangeQuantity(rangeQuantity);
         Set<Quantity> quantities = EnumSet.allOf(Quantity.class);
         quantities.remove(domainQuantity);
         quantities.remove(rangeQuantity);
-        this.otherQuantity = quantities.iterator().next();
+        this.setOtherQuantity(quantities.iterator().next());
         this.source = source;
         for (int series = 0; series < source.getNumberOfSeries(); series++)
         {
@@ -134,9 +112,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         // setup updater to do the actual work in another thread
         this.graphUpdater = new GraphUpdater<>("Fundamental diagram worker", Thread.currentThread(), (t) ->
         {
-            if (this.source != null)
+            if (this.getSource() != null)
             {
-                this.source.increaseTime(t);
+                this.getSource().increaseTime(t);
                 notifyPlotChange();
             }
         });
@@ -190,8 +168,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      */
     private JFreeChart createChart()
     {
-        NumberAxis xAxis = new NumberAxis(this.domainQuantity.label());
-        NumberAxis yAxis = new NumberAxis(this.rangeQuantity.label());
+        NumberAxis xAxis = new NumberAxis(this.getDomainQuantity().label());
+        NumberAxis yAxis = new NumberAxis(this.getRangeQuantity().label());
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer()
         {
             /** */
@@ -209,7 +187,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         renderer.setDefaultLinesVisible(false);
         XYPlot plot = new XYPlot(this, xAxis, yAxis, renderer);
         boolean showLegend = true;
-        if (this.source.getNumberOfSeries() < 2)
+        if (this.getSource().getNumberOfSeries() < 2)
         {
             plot.setFixedLegendItems(null);
             showLegend = false;
@@ -217,9 +195,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         else
         {
             this.legend = new LegendItemCollection();
-            for (int i = 0; i < this.source.getNumberOfSeries(); i++)
+            for (int i = 0; i < this.getSource().getNumberOfSeries(); i++)
             {
-                LegendItem li = new LegendItem(this.source.getName(i));
+                LegendItem li = new LegendItem(this.getSource().getName(i));
                 li.setSeriesKey(i); // lane series, not curve series
                 li.setShape(renderer.lookupLegendShape(i));
                 li.setFillPaint(renderer.lookupSeriesPaint(i));
@@ -233,234 +211,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /** {@inheritDoc} */
     @Override
-    protected ChartMouseListener getChartMouseListener()
-    {
-        ChartMouseListener toggle = this.source.getNumberOfSeries() < 2 ? null
-                : GraphUtil.getToggleSeriesByLegendListener(this.legend, this.laneVisible);
-        return new ChartMouseListener()
-        {
-            /** {@inheritDoc} */
-            @SuppressWarnings({"unchecked", "synthetic-access"})
-            @Override
-            public void chartMouseClicked(final ChartMouseEvent event)
-            {
-                if (toggle != null)
-                {
-                    toggle.chartMouseClicked(event); // forward as we use two listeners
-                }
-                // remove any line annotations
-                for (XYAnnotation annotation : ((List<XYAnnotation>) getChart().getXYPlot().getAnnotations()))
-                {
-                    if (annotation instanceof XYLineAnnotation)
-                    {
-                        getChart().getXYPlot().removeAnnotation(annotation);
-                    }
-                }
-                // add line annotation for each item in series if the user clicked in an item
-                if (event.getEntity() instanceof XYItemEntity)
-                {
-                    XYItemEntity itemEntity = (XYItemEntity) event.getEntity();
-                    int series = itemEntity.getSeriesIndex();
-                    for (int i = 0; i < getItemCount(series) - 1; i++)
-                    {
-                        XYLineAnnotation annotation = new XYLineAnnotation(getXValue(series, i), getYValue(series, i),
-                                getXValue(series, i + 1), getYValue(series, i + 1), new BasicStroke(1.0f), Color.WHITE);
-                        getChart().getXYPlot().addAnnotation(annotation);
-                    }
-                }
-                else if (event.getEntity() instanceof AxisEntity)
-                {
-                    if (((AxisEntity) event.getEntity()).getAxis().equals(getChart().getXYPlot().getDomainAxis()))
-                    {
-                        Quantity old = FundamentalDiagram.this.domainQuantity;
-                        FundamentalDiagram.this.domainQuantity = FundamentalDiagram.this.otherQuantity;
-                        FundamentalDiagram.this.otherQuantity = old;
-                        getChart().getXYPlot().getDomainAxis().setLabel(FundamentalDiagram.this.domainQuantity.label());
-                        getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
-                    }
-                    else
-                    {
-                        Quantity old = FundamentalDiagram.this.rangeQuantity;
-                        FundamentalDiagram.this.rangeQuantity = FundamentalDiagram.this.otherQuantity;
-                        FundamentalDiagram.this.otherQuantity = old;
-                        getChart().getXYPlot().getRangeAxis().setLabel(FundamentalDiagram.this.rangeQuantity.label());
-                        getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
-                    }
-                }
-            }
-
-            /** {@inheritDoc} */
-            @SuppressWarnings({"synthetic-access", "unchecked"})
-            @Override
-            public void chartMouseMoved(final ChartMouseEvent event)
-            {
-                if (toggle != null)
-                {
-                    toggle.chartMouseMoved(event); // forward as we use two listeners
-                }
-                // set text annotation and status text to time of item
-                if (event.getEntity() instanceof XYItemEntity)
-                {
-                    // create time info for status label
-                    XYItemEntity itemEntity = (XYItemEntity) event.getEntity();
-                    int series = itemEntity.getSeriesIndex();
-                    int item = itemEntity.getItem();
-                    double t = item * FundamentalDiagram.this.source.getUpdateInterval().si;
-                    FundamentalDiagram.this.timeInfo = String.format(", %.0fs", t);
-                    double x = getXValue(series, item);
-                    double y = getYValue(series, item);
-                    Range domain = getChart().getXYPlot().getDomainAxis().getRange();
-                    Range range = getChart().getXYPlot().getRangeAxis().getRange();
-                    TextAnchor anchor;
-                    if (range.getUpperBound() - y < y - range.getLowerBound())
-                    {
-                        // upper half
-                        if (domain.getUpperBound() - x < x - domain.getLowerBound())
-                        {
-                            // upper right quadrant
-                            anchor = TextAnchor.TOP_RIGHT;
-                        }
-                        else
-                        {
-                            // upper left quadrant, can't use TOP_LEFT as text will be under mouse pointer
-                            if ((range.getUpperBound() - y)
-                                    / (range.getUpperBound() - range.getLowerBound()) < (x - domain.getLowerBound())
-                                            / (domain.getUpperBound() - domain.getLowerBound()))
-                            {
-                                // closer to top (at least relatively) so move text down
-                                anchor = TextAnchor.TOP_RIGHT;
-                            }
-                            else
-                            {
-                                // closer to left (at least relatively) so move text right
-                                anchor = TextAnchor.BOTTOM_LEFT;
-                            }
-                        }
-                    }
-                    else if (domain.getUpperBound() - x < x - domain.getLowerBound())
-                    {
-                        // lower right quadrant
-                        anchor = TextAnchor.BOTTOM_RIGHT;
-                    }
-                    else
-                    {
-                        // lower left quadrant
-                        anchor = TextAnchor.BOTTOM_LEFT;
-                    }
-                    XYTextAnnotation textAnnotation = new XYTextAnnotation(String.format("%.0fs", t), x, y);
-                    textAnnotation.setTextAnchor(anchor);
-                    textAnnotation.setFont(textAnnotation.getFont().deriveFont(14.0f).deriveFont(Font.BOLD));
-                    getChart().getXYPlot().addAnnotation(textAnnotation);
-                }
-                // remove texts when mouse is elsewhere
-                else
-                {
-                    for (XYAnnotation annotation : ((List<XYAnnotation>) getChart().getXYPlot().getAnnotations()))
-                    {
-                        if (annotation instanceof XYTextAnnotation)
-                        {
-                            getChart().getXYPlot().removeAnnotation(annotation);
-                        }
-                    }
-                    FundamentalDiagram.this.timeInfo = "";
-                }
-            }
-        };
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void addPopUpMenuItems(final JPopupMenu popupMenu)
-    {
-        super.addPopUpMenuItems(popupMenu);
-        popupMenu.insert(new JPopupMenu.Separator(), 0);
-
-        JMenu updMenu = new JMenu("Update frequency");
-        ButtonGroup updGroup = new ButtonGroup();
-        for (int f : this.source.getPossibleUpdateFrequencies())
-        {
-            String format = "%dx";
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(String.format(format, f));
-            item.setSelected(f == 1);
-            item.addActionListener(new ActionListener()
-            {
-                /** {@inheritDoc} */
-                @SuppressWarnings("synthetic-access")
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-
-                    if ((int) (.5 + FundamentalDiagram.this.source.getAggregationPeriod().si
-                            / FundamentalDiagram.this.source.getUpdateInterval().si) != f)
-                    {
-                        Duration interval = Duration.createSI(FundamentalDiagram.this.source.getAggregationPeriod().si / f);
-                        FundamentalDiagram.this.setUpdateInterval(interval);
-                        // the above setUpdateInterval also recalculates the virtual last update time
-                        // add half an interval to avoid any rounding issues
-                        FundamentalDiagram.this.source.setUpdateInterval(interval,
-                                FundamentalDiagram.this.getUpdateTime().plus(interval.multiplyBy(0.5)),
-                                FundamentalDiagram.this);
-                        getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
-                        getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
-                        notifyPlotChange();
-                    }
-                }
-            });
-            updGroup.add(item);
-            updMenu.add(item);
-        }
-        popupMenu.insert(updMenu, 0);
-
-        JMenu aggMenu = new JMenu("Aggregation period");
-        ButtonGroup aggGroup = new ButtonGroup();
-        for (double t : this.source.getPossibleAggregationPeriods())
-        {
-            double t2 = t;
-            String format = "%.0f s";
-            if (t >= 60.0)
-            {
-                t2 = t / 60.0;
-                format = "%.0f min";
-            }
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(String.format(format, t2));
-            item.setSelected(t == this.source.getAggregationPeriod().si);
-            item.addActionListener(new ActionListener()
-            {
-
-                /** {@inheritDoc} */
-                @SuppressWarnings("synthetic-access")
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    if (FundamentalDiagram.this.source.getAggregationPeriod().si != t)
-                    {
-                        int n = (int) (0.5 + FundamentalDiagram.this.source.getAggregationPeriod().si
-                                / FundamentalDiagram.this.source.getUpdateInterval().si);
-                        Duration period = Duration.createSI(t);
-                        FundamentalDiagram.this.setUpdateInterval(period.divideBy(n));
-                        // add half an interval to avoid any rounding issues
-                        FundamentalDiagram.this.source.setAggregationPeriod(period);
-                        FundamentalDiagram.this.source.setUpdateInterval(period.divideBy(n),
-                                FundamentalDiagram.this.getUpdateTime().plus(period.divideBy(n).multiplyBy(0.5)),
-                                FundamentalDiagram.this);
-                        getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
-                        getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
-                        notifyPlotChange();
-                    }
-                }
-
-            });
-            aggGroup.add(item);
-            aggMenu.add(item);
-        }
-        popupMenu.insert(aggMenu, 0);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected void increaseTime(final Time time)
     {
-        if (this.graphUpdater != null && time.si >= this.source.getAggregationPeriod().si) // null during construction
+        if (this.graphUpdater != null && time.si >= this.getSource().getAggregationPeriod().si) // null during construction
         {
             this.graphUpdater.offer(time);
         }
@@ -470,11 +223,11 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     @Override
     public int getSeriesCount()
     {
-        if (this.source == null)
+        if (this.getSource() == null)
         {
             return 0;
         }
-        return this.source.getNumberOfSeries();
+        return this.getSource().getNumberOfSeries();
     }
 
     /** {@inheritDoc} */
@@ -504,7 +257,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     @Override
     public int getItemCount(final int series)
     {
-        return this.source.getItemCount(series);
+        return this.getSource().getItemCount(series);
     }
 
     /** {@inheritDoc} */
@@ -518,7 +271,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     @Override
     public double getXValue(final int series, final int item)
     {
-        return this.domainQuantity.getValue(this.source, series, item);
+        return this.getDomainQuantity().getValue(this.getSource(), series, item);
     }
 
     /** {@inheritDoc} */
@@ -532,7 +285,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     @Override
     public double getYValue(final int series, final int item)
     {
-        return this.rangeQuantity.getValue(this.source, series, item);
+        return this.getRangeQuantity().getValue(this.getSource(), series, item);
     }
 
     /** {@inheritDoc} */
@@ -546,9 +299,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     @Override
     protected String getStatusLabel(final double domainValue, final double rangeValue)
     {
-        return this.domainQuantity.format(domainValue) + ", " + this.rangeQuantity.format(rangeValue) + ", "
-                + this.otherQuantity.format(this.domainQuantity.computeOther(this.rangeQuantity, domainValue, rangeValue))
-                + this.timeInfo;
+        return this.getDomainQuantity().format(domainValue) + ", " + this.getRangeQuantity().format(rangeValue) + ", "
+                + this.getOtherQuantity().format(this.getDomainQuantity().computeOther(this.getRangeQuantity(), domainValue, rangeValue))
+                + this.getTimeInfo();
     }
 
     /**
@@ -1357,10 +1110,65 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     @Override
     public String toString()
     {
-        return "FundamentalDiagram [source=" + this.source + ", domainQuantity=" + this.domainQuantity + ", rangeQuantity="
-                + this.rangeQuantity + ", otherQuantity=" + this.otherQuantity + ", seriesLabels=" + this.seriesLabels
-                + ", graphUpdater=" + this.graphUpdater + ", timeInfo=" + this.timeInfo + ", legend=" + this.legend
+        return "FundamentalDiagram [source=" + this.getSource() + ", domainQuantity=" + this.getDomainQuantity() + ", rangeQuantity="
+                + this.getRangeQuantity() + ", otherQuantity=" + this.getOtherQuantity() + ", seriesLabels=" + this.seriesLabels
+                + ", graphUpdater=" + this.graphUpdater + ", timeInfo=" + this.getTimeInfo() + ", legend=" + this.legend
                 + ", laneVisible=" + this.laneVisible + "]";
+    }
+
+    public FdSource getSource()
+    {
+        return source;
+    }
+
+    public LegendItemCollection getLegend()
+    {
+        return legend;
+    }
+
+    public List<Boolean> getLaneVisible()
+    {
+        return laneVisible;
+    }
+
+    public Quantity getDomainQuantity()
+    {
+        return domainQuantity;
+    }
+
+    public void setDomainQuantity(Quantity domainQuantity)
+    {
+        this.domainQuantity = domainQuantity;
+    }
+
+    public Quantity getOtherQuantity()
+    {
+        return otherQuantity;
+    }
+
+    public void setOtherQuantity(Quantity otherQuantity)
+    {
+        this.otherQuantity = otherQuantity;
+    }
+
+    public Quantity getRangeQuantity()
+    {
+        return rangeQuantity;
+    }
+
+    public void setRangeQuantity(Quantity rangeQuantity)
+    {
+        this.rangeQuantity = rangeQuantity;
+    }
+
+    public String getTimeInfo()
+    {
+        return timeInfo;
+    }
+
+    public void setTimeInfo(String timeInfo)
+    {
+        this.timeInfo = timeInfo;
     }
 
 }

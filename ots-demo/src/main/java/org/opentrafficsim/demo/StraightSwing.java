@@ -20,6 +20,9 @@ import org.opentrafficsim.draw.graphs.ContourPlotDensity;
 import org.opentrafficsim.draw.graphs.ContourPlotFlow;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphPath;
+import org.opentrafficsim.draw.graphs.SwingContourPlot;
+import org.opentrafficsim.draw.graphs.SwingPlot;
+import org.opentrafficsim.draw.graphs.SwingTrajectoryPlot;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -130,21 +133,21 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
         RoadSampler sampler = new RoadSampler(simulator);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
         TablePanel charts = new TablePanel(3, 2);
-        AbstractPlot plot = null;
+        SwingPlot plot = null;
 
-        plot = new TrajectoryPlot("TrajectoryPlot", Duration.createSI(10.0), simulator, sampler, path);
+        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.createSI(10.0), simulator, sampler, path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
-        plot = new ContourPlotDensity("DensityPlot", simulator, dataPool);
+        plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));
         charts.setCell(plot.getContentPane(), 1, 0);
 
-        plot = new ContourPlotSpeed("SpeedPlot", simulator, dataPool);
+        plot = new SwingContourPlot(new ContourPlotSpeed("SpeedPlot", simulator, dataPool));
         charts.setCell(plot.getContentPane(), 2, 0);
 
-        plot = new ContourPlotFlow("FlowPlot", simulator, dataPool);
+        plot = new SwingContourPlot(new ContourPlotFlow("FlowPlot", simulator, dataPool));
         charts.setCell(plot.getContentPane(), 1, 1);
 
-        plot = new ContourPlotAcceleration("AccelerationPlot", simulator, dataPool);
+        plot = new SwingContourPlot(new ContourPlotAcceleration("AccelerationPlot", simulator, dataPool));
         charts.setCell(plot.getContentPane(), 2, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "statistics ", charts);

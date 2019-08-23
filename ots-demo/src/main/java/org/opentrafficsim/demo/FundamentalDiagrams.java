@@ -34,6 +34,7 @@ import org.opentrafficsim.demo.FundamentalDiagrams.FundamentalDiagramPlotsModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
+import org.opentrafficsim.draw.graphs.SwingFundamentalDiagram;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
@@ -157,13 +158,14 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         {
             Length detectorLocation = new Length(400 + 500 * plotNumber, METER);
             String name = "Fundamental Diagram at " + detectorLocation.getSI() + "m";
-            FundamentalDiagram graph;
+            SwingFundamentalDiagram graph;
             try
             {
-                graph = new FundamentalDiagram(name, Quantity.DENSITY, Quantity.FLOW, simulator, sampler,
+                graph = new SwingFundamentalDiagram(new FundamentalDiagram(name, Quantity.DENSITY, Quantity.FLOW, simulator,
+                        sampler,
                         GraphLaneUtil.createCrossSection(name,
                                 new DirectedLanePosition(getModel().getLane(), detectorLocation, GTUDirectionality.DIR_PLUS)),
-                        false, Duration.createSI(60.0), false);
+                        false, Duration.createSI(60.0), false));
             }
             catch (NetworkException | GTUException exception)
             {

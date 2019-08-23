@@ -1,39 +1,18 @@
 package org.opentrafficsim.draw.graphs;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -62,11 +41,8 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractPlot extends JFrame implements Identifiable, Dataset
+public abstract class AbstractPlot implements Identifiable, Dataset
 {
-
-    /** */
-    private static final long serialVersionUID = 20181004L;
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a graph. Not used internally.<br>
@@ -83,17 +59,23 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
     /** Initial upper bound for the time scale. */
     public static final Time DEFAULT_INITIAL_UPPER_TIME_BOUND = Time.createSI(300.0);
 
+    /** Simulator. */
+    private final OTSSimulatorInterface simulator;
+
+    /** Unique ID of the chart. */
+    private final String id = UUID.randomUUID().toString();
+
     /** Caption. */
     private final String caption;
 
-    /** Update interval. */
-    private Duration updateInterval;
+    /** The chart, so we can export it. */
+    private JFreeChart chart;
+
+    /** List of parties interested in changes of this plot. */
+    private Set<DatasetChangeListener> listeners = new LinkedHashSet<>();
 
     /** Delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories. */
     private final Duration delay;
-
-    /** Simulator. */
-    private final OTSSimulatorInterface simulator;
 
     /** Time of last data update. */
     private Time updateTime;
@@ -101,37 +83,25 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
     /** Number of updates. */
     private int updates = 0;
 
-    /** Unique ID of the chart. */
-    private final String id = UUID.randomUUID().toString();
-
-    /** The chart, so we can export it. */
-    private JFreeChart chart;
-
-    /** Status label. */
-    private JLabel statusLabel;
-
-    /** Detach menu item. */
-    private JMenuItem detach;
-
-    /** List of parties interested in changes of this plot. */
-    private Set<DatasetChangeListener> listeners = new LinkedHashSet<>();
+    /** Update interval. */
+    private Duration updateInterval;
 
     /** Event of next update. */
     private SimEventInterface<SimTimeDoubleUnit> updateEvent;
 
     /**
      * Constructor.
+     * @param simulator OTSSimulatorInterface; simulator
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
-     * @param simulator OTSSimulatorInterface; simulator
-     * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
+     * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
-    public AbstractPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public AbstractPlot(final OTSSimulatorInterface simulator, final String caption, final Duration updateInterval,
             final Duration delay)
     {
+        this.simulator = simulator;
         this.caption = caption;
         this.updateInterval = updateInterval;
-        this.simulator = simulator;
         this.delay = delay;
         update(); // start redraw chain
     }
@@ -157,174 +127,6 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
             chart.getXYPlot().setRangeGridlinePaint(Color.WHITE);
         }
 
-        // status label
-        this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
-        add(this.statusLabel, BorderLayout.SOUTH);
-
-        // override to gain some control over the auto bounds
-        ChartPanel chartPanel = new ChartPanel(chart)
-        {
-            /** */
-            private static final long serialVersionUID = 20181006L;
-
-            /** {@inheritDoc} */
-            @Override
-            public void restoreAutoDomainBounds()
-            {
-                super.restoreAutoDomainBounds();
-                if (chart.getPlot() instanceof XYPlot)
-                {
-                    setAutoBoundDomain(chart.getXYPlot());
-                }
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public void restoreAutoRangeBounds()
-            {
-                super.restoreAutoRangeBounds();
-                if (chart.getPlot() instanceof XYPlot)
-                {
-                    setAutoBoundRange(chart.getXYPlot());
-                }
-            }
-
-            /** {@inheritDoc} This implementation adds control over the PNG image size and font size. */
-            @Override
-            public void doSaveAs() throws IOException
-            {
-                // the code in this method is based on the code in the super implementation
-
-                // create setting components
-                JLabel fontSizeLabel = new JLabel("font size");
-                JTextField fontSize = new JTextField("32"); // by default, give more space for labels in a png export
-                fontSize.setToolTipText("Font size of title (other fonts are scaled)");
-                fontSize.setPreferredSize(new Dimension(40, 20));
-                JTextField width = new JTextField("960");
-                width.setToolTipText("Width [pixels]");
-                width.setPreferredSize(new Dimension(40, 20));
-                JLabel x = new JLabel("x");
-                JTextField height = new JTextField("540");
-                height.setToolTipText("Height [pixels]");
-                height.setPreferredSize(new Dimension(40, 20));
-
-                // create file chooser with these components
-                JFileChooser fileChooser = new JFileChooserWithSettings(fontSizeLabel, fontSize, width, x, height);
-                fileChooser.setCurrentDirectory(getDefaultDirectoryForSaveAs());
-                FileNameExtensionFilter filter =
-                        new FileNameExtensionFilter(localizationResources.getString("PNG_Image_Files"), "png");
-                fileChooser.addChoosableFileFilter(filter);
-                fileChooser.setFileFilter(filter);
-
-                int option = fileChooser.showSaveDialog(this);
-                if (option == JFileChooser.APPROVE_OPTION)
-                {
-                    String filename = fileChooser.getSelectedFile().getPath();
-                    if (isEnforceFileExtensions())
-                    {
-                        if (!filename.endsWith(".png"))
-                        {
-                            filename = filename + ".png";
-                        }
-                    }
-
-                    // get settings from setting components
-                    double fs; // relative scale
-                    try
-                    {
-                        fs = Double.parseDouble(fontSize.getText());
-                    }
-                    catch (NumberFormatException exception)
-                    {
-                        fs = 16.0;
-                    }
-                    int w;
-                    try
-                    {
-                        w = Integer.parseInt(width.getText());
-                    }
-                    catch (NumberFormatException exception)
-                    {
-                        w = getWidth();
-                    }
-                    int h;
-                    try
-                    {
-                        h = Integer.parseInt(height.getText());
-                    }
-                    catch (NumberFormatException exception)
-                    {
-                        h = getHeight();
-                    }
-                    OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(filename)));
-                    out.write(encodeAsPng(w, h, fs));
-                    out.close();
-                }
-            }
-        };
-        ChartMouseListener chartListener = getChartMouseListener();
-        if (chartListener != null)
-        {
-            chartPanel.addChartMouseListener(chartListener);
-        }
-
-        // pointer handler
-        final PointerHandler ph = new PointerHandler()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public void updateHint(final double domainValue, final double rangeValue)
-            {
-                if (Double.isNaN(domainValue))
-                {
-                    setStatusLabel(" ");
-                }
-                else
-                {
-                    setStatusLabel(getStatusLabel(domainValue, rangeValue));
-                }
-            }
-        };
-        chartPanel.addMouseMotionListener(ph);
-        chartPanel.addMouseListener(ph);
-        add(chartPanel, BorderLayout.CENTER);
-        chartPanel.setMouseWheelEnabled(true);
-
-        // pop up
-        JPopupMenu popupMenu = chartPanel.getPopupMenu();
-        popupMenu.add(new JPopupMenu.Separator());
-        this.detach = new JMenuItem("Show in detached window");
-        this.detach.addActionListener(new ActionListener()
-        {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                AbstractPlot.this.detach.setEnabled(false);
-                JFrame window = new JFrame(AbstractPlot.this.caption);
-                window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                window.add(chartPanel, BorderLayout.CENTER);
-                window.add(AbstractPlot.this.statusLabel, BorderLayout.SOUTH);
-                window.addWindowListener(new WindowAdapter()
-                {
-                    /** {@inheritDoc} */
-                    @Override
-                    public void windowClosing(@SuppressWarnings("hiding") final WindowEvent e)
-                    {
-                        add(chartPanel, BorderLayout.CENTER);
-                        add(AbstractPlot.this.statusLabel, BorderLayout.SOUTH);
-                        AbstractPlot.this.detach.setEnabled(true);
-                        AbstractPlot.this.getContentPane().validate();
-                        AbstractPlot.this.getContentPane().repaint();
-                    }
-                });
-                window.pack();
-                window.setVisible(true);
-                AbstractPlot.this.getContentPane().repaint();
-            }
-        });
-        popupMenu.add(this.detach);
-        addPopUpMenuItems(popupMenu);
     }
 
     /**
@@ -368,15 +170,6 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
     }
 
     /**
-     * Overridable method to add pop up items.
-     * @param popupMenu JPopupMenu; pop up menu
-     */
-    protected void addPopUpMenuItems(final JPopupMenu popupMenu)
-    {
-        //
-    }
-
-    /**
      * Overridable; activates auto bounds on domain axis from user input. This class does not force the use of {@code XYPlot}s,
      * but the auto bounds command comes from the {@code ChartPanel} that this class creates. In case the used plot is a
      * {@code XYPlot}, this method is then invoked. Sub classes with auto domain bounds that work with an {@code XYPlot} should
@@ -401,15 +194,6 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
     }
 
     /**
-     * Overridable; may return a chart listener for additional functions.
-     * @return ChartMouseListener, {@code null} by default
-     */
-    protected ChartMouseListener getChartMouseListener()
-    {
-        return null;
-    }
-
-    /**
      * Return the graph type for transceiver.
      * @return GraphType; the graph type.
      */
@@ -430,35 +214,6 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
     protected abstract void increaseTime(Time time);
 
     /**
-     * Redraws the plot and schedules the next update.
-     */
-    protected void update()
-    {
-        this.updateTime = this.simulator.getSimulatorTime();
-        increaseTime(this.updateTime.minus(this.delay));
-        notifyPlotChange();
-        scheduleNextUpdateEvent();
-    }
-
-    /**
-     * Schedules the next update event.
-     */
-    private void scheduleNextUpdateEvent()
-    {
-        try
-        {
-            this.updates++;
-            // events are scheduled slightly later, so all influencing movements have occurred
-            this.updateEvent = this.simulator.scheduleEventAbs(
-                    Time.createSI(this.updateInterval.si * this.updates + this.delay.si), this, this, "update", null);
-        }
-        catch (SimRuntimeException exception)
-        {
-            throw new RuntimeException("Unexpected exception while updating plot.", exception);
-        }
-    }
-
-    /**
      * Notify all change listeners.
      */
     public final void notifyPlotChange()
@@ -468,31 +223,6 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
         {
             dcl.datasetChanged(event);
         }
-    }
-
-    /**
-     * Sets a new update interval.
-     * @param interval Duration; update interval
-     */
-    protected final void setUpdateInterval(final Duration interval)
-    {
-        if (this.updateEvent != null)
-        {
-            this.simulator.cancelEvent(this.updateEvent);
-        }
-        this.updates = (int) (this.simulator.getSimulatorTime().si / interval.si);
-        this.updateInterval = interval;
-        this.updateTime = Time.createSI(this.updates * this.updateInterval.si);
-        scheduleNextUpdateEvent();
-    }
-
-    /**
-     * Returns time until which data should be plotted.
-     * @return Time; time until which data should be plotted
-     */
-    protected final Time getUpdateTime()
-    {
-        return this.updateTime;
     }
 
     /**
@@ -526,24 +256,75 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
     }
 
     /**
-     * Manually set status label from sub class. Will be overwritten by a moving mouse pointer over the axes.
-     * @param label String; label to set
+     * Retrieve the simulator.
+     * @return OTSSimulatorInterface; the simulator
      */
-    protected final void setStatusLabel(final String label)
+    public OTSSimulatorInterface getSimulator()
     {
-        if (this.statusLabel != null)
+        return simulator;
+    }
+
+    /**
+     * Sets a new update interval.
+     * @param interval Duration; update interval
+     */
+    protected final void setUpdateInterval(final Duration interval)
+    {
+        if (this.updateEvent != null)
         {
-            this.statusLabel.setText(label);
+            this.simulator.cancelEvent(this.updateEvent);
+        }
+        this.updates = (int) (this.simulator.getSimulatorTime().si / interval.si);
+        this.updateInterval = interval;
+        this.updateTime = Time.createSI(this.updates * this.updateInterval.si);
+        scheduleNextUpdateEvent();
+    }
+
+    /**
+     * Returns time until which data should be plotted.
+     * @return Time; time until which data should be plotted
+     */
+    protected final Time getUpdateTime()
+    {
+        return this.updateTime;
+    }
+
+    /**
+     * Redraws the plot and schedules the next update.
+     */
+    protected void update()
+    {
+        this.updateTime = this.simulator.getSimulatorTime();
+        increaseTime(this.updateTime.minus(this.delay));
+        notifyPlotChange();
+        scheduleNextUpdateEvent();
+    }
+
+    /**
+     * Schedules the next update event.
+     */
+    private void scheduleNextUpdateEvent()
+    {
+        try
+        {
+            this.updates++;
+            // events are scheduled slightly later, so all influencing movements have occurred
+            this.updateEvent = this.simulator.scheduleEventAbs(
+                    Time.createSI(this.updateInterval.si * this.updates + this.delay.si), this, this, "update", null);
+        }
+        catch (SimRuntimeException exception)
+        {
+            throw new RuntimeException("Unexpected exception while updating plot.", exception);
         }
     }
 
     /**
-     * Return the caption of this graph.
-     * @return String; the caption of this graph
+     * Retrieve the caption.
+     * @return String; the caption of the plot
      */
-    public final String getCaption()
+    public String getCaption()
     {
-        return this.caption;
+        return caption;
     }
 
 }

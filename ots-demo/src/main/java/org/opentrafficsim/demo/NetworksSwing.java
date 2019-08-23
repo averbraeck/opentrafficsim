@@ -24,6 +24,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.graphs.AbstractPlot;
 import org.opentrafficsim.draw.graphs.GraphPath;
+import org.opentrafficsim.draw.graphs.SwingPlot;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -145,8 +146,8 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
             {
                 throw new RuntimeException(exception);
             }
-            AbstractPlot plot =
-                    new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), updateInterval, simulator, sampler, path);
+            SwingPlot plot = new SwingPlot(
+                    new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), updateInterval, simulator, sampler, path));
             charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
 
