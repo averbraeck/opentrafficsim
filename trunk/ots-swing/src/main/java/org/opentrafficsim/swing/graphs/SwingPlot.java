@@ -1,4 +1,4 @@
-package org.opentrafficsim.draw.graphs;
+package org.opentrafficsim.swing.graphs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,6 +25,9 @@ import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
+import org.opentrafficsim.draw.graphs.AbstractPlot;
+import org.opentrafficsim.draw.graphs.JFileChooserWithSettings;
+import org.opentrafficsim.draw.graphs.PointerHandler;
 
 /**
  * Swing wrapper of all plots. This schedules regular updates, creates menus and deals with listeners. There are a number of

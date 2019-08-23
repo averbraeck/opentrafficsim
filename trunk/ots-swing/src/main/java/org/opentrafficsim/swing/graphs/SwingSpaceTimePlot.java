@@ -1,10 +1,12 @@
-package org.opentrafficsim.draw.graphs;
+package org.opentrafficsim.swing.graphs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
+
+import org.opentrafficsim.draw.graphs.AbstractSpaceTimePlot;
 
 /**
  * Embed a SpaceTimePlot in a Swing JPanel.

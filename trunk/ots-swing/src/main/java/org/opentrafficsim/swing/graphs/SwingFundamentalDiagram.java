@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.opentrafficsim.draw.graphs;
+package org.opentrafficsim.swing.graphs;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -25,6 +25,8 @@ import org.jfree.chart.entity.AxisEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.Range;
+import org.opentrafficsim.draw.graphs.FundamentalDiagram;
+import org.opentrafficsim.draw.graphs.GraphUtil;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 
 /**
@@ -204,7 +206,6 @@ public class SwingFundamentalDiagram extends SwingPlot
             item.addActionListener(new ActionListener()
             {
                 /** {@inheritDoc} */
-                @SuppressWarnings("synthetic-access")
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -217,8 +218,7 @@ public class SwingFundamentalDiagram extends SwingPlot
                         // the above setUpdateInterval also recalculates the virtual last update time
                         // add half an interval to avoid any rounding issues
                         getPlot().getSource().setUpdateInterval(interval,
-                                getPlot().getUpdateTime().plus(interval.multiplyBy(0.5)),
-                                getPlot());
+                                getPlot().getUpdateTime().plus(interval.multiplyBy(0.5)), getPlot());
                         getPlot().getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
                         getPlot().getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
                         getPlot().notifyPlotChange();

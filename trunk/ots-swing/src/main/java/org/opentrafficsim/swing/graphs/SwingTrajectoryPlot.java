@@ -1,9 +1,11 @@
 /**
  * 
  */
-package org.opentrafficsim.draw.graphs;
+package org.opentrafficsim.swing.graphs;
 
 import org.jfree.chart.ChartMouseListener;
+import org.opentrafficsim.draw.graphs.GraphUtil;
+import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 
 /**
  * Embed a TrajectoryPlot in a Swing JPanel.

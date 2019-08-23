@@ -170,7 +170,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /** {@inheritDoc} */
     @Override
-    protected void setAutoBoundDomain(final XYPlot plot)
+    public void setAutoBoundDomain(final XYPlot plot)
     {
         if (this.lowerDomainBound != null)
         {
@@ -184,7 +184,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /** {@inheritDoc} */
     @Override
-    protected void setAutoBoundRange(final XYPlot plot)
+    public void setAutoBoundRange(final XYPlot plot)
     {
         if (this.lowerRangeBound != null)
         {

@@ -297,7 +297,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /** {@inheritDoc} */
     @Override
-    protected String getStatusLabel(final double domainValue, final double rangeValue)
+    public String getStatusLabel(final double domainValue, final double rangeValue)
     {
         return this.getDomainQuantity().format(domainValue) + ", " + this.getRangeQuantity().format(rangeValue) + ", "
                 + this.getOtherQuantity().format(this.getDomainQuantity().computeOther(this.getRangeQuantity(), domainValue, rangeValue))
