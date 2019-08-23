@@ -1116,57 +1116,101 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                 + ", laneVisible=" + this.laneVisible + "]";
     }
 
+    /**
+     * Get the data source.
+     * @return FdSource; the data source
+     */
     public FdSource getSource()
     {
         return source;
     }
 
+    /**
+     * Retrievee the legend of this FundamentalDiagram.
+     * @return LegendItemCollection; the legend
+     */
     public LegendItemCollection getLegend()
     {
         return legend;
     }
 
+    /**
+     * Return the list of lane visibility flags.
+     * @return List&lt;Boolean&gt;; the list of lane visibility flags
+     */
     public List<Boolean> getLaneVisible()
     {
         return laneVisible;
     }
 
+    /**
+     * Return the domain quantity.
+     * @return Quantity; the domain quantity
+     */
     public Quantity getDomainQuantity()
     {
         return domainQuantity;
     }
 
-    public void setDomainQuantity(Quantity domainQuantity)
+    /**
+     * Set the domain quantity.
+     * @param domainQuantity Quantity; the new domain quantity
+     */
+    public void setDomainQuantity(final Quantity domainQuantity)
     {
         this.domainQuantity = domainQuantity;
     }
 
+    /**
+     * Get the other (non domain; vertical axis) quantity.
+     * @return Quantity; the quantity for the vertical axis
+     */
     public Quantity getOtherQuantity()
     {
         return otherQuantity;
     }
 
-    public void setOtherQuantity(Quantity otherQuantity)
+    /**
+     * Set the other (non domain; vertical axis) quantity.
+     * @param otherQuantity Quantity; the quantity for the vertical axis
+     */
+    public void setOtherQuantity(final Quantity otherQuantity)
     {
         this.otherQuantity = otherQuantity;
     }
 
+    /**
+     * Get the range quantity.
+     * @return Quantity; the range quantity
+     */
     public Quantity getRangeQuantity()
     {
         return rangeQuantity;
     }
 
-    public void setRangeQuantity(Quantity rangeQuantity)
+    /**
+     * Set the range quantity.
+     * @param rangeQuantity Quantity; the new range quantity
+     */
+    public void setRangeQuantity(final Quantity rangeQuantity)
     {
         this.rangeQuantity = rangeQuantity;
     }
 
+    /**
+     * Retrieve the time info.
+     * @return String; the time info
+     */
     public String getTimeInfo()
     {
         return timeInfo;
     }
 
-    public void setTimeInfo(String timeInfo)
+    /**
+     * Set the time info.
+     * @param timeInfo String; the new time info
+     */
+    public void setTimeInfo(final String timeInfo)
     {
         this.timeInfo = timeInfo;
     }

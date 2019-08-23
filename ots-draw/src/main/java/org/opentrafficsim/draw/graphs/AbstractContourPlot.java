@@ -1,16 +1,6 @@
 package org.opentrafficsim.draw.graphs;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
@@ -41,9 +31,6 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
  */
 public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamplerPlot implements XYInterpolatedDataset
 {
-
-    /** */
-    private static final long serialVersionUID = 20181004L;
 
     /** Color scale for the graph. */
     private final BoundsPaintScale paintScale;

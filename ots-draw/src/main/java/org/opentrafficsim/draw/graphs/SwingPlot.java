@@ -39,8 +39,8 @@ import org.jfree.chart.plot.XYPlot;
  */
 public class SwingPlot extends JFrame
 {
-    /** */
-    private static final long serialVersionUID = 20181004L;
+    /**  */
+    private static final long serialVersionUID = 20190823L;
 
     /** The JFreeChart plot. */
     private final AbstractPlot plot;
@@ -52,8 +52,8 @@ public class SwingPlot extends JFrame
     private JMenuItem detach;
 
     /**
-     * 
-     * @param plot AbstractPlot; wrapper of the chart
+     * Construct a new Swing container for an AbstractPlot.
+     * @param plot AbstractPlot; the plot to embed
      */
     public SwingPlot(final AbstractPlot plot)
     {

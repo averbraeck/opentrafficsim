@@ -6,14 +6,21 @@ package org.opentrafficsim.draw.graphs;
 import org.jfree.chart.ChartMouseListener;
 
 /**
- * @author pknoppers
- *
+ * Embed a TrajectoryPlot in a Swing JPanel.
+ * <P>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public class SwingTrajectoryPlot extends SwingSpaceTimePlot
 {
 
+    /**  */
+    private static final long serialVersionUID = 20190823L;
+
     /**
-     * @param plot
+     * Construct a new Swing container for a TrajectoryPlot.
+     * @param plot TrajectoryPlot; the plot to embed
      */
     public SwingTrajectoryPlot(final TrajectoryPlot plot)
     {

@@ -28,16 +28,23 @@ import org.jfree.data.Range;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 
 /**
- * @author pknoppers
- *
+ * Embed a FundamentalDiagram in a Swing JPanel.
+ * <P>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 public class SwingFundamentalDiagram extends SwingPlot
 {
 
+    /**  */
+    private static final long serialVersionUID = 20190823L;
+
     /**
-     * @param plot
+     * Construct a new Swing container for FundamentalDiagram plot.
+     * @param plot FundamentalDiagram; the plot to embed
      */
-    public SwingFundamentalDiagram(FundamentalDiagram plot)
+    public SwingFundamentalDiagram(final FundamentalDiagram plot)
     {
         super(plot);
     }
