@@ -159,7 +159,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * consistent.
      * @param granularity double; space granularity
      */
-    protected final void setSpaceGranularity(final double granularity)
+    public final void setSpaceGranularity(final double granularity)
     {
         this.blockRenderer.setBlockHeight(granularity);
     }
@@ -169,7 +169,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * consistent.
      * @param granularity double; time granularity
      */
-    protected final void setTimeGranularity(final double granularity)
+    public final void setTimeGranularity(final double granularity)
     {
         this.blockRenderer.setBlockWidth(granularity);
     }
@@ -179,7 +179,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * multiple plots consistent.
      * @param interpolate boolean; selected or not
      */
-    protected final void setInterpolation(final boolean interpolate)
+    public final void setInterpolation(final boolean interpolate)
     {
         this.blockRenderer.setInterpolate(interpolate);
     }
@@ -188,7 +188,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * Returns the data pool for sub classes.
      * @return ContourDataSource; data pool for subclasses
      */
-    protected final ContourDataSource<?> getDataPool()
+    public final ContourDataSource<?> getDataPool()
     {
         return this.dataPool;
     }
@@ -286,7 +286,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @return String; status label when the mouse is over the given location
      */
     @Override
-    protected final String getStatusLabel(final double domainValue, final double rangeValue)
+    public final String getStatusLabel(final double domainValue, final double rangeValue)
     {
         if (this.dataPool == null)
         {

@@ -1,4 +1,4 @@
-package org.opentrafficsim.draw.graphs;
+package org.opentrafficsim.swing.graphs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +11,8 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
+import org.opentrafficsim.draw.graphs.AbstractContourPlot;
+import org.opentrafficsim.draw.graphs.AbstractSpaceTimePlot;
 import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
 
 /**

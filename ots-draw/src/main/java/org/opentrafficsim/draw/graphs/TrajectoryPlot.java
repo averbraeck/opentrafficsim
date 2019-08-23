@@ -196,7 +196,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /** {@inheritDoc} */
     @Override
-    protected String getStatusLabel(final double domainValue, final double rangeValue)
+    public String getStatusLabel(final double domainValue, final double rangeValue)
     {
         return String.format("time %.0fs, distance %.0fm", domainValue, rangeValue);
     }

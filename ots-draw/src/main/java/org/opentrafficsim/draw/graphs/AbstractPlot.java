@@ -176,7 +176,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * implement this. The method is not abstract as the use of {@code XYPlot} is not obligated.
      * @param plot XYPlot; plot
      */
-    protected void setAutoBoundDomain(final XYPlot plot)
+    public void setAutoBoundDomain(final XYPlot plot)
     {
         //
     }
@@ -188,7 +188,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * implement this. The method is not abstract as the use of {@code XYPlot} is not obligated.
      * @param plot XYPlot; plot
      */
-    protected void setAutoBoundRange(final XYPlot plot)
+    public void setAutoBoundRange(final XYPlot plot)
     {
         //
     }
@@ -205,7 +205,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * @param rangeValue double; range value (y-axis)
      * @return String; status label when the mouse is over the given location
      */
-    protected abstract String getStatusLabel(double domainValue, double rangeValue);
+    public abstract String getStatusLabel(double domainValue, double rangeValue);
 
     /**
      * Increase the simulated time span.
@@ -229,7 +229,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * Returns the chart.
      * @return JFreeChart; chart
      */
-    protected final JFreeChart getChart()
+    public final JFreeChart getChart()
     {
         return this.chart;
     }
@@ -268,7 +268,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * Sets a new update interval.
      * @param interval Duration; update interval
      */
-    protected final void setUpdateInterval(final Duration interval)
+    public final void setUpdateInterval(final Duration interval)
     {
         if (this.updateEvent != null)
         {
@@ -284,7 +284,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * Returns time until which data should be plotted.
      * @return Time; time until which data should be plotted
      */
-    protected final Time getUpdateTime()
+    public final Time getUpdateTime()
     {
         return this.updateTime;
     }

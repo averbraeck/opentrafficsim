@@ -350,6 +350,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @return double[]; available granularities that a linked plot may use
      */
     @SuppressWarnings("synthetic-access")
+    public
     final double[] getGranularities(final Dimension dimension)
     {
         return dimension.getAxis(this).granularities;
@@ -361,6 +362,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @return double; granularity that a linked plot should use
      */
     @SuppressWarnings("synthetic-access")
+    public
     final double getGranularity(final Dimension dimension)
     {
         return dimension.getAxis(this).granularity;
@@ -392,7 +394,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @param dimension Dimension; space or time
      * @param granularity double; granularity in space or time (SI unit)
      */
-    final synchronized void setGranularity(final Dimension dimension, final double granularity)
+    public final synchronized void setGranularity(final Dimension dimension, final double granularity)
     {
         if (dimension.equals(Dimension.DISTANCE))
         {
@@ -418,7 +420,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * Sets bi-linear interpolation enabled or disabled. This will invalidate the plot triggering a redraw.
      * @param interpolate boolean; whether to enable interpolation
      */
-    final void setInterpolate(final boolean interpolate)
+    public final void setInterpolate(final boolean interpolate)
     {
         if (this.timeAxis.interpolate != interpolate)
         {
@@ -439,7 +441,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * Sets the adaptive smoothing enabled or disabled. This will invalidate the plot triggering a redraw.
      * @param smooth boolean; whether to smooth the plor
      */
-    final void setSmooth(final boolean smooth)
+    public final void setSmooth(final boolean smooth)
     {
         if (this.smooth != smooth)
         {

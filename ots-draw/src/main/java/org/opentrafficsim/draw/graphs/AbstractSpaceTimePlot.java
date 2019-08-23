@@ -99,7 +99,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
      * @param fixed boolean; if true; the domain range will not update when new data becomes available; if false; the domain
      *            range will update to show newly available data
      */
-    protected void updateFixedDomainRange(final boolean fixed)
+    public void updateFixedDomainRange(final boolean fixed)
     {
         this.fixedDomainRange = fixed ? getChart().getXYPlot().getDomainAxis().getRange().getLength() : null;
         notifyPlotChange();
@@ -129,7 +129,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
 
     /** {@inheritDoc} This implementation overrides to enable it's own form of auto bounds. */
     @Override
-    protected final void setAutoBoundDomain(final XYPlot plot)
+    public final void setAutoBoundDomain(final XYPlot plot)
     {
         super.setAutoBoundDomain(plot);
         this.autoBoundAxes = true;
@@ -137,7 +137,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
 
     /** {@inheritDoc} This implementation overrides to enable it's own form of auto bounds. */
     @Override
-    protected final void setAutoBoundRange(final XYPlot plot)
+    public final void setAutoBoundRange(final XYPlot plot)
     {
         super.setAutoBoundRange(plot);
         this.autoBoundAxes = true;

@@ -96,7 +96,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * Returns the path.
      * @return GraphPath&lt;KpiLaneDirection&gt;; the path
      */
-    protected final GraphPath<KpiLaneDirection> getPath()
+    public final GraphPath<KpiLaneDirection> getPath()
     {
         return this.path;
     }
