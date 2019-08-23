@@ -399,7 +399,7 @@ public class ContourDataSource<G extends GtuDataInterface>
             this.desiredSpaceGranularity = granularity;
             for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
             {
-                contourPlot.setSpaceGranularityRadioButton(granularity);
+                contourPlot.setSpaceGranularity(granularity);
             }
         }
         else
@@ -408,7 +408,7 @@ public class ContourDataSource<G extends GtuDataInterface>
             for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
             {
                 contourPlot.setUpdateInterval(Duration.createSI(granularity));
-                contourPlot.setTimeGranularityRadioButton(granularity);
+                contourPlot.setTimeGranularity(granularity);
             }
         }
         invalidate(null);
@@ -449,7 +449,7 @@ public class ContourDataSource<G extends GtuDataInterface>
                 this.smooth = smooth;
                 for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
                 {
-                    contourPlot.setSmoothing(smooth);
+                    // TODO work out what to do with this: contourPlot.setSmoothing(smooth);
                 }
                 invalidate(null);
             }
@@ -889,7 +889,7 @@ public class ContourDataSource<G extends GtuDataInterface>
     {
         for (AbstractContourPlot<?> plot : ContourDataSource.this.plots)
         {
-            plot.setStatusLabel(status);
+            // TODO what shall we do this this? plot.setStatusLabel(status);
         }
     }
 

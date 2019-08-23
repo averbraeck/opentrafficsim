@@ -1,11 +1,5 @@
 package org.opentrafficsim.draw.graphs;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JPopupMenu;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -50,13 +44,13 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
-     * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
+     * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
     public AbstractSpaceTimePlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
             final Duration delay, final Time initialEnd)
     {
-        super(caption, updateInterval, simulator, delay);
+        super(simulator, caption, updateInterval, delay);
         this.initialEnd = initialEnd;
     }
 
@@ -87,29 +81,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
             }
         });
     }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void addPopUpMenuItems(final JPopupMenu popupMenu)
-    {
-        JCheckBoxMenuItem fixedDomainCheckBox = new JCheckBoxMenuItem("Fix time range", false);
-        fixedDomainCheckBox.addActionListener(new ActionListener()
-        {
-            /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                boolean fix = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-                AbstractSpaceTimePlot.this.fixedDomainRange =
-                        fix ? getChart().getXYPlot().getDomainAxis().getRange().getLength() : null;
-                notifyPlotChange();
-            }
-        });
-        popupMenu.insert(fixedDomainCheckBox, 0);
-        popupMenu.insert(new JPopupMenu.Separator(), 1);
-    }
-
+    
     /** {@inheritDoc} */
     @Override
     protected void update()
@@ -123,6 +95,12 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
             setAutoBounds(getChart().getXYPlot());
         }
         super.update();
+    }
+
+    protected void updateFixedDomainRange(final boolean fixed)
+    {
+        this.fixedDomainRange = fixed ? getChart().getXYPlot().getDomainAxis().getRange().getLength() : null;
+        notifyPlotChange();
     }
 
     /**

@@ -60,18 +60,6 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /** Data pool. */
     private final ContourDataSource<?> dataPool;
 
-    /** Map to set time granularity. */
-    private Map<JRadioButtonMenuItem, Double> timeGranularityButtons = new LinkedHashMap<>();
-
-    /** Map to set space granularity. */
-    private Map<JRadioButtonMenuItem, Double> spaceGranularityButtons = new LinkedHashMap<>();
-
-    /** Check box for smoothing. */
-    private JCheckBoxMenuItem smoothCheckBox;
-
-    /** Check box for interpolation. */
-    private JCheckBoxMenuItem interpolateCheckBox;
-
     /** Block renderer in chart. */
     private XYInterpolatedBlockRenderer blockRenderer = null;
 
@@ -161,103 +149,6 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         return chart;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected void addPopUpMenuItems(final JPopupMenu popupMenu)
-    {
-        super.addPopUpMenuItems(popupMenu);
-        JMenu spaceGranularityMenu = buildMenu("Distance granularity", "%.0f m", 1000, "%.0f km", "setSpaceGranularity",
-                this.dataPool.getGranularities(Dimension.DISTANCE), this.dataPool.getGranularity(Dimension.DISTANCE),
-                this.spaceGranularityButtons);
-        popupMenu.insert(spaceGranularityMenu, 0);
-        JMenu timeGranularityMenu = buildMenu("Time granularity", "%.0f s", 60.0, "%.0f min", "setTimeGranularity",
-                this.dataPool.getGranularities(Dimension.TIME), this.dataPool.getGranularity(Dimension.TIME),
-                this.timeGranularityButtons);
-        popupMenu.insert(timeGranularityMenu, 1);
-        this.smoothCheckBox = new JCheckBoxMenuItem("Adaptive smoothing method", false);
-        this.smoothCheckBox.addActionListener(new ActionListener()
-        {
-            /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                AbstractContourPlot.this.dataPool.setSmooth(((JCheckBoxMenuItem) e.getSource()).isSelected());
-                notifyPlotChange();
-            }
-        });
-        popupMenu.insert(this.smoothCheckBox, 2);
-        this.interpolateCheckBox = new JCheckBoxMenuItem("Bilinear interpolation", true);
-        this.interpolateCheckBox.addActionListener(new ActionListener()
-        {
-            /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                boolean interpolate = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-                AbstractContourPlot.this.blockRenderer.setInterpolate(interpolate);
-                AbstractContourPlot.this.dataPool.setInterpolate(interpolate);
-                notifyPlotChange();
-            }
-        });
-        popupMenu.insert(this.interpolateCheckBox, 3);
-    }
-
-    /**
-     * Create a JMenu to let the user set the granularity.
-     * @param menuName String; caption for the new JMenu
-     * @param format1 String; format string for the values in the items under the new JMenu, below formatValue
-     * @param formatValue double; format value
-     * @param format2 String; format string for the values in the items under the new JMenu, above and equal to formatValue
-     * @param command String; prefix for the actionCommand of the items under the new JMenu
-     * @param values double[]; array of values to be formatted using the format strings to yield the items under the new JMenu
-     * @param initialValue double; the currently selected value (used to put the bullet on the correct item)
-     * @param granularityButtons Map&lt;JRadioButtonMenuItem, Double&gt;; map in to which buttons should be added
-     * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
-     */
-    private JMenu buildMenu(final String menuName, final String format1, final double formatValue, final String format2,
-            final String command, final double[] values, final double initialValue,
-            final Map<JRadioButtonMenuItem, Double> granularityButtons)
-    {
-        JMenu result = new JMenu(menuName);
-        ButtonGroup group = new ButtonGroup();
-        for (double value : values)
-        {
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(
-                    String.format(value < formatValue ? format1 : format2, value < formatValue ? value : value / formatValue));
-            granularityButtons.put(item, value);
-            item.setSelected(value == initialValue);
-            item.setActionCommand(command);
-            item.addActionListener(new ActionListener()
-            {
-                /** {@inheritDoc} */
-                @SuppressWarnings("synthetic-access")
-                @Override
-                public void actionPerformed(final ActionEvent actionEvent)
-                {
-                    if (command.equalsIgnoreCase("setSpaceGranularity"))
-                    {
-                        double granularity = AbstractContourPlot.this.spaceGranularityButtons.get(actionEvent.getSource());
-                        AbstractContourPlot.this.dataPool.setGranularity(Dimension.DISTANCE, granularity);
-                    }
-                    else if (command.equalsIgnoreCase("setTimeGranularity"))
-                    {
-                        double granularity = AbstractContourPlot.this.timeGranularityButtons.get(actionEvent.getSource());
-                        AbstractContourPlot.this.dataPool.setGranularity(Dimension.TIME, granularity);
-                    }
-                    else
-                    {
-                        throw new RuntimeException("Unknown ActionEvent");
-                    }
-                }
-            });
-            result.add(item);
-            group.add(item);
-        }
-        return result;
-    }
-
     /**
      * Returns the time granularity, just for information.
      * @return double; time granularity
@@ -281,13 +172,9 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * consistent.
      * @param granularity double; space granularity
      */
-    protected final void setSpaceGranularityRadioButton(final double granularity)
+    protected final void setSpaceGranularity(final double granularity)
     {
         this.blockRenderer.setBlockHeight(granularity);
-        for (JRadioButtonMenuItem button : this.spaceGranularityButtons.keySet())
-        {
-            button.setSelected(this.spaceGranularityButtons.get(button) == granularity);
-        }
     }
 
     /**
@@ -295,22 +182,9 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * consistent.
      * @param granularity double; time granularity
      */
-    protected final void setTimeGranularityRadioButton(final double granularity)
+    protected final void setTimeGranularity(final double granularity)
     {
         this.blockRenderer.setBlockWidth(granularity);
-        for (JRadioButtonMenuItem button : this.timeGranularityButtons.keySet())
-        {
-            button.setSelected(this.timeGranularityButtons.get(button) == granularity);
-        }
-    }
-
-    /**
-     * Sets the check box for smooth rendering. This is done from a {@code DataPool} to keep multiple plots consistent.
-     * @param smooth boolean; selected or not
-     */
-    protected final void setSmoothing(final boolean smooth)
-    {
-        this.smoothCheckBox.setSelected(smooth);
     }
 
     /**
@@ -321,9 +195,8 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     protected final void setInterpolation(final boolean interpolate)
     {
         this.blockRenderer.setInterpolate(interpolate);
-        this.interpolateCheckBox.setSelected(interpolate);
     }
-
+    
     /**
      * Returns the data pool for sub classes.
      * @return ContourDataSource; data pool for subclasses
@@ -471,5 +344,10 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @return CountorDataType; contour data type
      */
     protected abstract ContourDataType<Z, ?> getContourDataType();
+
+    public XYInterpolatedBlockRenderer getBlockRenderer()
+    {
+        return blockRenderer;
+    }
 
 }

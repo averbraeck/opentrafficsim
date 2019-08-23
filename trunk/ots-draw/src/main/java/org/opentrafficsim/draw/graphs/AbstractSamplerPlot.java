@@ -30,9 +30,6 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 {
 
-    /** */
-    private static final long serialVersionUID = 20181004L;
-
     /** Sampler. */
     private final Sampler<?> sampler;
 
@@ -52,7 +49,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * @param simulator OTSSimulatorInterface; simulator
      * @param sampler Sampler&lt;?&gt;; road sampler
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
-     * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
+     * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
     public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
             final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path, final Duration delay)
