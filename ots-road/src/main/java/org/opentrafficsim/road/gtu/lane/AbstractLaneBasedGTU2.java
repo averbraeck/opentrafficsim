@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -447,6 +448,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         int index = laneChangeDirection.isLeft() ? 0 : 1;
         int numRegistered = 0;
         DirectedPoint point = getLocation();
+        Map<Lane, Double> addToLanes = new LinkedHashMap<>();
         for (CrossSection crossSection : this.crossSections)
         {
             List<Lane> resultingLanes = new ArrayList<>();
@@ -464,12 +466,12 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                     // in either case we add the GTU at an extreme
                     // (this is only for ordering on the lane, the position is not used otherwise)
                     Length pos = position(lane, getReference());
-                    adjacentLane.addGTU(this, pos.si < lane.getLength().si / 2 ? 0.0 : 1.0);
+                    addToLanes.put(adjacentLane, pos.si < lane.getLength().si / 2 ? 0.0 : 1.0);
                 }
                 else
                 {
                     f = crossSection.getDirection().isPlus() ? f : 1.0 - f;
-                    adjacentLane.addGTU(this, adjacentLane.getLength().multiplyBy(f));
+                    addToLanes.put(adjacentLane, adjacentLane.getLength().multiplyBy(f).si / adjacentLane.getLength().si);
                 }
                 resultingLanes.add(index, adjacentLane);
             }
@@ -479,6 +481,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 getId(), laneChangeDirection);
         this.crossSections.clear();
         this.crossSections.addAll(newLanes);
+        for (Entry<Lane, Double> entry : addToLanes.entrySet())
+        {
+            entry.getKey().addGTU(this, entry.getValue());
+        }
         this.referenceLaneIndex = 1 - index;
     }
 
@@ -693,7 +699,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             if (i == this.referenceLaneIndex)
             {
                 nextLanes.add(nextLaneDirection.getLane());
-                nextLaneDirection.getLane().addGTU(this, insertFraction);
             }
             else
             {
@@ -703,7 +708,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 {
                     Lane nextLane = lanes.keySet().iterator().next();
                     nextLanes.add(nextLane);
-                    nextLane.addGTU(this, insertFraction);
                 }
                 else
                 {
@@ -716,7 +720,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                                         getGTUType(), nextLaneDirection.getDirection()).contains(nextLaneDirection.getLane()))
                         {
                             nextLanes.add(nextLane);
-                            nextLane.addGTU(this, insertFraction);
                             added = true;
                             break;
                         }
@@ -730,6 +733,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             }
         }
         this.crossSections.add(new CrossSection(nextLanes, nextLaneDirection.getDirection()));
+        for (Lane lane : nextLanes)
+        {
+            lane.addGTU(this, insertFraction);
+        }
         this.pendingEnterTrigger = null;
         scheduleEnterEvent();
         for (Lane lane : nextLanes)
