@@ -16,10 +16,13 @@ import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djutils.cli.CliException;
+import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.io.URLResource;
@@ -138,6 +141,7 @@ import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import picocli.CommandLine.Option;
 
 /**
  * Distraction simulation.
@@ -174,6 +178,54 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     /** Sampler. */
     private RoadSampler sampler;
 
+    /** Truck fraction. */
+    @Option(names = { "-f", "--fTruck" }, description = "Truck fraction", defaultValue = "0.05")
+    private double fTruck;
+
+    /** Left demand. */
+    @Option(names = "--leftDemand", description = "Left demand", defaultValue = "3500/h")
+    private Frequency leftDemand;
+
+    /** Right demand. */
+    @Option(names = "--rightDemand", description = "Right demand", defaultValue = "3200/h")
+    private Frequency rightDemand;
+
+    /** Sampler. */
+    @Option(names = "--sampler", description = "Sampler", negatable = true, defaultValue = "false")
+    private boolean doSampler;
+
+    /** Sampler. */
+    @Option(names = "--scenario", description = "Scenario", defaultValue = "test")
+    private String scenario;
+
+    /** Output directory. */
+    @Option(names = "--outputDir", description = "Output directory", defaultValue = "")
+    private String outputDir;
+
+    /** Tasks. */
+    @Option(names = "--tasks", description = "Use tasks", negatable = true, defaultValue = "false")
+    private boolean tasks;
+
+    /** Strategies. */
+    @Option(names = "--strategies", description = "Use strategies", negatable = true, defaultValue = "false")
+    private boolean strategies;
+
+    /** Adaptation. */
+    @Option(names = "--adaptation", description = "Use adaptation", negatable = true, defaultValue = "false")
+    private boolean adaptation;
+
+    /** Alpha. */
+    @Option(names = "--alpha", description = "Alpha: maximum lane-change reduction", defaultValue = "0.8")
+    private double alpha;
+
+    /** Beta. */
+    @Option(names = "--beta", description = "Beta: maximum car-following reduction", defaultValue = "0.6")
+    private double beta;
+
+    /** Fraction of underestimation. */
+    @Option(names = "--fUnderestimate", description = "Fraction underestimation", defaultValue = "0.75")
+    private double fractionUnderestimation;
+
     /**
      * Main method.
      * @param args String[]; command line arguments
@@ -182,9 +234,9 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     {
         // Long start = System.currentTimeMillis();
         AnticipationRelianceScript script = new AnticipationRelianceScript(args);
-        if (script.getBooleanProperty("autorun"))
+        if (script.isAutorun())
         {
-            System.out.println("Running " + script.getProperty("scenario") + "_" + script.getProperty("seed"));
+            System.out.println("Running " + script.scenario + "_" + script.getSeed());
         }
         // script.setProperty("sampler", true);
         // script.setProperty("autorun", false);
@@ -233,7 +285,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
      */
     private String getOutputFileStart()
     {
-        return getProperty("outputDir") + getProperty("scenario") + "_" + getProperty("seed");
+        return this.outputDir + this.scenario + "_" + getSeed();
     }
 
     /**
@@ -242,7 +294,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
      */
     private AnticipationRelianceScript(final String[] properties)
     {
-        super("Distraction", "Distraction simulation", properties);
+        super("Distraction", "Distraction simulation");
         setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
                 .addColorer(new TaskColorer("car-following")).addColorer(new TaskColorer("lane-changing"))
                 .addColorer(new TaskSaturationColorer()).addColorer(new ReactionTimeColorer(Duration.createSI(1.0)))
@@ -258,27 +310,15 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 .addColorer(new IncentiveColorer(IncentiveGetInLane.class))
                 .addColorer(new IncentiveColorer(IncentiveCourtesy.class))
                 .addColorer(new IncentiveColorer(IncentiveSocioSpeed.class)).build());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void setDefaultProperties()
-    {
-        setProperty("fTruck", 0.05);
-        setProperty("leftDemand", 3500);
-        setProperty("rightDemand", 3200);
-        setProperty("sampler", false);
-        setProperty("warmupTime", 360);
-        setProperty("simulationTime", 3960);
-        setProperty("scenario", "test");
-        setProperty("outputDir", "");
-
-        setProperty("tasks", false);
-        setProperty("strategies", false);
-        setProperty("adaptation", false);
-        setProperty("alpha", 0.8); // max. lane-change reduction
-        setProperty("beta", 0.6); // max. car-following reduction
-        setProperty("fractionUnderestimation", 0.75);
+        try
+        {
+            CliUtil.changeOptionDefault(this, "warmupTime", "360s");
+            CliUtil.changeOptionDefault(this, "simulationTime", "3960s");
+        }
+        catch (NoSuchFieldException | IllegalStateException | IllegalArgumentException | CliException exception)
+        {
+            throw new RuntimeException(exception);
+        }
     }
 
     /** {@inheritDoc} */
@@ -317,13 +357,12 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         ODMatrix od = new ODMatrix("Distraction", origins, destinations, categorization, globalTime, Interpolation.LINEAR);
         Category carCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
         Category truckCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.TRUCK));
-        double fTruck = getDoubleProperty("fTruck");
-        double demandLeft = getDoubleProperty("leftDemand");
-        double demandRight = getDoubleProperty("rightDemand");
-        FrequencyVector leftDemandPatternCar = getDemand(demandLeft * (1.0 - fTruck));
-        FrequencyVector leftDemandPatternTruck = getDemand(demandLeft * fTruck);
-        FrequencyVector rightDemandPatternCar = getDemand(demandRight * (1.0 - fTruck));
-        FrequencyVector rightDemandPatternTruck = getDemand(demandRight * fTruck);
+        FrequencyVector leftDemandPatternCar =
+                getDemand(this.leftDemand.getInUnit(FrequencyUnit.PER_HOUR) * (1.0 - this.fTruck));
+        FrequencyVector leftDemandPatternTruck = getDemand(this.leftDemand.getInUnit(FrequencyUnit.PER_HOUR) * this.fTruck);
+        FrequencyVector rightDemandPatternCar =
+                getDemand(this.rightDemand.getInUnit(FrequencyUnit.PER_HOUR) * (1.0 - this.fTruck));
+        FrequencyVector rightDemandPatternTruck = getDemand(this.rightDemand.getInUnit(FrequencyUnit.PER_HOUR) * this.fTruck);
         od.putDemandVector(network.getNode("LEFTINPRE"), network.getNode("EXIT"), carCategory, leftDemandPatternCar);
         od.putDemandVector(network.getNode("LEFTINPRE"), network.getNode("EXIT"), truckCategory, leftDemandPatternTruck);
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), carCategory, rightDemandPatternCar);
@@ -337,7 +376,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim, Duration.createSI(2.0), Duration.createSI(1.0)));
 
         // Sampler
-        if (getBooleanProperty("sampler"))
+        if (this.doSampler)
         {
             this.sampler = new RoadSampler(sim);
             this.sampler.registerExtendedDataType(new TimeToCollision());
@@ -345,7 +384,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             this.sampler.registerExtendedDataType(new LeaderId());
             this.sampler.registerExtendedDataType(new ReactionTime());
             this.sampler.registerExtendedDataType(new SituationalAwarenessDataType());
-            if (getBooleanProperty("tasks"))
+            if (this.tasks)
             {
                 this.sampler.registerExtendedDataType(new TaskAnticipationRelianceDataType("car-following"));
                 this.sampler.registerExtendedDataType(new TaskDemandDataType("car-following"));
@@ -383,7 +422,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             Length end = laneData.getLength().multiplyBy(endDistance.si / linkData.getLength().si);
             this.sampler
                     .registerSpaceTimeRegion(new SpaceTimeRegion(new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS),
-                            start, end, getTimeProperty("warmupTime"), getTimeProperty("simulationTime")));
+                            start, end, getStartTime().plus(getWarmupTime()), getStartTime().plus(getSimulationTime())));
         }
     }
 
@@ -444,6 +483,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
                 final Category category, final StreamInterface randomStream) throws GTUException
@@ -451,11 +491,10 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             OTSRoadNetwork network = (OTSRoadNetwork) origin.getNetwork();
             if (this.factoryCar == null)
             {
-                boolean strategies = getBooleanProperty("strategies");
-
                 // car-following model, with different desired speed models
-                CarFollowingModelFactory<IDMPlus> cfFactoryCar = new IdmPlusFactoryAR(
-                        () -> strategies ? new SocioDesiredSpeed(AbstractIDM.DESIRED_SPEED) : AbstractIDM.DESIRED_SPEED);
+                CarFollowingModelFactory<IDMPlus> cfFactoryCar =
+                        new IdmPlusFactoryAR(() -> AnticipationRelianceScript.this.strategies
+                                ? new SocioDesiredSpeed(AbstractIDM.DESIRED_SPEED) : AbstractIDM.DESIRED_SPEED);
                 CarFollowingModelFactory<IDMPlus> cfFactoryTruck = new IdmPlusFactoryAR(() -> AbstractIDM.DESIRED_SPEED);
 
                 // perception factory with estimation distribution (i.e. over- vs. underestimation)
@@ -463,9 +502,9 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 try
                 {
                     estimation = new Distribution<>(randomStream);
-                    estimation.add(
-                            new FrequencyAndObject<>(getDoubleProperty("fractionUnderestimation"), Estimation.UNDERESTIMATION));
-                    estimation.add(new FrequencyAndObject<>(1.0 - getDoubleProperty("fractionUnderestimation"),
+                    estimation.add(new FrequencyAndObject<>(AnticipationRelianceScript.this.fractionUnderestimation,
+                            Estimation.UNDERESTIMATION));
+                    estimation.add(new FrequencyAndObject<>(1.0 - AnticipationRelianceScript.this.fractionUnderestimation,
                             Estimation.OVERESTIMATION));
                 }
                 catch (ProbabilityException ex)
@@ -475,7 +514,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 PerceptionFactory perceptionFactory = new LmrsPerceptionFactoryAR(estimation);
 
                 // tailgating
-                Tailgating tailgating = getBooleanProperty("strategies") ? Tailgating.PRESSURE : Tailgating.NONE;
+                Tailgating tailgating = AnticipationRelianceScript.this.strategies ? Tailgating.PRESSURE : Tailgating.NONE;
 
                 // incentives
                 Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -484,7 +523,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 Set<VoluntaryIncentive> voluntaryIncentivesTruck = new LinkedHashSet<>();
                 voluntaryIncentivesCar.add(new IncentiveSpeedWithCourtesy());
                 voluntaryIncentivesCar.add(new IncentiveKeep());
-                if (strategies)
+                if (AnticipationRelianceScript.this.strategies)
                 {
                     voluntaryIncentivesCar.add(new IncentiveSocioSpeed());
                 }
@@ -499,7 +538,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.FSPEED,
                         new DistNormal(randomStream, 123.7 / 120.0, 12.0 / 120.0));
                 params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A, Acceleration.createSI(0.4));
-                if (strategies)
+                if (AnticipationRelianceScript.this.strategies)
                 {
                     params.addParameter(Tailgating.RHO, 0.0);
                     params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.SOCIO,
@@ -511,7 +550,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                             new Speed(50.0, SpeedUnit.KM_PER_HOUR));
                     params.addParameter(ParameterTypes.TMAX, Duration.createSI(1.6));
                 }
-                if (getBooleanProperty("adaptation"))
+                if (AnticipationRelianceScript.this.adaptation)
                 {
                     params.addParameter(AdaptationHeadway.BETA_T, 1.0); // T := T * (1.0 + this value)
                 }
@@ -596,27 +635,27 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public LanePerception generatePerception(final LaneBasedGTU gtu)
         {
-            Set<Task> tasks = new LinkedHashSet<>();
-            if (getBooleanProperty("tasks"))
+            Set<Task> tasksSet = new LinkedHashSet<>();
+            if (AnticipationRelianceScript.this.tasks)
             {
-                tasks.add(new CarFollowingTaskAR());
-                tasks.add(new LaneChangeTaskAR());
+                tasksSet.add(new CarFollowingTaskAR());
+                tasksSet.add(new LaneChangeTaskAR());
             }
 
             Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
             behavioralAdapatations.add(new AdaptationSituationalAwareness());
-            if (getBooleanProperty("adaptation"))
+            if (AnticipationRelianceScript.this.adaptation)
             {
                 behavioralAdapatations.add(new AdaptationHeadway());
             }
             LanePerception perception;
-            if (getBooleanProperty("tasks"))
+            if (AnticipationRelianceScript.this.tasks)
             {
-                @SuppressWarnings("synthetic-access")
-                Fuller fuller = new Fuller(tasks, behavioralAdapatations, new TaskManagerAR());
+                Fuller fuller = new Fuller(tasksSet, behavioralAdapatations, new TaskManagerAR());
                 perception = new CategoricalLanePerception(gtu, fuller);
             }
             else
@@ -633,22 +672,23 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public Parameters getParameters() throws ParameterException
         {
             Parameters params = super.getParameters();
             params.setParameter(HEXP, Duration.createSI(4.0));
-            params.setParameter(ALPHA, getDoubleProperty("alpha"));
-            params.setParameter(BETA, getDoubleProperty("beta"));
+            params.setParameter(ALPHA, AnticipationRelianceScript.this.alpha);
+            params.setParameter(BETA, AnticipationRelianceScript.this.beta);
             params.setParameter(Fuller.TC, 1.0);
-            params.setParameter(Fuller.TS_CRIT, 0.8);
+            params.setParameter(Fuller.TS_CRIT, 1.0); // Was not changed!
             params.setParameter(Fuller.TS_MAX, 2.0);
             params.setParameter(AdaptationSituationalAwareness.SA, 1.0);
             params.setParameter(AdaptationSituationalAwareness.SA_MAX, 1.0);
             params.setParameter(AdaptationSituationalAwareness.SA_MIN, 0.5);
             params.setParameter(AdaptationSituationalAwareness.TR_MAX, Duration.createSI(2.0));
             params.setParameter(ParameterTypes.TR, Duration.ZERO);
-            params.setParameter(AdaptationHeadway.BETA_T, 1.0);
+            params.setParameter(AdaptationHeadway.BETA_T, 1.0); // Increase?
             return params;
         }
     }
@@ -678,15 +718,15 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             double primaryTaskDemand = primary.calculateTaskDemand(perception, gtu, parameters);
             primary.setTaskDemand(primaryTaskDemand);
             // max AR is alpha of TD, actual AR approaches 0 for increasing TD
-            double alpha = parameters.getParameter(ALPHA);
-            double beta = parameters.getParameter(BETA);
-            primary.setAnticipationReliance(alpha * primaryTaskDemand * (1.0 - primaryTaskDemand));
+            double a = parameters.getParameter(ALPHA);
+            double b = parameters.getParameter(BETA);
+            primary.setAnticipationReliance(a * primaryTaskDemand * (1.0 - primaryTaskDemand));
             for (Task auxiliary : auxiliaryTasks)
             {
                 double auxiliaryTaskLoad = auxiliary.calculateTaskDemand(perception, gtu, parameters);
                 auxiliary.setTaskDemand(auxiliaryTaskLoad);
                 // max AR is beta of TD, actual AR approaches 0 as primary TD approaches 0
-                auxiliary.setAnticipationReliance(beta * auxiliaryTaskLoad * primaryTaskDemand);
+                auxiliary.setAnticipationReliance(b * auxiliaryTaskLoad * primaryTaskDemand);
             }
         }
     }

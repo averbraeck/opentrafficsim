@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -116,6 +117,7 @@ import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
+import picocli.CommandLine.Option;
 
 /**
  * <p>
@@ -136,12 +138,16 @@ public class RampMeteringDemo extends AbstractSimulationScript
     /** Parameter factory. */
     private ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
 
+    /** Ramp metering. */
+    @Option(names = { "-r", "--rampMetering" }, description = "Ramp metering on or off", defaultValue = "true")
+    private boolean rampMetering;
+
     /**
-     * @param properties String[] properties
+     * Constructor.
      */
-    protected RampMeteringDemo(final String[] properties)
+    protected RampMeteringDemo()
     {
-        super("Ramp metering", "Ramp metering", properties);
+        super("Ramp metering 1", "Ramp metering 2");
     }
 
     /**
@@ -150,14 +156,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
      */
     public static void main(final String[] args) throws Exception
     {
-        new RampMeteringDemo(args).start();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void setDefaultProperties()
-    {
-        setProperty("rampMetering", true);
+        RampMeteringDemo demo = new RampMeteringDemo();
+        CliUtil.execute(demo, new String[]{"--help"});
+        demo.start();
     }
 
     /** {@inheritDoc} */
@@ -221,7 +222,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         List<Detector> detectors34 = new ArrayList<>();
         detectors34.add(det3);
         detectors34.add(det4);
-        if (getBooleanProperty("rampMetering"))
+        if (this.rampMetering)
         {
             // traffic light
             TrafficLight light = new SimpleTrafficLight("light", lanesEF.get(0), lanesEF.get(0).getLength(), sim);
