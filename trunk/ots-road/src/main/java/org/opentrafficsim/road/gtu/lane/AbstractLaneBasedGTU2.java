@@ -357,11 +357,11 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
      */
     private void enterLaneRecursive(final LaneDirection lane, final Length position, final int dir) throws GTUException
     {
-        lane.getLane().addGTU(this, position);
         List<Lane> lanes = new ArrayList<>();
         lanes.add(lane.getLane());
         int index = dir > 0 ? this.crossSections.size() : 0;
         this.crossSections.add(index, new CrossSection(lanes, lane.getDirection()));
+        lane.getLane().addGTU(this, position);
 
         // upstream
         if (dir < 1)
