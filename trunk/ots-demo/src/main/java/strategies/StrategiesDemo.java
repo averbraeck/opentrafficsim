@@ -28,6 +28,8 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.cli.CliException;
+import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -103,6 +105,7 @@ import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import picocli.CommandLine.Option;
 
 /**
  * Demo of lane change strategies.
@@ -146,6 +149,7 @@ public class StrategiesDemo extends AbstractSimulationScript
     private Length truckMid;
 
     /** Car length. */
+    @Option(names = "--length", description = "Length", defaultValue = "2m")
     private Length carLength;
 
     /** Car mid. */
@@ -153,17 +157,24 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /**
      * Constructor.
-     * @param properties String[]; properties
      */
-    protected StrategiesDemo(final String[] properties)
+    protected StrategiesDemo()
     {
-        super("Strategies demo", "Demo of driving strategies in LMRS.", properties);
+        super("Strategies demo", "Demo of driving strategies in LMRS.");
         setGtuColorer(SwitchableGTUColorer.builder().addColorer(new FixedColor(Color.BLUE, "Blue"))
                 .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
                 .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
                 .addActiveColorer(new SocialPressureColorer())
                 .addColorer(new DesiredHeadwayColorer(Duration.createSI(0.5), Duration.createSI(1.6)))
                 .addColorer(new IncentiveColorer(IncentiveSocioSpeed.class)).build());
+        try
+        {
+            CliUtil.changeOptionDefault(this, "simulationTime", "3600000s");
+        }
+        catch (NoSuchFieldException | IllegalStateException | IllegalArgumentException | CliException exception)
+        {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**
@@ -172,7 +183,8 @@ public class StrategiesDemo extends AbstractSimulationScript
      */
     public static void main(final String[] args)
     {
-        StrategiesDemo demo = new StrategiesDemo(args);
+        StrategiesDemo demo = new StrategiesDemo();
+        CliUtil.execute(demo, args);
         try
         {
             demo.start();
@@ -181,13 +193,6 @@ public class StrategiesDemo extends AbstractSimulationScript
         {
             ex.printStackTrace();
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void setDefaultProperties()
-    {
-        setProperty("simulationTime", "360000");
     }
 
     /** {@inheritDoc} */
@@ -501,9 +506,9 @@ public class StrategiesDemo extends AbstractSimulationScript
         double radius = 150;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
         OTSRoadNode nodeA = new OTSRoadNode(network, "A", new OTSPoint3D(-radius, 0, 0), 
-                new Direction(90, DirectionUnit.EAST_DEGREE));
-        OTSRoadNode nodeB = new OTSRoadNode(network, "B", new OTSPoint3D(radius, 0, 0), 
                 new Direction(270, DirectionUnit.EAST_DEGREE));
+        OTSRoadNode nodeB = new OTSRoadNode(network, "B", new OTSPoint3D(radius, 0, 0), 
+                new Direction(90, DirectionUnit.EAST_DEGREE));
 
         OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
         for (int i = 0; i < coordsHalf1.length; i++)

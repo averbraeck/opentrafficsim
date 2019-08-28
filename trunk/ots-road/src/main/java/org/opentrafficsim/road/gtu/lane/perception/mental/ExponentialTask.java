@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -20,7 +21,7 @@ public class ExponentialTask extends AbstractTask
     private final double additionalTaskDemand;
 
     /** Time scale at which task demand changes from the initial to the final value. */
-    private final double tau;
+    private final Duration tau;
 
     /** Start time of the distraction. */
     private final double start;
@@ -30,10 +31,10 @@ public class ExponentialTask extends AbstractTask
      * @param id String; id
      * @param initialTaskDemand double; initial level of task demand
      * @param finalTaskDemand double; final level of task demand
-     * @param tau double; time scale at which task demand changes from the initial to the final value
+     * @param tau Duration; time scale at which task demand changes from the initial to the final value
      * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
      */
-    public ExponentialTask(final String id, final double initialTaskDemand, final double finalTaskDemand, final double tau,
+    public ExponentialTask(final String id, final double initialTaskDemand, final double finalTaskDemand, final Duration tau,
             final SimulatorInterface.TimeDoubleUnit simulator)
     {
         super(id);
@@ -49,7 +50,7 @@ public class ExponentialTask extends AbstractTask
             throws ParameterException, GTUException
     {
         double t = gtu.getSimulator().getSimulatorTime().si - this.start;
-        return this.initialTaskDemand + this.additionalTaskDemand * (1.0 - Math.exp(-t / this.tau));
+        return this.initialTaskDemand + this.additionalTaskDemand * (1.0 - Math.exp(-t / this.tau.si));
     }
 
 }

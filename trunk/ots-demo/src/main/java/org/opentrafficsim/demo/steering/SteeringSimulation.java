@@ -15,6 +15,7 @@ import org.djunits.value.vdouble.scalar.Mass;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djutils.cli.CliUtil;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -66,6 +67,7 @@ import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import picocli.CommandLine.Option;
 
 /**
  * Simulation script for steering functionality.
@@ -83,6 +85,10 @@ public class SteeringSimulation extends AbstractSimulationScript
 
     /** Feedback table. */
     static final FeedbackTable FEEDBACK_CAR;
+    
+    /** Number of lanes. */
+    @Option(names = "--numberOfLanes", description = "Number of lanes", defaultValue = "2")
+    private int numberOfLanes;
 
     static
     {
@@ -101,7 +107,9 @@ public class SteeringSimulation extends AbstractSimulationScript
     {
         try
         {
-            new SteeringSimulation(args).start();
+            SteeringSimulation sim = new SteeringSimulation();
+            CliUtil.execute(sim, args);
+            sim.start();
         }
         catch (Exception ex)
         {
@@ -110,11 +118,11 @@ public class SteeringSimulation extends AbstractSimulationScript
     }
 
     /**
-     * @param properties String[]; properties
+     * Constructor.
      */
-    protected SteeringSimulation(final String[] properties)
+    protected SteeringSimulation()
     {
-        super("Steering simulation", "Steering simulation", properties);
+        super("Steering simulation", "Steering simulation");
     }
 
     /**
@@ -124,6 +132,7 @@ public class SteeringSimulation extends AbstractSimulationScript
      * @return OTSRoadNetwork; network
      * @throws Exception on any exception
      */
+    @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         OTSRoadNetwork network = new OTSRoadNetwork("Steering network", true);
@@ -159,9 +168,8 @@ public class SteeringSimulation extends AbstractSimulationScript
                         Bezier.cubic(nodeE.getLocation(), nodeB.getLocation()), sim, LaneKeepingPolicy.KEEPRIGHT);
 
         // lanes and stripes
-        int n = getIntegerProperty("numberOfLanes");
         List<Lane> originLanes = new ArrayList<>();
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < this.numberOfLanes; i++)
         {
             for (CrossSectionLink link : new CrossSectionLink[] {linkAB, linkBC, linkCD})
             {
@@ -169,7 +177,7 @@ public class SteeringSimulation extends AbstractSimulationScript
                         network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR));
                 Length offset = laneWidth.multiplyBy(i + 1.0);
                 Stripe stripe = new Stripe(link, offset, offset, stripeWidth);
-                if (i < n - 1)
+                if (i < this.numberOfLanes - 1)
                 {
                     stripe.addPermeability(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.BOTH);
                 }

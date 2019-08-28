@@ -2,16 +2,20 @@ package org.opentrafficsim.swing.script;
 
 import java.awt.Dimension;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.cli.Checkable;
+import org.djutils.cli.CliException;
+import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -34,9 +38,14 @@ import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
- * Template for simulation script.
+ * Template for simulation script. This class allows the user to run a single visualized simulation, or to batch-run the same
+ * model. Parameters can be given through the command-line using djutils-ext. Fields can be added to sub-classes using the
+ * {@code @Options} and similar annotations. Default values of the properties in this abstract class can be overwritten by the
+ * sub-class using {@code CliUtil.changeDefaultValue()}.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -46,159 +55,111 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractSimulationScript implements EventListenerInterface
+@Command(description = "Test program for CLI", name = "Program", mixinStandardHelpOptions = true, showDefaultValues = true)
+public abstract class AbstractSimulationScript implements EventListenerInterface, Checkable
 {
     /** Name. */
-    final String name;
+    private final String name;
 
     /** Description. */
-    final String description;
+    private final String description;
 
     /** The simulator. */
-    OTSSimulatorInterface simulator;
+    private OTSSimulatorInterface simulator;
 
     /** The network. */
     private OTSRoadNetwork network;
 
-    /** Properties as String value, e.g. from command line. */
-    private final Map<String, String> props = new LinkedHashMap<>();
-
     /** GTU colorer. */
     private GTUColorer gtuColorer = OTSSwingApplication.DEFAULT_COLORER;
+
+    /** Seed. */
+    @Option(names = "--seed", description = "Seed", defaultValue = "1")
+    private long seed;
+
+    /** Start time. */
+    @Option(names = { "-s", "--startTime" }, description = "Start time", defaultValue = "0s")
+    private Time startTime;
+
+    /** Warm-up time. */
+    @Option(names = { "-w", "--warmupTime" }, description = "Warm-up time", defaultValue = "0s")
+    private Duration warmupTime;
+
+    /** Simulation time. */
+    @Option(names = { "-t", "--simulationTime" }, description = "Simulation time (including warm-up time)",
+            defaultValue = "3600s")
+    private Duration simulationTime;
+
+    /** Autorun. */
+    @Option(names = { "-a", "--autorun" }, description = "Autorun", negatable = true, defaultValue = "false")
+    private boolean autorun;
 
     /**
      * Constructor.
      * @param name String; name
      * @param description String; description
-     * @param properties String[]; properties as name-value pairs
      */
-    protected AbstractSimulationScript(final String name, final String description, final String[] properties)
+    protected AbstractSimulationScript(final String name, final String description)
     {
         this.name = name;
         this.description = description;
-        this.props.put("seed", "1");
-        this.props.put("startTime", "0");
-        this.props.put("warmupTime", "0");
-        this.props.put("simulationTime", "3600");
-        this.props.put("autorun", "false");
-        setDefaultProperties();
-        for (int i = 0; i < properties.length; i += 2)
+        try
         {
-            System.out.println("Adding " + properties[i] + " with argument " + properties[i + 1]);
-            this.props.put(properties[i], properties[i + 1]);
+            CliUtil.changeCommandName(this, this.name);
+            CliUtil.changeCommandDescription(this, this.description);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            CliUtil.changeCommandVersion(this,
+                    formatter.format(new Date(ClassUtil.classFileDescriptor(this.getClass()).getLastChangedDate())));
+        }
+        catch (NoSuchFieldException | IllegalStateException | IllegalArgumentException | CliException exception)
+        {
+            throw new RuntimeException("Exception while setting properties in @Command annotation.", exception);
         }
     }
 
     /**
-     * Sets a property.
-     * @param propertyName String; property name
-     * @param propertyValue Object; property value
+     * Returns the seed.
+     * @return long; seed
      */
-    public final void setProperty(final String propertyName, final Object propertyValue)
+    public long getSeed()
     {
-        this.props.put(propertyName, propertyValue.toString());
+        return this.seed;
     }
 
     /**
-     * Returns whether the property is present.
-     * @param propertyName String; property name
-     * @return boolean; whether the property is present
+     * Returns the start time.
+     * @return Time; start time
      */
-    public final boolean hasProperty(final String propertyName)
+    public Time getStartTime()
     {
-        return this.props.containsKey(propertyName);
-    }
-    
-    /**
-     * Returns the String value of given property.
-     * @param propertyName String; property name
-     * @return String; value of property
-     */
-    public final String getProperty(final String propertyName)
-    {
-        String p = this.props.get(propertyName);
-        Throw.when(p == null, IllegalStateException.class, "Property %s is not given.", propertyName);
-        return p;
+        return this.startTime;
     }
 
     /**
-     * Returns the double value of given property.
-     * @param propertyName String; property name
-     * @return double; value of property
+     * Returns the warm-up time.
+     * @return Duration; warm-up time
      */
-    public final double getDoubleProperty(final String propertyName)
+    public Duration getWarmupTime()
     {
-        return Double.parseDouble(getProperty(propertyName));
+        return this.warmupTime;
     }
 
     /**
-     * Returns the boolean value of given property.
-     * @param propertyName String; property name
-     * @return double; value of property
+     * Returns the simulation time.
+     * @return Duration; simulation time
      */
-    public final boolean getBooleanProperty(final String propertyName)
+    public Duration getSimulationTime()
     {
-        return Boolean.parseBoolean(getProperty(propertyName));
+        return this.simulationTime;
     }
 
     /**
-     * Returns the int value of given property.
-     * @param propertyName String; property name
-     * @return int; value of property
+     * Returns whether to autorun.
+     * @return boolean; whether to autorun
      */
-    public final int getIntegerProperty(final String propertyName)
+    public boolean isAutorun()
     {
-        return Integer.parseInt(getProperty(propertyName));
-    }
-
-    /**
-     * Returns the long value of given property.
-     * @param propertyName String; property name
-     * @return long; value of property
-     */
-    public final long getLongProperty(final String propertyName)
-    {
-        return Long.parseLong(getProperty(propertyName));
-    }
-
-    /**
-     * Returns the Duration value of given property.
-     * @param propertyName String; property name
-     * @return Duration; value of property
-     */
-    public final Duration getDurationProperty(final String propertyName)
-    {
-        return Duration.createSI(getDoubleProperty(propertyName));
-    }
-
-    /**
-     * Returns the Time value of given property.
-     * @param propertyName String; property name
-     * @return Time; value of property
-     */
-    public final Time getTimeProperty(final String propertyName)
-    {
-        return Time.createSI(getDoubleProperty(propertyName));
-    }
-    
-    /**
-     * Returns the Length value of given property.
-     * @param propertyName String; property name
-     * @return Length; value of property
-     */
-    public final Length getLengthProperty(final String propertyName)
-    {
-        return Length.createSI(getDoubleProperty(propertyName));
-    }
-    
-    /**
-     * Returns the Acceleration value of given property.
-     * @param propertyName String; property name
-     * @return Acceleration; value of property
-     */
-    public final Acceleration getAccelerationProperty(final String propertyName)
-    {
-        return Acceleration.createSI(getDoubleProperty(propertyName));
+        return this.autorun;
     }
 
     /**
@@ -219,24 +180,32 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         return this.gtuColorer;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void check() throws Exception
+    {
+        Throw.when(this.seed < 0, IllegalArgumentException.class, "Seed should be positive");
+        Throw.when(this.warmupTime.si < 0.0, IllegalArgumentException.class, "Warm-up time should be positive");
+        Throw.when(this.simulationTime.si < 0.0, IllegalArgumentException.class, "Simulation time should be positive");
+        Throw.when(this.simulationTime.si < this.warmupTime.si, IllegalArgumentException.class,
+                "Simulation time should be longer than warmp-up time");
+    }
+
     /**
      * Starts the simulation.
      * @throws Exception on any exception
      */
     public final void start() throws Exception
     {
-        Time startTime = getTimeProperty("startTime");
-        Duration warmupTime = getDurationProperty("warmupTime");
-        Duration simulationTime = getDurationProperty("simulationTime");
-        if (getBooleanProperty("autorun"))
+        if (isAutorun())
         {
             this.simulator = new OTSSimulator();
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
-            this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
+            this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
             double tReport = 60.0;
             Time t = this.simulator.getSimulatorTime();
-            while (t.si < simulationTime.si)
+            while (t.si < this.simulationTime.si)
             {
                 this.simulator.step();
                 t = this.simulator.getSimulatorTime();
@@ -254,7 +223,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         {
             this.simulator = new OTSAnimator();
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
-            this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
+            this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             OTSAnimationPanel animationPanel =
                     new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
                             (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
@@ -291,14 +260,14 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     {
         if (event.getType().equals(SimulatorInterface.END_REPLICATION_EVENT))
         {
-//            try
-//            {
-//                getSimulator().scheduleEventNow(this, this, "onSimulationEnd", null);
-//            }
-//            catch (SimRuntimeException exception)
-//            {
-//                throw new RuntimeException(exception);
-//            }
+            // try
+            // {
+            // getSimulator().scheduleEventNow(this, this, "onSimulationEnd", null);
+            // }
+            // catch (SimRuntimeException exception)
+            // {
+            // throw new RuntimeException(exception);
+            // }
             onSimulationEnd();
             // solve bug that event is fired twice
             AbstractSimulationScript.this.simulator.removeListener(AbstractSimulationScript.this,
@@ -348,14 +317,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @param animation OTSSimulationApplication&lt;?&gt;; animation to add tabs to
      */
     protected void addTabs(final OTSSimulatorInterface sim, final OTSSimulationApplication<?> animation)
-    {
-        //
-    }
-
-    /**
-     * Sets the default properties. Can be overridden and use method {@code setProperty()}. Default implementation does nothing.
-     */
-    protected void setDefaultProperties()
     {
         //
     }
@@ -420,6 +381,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         /**
          * @param simulator OTSSimulatorInterface; the simulator
          */
+        @SuppressWarnings("synthetic-access")
         ScriptModel(final OTSSimulatorInterface simulator)
         {
             AbstractSimulationScript.this.simulator = simulator;
@@ -431,10 +393,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         public void constructModel() throws SimRuntimeException
         {
             Map<String, StreamInterface> streams = new LinkedHashMap<>();
-            long seed = getLongProperty("seed");
-            StreamInterface stream = new MersenneTwister(seed);
+            StreamInterface stream = new MersenneTwister(getSeed());
             streams.put("generation", stream);
-            stream = new MersenneTwister(seed + 1);
+            stream = new MersenneTwister(getSeed() + 1);
             streams.put("default", stream);
             AbstractSimulationScript.this.simulator.getReplication().setStreams(streams);
             AbstractSimulationScript.this.network =
@@ -452,6 +413,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public OTSSimulatorInterface getSimulator()
         {
@@ -481,6 +443,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public String getShortName()
         {
@@ -488,6 +451,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public String getDescription()
         {

@@ -3,7 +3,6 @@ package org.opentrafficsim.demo.sdm;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -83,25 +82,25 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
     {
         ParameterFactoryByType paramFactory = new ParameterFactoryByType();
 
-        paramFactory.addParameter(Fuller.TC, simulation.getDoubleProperty("TC"));
-        paramFactory.addParameter(Fuller.TS_CRIT, simulation.getDoubleProperty("TS_CRIT"));
-        paramFactory.addParameter(Fuller.TS_MAX, simulation.getDoubleProperty("TS_MAX"));
+        paramFactory.addParameter(Fuller.TC, simulation.getTc());
+        paramFactory.addParameter(Fuller.TS_CRIT, simulation.getTsCrit());
+        paramFactory.addParameter(Fuller.TS_MAX, simulation.getTsMax());
 
-        paramFactory.addParameter(AdaptationSituationalAwareness.SA_MIN, simulation.getDoubleProperty("SA_MIN"));
-        paramFactory.addParameter(AdaptationSituationalAwareness.SA_MAX, simulation.getDoubleProperty("SA_MAX"));
-        paramFactory.addParameter(AdaptationSituationalAwareness.TR_MAX, simulation.getDurationProperty("TR_MAX"));
+        paramFactory.addParameter(AdaptationSituationalAwareness.SA_MIN, simulation.getSaMin());
+        paramFactory.addParameter(AdaptationSituationalAwareness.SA_MAX, simulation.getSaMax());
+        paramFactory.addParameter(AdaptationSituationalAwareness.TR_MAX, simulation.getTrMax());
 
-        paramFactory.addParameter(AdaptationHeadway.BETA_T, simulation.getDoubleProperty("BETA_T"));
+        paramFactory.addParameter(AdaptationHeadway.BETA_T, simulation.getBetaT());
 
-        paramFactory.addParameter(ParameterTypes.DT, simulation.getDurationProperty("DT"));
-        paramFactory.addParameter(ParameterTypes.TMIN, simulation.getDurationProperty("TMIN"));
-        paramFactory.addParameter(ParameterTypes.TMAX, simulation.getDurationProperty("TMAX"));
-        paramFactory.addParameter(ParameterTypes.T, simulation.getDurationProperty("TMAX"));
+        paramFactory.addParameter(ParameterTypes.DT, simulation.getDt());
+        paramFactory.addParameter(ParameterTypes.TMIN, simulation.getIdmOptions().getTMin());
+        paramFactory.addParameter(ParameterTypes.TMAX, simulation.getIdmOptions().getTMax());
+        paramFactory.addParameter(ParameterTypes.T, simulation.getIdmOptions().getTMax());
         paramFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.A,
-                Acceleration.createSI(simulation.getDoubleProperty("A_CAR")));
+                simulation.getIdmOptions().getACar());
         paramFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A,
-                Acceleration.createSI(simulation.getDoubleProperty("A_TRUCK")));
-        paramFactory.addParameter(ParameterTypes.B, Acceleration.createSI(simulation.getDoubleProperty("B")));
+                simulation.getIdmOptions().getATruck());
+        paramFactory.addParameter(ParameterTypes.B, simulation.getIdmOptions().getB());
 
         Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
         mandatoryIncentives.add(new IncentiveRoute());
