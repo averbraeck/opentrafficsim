@@ -112,10 +112,10 @@ public class ContourDataSource<G extends GtuDataInterface>
     private final GraphPath<KpiLaneDirection> path;
 
     /** Space axis. */
-    private final Axis spaceAxis;
+    final Axis spaceAxis;
 
     /** Time axis. */
-    private final Axis timeAxis;
+    final Axis timeAxis;
 
     /** Registered plots. */
     private Set<AbstractContourPlot<?>> plots = new LinkedHashSet<>();
@@ -997,7 +997,6 @@ public class ContourDataSource<G extends GtuDataInterface>
         DISTANCE
         {
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             protected Axis getAxis(final ContourDataSource<?> dataPool)
             {
@@ -1009,7 +1008,6 @@ public class ContourDataSource<G extends GtuDataInterface>
         TIME
         {
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             protected Axis getAxis(final ContourDataSource<?> dataPool)
             {
@@ -1037,7 +1035,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private static class Axis
+    static class Axis
     {
         /** Minimum value. */
         private final double minValue;
@@ -1174,6 +1172,15 @@ public class ContourDataSource<G extends GtuDataInterface>
                 this.interpolate = interpolate;
                 this.ticks = null;
             }
+        }
+
+        /**
+         * Retrieve the interpolate flag.
+         * @return boolean; true if interpolation is on; false if interpolation is off
+         */
+        public boolean isInterpolate()
+        {
+            return interpolate;
         }
 
         /** {@inheritDoc} */
