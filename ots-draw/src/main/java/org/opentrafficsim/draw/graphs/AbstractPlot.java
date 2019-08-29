@@ -326,5 +326,5 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     {
         return caption;
     }
-
+    
 }
