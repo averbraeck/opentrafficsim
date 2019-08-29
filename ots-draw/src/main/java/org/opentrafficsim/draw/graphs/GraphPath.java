@@ -68,13 +68,13 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
     {
         super(seriesNames);
         this.sections = sections;
-        Length start = Length.ZERO;
+        Length cumulativeLength = Length.ZERO;
         for (Section<S> section : sections)
         {
-            this.startDistances.add(start);
-            start = start.plus(section.getLength());
+            this.startDistances.add(cumulativeLength);
+            cumulativeLength = cumulativeLength.plus(section.getLength());
         }
-        this.totalLength = start;
+        this.totalLength = cumulativeLength;
         WeightedMeanAndSum<Double, Double> mean = new WeightedMeanAndSum<>();
         for (Section<S> section : sections)
         {
