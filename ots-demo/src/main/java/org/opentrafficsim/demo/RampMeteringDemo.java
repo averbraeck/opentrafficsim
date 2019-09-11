@@ -183,6 +183,15 @@ public class RampMeteringDemo extends AbstractSimulationScript
     /** Scenario. */
     @Option(names = "--scenario", description = "Scenario name.", defaultValue = "test")
     private String scenario;
+    
+    /** GTUs in simulation. */
+    private Map<String, Double> gtusInSimulation = new LinkedHashMap<>();
+
+    /** Total travel time, accumulated. */
+    private double totalTravelTime = 0.0;
+
+    /** Total travel time delay, accumulated. */
+    private double totalTravelTimeDelay = 0.0;
 
     /**
      * Constructor.
@@ -352,12 +361,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
     {
         return this.parameterFactory;
     }
-
-    private Map<String, Double> gtusInSimulation = new LinkedHashMap<>();
-
-    private double totalTravelTime = 0.0;
-
-    private double totalTravelTimeDelay = 0.0;
 
     /** {@inheritDoc} */
     @Override
