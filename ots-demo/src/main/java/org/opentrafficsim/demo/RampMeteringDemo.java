@@ -399,7 +399,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         if (this.output)
         {
             // detector data
-            Detector.writeToFile(getNetwork(), this.scenario + "_detectors.txt", true, "%.3f", CompressionMethod.NONE);
+            String file = String.format("%s_%02d_detectors.txt", this.scenario, getSeed());
+            Detector.writeToFile(getNetwork(), file, true, "%.3f", CompressionMethod.NONE);
 
             // travel time data
             for (GTU gtu : getNetwork().getGTUs())
@@ -408,7 +409,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
             }
             Throw.when(!this.gtusInSimulation.isEmpty(), RuntimeException.class,
                     "GTUs remain in simulation that are not measured.");
-            BufferedWriter bw = CompressedFileWriter.create(this.scenario + "_time.txt", false);
+            file = String.format("%s_%02d_time.txt", this.scenario, getSeed());
+            BufferedWriter bw = CompressedFileWriter.create(file, false);
             try
             {
                 bw.write(String.format("Total travel time: %.3fs", this.totalTravelTime));
