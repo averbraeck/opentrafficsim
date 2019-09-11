@@ -1,5 +1,8 @@
 package org.opentrafficsim.demo;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,7 +22,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.cli.CliUtil;
+import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
@@ -34,6 +39,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -45,6 +51,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -106,6 +113,7 @@ import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.Detector;
+import org.opentrafficsim.road.network.lane.object.sensor.Detector.CompressionMethod;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -114,6 +122,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.logger.SimLogger;
+import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -142,6 +151,39 @@ public class RampMeteringDemo extends AbstractSimulationScript
     @Option(names = { "-r", "--rampMetering" }, description = "Ramp metering on or off", defaultValue = "true")
     private boolean rampMetering;
 
+    /** Whether to generate output. */
+    @Option(names = "--output", description = "Generate output.", negatable = true, defaultValue = "false")
+    private boolean output;
+
+    /** Accepted gap. */
+    @Option(names = "--acceptedGap", description = "Accepted gap.", defaultValue = "0.5s")
+    private Duration acceptedGap;
+
+    /** Main demand. */
+    private FrequencyVector mainDemand;
+
+    /** Main demand string. */
+    @Option(names = "--mainDemand", description = "Main demand in veh/h.", defaultValue = "2000,3000,3900,3900,3000")
+    private String mainDemandString;
+
+    /** Ramp demand. */
+    private FrequencyVector rampDemand;
+
+    /** Ramp demand string. */
+    @Option(names = "--rampDemand", description = "Ramp demand in veh/h.", defaultValue = "500,500,500,500,500")
+    private String rampDemandString;
+
+    /** Demand time. */
+    private TimeVector demandTime;
+
+    /** Demand time string. */
+    @Option(names = "--demandTime", description = "Demand time in min.", defaultValue = "0,10,40,50,70")
+    private String demandTimeString;
+
+    /** Scenario. */
+    @Option(names = "--scenario", description = "Scenario name.", defaultValue = "test")
+    private String scenario;
+
     /**
      * Constructor.
      */
@@ -157,8 +199,36 @@ public class RampMeteringDemo extends AbstractSimulationScript
     public static void main(final String[] args) throws Exception
     {
         RampMeteringDemo demo = new RampMeteringDemo();
-        CliUtil.execute(demo, new String[]{"--help"});
+        CliUtil.changeOptionDefault(demo, "simulationTime", "4200s");
+        CliUtil.execute(demo, args);
+        demo.mainDemand =
+                new FrequencyVector(arrayFromString(demo.mainDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
+        demo.rampDemand =
+                new FrequencyVector(arrayFromString(demo.rampDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
+        demo.demandTime = new TimeVector(arrayFromString(demo.demandTimeString), TimeUnit.BASE_MINUTE, StorageType.DENSE);
         demo.start();
+    }
+
+    /**
+     * Returns an array from a String.
+     * @param str String; string
+     * @return double[] array
+     */
+    private static double[] arrayFromString(final String str)
+    {
+        int n = 0;
+        for (String part : str.split(","))
+        {
+            n++;
+        }
+        double[] out = new double[n];
+        int i = 0;
+        for (String part : str.split(","))
+        {
+            out[i] = Double.valueOf(part);
+            i++;
+        }
+        return out;
     }
 
     /** {@inheritDoc} */
@@ -168,6 +238,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
         SimLogger.setSimulator(sim);
 
         OTSRoadNetwork network = new OTSRoadNetwork("RampMetering", true);
+        if (this.output)
+        {
+            network.addListener(this, Network.GTU_ADD_EVENT);
+            network.addListener(this, Network.GTU_REMOVE_EVENT);
+        }
         GTUType car = network.getGtuType(GTUType.DEFAULTS.CAR);
         GTUType controlledCar = new GTUType(CONTROLLED_CAR_ID, car);
 
@@ -212,10 +287,17 @@ public class RampMeteringDemo extends AbstractSimulationScript
             new SinkSensor(lane, lane.getLength().minus(Length.createSI(50)), GTUDirectionality.DIR_PLUS, sim);
         }
         // detectors
-        Detector det1 = new Detector("1", lanesAB.get(0), Length.createSI(2900), sim);
-        Detector det2 = new Detector("2", lanesAB.get(1), Length.createSI(2900), sim);
-        Detector det3 = new Detector("3", lanesCD.get(0), Length.createSI(100), sim);
-        Detector det4 = new Detector("4", lanesCD.get(1), Length.createSI(100), sim);
+        Duration agg = Duration.createSI(60.0);
+        // TODO: detector length affects occupancy, which length to use?
+        Length detectorLength = Length.ZERO;
+        Detector det1 = new Detector("1", lanesAB.get(0), Length.createSI(2900), detectorLength, sim, agg, Detector.MEAN_SPEED,
+                Detector.OCCUPANCY);
+        Detector det2 = new Detector("2", lanesAB.get(1), Length.createSI(2900), detectorLength, sim, agg, Detector.MEAN_SPEED,
+                Detector.OCCUPANCY);
+        Detector det3 = new Detector("3", lanesCD.get(0), Length.createSI(100), detectorLength, sim, agg, Detector.MEAN_SPEED,
+                Detector.OCCUPANCY);
+        Detector det4 = new Detector("4", lanesCD.get(1), Length.createSI(100), detectorLength, sim, agg, Detector.MEAN_SPEED,
+                Detector.OCCUPANCY);
         List<Detector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);
@@ -242,24 +324,19 @@ public class RampMeteringDemo extends AbstractSimulationScript
         List<OTSRoadNode> destinations = new ArrayList<>();
         destinations.add(nodeD);
         Categorization categorization = new Categorization("cat", GTUType.class);// , Lane.class);
-        TimeVector globalTimeVector = new TimeVector(new double[] { 0, 3600 }, TimeUnit.BASE, StorageType.DENSE);
         Interpolation globalInterpolation = Interpolation.LINEAR;
-        ODMatrix od =
-                new ODMatrix("rampMetering", origins, destinations, categorization, globalTimeVector, globalInterpolation);
+        ODMatrix od = new ODMatrix("rampMetering", origins, destinations, categorization, this.demandTime, globalInterpolation);
         // Category carCatMainLeft = new Category(categorization, car, lanesAB.get(0));
         // Category carCatMainRight = new Category(categorization, car, lanesAB.get(1));
         Category carCatRamp = new Category(categorization, car);// , lanesEB.get(0));
         Category controlledCarCat = new Category(categorization, controlledCar);
-        FrequencyVector mainDemand =
-                new FrequencyVector(new double[] { 2000, 4000 }, FrequencyUnit.PER_HOUR, StorageType.DENSE);
-        FrequencyVector rampDemand = new FrequencyVector(new double[] { 250, 750 }, FrequencyUnit.PER_HOUR, StorageType.DENSE);
-        double fLeft = 0.6;
-        od.putDemandVector(nodeA, nodeD, carCatRamp, mainDemand, 0.6);
-        od.putDemandVector(nodeA, nodeD, controlledCarCat, mainDemand, 0.4);
+        // double fLeft = 0.6;
+        od.putDemandVector(nodeA, nodeD, carCatRamp, this.mainDemand, 0.6);
+        od.putDemandVector(nodeA, nodeD, controlledCarCat, this.mainDemand, 0.4);
         // od.putDemandVector(nodeA, nodeD, carCatMainLeft, mainDemand, fLeft);
         // od.putDemandVector(nodeA, nodeD, carCatMainRight, mainDemand, 1.0 - fLeft);
-        od.putDemandVector(nodeE, nodeD, carCatRamp, rampDemand, 0.6);
-        od.putDemandVector(nodeE, nodeD, controlledCarCat, rampDemand, 0.4);
+        od.putDemandVector(nodeE, nodeD, carCatRamp, this.rampDemand, 0.6);
+        od.putDemandVector(nodeE, nodeD, controlledCarCat, this.rampDemand, 0.4);
         ODOptions odOptions = new ODOptions();
         odOptions.set(ODOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator()).set(ODOptions.INSTANT_LC, true);
         ODApplier.applyOD(network, od, sim, odOptions);
@@ -274,6 +351,90 @@ public class RampMeteringDemo extends AbstractSimulationScript
     final ParameterFactoryByType getParameterFactory()
     {
         return this.parameterFactory;
+    }
+
+    private Map<String, Double> gtusInSimulation = new LinkedHashMap<>();
+
+    private double totalTravelTime = 0.0;
+
+    private double totalTravelTimeDelay = 0.0;
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        if (event.getType().equals(Network.GTU_ADD_EVENT))
+        {
+            this.gtusInSimulation.put((String) event.getContent(), getSimulator().getSimulatorTime().si);
+        }
+        else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
+        {
+            measureTravelTime((String) event.getContent());
+        }
+        else
+        {
+            super.notify(event);
+        }
+    }
+
+    /**
+     * Adds travel time and delay for a single GTU.
+     * @param id String; id of the GTU
+     */
+    private void measureTravelTime(final String id)
+    {
+        double tt = getSimulator().getSimulatorTime().si - this.gtusInSimulation.get(id);
+        double x = getNetwork().getGTU(id).getOdometer().si;
+        // TODO: we assume 120km/h everywhere, including the slower ramps
+        double ttd = tt - (x / (120 / 3.6));
+        this.totalTravelTime += tt;
+        this.totalTravelTimeDelay += ttd;
+        this.gtusInSimulation.remove(id);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void onSimulationEnd()
+    {
+        if (this.output)
+        {
+            // detector data
+            Detector.writeToFile(getNetwork(), this.scenario + "_detectors.txt", true, "%.3f", CompressionMethod.NONE);
+
+            // travel time data
+            for (GTU gtu : getNetwork().getGTUs())
+            {
+                measureTravelTime(gtu.getId());
+            }
+            Throw.when(!this.gtusInSimulation.isEmpty(), RuntimeException.class,
+                    "GTUs remain in simulation that are not measured.");
+            BufferedWriter bw = CompressedFileWriter.create(this.scenario + "_time.txt", false);
+            try
+            {
+                bw.write(String.format("Total travel time: %.3fs", this.totalTravelTime));
+                bw.newLine();
+                bw.write(String.format("Total travel time delay: %.3fs", this.totalTravelTimeDelay));
+                bw.close();
+            }
+            catch (IOException exception)
+            {
+                throw new RuntimeException(exception);
+            }
+            finally
+            {
+                try
+                {
+                    if (bw != null)
+                    {
+                        bw.close();
+                    }
+                }
+                catch (IOException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
     }
 
     /**
@@ -315,6 +476,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             return set;
                         }
 
+                        @SuppressWarnings("synthetic-access")
                         @Override
                         public LaneBasedTacticalPlanner create(final LaneBasedGTU gtu) throws GTUException
                         {
@@ -330,7 +492,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                                 settings.setParameter(ParameterTypes.S0, Length.createSI(3.0));
                                 settings.setParameter(ParameterTypes.A, Acceleration.createSI(2.0));
                                 settings.setParameter(ParameterTypes.B, Acceleration.createSI(2.0));
-                                settings.setParameter(ParameterTypes.T, Duration.createSI(0.5));
+                                settings.setParameter(ParameterTypes.T, RampMeteringDemo.this.acceptedGap);
                                 settings.setParameter(ParameterTypes.FSPEED, 1.0);
                                 settings.setParameter(ParameterTypes.B0, Acceleration.createSI(0.5));
                                 settings.setParameter(ParameterTypes.VCONG, new Speed(60, SpeedUnit.KM_PER_HOUR));
