@@ -82,6 +82,8 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
+import org.opentrafficsim.swing.graphs.SwingContourPlot;
+import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 import org.opentrafficsim.swing.script.IdmOptions;
@@ -127,11 +129,11 @@ public class SdmSimulation extends AbstractSimulationScript
     private String outputFile;
 
     /** Output. */
-    @Option(names = { "-o", "--output" }, description = "Create output", negatable = true, defaultValue = "true")
+    @Option(names = {"-o", "--output"}, description = "Create output", negatable = true, defaultValue = "true")
     private boolean output;
 
     /** Plots. */
-    @Option(names = { "-p", "--plots" }, description = "Create plots", negatable = true, defaultValue = "false")
+    @Option(names = {"-p", "--plots"}, description = "Create plots", negatable = true, defaultValue = "false")
     private boolean plots;
 
     /** Fraction of trucks. */
@@ -332,7 +334,7 @@ public class SdmSimulation extends AbstractSimulationScript
         double wut = sim.getReplication().getTreatment().getWarmupPeriod().si;
         double rl = sim.getReplication().getTreatment().getRunLength().si;
         TimeVector timeVector =
-                new TimeVector(new double[] { 0.0, wut, wut + (rl - wut) * 0.5, rl }, TimeUnit.BASE, StorageType.DENSE);
+                new TimeVector(new double[] {0.0, wut, wut + (rl - wut) * 0.5, rl}, TimeUnit.BASE, StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR;
         Categorization categorization = new Categorization("GTU categorization", GTUType.class);
         ODMatrix odMatrix = new ODMatrix("OD", origins, destinations, categorization, timeVector, interpolation);
@@ -345,10 +347,10 @@ public class SdmSimulation extends AbstractSimulationScript
         double startDemandFactor = this.startDemandFctor;
         double left1 = left2 * startDemandFactor;
         double right1 = right2 * startDemandFactor;
-        odMatrix.putDemandVector(nodeA, nodeF, carCategory, freq(new double[] { f2 * left1, f2 * left1, f2 * left2, 0.0 }));
-        odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] { f1 * left1, f1 * left1, f1 * left2, 0.0 }));
-        odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] { f2 * right1, f2 * right1, f2 * right2, 0.0 }));
-        odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] { f1 * right1, f1 * right1, f1 * right2, 0.0 }));
+        odMatrix.putDemandVector(nodeA, nodeF, carCategory, freq(new double[] {f2 * left1, f2 * left1, f2 * left2, 0.0}));
+        odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] {f1 * left1, f1 * left1, f1 * left2, 0.0}));
+        odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] {f2 * right1, f2 * right1, f2 * right2, 0.0}));
+        odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] {f1 * right1, f1 * right1, f1 * right2, 0.0}));
         ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.createSI(200)).set(ODOptions.GTU_TYPE,
                 new DefaultGTUCharacteristicsGeneratorOD(
                         new SdmStrategicalPlannerFactory(this.network, sim.getReplication().getStream("generation"), this)));
@@ -406,14 +408,19 @@ public class SdmSimulation extends AbstractSimulationScript
             GraphPath<KpiLaneDirection> path4 = GraphLaneUtil.createPath("Right road, right lane",
                     new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 2"),
                             GTUDirectionality.DIR_PLUS));
-            charts.setCell(new ContourPlotSpeed("Left road, left lane", sim, new ContourDataSource<>(this.sampler, path1))
-                    .getContentPane(), 0, 0);
-            charts.setCell(new ContourPlotSpeed("Left road, right lane", sim, new ContourDataSource<>(this.sampler, path2))
-                    .getContentPane(), 1, 0);
-            charts.setCell(new ContourPlotSpeed("Right road, left lane", sim, new ContourDataSource<>(this.sampler, path3))
-                    .getContentPane(), 0, 1);
-            charts.setCell(new ContourPlotSpeed("Right road, right lane", sim, new ContourDataSource<>(this.sampler, path4))
-                    .getContentPane(), 1, 1);
+            SwingPlot plot = null;
+            plot = new SwingContourPlot(
+                    new ContourPlotSpeed("Left road, left lane", sim, new ContourDataSource<>(this.sampler, path1)));
+            charts.setCell(plot.getContentPane(), 0, 0);
+            plot = new SwingContourPlot(
+                    new ContourPlotSpeed("Left road, right lane", sim, new ContourDataSource<>(this.sampler, path2)));
+            charts.setCell(plot.getContentPane(), 1, 0);
+            plot = new SwingContourPlot(
+                    new ContourPlotSpeed("Right road, left lane", sim, new ContourDataSource<>(this.sampler, path3)));
+            charts.setCell(plot.getContentPane(), 0, 1);
+            plot = new SwingContourPlot(
+                    new ContourPlotSpeed("Right road, right lane", sim, new ContourDataSource<>(this.sampler, path4)));
+            charts.setCell(plot.getContentPane(), 1, 1);
             animation.getAnimationPanel().getTabbedPane().addTab(animation.getAnimationPanel().getTabbedPane().getTabCount(),
                     "statistics ", charts);
         }
