@@ -57,18 +57,17 @@ public class SwingContourPlot extends SwingSpaceTimePlot
         spaceGranularityButtons = new LinkedHashMap<>();
         super.addPopUpMenuItems(popupMenu);
         JMenu spaceGranularityMenu = buildMenu("Distance granularity", "%.0f m", 1000, "%.0f km", "setSpaceGranularity",
-                getPlot().getDataPool().getGranularities(Dimension.DISTANCE), getPlot().getDataPool().getGranularity(Dimension.DISTANCE),
-                this.spaceGranularityButtons);
+                getPlot().getDataPool().getGranularities(Dimension.DISTANCE),
+                getPlot().getDataPool().getGranularity(Dimension.DISTANCE), this.spaceGranularityButtons);
         popupMenu.insert(spaceGranularityMenu, 0);
         JMenu timeGranularityMenu = buildMenu("Time granularity", "%.0f s", 60.0, "%.0f min", "setTimeGranularity",
-                getPlot().getDataPool().getGranularities(Dimension.TIME), getPlot().getDataPool().getGranularity(Dimension.TIME),
-                this.timeGranularityButtons);
+                getPlot().getDataPool().getGranularities(Dimension.TIME),
+                getPlot().getDataPool().getGranularity(Dimension.TIME), this.timeGranularityButtons);
         popupMenu.insert(timeGranularityMenu, 1);
         this.smoothCheckBox = new JCheckBoxMenuItem("Adaptive smoothing method", false);
         this.smoothCheckBox.addActionListener(new ActionListener()
         {
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -81,7 +80,6 @@ public class SwingContourPlot extends SwingSpaceTimePlot
         this.interpolateCheckBox.addActionListener(new ActionListener()
         {
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             public void actionPerformed(final ActionEvent e)
             {
