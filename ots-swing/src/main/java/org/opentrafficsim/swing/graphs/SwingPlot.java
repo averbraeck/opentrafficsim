@@ -62,7 +62,7 @@ public class SwingPlot extends JFrame
     {
         this.plot = plot;
         // status label
-        this.statusLabel = new JLabel("XXXX ", SwingConstants.CENTER);
+        this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         add(this.statusLabel, BorderLayout.SOUTH);
         setChart(plot.getChart());
     }
