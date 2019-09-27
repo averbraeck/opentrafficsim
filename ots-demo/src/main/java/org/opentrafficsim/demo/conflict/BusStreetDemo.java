@@ -254,11 +254,12 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             Generator<Duration> headwayGenerator =
                     new HeadwayGenerator(new Frequency(800, FrequencyUnit.PER_HOUR), this.simulator);
             LaneBasedGTUCharacteristicsGenerator characteristicsGenerator =
-                    new CharacteristicsGenerator(this.simulator, new double[] {0.9, 0.06, 0.04}, this.network);
+                    new CharacteristicsGenerator(this.simulator, new double[] { 0.9, 0.06, 0.04 }, this.network);
             RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
-            new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
+            LaneBasedGTUGenerator gen = new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
                     new IdGenerator(""));
+            gen.setInstantaneousLaneChange(true);
         }
     }
 
