@@ -300,7 +300,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
      */
     private boolean allowsRoute0(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
     {
-
+        
         // driving without route
         if (route == null)
         {
@@ -324,11 +324,15 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
         while (!currentSet.isEmpty())
         {
 
+            boolean allCutOff = false;
             if (!firstLoop || end)
             {
+                allCutOff = true;
                 // move longitudinal
                 for (LaneStructureRecord laneRecord : currentSet)
                 {
+                    allCutOff = allCutOff & laneRecord.isCutOffEnd();
+                    
                     to = route.indexOf(laneRecord.getToNode());
                     if (to == route.getNodes().size() - 2)
                     {
@@ -347,6 +351,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
                             }
                         }
                     }
+                    
                     for (LaneStructureRecord next : laneRecord.getNext())
                     {
                         if (next.getToNode().equals(route.destinationNode()))
@@ -364,7 +369,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
                 nextSet = new LinkedHashSet<>();
             }
             firstLoop = false;
-
+            
             // move lateral
             nextSet.addAll(currentSet);
             for (LaneStructureRecord laneRecord : currentSet)
@@ -387,7 +392,8 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
             // none of the next lanes was on the route
             if (nextSet.isEmpty())
             {
-                return false;
+                // if at the end of the lane structure we are still not able to reach all lanes in a link, assume ok
+                return allCutOff;
             }
 
             // reached a link on the route where all lanes can be reached?
