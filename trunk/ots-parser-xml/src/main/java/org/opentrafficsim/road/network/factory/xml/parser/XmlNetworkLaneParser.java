@@ -278,8 +278,15 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories =
                 ModelParser.parseModel(otsNetwork, models, inputParameters, parameterTypes, streamMap, parameterFactories);
         Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getSCENARIO(), ots.getNETWORKDEMAND());
-        List<LaneBasedGTUGenerator> generators =
-                ODParser.parseDemand(otsNetwork, simulator, demands, gtuTemplates, factories, modelIdReferrals, streamMap);
+        try
+        {
+            List<LaneBasedGTUGenerator> generators =
+                    ODParser.parseDemand(otsNetwork, simulator, demands, gtuTemplates, factories, modelIdReferrals, streamMap);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         // The code below can be used to visualize the LaneStructure of a particular GTU
         /*-EventListenerInterface listener = new EventListenerInterface()
         {

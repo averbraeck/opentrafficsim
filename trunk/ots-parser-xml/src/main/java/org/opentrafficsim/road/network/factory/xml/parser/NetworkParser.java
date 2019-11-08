@@ -336,7 +336,7 @@ public final class NetworkParser
             List<CrossSectionElement> cseList = new ArrayList<>();
             Map<String, Lane> lanes = new LinkedHashMap<>();
 
-            CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
+            //CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
 
             // Get the ROADLAYOUT (either defined here, or via pointer to DEFINITIONS)
             BASICROADLAYOUT roadLayoutTagBase;
@@ -740,8 +740,15 @@ public final class NetworkParser
                 break;
 
             case SOLID:
-                Stripe solidLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
-                cseList.add(solidLine);
+                try
+                {
+                    Stripe solidLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
+                    cseList.add(solidLine);
+                }
+                catch (OTSGeometryException oge)
+                {
+                    System.out.println("Caught OTSGeometryException constructing a stripe on " + csl);
+                }
                 break;
 
             default:
