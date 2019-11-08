@@ -20,6 +20,8 @@ import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -136,11 +138,30 @@ public final class ODParser
                 {
                     if (!origins.contains(otsNetwork.getNode(demand.getORIGIN())))
                     {
-                        origins.add(otsNetwork.getNode(demand.getORIGIN()));
+                        Node originNode = otsNetwork.getNode(demand.getORIGIN());
+                        if (null == originNode)
+                        {
+                            CategoryLogger.filter(Cat.PARSER).trace("Parse demand: cannot find origin {}", demand.getORIGIN());
+                        }
+                        else
+                        {
+                            // TODO: will skipping origins that are not in the network cause problems later on?
+                            origins.add(originNode);
+                        }
                     }
                     if (!destinations.contains(otsNetwork.getNode(demand.getDESTINATION())))
                     {
-                        destinations.add(otsNetwork.getNode(demand.getDESTINATION()));
+                        Node destinationNode = otsNetwork.getNode(demand.getORIGIN());
+                        if (null == destinationNode)
+                        {
+                            CategoryLogger.filter(Cat.PARSER).trace("Parse demand: cannot find destination {}",
+                                    demand.getDESTINATION());
+                        }
+                        else
+                        {
+                            // TODO: will skipping origins that are not in the network cause problems later on?
+                            destinations.add(destinationNode);
+                        }
                     }
                 }
 
