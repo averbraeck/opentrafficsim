@@ -220,6 +220,19 @@ public class OTSLine3D implements Locatable, Serializable
         {
             return this;
         }
+        if (list.size() == 2 && list.get(0).equals(list.get(1)))
+        {
+            SimLogger.always().debug("Fixing up degenerate noiseFilteredLine by inserting an intermediate point");
+            // Find something to insert along the way
+            for (int index = 1; index < this.size() - 1; index++)
+            {
+                if (!this.points[index].equals(list.get(0)))
+                {
+                    list.add(1, this.points[index]);
+                    break;
+                }
+            }
+        }
         try
         {
             return new OTSLine3D(list);
@@ -546,7 +559,8 @@ public class OTSLine3D implements Locatable, Serializable
     {
         if (start < 0 || start >= end || end > 1)
         {
-            throw new OTSGeometryException("Bad interval");
+            throw new OTSGeometryException(
+                    "Bad interval (start=" + start + ", end=" + end + ", this is " + this.toString() + ")");
         }
         return extract(start * this.length.si, end * this.length.si);
     }
