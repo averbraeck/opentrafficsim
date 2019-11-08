@@ -2,7 +2,9 @@ package org.opentrafficsim.road.network.lane.conflict;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -23,6 +25,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
@@ -129,8 +132,20 @@ public final class ConflictBuilder
             final LaneCombinationList ignoreList, final LaneCombinationList permittedList) throws OTSGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
+        long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
+        long lastReported = 0;
+        Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
+
         for (int i = 0; i < lanes.size(); i++)
         {
+            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
+            if (combinationsDone / 1000000 > lastReported)
+            {
+                SimLogger.always()
+                        .debug(String.format("generating conflicts at %.2f%%", 100.0 * combinationsDone / totalCombinations));
+                lastReported = combinationsDone / 1000000;
+            }
             Lane lane1 = lanes.get(i);
             for (GTUDirectionality dir1 : lane1.getLaneType().getDirectionality(gtuType).getDirectionalities())
             {
@@ -154,7 +169,7 @@ public final class ConflictBuilder
                         try
                         {
                             buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted, simulator,
-                                    widthGenerator);
+                                    widthGenerator, leftEdges, rightEdges);
                         }
                         catch (NetworkException ne)
                         {
@@ -208,7 +223,8 @@ public final class ConflictBuilder
         ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
         try
         {
-            buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted, simulator, widthGenerator);
+            buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted, simulator, widthGenerator,
+                    new LinkedHashMap<>(), new LinkedHashMap<>());
         }
         catch (NetworkException ne)
         {
@@ -230,6 +246,8 @@ public final class ConflictBuilder
      * @param permitted boolean; conflict permitted by traffic control
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param widthGenerator WidthGenerator; width generator
+     * @param leftEdges Map<Lane, OTSLine3D>; cache of left edge lines
+     * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
      * @throws OTSGeometryException in case of geometry exception
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
@@ -238,7 +256,8 @@ public final class ConflictBuilder
             final ImmutableMap<Lane, GTUDirectionality> down1, final ImmutableMap<Lane, GTUDirectionality> up1,
             final Lane lane2, final GTUDirectionality dir2, final ImmutableMap<Lane, GTUDirectionality> down2,
             final ImmutableMap<Lane, GTUDirectionality> up2, final GTUType gtuType, final boolean permitted,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
+            final Map<Lane, OTSLine3D> leftEdges, final Map<Lane, OTSLine3D> rightEdges)
             throws OTSGeometryException, NetworkException
     {
 
@@ -249,12 +268,26 @@ public final class ConflictBuilder
         }
 
         // Get left and right lines at specified width
-        OTSLine3D line1 = lane1.getCenterLine();
-        OTSLine3D line2 = lane2.getCenterLine();
-        OTSLine3D left1 = line1.offsetLine(widthGenerator.getWidth(lane1, 0.0) / 2, widthGenerator.getWidth(lane1, 1.0) / 2);
-        OTSLine3D right1 = line1.offsetLine(-widthGenerator.getWidth(lane1, 0.0) / 2, -widthGenerator.getWidth(lane1, 1.0) / 2);
-        OTSLine3D left2 = line2.offsetLine(widthGenerator.getWidth(lane2, 0.0) / 2, widthGenerator.getWidth(lane2, 1.0) / 2);
-        OTSLine3D right2 = line2.offsetLine(-widthGenerator.getWidth(lane2, 0.0) / 2, -widthGenerator.getWidth(lane2, 1.0) / 2);
+        OTSLine3D left1 = leftEdges.get(lane1);
+        OTSLine3D right1 = rightEdges.get(lane1);
+        if (null == left1)
+        {
+            OTSLine3D line1 = lane1.getCenterLine();
+            left1 = line1.offsetLine(widthGenerator.getWidth(lane1, 0.0) / 2, widthGenerator.getWidth(lane1, 1.0) / 2);
+            leftEdges.put(lane1, left1);
+            right1 = line1.offsetLine(-widthGenerator.getWidth(lane1, 0.0) / 2, -widthGenerator.getWidth(lane1, 1.0) / 2);
+            rightEdges.put(lane1, right1);
+        }
+        OTSLine3D left2 = leftEdges.get(lane2);
+        OTSLine3D right2 = rightEdges.get(lane2);
+        if (null == left2)
+        {
+            OTSLine3D line2 = lane2.getCenterLine();
+            left2 = line2.offsetLine(widthGenerator.getWidth(lane2, 0.0) / 2, widthGenerator.getWidth(lane2, 1.0) / 2);
+            leftEdges.put(lane2, left2);
+            right2 = line2.offsetLine(-widthGenerator.getWidth(lane2, 0.0) / 2, -widthGenerator.getWidth(lane2, 1.0) / 2);
+            rightEdges.put(lane2, right2);
+        }
 
         // Get list of all intersection fractions
         SortedSet<Intersection> intersections = Intersection.getIntersectionList(left1, left2, 0);
@@ -294,6 +327,12 @@ public final class ConflictBuilder
                         {
                             iterator.remove();
                         }
+                    }
+                    if (Double.isNaN(fraction1))
+                    {
+                        SimLogger.always().warn("Fixing fractions of merge conflict");
+                        fraction1 = 0;
+                        fraction2 = 0;
                     }
                     // Build conflict
                     buildMergeConflict(lane1, dir1, fraction1, lane2, dir2, fraction2, gtuType, simulator, widthGenerator,
@@ -343,6 +382,12 @@ public final class ConflictBuilder
                             break;
                         }
                     }
+                    if (Double.isNaN(fraction1))
+                    {
+                        SimLogger.always().warn("Fixing fractions of split conflict");
+                        fraction1 = 1;
+                        fraction2 = 1;
+                    }
                     // Build conflict
                     buildSplitConflict(lane1, dir1, fraction1, lane2, dir2, fraction2, gtuType, simulator, widthGenerator);
                     // Skip loop for efficiency, and do not create multiple splits in case of multiple same upstream lanes
@@ -381,7 +426,11 @@ public final class ConflictBuilder
                         f2Start = f2End;
                         f2End = f2Temp;
                     }
-                    buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start, f2End,
+                    if (Double.isNaN(f1Start) || Double.isNaN(f2Start) || Double.isNaN(f2End))
+                    {
+                        SimLogger.always().warn("NOT YET Fixing fractions of crossing conflict");
+                    }
+                    buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction2(), lane2, dir2, f2Start, f2End,
                             gtuType, simulator, widthGenerator, permitted);
                     f1Start = Double.NaN;
                     f2Start = Double.NaN;
@@ -731,7 +780,10 @@ public final class ConflictBuilder
                 throws OTSGeometryException
         {
             SortedSet<Intersection> out = new TreeSet<>();
-
+            if (!line1.getBounds().intersect(line2.getBounds()))
+            {
+                return out;
+            }
             double cumul1 = 0.0;
             OTSPoint3D start1 = null;
             OTSPoint3D end1 = line1.get(0);
