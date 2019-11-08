@@ -137,9 +137,6 @@ public class ContourDataSource<G extends GtuDataInterface>
     // *** SMOOTHING PROPERTIES ***
     // ****************************
 
-    /** Whether to smooth data. */
-    private boolean smooth = false;
-
     /** Free flow propagation speed. */
     private Speed cFree;
 
@@ -188,6 +185,9 @@ public class ContourDataSource<G extends GtuDataInterface>
 
     /** Selected time granularity, to be set and taken on the next update. */
     private Double desiredTimeGranularity = null;
+
+    /** Whether to smooth data. */
+    private boolean smooth = false;
 
     // ********************
     // *** CONSTRUCTORS ***
@@ -439,7 +439,7 @@ public class ContourDataSource<G extends GtuDataInterface>
 
     /**
      * Sets the adaptive smoothing enabled or disabled. This will invalidate the plot triggering a redraw.
-     * @param smooth boolean; whether to smooth the plor
+     * @param smooth boolean; whether to smooth the plot
      */
     public final void setSmooth(final boolean smooth)
     {
@@ -450,6 +450,7 @@ public class ContourDataSource<G extends GtuDataInterface>
                 this.smooth = smooth;
                 for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
                 {
+                    System.out.println("not notifying plot " + contourPlot);
                     // TODO work out what to do with this: contourPlot.setSmoothing(smooth);
                 }
                 invalidate(null);
