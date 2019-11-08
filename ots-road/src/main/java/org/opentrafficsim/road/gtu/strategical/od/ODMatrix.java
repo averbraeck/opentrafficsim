@@ -91,9 +91,10 @@ public class ODMatrix implements Serializable, Identifiable
             final Categorization categorization, final TimeVector globalTimeVector, final Interpolation globalInterpolation)
     {
         Throw.whenNull(id, "Id may not be null.");
-        Throw.when(origins == null || origins.contains(null), NullPointerException.class, "Origin may not be or contain null.");
-        Throw.when(destinations == null || destinations.contains(null), NullPointerException.class,
-                "Destination may not be or contain null.");
+        Throw.whenNull(origins, "Origins may not be null."); 
+        Throw.when(origins.contains(null), NullPointerException.class, "Origin may not contain null.");
+        Throw.whenNull(destinations, "Destination may not be null.");
+        Throw.when(destinations.contains(null), NullPointerException.class, "Destination may not contain null.");
         Throw.whenNull(categorization, "Categorization may not be null.");
         // Throw.whenNull(globalTimeVector, "Global time vector may not be null.");
         // Throw.whenNull(globalInterpolation, "Global interpolation may not be null.");
