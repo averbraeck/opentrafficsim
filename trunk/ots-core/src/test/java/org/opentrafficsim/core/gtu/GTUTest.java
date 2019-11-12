@@ -307,9 +307,9 @@ public class GTUTest
         try
         {
             gtu.init(strategicalPlanner, initialLocation, initialSpeed);
-            fail("init with fake strategical planner should have caused a NullPointerExeption in move");
+            fail("init with fake strategical planner should have caused a GTUException in move");
         }
-        catch (NullPointerException ne)
+        catch (GTUException ne)
         {
             // Ignore expected exception
         }
