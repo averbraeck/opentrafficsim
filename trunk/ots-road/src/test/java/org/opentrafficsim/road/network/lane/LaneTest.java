@@ -159,27 +159,27 @@ public class LaneTest implements UNITS
         // FIXME what overtaking conditions do we aim to test in this unit test?
         lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
-        // XXX: TEST FAILS: assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size());
-        // XXX: TEST FAILS: assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
+        assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size());
+        assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour = 2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(
             coordinates[2])) + startWidth.getSI() + endWidth.getSI();
-        // XXX: TEST FAILS: assertEquals("Length of contour is approximately " + approximateLengthOfContour,
-        // approximateLengthOfContour, lane.getContour().getLengthSI(), 4);
+        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane
+            .getContour().getLengthSI(), 4);
         // This lane takes a path that is about 3m longer
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // System.out.println("Add another Lane at the inside of the corner in the design line");
         Length startLateralPos2 = new Length(-8, METER);
         Length endLateralPos2 = new Length(-5, METER);
-        // FIXME what overtaking conditions do we ant to test in this unit test?
+        // FIXME what overtaking conditions do we want to test in this unit test?
         Lane lane2 = new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane2.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane2.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour = 2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(
             coordinates[2])) + startWidth.getSI() + endWidth.getSI();
-        // XXX: TEST FAILS: assertEquals("Length of contour is approximately " + approximateLengthOfContour,
-        // approximateLengthOfContour, lane2.getContour().getLengthSI(), 12);
+        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane2
+            .getContour().getLengthSI(), 12);
         // This lane takes a path that is about 11 meters shorter
         assertEquals("There should be no GTUs on the lane", 0, lane2.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane2.getLaneType());
@@ -749,10 +749,10 @@ public class LaneTest implements UNITS
                                 double boundsMinY = bbLow.y + l.y;
                                 double boundsMaxX = bbHigh.x + l.x;
                                 double boundsMaxY = bbHigh.y + l.y;
-                                // XXX: TEST FAILS: assertEquals("low x boundary", minX, boundsMinX, 0.1);
-                                // XXX: TEST FAILS: assertEquals("low y boundary", minY, boundsMinY, 0.1);
-                                // XXX: TEST FAILS: assertEquals("high x boundary", maxX, boundsMaxX, 0.1);
-                                // XXX: TEST FAILS: assertEquals("high y boundary", maxY, boundsMaxY, 0.1);
+                                assertEquals("low x boundary", minX, boundsMinX, 0.1);
+                                assertEquals("low y boundary", minY, boundsMinY, 0.1);
+                                assertEquals("high x boundary", maxX, boundsMaxX, 0.1);
+                                assertEquals("high y boundary", maxY, boundsMaxY, 0.1);
                             }
                         }
                     }
