@@ -171,7 +171,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     /**
      * Construct a new TrafCOD traffic light controller.
      * @param controllerName String; name of this TrafCOD traffic light controller
-     * @param trafCODRules List<String>; the TrafCOD rules
+     * @param trafCODRules List&lt;String&gt;; the TrafCOD rules
      * @param simulator OTSSimulatorInterface; the simulation engine
      * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
      * @param displayBackground BufferedImage; background for controller display image
@@ -553,7 +553,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     /**
      * Construct the display of this TrafCOD machine and connect it to the displayed traffic lights and sensors to this TrafCOD
      * machine.
-     * @param rules List<String>; the individual lines that specify the graphics file and the locations of the sensor and lights
+     * @param rules List&lt;String&gt;; the individual lines that specify the graphics file and the locations of the sensor and lights
      *            in the image
      * @throws TrafficControlException when the tfg data is invalid
      * @throws IOException when reading the background image fails
