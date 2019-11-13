@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.02.01/ots.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <DEFINITIONS>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_gtutypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_linktypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.02.01/defaults/default_lanetypes.xml" />
+      </xi:fallback>
+    </xi:include>
+
+    <GTUTEMPLATES>
+      <GTUTEMPLATE DEFAULT="true" GTUTYPE="CAR" ID="CAR">
+        <LENGTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="3.0" MAX="4.0" />
+        </LENGTHDIST>
+        <WIDTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="1.7" MAX="2.0" />
+        </WIDTHDIST>
+        <MAXSPEEDDIST SPEEDUNIT="km/h">
+          <CONSTANT C="120" />
+        </MAXSPEEDDIST>
+      </GTUTEMPLATE>
+    </GTUTEMPLATES>
+
+    <LINKTYPES>
+      <LINKTYPE ID="URBAN">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
+        <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="50km/h" />
+      </LINKTYPE>
+    </LINKTYPES>
+
+    <LANETYPES>
+      <LANETYPE ID="URBAN">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
+      </LANETYPE>
+    </LANETYPES>
+
+    <ROADLAYOUTS>
+      <ROADLAYOUT ID="RT_1ln_3m_50km/h" LINKTYPE="URBAN">
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-1.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>-3m</CENTEROFFSET>
+        </STRIPE>
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="RT_2ln_3m_50km/h" LINKTYPE="URBAN">
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-1.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>-3m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-4.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>-6m</CENTEROFFSET>
+        </STRIPE>
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="RT_3ln_3m_50km/h" LINKTYPE="URBAN">
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-1.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>-3m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-4.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>-6m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-7.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>-9m</CENTEROFFSET>
+        </STRIPE>
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="RT_4ln_3m_50km/h" LINKTYPE="URBAN">
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-1.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>-3m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-4.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>-6m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-7.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>-9m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A4" DESIGNDIRECTION="true" LANETYPE="URBAN">
+          <CENTEROFFSET>-10.5m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>-12m</CENTEROFFSET>
+        </STRIPE>
+      </ROADLAYOUT>
+    </ROADLAYOUTS>
+  </DEFINITIONS>
+
+  <NETWORK>
+    <NODE ID="N_A1a" COORDINATE="(-400, -9)" />
+    <NODE ID="N_A2a" COORDINATE="(-200, -9)" />
+    <NODE ID="N_A3a" COORDINATE="(-25, -9)" />
+
+    <NODE ID="N_B1a" COORDINATE="(9, -400)" />
+    <NODE ID="N_B2a" COORDINATE="(9, -200)" />
+    <NODE ID="N_B3a" COORDINATE="(9, -25)" />
+
+    <NODE ID="N_C3a" COORDINATE="(25, -9)" />
+
+    <NODE ID="N_C1a" COORDINATE="(400, -9)" />
+
+    <NODE ID="N_D3a" COORDINATE="(9, 25)" />
+    <NODE ID="N_D1a" COORDINATE="(9, 400)" />
+
+
+    <NODE ID="N_A3b" COORDINATE="(-25, 9)" />
+    <NODE ID="N_A1b" COORDINATE="(-400, 9)" />
+
+    <NODE ID="N_B3b" COORDINATE="(-9, -25)" />
+    <NODE ID="N_B1b" COORDINATE="(-9, -400)" />
+
+
+    <NODE ID="N_C1b" COORDINATE="(400, 9)" />
+    <NODE ID="N_C2b" COORDINATE="(200, 9)" />
+    <NODE ID="N_C3b" COORDINATE="(25, 9)" />
+
+    <NODE ID="N_D1b" COORDINATE="(-9, 400)" />
+    <NODE ID="N_D2b" COORDINATE="(-9, 200)" />
+    <NODE ID="N_D3b" COORDINATE="(-9, 25)" />
+
+  <!-- KRUISPUNT RECHTS -->
+
+    <NODE ID="N_E1a" COORDINATE="(400, -9)" />
+    <NODE ID="N_E2a" COORDINATE="(600, -9)" />
+    <NODE ID="N_E3a" COORDINATE="(775, -9)" />
+
+    <NODE ID="N_F1a" COORDINATE="(809, -400)" />
+    <NODE ID="N_F2a" COORDINATE="(809, -200)" />
+    <NODE ID="N_F3a" COORDINATE="(809, -25)" />
+
+    <NODE ID="N_G3a" COORDINATE="(825, -9)" />
+    <NODE ID="N_G1a" COORDINATE="(1200, -9)" />
+
+    <NODE ID="N_H3a" COORDINATE="(809, 25)" />
+    <NODE ID="N_H1a" COORDINATE="(809, 400)" />
+
+
+    <NODE ID="N_E3b" COORDINATE="(775, 9)" />
+
+    <NODE ID="N_E1b" COORDINATE="(400, 9)" />
+
+    <NODE ID="N_F3b" COORDINATE="(791, -25)" />
+    <NODE ID="N_F1b" COORDINATE="(791, -400)" />
+
+    <NODE ID="N_G1b" COORDINATE="(1200, 9)" />
+    <NODE ID="N_G2b" COORDINATE="(1000, 9)" />
+    <NODE ID="N_G3b" COORDINATE="(825, 9)" />
+
+    <NODE ID="N_H1b" COORDINATE="(791, 400)" />
+    <NODE ID="N_H2b" COORDINATE="(791, 200)" />
+    <NODE ID="N_H3b" COORDINATE="(791, 25)" />
+
+
+  <!-- TOEVOERLINKS -->
+  <!-- A -->
+    <LINK TYPE="URBAN" ID="L_A1a-A2a" NODESTART="N_A1a" NODEEND="N_A2a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_A2a-A3a" NODESTART="N_A2a" NODEEND="N_A3a" OFFSETSTART="3m" OFFSETEND="3m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_3ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- B -->
+    <LINK TYPE="URBAN" ID="L_B1a-B2a" NODESTART="N_B1a" NODEEND="N_B2a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_B2a-B3a" NODESTART="N_B2a" NODEEND="N_B3a" OFFSETSTART="3m" OFFSETEND="3m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_3ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- C -->
+    <LINK TYPE="URBAN" ID="L_C1b-C2b" NODESTART="N_C1b" NODEEND="N_C2b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_C2b-C3b" NODESTART="N_C2b" NODEEND="N_C3b" OFFSETSTART="3m" OFFSETEND="3m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_4ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- D -->
+    <LINK TYPE="URBAN" ID="L_D1b-D2b" NODESTART="N_D1b" NODEEND="N_D2b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_D2b-D3b" NODESTART="N_D2b" NODEEND="N_D3b" OFFSETSTART="3m" OFFSETEND="3m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+
+  <!-- AFVOERLINKS -->
+  <!-- A -->
+    <LINK TYPE="URBAN" ID="L_A3b-A1b" NODESTART="N_A3b" NODEEND="N_A1b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- B -->
+    <LINK TYPE="URBAN" ID="L_B3b-B1b" NODESTART="N_B3b" NODEEND="N_B1b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- C -->
+    <LINK TYPE="URBAN" ID="L_C3a-E2A" NODESTART="N_C3a" NODEEND="N_E1a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- D -->
+    <LINK TYPE="URBAN" ID="L_D3a-D1a" NODESTART="N_D3a" NODEEND="N_D1a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+
+
+  <!-- KRUISPUNTLINKS -->
+  <!-- VAN A -->
+    <LINK TYPE="URBAN" ID="L_A3a-B3b" NODESTART="N_A3a" NODEEND="N_B3b" OFFSETSTART="-3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_A3a-C3a" NODESTART="N_A3a" NODEEND="N_C3a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_A3a-D3a" NODESTART="N_A3a" NODEEND="N_D3a" OFFSETSTART="3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- VAN D -->
+    <LINK TYPE="URBAN" ID="L_D3b-B3b" NODESTART="N_D3b" NODEEND="N_A3b" OFFSETEND="-3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_D3b-C3b" NODESTART="N_D3b" NODEEND="N_B3b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_D3b-D3a" NODESTART="N_D3b" NODEEND="N_C3a" OFFSETSTART="3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- VAN C -->
+    <LINK TYPE="URBAN" ID="L_C3b-D3a" NODESTART="N_C3b" NODEEND="N_D3a" OFFSETSTART="-6m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_C3b-A3b" NODESTART="N_C3b" NODEEND="N_A3b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_C3b-B3b" NODESTART="N_C3b" NODEEND="N_B3b" OFFSETSTART="3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- VAN B -->
+    <LINK TYPE="URBAN" ID="L_B3a-C3a" NODESTART="N_B3a" NODEEND="N_C3a" OFFSETSTART="-3m" OFFSETEND="-3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_B3a-D3a" NODESTART="N_B3a" NODEEND="N_D3a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_B3a-A3b" NODESTART="N_B3a" NODEEND="N_A3b" OFFSETSTART="3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+
+  <!-- KRUISPUNT RECHTS -->
+
+
+  <!-- TOEVOERLINKS -->
+  <!-- E -->
+    <LINK TYPE="URBAN" ID="L_E1a-E2a" NODESTART="N_E1a" NODEEND="N_E2a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_E2a-E3a" NODESTART="N_E2a" NODEEND="N_E3a" OFFSETSTART="3m" OFFSETEND="3m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_3ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- F -->
+    <LINK TYPE="URBAN" ID="L_F1a-F2a" NODESTART="N_F1a" NODEEND="N_F2a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_F2a-F3a" NODESTART="N_F2a" NODEEND="N_F3a" OFFSETSTART="3m" OFFSETEND="3m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_3ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- G -->
+    <LINK TYPE="URBAN" ID="L_G1b-G2b" NODESTART="N_G1b" NODEEND="N_G2b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_G2b-G3b" NODESTART="N_G2b" NODEEND="N_G3b" OFFSETSTART="3m" OFFSETEND="3m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_4ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- H -->
+    <LINK TYPE="URBAN" ID="L_H1b-H2b" NODESTART="N_H1b" NODEEND="N_H2b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_H2b-H3b" NODESTART="N_H2b" NODEEND="N_H3b" OFFSETSTART="3m" OFFSETEND="3m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+
+  <!-- AFVOERLINKS -->
+  <!-- E -->
+    <LINK TYPE="URBAN" ID="L_E3b-C2b" NODESTART="N_E3b" NODEEND="N_C1b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- F -->
+    <LINK TYPE="URBAN" ID="L_F3b-F1b" NODESTART="N_F3b" NODEEND="N_F1b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- G -->
+    <LINK TYPE="URBAN" ID="L_G3a-G1a" NODESTART="N_G3a" NODEEND="N_G1a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- H -->
+    <LINK TYPE="URBAN" ID="L_H3a-H1a" NODESTART="N_H3a" NODEEND="N_H1a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+
+
+  <!-- KRUISPUNTLINKS -->
+  <!-- VAN E -->
+    <LINK TYPE="URBAN" ID="L_E3a-F3b" NODESTART="N_E3a" NODEEND="N_F3b" OFFSETSTART="-3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_E3a-G3a" NODESTART="N_E3a" NODEEND="N_G3a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_E3a-H3a" NODESTART="N_E3a" NODEEND="N_H3a" OFFSETSTART="3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- VAN H -->
+    <LINK TYPE="URBAN" ID="L_H3b-F3b" NODESTART="N_H3b" NODEEND="N_E3b" OFFSETEND="-3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_H3b-G3b" NODESTART="N_H3b" NODEEND="N_F3b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_H3b-H3a" NODESTART="N_H3b" NODEEND="N_G3a" OFFSETSTART="3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- VAN G -->
+    <LINK TYPE="URBAN" ID="L_G3b-H3a" NODESTART="N_G3b" NODEEND="N_H3a" OFFSETSTART="-6m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_G3b-E3b" NODESTART="N_G3b" NODEEND="N_E3b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_2ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_G3b-F3b" NODESTART="N_G3b" NODEEND="N_F3b" OFFSETSTART="3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+  <!-- VAN F -->
+    <LINK TYPE="URBAN" ID="L_F3a-G3a" NODESTART="N_F3a" NODEEND="N_G3a" OFFSETSTART="-3m" OFFSETEND="-3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_F3a-H3a" NODESTART="N_F3a" NODEEND="N_H3a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="URBAN" ID="L_F3a-E3b" NODESTART="N_F3a" NODEEND="N_E3b" OFFSETSTART="3m">
+      <BEZIER />
+      <DEFINEDLAYOUT>RT_1ln_3m_50km/h</DEFINEDLAYOUT>
+    </LINK>
+
+  </NETWORK>
+
+  <NETWORKDEMAND>
+  </NETWORKDEMAND>
+
+  <SCENARIO></SCENARIO>
+
+  <RUN>
+    <RUNLENGTH>1h</RUNLENGTH>
+  </RUN>
+</OTS>
