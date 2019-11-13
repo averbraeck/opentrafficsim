@@ -120,6 +120,16 @@ public class NestedCache<T>
         return (T) this.map.get(key);
     }
 
+    /**
+     * Clears the cache for the given key.
+     * @param key Object; key to clear the cache for
+     * @return Object; object that was previously cached to the key, or {@code null} if it was not cached.
+     */
+    public Object clear(final Object key)
+    {
+        return this.map.remove(key);
+    }
+    
     /** {@inheritDoc} */
     @Override
     public String toString()
