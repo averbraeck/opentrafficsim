@@ -44,17 +44,15 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
+import org.opentrafficsim.core.gtu.GTUErrorHandler;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
-import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -74,6 +72,7 @@ import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGenerat
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
+import org.opentrafficsim.road.gtu.lane.CollisionDetector;
 import org.opentrafficsim.road.gtu.lane.CollisionException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
@@ -163,11 +162,11 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
     /** Fraction of primary task that can be reduced by anticipation reliance. */
     static final ParameterTypeDouble ALPHA = new ParameterTypeDouble("alpha",
-            "Fraction of primary task that can be reduced by anticipation reliance.", 0.8, DualBound.UNITINTERVAL);
+            "Fraction of primary task that can be reduced by anticipation reliance.", 0.6, DualBound.UNITINTERVAL);
 
     /** Fraction of auxiliary tasks that can be reduced by anticipation reliance. */
     static final ParameterTypeDouble BETA = new ParameterTypeDouble("beta",
-            "Fraction of auxiliary tasks that can be reduced by anticipation reliance.", 0.6, DualBound.UNITINTERVAL);
+            "Fraction of auxiliary tasks that can be reduced by anticipation reliance.", 0.5, DualBound.UNITINTERVAL);
 
     /** Distance to not consider at start of the network. */
     private static Length ignoreStart = Length.createSI(2900); // Not 100m on pre-link, so 3000 total
@@ -233,7 +232,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     public static void main(final String... args)
     {
         // Long start = System.currentTimeMillis();
-        AnticipationRelianceScript script = new AnticipationRelianceScript(args);
+        AnticipationRelianceScript script = new AnticipationRelianceScript();
         if (script.isAutorun())
         {
             System.out.println("Running " + script.scenario + "_" + script.getSeed());
@@ -247,10 +246,12 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         // script.setProperty("beta", 0.0);
         try
         {
+            CliUtil.execute(script, args);
             script.start();
         }
         catch (Throwable throwable)
         {
+            // Note: we only get here if we autorun
             Throwable original = throwable;
             while (throwable != null)
             {
@@ -290,9 +291,8 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
     /**
      * Constructor.
-     * @param properties String[]; properties as name-value pairs
      */
-    private AnticipationRelianceScript(final String[] properties)
+    private AnticipationRelianceScript()
     {
         super("Distraction", "Distraction simulation");
         setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
@@ -340,6 +340,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         // Network
         URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
         OTSRoadNetwork network = new OTSRoadNetwork("Distraction", true);
+        new CollisionDetector(network);
         XmlNetworkLaneParser.build(xmlURL, network, sim);
 
         // new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000),
@@ -369,7 +370,8 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), truckCategory, rightDemandPatternTruck);
         ODOptions odOptions = new ODOptions()
                 .set(ODOptions.GTU_TYPE, new DefaultGTUCharacteristicsGeneratorOD(new DistractionFactorySupplier()))
-                .set(ODOptions.INSTANT_LC, true);
+                .set(ODOptions.INSTANT_LC, true)
+                .set(ODOptions.ERROR_HANDLER, GTUErrorHandler.THROW);
         ODApplier.applyOD(network, od, sim, odOptions);
 
         // History
@@ -436,20 +438,6 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     {
         return new FrequencyVector(new double[] { demand * 0.5, demand * 0.5, demand, demand, 0.0 }, FrequencyUnit.PER_HOUR,
                 StorageType.DENSE);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void animateNetwork(final OTSNetwork net)
-    {
-        try
-        {
-            DefaultAnimationFactory.animateXmlNetwork(net, getSimulator(), getGtuColorer());
-        }
-        catch (OTSDrawingException exception)
-        {
-            throw new RuntimeException("Exception while creating network animation.", exception);
-        }
     }
 
     /////////////////////
