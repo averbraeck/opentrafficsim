@@ -4,7 +4,7 @@
 
   <groupId>opentrafficsim</groupId>
   <artifactId>ots</artifactId>
-  <version>1.02.02-SNAPSHOT</version>
+  <version>1.02.02</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -372,7 +372,12 @@
             <artifactId>ots-build-tools</artifactId>
             <version>${project.version}</version>
           </dependency>
-        </dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>8.26</version>
+            </dependency>
+         </dependencies>
       </plugin>
 
       <plugin>
