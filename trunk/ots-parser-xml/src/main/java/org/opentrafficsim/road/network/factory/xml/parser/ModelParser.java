@@ -31,6 +31,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
+import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -351,10 +352,11 @@ public class ModelParser
      * @return Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; strategical planner factories by model ID
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
-    public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(
-            final OTSRoadNetwork otsNetwork, final List<MODELTYPE> models, final InputParameters inputParameters,
-            final Map<String, ParameterType<?>> parameterTypes, final Map<String, StreamInformation> streamMap,
-            final Map<String, ParameterFactory> parameterFactories) throws XmlParserException
+    public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>,
+            K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(final OTSRoadNetwork otsNetwork,
+                    final List<MODELTYPE> models, final InputParameters inputParameters,
+                    final Map<String, ParameterType<?>> parameterTypes, final Map<String, StreamInformation> streamMap,
+                    final Map<String, ParameterFactory> parameterFactories) throws XmlParserException
     {
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
         for (MODELTYPE model : models)
@@ -469,6 +471,7 @@ public class ModelParser
      * @return LaneBasedTacticalPlannerFactory&lt;LMRS&gt;; LMRS factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
+    @SuppressWarnings("unchecked")
     private static LaneBasedTacticalPlannerFactory<org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS> parseLmrs(
             final LMRS lmrs) throws XmlParserException
     {
@@ -774,8 +777,7 @@ public class ModelParser
             Constructor<? extends DesiredHeadwayModel> constructor;
             try
             {
-                constructor = (Constructor<? extends DesiredHeadwayModel>) ClassUtil
-                        .resolveConstructor(desiredHeadwayModel.getCLASS(), new Object[0]);
+                constructor = ClassUtil.resolveConstructor(desiredHeadwayModel.getCLASS(), new Object[0]);
             }
             catch (NoSuchMethodException exception)
             {
@@ -851,8 +853,7 @@ public class ModelParser
             Constructor<? extends DesiredSpeedModel> constructor;
             try
             {
-                constructor = (Constructor<? extends DesiredSpeedModel>) ClassUtil
-                        .resolveConstructor(desiredSpeedModel.getCLASS(), new Object[0]);
+                constructor = ClassUtil.resolveConstructor(desiredSpeedModel.getCLASS(), new Object[0]);
             }
             catch (NoSuchMethodException exception)
             {
@@ -943,10 +944,10 @@ public class ModelParser
         }
 
         // Categories
-        List<Constructor<? extends PerceptionCategory<?, ?>>> categoryConstructorsPerception = new ArrayList<>();
-        List<Constructor<? extends PerceptionCategory<?, ?>>> categoryConstructorsPerceptionHeadway = new ArrayList<>();
-        Class<?>[] perceptionConstructor = new Class[] { LanePerception.class };
-        Class<?>[] perceptionHeadwayConstructor = new Class[] { LanePerception.class, HeadwayGtuType.class };
+        List<Constructor<? extends PerceptionCategory>> categoryConstructorsPerception = new ArrayList<>();
+        List<Constructor<? extends PerceptionCategory>> categoryConstructorsPerceptionHeadway = new ArrayList<>();
+        Class<?>[] perceptionConstructor = new Class[] {LanePerception.class};
+        Class<?>[] perceptionHeadwayConstructor = new Class[] {LanePerception.class, HeadwayGtuType.class};
         for (CATEGORY category : perception.getCATEGORY())
         {
             try
@@ -954,41 +955,40 @@ public class ModelParser
                 switch (category.getValue())
                 {
                     case "EGO":
-                        categoryConstructorsPerception.add((Constructor<? extends PerceptionCategory<?, ?>>) ClassUtil
-                                .resolveConstructor(DirectEgoPerception.class, perceptionConstructor));
+                        Constructor<DirectEgoPerception> c =
+                                ClassUtil.resolveConstructor(DirectEgoPerception.class, new Class[] {Perception.class});
+                        categoryConstructorsPerception.add(c);
                         break;
                     case "BUSSTOP":
-                        categoryConstructorsPerception.add((Constructor<? extends PerceptionCategory<?, ?>>) ClassUtil
-                                .resolveConstructor(DirectBusStopPerception.class, perceptionConstructor));
+                        categoryConstructorsPerception
+                                .add(ClassUtil.resolveConstructor(DirectBusStopPerception.class, perceptionConstructor));
                         break;
                     case "INFRASTRUCTURE":
-                        categoryConstructorsPerception.add((Constructor<? extends PerceptionCategory<?, ?>>) ClassUtil
-                                .resolveConstructor(DirectInfrastructurePerception.class, perceptionConstructor));
+                        categoryConstructorsPerception
+                                .add(ClassUtil.resolveConstructor(DirectInfrastructurePerception.class, perceptionConstructor));
                         break;
                     case "INTERSECTION":
-                        categoryConstructorsPerceptionHeadway.add((Constructor<? extends PerceptionCategory<?, ?>>) ClassUtil
-                                .resolveConstructor(DirectIntersectionPerception.class, perceptionHeadwayConstructor));
+                        categoryConstructorsPerceptionHeadway.add(
+                                ClassUtil.resolveConstructor(DirectIntersectionPerception.class, perceptionHeadwayConstructor));
                         break;
                     case "NEIGHBORS":
-                        categoryConstructorsPerceptionHeadway.add((Constructor<? extends PerceptionCategory<?, ?>>) ClassUtil
-                                .resolveConstructor(DirectNeighborsPerception.class, perceptionHeadwayConstructor));
+                        categoryConstructorsPerceptionHeadway.add(
+                                ClassUtil.resolveConstructor(DirectNeighborsPerception.class, perceptionHeadwayConstructor));
                         break;
                     case "TRAFFIC":
-                        categoryConstructorsPerception.add((Constructor<? extends PerceptionCategory<?, ?>>) ClassUtil
-                                .resolveConstructor(AnticipationTrafficPerception.class, perceptionConstructor));
+                        categoryConstructorsPerception
+                                .add(ClassUtil.resolveConstructor(AnticipationTrafficPerception.class, perceptionConstructor));
                         break;
                     case "CLASS":
                         Constructor<? extends PerceptionCategory<?, ?>> constructor;
                         try
                         {
-                            constructor = (Constructor<? extends PerceptionCategory<?, ?>>) ClassUtil
-                                    .resolveConstructor(category.getCLASS(), perceptionHeadwayConstructor);
+                            constructor = ClassUtil.resolveConstructor(category.getCLASS(), perceptionHeadwayConstructor);
                             categoryConstructorsPerceptionHeadway.add(constructor);
                         }
                         catch (NoSuchMethodException exception)
                         {
-                            constructor = (Constructor<? extends PerceptionCategory<?, ?>>) ClassUtil
-                                    .resolveConstructor(category.getCLASS(), perceptionConstructor);
+                            constructor = ClassUtil.resolveConstructor(category.getCLASS(), perceptionConstructor);
                             categoryConstructorsPerception.add(constructor);
                         }
                         catch (NullPointerException exception)
@@ -1116,11 +1116,11 @@ public class ModelParser
                 CategoricalLanePerception lanePerception = new CategoricalLanePerception(gtu, mental);
                 try
                 {
-                    for (Constructor<? extends PerceptionCategory<?, ?>> constructor : categoryConstructorsPerception)
+                    for (Constructor<? extends PerceptionCategory> constructor : categoryConstructorsPerception)
                     {
                         lanePerception.addPerceptionCategory(constructor.newInstance(lanePerception));
                     }
-                    for (Constructor<? extends PerceptionCategory<?, ?>> constructor : categoryConstructorsPerceptionHeadway)
+                    for (Constructor<? extends PerceptionCategory> constructor : categoryConstructorsPerceptionHeadway)
                     {
                         lanePerception.addPerceptionCategory(constructor.newInstance(lanePerception, headwayGtuType));
                     }
