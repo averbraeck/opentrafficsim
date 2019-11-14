@@ -69,7 +69,7 @@ public class TrajectoryAcceptList
     /**
      * @param i int; number of {@code trajectory} to get
      * @return i'th {@code trajectory}
-     * @throws IndexOutOfBoundsException if the index is out of range (<tt>index &lt; 0 || index &gt;= size()</tt>)
+     * @throws IndexOutOfBoundsException if the index is out of range (<code>index &lt; 0 || index &gt;= size()</code>)
      */
     public final Trajectory<?> getTrajectory(final int i)
     {
@@ -79,7 +79,7 @@ public class TrajectoryAcceptList
     /**
      * @param i int; number of {@code TrajectoryGroup} to get
      * @return i'th {@code TrajectoryGroup}
-     * @throws IndexOutOfBoundsException if the index is out of range (<tt>index &lt; 0 || index &gt;= size()</tt>)
+     * @throws IndexOutOfBoundsException if the index is out of range (<code>index &lt; 0 || index &gt;= size()</code>)
      */
     public final TrajectoryGroup getTrajectoryGroup(final int i)
     {

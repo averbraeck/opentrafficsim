@@ -116,7 +116,7 @@ public final class ConflictUtil
 
     /**
      * Approach conflicts by applying appropriate acceleration (or deceleration). The model may yield for a vehicle even while
-     * having priority. Such a 'yield plan' is remembered in <tt>YieldPlans</tt>. By forwarding the same <tt>YieldPlans</tt> for
+     * having priority. Such a 'yield plan' is remembered in <code>YieldPlans</code>. By forwarding the same <code>YieldPlans</code> for
      * a GTU consistency of such plans is provided. If any conflict is not accepted to pass, stopping before a more upstream
      * conflict is applied if there not sufficient stopping length in between conflicts.
      * @param parameters Parameters; parameters

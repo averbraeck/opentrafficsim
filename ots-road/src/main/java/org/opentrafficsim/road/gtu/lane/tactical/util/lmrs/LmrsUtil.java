@@ -343,7 +343,7 @@ public final class LmrsUtil implements LmrsParameters
     }
 
     /**
-     * Updates the desired headway following an exponential shape approximated with fixed time step <tt>DT</tt>.
+     * Updates the desired headway following an exponential shape approximated with fixed time step <code>DT</code>.
      * @param params Parameters; parameters
      * @throws ParameterException in case of a parameter exception
      */
