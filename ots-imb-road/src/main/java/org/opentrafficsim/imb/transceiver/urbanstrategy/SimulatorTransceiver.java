@@ -176,7 +176,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
      * </p>
      * <p>
      * <h2>CHANGE</h2>
-     * <table caption="" style="width:800px;">
+     * <table style="width:800px;"><caption>&nbsp;</caption>
      * <thead>
      * <tr>
      * <th style="width:25%;">Variable</th>
