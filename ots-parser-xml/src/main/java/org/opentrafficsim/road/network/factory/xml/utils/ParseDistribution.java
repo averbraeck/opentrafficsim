@@ -67,7 +67,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public final class ParseDistribution
 {
     /** Utility class. */
-    private ParseDistribution()
+    private ParseDistribution() 
     {
         // do not instantiate
     }
