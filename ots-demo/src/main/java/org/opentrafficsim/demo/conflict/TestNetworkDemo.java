@@ -75,7 +75,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
         {
             OTSAnimator simulator = new OTSAnimator();
             final TestNetworkModel networkModel = new TestNetworkModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), networkModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), networkModel);
             OTSAnimationPanel animationPanel =
                     new OTSAnimationPanel(networkModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
                             networkModel, new DefaultSwitchableGTUColorer(), networkModel.getNetwork());

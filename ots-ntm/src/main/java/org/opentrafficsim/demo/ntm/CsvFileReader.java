@@ -357,7 +357,7 @@ public class CsvFileReader
                             // This should be input in file: which profile is connected to which OD pair
                             DepartureTimeProfile profile = profiles.get(0);
                             Time startSimulationTimeSinceMidnight =
-                                    new Time(settingsNTM.getDurationSinceMidnight().getSI(), TimeUnit.BASE);
+                                    new Time(settingsNTM.getDurationSinceMidnight().getSI(), TimeUnit.DEFAULT);
                             NavigableMap<Time, FractionOfTripDemandByTimeSegment> profileList =
                                     profile.checkAndNormalizeCurve(startSimulationTimeSinceMidnight,
                                             settingsNTM.getDurationOfSimulation(), profile.getDepartureTimeCurve());

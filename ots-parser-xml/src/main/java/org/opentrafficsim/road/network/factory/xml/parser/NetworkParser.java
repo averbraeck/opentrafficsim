@@ -336,7 +336,7 @@ public final class NetworkParser
             List<CrossSectionElement> cseList = new ArrayList<>();
             Map<String, Lane> lanes = new LinkedHashMap<>();
 
-            //CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
+            // CategoryLogger.filter(Cat.PARSER).trace("Parse link: {}", xmlLink.getID());
 
             // Get the ROADLAYOUT (either defined here, or via pointer to DEFINITIONS)
             BASICROADLAYOUT roadLayoutTagBase;
@@ -533,10 +533,10 @@ public final class NetworkParser
                 CROSSSECTIONELEMENT cse = (CROSSSECTIONELEMENT) o;
                 CSEData cseData = new CSEData();
                 cseData.widthStart = cse.getWIDTH() == null ? cse.getWIDTHSTART() : cse.getWIDTH();
-                Length halfWidthStart = cseData.widthStart.multiplyBy(0.5);
+                Length halfWidthStart = cseData.widthStart.times(0.5);
                 totalWidthStart = totalWidthStart.plus(cseData.widthStart);
                 cseData.widthEnd = cse.getWIDTH() == null ? cse.getWIDTHEND() : cse.getWIDTH();
-                Length halfWidthEnd = cseData.widthEnd.multiplyBy(0.5);
+                Length halfWidthEnd = cseData.widthEnd.times(0.5);
                 totalWidthEnd = totalWidthEnd.plus(cseData.widthStart);
 
                 if (cse.getCENTEROFFSET() != null)
@@ -601,12 +601,12 @@ public final class NetworkParser
         if (!startOffset)
         {
             cseDataList.get(0).centerOffsetStart =
-                    totalWidthStart.multiplyBy(-0.5).minus(cseDataList.get(0).widthStart.multiplyBy(-0.5));
+                    totalWidthStart.times(-0.5).minus(cseDataList.get(0).widthStart.times(-0.5));
         }
         if (!endOffset)
         {
             cseDataList.get(0).centerOffsetEnd =
-                    totalWidthEnd.multiplyBy(-0.5).minus(cseDataList.get(0).widthEnd.multiplyBy(-0.5));
+                    totalWidthEnd.times(-0.5).minus(cseDataList.get(0).widthEnd.times(-0.5));
         }
 
         // forward pass
@@ -616,25 +616,25 @@ public final class NetworkParser
         {
             if (cseData.centerOffsetStart != null)
             {
-                cs = cseData.centerOffsetStart.plus(cseData.widthStart.multiplyBy(0.5));
+                cs = cseData.centerOffsetStart.plus(cseData.widthStart.times(0.5));
             }
             else
             {
                 if (cs != null)
                 {
-                    cseData.centerOffsetStart = cs.plus(cseData.widthStart.multiplyBy(0.5));
+                    cseData.centerOffsetStart = cs.plus(cseData.widthStart.times(0.5));
                     cs = cs.plus(cseData.widthStart);
                 }
             }
             if (cseData.centerOffsetEnd != null)
             {
-                es = cseData.centerOffsetEnd.plus(cseData.widthEnd.multiplyBy(0.5));
+                es = cseData.centerOffsetEnd.plus(cseData.widthEnd.times(0.5));
             }
             else
             {
                 if (es != null)
                 {
-                    cseData.centerOffsetEnd = es.plus(cseData.widthEnd.multiplyBy(0.5));
+                    cseData.centerOffsetEnd = es.plus(cseData.widthEnd.times(0.5));
                     es = es.plus(cseData.widthEnd);
                 }
             }
@@ -648,25 +648,25 @@ public final class NetworkParser
             CSEData cseData = cseDataList.get(i);
             if (cseData.centerOffsetStart != null)
             {
-                cs = cseData.centerOffsetStart.minus(cseData.widthStart.multiplyBy(0.5));
+                cs = cseData.centerOffsetStart.minus(cseData.widthStart.times(0.5));
             }
             else
             {
                 if (cs != null)
                 {
-                    cseData.centerOffsetStart = cs.minus(cseData.widthStart.multiplyBy(0.5));
+                    cseData.centerOffsetStart = cs.minus(cseData.widthStart.times(0.5));
                     cs = cs.minus(cseData.widthStart);
                 }
             }
             if (cseData.centerOffsetEnd != null)
             {
-                es = cseData.centerOffsetEnd.minus(cseData.widthEnd.multiplyBy(0.5));
+                es = cseData.centerOffsetEnd.minus(cseData.widthEnd.times(0.5));
             }
             else
             {
                 if (es != null)
                 {
-                    cseData.centerOffsetEnd = es.minus(cseData.widthEnd.multiplyBy(0.5));
+                    cseData.centerOffsetEnd = es.minus(cseData.widthEnd.times(0.5));
                     es = es.minus(cseData.widthEnd);
                 }
             }

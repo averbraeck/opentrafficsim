@@ -119,7 +119,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 {
                     OTSAnimator simulator = new OTSAnimator();
                     TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
-                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), openDriveModel);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), openDriveModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, openDriveModel, DEFAULT_COLORER, openDriveModel.getNetwork());
                     new TestOpenDriveParserNoRTINew(openDriveModel, animationPanel);
@@ -468,7 +468,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 LanePerceptionFull perception = new LanePerceptionFull();
                 DirectedLanePosition directedLanePosition =
                     new DirectedLanePosition(lane,
-                        initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                        initialPosDist.draw().times(lane.getCenterLine().getLengthSI()), dir);
                 Set<DirectedLanePosition> lanepositionSet = new LinkedHashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
                 Length carLength = lengthDist.draw();
@@ -553,7 +553,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 try
                 {
                     directedLanePosition =
-                        new DirectedLanePosition(lane, initialPosDist.draw().multiplyBy(
+                        new DirectedLanePosition(lane, initialPosDist.draw().times(
                             lane.getCenterLine().getLengthSI()), dir);
                 }
                 catch (GTUException exception1)
@@ -664,12 +664,12 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 throws GTUException, NamingException, NetworkException, SimRuntimeException, OTSGeometryException
         {
             DirectedLanePosition directedLanePosition = new DirectedLanePosition(lane,
-                    this.initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                    this.initialPosDist.draw().times(lane.getCenterLine().getLengthSI()), dir);
             Set<DirectedLanePosition> lanepositionSet = new LinkedHashSet<DirectedLanePosition>();
             lanepositionSet.add(directedLanePosition);
             Length carLength = this.lengthDist.draw();
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, carLength,
-                    this.widthDist.draw(), this.maxSpeedDist.draw(), carLength.multiplyBy(0.5), this.simulator, network);
+                    this.widthDist.draw(), this.maxSpeedDist.draw(), carLength.times(0.5), this.simulator, network);
             car.init(laneBasedStrategicalPlannerFactory.create(car, route, null, null), lanepositionSet, Speed.ZERO);
             this.rtiCars.add(car);
         }

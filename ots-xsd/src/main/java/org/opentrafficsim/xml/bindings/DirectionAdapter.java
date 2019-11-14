@@ -1,8 +1,5 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.logger.CategoryLogger;
 
@@ -16,7 +13,7 @@ import org.djutils.logger.CategoryLogger;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class DirectionAdapter extends XmlAdapter<String, Direction>
+public class DirectionAdapter extends UnitAdapter<Direction>
 {
     /** {@inheritDoc} */
     @Override
@@ -24,20 +21,24 @@ public class DirectionAdapter extends XmlAdapter<String, Direction>
     {
         try
         {
-            return Direction.valueOf(field);
+            String direction = field;
+            if (direction.trim().endsWith("deg"))
+            {
+                direction = direction.replace("deg", "deg(E)");
+            }
+            if (direction.trim().endsWith("rad"))
+            {
+                direction = direction.replace("deg", "rad(E)");
+            }
+            direction = direction.replace("East", "E");
+            direction = direction.replace("North", "N");
+            return Direction.valueOf(direction);
         }
         catch (Exception exception)
         {
             CategoryLogger.always().error(exception, "Problem parsing Direction '" + field + "'");
             throw exception;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String marshal(final Direction direction) throws IllegalArgumentException
-    {
-        return Scalar.textualStringOfDefaultLocale(direction);
     }
 
 }

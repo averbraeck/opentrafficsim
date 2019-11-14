@@ -27,9 +27,18 @@ import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.sim0mq.Sim0MQException;
-import org.sim0mq.message.MessageStatus;
 import org.sim0mq.message.MessageUtil;
-import org.sim0mq.message.SimulationMessage;
+import org.sim0mq.message.Sim0MQMessage;
+import org.sim0mq.message.federatestarter.FS1RequestStatusMessage;
+import org.sim0mq.message.federationmanager.FM2SimRunControlMessage;
+import org.sim0mq.message.federationmanager.FM3SetParameterMessage;
+import org.sim0mq.message.federationmanager.FM4SimStartMessage;
+import org.sim0mq.message.federationmanager.FM5RequestStatus;
+import org.sim0mq.message.federationmanager.FM6RequestStatisticsMessage;
+import org.sim0mq.message.modelcontroller.MC1StatusMessage;
+import org.sim0mq.message.modelcontroller.MC2AckNakMessage;
+import org.sim0mq.message.modelcontroller.MC3StatisticsMessage;
+import org.sim0mq.message.modelcontroller.MC4StatisticsErrorMessage;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
@@ -69,10 +78,10 @@ public class SuperDemoWebApplication implements Checkable
     private String modelId;
 
     /** runtime. */
-    private Duration runTime;
+    private Duration runDuration;
 
     /** warmup. */
-    private Duration warmupTime;
+    private Duration warmupDuration;
 
     /** message count. */
     private long messageCount = 0;
@@ -105,8 +114,7 @@ public class SuperDemoWebApplication implements Checkable
      * @throws SerializationException on serialization problem
      * @throws IOException when TRAFCOD file cannot be found
      */
-    protected void init()
-            throws SimRuntimeException, NamingException, Sim0MQException, SerializationException, IOException
+    protected void init() throws SimRuntimeException, NamingException, Sim0MQException, SerializationException, IOException
     {
         this.simulator = new OTSAnimator();
         this.modelId = this.modelId.trim();
@@ -188,41 +196,39 @@ public class SuperDemoWebApplication implements Checkable
 
             byte[] request = this.fsSocket.recv(0);
             System.out.println(MessageUtil.printBytes(request));
-            Object[] fields = SimulationMessage.decode(request);
+            Object[] fields = Sim0MQMessage.decodeToArray(request);
+            Object receiverId = fields[4];
+            Object messageTypeId = fields[5];
 
-            System.out.println("Received " + SimulationMessage.print(fields));
+            System.out.println("Received " + Sim0MQMessage.print(fields));
             System.out.flush();
-
-            this.federationRunId = fields[1];
-            String senderId = fields[2].toString();
-            String receiverId = fields[3].toString();
-            String messageId = fields[4].toString();
-            long uniqueId = ((Long) fields[5]).longValue();
 
             if (receiverId.equals(this.modelId))
             {
-                System.err.println("Received: " + messageId + ", payload = " + SimulationMessage.listPayload(fields));
-                switch (messageId)
+                switch (messageTypeId.toString())
                 {
                     case "FS.1":
+                        processRequestStatus(identity, new FS1RequestStatusMessage(fields));
+                        break;
+
                     case "FM.5":
-                        processRequestStatus(identity, senderId, uniqueId);
+                        processRequestStatus(identity, new FM5RequestStatus(fields));
                         break;
 
                     case "FM.2":
-                        processSimRunControl(identity, senderId, uniqueId, fields);
+                        processSimRunControl(identity, new FM2SimRunControlMessage(fields));
                         break;
 
                     case "FM.3":
-                        processSetParameter(identity, senderId, uniqueId, fields);
+                        processSetParameter(identity, new FM3SetParameterMessage(fields));
                         break;
 
                     case "FM.4":
-                        processSimStart(identity, senderId, uniqueId);
+                        processSimStart(identity, new FM4SimStartMessage(fields));
                         break;
 
                     case "FM.6":
-                        processRequestStatistics(identity, senderId, uniqueId, fields);
+                        processRequestStatistics(identity, new FM6RequestStatisticsMessage(fields));
                         break;
 
                     case "FS.3":
@@ -231,7 +237,7 @@ public class SuperDemoWebApplication implements Checkable
 
                     default:
                         // wrong message
-                        System.err.println("Received unknown message -- not processed: " + messageId);
+                        System.err.println("Received unknown message -- not processed: " + messageTypeId);
                 }
             }
             else
@@ -244,16 +250,19 @@ public class SuperDemoWebApplication implements Checkable
     }
 
     /**
-     * Process FS.1 message and send MC.1 message back.
+     * Process FS.1 or FM.5 message and send MC.1 message back.
      * @param identity reply id for REQ-ROUTER pattern
-     * @param receiverId the receiver of the response
-     * @param replyToMessageId the message to which this is the reply
+     * @param message the message (0 payload fields)
      * @throws Sim0MQException on error
      * @throws SerializationException on serialization problem
      */
-    private void processRequestStatus(final String identity, final String receiverId, final long replyToMessageId)
+    private void processRequestStatus(final String identity, final Sim0MQMessage message)
             throws Sim0MQException, SerializationException
     {
+        if (this.federationRunId == null)
+        {
+            this.federationRunId = message.getFederationId();
+        }
         String status = "started";
         if (this.simulator.isRunning())
         {
@@ -273,8 +282,8 @@ public class SuperDemoWebApplication implements Checkable
         }
         this.fsSocket.sendMore(identity);
         this.fsSocket.sendMore("");
-        byte[] mc1Message = SimulationMessage.encodeUTF8(this.federationRunId, this.modelId, receiverId, "MC.1",
-                ++this.messageCount, MessageStatus.NEW, replyToMessageId, status, "");
+        byte[] mc1Message = new MC1StatusMessage(this.federationRunId, this.modelId, message.getSenderId(), ++this.messageCount,
+                message.getMessageId(), status, "").createByteArray();
         this.fsSocket.send(mc1Message, 0);
 
         System.out.println("Sent MC.1");
@@ -284,45 +293,43 @@ public class SuperDemoWebApplication implements Checkable
     /**
      * Process FM.2 message and send MC.2 message back.
      * @param identity reply id for REQ-ROUTER pattern
-     * @param receiverId the receiver of the response
-     * @param replyToMessageId the message to which this is the reply
-     * @param fields the message
+     * @param message the FM.2 message
      * @throws Sim0MQException on error
      * @throws SerializationException on serialization problem
      */
-    private void processSimRunControl(final String identity, final String receiverId, final long replyToMessageId,
-            final Object[] fields) throws Sim0MQException, SerializationException
+    private void processSimRunControl(final String identity, final FM2SimRunControlMessage message)
+            throws Sim0MQException, SerializationException
     {
         boolean status = true;
         String error = "";
         try
         {
-            Object runTimeField = fields[8];
-            if (runTimeField instanceof Number)
+            Object runDurationField = message.getRunDuration();
+            if (runDurationField instanceof Number)
             {
-                this.runTime = new Duration(((Number) fields[8]).doubleValue(), DurationUnit.SI);
+                this.runDuration = new Duration(((Number) runDurationField).doubleValue(), DurationUnit.SI);
             }
-            else if (runTimeField instanceof Duration)
+            else if (runDurationField instanceof Duration)
             {
-                this.runTime = (Duration) runTimeField;
+                this.runDuration = (Duration) runDurationField;
             }
             else
             {
-                throw new Sim0MQException("runTimeField " + runTimeField + " neither Number nor Duration");
+                throw new Sim0MQException("runTimeField " + runDurationField + " neither Number nor Duration");
             }
 
-            Object warmupField = fields[8];
-            if (warmupField instanceof Number)
+            Object warmupDurationField = message.getWarmupDuration();
+            if (warmupDurationField instanceof Number)
             {
-                this.warmupTime = new Duration(((Number) fields[9]).doubleValue(), DurationUnit.SI);
+                this.warmupDuration = new Duration(((Number) warmupDurationField).doubleValue(), DurationUnit.SI);
             }
-            else if (warmupField instanceof Duration)
+            else if (warmupDurationField instanceof Duration)
             {
-                this.warmupTime = (Duration) warmupField;
+                this.warmupDuration = (Duration) warmupDurationField;
             }
             else
             {
-                throw new Sim0MQException("warmupField " + warmupField + " neither Number nor Duration");
+                throw new Sim0MQException("warmupField " + warmupDurationField + " neither Number nor Duration");
             }
         }
         catch (Exception e)
@@ -330,8 +337,8 @@ public class SuperDemoWebApplication implements Checkable
             status = false;
             error = e.getMessage();
         }
-        byte[] mc2Message = SimulationMessage.encodeUTF8(this.federationRunId, this.modelId, receiverId, "MC.2",
-                ++this.messageCount, MessageStatus.NEW, replyToMessageId, status, error);
+        byte[] mc2Message = new MC2AckNakMessage(this.federationRunId, this.modelId, message.getSenderId(), ++this.messageCount,
+                message.getMessageId(), status, error).createByteArray();
         this.fsSocket.sendMore(identity);
         this.fsSocket.sendMore("");
         this.fsSocket.send(mc2Message, 0);
@@ -343,61 +350,22 @@ public class SuperDemoWebApplication implements Checkable
     /**
      * Process FM.3 message and send MC.2 message back.
      * @param identity reply id for REQ-ROUTER pattern
-     * @param receiverId the receiver of the response
-     * @param replyToMessageId the message to which this is the reply
+     * @param message the FM3 message
      * @throws Sim0MQException on error
      * @throws SerializationException on serialization problem
      */
-    private void processSimStart(final String identity, final String receiverId, final long replyToMessageId)
+    private void processSetParameter(final String identity, final FM3SetParameterMessage message)
             throws Sim0MQException, SerializationException
     {
         boolean status = true;
         String error = "";
         try
         {
-            OTSReplication replication = OTSReplication.create("rep1", Time.ZERO, this.warmupTime, this.runTime, this.model);
-            this.simulator.initialize(replication, ReplicationMode.TERMINATING);
-            // TODO: different... this.simulator.scheduleEventAbs(100.0, this, this, "terminate", null);
-
-            this.simulator.start();
-        }
-        catch (Exception e)
-        {
-            status = false;
-            error = e.getMessage();
-        }
-
-        byte[] mc2Message = SimulationMessage.encodeUTF8(this.federationRunId, this.modelId, receiverId, "MC.2",
-                ++this.messageCount, MessageStatus.NEW, replyToMessageId, status, error);
-        this.fsSocket.sendMore(identity);
-        this.fsSocket.sendMore("");
-        this.fsSocket.send(mc2Message, 0);
-
-        System.out.println("Sent MC.2");
-        System.out.flush();
-    }
-
-    /**
-     * Process FM.4 message and send MC.2 message back.
-     * @param identity reply id for REQ-ROUTER pattern
-     * @param receiverId the receiver of the response
-     * @param replyToMessageId the message to which this is the reply
-     * @param fields the message
-     * @throws Sim0MQException on error
-     * @throws SerializationException on serialization problem
-     */
-    private void processSetParameter(final String identity, final String receiverId, final long replyToMessageId,
-            final Object[] fields) throws Sim0MQException, SerializationException
-    {
-        boolean status = true;
-        String error = "";
-        try
-        {
-            String parameterName = fields[8].toString();
-            Object parameterValueField = fields[9];
-
             // TODO: change for InputParameter
             /*-
+            String parameterName = message.getParameterName();
+            Object parameterValueField = message.getParameterValue();
+            
             switch (parameterName)
             {
                 case "seed":
@@ -425,8 +393,8 @@ public class SuperDemoWebApplication implements Checkable
             error = e.getMessage();
         }
 
-        byte[] mc2Message = SimulationMessage.encodeUTF8(this.federationRunId, this.modelId, receiverId, "MC.2",
-                ++this.messageCount, MessageStatus.NEW, replyToMessageId, status, error);
+        byte[] mc2Message = new MC2AckNakMessage(this.federationRunId, this.modelId, message.getSenderId(), ++this.messageCount,
+                message.getMessageId(), status, error).createByteArray();
         this.fsSocket.sendMore(identity);
         this.fsSocket.sendMore("");
         this.fsSocket.send(mc2Message, 0);
@@ -436,24 +404,59 @@ public class SuperDemoWebApplication implements Checkable
     }
 
     /**
-     * Process FM.5 message and send MC.3 or MC.4 message back.
+     * Process FM.4 message and send MC.2 message back.
      * @param identity reply id for REQ-ROUTER pattern
-     * @param receiverId the receiver of the response
-     * @param replyToMessageId the message to which this is the reply
-     * @param fields the message
+     * @param message the FM.4 message
      * @throws Sim0MQException on error
      * @throws SerializationException on serialization problem
      */
-    private void processRequestStatistics(final String identity, final String receiverId, final long replyToMessageId,
-            final Object[] fields) throws Sim0MQException, SerializationException
+    private void processSimStart(final String identity, final FM4SimStartMessage message)
+            throws Sim0MQException, SerializationException
+    {
+        boolean status = true;
+        String error = "";
+        try
+        {
+            OTSReplication replication =
+                    OTSReplication.create("rep1", Time.ZERO, this.warmupDuration, this.runDuration, this.model);
+            this.simulator.initialize(replication, ReplicationMode.TERMINATING);
+            // TODO: different... this.simulator.scheduleEventAbs(100.0, this, this, "terminate", null);
+
+            this.simulator.start();
+        }
+        catch (Exception e)
+        {
+            status = false;
+            error = e.getMessage();
+        }
+
+        byte[] mc2Message = new MC2AckNakMessage(this.federationRunId, this.modelId, message.getSenderId(), ++this.messageCount,
+                message.getMessageId(), status, error).createByteArray();
+        this.fsSocket.sendMore(identity);
+        this.fsSocket.sendMore("");
+        this.fsSocket.send(mc2Message, 0);
+
+        System.out.println("Sent MC.2");
+        System.out.flush();
+    }
+
+    /**
+     * Process FM.6 message and send MC.3 or MC.4 message back.
+     * @param identity reply id for REQ-ROUTER pattern
+     * @param message the FM.6 message
+     * @throws Sim0MQException on error
+     * @throws SerializationException on serialization problem
+     */
+    private void processRequestStatistics(final String identity, final FM6RequestStatisticsMessage message)
+            throws Sim0MQException, SerializationException
     {
         boolean ok = true;
         String error = "";
-        String variableName = fields[8].toString();
+        String variableName = message.getVariableName();
         double variableValue = Double.NaN;
         try
         {
-            // TODO: This probably goes away or is replaced by metadata
+            // TODO: change for real outputs of the model.
             /*-
             switch (variableName)
             {
@@ -490,8 +493,8 @@ public class SuperDemoWebApplication implements Checkable
 
         if (ok)
         {
-            byte[] mc3Message = SimulationMessage.encodeUTF8(this.federationRunId, this.modelId, receiverId, "MC.3",
-                    ++this.messageCount, MessageStatus.NEW, replyToMessageId, variableName, variableValue);
+            byte[] mc3Message = new MC3StatisticsMessage(this.federationRunId, this.modelId, message.getSenderId(),
+                    ++this.messageCount, variableName, variableValue).createByteArray();
             this.fsSocket.sendMore(identity);
             this.fsSocket.sendMore("");
             this.fsSocket.send(mc3Message, 0);
@@ -501,8 +504,8 @@ public class SuperDemoWebApplication implements Checkable
         }
         else
         {
-            byte[] mc4Message = SimulationMessage.encodeUTF8(this.federationRunId, this.modelId, receiverId, "MC.4",
-                    ++this.messageCount, MessageStatus.NEW, replyToMessageId, ok, error);
+            byte[] mc4Message = new MC4StatisticsErrorMessage(this.federationRunId, this.modelId, message.getSenderId(),
+                    ++this.messageCount, variableName, error).createByteArray();
             this.fsSocket.sendMore(identity);
             this.fsSocket.sendMore("");
             this.fsSocket.send(mc4Message, 0);

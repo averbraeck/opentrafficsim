@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import org.djunits.unit.FrequencyUnit;

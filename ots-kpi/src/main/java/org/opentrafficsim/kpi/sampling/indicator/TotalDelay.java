@@ -53,7 +53,7 @@ public class TotalDelay extends AbstractIndicator<Duration>
                 sumDist = sumDist.plus(trajectory.getTotalLength());
             }
         }
-        return sumTime.minus(sumDist.divideBy(this.referenceSpeed));
+        return sumTime.minus(sumDist.divide(this.referenceSpeed));
     }
 
     /** {@inheritDoc} */

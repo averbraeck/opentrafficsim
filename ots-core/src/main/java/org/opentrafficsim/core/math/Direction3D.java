@@ -4,10 +4,11 @@ import java.io.Serializable;
 import java.util.Locale;
 
 import org.djunits.unit.DirectionUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.DirectionVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 
 /**
  * 3D-rotation, RPY coded (longitudinal roll along the x-axis, lateral pitch along the y-axis and vertical yaw along the
@@ -32,13 +33,13 @@ public class Direction3D implements Serializable
 
     /**
      * @param rotation DirectionVector; the angles in 3D (RPY coded)
-     * @throws ValueException in case the vector does not have exactly three elements
+     * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
-    public Direction3D(final DirectionVector rotation) throws ValueException
+    public Direction3D(final DirectionVector rotation) throws ValueRuntimeException
     {
         if (rotation.size() != 3)
         {
-            throw new ValueException("Size of an RPY-rotation vector should be exactly 3. Got: " + rotation);
+            throw new ValueRuntimeException("Size of an RPY-rotation vector should be exactly 3. Got: " + rotation);
         }
         this.rotation = rotation;
     }
@@ -47,11 +48,11 @@ public class Direction3D implements Serializable
      * @param roll Direction; (phi) the rotation around the x-axis
      * @param pitch Direction; (theta) the rotation around the y-axis
      * @param yaw Direction; (psi) the rotation around the z-axis
-     * @throws ValueException in case the units are incorrect
+     * @throws ValueRuntimeException in case the units are incorrect
      */
-    public Direction3D(final Direction roll, final Direction pitch, final Direction yaw) throws ValueException
+    public Direction3D(final Direction roll, final Direction pitch, final Direction yaw) throws ValueRuntimeException
     {
-        this.rotation = new DirectionVector(new Direction[] {roll, pitch, yaw}, StorageType.DENSE);
+        this.rotation = DoubleVector.instantiate(new Direction[] {roll, pitch, yaw}, roll.getDisplayUnit(), StorageType.DENSE);
     }
 
     /**
@@ -59,11 +60,12 @@ public class Direction3D implements Serializable
      * @param pitch double; (theta) the rotation around the y-axis
      * @param yaw double; (psi) the rotation around the z-axis
      * @param unit DirectionUnit; the unit of the RPY parameters
-     * @throws ValueException in case the units are incorrect
+     * @throws ValueRuntimeException in case the units are incorrect
      */
-    public Direction3D(final double roll, final double pitch, final double yaw, final DirectionUnit unit) throws ValueException
+    public Direction3D(final double roll, final double pitch, final double yaw, final DirectionUnit unit)
+            throws ValueRuntimeException
     {
-        this.rotation = new DirectionVector(new double[] {roll, pitch, yaw}, unit, StorageType.DENSE);
+        this.rotation = DoubleVector.instantiate(new double[] {roll, pitch, yaw}, unit, StorageType.DENSE);
     }
 
     /**
@@ -75,7 +77,7 @@ public class Direction3D implements Serializable
         {
             return this.rotation.get(0);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(
@@ -93,7 +95,7 @@ public class Direction3D implements Serializable
         {
             return this.rotation.get(1);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(
@@ -111,7 +113,7 @@ public class Direction3D implements Serializable
         {
             return this.rotation.get(2);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(

@@ -1,34 +1,34 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.02.01/ots.xsd"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.03.00/ots.xsd"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <DEFINITIONS>
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml">
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutypes.xml">
       <xi:fallback>
-        <xi:include href="../xsd/1.02.01/defaults/default_gtutypes.xml">
+        <xi:include href="../xsd/1.03.00/defaults/default_gtutypes.xml">
           <xi:fallback>
-            <xi:include href="xsd/1.02.01/defaults/default_gtutypes.xml" />
+            <xi:include href="xsd/1.03.00/defaults/default_gtutypes.xml" />
           </xi:fallback>
         </xi:include>
       </xi:fallback>
     </xi:include>
     
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_linktypes.xml">
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_linktypes.xml">
       <xi:fallback>
-        <xi:include href="../xsd/1.02.01/defaults/default_linktypes.xml">
+        <xi:include href="../xsd/1.03.00/defaults/default_linktypes.xml">
           <xi:fallback>
-            <xi:include href="xsd/1.02.01/defaults/default_linktypes.xml" />
+            <xi:include href="xsd/1.03.00/defaults/default_linktypes.xml" />
           </xi:fallback>
         </xi:include>
       </xi:fallback>
     </xi:include>
 
-    <xi:include href="https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_lanetypes.xml">
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_lanetypes.xml">
       <xi:fallback>
-        <xi:include href="../xsd/1.02.01/defaults/default_lanetypes.xml">
+        <xi:include href="../xsd/1.03.00/defaults/default_lanetypes.xml">
           <xi:fallback>
-            <xi:include href="xsd/1.02.01/defaults/default_lanetypes.xml" />
+            <xi:include href="xsd/1.03.00/defaults/default_lanetypes.xml" />
           </xi:fallback>
         </xi:include>
       </xi:fallback>

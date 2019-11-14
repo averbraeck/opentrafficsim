@@ -219,7 +219,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
             carBuilder.setGtuType(getGtuType());
             Length carLength = getLengthDist().draw();
             carBuilder.setLength(carLength);
-            carBuilder.setFront(carLength.multiplyBy(0.75));
+            carBuilder.setFront(carLength.times(0.75));
             carBuilder.setWidth(getWidthDist().draw());
             carBuilder.setMaximumSpeed(getMaximumSpeedDist().draw());
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());
@@ -228,8 +228,8 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
             initialLongitudinalPositions.add(new DirectedLanePosition(this.lane, this.position, this.direction));
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setNetwork(this.network);
-            carBuilder.setMaximumAcceleration(Acceleration.createSI(3.0));
-            carBuilder.setMaximumDeceleration(Acceleration.createSI(-8.0));
+            carBuilder.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
+            carBuilder.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
             this.generatedGTUs++;
 
             if (enoughSpace(carBuilder))

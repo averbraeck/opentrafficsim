@@ -92,8 +92,8 @@ public interface Synchronization extends LmrsParameters
                     // this method also introduces very strong deceleration at low speeds, as the time step makes bMin go from
                     // 3.4
                     // (ignored, so maybe 1.25 acceleration applied) to >10
-                    // remainingDist = remainingDist.minus(Length.createSI(10));
-                    remainingDist = remainingDist.minus(laneChange.getMinimumLaneChangeDistance().multiplyBy(nCur));
+                    // remainingDist = remainingDist.minus(Length.instantiateSI(10));
+                    remainingDist = remainingDist.minus(laneChange.getMinimumLaneChangeDistance().times(nCur));
                 }
                 if (remainingDist.le0())
                 {
@@ -222,7 +222,7 @@ public interface Synchronization extends LmrsParameters
                 if (!followers.isEmpty())
                 {
                     HeadwayGTU follower = followers.first();
-                    Length netGap = leader.getDistance().plus(follower.getDistance()).multiplyBy(0.5);
+                    Length netGap = leader.getDistance().plus(follower.getDistance()).times(0.5);
                     gap = Length.max(gap, leader.getDistance().minus(netGap).plus(cfm.desiredHeadway(params, ownSpeed)));
                 }
                 a = CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, gap, leader.getSpeed());
@@ -300,7 +300,7 @@ public interface Synchronization extends LmrsParameters
             Length x0 = params.getParameter(ParameterTypes.LOOKAHEAD);
             Duration t0 = params.getParameter(ParameterTypes.T0);
             Duration lc = params.getParameter(ParameterTypes.LCDUR);
-            Speed tagSpeed = x0.divideBy(t0);
+            Speed tagSpeed = x0.divide(t0);
             double dCoop = params.getParameter(DCOOP);
             EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
             Speed ownSpeed = ego.getSpeed();
@@ -327,7 +327,7 @@ public interface Synchronization extends LmrsParameters
             {
                 int nCurTmp = lcInfo.getRequiredNumberOfLaneChanges();
                 // subtract minimum lane change distance per lane change
-                Length xCurTmp = lcInfo.getRemainingDistance().minus(ownLength.multiplyBy(2.0 * nCurTmp)).minus(dx);
+                Length xCurTmp = lcInfo.getRemainingDistance().minus(ownLength.times(2.0 * nCurTmp)).minus(dx);
                 if (xCurTmp.lt(xCur))
                 {
                     nCur = nCurTmp;
@@ -337,7 +337,7 @@ public interface Synchronization extends LmrsParameters
 
             // for short ramps, include braking distance, i.e. we -do- select a gap somewhat upstream of the merge point;
             // should we abandon this gap, we still have braking distance and minimum lane change distance left
-            Length xMergeSync = xCur.minus(Length.createSI(.5 * ownSpeed.si * ownSpeed.si / b.si));
+            Length xMergeSync = xCur.minus(Length.instantiateSI(.5 * ownSpeed.si * ownSpeed.si / b.si));
             xMergeSync = Length.min(xMerge, xMergeSync);
 
             // abandon the gap if the sync vehicle is no longer adjacent, in congestion within xMergeSync, or too far
@@ -433,7 +433,7 @@ public interface Synchronization extends LmrsParameters
                     double c = requiredBufferSpace(ownSpeed, nCur, x0, t0, lc, dCoop).si;
                     double t = (xCur.si - follower.getDistance().si - c) / follower.getSpeed().si;
                     double xGap = ownSpeed.si * (tMin.si + desire * (tMax.si - tMin.si));
-                    Acceleration acc = Acceleration.createSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
+                    Acceleration acc = Acceleration.instantiateSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
                     if (follower.getSpeed().eq0() || acc.si < -ownSpeed.si / t || t < 0)
                     {
                         // inappropriate to get behind
@@ -455,7 +455,7 @@ public interface Synchronization extends LmrsParameters
                         double c = requiredBufferSpace(ownSpeed, nCur, x0, t0, lc, dCoop).si;
                         double t = (xCur.si - leaders.first().getDistance().si - c) / leaders.first().getSpeed().si;
                         double xGap = ownSpeed.si * (tMin.si + desire * (tMax.si - tMin.si));
-                        Acceleration acc = Acceleration.createSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
+                        Acceleration acc = Acceleration.instantiateSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
                         if (!(leaders.first().getSpeed().eq0() || acc.si < -ownSpeed.si / t || t < 0))
                         {
                             a = Acceleration.max(a, acc);
@@ -471,8 +471,8 @@ public interface Synchronization extends LmrsParameters
                 {
                     // achieve speed to have sufficient time as soon as a lane change becomes possible (infrastructure)
                     Speed vMerge = xCur.lt(xMerge) ? Speed.ZERO
-                            : xCur.minus(xMerge).divideBy(t0.multiplyBy((1 - dCoop) * (nCur - 1)).plus(lc));
-                    vMerge = Speed.max(vMerge, x0.divideBy(t0));
+                            : xCur.minus(xMerge).divide(t0.times((1 - dCoop) * (nCur - 1)).plus(lc));
+                    vMerge = Speed.max(vMerge, x0.divide(t0));
                     a = Acceleration.min(a, CarFollowingUtil.approachTargetSpeed(cfm, params, ownSpeed, sli, xMerge, vMerge));
                 }
                 else
@@ -695,7 +695,7 @@ public interface Synchronization extends LmrsParameters
          *            ______                    ______
          */
         Length headwayAdjustment = params.getParameter(ParameterTypes.S0)
-                .plus(Length.min(followerLength, leader.getLength()).multiplyBy(0.5)).multiplyBy(tagExtent);
+                .plus(Length.min(followerLength, leader.getLength()).times(0.5)).times(tagExtent);
         Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance().plus(headwayAdjustment), followerSpeed,
                 leader.getSpeed(), desire, params, sli, cfm);
         return a;
@@ -770,9 +770,9 @@ public interface Synchronization extends LmrsParameters
     static Length requiredBufferSpace(final Speed speed, final int nCur, final Length x0, final Duration t0, final Duration lc,
             final double dCoop)
     {
-        Length xCrit = speed.multiplyBy(t0);
+        Length xCrit = speed.times(t0);
         xCrit = Length.max(xCrit, x0);
-        return speed.multiplyBy(lc).plus(xCrit.multiplyBy((nCur - 1.0) * (1.0 - dCoop)));
+        return speed.times(lc).plus(xCrit.times((nCur - 1.0) * (1.0 - dCoop)));
     }
 
     /**

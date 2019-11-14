@@ -53,21 +53,21 @@ public class DistributionsTest
     {
         // Test the various quantities
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist = Distributions.parseLengthDist("UNIFORM(1, 3) m");
-        assertEquals("unit is length", LengthUnit.METER, lengthDist.getUnit());
+        assertEquals("unit is length", LengthUnit.METER, lengthDist.getDisplayUnit());
         assertEquals("distribution is uniform", DistUniform.class, lengthDist.getDistribution().getClass());
         ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit> positionDist =
                 Distributions.parsePositionDist("UNIFORM(1, 3) m");
-        assertEquals("unit is position", PositionUnit.METER, positionDist.getUnit());
+        assertEquals("unit is position", PositionUnit.METER, positionDist.getDisplayUnit());
         assertEquals("distribution is uniform", DistUniform.class, positionDist.getDistribution().getClass());
         ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> durationDist =
                 Distributions.parseDurationDist("UNIFORM(1, 3) s");
-        assertEquals("unit is duration", DurationUnit.SI, durationDist.getUnit());
+        assertEquals("unit is duration", DurationUnit.SI, durationDist.getDisplayUnit());
         assertEquals("distribution is uniform", DistUniform.class, durationDist.getDistribution().getClass());
         ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit> timeDist = Distributions.parseTimeDist("UNIFORM(1, 3) s");
-        assertEquals("unit is time", TimeUnit.BASE, timeDist.getUnit());
+        assertEquals("unit is time", TimeUnit.DEFAULT, timeDist.getDisplayUnit());
         assertEquals("distribution is uniform", DistUniform.class, positionDist.getDistribution().getClass());
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedDist = Distributions.parseSpeedDist("UNIFORM(1, 3) m/s");
-        assertEquals("unit is speed", SpeedUnit.METER_PER_SECOND, speedDist.getUnit());
+        assertEquals("unit is speed", SpeedUnit.METER_PER_SECOND, speedDist.getDisplayUnit());
         assertEquals("distribution is uniform", DistUniform.class, speedDist.getDistribution().getClass());
         // Test the various distributions
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> dist = Distributions.parseLengthDist("CONST(123) m");

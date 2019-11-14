@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;

@@ -27,7 +27,7 @@ public final class MockDEVSSimulator
     public static OTSSimulatorInterface createMock()
     {
         OTSSimulatorInterface mockSimulator = Mockito.mock(OTSSimulatorInterface.class);
-        Mockito.when(mockSimulator.getSimulatorTime()).thenReturn(new Time(0.0, TimeUnit.BASE));
+        Mockito.when(mockSimulator.getSimulatorTime()).thenReturn(new Time(0.0, TimeUnit.DEFAULT));
         return mockSimulator;
     }
 }

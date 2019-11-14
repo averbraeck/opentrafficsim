@@ -35,7 +35,7 @@ public class ContinuousDistSpeed extends ContinuousDistDoubleScalar.Rel<Speed, S
     @Override
     public Speed draw()
     {
-        return new Speed(getDistribution().draw(), (SpeedUnit) getUnit());
+        return new Speed(getDistribution().draw(), (SpeedUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

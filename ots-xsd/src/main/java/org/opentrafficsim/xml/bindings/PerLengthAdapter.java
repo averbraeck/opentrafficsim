@@ -1,8 +1,5 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.logger.CategoryLogger;
 
@@ -14,7 +11,7 @@ import org.djutils.logger.CategoryLogger;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class PerLengthAdapter extends XmlAdapter<String, LinearDensity>
+public class PerLengthAdapter extends UnitAdapter<LinearDensity>
 {
     /** {@inheritDoc} */
     @Override
@@ -29,13 +26,6 @@ public class PerLengthAdapter extends XmlAdapter<String, LinearDensity>
             CategoryLogger.always().error(exception, "Problem parsing PerLength (LinearDensity) '" + field + "'");
             throw exception;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String marshal(final LinearDensity linearDensity) throws IllegalArgumentException
-    {
-        return Scalar.textualStringOfDefaultLocale(linearDensity);
     }
 
 }

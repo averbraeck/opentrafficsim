@@ -213,7 +213,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 Length gtuWidth = new Length(2, LengthUnit.METER);
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
                 LaneBasedGTU gtu = new LaneBasedIndividualGTU("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed,
-                        gtuLength.multiplyBy(0.5), simulator, network);
+                        gtuLength.times(0.5), simulator, network);
                 Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(pos, LengthUnit.METER);
                 DirectedLanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
@@ -232,7 +232,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                     System.out.println("let op. InitialLongitudinalPositions: " + initialLongitudinalPositions);
                 }
                 ((AbstractLaneBasedGTU) gtu).init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
-                if (initialPosition.plus(gtuLength.divideBy(2)).lt(a) || initialPosition.minus(gtuLength.divideBy(2)).gt(b))
+                if (initialPosition.plus(gtuLength.divide(2)).lt(a) || initialPosition.minus(gtuLength.divide(2)).gt(b))
                 {
                     assertEquals("event list is empty", 0, this.loggedEvents.size());
                 }
@@ -252,7 +252,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                     simulator.step();
                 }
                 System.out.println("simulation time is now " + simulator);
-                if (initialPosition.minus(gtuLength.divideBy(2)).lt(b))
+                if (initialPosition.minus(gtuLength.divide(2)).lt(b))
                 {
                     assertEquals("event list contains 2 events", 2, this.loggedEvents.size());
                 }

@@ -85,9 +85,9 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
             {
                 graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                 GeneralPath arrow = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
-                arrow.moveTo(0.5,  -0.5);
-                arrow.lineTo(2,  0);
-                arrow.lineTo(0.5,  0.5);
+                arrow.moveTo(0.5, -0.5);
+                arrow.lineTo(2, 0);
+                arrow.lineTo(0.5, 0.5);
                 graphics.draw(arrow);
             }
         }

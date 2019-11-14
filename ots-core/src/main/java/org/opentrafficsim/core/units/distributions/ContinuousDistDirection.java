@@ -36,7 +36,7 @@ public class ContinuousDistDirection extends ContinuousDistDoubleScalar.Abs<Dire
     @Override
     public Direction draw()
     {
-        return new Direction(getDistribution().draw(), (DirectionUnit) getUnit());
+        return new Direction(getDistribution().draw(), (DirectionUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

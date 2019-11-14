@@ -97,7 +97,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
         // sensor positions.
-        Length dy2 = getWidth().multiplyBy(0.5);
+        Length dy2 = getWidth().times(0.5);
         this.frontPos = new RelativePosition(front, Length.ZERO, Length.ZERO, RelativePosition.FRONT);
         this.relativePositions.put(RelativePosition.FRONT, this.frontPos);
         this.rearPos = new RelativePosition(front.minus(getLength()), Length.ZERO, Length.ZERO, RelativePosition.REAR);
@@ -114,7 +114,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
             Length x = i < 0 ? front.minus(getLength()) : front;
             for (int j = -1; j <= 1; j += 2)
             {
-                this.contourPoints.add(new RelativePosition(x, dy2.multiplyBy(j), Length.ZERO, RelativePosition.CONTOUR));
+                this.contourPoints.add(new RelativePosition(x, dy2.times(j), Length.ZERO, RelativePosition.CONTOUR));
             }
         }
     }

@@ -341,7 +341,7 @@ public abstract class Sampler<G extends GtuDataInterface>
             query.addSpaceTimeRegion(str.getLaneDirection(), str.getStartPosition(), str.getEndPosition(), str.getStartTime(),
                     str.getEndTime());
         }
-        List<TrajectoryGroup<G>> groups = query.getTrajectoryGroups(Time.createSI(Double.POSITIVE_INFINITY));
+        List<TrajectoryGroup<G>> groups = query.getTrajectoryGroups(Time.instantiateSI(Double.POSITIVE_INFINITY));
         try
         {
             // gather all meta data types for the header line

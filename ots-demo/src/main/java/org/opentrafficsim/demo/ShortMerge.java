@@ -140,7 +140,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
     static final boolean ADDITIONAL_INCENTIVES = true;
 
     /** Simulation time. */
-    public static final Time SIMTIME = Time.createSI(3600);
+    public static final Time SIMTIME = Time.instantiateSI(3600);
 
     /**
      * Create a ShortMerge Swing application.
@@ -183,7 +183,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         {
             OTSAnimator simulator = new OTSAnimator();
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, otsModel, new LmrsSwitchableColorer(), otsModel.getNetwork());
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
@@ -353,20 +353,20 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             // vehicle templates, with routes
             LaneBasedTemplateGTUType carA =
                     new LaneBasedTemplateGTUType(new GTUType("car", this.network.getGtuType(GTUType.DEFAULTS.CAR)),
-                            new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
-                            speedCar, strategicalFactory, routeGeneratorA);
+                            new ConstantGenerator<>(Length.instantiateSI(4.0)),
+                            new ConstantGenerator<>(Length.instantiateSI(2.0)), speedCar, strategicalFactory, routeGeneratorA);
             LaneBasedTemplateGTUType carF =
                     new LaneBasedTemplateGTUType(new GTUType("car", this.network.getGtuType(GTUType.DEFAULTS.CAR)),
-                            new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
-                            speedCar, strategicalFactory, routeGeneratorF);
-            LaneBasedTemplateGTUType truckA =
-                    new LaneBasedTemplateGTUType(new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK)),
-                            new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
-                            speedTruck, strategicalFactory, routeGeneratorA);
-            LaneBasedTemplateGTUType truckF =
-                    new LaneBasedTemplateGTUType(new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK)),
-                            new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
-                            speedTruck, strategicalFactory, routeGeneratorF);
+                            new ConstantGenerator<>(Length.instantiateSI(4.0)),
+                            new ConstantGenerator<>(Length.instantiateSI(2.0)), speedCar, strategicalFactory, routeGeneratorF);
+            LaneBasedTemplateGTUType truckA = new LaneBasedTemplateGTUType(
+                    new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+                    new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
+                    speedTruck, strategicalFactory, routeGeneratorA);
+            LaneBasedTemplateGTUType truckF = new LaneBasedTemplateGTUType(
+                    new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+                    new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
+                    speedTruck, strategicalFactory, routeGeneratorF);
             //
             Distribution<LaneBasedTemplateGTUType> gtuTypeAllCarA = new Distribution<>(streams.get("gtuClass"));
             gtuTypeAllCarA.add(new FrequencyAndObject<>(1.0, carA));
@@ -401,7 +401,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, colorer,
                     roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
 
-            new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.createSI(10),
+            new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.instantiateSI(10),
                     this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));
 
         }

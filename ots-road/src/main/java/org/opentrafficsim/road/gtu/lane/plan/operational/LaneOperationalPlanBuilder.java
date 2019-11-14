@@ -10,7 +10,7 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -29,7 +29,6 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -103,15 +102,15 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         Segment segment;
         if (startSpeed.eq(endSpeed))
         {
-            segment = new SpeedSegment(distance.divideBy(startSpeed));
+            segment = new SpeedSegment(distance.divide(startSpeed));
         }
         else
         {
             try
             {
                 // t = 2x / (vt + v0); a = (vt - v0) / t
-                Duration duration = distance.multiplyBy(2.0).divideBy(endSpeed.plus(startSpeed));
-                Acceleration acceleration = endSpeed.minus(startSpeed).divideBy(duration);
+                Duration duration = distance.times(2.0).divide(endSpeed.plus(startSpeed));
+                Acceleration acceleration = endSpeed.minus(startSpeed).divide(duration);
                 if (acceleration.si < 0.0 && acceleration.lt(maxDeceleration))
                 {
                     acceleration = maxDeceleration;
@@ -126,7 +125,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 }
                 segment = new OperationalPlan.AccelerationSegment(duration, acceleration);
             }
-            catch (ValueException ve)
+            catch (ValueRuntimeException ve)
             {
                 throw new OperationalPlanException(ve);
             }
@@ -183,7 +182,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         ArrayList<Segment> segmentList = new ArrayList<>();
         if (startSpeed.eq(endSpeed))
         {
-            segmentList.add(new OperationalPlan.SpeedSegment(distance.divideBy(startSpeed)));
+            segmentList.add(new OperationalPlan.SpeedSegment(distance.divide(startSpeed)));
         }
         else
         {
@@ -191,8 +190,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             {
                 if (endSpeed.gt(startSpeed))
                 {
-                    Duration t = endSpeed.minus(startSpeed).divideBy(acceleration);
-                    Length x = startSpeed.multiplyBy(t).plus(acceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
+                    Duration t = endSpeed.minus(startSpeed).divide(acceleration);
+                    Length x = startSpeed.times(t).plus(acceleration.times(0.5).times(t).times(t));
                     if (x.ge(distance))
                     {
                         // we cannot reach the end speed in the given distance with the given acceleration
@@ -205,14 +204,14 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                     {
                         // we reach the (higher) end speed before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, acceleration));
-                        Duration duration = distance.minus(x).divideBy(endSpeed);
+                        Duration duration = distance.minus(x).divide(endSpeed);
                         segmentList.add(new OperationalPlan.SpeedSegment(duration));
                     }
                 }
                 else
                 {
-                    Duration t = endSpeed.minus(startSpeed).divideBy(deceleration);
-                    Length x = startSpeed.multiplyBy(t).plus(deceleration.multiplyBy(0.5).multiplyBy(t).multiplyBy(t));
+                    Duration t = endSpeed.minus(startSpeed).divide(deceleration);
+                    Length x = startSpeed.times(t).plus(deceleration.times(0.5).times(t).times(t));
                     if (x.ge(distance))
                     {
                         // we cannot reach the end speed in the given distance with the given deceleration
@@ -232,12 +231,12 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                         }
                         // we reach the (lower) end speed, larger than zero, before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
-                        Duration duration = distance.minus(x).divideBy(endSpeed);
+                        Duration duration = distance.minus(x).divide(endSpeed);
                         segmentList.add(new OperationalPlan.SpeedSegment(duration));
                     }
                 }
             }
-            catch (ValueException ve)
+            catch (ValueRuntimeException ve)
             {
                 throw new OperationalPlanException(ve);
             }
@@ -273,7 +272,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
 
         Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
         Length distance =
-                Length.createSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
+                Length.instantiateSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
         List<Segment> segmentList = createAccelerationSegments(startSpeed, acceleration, brakingTime, timeStep);
         if (distance.le(MINIMUM_CREDIBLE_PATH_LENGTH))
         {
@@ -395,7 +394,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
 
         Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
         Length planDistance =
-                Length.createSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
+                Length.instantiateSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
         List<Segment> segmentList = createAccelerationSegments(startSpeed, acceleration, brakingTime, timeStep);
 
         try
@@ -456,7 +455,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         {
             return time;
         }
-        return Duration.createSI(t);
+        return Duration.instantiateSI(t);
     }
 
     /**

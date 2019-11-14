@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 

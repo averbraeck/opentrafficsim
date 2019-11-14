@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;

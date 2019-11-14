@@ -48,7 +48,7 @@ public class LinearACC extends AbstractLinearFreeControl
         double es =
                 leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDACC).si - settings.getParameter(X0).si;
         double ev = leader.getSpeed().si - gtu.getSpeed().si;
-        return Acceleration.createSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev);
+        return Acceleration.instantiateSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev);
     }
 
 }

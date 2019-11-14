@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -133,7 +133,7 @@ public class LaneBasedGTUTest implements UNITS
         Parameters parameters = DefaultTestParameters.create();
 
         LaneBasedIndividualGTU truck = new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed,
-                truckLength.multiplyBy(0.5), simulator, this.network);
+                truckLength.times(0.5), simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.setParameters(parameters);
@@ -210,7 +210,7 @@ public class LaneBasedGTUTest implements UNITS
                 parameters = DefaultTestParameters.create();
 
                 LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed,
-                        carLength.multiplyBy(0.5), simulator, this.network);
+                        carLength.times(0.5), simulator, this.network);
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
                 car.setParameters(parameters);
@@ -404,7 +404,7 @@ public class LaneBasedGTUTest implements UNITS
             Parameters parameters = DefaultTestParameters.create();
 
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType,
-                    new Length(4, METER), new Length(1.8, METER), maximumSpeed, Length.createSI(2.0), simulator, this.network);
+                    new Length(4, METER), new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
             car.setParameters(parameters);

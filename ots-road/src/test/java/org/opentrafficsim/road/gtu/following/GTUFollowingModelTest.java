@@ -15,7 +15,7 @@ import java.util.Set;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -120,7 +120,7 @@ public class GTUFollowingModelTest implements UNITS
         Parameters parameters = DefaultTestParameters.create();
         maxHeadway = parameters.getParameter(ParameterTypes.LOOKAHEAD);
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("12345", carType, length, width, maxSpeed,
-                length.multiplyBy(0.5), simulator, this.network);
+                length.times(0.5), simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
         gtu.setParameters(parameters);
@@ -169,7 +169,7 @@ public class GTUFollowingModelTest implements UNITS
         initialLongitudinalPositions50
                 .add(new DirectedLanePosition(lane, initialPosition.plus(headway50m), GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualGTU gtu50m = new LaneBasedIndividualGTU("100050", carType, length, width, maxSpeed,
-                length.multiplyBy(0.5), simulator, this.network);
+                length.times(0.5), simulator, this.network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu50m), gtu50m);
         gtu50m.setParameters(parameters);
@@ -200,7 +200,7 @@ public class GTUFollowingModelTest implements UNITS
         Length headway100m = new Length(100, METER);
         initialLongitudinalPositions100.put(lane, initialPosition.plus(headway100m));
         LaneBasedIndividualGTU gtu100m = new LaneBasedIndividualGTU("100100", carType, length, width, maxSpeed,
-                length.multiplyBy(0.5), simulator, this.network);
+                length.times(0.5), simulator, this.network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu100m), gtu100m);
         gtu100m.setParameters(parameters);
@@ -237,7 +237,7 @@ public class GTUFollowingModelTest implements UNITS
         Length ahead = new Length(1, METER);
         initialLongitudinalPositionsOverlapping.put(lane, initialPosition.plus(ahead));
         LaneBasedIndividualGTU gtu1m = new LaneBasedIndividualGTU("100100" + this.gtuIdGenerator.nextId(), carType, length,
-                width, maxSpeed, length.multiplyBy(0.5), simulator, this.network);
+                width, maxSpeed, length.times(0.5), simulator, this.network);
         strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu1m), gtu1m);
         gtu1m.setParameters(parameters);
@@ -261,7 +261,7 @@ public class GTUFollowingModelTest implements UNITS
         initialLongitudinalPositionsMinus75
                 .add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus75m), GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualGTU gtuMinus75m = new LaneBasedIndividualGTU("100075", carType, length, width, maxSpeed,
-                length.multiplyBy(0.5), simulator, this.network);
+                length.times(0.5), simulator, this.network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtuMinus75m), gtuMinus75m);
         gtuMinus75m.setParameters(parameters);
@@ -283,7 +283,7 @@ public class GTUFollowingModelTest implements UNITS
         initialLongitudinalPositionsMinus200
                 .add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus200m), GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualGTU gtuMinus200m = new LaneBasedIndividualGTU("100200", carType, length, width, maxSpeed,
-                length.multiplyBy(0.5), simulator, this.network);
+                length.times(0.5), simulator, this.network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtuMinus200m), gtuMinus200m);
         gtuMinus200m.setParameters(parameters);

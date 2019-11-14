@@ -113,7 +113,7 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
                 {
                     OTSAnimator simulator = new OTSAnimator();
                     TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
-                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), openDriveModel);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), openDriveModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, openDriveModel, DEFAULT_COLORER, openDriveModel.getNetwork());
                     new TestOpenDriveParserNoRTI(openDriveModel, animationPanel);
@@ -441,7 +441,7 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
                 try
                 {
                     directedLanePosition = new DirectedLanePosition(lane,
-                            initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                            initialPosDist.draw().times(lane.getCenterLine().getLengthSI()), dir);
                 }
                 catch (GTUException exception1)
                 {
@@ -490,7 +490,7 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
                     try
                     {
                         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(String.valueOf(i), carType, carLength,
-                                widthDist.draw(), maxSpeedDist.draw(), carLength.multiplyBy(0.5), this.simulator, this.network);
+                                widthDist.draw(), maxSpeedDist.draw(), carLength.times(0.5), this.simulator, this.network);
                         car.init(strategicalPlannerFactory.create(car, cr, null, null), lanepositionSet, Speed.ZERO);
                         this.rtiCars.add(car);
                     }

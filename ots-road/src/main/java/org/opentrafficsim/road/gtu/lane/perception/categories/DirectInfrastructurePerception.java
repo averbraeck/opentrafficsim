@@ -653,9 +653,9 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             if ((lat.isLeft() && this.record.possibleLeft(this.legal))
                     || (lat.isRight() && this.record.possibleRight(this.legal)))
             {
-                return Length.createSI(d); // possible over d
+                return Length.instantiateSI(d); // possible over d
             }
-            return Length.createSI(-d); // not possible over d
+            return Length.instantiateSI(-d); // not possible over d
         }
 
     }

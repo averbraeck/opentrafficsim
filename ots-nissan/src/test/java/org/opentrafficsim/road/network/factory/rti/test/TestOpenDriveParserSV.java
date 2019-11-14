@@ -117,7 +117,7 @@ public class TestOpenDriveParserSV extends OTSSimulationApplication<OTSModelInte
                 {
                     OTSAnimator simulator = new OTSAnimator();
                     TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
-                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), openDriveModel);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), openDriveModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, openDriveModel, DEFAULT_COLORER, openDriveModel.getNetwork());
                     new TestOpenDriveParserSV(openDriveModel, animationPanel);
@@ -443,7 +443,7 @@ public class TestOpenDriveParserSV extends OTSSimulationApplication<OTSModelInte
                 try
                 {
                     directedLanePosition = new DirectedLanePosition(lane,
-                            initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                            initialPosDist.draw().times(lane.getCenterLine().getLengthSI()), dir);
                 }
                 catch (GTUException exception1)
                 {

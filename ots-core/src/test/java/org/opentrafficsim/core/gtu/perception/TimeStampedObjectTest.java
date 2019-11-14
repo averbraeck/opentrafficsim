@@ -27,10 +27,10 @@ public class TimeStampedObjectTest
     public final void testAll()
     {
         String string1 = "string 1";
-        Time time1 = new Time(1234, TimeUnit.BASE);
+        Time time1 = new Time(1234, TimeUnit.DEFAULT);
         TimeStampedObject<String> tso1 = new TimeStampedObject<String>(string1, time1);
         String string2 = "string 2";
-        Time time2 = new Time(2345, TimeUnit.BASE);
+        Time time2 = new Time(2345, TimeUnit.DEFAULT);
         TimeStampedObject<String> tso2 = new TimeStampedObject<String>(string2, time2);
         verifyFields(tso1, string1, time1);
         verifyFields(tso2, string2, time2);

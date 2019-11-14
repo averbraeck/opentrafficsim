@@ -10,7 +10,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DirectionUnit;
-import org.djunits.value.AngleUtil;
+import org.djunits.value.util.AngleUtil;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.reflection.ClassUtil;

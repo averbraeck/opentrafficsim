@@ -39,7 +39,7 @@ public class RTICar extends LaneBasedIndividualGTU
             final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
             throws NamingException, GTUException, OperationalPlanException
     {
-        super(valueOf, carType, carLength, width, maxSpeed, carLength.multiplyBy(0.5), simulator, network);
+        super(valueOf, carType, carLength, width, maxSpeed, carLength.times(0.5), simulator, network);
         this.current = this.getOperationalPlan().getLocation(simulator.getSimulatorTime());
     }
 

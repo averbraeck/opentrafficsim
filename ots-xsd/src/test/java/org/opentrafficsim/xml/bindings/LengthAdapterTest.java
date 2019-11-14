@@ -21,7 +21,7 @@ public class LengthAdapterTest
 {
     /** the allowed units. */
     LengthUnit[] units = new LengthUnit[] {LengthUnit.MILLIMETER, LengthUnit.CENTIMETER, LengthUnit.DECIMETER, LengthUnit.METER,
-            LengthUnit.DEKAMETER, LengthUnit.HECTOMETER, LengthUnit.KILOMETER, LengthUnit.MILE, LengthUnit.YARD,
+            LengthUnit.DECAMETER, LengthUnit.HECTOMETER, LengthUnit.KILOMETER, LengthUnit.MILE, LengthUnit.YARD,
             LengthUnit.FOOT};
 
     /** the corresponding strings. */

@@ -16,7 +16,6 @@ import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -120,7 +119,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public final ImmutableMap<TYPE, RelativePosition> getRelativePositions()
+    public final ImmutableMap<RelativePosition.TYPE, RelativePosition> getRelativePositions()
     {
         return null;
     }

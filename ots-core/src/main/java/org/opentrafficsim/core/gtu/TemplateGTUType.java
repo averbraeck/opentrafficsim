@@ -58,7 +58,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator) throws NullPointerException
     {
         this(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
-                new ConstantGenerator<>(Acceleration.createSI(3.0)), new ConstantGenerator<>(Acceleration.createSI(-8.0)));
+                new ConstantGenerator<>(Acceleration.instantiateSI(3.0)), new ConstantGenerator<>(Acceleration.instantiateSI(-8.0)));
     }
 
     /**
@@ -109,7 +109,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
         Throw.when(deceleration.si >= 0, IllegalArgumentException.class, "Deceleration should be below 0.");
         Length length = this.lengthGenerator.draw();
         return new GTUCharacteristics(this.gtuType, length, this.widthGenerator.draw(), this.maximumSpeedGenerator.draw(),
-                acceleration, deceleration, length.multiplyBy(0.75));
+                acceleration, deceleration, length.times(0.75));
     }
 
     /**

@@ -51,7 +51,7 @@ public class LinearCACC extends LinearACC
                 leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDCACC).si - settings.getParameter(X0).si;
         double ev = leader.getSpeed().si - gtu.getSpeed().si;
         double kaui = settings.getParameter(KA) * leader.getAcceleration().si;
-        return Acceleration.createSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev + kaui);
+        return Acceleration.instantiateSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev + kaui);
     }
 
 }

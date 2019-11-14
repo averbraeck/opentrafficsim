@@ -197,8 +197,8 @@ public class IMBSampler extends Sampler<GtuData>
         if ((!this.lastLanes.containsKey(gtuId) || !this.lastLanes.get(gtuId).equals(kpiLaneDirection))
                 && contains(kpiLaneDirection))
         {
-            processGtuAddEvent(kpiLaneDirection, Length.createSI(longitudinalPosition), Speed.createSI(speed),
-                    Acceleration.createSI(acceleration), now(), gtu);
+            processGtuAddEvent(kpiLaneDirection, Length.instantiateSI(longitudinalPosition), Speed.instantiateSI(speed),
+                    Acceleration.instantiateSI(acceleration), now(), gtu);
         }
         else if (contains(kpiLaneDirection))
         {
@@ -220,8 +220,8 @@ public class IMBSampler extends Sampler<GtuData>
             }
             // END TEST LOOP
             // move on current
-            processGtuMoveEvent(kpiLaneDirection, Length.createSI(longitudinalPosition), Speed.createSI(speed),
-                    Acceleration.createSI(acceleration), now(), gtu);
+            processGtuMoveEvent(kpiLaneDirection, Length.instantiateSI(longitudinalPosition), Speed.instantiateSI(speed),
+                    Acceleration.instantiateSI(acceleration), now(), gtu);
         }
         this.lastLanes.put(gtuId, kpiLaneDirection);
     }

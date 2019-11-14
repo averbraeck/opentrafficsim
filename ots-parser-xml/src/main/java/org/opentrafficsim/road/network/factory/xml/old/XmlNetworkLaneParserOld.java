@@ -19,10 +19,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
@@ -189,12 +190,12 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws OTSGeometryException when construction of a lane contour or offset design line fails
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      * @throws ParameterException ...
-     * @throws ValueException ...
+     * @throws ValueRuntimeException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
     public final OTSRoadNetwork build(final URL url, final boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
-            OTSGeometryException, SimRuntimeException, ValueException, ParameterException
+            OTSGeometryException, SimRuntimeException, ValueRuntimeException, ParameterException
     {
         return build(url, new OTSRoadNetwork(url.toString(), true), interpretXMLComments);
     }
@@ -213,12 +214,12 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws OTSGeometryException when construction of a lane contour or offset design line fails
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      * @throws ParameterException ...
-     * @throws ValueException ...
+     * @throws ValueRuntimeException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
     public final OTSRoadNetwork build(final InputStream stream, final boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
-            OTSGeometryException, SimRuntimeException, ValueException, ParameterException
+            OTSGeometryException, SimRuntimeException, ValueRuntimeException, ParameterException
     {
         return build(stream, new OTSRoadNetwork(stream.toString(), true), interpretXMLComments);
     }
@@ -238,12 +239,12 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws OTSGeometryException when construction of a lane contour or offset design line fails
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      * @throws ParameterException ...
-     * @throws ValueException ...
+     * @throws ValueRuntimeException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
     public final OTSRoadNetwork build(final URL url, final OTSRoadNetwork otsNetwork, final boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
-            OTSGeometryException, SimRuntimeException, ValueException, ParameterException
+            OTSGeometryException, SimRuntimeException, ValueRuntimeException, ParameterException
     {
         return build(url.openStream(), otsNetwork, interpretXMLComments);
     }
@@ -263,12 +264,12 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws OTSGeometryException when construction of a lane contour or offset design line fails
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      * @throws ParameterException ...
-     * @throws ValueException ...
+     * @throws ValueRuntimeException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
     public final OTSRoadNetwork build(final InputStream stream, final OTSRoadNetwork otsNetwork, final boolean interpretXMLComments)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
-            OTSGeometryException, SimRuntimeException, ValueException, ParameterException
+            OTSGeometryException, SimRuntimeException, ValueRuntimeException, ParameterException
     {
         // try
         // {
@@ -399,12 +400,12 @@ public class XmlNetworkLaneParserOld implements Serializable
      * @throws OTSGeometryException might happen if a centroid is positioned on top of the entry exit point of a link
      * @throws NamingException on error
      * @throws RemoteException on error
-     * @throws ValueException on error
+     * @throws ValueRuntimeException on error
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
     private void fixOD(final OTSRoadNetwork otsNetwork) throws NetworkException, OTSGeometryException, RemoteException,
-            NamingException, ValueException, ParameterException, SimRuntimeException
+            NamingException, ValueRuntimeException, ParameterException, SimRuntimeException
     {
         // Reduce the list to only OD comments and strip the OD header and parse each into a key-value map.
         Map<String, Map<String, String>> odInfo = new LinkedHashMap<>();
@@ -525,7 +526,7 @@ public class XmlNetworkLaneParserOld implements Serializable
         double start = Double.parseDouble(startTimeString);
         start = 0;
         double duration = Double.parseDouble(durations.get(startTimeString));
-        TimeVector tv = new TimeVector(new double[] {start, start + duration}, TimeUnit.BASE, StorageType.DENSE);
+        TimeVector tv = DoubleVector.instantiate(new double[] {start, start + duration}, TimeUnit.DEFAULT, StorageType.DENSE);
         // Categorization categorization = new Categorization("AimsunOTSExport", firstGTUType, otherGTUTypes);
         Categorization categorization = new Categorization("AimsunOTSExport", GTUType.class);
         ODMatrix od = new ODMatrix("ODExample", new ArrayList<>(origins), new ArrayList<>(destinations), categorization, tv,
@@ -553,7 +554,7 @@ public class XmlNetworkLaneParserOld implements Serializable
             Category category = new Category(categorization, gtuType);
             org.opentrafficsim.core.network.Node from = otsNetwork.getNode(map.get("origin"));
             org.opentrafficsim.core.network.Node to = otsNetwork.getNode(map.get("destination"));
-            FrequencyVector demand = new FrequencyVector(new double[] {Double.parseDouble(map.get("flow")), 0},
+            FrequencyVector demand = DoubleVector.instantiate(new double[] {Double.parseDouble(map.get("flow")), 0},
                     FrequencyUnit.PER_HOUR, StorageType.DENSE);
             od.putDemandVector(from, to, category, demand);
             System.out.println(

@@ -35,7 +35,7 @@ public class ContinuousDistAngle extends ContinuousDistDoubleScalar.Rel<Angle, A
     @Override
     public Angle draw()
     {
-        return new Angle(getDistribution().draw(), (AngleUnit) getUnit());
+        return new Angle(getDistribution().draw(), (AngleUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

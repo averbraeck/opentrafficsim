@@ -135,7 +135,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
             double fromRight = this.antFromRight.get(lane);
             v = v < fromRight ? v : fromRight;
         }
-        return Speed.createSI(v);
+        return Speed.instantiateSI(v);
     }
 
     /**

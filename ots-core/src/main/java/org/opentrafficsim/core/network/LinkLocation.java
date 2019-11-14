@@ -47,7 +47,7 @@ public class LinkLocation implements Serializable
     {
         super();
         this.link = link;
-        this.fractionalLongitudinalPosition = position.divideBy(this.link.getLength()).doubleValue();
+        this.fractionalLongitudinalPosition = position.divide(this.link.getLength()).doubleValue();
     }
 
     /**
@@ -96,6 +96,6 @@ public class LinkLocation implements Serializable
     public final String toString()
     {
         return String.format("%s %.3f%s", getLink(), getLongitudinalPosition().getInUnit(),
-                getLongitudinalPosition().getUnit());
+                getLongitudinalPosition().getDisplayUnit());
     }
 }

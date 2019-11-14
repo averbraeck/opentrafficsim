@@ -62,7 +62,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Margin to find upstream conflicts who's ends are downstream, needed as the algorithm searches beyond a location. */
-    private static final Length MARGIN = Length.createSI(0.001);
+    private static final Length MARGIN = Length.instantiateSI(0.001);
 
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
@@ -225,9 +225,9 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                         double dStart = line1.getLocation(pos1a).distance(line2.getLocation(pos2a));
                         double dEnd = line1.getLocation(pos1b).distance(line2.getLocation(pos2b));
                         Length startWidth =
-                                Length.createSI(dStart + .5 * thisLane.getWidth(pos1a).si + .5 * otherLane.getWidth(pos2a).si);
+                                Length.instantiateSI(dStart + .5 * thisLane.getWidth(pos1a).si + .5 * otherLane.getWidth(pos2a).si);
                         Length endWidth =
-                                Length.createSI(dEnd + .5 * thisLane.getWidth(pos1b).si + .5 * otherLane.getWidth(pos2b).si);
+                                Length.instantiateSI(dEnd + .5 * thisLane.getWidth(pos1b).si + .5 * otherLane.getWidth(pos2b).si);
 
                         headwayConflict = new HeadwayConflict(conflictType, conflictPriority, conflictRuleType, id, distance,
                                 length, conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs,

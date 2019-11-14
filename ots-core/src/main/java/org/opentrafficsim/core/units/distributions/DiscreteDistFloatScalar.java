@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.AngleSolidUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
@@ -27,6 +26,7 @@ import org.djunits.unit.MassUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
 import org.djunits.unit.PressureUnit;
+import org.djunits.unit.SolidAngleUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TemperatureUnit;
 import org.djunits.unit.TimeUnit;
@@ -34,13 +34,9 @@ import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
-import org.djunits.value.Relative;
-import org.djunits.value.vfloat.scalar.AbstractFloatScalarAbs;
-import org.djunits.value.vfloat.scalar.AbstractFloatScalarRel;
 import org.djunits.value.vfloat.scalar.FloatAbsoluteTemperature;
 import org.djunits.value.vfloat.scalar.FloatAcceleration;
 import org.djunits.value.vfloat.scalar.FloatAngle;
-import org.djunits.value.vfloat.scalar.FloatAngleSolid;
 import org.djunits.value.vfloat.scalar.FloatArea;
 import org.djunits.value.vfloat.scalar.FloatDensity;
 import org.djunits.value.vfloat.scalar.FloatDimensionless;
@@ -61,12 +57,15 @@ import org.djunits.value.vfloat.scalar.FloatMass;
 import org.djunits.value.vfloat.scalar.FloatPosition;
 import org.djunits.value.vfloat.scalar.FloatPower;
 import org.djunits.value.vfloat.scalar.FloatPressure;
-import org.djunits.value.vfloat.scalar.FloatScalar;
+import org.djunits.value.vfloat.scalar.FloatSolidAngle;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djunits.value.vfloat.scalar.FloatTemperature;
 import org.djunits.value.vfloat.scalar.FloatTime;
 import org.djunits.value.vfloat.scalar.FloatTorque;
 import org.djunits.value.vfloat.scalar.FloatVolume;
+import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarAbs;
+import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarRel;
+import org.djunits.value.vfloat.scalar.base.FloatScalar;
 
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
@@ -114,7 +113,7 @@ public interface DiscreteDistFloatScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -133,7 +132,7 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatTime((float) getDistribution().draw(), (TimeUnit) getUnit());
 
                 default:
-                    return (T) new FloatScalar.Abs(getDistribution().draw(), (AU) getUnit());
+                    return (T) FloatScalar.instantiate(getDistribution().draw(), (AU) getUnit());
             }
         }
 
@@ -151,7 +150,7 @@ public interface DiscreteDistFloatScalar
      * @param <U> The unit type used
      */
     class Rel<T extends AbstractFloatScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-            implements Relative, Serializable
+            implements Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -177,7 +176,7 @@ public interface DiscreteDistFloatScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -188,8 +187,8 @@ public interface DiscreteDistFloatScalar
                 case "AngleUnit":
                     return (T) new FloatAngle((float) getDistribution().draw(), (AngleUnit) getUnit());
 
-                case "AngleSolidUnit":
-                    return (T) new FloatAngleSolid((float) getDistribution().draw(), (AngleSolidUnit) getUnit());
+                case "SolidAngleUnit":
+                    return (T) new FloatSolidAngle((float) getDistribution().draw(), (SolidAngleUnit) getUnit());
 
                 case "AreaUnit":
                     return (T) new FloatArea((float) getDistribution().draw(), (AreaUnit) getUnit());
@@ -260,7 +259,7 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatVolume((float) getDistribution().draw(), (VolumeUnit) getUnit());
 
                 default:
-                    return (T) new FloatScalar.Rel(getDistribution().draw(), getUnit());
+                    return (T) FloatScalar.instantiate(getDistribution().draw(), (U) getUnit());
             }
         }
 

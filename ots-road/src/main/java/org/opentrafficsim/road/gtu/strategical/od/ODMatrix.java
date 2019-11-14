@@ -13,12 +13,13 @@ import java.util.TreeMap;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.network.NetworkException;
@@ -263,9 +264,9 @@ public class ODMatrix implements Serializable, Identifiable
         Time prevTime;
         try
         {
-            prevTime = timeVector.get(0).eq0() ? Time.createSI(-1.0) : Time.ZERO;
+            prevTime = timeVector.get(0).eq0() ? Time.instantiateSI(-1.0) : Time.ZERO;
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // verified to be > 1, so no empty vector
             throw new RuntimeException("Unexpected exception while checking time vector.", exception);
@@ -330,9 +331,9 @@ public class ODMatrix implements Serializable, Identifiable
             }
             try
             {
-                demandScaled = new FrequencyVector(scaled, demand.getUnit(), demand.getStorageType());
+                demandScaled = DoubleVector.instantiate(scaled, demand.getDisplayUnit(), demand.getStorageType());
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 // cannot happen, we use an existing vector
                 throw new RuntimeException("An object was null.", exception);
@@ -376,9 +377,9 @@ public class ODMatrix implements Serializable, Identifiable
         FrequencyVector demandScaled;
         try
         {
-            demandScaled = new FrequencyVector(scaled, demand.getUnit(), demand.getStorageType());
+            demandScaled = DoubleVector.instantiate(scaled, demand.getDisplayUnit(), demand.getStorageType());
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // cannot happen, we use an existing vector
             throw new RuntimeException("An object was null.", exception);
@@ -579,10 +580,10 @@ public class ODMatrix implements Serializable, Identifiable
                         - timeVector.get(i).getInUnit(TimeUnit.BASE_HOUR));
             }
             // last value can remain zero as initialized
-            putDemandVector(origin, destination, category, new FrequencyVector(flow, FrequencyUnit.PER_HOUR, StorageType.DENSE),
+            putDemandVector(origin, destination, category, DoubleVector.instantiate(flow, FrequencyUnit.PER_HOUR, StorageType.DENSE),
                     timeVector, Interpolation.STEPWISE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should not happen as we check and then loop over the array length
             throw new RuntimeException("Could not translate trip vector into demand vector.", exception);
@@ -614,7 +615,7 @@ public class ODMatrix implements Serializable, Identifiable
             {
                 trips[i] = interpolation.integrate(demand.get(i), time.get(i), demand.get(i + 1), time.get(i + 1));
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 // should not happen as we loop over the array length
                 throw new RuntimeException("Could not translate demand vector into trip vector.", exception);
@@ -651,7 +652,7 @@ public class ODMatrix implements Serializable, Identifiable
             return interpolation.integrate(demand.get(periodIndex), time.get(periodIndex), demand.get(periodIndex + 1),
                     time.get(periodIndex + 1));
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should not happen as the index was checked
             throw new RuntimeException("Could not get number of trips.", exception);
@@ -690,10 +691,10 @@ public class ODMatrix implements Serializable, Identifiable
             Throw.when(dem[periodIndex] < -additionalDemand, UnsupportedOperationException.class,
                     "Demand may not become negative.");
             dem[periodIndex] += additionalDemand;
-            putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE),
+            putDemandVector(origin, destination, category, DoubleVector.instantiate(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE),
                     time, Interpolation.STEPWISE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should not happen as the index was checked
             throw new RuntimeException("Unexpected exception while getting number of trips.", exception);
@@ -775,7 +776,7 @@ public class ODMatrix implements Serializable, Identifiable
                 {
                     sum += interpolation.integrate(demand.get(i), time.get(i), demand.get(i + 1), time.get(i + 1));
                 }
-                catch (ValueException exception)
+                catch (ValueRuntimeException exception)
                 {
                     // should not happen as we loop over the array length
                     throw new RuntimeException("Unexcepted exception while determining total trips over time.", exception);

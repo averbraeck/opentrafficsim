@@ -39,7 +39,7 @@ public class CycleTimeLightController implements RampMeteringLightController
 {
 
     /** Minimum red duration. */
-    private static final Duration MIN_RED_TIME = Duration.createSI(2.0);
+    private static final Duration MIN_RED_TIME = Duration.instantiateSI(2.0);
 
     /** Whether the controller is enabled. */
     private boolean enabled = false;
@@ -76,7 +76,7 @@ public class CycleTimeLightController implements RampMeteringLightController
         {
             Try.execute(() -> new RampMeteringSensor(trafficLight, simulator, compatible),
                     "Unexpected exception while creating a detector with a ramp metering traffic light.");
-            this.greenStarts.put(trafficLight, Time.createSI(Double.NEGATIVE_INFINITY));
+            this.greenStarts.put(trafficLight, Time.instantiateSI(Double.NEGATIVE_INFINITY));
         }
     }
 

@@ -36,7 +36,7 @@ public class ContinuousDistTime extends ContinuousDistDoubleScalar.Abs<Time, Tim
     @Override
     public Time draw()
     {
-        return new Time(getDistribution().draw(), (TimeUnit) getUnit());
+        return new Time(getDistribution().draw(), (TimeUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.core.network.NetworkException;
@@ -33,9 +33,9 @@ public final class LengthUnits implements UNITS
         LENGTH_UNITS.put("mm", MILLIMETER);
         LENGTH_UNITS.put("cm", CENTIMETER);
         LENGTH_UNITS.put("dm", DECIMETER);
-        LENGTH_UNITS.put("dam", DEKAMETER);
-        LENGTH_UNITS.put("hm", HECTOMETER);
         LENGTH_UNITS.put("m", METER);
+        LENGTH_UNITS.put("dam", DECAMETER);
+        LENGTH_UNITS.put("hm", HECTOMETER);
         LENGTH_UNITS.put("km", KILOMETER);
         LENGTH_UNITS.put("mi", MILE);
         LENGTH_UNITS.put("y", YARD);
@@ -44,9 +44,9 @@ public final class LengthUnits implements UNITS
         PER_LENGTH_UNITS.put("/mm", PER_MILLIMETER);
         PER_LENGTH_UNITS.put("/cm", PER_CENTIMETER);
         PER_LENGTH_UNITS.put("/dm", PER_DECIMETER);
-        PER_LENGTH_UNITS.put("/dam", PER_DEKAMETER);
-        PER_LENGTH_UNITS.put("/hm", PER_HECTOMETER);
         PER_LENGTH_UNITS.put("/m", PER_METER);
+        PER_LENGTH_UNITS.put("/dam", PER_DECAMETER);
+        PER_LENGTH_UNITS.put("/hm", PER_HECTOMETER);
         PER_LENGTH_UNITS.put("/km", PER_KILOMETER);
         PER_LENGTH_UNITS.put("/mi", PER_MILE);
         PER_LENGTH_UNITS.put("/y", PER_YARD);

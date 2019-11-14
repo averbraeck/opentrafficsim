@@ -220,7 +220,7 @@ public final class LmrsUtil implements LmrsParameters
                                             params.getParameter(DCOOP)));
                             if (thisBoundary.le0())
                             {
-                                thisBoundary = info.getRemainingDistance().divideBy(info.getRequiredNumberOfLaneChanges());
+                                thisBoundary = info.getRemainingDistance().divide(info.getRequiredNumberOfLaneChanges());
                             }
                             boundary = boundary == null || thisBoundary.si < boundary.si ? thisBoundary : boundary;
                         }
@@ -633,7 +633,7 @@ public final class LmrsUtil implements LmrsParameters
         double limitedDesire = desire < 0 ? 0 : desire > 1 ? 1 : desire;
         double tDes = limitedDesire * params.getParameter(TMIN).si + (1 - limitedDesire) * params.getParameter(TMAX).si;
         double t = params.getParameter(T).si;
-        params.setParameterResettable(T, Duration.createSI(tDes < t ? tDes : t));
+        params.setParameterResettable(T, Duration.instantiateSI(tDes < t ? tDes : t));
     }
 
     /**

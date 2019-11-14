@@ -82,11 +82,11 @@ class PlanViewTag implements Serializable
 
             lastGeometryTag.x = new Length(0.0, LengthUnit.METER);
 
-            lastGeometryTag.x = previousTag.x.plus(previousTag.length.multiplyBy(Math.cos(previousTag.hdg.si)));
+            lastGeometryTag.x = previousTag.x.plus(previousTag.length.times(Math.cos(previousTag.hdg.si)));
 
             lastGeometryTag.y = new Length(0.0, LengthUnit.METER);
 
-            lastGeometryTag.y = previousTag.y.plus(previousTag.length.multiplyBy(Math.sin(previousTag.hdg.si)));
+            lastGeometryTag.y = previousTag.y.plus(previousTag.length.times(Math.sin(previousTag.hdg.si)));
 
             lastGeometryTag.hdg = previousTag.hdg;
 
@@ -133,7 +133,7 @@ class PlanViewTag implements Serializable
             Length beHeight = elevationTags.get(before).elevation;
             Length afHeight = elevationTags.get(after).elevation;
 
-            return afHeight.minus(beHeight).multiplyBy(factor).plus(beHeight);
+            return afHeight.minus(beHeight).times(factor).plus(beHeight);
         }
     }
 
@@ -160,14 +160,14 @@ class PlanViewTag implements Serializable
 
         List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
 
-        Length x1 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.5));
-        Length y1 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.5));
+        Length x1 = geometryTag.x.plus(geometryTag.length.times(Math.cos(geometryTag.hdg.si)).times(0.5));
+        Length y1 = geometryTag.y.plus(geometryTag.length.times(Math.sin(geometryTag.hdg.si)).times(0.5));
 
         OTSPoint3D p = new OTSPoint3D(x1.si, y1.si, 0);
         pOutPut.add(p);
 
-        Length x2 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.66));
-        Length y2 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.66));
+        Length x2 = geometryTag.x.plus(geometryTag.length.times(Math.cos(geometryTag.hdg.si)).times(0.66));
+        Length y2 = geometryTag.y.plus(geometryTag.length.times(Math.sin(geometryTag.hdg.si)).times(0.66));
 
         OTSPoint3D q = new OTSPoint3D(x2.si, y2.si, 0);
         pOutPut.add(q);

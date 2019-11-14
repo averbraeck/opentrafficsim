@@ -35,7 +35,7 @@ public class ContinuousDistDimensionless extends ContinuousDistDoubleScalar.Rel<
     @Override
     public Dimensionless draw()
     {
-        return new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
+        return new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

@@ -93,7 +93,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
             final CircularLaneModel otsModel = new CircularLaneModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularLaneSwing app = new CircularLaneSwing("Circular Lane", animationPanel, otsModel);
@@ -134,7 +134,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
 
-        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.createSI(10.0), simulator, sampler, path));
+        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler, path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));

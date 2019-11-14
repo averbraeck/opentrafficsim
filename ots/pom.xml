@@ -69,10 +69,10 @@
 
     <tinylog.version>1.3.5</tinylog.version>
     <ots.version>${project.version}</ots.version>
-    <djunits.version>3.01.04</djunits.version>
-    <djutils.version>1.02.02</djutils.version>
-    <dsol.version>3.03.09</dsol.version>
-    <sim0mq.version>1.00.00</sim0mq.version>
+    <djunits.version>4.01.03</djunits.version>
+    <djutils.version>1.03.02</djutils.version>
+    <dsol.version>3.03.12</dsol.version>
+    <sim0mq.version>2.00.01</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <geotools.version>20.2</geotools.version>
@@ -85,33 +85,32 @@
     <multislider.version>1.0</multislider.version>
     <ojalgo.version>46.1.0</ojalgo.version>
     <osm.version>0.46</osm.version>
-    <findbugs.version>3.0.1u2</findbugs.version>
     <xstream.version>1.4.10</xstream.version>
     <powermock.version>1.7.4</powermock.version>
     <protobuf.version>3.4.0</protobuf.version>
 
     <maven.compiler.version>3.8.1</maven.compiler.version>
-    <maven.site.version>3.7.1</maven.site.version>
+    <maven.site.version>3.8.2</maven.site.version>
     <maven.deploy.version>3.0.0-M1</maven.deploy.version>
     <maven.install.version>3.0.0-M1</maven.install.version>
     <maven.source.version>3.1.0</maven.source.version>
-    <maven.javadoc.version>3.1.0</maven.javadoc.version>
+    <maven.javadoc.version>3.1.1</maven.javadoc.version>
     <maven.checkstyle.version>3.1.0</maven.checkstyle.version>
-    <maven.surefire.version>2.22.0</maven.surefire.version>
-    <maven.surefire-report.version>2.22.0</maven.surefire-report.version>
-    <maven.failsafe.version>2.22.0</maven.failsafe.version>
-    <maven.jacoco.version>0.8.4</maven.jacoco.version>
+    <maven.surefire.version>3.0.0-M3</maven.surefire.version>
+    <maven.surefire-report.version>3.0.0-M3</maven.surefire-report.version>
+    <maven.failsafe.version>3.0.0-M3</maven.failsafe.version>
+    <maven.jacoco.version>0.8.5</maven.jacoco.version>
+    <maven.spotbugs.version>3.1.12.2</maven.spotbugs.version>
+    <spotbugs.version>4.0.0-beta4</spotbugs.version>
     <maven.project-info-reports.version>3.0.0</maven.project-info-reports.version>
     <maven.jxr.version>3.0.0</maven.jxr.version>
     <maven.taglist.version>2.4</maven.taglist.version>
-    <maven.findbugs.version>3.0.5</maven.findbugs.version>
     <maven.pmd.version>3.12.0</maven.pmd.version>
     <maven.changes.version>2.12.1</maven.changes.version>
     <wagon.maven.version>2.0.0</wagon.maven.version>
     <wagon.ssh.version>3.3.3</wagon.ssh.version>
     <wagon.ftp.version>3.3.3</wagon.ftp.version>
     <maven-jaxb2.version>0.14.0</maven-jaxb2.version>
-
   </properties>
 
   
@@ -251,6 +250,7 @@
               <url>scp://opentrafficsim.org/home/web/opentrafficsim.org</url>
               <serverId>ots-deployment</serverId>
               <commands>
+                <command>cp -f /home/web/opentrafficsim.org/docs/${project.version}/${project.artifactId}/apidocs/element-list /home/web/opentrafficsim.org/docs/${project.version}/${project.artifactId}/apidocs/package-list | true</command>
                 <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
                 <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
                 <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/current</command>
@@ -288,59 +288,61 @@
 
         <configuration>
           <links>
-            <link>http://www.jfree.org/jcommon/api</link>
-            <link>http://www.jfree.org/jfreechart/api/javadoc</link>
-            <link>https://junit.org/junit4/javadoc/4.12</link>
+            <link>http://www.jfree.org/jcommon/api/</link>
+            <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
+            <link>https://junit.org/junit4/javadoc/4.12/</link>
             <!-- link>https://xerces.apache.org/xerces2-j/javadocs/api</link -->
-            <link>http://xerces.apache.org/xerces2-j/javadocs/api</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-base/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-naming/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-event/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-introspection/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-core/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-animation/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-swing/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-web/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-demo/apidocs</link>
-            <link>https://tinylog.org/javadoc</link>
-            <link>https://djunits.org/docs/current/apidocs</link>
-            <link>https://djutils.org/docs/current/apidocs</link>
-            <link>http://www.jdom.org/docs/apidocs</link>
-            <link>https://dst.lbl.gov/ACSSoftware/colt/api</link>
-            <link>https://sim0mq.org/docs/current/apidocs</link>
-            <link>http://docs.geotools.org/stable/javadocs</link>
-            <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.15.1/documentation</link>
-            <link>http://osm2world.org/docs/javadoc</link>
-            <link>http://poi.apache.org/apidocs</link>
-            <link>https://jgrapht.org/javadoc</link>
-            <link>http://javadoc.scijava.org/ojAlgo</link>
-            <link>https://opentrafficsim.org/docs/current/ots-base/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-core/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-road/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-water/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-animation/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-draw/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-swing/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-web/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-demo/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-kpi/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-multimodal/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-road/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-trafficcontrol/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-xsd/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-shape/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-vissim/apidocs</link>
+            <link>http://xerces.apache.org/xerces2-j/javadocs/api/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-animation/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</link>
+            <link>https://tinylog.org/v1/javadoc/</link>
+            <link>https://djunits.org/docs/current/apidocs/</link>
+            <link>https://djutils.org/docs/current/apidocs/</link>
+            <link>https://djutils.org/docs/current/djutils-serialization/apidocs/</link>
+            <link>https://djutils.org/docs/current/djutils-ext/apidocs/</link>
+            <link>http://www.jdom.org/docs/apidocs/</link>
+            <link>https://dst.lbl.gov/ACSSoftware/colt/api/</link>
+            <link>https://sim0mq.org/docs/current/apidocs/</link>
+            <link>http://docs.geotools.org/stable/javadocs/</link>
+            <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.15.1/documentation/</link>
+            <link>http://osm2world.org/docs/javadoc/</link>
+            <link>http://poi.apache.org/apidocs/</link>
+            <link>https://jgrapht.org/javadoc/</link>
+            <link>http://javadoc.scijava.org/ojAlgo/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-base/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-core/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-road/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-water/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-animation/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-draw/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-swing/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-web/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-demo/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-kpi/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-multimodal/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-road/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-trafficcontrol/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-xsd/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-shape/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-vissim/apidocs/</link>
           </links>
 
           <minmemory>256m</minmemory>
@@ -462,22 +464,6 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>${maven.findbugs.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <failOnError>false</failOnError>
-        </configuration>
-      </plugin>
-
     </plugins>
 
   </build>
@@ -515,59 +501,61 @@
 
         <configuration>
           <links>
-            <link>http://www.jfree.org/jcommon/api</link>
-            <link>http://www.jfree.org/jfreechart/api/javadoc</link>
-            <link>https://junit.org/junit4/javadoc/4.12</link>
+            <link>http://www.jfree.org/jcommon/api/</link>
+            <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
+            <link>https://junit.org/junit4/javadoc/4.12/</link>
             <!-- link>https://xerces.apache.org/xerces2-j/javadocs/api</link -->
-            <link>http://xerces.apache.org/xerces2-j/javadocs/api</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-base/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-naming/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-event/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-introspection/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-core/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-animation/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-swing/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-web/apidocs</link>
-            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-demo/apidocs</link>
-            <link>https://tinylog.org/javadoc</link>
-            <link>https://djunits.org/docs/current/apidocs</link>
-            <link>https://djutils.org/docs/current/apidocs</link>
-            <link>http://www.jdom.org/docs/apidocs</link>
-            <link>https://dst.lbl.gov/ACSSoftware/colt/api</link>
-            <link>https://sim0mq.org/docs/current/apidocs</link>
-            <link>http://docs.geotools.org/stable/javadocs</link>
-            <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.15.1/documentation</link>
-            <link>http://osm2world.org/docs/javadoc</link>
-            <link>http://poi.apache.org/apidocs</link>
-            <link>https://jgrapht.org/javadoc</link>
-            <link>http://javadoc.scijava.org/ojAlgo</link>
-            <link>https://opentrafficsim.org/docs/current/ots-base/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-core/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-road/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-water/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-animation/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-draw/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-swing/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-web/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-demo/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-kpi/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-multimodal/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-road/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-trafficcontrol/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-xsd/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-shape/apidocs</link>
-            <link>https://opentrafficsim.org/docs/current/ots-parser-vissim/apidocs</link>
+            <link>http://xerces.apache.org/xerces2-j/javadocs/api/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-animation/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</link>
+            <link>https://tinylog.org/v1/javadoc/</link>
+            <link>https://djunits.org/docs/current/apidocs/</link>
+            <link>https://djutils.org/docs/current/apidocs/</link>
+            <link>https://djutils.org/docs/current/djutils-serialization/apidocs/</link>
+            <link>https://djutils.org/docs/current/djutils-ext/apidocs/</link>
+            <link>http://www.jdom.org/docs/apidocs/</link>
+            <link>https://dst.lbl.gov/ACSSoftware/colt/api/</link>
+            <link>https://sim0mq.org/docs/current/apidocs/</link>
+            <link>http://docs.geotools.org/stable/javadocs/</link>
+            <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.15.1/documentation/</link>
+            <link>http://osm2world.org/docs/javadoc/</link>
+            <link>http://poi.apache.org/apidocs/</link>
+            <link>https://jgrapht.org/javadoc/</link>
+            <link>http://javadoc.scijava.org/ojAlgo/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-base/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-core/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-road/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-water/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-animation/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-draw/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-swing/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-web/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-demo/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-kpi/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-multimodal/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-road/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-trafficcontrol/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-xsd/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-shape/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-vissim/apidocs/</link>
           </links>
 
           <minmemory>256m</minmemory>
@@ -702,9 +690,18 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>${maven.findbugs.version}</version>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${maven.spotbugs.version}</version>
+        <configuration>
+          <dependencies>
+            <dependency>
+              <groupId>com.github.spotbugs</groupId>
+              <artifactId>spotbugs</artifactId>
+              <version>${spotbugs.version}</version>
+            </dependency>
+          </dependencies>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -1139,12 +1136,6 @@
         <groupId>org.openstreetmap.osmosis</groupId>
         <artifactId>osmosis-osm-binary</artifactId>
         <version>${osm.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.google.code.findbugs</groupId>
-        <artifactId>annotations</artifactId>
-        <version>${findbugs.version}</version>
       </dependency>
 
       <dependency>

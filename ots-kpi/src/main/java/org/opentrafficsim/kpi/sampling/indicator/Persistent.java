@@ -1,8 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
 import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
-import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
+import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
 import org.djutils.exceptions.Throw;
 
 /**
@@ -18,12 +17,10 @@ import org.djutils.exceptions.Throw;
  * @param <T> class of the value
  * @param <W> weight class
  */
-public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, W extends Number>
-        implements DoubleScalarInterface
+public class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, W extends Number>
 {
-
     /** Unit. */
-    private final U unit;
+    private final U displayUnit;
 
     /** Sum of values. */
     private T sum = null;
@@ -51,11 +48,11 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
 
     /**
      * Constructor.
-     * @param unit U; unit, does't matter which one, so long it belongs to the right quantity
+     * @param displayUnit U; unit used for displaying the persistent values, minimum, maximum, mean, etc.
      */
-    public Persistent(final U unit)
+    public Persistent(final U displayUnit)
     {
-        this.unit = unit;
+        this.displayUnit = displayUnit;
     }
 
     /**
@@ -64,7 +61,7 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
      */
     public Persistent<U, T, W> copy()
     {
-        Persistent<U, T, W> persistent = new Persistent<>(this.unit);
+        Persistent<U, T, W> persistent = new Persistent<>(this.displayUnit);
         persistent.sum = this.sum;
         persistent.min = this.min;
         persistent.max = this.max;
@@ -80,7 +77,7 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
      * @param value T; the value
      * @param weight W; the weight
      */
-    public void addValue(T value, W weight)
+    public void addValue(final T value, final W weight)
     {
         Throw.whenNull(value, "Value may not be null.");
         Throw.whenNull(weight, "Weight may not be null.");
@@ -195,20 +192,6 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
         return instantiate(this.mean);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public double getSI()
-    {
-        return this.mean;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getInUnit()
-    {
-        return this.mean;
-    }
-
     /**
      * @return variance in si
      */
@@ -243,9 +226,9 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
      * @param valueSI double; si value
      * @return instantiate typed value from si value
      */
-    private final T instantiate(double valueSI)
+    private T instantiate(final double valueSI)
     {
-        return this.min.instantiateRel(valueSI, this.unit.getStandardUnit());
+        return this.min.instantiateRel(valueSI, this.displayUnit.getStandardUnit());
     }
 
     /**
@@ -492,11 +475,11 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
-        return "Persistent [unit=" + this.unit + ", sum=" + this.sum + ", min=" + this.min + ", max=" + this.max + ", mean="
-                + this.mean + ", varianceSum=" + this.varianceSum + ", weightSum=" + this.weightSum + ", n=" + this.n
-                + ", semaphore=" + this.semaphore + "]";
+        return "Persistent [unit=" + this.displayUnit + ", sum=" + this.sum + ", min=" + this.min + ", max=" + this.max
+                + ", mean=" + this.mean + ", varianceSum=" + this.varianceSum + ", weightSum=" + this.weightSum + ", n="
+                + this.n + ", semaphore=" + this.semaphore + "]";
     }
 
 }

@@ -128,12 +128,12 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
             leftComponent = -0.5 / this.a.si;
         }
         Acceleration logWeightedAccelerationTimes2 =
-                new Acceleration(Math.sqrt(this.a.getSI() * this.b.getSI()), AccelerationUnit.SI).multiplyBy(2);
+                new Acceleration(Math.sqrt(this.a.getSI() * this.b.getSI()), AccelerationUnit.SI).times(2);
         // don't forget the times 2
 
         Speed dV = followerSpeed.minus(leaderSpeed);
-        Length sStar = this.s0.plus(followerSpeed.multiplyBy(this.tSafe))
-                .plus(dV.multiplyBy(followerSpeed.divideBy(logWeightedAccelerationTimes2)));
+        Length sStar = this.s0.plus(followerSpeed.times(this.tSafe))
+                .plus(dV.times(followerSpeed.divide(logWeightedAccelerationTimes2)));
 
         /*-
         this.s0.plus(Calc.speedTimesTime(followerSpeed, this.tSafe)).plus(
@@ -147,7 +147,7 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serial
         }
 
         double rightComponent = 1 - Math.pow(sStar.getSI() / headway.getSI(), 2);
-        Acceleration newAcceleration = new Acceleration(this.a).multiplyBy(Math.min(leftComponent, rightComponent));
+        Acceleration newAcceleration = new Acceleration(this.a).times(Math.min(leftComponent, rightComponent));
         if (newAcceleration.getSI() * stepSize.getSI() + followerSpeed.getSI() < 0)
         {
             newAcceleration = new Acceleration(-followerSpeed.getSI() / stepSize.getSI(), AccelerationUnit.SI);

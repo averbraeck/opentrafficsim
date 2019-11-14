@@ -4,9 +4,10 @@ import java.awt.Color;
 import java.util.List;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.matrix.AccelerationMatrix;
+import org.djunits.value.vdouble.matrix.base.DoubleMatrix;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -43,9 +44,9 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                 {
                     try
                     {
-                        return new AccelerationMatrix(filteredData, AccelerationUnit.SI, StorageType.DENSE);
+                        return DoubleMatrix.instantiate(filteredData, AccelerationUnit.SI, StorageType.DENSE);
                     }
-                    catch (ValueException exception)
+                    catch (ValueRuntimeException exception)
                     {
                         // should not happen as filtered data comes from the EGTF
                         throw new RuntimeException("Unexpected exception while converting acceleration to output format.",
@@ -95,7 +96,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                 @Override
                 public Acceleration finalize(final WeightedMeanAndSum<Double, Double> intermediate)
                 {
-                    return Acceleration.createSI(intermediate.getMean());
+                    return Acceleration.instantiateSI(intermediate.getMean());
                 }
 
                 /** {@inheritDoc} */

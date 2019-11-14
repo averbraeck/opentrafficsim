@@ -637,14 +637,14 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         Parameters params = getGtu().getParameters();
         Length maxDistance = sinkAtEnd ? new Length(Double.MAX_VALUE, LengthUnit.SI)
                 : Length.min(getGtu().getParameters().getParameter(LOOKAHEAD),
-                        lanePathInfo.getPath().getLength().minus(getGtu().getLength().multiplyBy(2.0)));
+                        lanePathInfo.getPath().getLength().minus(getGtu().getLength().times(2.0)));
         // params.setParameter(B, params.getParameter(B0));
         AccelerationStep mostLimitingAccelerationStep = getCarFollowingModelOld().computeAccelerationStepWithNoLeader(getGtu(),
                 maxDistance, simplePerception.getSpeedLimit());
         // bc.resetParameter(B);
         Acceleration minB = params.getParameter(B).neg();
         Acceleration numericallySafeB =
-                Acceleration.max(minB, getGtu().getSpeed().divideBy(mostLimitingAccelerationStep.getDuration()).neg());
+                Acceleration.max(minB, getGtu().getSpeed().divide(mostLimitingAccelerationStep.getDuration()).neg());
         if ((this.syncHeadway != null || this.coopHeadway != null) && mostLimitingAccelerationStep.getAcceleration().gt(minB))
         {
             AccelerationStep sync;

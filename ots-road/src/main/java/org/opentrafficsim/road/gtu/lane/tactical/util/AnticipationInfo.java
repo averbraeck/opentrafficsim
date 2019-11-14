@@ -95,7 +95,7 @@ public final class AnticipationInfo implements Serializable
         {
             if (initialSpeed.gt0())
             {
-                return new AnticipationInfo(distance.divideBy(initialSpeed), initialSpeed);
+                return new AnticipationInfo(distance.divide(initialSpeed), initialSpeed);
             }
             // stand-still, so infinite
             return new AnticipationInfo(new Duration(Double.POSITIVE_INFINITY, DurationUnit.SI), Speed.ZERO);
@@ -110,15 +110,15 @@ public final class AnticipationInfo implements Serializable
         // parabolic solution
         Duration d = new Duration((Math.sqrt(tmp) - initialSpeed.si) / acceleration.si, DurationUnit.SI);
         // check max speed
-        Speed endSpeed = initialSpeed.plus(acceleration.multiplyBy(d));
+        Speed endSpeed = initialSpeed.plus(acceleration.times(d));
         if (endSpeed.le(maxSpeed))
         {
             return new AnticipationInfo(d, endSpeed);
         }
         // maximum speed exceeded, calculate in two steps
-        Duration d1 = maxSpeed.minus(initialSpeed).divideBy(acceleration);
+        Duration d1 = maxSpeed.minus(initialSpeed).divide(acceleration);
         Length x2 = new Length(distance.si - initialSpeed.si * d1.si - .5 * acceleration.si * d1.si * d1.si, LengthUnit.SI);
-        return new AnticipationInfo(d1.plus(x2.divideBy(maxSpeed)), maxSpeed);
+        return new AnticipationInfo(d1.plus(x2.divide(maxSpeed)), maxSpeed);
     }
 
     /**
@@ -155,7 +155,7 @@ public final class AnticipationInfo implements Serializable
             if (add.lt(remain))
             {
                 xCumul = xCumul.plus(add);
-                speed = speed.plus(a.multiplyBy(timeStep));
+                speed = speed.plus(a.times(timeStep));
                 out = out.plus(timeStep);
             }
             else
@@ -165,12 +165,12 @@ public final class AnticipationInfo implements Serializable
                 if (tmp < 0.000001)
                 {
                     // (near) constant speed
-                    timeInStep = remain.divideBy(speed);
+                    timeInStep = remain.divide(speed);
                 }
                 else
                 {
                     timeInStep = new Duration(tmp / a.si, DurationUnit.SI);
-                    speed = speed.plus(a.multiplyBy(timeInStep));
+                    speed = speed.plus(a.times(timeInStep));
                 }
                 out = out.plus(timeInStep);
                 return new AnticipationInfo(out, speed);

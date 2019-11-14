@@ -10,7 +10,6 @@ import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -226,9 +225,9 @@ public final class ParseDistribution
             final Map<String, StreamInformation> streamMap, final LENGTHDISTTYPE lengthDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, lengthDist);
-        for (LengthUnit unit : Unit.getUnits(LengthUnit.class))
+        for (LengthUnit unit : LengthUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultLocaleTextualRepresentations().contains(lengthDist.getLENGTHUNIT()))
+            if (unit.getAbbreviations().contains(lengthDist.getLENGTHUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(dist, unit);
             }
@@ -248,9 +247,9 @@ public final class ParseDistribution
             final Map<String, StreamInformation> streamMap, final POSITIONDISTTYPE positionDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, positionDist);
-        for (PositionUnit unit : Unit.getUnits(PositionUnit.class))
+        for (PositionUnit unit : PositionUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultLocaleTextualRepresentations().contains(positionDist.getPOSITIONUNIT()))
+            if (unit.getAbbreviations().contains(positionDist.getPOSITIONUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit>(dist, unit);
             }
@@ -270,9 +269,9 @@ public final class ParseDistribution
             final Map<String, StreamInformation> streamMap, final DURATIONDISTTYPE durationDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, durationDist);
-        for (DurationUnit unit : Unit.getUnits(DurationUnit.class))
+        for (DurationUnit unit : DurationUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultLocaleTextualRepresentations().contains(durationDist.getDURATIONUNIT()))
+            if (unit.getAbbreviations().contains(durationDist.getDURATIONUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Duration, DurationUnit>(dist, unit);
             }
@@ -292,9 +291,9 @@ public final class ParseDistribution
             final Map<String, StreamInformation> streamMap, final TIMEDISTTYPE timeDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, timeDist);
-        for (TimeUnit unit : Unit.getUnits(TimeUnit.class))
+        for (TimeUnit unit : TimeUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultLocaleTextualRepresentations().contains(timeDist.getTIMEUNIT()))
+            if (unit.getAbbreviations().contains(timeDist.getTIMEUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit>(dist, unit);
             }
@@ -313,9 +312,9 @@ public final class ParseDistribution
             final Map<String, StreamInformation> streamMap, final SPEEDDISTTYPE speedDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, speedDist);
-        for (SpeedUnit unit : Unit.getUnits(SpeedUnit.class))
+        for (SpeedUnit unit : SpeedUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultLocaleTextualRepresentations().contains(speedDist.getSPEEDUNIT()))
+            if (unit.getAbbreviations().contains(speedDist.getSPEEDUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(dist, unit);
             }
@@ -335,9 +334,9 @@ public final class ParseDistribution
             throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, accelerationDist);
-        for (AccelerationUnit unit : Unit.getUnits(AccelerationUnit.class))
+        for (AccelerationUnit unit : AccelerationUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultLocaleTextualRepresentations().contains(accelerationDist.getACCELERATIONUNIT()))
+            if (unit.getAbbreviations().contains(accelerationDist.getACCELERATIONUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Acceleration, AccelerationUnit>(dist, unit);
             }
@@ -354,12 +353,12 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<Frequency, FrequencyUnit> parseFrequencyDist(
-            Map<String, StreamInformation> streamMap, FREQUENCYDISTTYPE frequencyDist) throws XmlParserException
+            final Map<String, StreamInformation> streamMap, final FREQUENCYDISTTYPE frequencyDist) throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, frequencyDist);
-        for (FrequencyUnit unit : Unit.getUnits(FrequencyUnit.class))
+        for (FrequencyUnit unit : FrequencyUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultLocaleTextualRepresentations().contains(frequencyDist.getFREQUENCYUNIT()))
+            if (unit.getAbbreviations().contains(frequencyDist.getFREQUENCYUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<Frequency, FrequencyUnit>(dist, unit);
             }
@@ -376,12 +375,13 @@ public final class ParseDistribution
      * @throws XmlParserException in case of a parse error.
      */
     public static ContinuousDistDoubleScalar.Rel<LinearDensity, LinearDensityUnit> parseLinearDensityDist(
-            Map<String, StreamInformation> streamMap, LINEARDENSITYDISTTYPE linearDensityDist) throws XmlParserException
+            final Map<String, StreamInformation> streamMap, final LINEARDENSITYDISTTYPE linearDensityDist)
+            throws XmlParserException
     {
         DistContinuous dist = makeDistContinuous(streamMap, linearDensityDist);
-        for (LinearDensityUnit unit : Unit.getUnits(LinearDensityUnit.class))
+        for (LinearDensityUnit unit : LinearDensityUnit.BASE.getUnitsById().values())
         {
-            if (unit.getDefaultLocaleTextualRepresentations().contains(linearDensityDist.getLINEARDENSITYUNIT()))
+            if (unit.getAbbreviations().contains(linearDensityDist.getLINEARDENSITYUNIT()))
             {
                 return new ContinuousDistDoubleScalar.Rel<LinearDensity, LinearDensityUnit>(dist, unit);
             }

@@ -12,7 +12,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -197,7 +197,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
         // 1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d), laneChangeModel);
         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER),
-                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.createSI(2.0), this.simulator, this.network);
+                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), this.simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, car), car);
         car.setParameters(parameters);
@@ -243,7 +243,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
             // laneChangeModel);
             LaneBasedIndividualGTU collisionCar =
                     new LaneBasedIndividualGTU("LaneChangeBlockingCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
-                            new Speed(150, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
+                            new Speed(150, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, collisionCar), collisionCar);
             collisionCar.setParameters(parameters);
@@ -281,7 +281,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
             // laneChangeModel);
             LaneBasedIndividualGTU otherCar =
                     new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
-                            new Speed(150, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
+                            new Speed(150, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, otherCar), otherCar);
             otherCar.setParameters(parameters);

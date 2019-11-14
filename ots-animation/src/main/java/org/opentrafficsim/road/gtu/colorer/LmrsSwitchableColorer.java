@@ -44,7 +44,7 @@ public class LmrsSwitchableColorer extends SwitchableGTUColorer
         super(0, new FixedColor(Color.BLUE, "Blue"), GTUTypeColorer.DEFAULT, new IDGTUColorer(),
                 new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
                 new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)),
-                new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)), new SplitColorer(),
+                new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)), new SplitColorer(),
                 new SynchronizationColorer(), new DesiredHeadwayColorer(), new TotalDesireColorer(),
                 new IncentiveColorer(IncentiveRoute.class), new IncentiveColorer(IncentiveSpeedWithCourtesy.class),
                 new IncentiveColorer(IncentiveSpeed.class), new IncentiveColorer(IncentiveKeep.class),

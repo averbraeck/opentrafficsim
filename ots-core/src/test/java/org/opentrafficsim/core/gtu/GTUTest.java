@@ -307,7 +307,7 @@ public class GTUTest
         try
         {
             gtu.init(strategicalPlanner, initialLocation, initialSpeed);
-            fail("init with fake strategical planner should have caused a GTUException in move");
+            fail("init with fake strategical planner should have caused a GTUExeption in move");
         }
         catch (GTUException ne)
         {

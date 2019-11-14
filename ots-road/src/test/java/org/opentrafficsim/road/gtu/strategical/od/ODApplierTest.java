@@ -15,8 +15,8 @@ import java.util.Set;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -24,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -151,7 +152,7 @@ public class ODApplierTest
     {
         this.replication = createReplicationMock();
         this.simulator = createSimulatorMock();
-        this.historyManager = new HistoryManagerDEVS(this.simulator, Duration.createSI(10.0), Duration.createSI(1.0));
+        this.historyManager = new HistoryManagerDEVS(this.simulator, Duration.instantiateSI(10.0), Duration.instantiateSI(1.0));
         makeNetwork();
     }
 
@@ -169,9 +170,9 @@ public class ODApplierTest
         CrossSectionLink linkAB =
                 new CrossSectionLink(this.network, "AB", nodeA, nodeB, this.network.getLinkType(LinkType.DEFAULTS.ROAD),
                         new OTSLine3D(pointA, pointB), this.simulator, LaneKeepingPolicy.KEEPRIGHT);
-        this.lanes.put("lane1", new Lane(linkAB, "lane1", Length.createSI(1.75), Length.createSI(3.5),
+        this.lanes.put("lane1", new Lane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(3.5),
                 this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        this.lanes.put("lane2", new Lane(linkAB, "lane2", Length.createSI(-1.75), Length.createSI(3.5),
+        this.lanes.put("lane2", new Lane(linkAB, "lane2", Length.instantiateSI(-1.75), Length.instantiateSI(3.5),
                 this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY), new Speed(120, SpeedUnit.KM_PER_HOUR)));
         Set<GTUType> gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
@@ -216,7 +217,7 @@ public class ODApplierTest
     /**
      * Test whether correct headways and frequencies are calculated.
      * @throws NetworkException on exception
-     * @throws ValueException on exception
+     * @throws ValueRuntimeException on exception
      * @throws SimRuntimeException on exception
      * @throws ParameterException on exception
      * @throws ProbabilityException on exception
@@ -225,7 +226,7 @@ public class ODApplierTest
      * @throws OTSGeometryException on exception
      */
     @Test
-    public void headwayGeneratorTest() throws ValueException, NetworkException, ParameterException, SimRuntimeException,
+    public void headwayGeneratorTest() throws ValueRuntimeException, NetworkException, ParameterException, SimRuntimeException,
             ProbabilityException, IllegalArgumentException, IllegalAccessException, OTSGeometryException
     {
 
@@ -248,25 +249,25 @@ public class ODApplierTest
             Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
             double factor = id.equals("A1") ? 0.4 : 0.6;
             // now check various points in time
-            this.time = Time.createSI(0); // spanning initial 0-demand period
+            this.time = Time.instantiateSI(0); // spanning initial 0-demand period
             assertAboutEqual(headwayGenerator.draw(), 100 + 1 / (factor * 1000 / 3600));
-            this.time = Time.createSI(30); // spanning 0-demand period partially
+            this.time = Time.instantiateSI(30); // spanning 0-demand period partially
             assertAboutEqual(headwayGenerator.draw(), 70 + 1 / (factor * 1000 / 3600));
-            this.time = Time.createSI(100); // start of demand period
+            this.time = Time.instantiateSI(100); // start of demand period
             assertAboutEqual(headwayGenerator.draw(), 1 / (factor * 1000 / 3600));
-            this.time = Time.createSI(130); // middle of demand period
+            this.time = Time.instantiateSI(130); // middle of demand period
             assertAboutEqual(headwayGenerator.draw(), 1 / (factor * 1000 / 3600));
-            this.time = Time.createSI(199); // over slice edge
+            this.time = Time.instantiateSI(199); // over slice edge
             double preSlice = factor * 1000 / 3600;
             assertAboutEqual(headwayGenerator.draw(), 1 + (1 - preSlice) / (factor * 2000 / 3600));
-            this.time = Time.createSI(299); // spanning 0-demand period in the middle
+            this.time = Time.instantiateSI(299); // spanning 0-demand period in the middle
             preSlice = factor * 2000 / 3600;
             assertAboutEqual(headwayGenerator.draw(), 201 + (1 - preSlice) / (factor * 2000 / 3600));
-            this.time = Time.createSI(599); // just before end
+            this.time = Time.instantiateSI(599); // just before end
             assertEquals(headwayGenerator.draw(), null);
-            this.time = Time.createSI(600); // on end
+            this.time = Time.instantiateSI(600); // on end
             assertEquals(headwayGenerator.draw(), null);
-            this.time = Time.createSI(700); // beyond end
+            this.time = Time.instantiateSI(700); // beyond end
             assertEquals(headwayGenerator.draw(), null);
         }
 
@@ -284,26 +285,26 @@ public class ODApplierTest
             Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
             double factor = id.equals("A1") ? 0.4 : 0.6;
             // now check various points in time
-            this.time = Time.createSI(0); // spanning initial 0-demand period
+            this.time = Time.instantiateSI(0); // spanning initial 0-demand period
             double inv = inverseTrapezoidal(1.0, 100, 1000, 200, 2000, 100, factor);
             assertAboutEqual(headwayGenerator.draw(), 100 + inv);
-            this.time = Time.createSI(30); // spanning 0-demand period partially
+            this.time = Time.instantiateSI(30); // spanning 0-demand period partially
             assertAboutEqual(headwayGenerator.draw(), 70 + inv);
-            this.time = Time.createSI(100); // start of demand period
+            this.time = Time.instantiateSI(100); // start of demand period
             assertAboutEqual(headwayGenerator.draw(), inv);
-            this.time = Time.createSI(130); // middle of demand period
+            this.time = Time.instantiateSI(130); // middle of demand period
             assertAboutEqual(headwayGenerator.draw(), inverseTrapezoidal(1.0, 100, 1000, 200, 2000, 130, factor));
-            this.time = Time.createSI(199); // over slice edge
+            this.time = Time.instantiateSI(199); // over slice edge
             double preSlice = trapezoidal(100, 1000, 200, 2000, 199, 200, factor);
             assertAboutEqual(headwayGenerator.draw(), 1 + inverseTrapezoidal(1.0 - preSlice, 200, 2000, 300, 0, 200, factor));
-            this.time = Time.createSI(299); // spanning 0-demand period in the middle
+            this.time = Time.instantiateSI(299); // spanning 0-demand period in the middle
             preSlice = trapezoidal(200, 2000, 300, 0, 299, 300, factor);
             assertAboutEqual(headwayGenerator.draw(), 101 + inverseTrapezoidal(1.0 - preSlice, 400, 0, 500, 2000, 400, factor));
-            this.time = Time.createSI(599); // just before end
+            this.time = Time.instantiateSI(599); // just before end
             assertEquals(headwayGenerator.draw(), null);
-            this.time = Time.createSI(600); // on end
+            this.time = Time.instantiateSI(600); // on end
             assertEquals(headwayGenerator.draw(), null);
-            this.time = Time.createSI(700); // beyond end
+            this.time = Time.instantiateSI(700); // beyond end
             assertEquals(headwayGenerator.draw(), null);
         }
 
@@ -341,7 +342,7 @@ public class ODApplierTest
                                 }
                                 else
                                 {
-                                    this.time = Time.createSI(7200);
+                                    this.time = Time.instantiateSI(7200);
                                 }
                             }
                             this.time = Time.ZERO;
@@ -379,20 +380,20 @@ public class ODApplierTest
      * @param lane1 Lane; lane 1 (60% of all traffic, all cars)
      * @param lane2 Lane; lane 2 (40% of all traffic, half of which is trucks)
      * @return OD
-     * @throws ValueException on exception
+     * @throws ValueRuntimeException on exception
      * @throws NetworkException on exception
      */
     private ODMatrix getOD(final double[] timeVec, final double[] demandVec, final Interpolation interpolation,
-            final Node nodeA, final Node nodeB, final Lane lane1, final Lane lane2) throws ValueException, NetworkException
+            final Node nodeA, final Node nodeB, final Lane lane1, final Lane lane2) throws ValueRuntimeException, NetworkException
     {
         Categorization categorization = new Categorization("ODExample", Lane.class, GTUType.class, Route.class);
         List<Node> origins = new ArrayList<>();
         origins.add(nodeA);
         List<Node> destinations = new ArrayList<>();
         destinations.add(nodeB);
-        TimeVector timeVector = new TimeVector(timeVec, TimeUnit.BASE, StorageType.DENSE);
+        TimeVector timeVector = DoubleVector.instantiate(timeVec, TimeUnit.DEFAULT, StorageType.DENSE);
         ODMatrix od = new ODMatrix("ODExample", origins, destinations, categorization, timeVector, interpolation);
-        FrequencyVector demand = new FrequencyVector(demandVec, FrequencyUnit.PER_HOUR, StorageType.DENSE);
+        FrequencyVector demand = DoubleVector.instantiate(demandVec, FrequencyUnit.PER_HOUR, StorageType.DENSE);
         Route route = new Route("AB").addNode(nodeA).addNode(nodeB);
         Category category = new Category(categorization, lane1, this.network.getGtuType(GTUType.DEFAULTS.CAR), route);
         od.putDemandVector(nodeA, nodeB, category, demand, timeVector, interpolation, .6);
@@ -476,7 +477,7 @@ public class ODApplierTest
     }
 
     /**
-     * @throws ValueException on exception
+     * @throws ValueRuntimeException on exception
      * @throws NetworkException on exception
      * @throws SimRuntimeException on exception
      * @throws ParameterException on exception
@@ -485,7 +486,7 @@ public class ODApplierTest
      */
     @Test
     public void gtuFractionTest()
-            throws ValueException, NetworkException, ParameterException, SimRuntimeException, ProbabilityException, GTUException
+            throws ValueRuntimeException, NetworkException, ParameterException, SimRuntimeException, ProbabilityException, GTUException
     {
         this.time = Time.ZERO;
         Node nodeA = this.network.getNode("A");

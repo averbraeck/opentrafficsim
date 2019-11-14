@@ -89,7 +89,7 @@ public interface Cooperation extends LmrsParameters
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             NeighborsPerception neighbours = perception.getPerceptionCategory(NeighborsPerception.class);
             PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
-            Speed thresholdSpeed = Speed.createSI(40.0 / 3.6);
+            Speed thresholdSpeed = Speed.instantiateSI(40.0 / 3.6);
             boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
             for (HeadwayGTU leader : Synchronization.removeAllUpstreamOfConflicts(
                     Synchronization.removeAllUpstreamOfConflicts(neighbours.getLeaders(relativeLane), perception, relativeLane),

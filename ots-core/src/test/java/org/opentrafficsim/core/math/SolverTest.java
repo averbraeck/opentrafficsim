@@ -3,7 +3,7 @@ package org.opentrafficsim.core.math;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
 import org.junit.Test;
 
 /**
@@ -39,7 +39,7 @@ public class SolverTest
             Solver.firstSolutionAfter(0, 0, 0, 0);
             fail("Unsolvable linear equation should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
@@ -51,7 +51,7 @@ public class SolverTest
             Solver.firstSolutionAfter(0, 0, 3, 1);
             fail("No solution after boundary should have thrown an exception");
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // Ignore expected exception
         }
@@ -59,7 +59,7 @@ public class SolverTest
         {
             assertEquals("solution should match", -0.3333333333, Solver.firstSolutionAfter(-0.5, 0, 3, 1), 0.000001);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             fail("Caught unexpected exception");
         }
@@ -74,7 +74,7 @@ public class SolverTest
             Solver.firstSolutionAfter(0, 1, 0, 1);
             fail("Equation with no solutions should have thrown an exception");
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // Ignore expected exception
         }
@@ -85,7 +85,7 @@ public class SolverTest
         {
             assertEquals("solution should match", 0, Solver.firstSolutionAfter(-0.00001, 1, 0, 0), 0.000001);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             fail("Caught unexpected exception");
         }
@@ -97,7 +97,7 @@ public class SolverTest
         {
             assertEquals("First solution after -10 should be -1", -1, Solver.firstSolutionAfter(-10, 1, 0, -1), 0.000001);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             fail("Caught unexpected exception");
         }
@@ -105,7 +105,7 @@ public class SolverTest
         {
             assertEquals("First solution after 0 should be 1", 1, Solver.firstSolutionAfter(0, 1, 0, -1), 0.000001);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             fail("Caught unexpected exception");
         }
@@ -114,7 +114,7 @@ public class SolverTest
             Solver.firstSolutionAfter(2, 1, 0, -1);
             fail("First solution after 2 should have thrown an exception");
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // Ignore expected exception
         }
@@ -128,7 +128,7 @@ public class SolverTest
         {
             assertEquals("First solution after -10 should be -3", -3, Solver.firstSolutionAfter(-10, 1, 2, -3), 0.000001);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             fail("Caught unexpected exception");
         }
@@ -136,7 +136,7 @@ public class SolverTest
         {
             assertEquals("First solution after 0 should be 1", 1, Solver.firstSolutionAfter(0, 1, 2, -3), 0.000001);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             fail("Caught unexpected exception");
         }
@@ -145,7 +145,7 @@ public class SolverTest
             Solver.firstSolutionAfter(2, 1, 2, -3);
             fail("First solution after 2 should have thrown an exception");
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // Ignore expected exception
         }
@@ -155,7 +155,7 @@ public class SolverTest
         {
             assertEquals("First solution after -10 should be -3", -3, Solver.firstSolutionAfter(-10, -1, -2, 3), 0.000001);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             fail("Caught unexpected exception");
         }
@@ -163,7 +163,7 @@ public class SolverTest
         {
             assertEquals("First solution after 0 should be 1", 1, Solver.firstSolutionAfter(0, -1, -2, 3), 0.000001);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             fail("Caught unexpected exception");
         }
@@ -172,7 +172,7 @@ public class SolverTest
             Solver.firstSolutionAfter(2, -1, -2, 3);
             fail("First solution after 2 should have thrown an exception");
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // Ignore expected exception
         }

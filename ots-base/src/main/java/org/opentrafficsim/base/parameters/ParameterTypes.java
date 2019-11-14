@@ -89,15 +89,15 @@ public class ParameterTypes implements ConstraintInterface
     static
     {
 
-        DT = new ParameterTypeDuration("dt", "Fixed model time step", Duration.createSI(0.5), POSITIVE);
+        DT = new ParameterTypeDuration("dt", "Fixed model time step", Duration.instantiateSI(0.5), POSITIVE);
 
-        S0 = new ParameterTypeLength("s0", "Car-following stopping distance", Length.createSI(3.0), POSITIVE);
+        S0 = new ParameterTypeLength("s0", "Car-following stopping distance", Length.instantiateSI(3.0), POSITIVE);
 
-        A = new ParameterTypeAcceleration("a", "Maximum (desired) car-following acceleration", Acceleration.createSI(1.25),
+        A = new ParameterTypeAcceleration("a", "Maximum (desired) car-following acceleration", Acceleration.instantiateSI(1.25),
                 POSITIVE);
 
-        B = new ParameterTypeAcceleration("b", "Maximum comfortable car-following deceleration", Acceleration.createSI(2.09),
-                POSITIVE)
+        B = new ParameterTypeAcceleration("b", "Maximum comfortable car-following deceleration",
+                Acceleration.instantiateSI(2.09), POSITIVE)
         {
             /** */
             private static final long serialVersionUID = 20170203L;
@@ -114,7 +114,7 @@ public class ParameterTypes implements ConstraintInterface
         };
 
         BCRIT = new ParameterTypeAcceleration("bCrit", "Maximum critical deceleration, e.g. stop/go at traffic light",
-                Acceleration.createSI(3.5), POSITIVE)
+                Acceleration.instantiateSI(3.5), POSITIVE)
         {
             /** */
             private static final long serialVersionUID = 20170203L;
@@ -130,7 +130,7 @@ public class ParameterTypes implements ConstraintInterface
         };
 
         B0 = new ParameterTypeAcceleration("b0", "Maximum adjustment deceleration, e.g. when speed limit drops",
-                Acceleration.createSI(0.5), POSITIVE)
+                Acceleration.instantiateSI(0.5), POSITIVE)
         {
             /** */
             private static final long serialVersionUID = 20170203L;
@@ -146,9 +146,9 @@ public class ParameterTypes implements ConstraintInterface
             }
         };
 
-        T = new ParameterTypeDuration("T", "Current car-following headway", Duration.createSI(1.2), POSITIVE);
+        T = new ParameterTypeDuration("T", "Current car-following headway", Duration.instantiateSI(1.2), POSITIVE);
 
-        TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway", Duration.createSI(0.56), POSITIVE)
+        TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway", Duration.instantiateSI(0.56), POSITIVE)
         {
             /** */
             private static final long serialVersionUID = 20160400L;
@@ -162,7 +162,7 @@ public class ParameterTypes implements ConstraintInterface
             }
         };
 
-        TMAX = new ParameterTypeDuration("Tmax", "Maximum car-following headway", Duration.createSI(1.2), POSITIVE)
+        TMAX = new ParameterTypeDuration("Tmax", "Maximum car-following headway", Duration.instantiateSI(1.2), POSITIVE)
         {
             /** */
             private static final long serialVersionUID = 20160400L;
@@ -176,27 +176,29 @@ public class ParameterTypes implements ConstraintInterface
             }
         };
 
-        TAU = new ParameterTypeDuration("tau", "Headway relaxation time", Duration.createSI(25.0), POSITIVE);
+        TAU = new ParameterTypeDuration("tau", "Headway relaxation time", Duration.instantiateSI(25.0), POSITIVE);
 
-        T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes", Duration.createSI(43.0), POSITIVE);
+        T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes", Duration.instantiateSI(43.0),
+                POSITIVE);
 
-        LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance", Length.createSI(295.0), POSITIVE);
+        LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance", Length.instantiateSI(295.0), POSITIVE);
 
-        LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance", Length.createSI(200.0), POSITIVE);
+        LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance", Length.instantiateSI(200.0), POSITIVE);
 
         LOOKBACKOLD = new ParameterTypeLength("Look-back old", "Look-back distance (old version for MOBIL code)",
-                Length.createSI(-200.0), NEGATIVE);
+                Length.instantiateSI(-200.0), NEGATIVE);
 
         FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor", 1.0, POSITIVE);
 
         VCONG = new ParameterTypeSpeed("vCong", "Speed threshold below which traffic is considered congested",
                 new Speed(60, SpeedUnit.KM_PER_HOUR), POSITIVE);
 
-        LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration", Duration.createSI(3.0), POSITIVE);
+        LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration", Duration.instantiateSI(3.0), POSITIVE);
 
-        PERCEPTION = new ParameterTypeLength("perception", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
+        PERCEPTION =
+                new ParameterTypeLength("perception", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
 
-        TR = new ParameterTypeDuration("Tr", "Reaction time", Duration.createSI(0.5), POSITIVEZERO);
+        TR = new ParameterTypeDuration("Tr", "Reaction time", Duration.instantiateSI(0.5), POSITIVEZERO);
 
     }
 

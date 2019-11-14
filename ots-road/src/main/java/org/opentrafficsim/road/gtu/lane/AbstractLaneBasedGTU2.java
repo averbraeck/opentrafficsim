@@ -147,7 +147,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     public static Length initialLocationThresholdDifference = new Length(1.0, LengthUnit.MILLIMETER);
 
     /** Margin to add to plan to check of the path will enter the next section. */
-    public static Length eventMargin = Length.createSI(50.0);
+    public static Length eventMargin = Length.instantiateSI(50.0);
 
     /** Turn indicator status. */
     private final Historical<TurnIndicatorStatus> turnIndicatorStatus;
@@ -471,7 +471,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 else
                 {
                     f = crossSection.getDirection().isPlus() ? f : 1.0 - f;
-                    addToLanes.put(adjacentLane, adjacentLane.getLength().multiplyBy(f).si / adjacentLane.getLength().si);
+                    addToLanes.put(adjacentLane, adjacentLane.getLength().times(f).si / adjacentLane.getLength().si);
                 }
                 resultingLanes.add(index, adjacentLane);
             }
@@ -950,7 +950,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 }
                 if (cumul <= getOperationalPlan().getTotalLength().si)
                 {
-                    return getOperationalPlan().timeAtDistance(Length.createSI(cumul));
+                    return getOperationalPlan().timeAtDistance(Length.instantiateSI(cumul));
                 }
                 // ref will cross the line, but GTU will not travel enough for rear to cross
                 return null;
@@ -1123,7 +1123,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 throw new GTUException(e);
             }
 
-            Length length = Length.createSI(loc);
+            Length length = Length.instantiateSI(loc);
             if (CACHING)
             {
                 this.cachedPositions.put(cacheIndex, length);
@@ -1421,12 +1421,12 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         d = ref.getGtuDirection().isPlus() ? d : -d;
         if (this.crossSections.get(0).getLanes().size() > 1)
         {
-            return Length.createSI(latIndex == 0 ? -d : d);
+            return Length.instantiateSI(latIndex == 0 ? -d : d);
         }
         double x2 = p.x + Math.cos(p.getRotZ());
         double y2 = p.y + Math.sin(p.getRotZ());
         double det = (loc.x - p.x) * (y2 - p.y) - (loc.y - p.y) * (x2 - p.x);
-        return Length.createSI(det < 0.0 ? -d : d);
+        return Length.instantiateSI(det < 0.0 ? -d : d);
     }
 
     /** {@inheritDoc} */

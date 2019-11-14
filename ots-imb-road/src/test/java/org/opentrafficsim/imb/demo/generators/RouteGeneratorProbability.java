@@ -3,7 +3,7 @@ package org.opentrafficsim.imb.demo.generators;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.exceptions.Throw;
@@ -140,7 +140,7 @@ public class RouteGeneratorProbability implements Generator<Route>
             throw new RuntimeException("Probability error, no route was drawn.");
 
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             throw new RuntimeException(
                     "Value out of range of time or demand vector. Note that HeadwayGenerator does not create safe copies.",

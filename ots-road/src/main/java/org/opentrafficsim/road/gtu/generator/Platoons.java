@@ -10,12 +10,13 @@ import java.util.TreeMap;
 
 import javax.naming.NamingException;
 
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.WeightedMeanAndSum;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -349,9 +350,9 @@ public abstract class Platoons<T>
             {
                 array[i] = demand.getInUnit(i) * factor;
             }
-            return new FrequencyVector(array, demand.getUnit(), StorageType.DENSE);
+            return DoubleVector.instantiate(array, demand.getDisplayUnit(), StorageType.DENSE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             throw new RuntimeException("Unexpected exception while looping vector.", exception);
         }

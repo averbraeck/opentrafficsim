@@ -28,20 +28,20 @@ public abstract class AbstractContinuousDistScalar implements Serializable
     private final DistContinuous distribution;
 
     /** The unit. */
-    private final Unit<?> unit;
+    private final Unit<?> displayUnit;
 
     /** The dummy stream for the constant values. Is never really used. */
     private static final StreamInterface DUMMY_STREAM = new Java2Random();
 
     /**
      * @param distribution DistContinuous; the wrapped distribution function.
-     * @param unit Unit&lt;?&gt;; the unit.
+     * @param displayUnit Unit&lt;?&gt;; the unit.
      */
-    protected AbstractContinuousDistScalar(final DistContinuous distribution, final Unit<?> unit)
+    protected AbstractContinuousDistScalar(final DistContinuous distribution, final Unit<?> displayUnit)
     {
         super();
         this.distribution = distribution;
-        this.unit = unit;
+        this.displayUnit = displayUnit;
     }
 
     /**
@@ -64,9 +64,9 @@ public abstract class AbstractContinuousDistScalar implements Serializable
     /**
      * @return the unit
      */
-    public final Unit<?> getUnit()
+    public final Unit<?> getDisplayUnit()
     {
-        return this.unit;
+        return this.displayUnit;
     }
 
     /** {@inheritDoc} */
@@ -74,6 +74,6 @@ public abstract class AbstractContinuousDistScalar implements Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "ContinuousDistDoubleScalar [distribution=" + this.distribution + ", unit=" + this.unit + "]";
+        return "ContinuousDistDoubleScalar [distribution=" + this.distribution + ", displayUnit=" + this.displayUnit + "]";
     }
 }

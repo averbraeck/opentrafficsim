@@ -1,10 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.perception.headway;
 
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -338,7 +340,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
         {
             return this.width.getWidth(fraction);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             throw new RuntimeException("Unexpected exception: fraction could not be interpolated.", exception);
         }
@@ -390,9 +392,9 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
          * Returns the width at the given fraction.
          * @param fraction double; fraction from 0 to 1
          * @return Length; width at the given fraction
-         * @throws ValueException when index is out of bounds
+         * @throws ValueRuntimeException when index is out of bounds
          */
-        public Length getWidth(final double fraction) throws ValueException
+        public Length getWidth(final double fraction) throws ValueRuntimeException
         {
             Throw.when(fraction < 0.0 || fraction > 1.0, IllegalArgumentException.class, "Fraction should be between 0 and 1.");
             if (fraction == 1.0)
@@ -423,9 +425,9 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
             try
             {
                 return new Width(new double[] { 0.0, 1.0 },
-                        new LengthVector(new Length[] { startWidth, endWidth }, StorageType.DENSE));
+                        DoubleVector.instantiate(new Length[] { startWidth, endWidth }, LengthUnit.SI, StorageType.DENSE));
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 throw new RuntimeException("Unexpected exception: widths could not be put in a vector.", exception);
             }

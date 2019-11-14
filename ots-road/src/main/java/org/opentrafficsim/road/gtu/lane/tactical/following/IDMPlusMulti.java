@@ -75,7 +75,7 @@ public class IDMPlusMulti extends AbstractIDM
         {
             // desired headway is scaled to the i'th leader
             // current headway is the sum of net headways (i.e. vehicle lengths of vehicles in between are subtracted)
-            double sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway.multiplyBy(i), leader.getSpeed()).si
+            double sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway.times(i), leader.getSpeed()).si
                     / (leader.getDistance().si - cumulVehicleLengths);
             double aIntSingle = a.si * (1 - sRatio * sRatio);
             aIntMulti = aIntMulti < aIntSingle ? aIntMulti : aIntSingle;

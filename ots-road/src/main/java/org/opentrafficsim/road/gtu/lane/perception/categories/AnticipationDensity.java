@@ -68,7 +68,7 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
             @Override
             public LinearDensity collect(final CountAndDistance intermediate)
             {
-                return LinearDensity.createSI(intermediate.getDistance().si / intermediate.getCount());
+                return LinearDensity.instantiateSI(intermediate.getDistance().si / intermediate.getCount());
             }
         };
     }

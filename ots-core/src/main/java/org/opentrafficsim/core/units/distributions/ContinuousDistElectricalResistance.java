@@ -36,7 +36,7 @@ public class ContinuousDistElectricalResistance
     @Override
     public ElectricalResistance draw()
     {
-        return new ElectricalResistance(getDistribution().draw(), (ElectricalResistanceUnit) getUnit());
+        return new ElectricalResistance(getDistribution().draw(), (ElectricalResistanceUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

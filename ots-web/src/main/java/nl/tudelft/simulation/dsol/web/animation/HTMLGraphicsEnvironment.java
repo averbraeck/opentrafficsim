@@ -12,6 +12,7 @@ import org.djutils.logger.CategoryLogger;
 
 import nl.tudelft.simulation.dsol.logger.Cat;
 
+
 /**
  * HTMLGraphicsEnvironment.java. <br>
  * <br>

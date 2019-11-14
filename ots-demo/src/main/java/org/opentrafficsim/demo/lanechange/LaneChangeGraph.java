@@ -16,14 +16,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -277,7 +277,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
         OTSSimulator simulator = new OTSSimulator();
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), this);
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), this);
 
         // Set up the network
         GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
@@ -300,7 +300,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 new Length(2, METER), new Duration(1, SECOND), 1d);
 
         LaneBasedIndividualGTU referenceCar = new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER),
-                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.createSI(2.0), simulator, this.network);
+                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), simulator, this.network);
         referenceCar.setParameters(DefaultsFactory.getDefaultParameters());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, referenceCar), referenceCar);
@@ -323,7 +323,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             final int stepsNeeded = (int) Math.ceil(Math.log(DoubleScalar.minus(high, low).getSI() / delta) / Math.log(2));
             for (int step = 0; step < stepsNeeded; step++)
             {
-                Length mutableMid = low.plus(high).divideBy(2);
+                Length mutableMid = low.plus(high).divide(2);
                 mid = mutableMid;
                 LaneMovementStep midResult = computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, mid,
                         lanes[1], speedDifference, mergeRight);
@@ -378,7 +378,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(otherCarLane, otherCarPosition, GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualGTU otherCar =
                 new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), new Length(4, METER), new Length(2, METER),
-                        new Speed(150, KM_PER_HOUR), Length.createSI(2.0), referenceCar.getSimulator(), this.network);
+                        new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), referenceCar.getSimulator(), this.network);
         otherCar.setParameters(DefaultsFactory.getDefaultParameters());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, otherCar), otherCar);

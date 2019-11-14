@@ -28,8 +28,8 @@ public class TimeStampedObjectTest
     @Test
     public final void testTimeStampedObject()
     {
-        Time timeStamp1 = new Time(123, TimeUnit.BASE);
-        Time timeStamp2 = new Time(456, TimeUnit.BASE);
+        Time timeStamp1 = new Time(123, TimeUnit.DEFAULT);
+        Time timeStamp2 = new Time(456, TimeUnit.DEFAULT);
         TimeStampedObject<String> tso1 = new TimeStampedObject<String>("tso1", timeStamp1);
         assertEquals("time stamp matches", timeStamp1, tso1.getTimestamp());
         assertEquals("string matches", "tso1", tso1.getObject());

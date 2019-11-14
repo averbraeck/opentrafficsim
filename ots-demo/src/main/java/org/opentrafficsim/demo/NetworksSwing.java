@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -100,7 +100,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
             final NetworksModel otsModel = new NetworksModel(simulator);
             if (NetworksParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 NetworksSwing app = new NetworksSwing("Networks", animationPanel, otsModel);
@@ -131,7 +131,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
         RoadSampler sampler = new RoadSampler(simulator);
-        Duration updateInterval = Duration.createSI(10.0);
+        Duration updateInterval = Duration.instantiateSI(10.0);
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             List<LaneDirection> start = new ArrayList<>();

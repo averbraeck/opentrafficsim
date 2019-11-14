@@ -83,7 +83,7 @@ public class LaneChange implements Serializable
      */
     public LaneChange(final LaneBasedGTU gtu)
     {
-        this.minimumLaneChangeDistance = gtu.getLength().multiplyBy(MIN_LC_LENGTH_FACTOR);
+        this.minimumLaneChangeDistance = gtu.getLength().times(MIN_LC_LENGTH_FACTOR);
     }
 
     /**
@@ -247,7 +247,7 @@ public class LaneChange implements Serializable
          * physical distance. So: length = min( max("1", "2"), "3" ). These distances are all considered along the from-lanes.
          * Actual path distance is different.
          */
-        Speed meanSpeed = planDistance.divideBy(timeStep);
+        Speed meanSpeed = planDistance.divide(timeStep);
         double minDuration = this.minimumLaneChangeDistance.si / meanSpeed.si;
         double laneChangeDuration = Math.max(this.desiredLaneChangeDuration.si, minDuration);
         if (this.boundary != null)
@@ -325,7 +325,7 @@ public class LaneChange implements Serializable
             endPosFrom += fromLane.getLane().getLength().si;
         }
         // finally, get location at the final lane available
-        double endFractionalPositionFrom = fromLane.fractionAtCoveredDistance(Length.createSI(endPosFrom));
+        double endFractionalPositionFrom = fromLane.fractionAtCoveredDistance(Length.instantiateSI(endPosFrom));
 
         DirectedLanePosition fromAdjusted = from;
         while (fromAdjusted.getGtuDirection().isPlus() ? fromAdjusted.getPosition().gt(fromAdjusted.getLane().getLength())
@@ -372,7 +372,7 @@ public class LaneChange implements Serializable
         OTSLine3D toLine = getLine(toLanes, startFractionalPositionTo, endFractionalPositionTo);
 
         OTSLine3D path = this.laneChangePath.getPath(timeStep, planDistance, meanSpeed, fromAdjusted, startPosition,
-                laneChangeDirection, fromLine, toLine, Duration.createSI(laneChangeDuration), this.fraction);
+                laneChangeDirection, fromLine, toLine, Duration.instantiateSI(laneChangeDuration), this.fraction);
 
         // update
         // TODO: this assumes the time step will not be interrupted
@@ -537,7 +537,7 @@ public class LaneChange implements Serializable
                 return true;
             }
             double t = speed.si / -a.si;
-            distanceToStop = Length.createSI(speed.si * t + .5 * a.si * t * t);
+            distanceToStop = Length.instantiateSI(speed.si * t + .5 * a.si * t * t);
         }
 
         Length availableDistance = headway.getDistance().plus(distanceToStop);
@@ -547,7 +547,7 @@ public class LaneChange implements Serializable
             t = Math.min(egoSpeed.si / -egoAcceleration.si, t);
         }
         Length requiredDistance =
-                Length.max(Length.createSI(egoSpeed.si * t + .5 * egoAcceleration.si * t * t), this.minimumLaneChangeDistance)
+                Length.max(Length.instantiateSI(egoSpeed.si * t + .5 * egoAcceleration.si * t * t), this.minimumLaneChangeDistance)
                         .plus(s0);
         return availableDistance.gt(requiredDistance);
     }
@@ -742,7 +742,7 @@ public class LaneChange implements Serializable
                     if (fromLane.getLength().si >= positionAtEnd)
                     {
                         // get target point by interpolation between from and to lane
-                        double endFraction = fromLane.fractionAtCoveredDistance(Length.createSI(positionAtEnd));
+                        double endFraction = fromLane.fractionAtCoveredDistance(Length.instantiateSI(positionAtEnd));
                         DirectedPoint pFrom = fromLane.getLocationFraction(endFraction);
                         DirectedPoint pTo = toLanes.get(i).getLocationFraction(endFraction);
                         DirectedPoint target = new DirectedPoint((1 - f) * pFrom.x + f * pTo.x, (1 - f) * pFrom.y + f * pTo.y,

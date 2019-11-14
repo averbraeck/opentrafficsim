@@ -1,12 +1,11 @@
 package org.opentrafficsim.kpi.sampling.data;
 
-import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.Unit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
+import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 
 /**
@@ -29,7 +28,7 @@ public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface>
      * Constructor setting the id.
      * @param id String; id
      */
-    public ExtendedDataTypeSpeed(String id)
+    public ExtendedDataTypeSpeed(final String id)
     {
         super(id);
     }
@@ -38,20 +37,19 @@ public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface>
     @Override
     protected final FloatSpeed convertValue(final float value)
     {
-        return FloatSpeed.createSI(value);
+        return FloatSpeed.instantiateSI(value);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final FloatSpeedVector convert(final float[] storage) throws ValueException
+    protected final FloatSpeedVector convert(final float[] storage) throws ValueRuntimeException
     {
-        return new FloatSpeedVector(storage, SpeedUnit.SI, StorageType.DENSE);
+        return FloatVector.instantiate(storage, SpeedUnit.SI, StorageType.DENSE);
     }
 
     /** {@inheritDoc} */
     @Override
-    public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>> FloatSpeed interpolate(final FloatSpeed value0,
-            final FloatSpeed value1, final double f)
+    public FloatSpeed interpolate(final FloatSpeed value0, final FloatSpeed value1, final double f)
     {
         return FloatSpeed.interpolate(value0, value1, (float) f);
     }

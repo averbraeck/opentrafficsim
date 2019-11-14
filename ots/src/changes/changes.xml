@@ -6,10 +6,27 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
     
-    <release version="1.02.02" date="2019-05-XX" description="xsd-parser, ots-web ready; gradual lane change">
+    <release version="1.03.00" date="2019-10-12" description="xsd-parser, ots-web ready; gradual lane change">
       <action dev="averbraeck" type="update">
-        DJUTILS has been updated to 1.02.00, enabling the CLI utilities in djutils-ext.  
+        DJUNITS has been updated to 4.01.03, to be ready for Java9+ (tested with Java-13). As the structure of
+        the Scalars, Vectors and Matrices has changed, this caused quite a number of changes in ots classes.
       </action>
+      <action dev="averbraeck" type="update">
+        DJUTILS has been updated to 1.03.02, enabling the CLI utilities in djutils-ext. This version
+        is also ready for Java 9+ (and tested with Java-13).
+      </action>
+      <action dev="averbraeck" type="update">
+        DSOL has been updated to 3.03.12. This version is also ready for Java 9+ (and tested with Java-13).
+      </action>
+      <action dev="averbraeck" type="update">
+        SIM0MQ has been updated to 2.00.01, enabling new message components of sim0mq version 2. This version
+        is also ready for Java 9+ (and tested with Java-13). It is dependent on the latest version of 
+        djutils-serialization, which is included as of DJUTILS version 1.03.00. Note that the message structure
+        of sim0mq version 2 is not compatible with sim0mq version 1.
+      </action>
+    </release>
+
+    <release version="1.02.02" date="2019-10-10" description="ots-xsd; GTUType, LinkType, LaneType in Defaults">
       <action dev="averbraeck" type="add">
         CLI utilities built into the demo project.  
       </action>

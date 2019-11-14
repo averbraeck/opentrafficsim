@@ -3,7 +3,6 @@ package org.opentrafficsim.aimsun;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +23,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -48,7 +47,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -92,11 +90,11 @@ public class AimsunControl
      * @throws OTSGeometryException on error
      * @throws NetworkException on error
      * @throws NamingException on error
-     * @throws ValueException on error
+     * @throws ValueRuntimeException on error
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueException,
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueRuntimeException,
             ParameterException, SimRuntimeException
     {
         // TODO: LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
@@ -251,12 +249,12 @@ public class AimsunControl
      * @throws OTSGeometryException on error
      * @throws NetworkException on error
      * @throws NamingException on error
-     * @throws ValueException on error
+     * @throws ValueRuntimeException on error
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
     private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException, NamingException,
-            ValueException, ParameterException, SimRuntimeException
+            ValueRuntimeException, ParameterException, SimRuntimeException
     {
         System.out.println("Entering command loop");
         InputStream inputStream = socket.getInputStream();
@@ -586,23 +584,16 @@ public class AimsunControl
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                         getSimulator());
+                // TODO: These links are Aimsun specific.
                 LaneCombinationList ignoreList = new LaneCombinationList();
-                try
-                {
-                    // TODO: These links are Aimsun Barcelona network specific.
-                    ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
-                            (CrossSectionLink) this.network.getLink("928_J6"));
-                    ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
-                            (CrossSectionLink) this.network.getLink("925_J2"));
-                }
-                catch (NullPointerException npe)
-                {
-                    // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
-                }
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
+                        (CrossSectionLink) this.network.getLink("928_J6"));
+                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
+                        (CrossSectionLink) this.network.getLink("925_J2"));
                 LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)), ignoreList, permittedList);
-                new GTUDumper(simulator, Time.ZERO, Duration.createSI(60), network, "C:/Temp/aimsun");
+                        new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
+                new GTUDumper(simulator, Time.ZERO, Duration.instantiateSI(60), network, "C:/Temp/aimsun");
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GTUException exception)

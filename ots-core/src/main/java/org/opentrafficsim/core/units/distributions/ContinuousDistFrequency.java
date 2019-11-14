@@ -35,7 +35,7 @@ public class ContinuousDistFrequency extends ContinuousDistDoubleScalar.Rel<Freq
     @Override
     public Frequency draw()
     {
-        return new Frequency(getDistribution().draw(), (FrequencyUnit) getUnit());
+        return new Frequency(getDistribution().draw(), (FrequencyUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

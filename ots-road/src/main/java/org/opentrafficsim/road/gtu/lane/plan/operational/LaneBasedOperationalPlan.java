@@ -143,13 +143,13 @@ public class LaneBasedOperationalPlan extends OperationalPlan
         // initialize loop data
         double length = -lane.coveredDistance(pos.getPosition().si / pos.getLane().getLength().si).si;
         double f = Double.NaN;
-        Direction prevDir = Direction.createSI(getRotZAtFraction(lane, true));
+        Direction prevDir = Direction.instantiateSI(getRotZAtFraction(lane, true));
 
         // move to next lane while projection fails
         while (Double.isNaN(f))
         {
             LaneDirection nextLane = lane.getNextLaneDirection(gtu);
-            Direction nextDir = Direction.createSI(nextLane == null ? getRotZAtFraction(lane, false)
+            Direction nextDir = Direction.instantiateSI(nextLane == null ? getRotZAtFraction(lane, false)
                     : .5 * getRotZAtFraction(lane, false) + .5 * getRotZAtFraction(nextLane, true));
             f = lane.getLane().getCenterLine().projectFractional(prevDir, nextDir, point.x, point.y, FractionalFallback.NaN);
 
@@ -210,7 +210,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
             }
         }
         // add length on lane where the reference position was projected to (or to it's consecutive gap between lanes)
-        return Length.createSI(length);
+        return Length.instantiateSI(length);
     }
 
     /** {@inheritDoc} */

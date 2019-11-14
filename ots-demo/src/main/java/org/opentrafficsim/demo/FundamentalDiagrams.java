@@ -9,7 +9,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -124,7 +124,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             final FundamentalDiagramPlotsModel otsModel = new FundamentalDiagramPlotsModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 FundamentalDiagrams app = new FundamentalDiagrams("FundamentalDiagrams", animationPanel, otsModel);
@@ -165,7 +165,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                         sampler,
                         GraphLaneUtil.createCrossSection(name,
                                 new DirectedLanePosition(getModel().getLane(), detectorLocation, GTUDirectionality.DIR_PLUS)),
-                        false, Duration.createSI(60.0), false));
+                        false, Duration.instantiateSI(60.0), false));
             }
             catch (NetworkException | GTUException exception)
             {
@@ -327,11 +327,11 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
                         this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
-                        new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
+                        new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
                 gtu.setNoLaneChangeDistance(Length.ZERO);
-                gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
-                gtu.setMaximumDeceleration(Acceleration.createSI(-8.0));
+                gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
+                gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
 
                 // strategical planner
                 LaneBasedStrategicalPlanner strategicalPlanner =

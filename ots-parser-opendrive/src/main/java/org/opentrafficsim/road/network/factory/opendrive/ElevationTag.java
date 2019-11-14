@@ -87,9 +87,9 @@ class ElevationTag implements Serializable
             throw new SAXException("Geometry: missing attribute d");
         elevationTag.d = new Length(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
 
-        elevationTag.elevation = new Length(elevationTag.a.plus(elevationTag.b.multiplyBy(elevationTag.s.doubleValue()))
-                .plus(elevationTag.c.multiplyBy(Math.pow(elevationTag.s.doubleValue(), 2)))
-                .plus(elevationTag.d.multiplyBy(Math.pow(elevationTag.s.doubleValue(), 3))));
+        elevationTag.elevation = new Length(elevationTag.a.plus(elevationTag.b.times(elevationTag.s.doubleValue()))
+                .plus(elevationTag.c.times(Math.pow(elevationTag.s.doubleValue(), 2)))
+                .plus(elevationTag.d.times(Math.pow(elevationTag.s.doubleValue(), 3))));
 
         return elevationTag;
     }

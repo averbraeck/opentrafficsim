@@ -13,7 +13,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -157,7 +157,7 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
             final CircularRoadModelIMB otsModel = new CircularRoadModelIMB(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
                 CircularRoadIMB app = new CircularRoadIMB("Circular Road", animationPanel, otsModel);
@@ -205,7 +205,7 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
         RoadSampler sampler = new RoadSampler(simulator);
         ContourDataSource<?> dataPool0 = new ContourDataSource<>(sampler, path0);
         ContourDataSource<?> dataPool1 = new ContourDataSource<>(sampler, path1);
-        Duration updateInterval = Duration.createSI(10.0);
+        Duration updateInterval = Duration.instantiateSI(10.0);
 
         SwingPlot plot = null;
         GraphPath<KpiLaneDirection> path = null;
@@ -237,11 +237,11 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
         }
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY,
-                Quantity.FLOW, simulator, sampler, crossSection, true, Duration.createSI(60.0), false));
+                Quantity.FLOW, simulator, sampler, crossSection, true, Duration.instantiateSI(60.0), false));
         trajectoryChart.setCell(plot.getContentPane(), 1, 0);
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW,
-                Quantity.SPEED, simulator, sampler, crossSection, false, Duration.createSI(60.0), false));
+                Quantity.SPEED, simulator, sampler, crossSection, false, Duration.instantiateSI(60.0), false));
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
@@ -341,8 +341,8 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
             InputParameterMap genericMap = (InputParameterMap) this.inputParameterMap.get("generic");
 
             genericMap.add(new InputParameterDoubleScalar<LengthUnit, Length>("trackLength", "Track length",
-                    "Track length (circumfence of the track)", Length.createSI(1000.0), Length.createSI(500.0),
-                    Length.createSI(2000.0), true, true, "%.0f", 1.0));
+                    "Track length (circumfence of the track)", Length.instantiateSI(1000.0), Length.instantiateSI(500.0),
+                    Length.instantiateSI(2000.0), true, true, "%.0f", 1.0));
             genericMap.add(new InputParameterDouble("densityMean", "Mean density (veh / km)",
                     "mean density of the vehicles (vehicles per kilometer)", 30.0, 5.0, 45.0, true, true, "%.0f", 2.0));
             genericMap.add(new InputParameterDouble("densityVariability", "Density variability",
@@ -495,10 +495,10 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
         LaneBasedIndividualGTU gtu =
                 new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
-                        new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
+                        new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
         gtu.setNoLaneChangeDistance(Length.ZERO);
-        gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
-        gtu.setMaximumDeceleration(Acceleration.createSI(-8.0));
+        gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
+        gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner;

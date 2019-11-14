@@ -12,8 +12,8 @@ import java.util.Set;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Throw;
@@ -44,15 +45,17 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
-import org.opentrafficsim.core.gtu.GTUErrorHandler;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -158,27 +161,27 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
     /** Car-following task parameter. */
     static final ParameterTypeDuration HEXP = new ParameterTypeDuration("Hexp",
-            "Exponential decay of car-following task by headway.", Duration.createSI(4.0), NumericConstraint.POSITIVE);
+            "Exponential decay of car-following task by headway.", Duration.instantiateSI(4.0), NumericConstraint.POSITIVE);
 
     /** Fraction of primary task that can be reduced by anticipation reliance. */
     static final ParameterTypeDouble ALPHA = new ParameterTypeDouble("alpha",
-            "Fraction of primary task that can be reduced by anticipation reliance.", 0.6, DualBound.UNITINTERVAL);
+            "Fraction of primary task that can be reduced by anticipation reliance.", 0.8, DualBound.UNITINTERVAL);
 
     /** Fraction of auxiliary tasks that can be reduced by anticipation reliance. */
     static final ParameterTypeDouble BETA = new ParameterTypeDouble("beta",
-            "Fraction of auxiliary tasks that can be reduced by anticipation reliance.", 0.5, DualBound.UNITINTERVAL);
+            "Fraction of auxiliary tasks that can be reduced by anticipation reliance.", 0.6, DualBound.UNITINTERVAL);
 
     /** Distance to not consider at start of the network. */
-    private static Length ignoreStart = Length.createSI(2900); // Not 100m on pre-link, so 3000 total
+    private static Length ignoreStart = Length.instantiateSI(2900); // Not 100m on pre-link, so 3000 total
 
     /** Distance to not consider at end of the network. */
-    private static Length ignoreEnd = Length.createSI(1000);
+    private static Length ignoreEnd = Length.instantiateSI(1000);
 
     /** Sampler. */
     private RoadSampler sampler;
 
     /** Truck fraction. */
-    @Option(names = { "-f", "--fTruck" }, description = "Truck fraction", defaultValue = "0.05")
+    @Option(names = {"-f", "--fTruck"}, description = "Truck fraction", defaultValue = "0.05")
     private double fTruck;
 
     /** Left demand. */
@@ -246,7 +249,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         // script.setProperty("beta", 0.0);
         try
         {
-            CliUtil.execute(script, args);
+            CliUtil.execute(script, args); // XX from old version
             script.start();
         }
         catch (Throwable throwable)
@@ -297,13 +300,13 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         super("Distraction", "Distraction simulation");
         setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
                 .addColorer(new TaskColorer("car-following")).addColorer(new TaskColorer("lane-changing"))
-                .addColorer(new TaskSaturationColorer()).addColorer(new ReactionTimeColorer(Duration.createSI(1.0)))
+                .addColorer(new TaskSaturationColorer()).addColorer(new ReactionTimeColorer(Duration.instantiateSI(1.0)))
                 .addColorer(GTUTypeColorer.DEFAULT).addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
                 .addColorer(
                         new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
-                .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
+                .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
                 .addColorer(new SynchronizationColorer())
-                .addColorer(new DesiredHeadwayColorer(Duration.createSI(0.56), Duration.createSI(2.4)))
+                .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.56), Duration.instantiateSI(2.4)))
                 .addColorer(new TotalDesireColorer()).addColorer(new IncentiveColorer(IncentiveRoute.class))
                 .addColorer(new IncentiveColorer(IncentiveSpeedWithCourtesy.class))
                 .addColorer(new IncentiveColorer(IncentiveSpeed.class)).addColorer(new IncentiveColorer(IncentiveKeep.class))
@@ -340,11 +343,12 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         // Network
         URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
         OTSRoadNetwork network = new OTSRoadNetwork("Distraction", true);
-        new CollisionDetector(network);
+        new CollisionDetector(network); // XXX: is this needed here? was in old version...
         XmlNetworkLaneParser.build(xmlURL, network, sim);
 
-        // new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000),
-        // sim, new TrapezoidProfile(0.2, Length.createSI(-400), Length.createSI(200), Length.createSI(400)));
+        // new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0),
+        // Length.instantiateSI(1000),
+        // sim, new TrapezoidProfile(0.2, Length.instantiateSI(-400), Length.instantiateSI(200), Length.instantiateSI(400)));
 
         // OD
         List<Node> origins = new ArrayList<>();
@@ -354,7 +358,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         destinations.add(network.getNode("EXIT"));
         Categorization categorization = new Categorization("Distraction", GTUType.class);
         TimeVector globalTime =
-                new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
+                DoubleVector.instantiate(new double[] {0, 360, 1560, 2160, 3960}, TimeUnit.BASE_SECOND, StorageType.DENSE);
         ODMatrix od = new ODMatrix("Distraction", origins, destinations, categorization, globalTime, Interpolation.LINEAR);
         Category carCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
         Category truckCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.TRUCK));
@@ -370,12 +374,12 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), truckCategory, rightDemandPatternTruck);
         ODOptions odOptions = new ODOptions()
                 .set(ODOptions.GTU_TYPE, new DefaultGTUCharacteristicsGeneratorOD(new DistractionFactorySupplier()))
-                .set(ODOptions.INSTANT_LC, true)
-                .set(ODOptions.ERROR_HANDLER, GTUErrorHandler.THROW);
+                .set(ODOptions.INSTANT_LC, true);
         ODApplier.applyOD(network, od, sim, odOptions);
 
         // History
-        sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim, Duration.createSI(2.0), Duration.createSI(1.0)));
+        sim.getReplication()
+                .setHistoryManager(new HistoryManagerDEVS(sim, Duration.instantiateSI(2.0), Duration.instantiateSI(1.0)));
 
         // Sampler
         if (this.doSampler)
@@ -420,8 +424,8 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     {
         for (LaneDataInterface laneData : linkData.getLaneDatas())
         {
-            Length start = laneData.getLength().multiplyBy(startDistance.si / linkData.getLength().si);
-            Length end = laneData.getLength().multiplyBy(endDistance.si / linkData.getLength().si);
+            Length start = laneData.getLength().times(startDistance.si / linkData.getLength().si);
+            Length end = laneData.getLength().times(endDistance.si / linkData.getLength().si);
             this.sampler
                     .registerSpaceTimeRegion(new SpaceTimeRegion(new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS),
                             start, end, getStartTime().plus(getWarmupTime()), getStartTime().plus(getSimulationTime())));
@@ -432,12 +436,26 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
      * Compose demand vector.
      * @param demand double; maximum demand value
      * @return FrequencyVector demand vector
-     * @throws ValueException on value exception
+     * @throws ValueRuntimeException on value exception
      */
-    private static FrequencyVector getDemand(final double demand) throws ValueException
+    private static FrequencyVector getDemand(final double demand) throws ValueRuntimeException
     {
-        return new FrequencyVector(new double[] { demand * 0.5, demand * 0.5, demand, demand, 0.0 }, FrequencyUnit.PER_HOUR,
+        return DoubleVector.instantiate(new double[] {demand * 0.5, demand * 0.5, demand, demand, 0.0}, FrequencyUnit.PER_HOUR,
                 StorageType.DENSE);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void animateNetwork(final OTSNetwork net)
+    {
+        try
+        {
+            DefaultAnimationFactory.animateXmlNetwork(net, getSimulator(), getGtuColorer());
+        }
+        catch (OTSDrawingException exception)
+        {
+            throw new RuntimeException("Exception while creating network animation.", exception);
+        }
     }
 
     /////////////////////
@@ -525,7 +543,8 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 ParameterFactoryByType params = new ParameterFactoryByType();
                 params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.FSPEED,
                         new DistNormal(randomStream, 123.7 / 120.0, 12.0 / 120.0));
-                params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A, Acceleration.createSI(0.4));
+                params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A,
+                        Acceleration.instantiateSI(0.4));
                 if (AnticipationRelianceScript.this.strategies)
                 {
                     params.addParameter(Tailgating.RHO, 0.0);
@@ -536,7 +555,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                             new ContinuousDistSpeed(new DistLogNormal(randomStream, 3.3789, 0.4), SpeedUnit.KM_PER_HOUR));
                     params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.VGAIN,
                             new Speed(50.0, SpeedUnit.KM_PER_HOUR));
-                    params.addParameter(ParameterTypes.TMAX, Duration.createSI(1.6));
+                    params.addParameter(ParameterTypes.TMAX, Duration.instantiateSI(1.6));
                 }
                 if (AnticipationRelianceScript.this.adaptation)
                 {
@@ -665,7 +684,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         public Parameters getParameters() throws ParameterException
         {
             Parameters params = super.getParameters();
-            params.setParameter(HEXP, Duration.createSI(4.0));
+            params.setParameter(HEXP, Duration.instantiateSI(4.0));
             params.setParameter(ALPHA, AnticipationRelianceScript.this.alpha);
             params.setParameter(BETA, AnticipationRelianceScript.this.beta);
             params.setParameter(Fuller.TC, 1.0);
@@ -674,7 +693,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             params.setParameter(AdaptationSituationalAwareness.SA, 1.0);
             params.setParameter(AdaptationSituationalAwareness.SA_MAX, 1.0);
             params.setParameter(AdaptationSituationalAwareness.SA_MIN, 0.5);
-            params.setParameter(AdaptationSituationalAwareness.TR_MAX, Duration.createSI(2.0));
+            params.setParameter(AdaptationSituationalAwareness.TR_MAX, Duration.instantiateSI(2.0));
             params.setParameter(ParameterTypes.TR, Duration.ZERO);
             params.setParameter(AdaptationHeadway.BETA_T, 1.0); // Increase?
             return params;

@@ -131,7 +131,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
                 {
                     rem = this.plannerTimeStep.si - this.reactionTime.si;
                 }
-                this.remainder = Duration.createSI(rem);
+                this.remainder = Duration.instantiateSI(rem);
             }
             catch (ParameterException | GTUException exception)
             {

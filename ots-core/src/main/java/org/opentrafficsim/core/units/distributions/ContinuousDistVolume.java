@@ -35,7 +35,7 @@ public class ContinuousDistVolume extends ContinuousDistDoubleScalar.Rel<Volume,
     @Override
     public Volume draw()
     {
-        return new Volume(getDistribution().draw(), (VolumeUnit) getUnit());
+        return new Volume(getDistribution().draw(), (VolumeUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

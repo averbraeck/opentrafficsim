@@ -168,9 +168,9 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
         OTSAnimator simulator = new OTSAnimator();
 
         NWBModel nwbModel = new NWBModel(simulator, network, "NWB network", "NWB network");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), nwbModel);
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), nwbModel);
 
-        Length standardLaneWidth = Length.createSI(3.5);
+        Length standardLaneWidth = Length.instantiateSI(3.5);
 
         LaneType freeWay = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         LaneType highWay = network.getLaneType(LaneType.DEFAULTS.HIGHWAY);
@@ -192,11 +192,11 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
                 if (null == startNode)
                 {
                     OTSPoint3D nextPoint = designLine.getPoints()[1];
-                    direction = Direction.createSI(Math.atan2(nextPoint.y - p.y, nextPoint.x - p.x));
+                    direction = Direction.instantiateSI(Math.atan2(nextPoint.y - p.y, nextPoint.x - p.x));
                 }
                 else
                 {
-                    direction = Direction.createSI(Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x));
+                    direction = Direction.instantiateSI(Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x));
                 }
                 OTSRoadNode node = new OTSRoadNode(network, nodeName, p, direction);
                 if (null == startNode)

@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.djunits.value.StorageType;
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
@@ -18,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
@@ -245,8 +248,9 @@ public final class ODParser
                         timeList.add(time.getVALUE());
                     }
                     Collections.sort(timeList);
-                    globalTimeVector = Try.assign(() -> new TimeVector(timeList, StorageType.DENSE), XmlParserException.class,
-                            "Global time has no values.");
+                    globalTimeVector =
+                            Try.assign(() -> DoubleVector.instantiateList(timeList, TimeUnit.DEFAULT, StorageType.DENSE),
+                                    XmlParserException.class, "Global time has no values.");
                 }
 
                 // Global interpolation
@@ -373,8 +377,9 @@ public final class ODParser
                                 demandRaw[i] = parseLevel(baseDemand.get(i).getValue(),
                                         factor * (factors == null ? 1.0 : parsePositiveFactor(factors.get(i).getValue())));
                             }
-                            FrequencyVector demandVector = Try.assign(() -> new FrequencyVector(demandRaw, StorageType.DENSE),
-                                    XmlParserException.class, "Unexpected empty demand.");
+                            FrequencyVector demandVector =
+                                    Try.assign(() -> DoubleVector.instantiate(demandRaw, FrequencyUnit.SI, StorageType.DENSE),
+                                            XmlParserException.class, "Unexpected empty demand.");
 
                             // Finally, add the demand
                             odMatrix.putDemandVector(origin, destination, category, demandVector, timeVector, interpolation);
@@ -385,7 +390,7 @@ public final class ODParser
 
                 // OD Options
                 ODOptions odOptions =
-                        new ODOptions().set(ODOptions.GTU_ID, idGenerator).set(ODOptions.NO_LC_DIST, Length.createSI(1.0));
+                        new ODOptions().set(ODOptions.GTU_ID, idGenerator).set(ODOptions.NO_LC_DIST, Length.instantiateSI(1.0));
                 // templates
                 Set<TemplateGTUType> templates = new LinkedHashSet<>();
                 for (GTUTEMPLATE template : gtuTemplates.values())
@@ -601,7 +606,7 @@ public final class ODParser
      */
     private static Frequency parseLevel(final String string, final double factor)
     {
-        return Frequency.valueOf(string.replace("veh", "")).multiplyBy(factor);
+        return Frequency.valueOf(string.replace("veh", "")).times(factor);
     }
 
     /**
@@ -647,8 +652,8 @@ public final class ODParser
             timeList.add(time.getTIME());
         }
         Collections.sort(timeList);
-        return Try.assign(() -> new TimeVector(timeList, StorageType.DENSE), XmlParserException.class,
-                "Global time has no values.");
+        return Try.assign(() -> DoubleVector.instantiateList(timeList, TimeUnit.DEFAULT, StorageType.DENSE),
+                XmlParserException.class, "Global time has no values.");
     }
 
     /**

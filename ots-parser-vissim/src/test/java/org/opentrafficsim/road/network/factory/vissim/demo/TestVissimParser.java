@@ -68,7 +68,7 @@ public class TestVissimParser extends OTSSimulationApplication<OTSModelInterface
                 {
                     OTSAnimator simulator = new OTSAnimator();
                     VissimImport model = new VissimImport(simulator);
-                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), model);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(model.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, model, DEFAULT_COLORER, model.getNetwork());
                     new TestVissimParser(model, animationPanel);

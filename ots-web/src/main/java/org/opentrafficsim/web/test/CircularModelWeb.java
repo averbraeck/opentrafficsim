@@ -46,7 +46,7 @@ public class CircularModelWeb extends OTSWebServer
         CircularRoadModel model = new CircularRoadModel(simulator);
         if (TabbedParameterDialog.process(model.getInputParameterMap()))
         {
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), model);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
             new CircularModelWeb("Circular Road", simulator, model);
         }
     }

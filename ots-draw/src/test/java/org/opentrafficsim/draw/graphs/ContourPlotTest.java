@@ -17,10 +17,9 @@ import javax.swing.JOptionPane;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -767,7 +766,7 @@ public class ContourPlotTest implements UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU(id, gtuType, length, width, maxSpeed, length.multiplyBy(0.5), simulator, network);
+                new LaneBasedIndividualGTU(id, gtuType, length, width, maxSpeed, length.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);

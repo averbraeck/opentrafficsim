@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
@@ -82,7 +82,7 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
                             sumRefTime = sumRefTime.plus(new Duration(dx / refV, DurationUnit.SI));
                         }
                     }
-                    catch (ValueException exception)
+                    catch (ValueRuntimeException exception)
                     {
                         // should not occur as we check the size of the vector
                         throw new RuntimeException("Trying to obtain value outside of range.", exception);

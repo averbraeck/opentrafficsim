@@ -30,15 +30,15 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
 
     /** Time headway setting for ACC mode. */
     public static final ParameterTypeDuration TDACC = new ParameterTypeDuration("td ACC",
-            "User defined time headway in ACC mode", Duration.createSI(1.2), NumericConstraint.POSITIVE);
+            "User defined time headway in ACC mode", Duration.instantiateSI(1.2), NumericConstraint.POSITIVE);
 
     /** Time headway setting for CACC mode. */
     public static final ParameterTypeDuration TDCACC = new ParameterTypeDuration("td CACC",
-            "User defined time headway in CACC mode", Duration.createSI(0.5), NumericConstraint.POSITIVE);
+            "User defined time headway in CACC mode", Duration.instantiateSI(0.5), NumericConstraint.POSITIVE);
 
     /** (C)ACC stopping distance. */
     public static final ParameterTypeLength X0 =
-            new ParameterTypeLength("x0 (C)ACC", "Stopping distance (C)ACC", Length.createSI(3.0), NumericConstraint.POSITIVE);
+            new ParameterTypeLength("x0 (C)ACC", "Stopping distance (C)ACC", Length.instantiateSI(3.0), NumericConstraint.POSITIVE);
 
     /** Delayed actuation. */
     private final DelayedActuation delayedActuation;

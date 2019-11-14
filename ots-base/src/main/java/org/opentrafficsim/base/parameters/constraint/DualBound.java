@@ -1,6 +1,6 @@
 package org.opentrafficsim.base.parameters.constraint;
 
-import org.djunits.value.vdouble.scalar.AbstractDoubleScalar;
+import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalar;
 import org.djutils.exceptions.Throw;
 
 /**

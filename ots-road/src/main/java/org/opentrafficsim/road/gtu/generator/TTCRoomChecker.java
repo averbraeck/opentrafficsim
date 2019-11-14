@@ -67,9 +67,9 @@ public class TTCRoomChecker implements RoomChecker
                 speed = Speed.min(speed, dlp.getLane().getSpeedLimit(characteristics.getGTUType()));
             }
         }
-        if ((speed.le(leader.getSpeed()) || leader.getDistance().divideBy(speed.minus(leader.getSpeed())).gt(this.ttc))
+        if ((speed.le(leader.getSpeed()) || leader.getDistance().divide(speed.minus(leader.getSpeed())).gt(this.ttc))
                 && leader.getDistance()
-                        .gt(speed.multiplyBy(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
+                        .gt(speed.times(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
         {
             return new Placement(speed, initialPosition);
         }

@@ -94,7 +94,7 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
             final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<SimTimeDoubleUnit> result = new SimEvent<>(
-                new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source, target, method, args);
+                new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }

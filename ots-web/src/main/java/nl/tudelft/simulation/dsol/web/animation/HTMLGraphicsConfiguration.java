@@ -10,6 +10,7 @@ import org.djutils.logger.CategoryLogger;
 
 import nl.tudelft.simulation.dsol.logger.Cat;
 
+
 /**
  * The <code>HTMLGraphicsConfiguration</code> class describes the characteristics of the HTML canvas in the browser, as a
  * graphics destination to write to. Note that there can be several <code>GraphicsConfiguration</code> objects associated with a

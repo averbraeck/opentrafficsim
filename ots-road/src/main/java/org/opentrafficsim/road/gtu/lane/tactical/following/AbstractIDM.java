@@ -59,7 +59,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
         @Override
         public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
         {
-            return Length.createSI(parameters.getParameter(S0).si + speed.si * parameters.getParameter(T).si);
+            return Length.instantiateSI(parameters.getParameter(S0).si + speed.si * parameters.getParameter(T).si);
         }
     };
 
@@ -69,7 +69,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
         @Override
         public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
         {
-            Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).multiplyBy(parameters.getParameter(FSPEED));
+            Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).times(parameters.getParameter(FSPEED));
             Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
             return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
         }
@@ -114,10 +114,10 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
         // return free term if there are no leaders
         if (leaders.isEmpty())
         {
-            return Acceleration.createSI(aFree);
+            return Acceleration.instantiateSI(aFree);
         }
         // return combined acceleration
-        return combineInteractionTerm(Acceleration.createSI(aFree), parameters, speed, desiredSpeed, desiredHeadway, leaders);
+        return combineInteractionTerm(Acceleration.instantiateSI(aFree), parameters, speed, desiredSpeed, desiredHeadway, leaders);
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
          * Limit used to be 0, but the IDM is very sensitive there. With a decelerating leader, an ok acceleration in one time
          * step, may results in acceleration < -10 in the next.
          */
-        return Length.createSI(sStar >= s0.si ? sStar : s0.si);
+        return Length.instantiateSI(sStar >= s0.si ? sStar : s0.si);
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     {
         Acceleration a = parameters.getParameter(A);
         Acceleration b = parameters.getParameter(B);
-        return Length.createSI(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si * b.si)));
+        return Length.instantiateSI(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si * b.si)));
     }
 
 }

@@ -89,7 +89,7 @@ public interface Estimation
         {
             delta = -delta; // faster leader increases the headway, faster follower reduces the headway
         }
-        return Length.createSI(distance.si + delta);
+        return Length.instantiateSI(distance.si + delta);
     }
 
     /**
@@ -120,7 +120,7 @@ public interface Estimation
      */
     default Speed getDelayedSpeedDifference(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu, final Time when)
     {
-        return Speed.createSI(perceivedGtu.getSpeed(when).si - perceivingGtu.getSpeed(when).si);
+        return Speed.instantiateSI(perceivedGtu.getSpeed(when).si - perceivingGtu.getSpeed(when).si);
     }
 
     /**
@@ -156,9 +156,9 @@ public interface Estimation
         {
             double factor = 1.0 + this.sign * (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
                     - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
-            Length headway = getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when).multiplyBy(factor);
+            Length headway = getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when).times(factor);
             Speed speed = getEgoSpeed(perceivingGtu)
-                    .plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when).multiplyBy(factor));
+                    .plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when).times(factor));
             Acceleration acceleration = perceivedGtu.getAcceleration(when);
             return new NeighborTriplet(headway, speed, acceleration);
         }

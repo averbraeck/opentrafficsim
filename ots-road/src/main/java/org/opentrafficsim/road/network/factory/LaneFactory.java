@@ -50,7 +50,7 @@ public final class LaneFactory
 {
 
     /** Stripe width. */
-    private static final Length STRIPE_WIDTH = Length.createSI(0.2);
+    private static final Length STRIPE_WIDTH = Length.instantiateSI(0.2);
 
     /** Angle above which a Bezier curve is used over a straight line. */
     private static final double BEZIER_MARGIN = Math.toRadians(0.5);
@@ -155,7 +155,7 @@ public final class LaneFactory
     public LaneFactory leftToRight(final double leftLanes, final Length laneWidth, final LaneType laneType,
             final Speed speedLimit)
     {
-        this.offset = laneWidth.multiplyBy(leftLanes);
+        this.offset = laneWidth.times(leftLanes);
         this.laneWidth0 = laneWidth.neg();
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
@@ -176,7 +176,7 @@ public final class LaneFactory
     public LaneFactory rightToLeft(final double rightLanes, final Length laneWidth, final LaneType laneType,
             final Speed speedLimit)
     {
-        this.offset = laneWidth.multiplyBy(-rightLanes);
+        this.offset = laneWidth.times(-rightLanes);
         this.laneWidth0 = laneWidth;
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
@@ -221,8 +221,8 @@ public final class LaneFactory
         list.add(null);
         for (Permeable perm : list)
         {
-            Length startOffset = this.offset.plus(this.laneWidth0.multiplyBy(0.5)).plus(this.offsetStart);
-            Length endOffset = this.offset.plus(this.laneWidth0.multiplyBy(0.5)).plus(this.offsetEnd);
+            Length startOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetStart);
+            Length endOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetEnd);
             this.lanes.add(Try.assign(
                     () -> new Lane(this.link, "Lane " + (this.lanes.size() + 1), startOffset, endOffset, this.laneWidth0.abs(),
                             this.laneWidth0.abs(), this.laneType0, this.speedLimit0),
@@ -255,17 +255,17 @@ public final class LaneFactory
             for (Lane lane : this.lanes)
             {
                 if (startOffset == null
-                        || lane.getDesignLineOffsetAtBegin().plus(lane.getBeginWidth().multiplyBy(0.5)).gt(startOffset))
+                        || lane.getDesignLineOffsetAtBegin().plus(lane.getBeginWidth().times(0.5)).gt(startOffset))
                 {
-                    startOffset = lane.getDesignLineOffsetAtBegin().plus(lane.getBeginWidth().multiplyBy(0.5));
+                    startOffset = lane.getDesignLineOffsetAtBegin().plus(lane.getBeginWidth().times(0.5));
                 }
-                if (endOffset == null || lane.getDesignLineOffsetAtEnd().plus(lane.getEndWidth().multiplyBy(0.5)).gt(endOffset))
+                if (endOffset == null || lane.getDesignLineOffsetAtEnd().plus(lane.getEndWidth().times(0.5)).gt(endOffset))
                 {
-                    endOffset = lane.getDesignLineOffsetAtEnd().plus(lane.getEndWidth().multiplyBy(0.5));
+                    endOffset = lane.getDesignLineOffsetAtEnd().plus(lane.getEndWidth().times(0.5));
                 }
             }
-            Length start = startOffset.plus(width.multiplyBy(0.5));
-            Length end = endOffset.plus(width.multiplyBy(0.5));
+            Length start = startOffset.plus(width.times(0.5));
+            Length end = endOffset.plus(width.times(0.5));
             Try.assign(() -> new Shoulder(this.link, "Left shoulder", start, end, width, width),
                     "Unexpected exception while building link.");
         }
@@ -276,18 +276,18 @@ public final class LaneFactory
             for (Lane lane : this.lanes)
             {
                 if (startOffset == null
-                        || lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().multiplyBy(0.5)).lt(startOffset))
+                        || lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().times(0.5)).lt(startOffset))
                 {
-                    startOffset = lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().multiplyBy(0.5));
+                    startOffset = lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().times(0.5));
                 }
                 if (endOffset == null
-                        || lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().multiplyBy(0.5)).lt(endOffset))
+                        || lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().times(0.5)).lt(endOffset))
                 {
-                    endOffset = lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().multiplyBy(0.5));
+                    endOffset = lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().times(0.5));
                 }
             }
-            Length start = startOffset.minus(width.multiplyBy(0.5));
-            Length end = endOffset.minus(width.multiplyBy(0.5));
+            Length start = startOffset.minus(width.times(0.5));
+            Length end = endOffset.minus(width.times(0.5));
             Try.assign(() -> new Shoulder(this.link, "Right shoulder", start, end, width, width),
                     "Unexpected exception while building link.");
         }

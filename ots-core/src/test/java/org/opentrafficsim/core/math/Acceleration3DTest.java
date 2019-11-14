@@ -6,11 +6,12 @@ import static org.junit.Assert.fail;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DirectionUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.AccelerationVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.junit.Test;
 
 /**
@@ -27,59 +28,59 @@ public class Acceleration3DTest
 
     /**
      * Test the constructors and getters of the Acceleration3D class.
-     * @throws ValueException Should not happen; test fails if it does
+     * @throws ValueRuntimeException Should not happen; test fails if it does
      */
     @Test
-    public final void acceleration3DTest() throws ValueException
+    public final void acceleration3DTest() throws ValueRuntimeException
     {
         double x = 2.2;
         double y = 3.3;
         double z = 5.5;
         Acceleration3D a3d = new Acceleration3D(x, y, z, AccelerationUnit.SI);
         checkAcceleration(a3d, x, y, z);
-        AccelerationVector sv = new AccelerationVector(new double[] {x, y, z}, AccelerationUnit.SI, StorageType.DENSE);
+        AccelerationVector sv = DoubleVector.instantiate(new double[] {x, y, z}, AccelerationUnit.SI, StorageType.DENSE);
         a3d = new Acceleration3D(sv);
         checkAcceleration(a3d, x, y, z);
-        sv = new AccelerationVector(new double[] {x, y, z}, AccelerationUnit.SI, StorageType.SPARSE);
+        sv = DoubleVector.instantiate(new double[] {x, y, z}, AccelerationUnit.SI, StorageType.SPARSE);
         a3d = new Acceleration3D(sv);
         checkAcceleration(a3d, x, y, z);
-        sv = new AccelerationVector(new double[] {x, y}, AccelerationUnit.SI, StorageType.DENSE);
+        sv = DoubleVector.instantiate(new double[] {x, y}, AccelerationUnit.SI, StorageType.DENSE);
         try
         {
             new Acceleration3D(sv);
             fail("Short vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
-        sv = new AccelerationVector(new double[] {x, y, z, x}, AccelerationUnit.SI, StorageType.DENSE);
+        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, AccelerationUnit.SI, StorageType.DENSE);
         try
         {
             new Acceleration3D(sv);
             fail("Long vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
-        sv = new AccelerationVector(new double[] {x, y}, AccelerationUnit.SI, StorageType.SPARSE);
+        sv = DoubleVector.instantiate(new double[] {x, y}, AccelerationUnit.SI, StorageType.SPARSE);
         try
         {
             new Acceleration3D(sv);
             fail("Short vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
-        sv = new AccelerationVector(new double[] {x, y, z, x}, AccelerationUnit.SI, StorageType.SPARSE);
+        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, AccelerationUnit.SI, StorageType.SPARSE);
         try
         {
             new Acceleration3D(sv);
             fail("Long vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
@@ -92,8 +93,8 @@ public class Acceleration3DTest
         double theta = Math.PI * 0.4;
         double phi = Math.PI * 0.3;
         double length = 10;
-        a3d = new Acceleration3D(new Acceleration(length, AccelerationUnit.SI),
-                new Direction(theta, DirectionUnit.EAST_RADIAN), new Direction(phi, DirectionUnit.EAST_RADIAN));
+        a3d = new Acceleration3D(new Acceleration(length, AccelerationUnit.SI), new Direction(theta, DirectionUnit.EAST_RADIAN),
+                new Direction(phi, DirectionUnit.EAST_RADIAN));
         checkAcceleration(a3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));
         assertTrue("toString output contains the class name", a3d.toString().contains("Acceleration3D"));

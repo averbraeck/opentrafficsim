@@ -1,8 +1,5 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.logger.CategoryLogger;
 
@@ -14,7 +11,7 @@ import org.djutils.logger.CategoryLogger;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class TimeAdapter extends XmlAdapter<String, Time>
+public class TimeAdapter extends UnitAdapter<Time>
 {
     /** {@inheritDoc} */
     @Override
@@ -29,13 +26,6 @@ public class TimeAdapter extends XmlAdapter<String, Time>
             CategoryLogger.always().error(exception, "Problem parsing Time '" + field + "'");
             throw exception;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String marshal(final Time time) throws IllegalArgumentException
-    {
-        return Scalar.textualStringOfDefaultLocale(time);
     }
 
 }

@@ -34,7 +34,7 @@ public interface DelayedActuation
 
     /** Parameter for actuation delay. */
     ParameterTypeDuration TAU =
-            new ParameterTypeDuration("tau_actuation", "Actuation delay", Duration.createSI(0.1), NumericConstraint.POSITIVE);
+            new ParameterTypeDuration("tau_actuation", "Actuation delay", Duration.instantiateSI(0.1), NumericConstraint.POSITIVE);
 
     /** Tau delayed actuation. */
     DelayedActuation TAUDELAYED = new DelayedActuation()

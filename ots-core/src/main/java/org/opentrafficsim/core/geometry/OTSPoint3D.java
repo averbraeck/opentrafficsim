@@ -512,7 +512,7 @@ public class OTSPoint3D implements Locatable, Serializable
      */
     public final Direction horizontalDirection(final OTSPoint3D point)
     {
-        return Direction.createSI(Math.atan2(point.y - this.y, point.x - this.x));
+        return Direction.instantiateSI(Math.atan2(point.y - this.y, point.x - this.x));
     }
 
     /**

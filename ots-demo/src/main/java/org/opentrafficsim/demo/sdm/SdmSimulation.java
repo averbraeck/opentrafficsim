@@ -10,8 +10,8 @@ import java.util.List;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
@@ -238,8 +239,8 @@ public class SdmSimulation extends AbstractSimulationScript
                 .addColorer(new DistractionColorer(DefaultDistraction.ANSWERING_CELL_PHONE, DefaultDistraction.CONVERSING,
                         DefaultDistraction.MANIPULATING_AUDIO_CONTROLS, DefaultDistraction.EXTERNAL_DISTRACTION))
                 .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
-                .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
-                .addColorer(new DesiredHeadwayColorer(Duration.createSI(0.56), Duration.createSI(2.4)))
+                .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
+                .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.56), Duration.instantiateSI(2.4)))
                 .addColorer(new TaskSaturationColorer()).build());
         try
         {
@@ -285,8 +286,8 @@ public class SdmSimulation extends AbstractSimulationScript
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         // manager of historic information to allow a reaction time
-        sim.getReplication().setHistoryManager(
-                new HistoryManagerDEVS(sim, AdaptationSituationalAwareness.TR_MAX.getDefaultValue(), Duration.createSI(10.0)));
+        sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim,
+                AdaptationSituationalAwareness.TR_MAX.getDefaultValue(), Duration.instantiateSI(10.0)));
 
         // Network
         this.network = new OTSRoadNetwork("SDM", true);
@@ -304,7 +305,7 @@ public class SdmSimulation extends AbstractSimulationScript
         OTSRoadNode nodeF = new OTSRoadNode(this.network, "F", pointF, Direction.ZERO);
         LinkType type = this.network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
-        Length laneWidth = Length.createSI(3.5);
+        Length laneWidth = Length.instantiateSI(3.5);
         LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
         List<Lane> allLanes = new ArrayList<>();
@@ -322,7 +323,7 @@ public class SdmSimulation extends AbstractSimulationScript
         allLanes.addAll(lanesEF);
         for (Lane lane : lanesEF)
         {
-            new SinkSensor(lane, lane.getLength().minus(Length.createSI(50)), Compatible.EVERYTHING, sim);
+            new SinkSensor(lane, lane.getLength().minus(Length.instantiateSI(50)), Compatible.EVERYTHING, sim);
         }
 
         // OD
@@ -333,8 +334,8 @@ public class SdmSimulation extends AbstractSimulationScript
         destinations.add(nodeF);
         double wut = sim.getReplication().getTreatment().getWarmupPeriod().si;
         double rl = sim.getReplication().getTreatment().getRunLength().si;
-        TimeVector timeVector =
-                new TimeVector(new double[] {0.0, wut, wut + (rl - wut) * 0.5, rl}, TimeUnit.BASE, StorageType.DENSE);
+        TimeVector timeVector = DoubleVector.instantiate(new double[] {0.0, wut, wut + (rl - wut) * 0.5, rl}, TimeUnit.DEFAULT,
+                StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR;
         Categorization categorization = new Categorization("GTU categorization", GTUType.class);
         ODMatrix odMatrix = new ODMatrix("OD", origins, destinations, categorization, timeVector, interpolation);
@@ -351,7 +352,7 @@ public class SdmSimulation extends AbstractSimulationScript
         odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] {f1 * left1, f1 * left1, f1 * left2, 0.0}));
         odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] {f2 * right1, f2 * right1, f2 * right2, 0.0}));
         odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] {f1 * right1, f1 * right1, f1 * right2, 0.0}));
-        ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.createSI(200)).set(ODOptions.GTU_TYPE,
+        ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.instantiateSI(200)).set(ODOptions.GTU_TYPE,
                 new DefaultGTUCharacteristicsGeneratorOD(
                         new SdmStrategicalPlannerFactory(this.network, sim.getReplication().getStream("generation"), this)));
         ODApplier.applyOD(this.network, odMatrix, sim, odOptions);
@@ -434,11 +435,11 @@ public class SdmSimulation extends AbstractSimulationScript
      * Creates a frequency vector.
      * @param array double[]; array in veh/h
      * @return FrequencyVector; frequency vector
-     * @throws ValueException on problem
+     * @throws ValueRuntimeException on problem
      */
-    private FrequencyVector freq(final double[] array) throws ValueException
+    private FrequencyVector freq(final double[] array) throws ValueRuntimeException
     {
-        return new FrequencyVector(array, FrequencyUnit.PER_HOUR, StorageType.DENSE);
+        return DoubleVector.instantiate(array, FrequencyUnit.PER_HOUR, StorageType.DENSE);
     }
 
     /**
@@ -489,8 +490,8 @@ public class SdmSimulation extends AbstractSimulationScript
     {
         if (this.output)
         {
-            Length preDetectorPosition = Length.createSI(400.0); // on link DE, upstream of lane drop
-            Length postDetectorPosition = Length.createSI(100.0); // on link EF, downstream of lane drop
+            Length preDetectorPosition = Length.instantiateSI(400.0); // on link DE, upstream of lane drop
+            Length postDetectorPosition = Length.instantiateSI(100.0); // on link EF, downstream of lane drop
             double tts = 0.0;
             List<Float> ttcList = new ArrayList<>();
             List<Float> decList = new ArrayList<>();

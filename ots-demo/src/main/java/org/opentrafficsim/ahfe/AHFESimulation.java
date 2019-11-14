@@ -53,16 +53,16 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class AHFESimulation extends AbstractOTSSimulationApplication
 {
     /** Warm-up time. */
-    static final Time WARMUP = Time.createSI(360);
+    static final Time WARMUP = Time.instantiateSI(360);
 
     /** Simulation time, including warm-up time. */
-    static final Time SIMEND = Time.createSI(360 + 3600);
+    static final Time SIMEND = Time.instantiateSI(360 + 3600);
 
     /** Distance to not consider at start of the network. */
-    private static Length ignoreStart = Length.createSI(2900); // Not 100m on pre-link, so 3000 total
+    private static Length ignoreStart = Length.instantiateSI(2900); // Not 100m on pre-link, so 3000 total
 
     /** Distance to not consider at end of the network. */
-    private static Length ignoreEnd = Length.createSI(1000);
+    private static Length ignoreEnd = Length.instantiateSI(1000);
 
     /** */
     private static final long serialVersionUID = 20170228L;
@@ -88,7 +88,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
         boolean autorun = true;
         int replication = 1;
         String anticipationStrategy = "none";
-        Duration reactionTime = Duration.createSI(0.0);
+        Duration reactionTime = Duration.instantiateSI(0.0);
         Duration anticipationTime = Duration.ZERO;
         double truckFraction = 0.05;
         double distanceError = 0.0; // 0.05;
@@ -149,7 +149,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
                 {
                     try
                     {
-                        reactionTime = Duration.createSI(java.lang.Double.parseDouble(value));
+                        reactionTime = Duration.instantiateSI(java.lang.Double.parseDouble(value));
                     }
                     catch (NumberFormatException nfe)
                     {
@@ -160,7 +160,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
                 {
                     try
                     {
-                        anticipationTime = Duration.createSI(java.lang.Double.parseDouble(value));
+                        anticipationTime = Duration.instantiateSI(java.lang.Double.parseDouble(value));
                     }
                     catch (NumberFormatException nfe)
                     {
@@ -286,7 +286,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
                             finalReactionTime, finalAnticipationTime, finalTruckFraction, finalDistanceError, finalSpeedError,
                             finalAccelerationError, finalLeftDemand, finalRightDemand, finalLeftFraction);
                     System.out.println("Setting up replication " + finalReplication);
-                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), ahfeModel, finalReplication);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMEND.si), ahfeModel, finalReplication);
                     new AHFESimulation(ahfeModel);
                     // 1 hour simulation run for testing
                     if (finalAutoRun)
@@ -512,8 +512,8 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
         {
             for (LaneDataInterface laneData : linkData.getLaneDatas())
             {
-                Length start = laneData.getLength().multiplyBy(startDistance.si / linkData.getLength().si);
-                Length end = laneData.getLength().multiplyBy(endDistance.si / linkData.getLength().si);
+                Length start = laneData.getLength().times(startDistance.si / linkData.getLength().si);
+                Length end = laneData.getLength().times(endDistance.si / linkData.getLength().si);
                 this.sampler.registerSpaceTimeRegion(new SpaceTimeRegion(
                         new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS), start, end, WARMUP, SIMEND));
             }

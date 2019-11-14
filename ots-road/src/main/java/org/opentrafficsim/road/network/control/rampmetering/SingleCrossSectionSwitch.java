@@ -65,7 +65,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
                 n++;
             }
         }
-        return Speed.createSI(value / n);
+        return Speed.instantiateSI(value / n);
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
      */
     protected final Frequency meanFlow()
     {
-        return totalFlow().divideBy(this.detectors.size());
+        return totalFlow().divide(this.detectors.size());
     }
     
     /**
@@ -91,7 +91,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
                 value += detector.getLastFlow().si;
             }
         }
-        return Frequency.createSI(value);
+        return Frequency.instantiateSI(value);
     }
 
 }

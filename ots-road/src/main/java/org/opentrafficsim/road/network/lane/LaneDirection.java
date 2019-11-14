@@ -74,9 +74,9 @@ public class LaneDirection implements Serializable
     {
         if (this.direction.isPlus())
         {
-            return getLane().getLength().multiplyBy(fraction);
+            return getLane().getLength().times(fraction);
         }
-        return getLane().getLength().multiplyBy(1.0 - fraction);
+        return getLane().getLength().times(1.0 - fraction);
     }
 
     /**
@@ -88,9 +88,9 @@ public class LaneDirection implements Serializable
     {
         if (this.direction.isPlus())
         {
-            return getLane().getLength().multiplyBy(1.0 - fraction);
+            return getLane().getLength().times(1.0 - fraction);
         }
-        return getLane().getLength().multiplyBy(fraction);
+        return getLane().getLength().times(fraction);
     }
 
     /**

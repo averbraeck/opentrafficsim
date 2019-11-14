@@ -57,8 +57,8 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             new ParameterTypeDuration("ta", "anticipation time in future", Duration.ZERO, ConstraintInterface.POSITIVEZERO);
 
     /** Parameter for correlation in errors. */
-    public static final ParameterTypeDuration TAUE =
-            new ParameterTypeDuration("tau_e", "error correlation time", Duration.createSI(20), ConstraintInterface.POSITIVE);
+    public static final ParameterTypeDuration TAUE = new ParameterTypeDuration("tau_e", "error correlation time",
+            Duration.instantiateSI(20), ConstraintInterface.POSITIVE);
 
     /** Parameter for distance error factor. */
     public static final ParameterTypeDouble SERROR =
@@ -422,13 +422,13 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             final double error, final double distanceError, final double speedError, final double accelerationError,
             final Speed egoSpeed)
     {
-        Length s = Length.createSI(distance.si * (1 + ((distance.ge0() ? error : -error) * distanceError)));
-        Speed v = Speed.createSI(speed.si + (error * speedError * distance.si));
+        Length s = Length.instantiateSI(distance.si * (1 + ((distance.ge0() ? error : -error) * distanceError)));
+        Speed v = Speed.instantiateSI(speed.si + (error * speedError * distance.si));
         if (v.lt0())
         {
             v = Speed.ZERO;
         }
-        Acceleration a = Acceleration.createSI(acceleration.si * (1 + error * accelerationError));
+        Acceleration a = Acceleration.instantiateSI(acceleration.si * (1 + error * accelerationError));
         return new NeighborTriplet(s, v, a);
     }
 

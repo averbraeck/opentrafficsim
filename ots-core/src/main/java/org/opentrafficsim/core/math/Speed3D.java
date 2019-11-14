@@ -5,11 +5,12 @@ import java.util.Locale;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 
 /**
  * A 3D speed vector, decomposed in X, Y, and Z-speed with easy conversion from and to a spherical coordinate system. <br>
@@ -40,14 +41,14 @@ public class Speed3D implements Serializable
     /**
      * Construct a new Speed3D from vector of strongly typed Cartesian coordinates.
      * @param speed SpeedVector; the speeds in 3D (YPR coded)
-     * @throws ValueException in case the vector does not have exactly three elements
+     * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
-    public Speed3D(final SpeedVector speed) throws ValueException
+    public Speed3D(final SpeedVector speed) throws ValueRuntimeException
     {
         super();
         if (speed.size() != 3)
         {
-            throw new ValueException("Size of an RPY-speed vector should be exactly 3. Got: " + speed);
+            throw new ValueRuntimeException("Size of an RPY-speed vector should be exactly 3. Got: " + speed);
         }
         this.speed = speed;
     }
@@ -57,12 +58,12 @@ public class Speed3D implements Serializable
      * @param x Speed; the speed in the x-direction
      * @param y Speed; the speed in the y-direction
      * @param z Speed; the speed in the z-direction
-     * @throws ValueException in case the units are incorrect
+     * @throws ValueRuntimeException in case the units are incorrect
      */
-    public Speed3D(final Speed x, final Speed y, final Speed z) throws ValueException
+    public Speed3D(final Speed x, final Speed y, final Speed z) throws ValueRuntimeException
     {
         super();
-        this.speed = new SpeedVector(new Speed[] {x, y, z}, StorageType.DENSE);
+        this.speed = DoubleVector.instantiate(new Speed[] {x, y, z}, x.getDisplayUnit(), StorageType.DENSE);
     }
 
     /**
@@ -71,12 +72,12 @@ public class Speed3D implements Serializable
      * @param y double; the speed in the y-direction
      * @param z double; the speed in the z-direction
      * @param unit SpeedUnit; the unit of the xyz parameters
-     * @throws ValueException in case the units are incorrect
+     * @throws ValueRuntimeException in case the units are incorrect
      */
-    public Speed3D(final double x, final double y, final double z, final SpeedUnit unit) throws ValueException
+    public Speed3D(final double x, final double y, final double z, final SpeedUnit unit) throws ValueRuntimeException
     {
         super();
-        this.speed = new SpeedVector(new double[] {x, y, z}, unit, StorageType.DENSE);
+        this.speed = DoubleVector.instantiate(new double[] {x, y, z}, unit, StorageType.DENSE);
     }
 
     /**
@@ -84,13 +85,13 @@ public class Speed3D implements Serializable
      * @param speed Speed; the speed in the direction of the angle along the vector
      * @param theta Direction; the angle from the z direction
      * @param phi Direction; the projected angle in the xy-plane from the x direction
-     * @throws ValueException in case the vector does not have exactly three elements
+     * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
-    public Speed3D(final Speed speed, final Direction theta, final Direction phi) throws ValueException
+    public Speed3D(final Speed speed, final Direction theta, final Direction phi) throws ValueRuntimeException
     {
         super();
         double[] xyz = Scalar3D.polarToCartesian(speed.getInUnit(), theta.si, phi.si);
-        this.speed = new SpeedVector(xyz, speed.getUnit(), StorageType.DENSE);
+        this.speed = DoubleVector.instantiate(xyz, speed.getDisplayUnit(), StorageType.DENSE);
     }
 
     /**
@@ -103,7 +104,7 @@ public class Speed3D implements Serializable
         {
             return this.speed.get(0);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(
@@ -121,7 +122,7 @@ public class Speed3D implements Serializable
         {
             return this.speed.get(1);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(
@@ -139,7 +140,7 @@ public class Speed3D implements Serializable
         {
             return this.speed.get(2);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(

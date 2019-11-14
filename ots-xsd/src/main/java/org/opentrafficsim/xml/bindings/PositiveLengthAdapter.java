@@ -1,8 +1,5 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.logger.CategoryLogger;
 
@@ -14,7 +11,7 @@ import org.djutils.logger.CategoryLogger;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class PositiveLengthAdapter extends XmlAdapter<String, Length>
+public class PositiveLengthAdapter extends UnitAdapter<Length>
 {
     /** {@inheritDoc} */
     @Override
@@ -45,7 +42,7 @@ public class PositiveLengthAdapter extends XmlAdapter<String, Length>
             CategoryLogger.always().error("PositiveLength cannot be negative: " + length);
             throw new IllegalArgumentException("PositiveLength cannot be negative: " + length);
         }
-        return Scalar.textualStringOfDefaultLocale(length);
+        return super.marshal(length);
     }
 
 }

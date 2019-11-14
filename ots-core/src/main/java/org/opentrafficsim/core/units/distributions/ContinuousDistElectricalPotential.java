@@ -36,7 +36,7 @@ public class ContinuousDistElectricalPotential
     @Override
     public ElectricalPotential draw()
     {
-        return new ElectricalPotential(getDistribution().draw(), (ElectricalPotentialUnit) getUnit());
+        return new ElectricalPotential(getDistribution().draw(), (ElectricalPotentialUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

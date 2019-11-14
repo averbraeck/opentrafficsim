@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -31,7 +30,6 @@ public class DistributionTest
      * @throws ProbabilityException the test fails if this happens uncaught
      */
     @Test
-    @SuppressFBWarnings("NP_NULL_PARAM_DEREF_NONVIRTUAL")
     public final void distributionTest() throws ProbabilityException
     {
         StreamInterface si = new MersenneTwister(1234);
