@@ -24,7 +24,7 @@ import nl.tudelft.simulation.event.TimedEvent;
  * <p>
  * <style>table,th,td {border:1px solid grey; border-style:solid; text-align:left; border-collapse: collapse;}</style>
  * <H2>NEW</H2>
- * <table caption="" style="width:800px;">
+ * <table style="width:800px;"><caption>&nbsp;</caption>
  * <thead>
  * <tr>
  * <th style="width:25%;">Variable</th>
@@ -70,7 +70,7 @@ import nl.tudelft.simulation.event.TimedEvent;
  * </p>
  * <p>
  * <h2>DELETE</h2>
- * <table caption="" style="width:800px;">
+ * <table style="width:800px;"><caption>&nbsp;</caption>
  * <thead>
  * <tr>
  * <th style="width:25%;">Variable</th>

@@ -84,7 +84,7 @@ public final class ODApplier
      * is equal to the origin node id. For lane-based generators the id's are appended with an ordered number (e.g. A1), where
      * the ordering is first by link id, and then right to left concerning the lateral lane position at the start of the lane.
      * For node "A" this would for example be:<br>
-     * <table caption="">
+     * <table ><caption>&nbsp;</caption>
      * <tr>
      * <th>Generator id</th>
      * <th>Link</th>

@@ -54,7 +54,7 @@ public enum LongitudinalDirectionality
 
     /**
      * This method looks if this directionality "contains" the provided other directionality. The logic table looks as follows:
-     * <table border="1" caption="">
+     * <table border="1"><caption>&nbsp;</caption>
      * <tr>
      * <td><b>THIS &darr; &nbsp; OTHER &rarr;</b></td>
      * <td><b>DIR_BOTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>

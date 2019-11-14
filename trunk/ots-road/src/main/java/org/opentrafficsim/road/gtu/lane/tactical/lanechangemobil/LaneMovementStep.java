@@ -26,7 +26,7 @@ public class LaneMovementStep implements Serializable
 
     /**
      * Lane change. This has one of the following values:
-     * <table caption="">
+     * <table ><caption>&nbsp;</caption>
      * <tr>
      * <td>null:</td>
      * <td>Stay in the current lane</td>
@@ -47,7 +47,7 @@ public class LaneMovementStep implements Serializable
      * Construct a new LaneChangeModelResult.
      * @param gfmr AccelerationStep; the acceleration and duration of validity of this result.
      * @param laneChange LateralDirectionality; this has one of the values:
-     *            <table caption="">
+     *            <table ><caption>&nbsp;</caption>
      *            <tr>
      *            <td>null:</td>
      *            <td>Stay in the current lane</td>
@@ -78,7 +78,7 @@ public class LaneMovementStep implements Serializable
 
     /**
      * @return laneChange. This has one of the values:
-     *         <table caption="">
+     *         <table ><caption>&nbsp;</caption>
      *         <tr>
      *         <td>null:</td>
      *         <td>Stay in the current lane</td>
