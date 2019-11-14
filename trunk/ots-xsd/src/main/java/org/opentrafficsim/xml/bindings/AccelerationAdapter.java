@@ -1,8 +1,5 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djutils.logger.CategoryLogger;
 
@@ -14,7 +11,7 @@ import org.djutils.logger.CategoryLogger;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class AccelerationAdapter extends XmlAdapter<String, Acceleration>
+public class AccelerationAdapter extends UnitAdapter<Acceleration>
 {
     /** {@inheritDoc} */
     @Override
@@ -30,12 +27,4 @@ public class AccelerationAdapter extends XmlAdapter<String, Acceleration>
             throw exception;
         }
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public String marshal(final Acceleration acceleration) throws IllegalArgumentException
-    {
-        return Scalar.textualStringOfDefaultLocale(acceleration);
-    }
-
 }

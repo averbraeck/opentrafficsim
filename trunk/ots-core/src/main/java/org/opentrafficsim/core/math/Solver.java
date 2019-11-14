@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.math;
 
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
 
 /**
  * Solvers for simple equations.
@@ -58,15 +58,15 @@ public final class Solver
      * @param b double; linear coefficient
      * @param c double; value of the quadratic function for x==0
      * @return double; the solution that is closest (but not less than) a boundary
-     * @throws ValueException if there is no acceptable solution
+     * @throws ValueRuntimeException if there is no acceptable solution
      */
     public static double firstSolutionAfter(final double lowerBound, final double a, final double b, final double c)
-            throws ValueException
+            throws ValueRuntimeException
     {
         double[] solutions = solve(a, b, c);
         if (0 == solutions.length)
         {
-            throw new ValueException("No solutions");
+            throw new ValueRuntimeException("No solutions");
         }
         else if (1 == solutions.length)
         {
@@ -74,12 +74,12 @@ public final class Solver
             {
                 return solutions[0];
             }
-            throw new ValueException("Only one solution and it is before lowerBound");
+            throw new ValueRuntimeException("Only one solution and it is before lowerBound");
         }
         // Two solutions
         if (solutions[0] < lowerBound && solutions[1] < lowerBound)
         {
-            throw new ValueException("Both solutions are before lowerBound");
+            throw new ValueRuntimeException("Both solutions are before lowerBound");
         }
         if (solutions[0] < lowerBound)
         {

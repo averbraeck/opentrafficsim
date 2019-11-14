@@ -7,10 +7,11 @@ import java.util.List;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.network.factory.xml.units.DurationUnits;
@@ -176,7 +177,7 @@ public class DemandTag implements Serializable
             if (tag.demandType.equals(DemandType.TIMED_FACTORS) || tag.demandType.equals(DemandType.TIMED_FREQUENCIES))
             {
                 tag.timeVector = Try.assign(
-                        () -> new TimeVector(timeList.stream().mapToDouble(d -> d).toArray(), TimeUnit.BASE, StorageType.DENSE),
+                        () -> DoubleVector.instantiate(timeList.stream().mapToDouble(d -> d).toArray(), TimeUnit.DEFAULT, StorageType.DENSE),
                         "Unexpected exception while converting list of time values to an array.");
             }
             // factor or demand vector
@@ -187,7 +188,7 @@ public class DemandTag implements Serializable
             else if (tag.demandType.equals(DemandType.TIMED_FREQUENCIES) || tag.demandType.equals(DemandType.FREQUENCIES))
             {
                 tag.demandVector = Try.assign(
-                        () -> new FrequencyVector(valueList.stream().mapToDouble(d -> d).toArray(), UNIT, StorageType.DENSE),
+                        () -> DoubleVector.instantiate(valueList.stream().mapToDouble(d -> d).toArray(), UNIT, StorageType.DENSE),
                         "Unexpected exception while converting list of time values to an array.");
             }
 

@@ -48,7 +48,7 @@ public class PloegCACC extends PloegACC
                 leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDCACC).si - settings.getParameter(X0).si;
         double esd = leader.getSpeed().si - gtu.getSpeed().si - gtu.getAcceleration().si * settings.getParameter(TDCACC).si;
         double kaui = settings.getParameter(KA) * leader.getAcceleration().si;
-        return Acceleration.createSI(settings.getParameter(KS) * es + settings.getParameter(KD) * esd + kaui);
+        return Acceleration.instantiateSI(settings.getParameter(KS) * es + settings.getParameter(KD) * esd + kaui);
     }
 
 }

@@ -5,11 +5,12 @@ import java.util.Locale;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DirectionUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.AccelerationVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 
 /**
  * A 3D acceleration vector, decomposed in X, Y, and Z-acceleration with easy conversion from and to a spherical coordinate
@@ -41,14 +42,14 @@ public class Acceleration3D implements Serializable
     /**
      * Construct a new Acceleration3D from vector of strongly typed Cartesian coordinates.
      * @param acceleration AccelerationVector; the accelerations in 3D (YPR coded)
-     * @throws ValueException in case the vector does not have exactly three elements
+     * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
-    public Acceleration3D(final AccelerationVector acceleration) throws ValueException
+    public Acceleration3D(final AccelerationVector acceleration) throws ValueRuntimeException
     {
         super();
         if (acceleration.size() != 3)
         {
-            throw new ValueException("Size of an RPY-acceleration vector should be exactly 3. Got: " + acceleration);
+            throw new ValueRuntimeException("Size of an RPY-acceleration vector should be exactly 3. Got: " + acceleration);
         }
         this.acceleration = acceleration;
     }
@@ -58,12 +59,12 @@ public class Acceleration3D implements Serializable
      * @param x Acceleration; the acceleration in the x-direction
      * @param y Acceleration; the acceleration in the y-direction
      * @param z Acceleration; the acceleration in the z-direction
-     * @throws ValueException in case the units are incorrect
+     * @throws ValueRuntimeException in case the units are incorrect
      */
-    public Acceleration3D(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueException
+    public Acceleration3D(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueRuntimeException
     {
         super();
-        this.acceleration = new AccelerationVector(new Acceleration[] {x, y, z}, StorageType.DENSE);
+        this.acceleration = DoubleVector.instantiate(new Acceleration[] {x, y, z}, AccelerationUnit.SI, StorageType.DENSE);
     }
 
     /**
@@ -72,12 +73,13 @@ public class Acceleration3D implements Serializable
      * @param y double; the acceleration in the y-direction
      * @param z double; the acceleration in the z-direction
      * @param unit AccelerationUnit; the unit of the xyz parameters
-     * @throws ValueException in case the units are incorrect
+     * @throws ValueRuntimeException in case the units are incorrect
      */
-    public Acceleration3D(final double x, final double y, final double z, final AccelerationUnit unit) throws ValueException
+    public Acceleration3D(final double x, final double y, final double z, final AccelerationUnit unit)
+            throws ValueRuntimeException
     {
         super();
-        this.acceleration = new AccelerationVector(new double[] {x, y, z}, unit, StorageType.DENSE);
+        this.acceleration = DoubleVector.instantiate(new double[] {x, y, z}, unit, StorageType.DENSE);
     }
 
     /**
@@ -85,13 +87,14 @@ public class Acceleration3D implements Serializable
      * @param acceleration Acceleration; the acceleration in the direction of the angle along the vector
      * @param theta Direction; the angle from the z direction
      * @param phi Direction; the projected angle in the xy-plane from the x direction
-     * @throws ValueException in case the vector does not have exactly three elements
+     * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
-    public Acceleration3D(final Acceleration acceleration, final Direction theta, final Direction phi) throws ValueException
+    public Acceleration3D(final Acceleration acceleration, final Direction theta, final Direction phi)
+            throws ValueRuntimeException
     {
         super();
         double[] xyz = Scalar3D.polarToCartesian(acceleration.getInUnit(), theta.si, phi.si);
-        this.acceleration = new AccelerationVector(xyz, acceleration.getUnit(), StorageType.DENSE);
+        this.acceleration = DoubleVector.instantiate(xyz, acceleration.getDisplayUnit(), StorageType.DENSE);
     }
 
     /**
@@ -104,7 +107,7 @@ public class Acceleration3D implements Serializable
         {
             return this.acceleration.get(0);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(
@@ -123,7 +126,7 @@ public class Acceleration3D implements Serializable
         {
             return this.acceleration.get(1);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(
@@ -142,7 +145,7 @@ public class Acceleration3D implements Serializable
         {
             return this.acceleration.get(2);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException(

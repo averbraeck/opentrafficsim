@@ -47,8 +47,6 @@ import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -65,7 +63,6 @@ public final class Convert
     /**
      * Construct a converter.
      */
-    @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     public Convert()
     {
         baseX = Double.NaN;
@@ -197,7 +194,7 @@ public final class Convert
                 try
                 {
                     return new OTSRoadNode(network, Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)),
-                            Direction.createSI(Double.NaN));
+                            Direction.instantiateSI(Double.NaN));
                 }
                 catch (TransformException exception)
                 {
@@ -218,7 +215,7 @@ public final class Convert
             if (null == otsNode)
             {
                 otsNode = new OTSRoadNode(network, nodeName, new OTSPoint3D(Convert.transform(coordWGS84)), 
-                        Direction.createSI(Double.NaN));
+                        Direction.instantiateSI(Double.NaN));
             }
             return otsNode;
         }

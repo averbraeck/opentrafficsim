@@ -59,9 +59,9 @@ public class Converter
             pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" + "<OTS xmlns=\"http://www.opentrafficsim.org/ots\" "
                     + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
                     + "  xsi:schemaLocation=\"http://www.opentrafficsim.org/ots "
-                    + "https://opentrafficsim.org/docs/xsd/1.02.01/ots.xsd\"\n"
+                    + "https://opentrafficsim.org/docs/xsd/1.03.00/ots.xsd\"\n"
                     + "  xmlns:xi=\"http://www.w3.org/2001/XInclude\">\n" + "\n" + "  <DEFINITIONS>\n"
-                    + "    <xi:include href=\"https://opentrafficsim.org/docs/xsd/1.02.01/defaults/default_gtutypes.xml\" />\n");
+                    + "    <xi:include href=\"https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutypes.xml\" />\n");
 
             NodeList defNodeList = nodesOfType(xmlNodeList, "DEFINITIONS").get(0).getChildNodes();
 

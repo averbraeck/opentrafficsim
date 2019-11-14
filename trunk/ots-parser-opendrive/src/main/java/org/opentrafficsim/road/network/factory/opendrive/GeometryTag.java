@@ -137,7 +137,7 @@ class GeometryTag implements Serializable
             geometryTag.id = UUID.randomUUID().toString();
         }
 
-        OTSRoadNode node = new OTSRoadNode(network, geometryTag.id, coordinate, Direction.createSI(Double.NaN));
+        OTSRoadNode node = new OTSRoadNode(network, geometryTag.id, coordinate, Direction.instantiateSI(Double.NaN));
         geometryTag.node = node;
         return node;
     }

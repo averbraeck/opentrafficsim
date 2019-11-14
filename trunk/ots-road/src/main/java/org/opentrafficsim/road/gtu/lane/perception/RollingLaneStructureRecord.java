@@ -791,7 +791,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
             public Length calculateStartDistance(final RollingLaneStructureRecord startDistanceSource,
                     final RollingLaneStructureRecord self, final double fractionalPosition)
             {
-                return self.getLane().getLength().multiplyBy(fractionalPosition).neg();
+                return self.getLane().getLength().times(fractionalPosition).neg();
             }
         };
 

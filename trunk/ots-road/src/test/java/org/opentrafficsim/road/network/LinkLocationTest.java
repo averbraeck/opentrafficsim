@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network;
 
 import static org.junit.Assert.assertEquals;
 
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;

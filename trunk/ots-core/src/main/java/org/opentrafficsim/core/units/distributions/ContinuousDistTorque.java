@@ -35,7 +35,7 @@ public class ContinuousDistTorque extends ContinuousDistDoubleScalar.Rel<Torque,
     @Override
     public Torque draw()
     {
-        return new Torque(getDistribution().draw(), (TorqueUnit) getUnit());
+        return new Torque(getDistribution().draw(), (TorqueUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

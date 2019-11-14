@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
@@ -120,8 +120,8 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
             InputParameterMap genericMap = (InputParameterMap) this.inputParameterMap.get("generic");
 
             genericMap.add(new InputParameterDoubleScalar<LengthUnit, Length>("trackLength", "Track length",
-                    "Track length (circumfence of the track)", Length.createSI(1000.0), Length.createSI(500.0),
-                    Length.createSI(2000.0), true, true, "%.0f", 1.0));
+                    "Track length (circumfence of the track)", Length.instantiateSI(1000.0), Length.instantiateSI(500.0),
+                    Length.instantiateSI(2000.0), true, true, "%.0f", 1.0));
             genericMap.add(new InputParameterDouble("densityMean", "Mean density (veh / km)",
                     "mean density of the vehicles (vehicles per kilometer)", 30.0, 5.0, 45.0, true, true, "%.0f", 2.0));
             genericMap.add(new InputParameterDouble("densityVariability", "Density variability",
@@ -154,11 +154,10 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OTSPoint3D(radius, 0, 0), 
+            OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OTSPoint3D(radius, 0, 0),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
-            OTSRoadNode halfway = new OTSRoadNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0), 
+            OTSRoadNode halfway = new OTSRoadNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0),
                     new Direction(270, DirectionUnit.EAST_DEGREE));
-            
 
             OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf1.length; i++)
@@ -225,11 +224,11 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
                 this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
-                new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
+                new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
-        gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
-        gtu.setMaximumDeceleration(Acceleration.createSI(-8.0));
+        gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
+        gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner;

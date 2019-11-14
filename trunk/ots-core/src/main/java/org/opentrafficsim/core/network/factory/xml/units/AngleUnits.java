@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.DirectionUnit;
-import org.djunits.unit.UNITS;
-import org.djunits.value.AngleUtil;
+import org.djunits.unit.util.UNITS;
+import org.djunits.value.util.AngleUtil;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.opentrafficsim.core.network.NetworkException;
@@ -130,7 +130,7 @@ public final class AngleUnits implements UNITS
         {
             double value = Double.parseDouble(sv);
             Direction direction = new Direction(value, u);
-            return new Direction(AngleUtil.normalize(direction).si, DirectionUnit.EAST_RADIAN);
+            return new Direction(AngleUtil.normalize(direction.si), DirectionUnit.DEFAULT);
         }
         catch (NumberFormatException nfe)
         {

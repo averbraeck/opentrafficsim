@@ -276,7 +276,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
                         {
                             if (isOnRoute(nextRecord))
                             {
-                                prepareNext(nextRecord, Length.createSI(-1e-9));
+                                prepareNext(nextRecord, Length.instantiateSI(-1e-9));
                             }
                         }
                     }

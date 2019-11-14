@@ -41,7 +41,7 @@ public class OperationalPlanTest
     public final void testOperationalPlan() throws OperationalPlanException, OTSGeometryException
     {
         DirectedPoint waitPoint = new DirectedPoint(12, 13, 14, 15, 16, 17);
-        Time startTime = new Time(100, TimeUnit.BASE);
+        Time startTime = new Time(100, TimeUnit.DEFAULT);
         Duration duration = new Duration(1, DurationUnit.MINUTE);
         OperationalPlan op = new OperationalPlan(null, waitPoint, startTime, duration);
         assertEquals("Start speed is 0", 0, op.getStartSpeed().si, 0);
@@ -64,18 +64,18 @@ public class OperationalPlanTest
         }
         try
         {
-            op.getLocation(new Time(99.5, TimeUnit.BASE));
+            op.getLocation(new Time(99.5, TimeUnit.DEFAULT));
             fail("getLocation for absolute time before start time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
         {
             // Ignore expected exception
         }
-        op.getLocation(new Time(100.1, TimeUnit.BASE)); // Should NOT throw an exception
-        op.getLocation(new Time(159.9, TimeUnit.BASE)); // Should NOT throw an exception
+        op.getLocation(new Time(100.1, TimeUnit.DEFAULT)); // Should NOT throw an exception
+        op.getLocation(new Time(159.9, TimeUnit.DEFAULT)); // Should NOT throw an exception
         try
         {
-            op.getLocation(new Time(160.1, TimeUnit.BASE));
+            op.getLocation(new Time(160.1, TimeUnit.DEFAULT));
             fail("getLocation for absolute time after end time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
@@ -153,7 +153,7 @@ public class OperationalPlanTest
         for (int i = 0; i <= steps; i++)
         {
             double stepTime = startTime.si + t * i / steps * 0.9999; // sometimes fails for endTime
-            Time absTime = new Time(stepTime, TimeUnit.BASE);
+            Time absTime = new Time(stepTime, TimeUnit.DEFAULT);
             double deltaT = stepTime - startTime.si;
             Duration relTime = new Duration(deltaT, DurationUnit.SI);
             double expectedDistance = startSpeed.si * deltaT + 0.5 * a.si * deltaT * deltaT;

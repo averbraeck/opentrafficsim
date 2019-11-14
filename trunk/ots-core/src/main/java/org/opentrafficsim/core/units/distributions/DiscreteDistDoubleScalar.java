@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.AngleSolidUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
@@ -27,6 +26,7 @@ import org.djunits.unit.MassUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
 import org.djunits.unit.PressureUnit;
+import org.djunits.unit.SolidAngleUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TemperatureUnit;
 import org.djunits.unit.TimeUnit;
@@ -34,18 +34,13 @@ import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
-import org.djunits.value.Relative;
 import org.djunits.value.vdouble.scalar.AbsoluteTemperature;
-import org.djunits.value.vdouble.scalar.AbstractDoubleScalarAbs;
-import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Angle;
-import org.djunits.value.vdouble.scalar.AngleSolid;
 import org.djunits.value.vdouble.scalar.Area;
 import org.djunits.value.vdouble.scalar.Density;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.ElectricalCharge;
 import org.djunits.value.vdouble.scalar.ElectricalCurrent;
@@ -62,11 +57,15 @@ import org.djunits.value.vdouble.scalar.Mass;
 import org.djunits.value.vdouble.scalar.Position;
 import org.djunits.value.vdouble.scalar.Power;
 import org.djunits.value.vdouble.scalar.Pressure;
+import org.djunits.value.vdouble.scalar.SolidAngle;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Temperature;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.Torque;
 import org.djunits.value.vdouble.scalar.Volume;
+import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarAbs;
+import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
@@ -114,7 +113,7 @@ public interface DiscreteDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         public T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -132,7 +131,7 @@ public interface DiscreteDistDoubleScalar
                     return (T) new Time(getDistribution().draw(), (TimeUnit) getUnit());
 
                 default:
-                    return (T) new DoubleScalar.Abs(getDistribution().draw(), (AU) getUnit());
+                    return (T) DoubleScalar.instantiate(getDistribution().draw(), (AU) getUnit());
             }
         }
 
@@ -151,7 +150,7 @@ public interface DiscreteDistDoubleScalar
      * @param <U> The unit type used
      */
     class Rel<T extends AbstractDoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-            implements Relative, Serializable
+            implements Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -177,7 +176,7 @@ public interface DiscreteDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         public T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -188,8 +187,8 @@ public interface DiscreteDistDoubleScalar
                 case "AngleUnit":
                     return (T) new Angle(getDistribution().draw(), (AngleUnit) getUnit());
 
-                case "AngleSolidUnit":
-                    return (T) new AngleSolid(getDistribution().draw(), (AngleSolidUnit) getUnit());
+                case "SolidAngleUnit":
+                    return (T) new SolidAngle(getDistribution().draw(), (SolidAngleUnit) getUnit());
 
                 case "AreaUnit":
                     return (T) new Area(getDistribution().draw(), (AreaUnit) getUnit());
@@ -258,7 +257,7 @@ public interface DiscreteDistDoubleScalar
                     return (T) new Volume(getDistribution().draw(), (VolumeUnit) getUnit());
 
                 default:
-                    return (T) new DoubleScalar.Rel(getDistribution().draw(), getUnit());
+                    return (T) DoubleScalar.instantiate(getDistribution().draw(), (U) getUnit());
             }
         }
 

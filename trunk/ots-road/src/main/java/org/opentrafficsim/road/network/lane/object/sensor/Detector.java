@@ -99,7 +99,7 @@ public class Detector extends AbstractSensor
         @Override
         public Speed aggregate(final Double cumulative, final int count, final Duration aggregation)
         {
-            return Speed.createSI(cumulative / count);
+            return Speed.instantiateSI(cumulative / count);
         }
 
         @Override
@@ -151,7 +151,7 @@ public class Detector extends AbstractSensor
         @Override
         public Speed aggregate(final Double cumulative, final int count, final Duration aggregation)
         {
-            return Speed.createSI(count / cumulative);
+            return Speed.instantiateSI(count / cumulative);
         }
 
         @Override
@@ -317,7 +317,7 @@ public class Detector extends AbstractSensor
             final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         // Note: length not important for flow and mean speed
-        this(id, lane, longitudinalPosition, Length.ZERO, simulator, Duration.createSI(60.0), MEAN_SPEED);
+        this(id, lane, longitudinalPosition, Length.ZERO, simulator, Duration.instantiateSI(60.0), MEAN_SPEED);
     }
 
     /**
@@ -339,7 +339,7 @@ public class Detector extends AbstractSensor
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.aggregation = aggregation;
-        Try.execute(() -> simulator.scheduleEventAbs(Time.createSI(aggregation.si), this, this, "aggregate", null),
+        Try.execute(() -> simulator.scheduleEventAbs(Time.instantiateSI(aggregation.si), this, this, "aggregate", null),
                 "");
         for (DetectorMeasurement<?, ?> measurement : measurements)
         {
@@ -447,7 +447,7 @@ public class Detector extends AbstractSensor
      */
     private void aggregate()
     {
-        Frequency frequency = Frequency.createSI(this.periodCount / this.aggregation.si);
+        Frequency frequency = Frequency.instantiateSI(this.periodCount / this.aggregation.si);
         this.count.add(frequency);
         for (DetectorMeasurement<?, ?> measurement : this.dataMap.keySet())
         {
@@ -470,7 +470,7 @@ public class Detector extends AbstractSensor
         }
         this.period++;
         double t = this.aggregation.si * this.period;
-        Time time = Time.createSI(t);
+        Time time = Time.instantiateSI(t);
         Try.execute(() -> getSimulator().scheduleEventAbs(time, this, this, "aggregate", null), "");
     }
 
@@ -947,7 +947,7 @@ public class Detector extends AbstractSensor
         private int count = 0;
 
         /** Time the last GTU exited the detector. */
-        private Time lastExitTime = Time.createSI(Double.NEGATIVE_INFINITY);
+        private Time lastExitTime = Time.instantiateSI(Double.NEGATIVE_INFINITY);
 
         /** Stored sizes of earlier platoons. */
         private List<Integer> platoons = new ArrayList<>();

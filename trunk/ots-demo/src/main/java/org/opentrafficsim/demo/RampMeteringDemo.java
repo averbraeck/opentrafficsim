@@ -12,7 +12,7 @@ import java.util.Set;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -148,7 +149,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     private ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
 
     /** Ramp metering. */
-    @Option(names = { "-r", "--rampMetering" }, description = "Ramp metering on or off", defaultValue = "true")
+    @Option(names = {"-r", "--rampMetering"}, description = "Ramp metering on or off", defaultValue = "true")
     private boolean rampMetering;
 
     /** Whether to generate output. */
@@ -183,7 +184,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     /** Scenario. */
     @Option(names = "--scenario", description = "Scenario name.", defaultValue = "test")
     private String scenario;
-    
+
     /** GTUs in simulation. */
     private Map<String, Double> gtusInSimulation = new LinkedHashMap<>();
 
@@ -211,10 +212,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
         CliUtil.changeOptionDefault(demo, "simulationTime", "4200s");
         CliUtil.execute(demo, args);
         demo.mainDemand =
-                new FrequencyVector(arrayFromString(demo.mainDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
+                DoubleVector.instantiate(arrayFromString(demo.mainDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
         demo.rampDemand =
-                new FrequencyVector(arrayFromString(demo.rampDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
-        demo.demandTime = new TimeVector(arrayFromString(demo.demandTimeString), TimeUnit.BASE_MINUTE, StorageType.DENSE);
+                DoubleVector.instantiate(arrayFromString(demo.rampDemandString), FrequencyUnit.PER_HOUR, StorageType.DENSE);
+        demo.demandTime =
+                DoubleVector.instantiate(arrayFromString(demo.demandTimeString), TimeUnit.BASE_MINUTE, StorageType.DENSE);
         demo.start();
     }
 
@@ -256,9 +258,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
         GTUType controlledCar = new GTUType(CONTROLLED_CAR_ID, car);
 
         GTUColorer[] colorers =
-                new GTUColorer[] { new IDGTUColorer(), new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
-                        new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)),
-                        new GTUTypeColorer().add(car).add(controlledCar) };
+                new GTUColorer[] {new IDGTUColorer(), new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
+                        new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
+                        new GTUTypeColorer().add(car).add(controlledCar)};
         SwitchableGTUColorer colorer = new SwitchableGTUColorer(0, colorers);
         setGtuColorer(colorer);
 
@@ -275,7 +277,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         LinkType freeway = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
-        Length laneWidth = Length.createSI(3.6);
+        Length laneWidth = Length.instantiateSI(3.6);
         LaneType freewayLane = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
         Speed rampSpeedLimit = new Speed(70, SpeedUnit.KM_PER_HOUR);
@@ -286,27 +288,27 @@ public class RampMeteringDemo extends AbstractSimulationScript
         List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Permeable.BOTH).getLanes();
         List<Lane> lanesEF =
-                new LaneFactory(network, nodeE, nodeF, freeway, sim, policy).setOffsetEnd(laneWidth.multiplyBy(1.5).neg())
+                new LaneFactory(network, nodeE, nodeF, freeway, sim, policy).setOffsetEnd(laneWidth.times(1.5).neg())
                         .leftToRight(0.5, laneWidth, freewayLane, rampSpeedLimit).addLanes().getLanes();
         List<Lane> lanesFB = new LaneFactory(network, nodeF, nodeB, freeway, sim, policy)
-                .setOffsetStart(laneWidth.multiplyBy(1.5).neg()).setOffsetEnd(laneWidth.multiplyBy(1.5).neg())
+                .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         for (Lane lane : lanesCD)
         {
-            new SinkSensor(lane, lane.getLength().minus(Length.createSI(50)), GTUDirectionality.DIR_PLUS, sim);
+            new SinkSensor(lane, lane.getLength().minus(Length.instantiateSI(50)), GTUDirectionality.DIR_PLUS, sim);
         }
         // detectors
-        Duration agg = Duration.createSI(60.0);
+        Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
-        Detector det1 = new Detector("1", lanesAB.get(0), Length.createSI(2900), detectorLength, sim, agg, Detector.MEAN_SPEED,
-                Detector.OCCUPANCY);
-        Detector det2 = new Detector("2", lanesAB.get(1), Length.createSI(2900), detectorLength, sim, agg, Detector.MEAN_SPEED,
-                Detector.OCCUPANCY);
-        Detector det3 = new Detector("3", lanesCD.get(0), Length.createSI(100), detectorLength, sim, agg, Detector.MEAN_SPEED,
-                Detector.OCCUPANCY);
-        Detector det4 = new Detector("4", lanesCD.get(1), Length.createSI(100), detectorLength, sim, agg, Detector.MEAN_SPEED,
-                Detector.OCCUPANCY);
+        Detector det1 = new Detector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength, sim, agg,
+                Detector.MEAN_SPEED, Detector.OCCUPANCY);
+        Detector det2 = new Detector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength, sim, agg,
+                Detector.MEAN_SPEED, Detector.OCCUPANCY);
+        Detector det3 = new Detector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength, sim, agg,
+                Detector.MEAN_SPEED, Detector.OCCUPANCY);
+        Detector det4 = new Detector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength, sim, agg,
+                Detector.MEAN_SPEED, Detector.OCCUPANCY);
         List<Detector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);
@@ -490,16 +492,16 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             try
                             {
                                 // system operation settings
-                                settings.setParameter(SyncAndAccept.SYNCTIME, Duration.createSI(1.0));
-                                settings.setParameter(SyncAndAccept.COOPTIME, Duration.createSI(2.0));
+                                settings.setParameter(SyncAndAccept.SYNCTIME, Duration.instantiateSI(1.0));
+                                settings.setParameter(SyncAndAccept.COOPTIME, Duration.instantiateSI(2.0));
                                 // parameters used in car-following model for gap-acceptance
                                 settings.setParameter(AbstractIDM.DELTA, 1.0);
-                                settings.setParameter(ParameterTypes.S0, Length.createSI(3.0));
-                                settings.setParameter(ParameterTypes.A, Acceleration.createSI(2.0));
-                                settings.setParameter(ParameterTypes.B, Acceleration.createSI(2.0));
+                                settings.setParameter(ParameterTypes.S0, Length.instantiateSI(3.0));
+                                settings.setParameter(ParameterTypes.A, Acceleration.instantiateSI(2.0));
+                                settings.setParameter(ParameterTypes.B, Acceleration.instantiateSI(2.0));
                                 settings.setParameter(ParameterTypes.T, RampMeteringDemo.this.acceptedGap);
                                 settings.setParameter(ParameterTypes.FSPEED, 1.0);
-                                settings.setParameter(ParameterTypes.B0, Acceleration.createSI(0.5));
+                                settings.setParameter(ParameterTypes.B0, Acceleration.instantiateSI(0.5));
                                 settings.setParameter(ParameterTypes.VCONG, new Speed(60, SpeedUnit.KM_PER_HOUR));
                             }
                             catch (ParameterException exception)
@@ -687,11 +689,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
     {
         /** Parameter of time after lane change command when the system will start synchronization. */
         public static final ParameterTypeDuration SYNCTIME = new ParameterTypeDuration("tSync",
-                "Time after which synchronization starts.", Duration.createSI(1.0), NumericConstraint.POSITIVE);
+                "Time after which synchronization starts.", Duration.instantiateSI(1.0), NumericConstraint.POSITIVE);
 
         /** Parameter of time after lane change command when the system will start cooperation (indicator). */
         public static final ParameterTypeDuration COOPTIME = new ParameterTypeDuration("tCoop",
-                "Time after which cooperation starts (indicator).", Duration.createSI(2.0), NumericConstraint.POSITIVE);
+                "Time after which cooperation starts (indicator).", Duration.instantiateSI(2.0), NumericConstraint.POSITIVE);
 
         /** GTU. */
         private final LaneBasedGTU gtu;

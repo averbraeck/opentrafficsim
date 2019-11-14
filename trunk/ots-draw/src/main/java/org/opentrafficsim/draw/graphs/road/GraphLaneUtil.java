@@ -350,7 +350,7 @@ public final class GraphLaneUtil
             speed = speed == null ? lane.getLowestSpeedLimit() : Speed.min(speed, lane.getLowestSpeedLimit());
             list.add(new KpiLaneDirection(new LaneData(lane),
                     linkPosition.getDirection().isPlus() ? KpiGtuDirectionality.DIR_PLUS : KpiGtuDirectionality.DIR_MINUS));
-            positions.add(lane.getLength().multiplyBy(linkPosition.getFractionalLongitudinalPosition()));
+            positions.add(lane.getLength().times(linkPosition.getFractionalLongitudinalPosition()));
         }
         return createCrossSection(names, list, positions, speed);
     }

@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
@@ -134,7 +134,8 @@ public final class ShapeFileReader implements UNITS
                 }
                 if (addThisNode)
                 {
-                    OTSRoadNode node = new OTSRoadNode(network, nr, new OTSPoint3D(coordinate), Direction.createSI(Double.NaN));
+                    OTSRoadNode node =
+                            new OTSRoadNode(network, nr, new OTSPoint3D(coordinate), Direction.instantiateSI(Double.NaN));
                     nodes.put(nr, node);
                 }
             }

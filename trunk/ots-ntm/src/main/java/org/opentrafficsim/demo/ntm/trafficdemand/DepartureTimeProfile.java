@@ -3,9 +3,9 @@ package org.opentrafficsim.demo.ntm.trafficdemand;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 
 /**
  * Describes the division the departure of trips within a period over the separate segments

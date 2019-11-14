@@ -7,14 +7,15 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.MassUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Mass;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliUtil;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -85,7 +86,7 @@ public class SteeringSimulation extends AbstractSimulationScript
 
     /** Feedback table. */
     static final FeedbackTable FEEDBACK_CAR;
-    
+
     /** Number of lanes. */
     @Option(names = "--numberOfLanes", description = "Number of lanes", defaultValue = "2")
     private int numberOfLanes;
@@ -136,8 +137,8 @@ public class SteeringSimulation extends AbstractSimulationScript
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         OTSRoadNetwork network = new OTSRoadNetwork("Steering network", true);
-        Length laneWidth = Length.createSI(3.5);
-        Length stripeWidth = Length.createSI(0.2);
+        Length laneWidth = Length.instantiateSI(3.5);
+        Length stripeWidth = Length.instantiateSI(0.2);
 
         // points
         OTSPoint3D pointA = new OTSPoint3D(0, 0);
@@ -173,9 +174,9 @@ public class SteeringSimulation extends AbstractSimulationScript
         {
             for (CrossSectionLink link : new CrossSectionLink[] {linkAB, linkBC, linkCD})
             {
-                Lane lane = new Lane(link, "Lane " + (i + 1), laneWidth.multiplyBy((0.5 + i)), laneWidth,
+                Lane lane = new Lane(link, "Lane " + (i + 1), laneWidth.times((0.5 + i)), laneWidth,
                         network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR));
-                Length offset = laneWidth.multiplyBy(i + 1.0);
+                Length offset = laneWidth.times(i + 1.0);
                 Stripe stripe = new Stripe(link, offset, offset, stripeWidth);
                 if (i < this.numberOfLanes - 1)
                 {
@@ -184,9 +185,10 @@ public class SteeringSimulation extends AbstractSimulationScript
                 // sink sensors
                 if (lane.getParentLink().getId().equals("CD"))
                 {
-                    new SinkSensor(lane, lane.getLength().minus(Length.createSI(100.0)), Compatible.EVERYTHING, sim);
+                    new SinkSensor(lane, lane.getLength().minus(Length.instantiateSI(100.0)), Compatible.EVERYTHING, sim);
                     // detectors 100m after on ramp
-                    new Detector(lane.getFullId(), lane, Length.createSI(100.0), sim); // id equal to lane, may be different
+                    new Detector(lane.getFullId(), lane, Length.instantiateSI(100.0), sim); // id equal to lane, may be
+                                                                                            // different
                 }
                 if (lane.getParentLink().getId().equals("AB"))
                 {
@@ -198,9 +200,9 @@ public class SteeringSimulation extends AbstractSimulationScript
         Stripe stripe = new Stripe(linkBC, Length.ZERO, Length.ZERO, stripeWidth);
         stripe.addPermeability(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.LEFT);
         new Stripe(linkCD, Length.ZERO, Length.ZERO, stripeWidth);
-        new Lane(linkBC, "Acceleration lane", laneWidth.multiplyBy(-0.5), laneWidth,
-                network.getLaneType(LaneType.DEFAULTS.FREEWAY), new Speed(120, SpeedUnit.KM_PER_HOUR));
-        new Lane(linkEB, "Onramp", laneWidth.multiplyBy(-0.5), laneWidth, network.getLaneType(LaneType.DEFAULTS.FREEWAY),
+        new Lane(linkBC, "Acceleration lane", laneWidth.times(-0.5), laneWidth, network.getLaneType(LaneType.DEFAULTS.FREEWAY),
+                new Speed(120, SpeedUnit.KM_PER_HOUR));
+        new Lane(linkEB, "Onramp", laneWidth.times(-0.5), laneWidth, network.getLaneType(LaneType.DEFAULTS.FREEWAY),
                 new Speed(120, SpeedUnit.KM_PER_HOUR));
         new Stripe(linkEB, Length.ZERO, Length.ZERO, stripeWidth);
         new Stripe(linkEB, laneWidth.neg(), laneWidth.neg(), stripeWidth);
@@ -212,7 +214,7 @@ public class SteeringSimulation extends AbstractSimulationScript
         origins.add(nodeE);
         List<OTSNode> destinations = new ArrayList<>();
         destinations.add(nodeD);
-        TimeVector timeVector = new TimeVector(new double[] {0.0, 0.5, 1.0}, TimeUnit.BASE_HOUR, StorageType.DENSE);
+        TimeVector timeVector = DoubleVector.instantiate(new double[] {0.0, 0.5, 1.0}, TimeUnit.BASE_HOUR, StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR; // or STEPWISE
         Categorization categorization = new Categorization("GTU type", GTUType.class);
         Category carCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
@@ -285,7 +287,7 @@ public class SteeringSimulation extends AbstractSimulationScript
                 .setVehicleModelGenerator(vehicleModelGenerator).create();
 
         // od options
-        ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.createSI(300.0)).set(ODOptions.GTU_TYPE,
+        ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.instantiateSI(300.0)).set(ODOptions.GTU_TYPE,
                 characteristicsGenerator);
         ODApplier.applyOD(network, odMatrix, sim, odOptions);
 
@@ -296,11 +298,11 @@ public class SteeringSimulation extends AbstractSimulationScript
      * Creates a frequency vector.
      * @param array double[]; array in veh/h
      * @return FrequencyVector; frequency vector
-     * @throws ValueException on problem
+     * @throws ValueRuntimeException on problem
      */
-    private FrequencyVector freq(final double[] array) throws ValueException
+    private FrequencyVector freq(final double[] array) throws ValueRuntimeException
     {
-        return new FrequencyVector(array, FrequencyUnit.PER_HOUR, StorageType.DENSE);
+        return DoubleVector.instantiate(array, FrequencyUnit.PER_HOUR, StorageType.DENSE);
     }
 
 }

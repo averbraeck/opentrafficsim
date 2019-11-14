@@ -70,7 +70,7 @@ public class ListHeadways implements Generator<Duration>
                 throw new RuntimeException(
                         "Arrival times from file are not in chronological order (" + when + "<" + this.prev + ").");
             }
-            Duration headway = Duration.createSI(when - this.prev);
+            Duration headway = Duration.instantiateSI(when - this.prev);
             this.prev = when;
             return headway;
         }

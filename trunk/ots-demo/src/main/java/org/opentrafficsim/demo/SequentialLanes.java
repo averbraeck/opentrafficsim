@@ -10,7 +10,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -131,7 +131,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             final SequentialModel otsModel = new SequentialModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 SequentialLanes app = new SequentialLanes("SequentialLanes", animationPanel, otsModel);
@@ -172,7 +172,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
 
-        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.createSI(10.0), simulator, sampler, path));
+        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler, path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));
@@ -381,11 +381,11 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
                         this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
-                        new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
+                        new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
                 gtu.setNoLaneChangeDistance(Length.ZERO);
-                gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
-                gtu.setMaximumDeceleration(Acceleration.createSI(-8.0));
+                gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
+                gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
 
                 // strategical planner
                 LaneBasedStrategicalPlanner strategicalPlanner =

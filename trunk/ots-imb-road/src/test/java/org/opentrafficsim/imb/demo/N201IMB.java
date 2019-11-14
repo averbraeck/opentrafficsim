@@ -14,7 +14,7 @@ import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
@@ -109,7 +109,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
             final N201Model otsModel = new N201Model(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
                 N201IMB app = new N201IMB(otsModel, animationPanel);
@@ -212,7 +212,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException exception)
+                    | OTSGeometryException | ValueRuntimeException | ParameterException exception)
             {
                 exception.printStackTrace();
             }

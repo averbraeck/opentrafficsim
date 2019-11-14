@@ -232,7 +232,7 @@ public class XMLNetworkWriter
                 }
                 ROADLAYOUT.STRIPE stripe = new ROADLAYOUT.STRIPE();
                 stripe.setTYPE("DASHED");
-                stripe.setOFFSET(inputLane.getDesignLineOffsetAtBegin().minus(inputLane.getBeginWidth().divideBy(2.0))
+                stripe.setOFFSET(inputLane.getDesignLineOffsetAtBegin().minus(inputLane.getBeginWidth().divide(2.0))
                         .getInUnit(LengthUnit.METER) + "m");
                 rla.getLANEOrNOTRAFFICLANEOrSHOULDER().add(stripe);
 

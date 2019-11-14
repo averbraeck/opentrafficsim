@@ -24,7 +24,7 @@ public class Altruistic extends AbstractLaneChangeModel
         // Discussion. The altruistic driver personality in Treiber adds two accelerations together. This reduces the
         // "sensitivity" for keep lane, keep right and follow route incentives.
         // This implementation returns the average of the two in order to avoid this sensitivity problem.
-        AccelerationUnit unit = accelerationSteps.getLeaderAcceleration().getUnit();
+        AccelerationUnit unit = accelerationSteps.getLeaderAcceleration().getDisplayUnit();
         return new Acceleration((accelerationSteps.getLeaderAcceleration().getInUnit()
                 + accelerationSteps.getFollowerAcceleration().getInUnit(unit)) / 2, unit);
     }

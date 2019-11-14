@@ -31,7 +31,7 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer implements
         COLORERS = new GTUColorer[3];
         COLORERS[0] = new IDGTUColorer();
         COLORERS[1] = new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR));
-        COLORERS[2] = new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2));
+        COLORERS[2] = new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2));
     }
 
     /**

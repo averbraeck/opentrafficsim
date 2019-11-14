@@ -44,10 +44,10 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
 {
 
     /** Margin in case of a left lane. */
-    private static final Length LEFT = Length.createSI(-0.000001);
+    private static final Length LEFT = Length.instantiateSI(-0.000001);
 
     /** Margin in case of a right lane. */
-    private static final Length RIGHT = Length.createSI(0.000001);
+    private static final Length RIGHT = Length.instantiateSI(0.000001);
 
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;

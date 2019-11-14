@@ -6,10 +6,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.vector.DurationVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.math.Draw;
@@ -91,9 +92,9 @@ public class SplitFraction
         {
             double[] t = new double[2];
             t[1] = Double.MAX_VALUE;
-            time = new DurationVector(t, DurationUnit.SI, StorageType.DENSE);
+            time = DoubleVector.instantiate(t, DurationUnit.SI, StorageType.DENSE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should not happen, input is not null
             throw new RuntimeException("Input null while creating duration vector.", exception);
@@ -140,7 +141,7 @@ public class SplitFraction
             {
                 this.fractions.get(gtuType).get(link).put(time.get(i), fraction[i]);
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 // should not happen, sizes are checked
                 throw new RuntimeException("Index out of range.", exception);

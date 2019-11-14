@@ -611,7 +611,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 numRegistered++;
                 Lane adjacentLane = laneSet.iterator().next();
-                Length position = adjacentLane.getLength().multiplyBy(fractionalLanePositions.get(lane));
+                Length position = adjacentLane.getLength().times(fractionalLanePositions.get(lane));
                 if (lanesCopy.get(lane).isPlus() ? position.lt(lane.getLength().minus(getRear().getDx()))
                         : position.gt(getFront().getDx().neg()))
                 {
@@ -1104,7 +1104,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 System.out.println("loc is NaN");
             }
-            Length length = Length.createSI(loc);
+            Length length = Length.instantiateSI(loc);
             if (CACHING)
             {
                 this.cachedPositions.put(cacheIndex, length);
@@ -1349,13 +1349,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 end = endLane.getCenterLine().getLocationExtendedSI(endPos);
                 if (laneDir.isPlus())
                 {
-                    refPosAtLastTimestep = nextDirection.isPlus() ? Length.createSI(referenceStartSI - lane.getLength().si)
-                            : Length.createSI(nextLane.getLength().si - referenceStartSI + lane.getLength().si);
+                    refPosAtLastTimestep = nextDirection.isPlus() ? Length.instantiateSI(referenceStartSI - lane.getLength().si)
+                            : Length.instantiateSI(nextLane.getLength().si - referenceStartSI + lane.getLength().si);
                 }
                 else
                 {
-                    refPosAtLastTimestep = nextDirection.isPlus() ? Length.createSI(-referenceStartSI)
-                            : Length.createSI(nextLane.getLength().si + referenceStartSI);
+                    refPosAtLastTimestep = nextDirection.isPlus() ? Length.instantiateSI(-referenceStartSI)
+                            : Length.instantiateSI(nextLane.getLength().si + referenceStartSI);
                 }
             }
 
@@ -1367,7 +1367,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     if (Double.isNaN(enterTime.si))
                     {
                         // TODO: this escape was in timeAtPoint, where it was changed to return null for leave lane events
-                        enterTime = Time.createSI(getOperationalPlan().getEndTime().si - 1e-9);
+                        enterTime = Time.instantiateSI(getOperationalPlan().getEndTime().si - 1e-9);
                         // -1e-9 prevents that next move() reschedules enter
                     }
                     addLaneToGtu(nextLane, refPosAtLastTimestep, nextDirection);
@@ -1411,7 +1411,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 if (laneDir.isPlus() ? nextRearPosSI > lane.getLength().si : nextRearPosSI < 0.0)
                 {
                     exitTime = getOperationalPlan().timeAtDistance(
-                            Length.createSI((laneDir.isPlus() ? lane.getLength().si - referenceStartSI : referenceStartSI)
+                            Length.instantiateSI((laneDir.isPlus() ? lane.getLength().si - referenceStartSI : referenceStartSI)
                                     - getRear().getDx().si));
                 }
             }

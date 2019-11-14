@@ -10,8 +10,6 @@ import java.net.InetAddress;
 import org.opentrafficsim.road.network.factory.rti.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.rti.data.RTIToOTSData;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /** */
 public class CommunicationTest
 {
@@ -20,7 +18,6 @@ public class CommunicationTest
      * @param args String[]; args
      * @throws IOException i/o exception
      */
-    @SuppressFBWarnings("IL_INFINITE_LOOP")
     public static void main(String[] args) throws IOException
     {
         // FileOutputStream fos = new FileOutputStream(new File("D:\\outtt.dat"));

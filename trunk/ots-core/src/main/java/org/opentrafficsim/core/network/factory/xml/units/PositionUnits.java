@@ -27,7 +27,6 @@ public final class PositionUnits
         POSITION_UNITS.put("mm", PositionUnit.MILLIMETER);
         POSITION_UNITS.put("cm", PositionUnit.CENTIMETER);
         POSITION_UNITS.put("dm", PositionUnit.DECIMETER);
-        POSITION_UNITS.put("dam", PositionUnit.DEKAMETER);
         POSITION_UNITS.put("hm", PositionUnit.HECTOMETER);
         POSITION_UNITS.put("m", PositionUnit.METER);
         POSITION_UNITS.put("km", PositionUnit.KILOMETER);

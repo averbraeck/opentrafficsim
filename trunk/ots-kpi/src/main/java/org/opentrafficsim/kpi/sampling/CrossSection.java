@@ -57,7 +57,7 @@ public class CrossSection implements Serializable
         for (LaneDataInterface lane : link.getLaneDatas())
         {
             KpiDirectedLanePosition directedLanePosition =
-                    new KpiDirectedLanePosition(lane, lane.getLength().multiplyBy(fraction), direction);
+                    new KpiDirectedLanePosition(lane, lane.getLength().times(fraction), direction);
             this.directedLanePositions.add(directedLanePosition);
         }
     }

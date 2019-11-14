@@ -5,41 +5,56 @@ import static org.junit.Assert.assertTrue;
 
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
+import org.djunits.unit.AbsorbedDoseUnit;
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.AngleSolidUnit;
+import org.djunits.unit.AmountOfSubstanceUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
+import org.djunits.unit.CatalyticActivityUnit;
 import org.djunits.unit.DensityUnit;
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.ElectricalCapacitanceUnit;
 import org.djunits.unit.ElectricalChargeUnit;
+import org.djunits.unit.ElectricalConductanceUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
+import org.djunits.unit.ElectricalInductanceUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
 import org.djunits.unit.ElectricalResistanceUnit;
 import org.djunits.unit.EnergyUnit;
+import org.djunits.unit.EquivalentDoseUnit;
 import org.djunits.unit.FlowMassUnit;
 import org.djunits.unit.FlowVolumeUnit;
 import org.djunits.unit.ForceUnit;
 import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.IlluminanceUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
-import org.djunits.unit.LinearUnit;
+import org.djunits.unit.LuminousFluxUnit;
+import org.djunits.unit.LuminousIntensityUnit;
+import org.djunits.unit.MagneticFluxDensityUnit;
+import org.djunits.unit.MagneticFluxUnit;
 import org.djunits.unit.MassUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
 import org.djunits.unit.PressureUnit;
+import org.djunits.unit.SolidAngleUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TemperatureUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
+import org.djunits.unit.quantity.Quantity;
+import org.djunits.unit.scale.IdentityScale;
+import org.djunits.unit.scale.OffsetLinearScale;
+import org.djunits.unit.si.SIPrefixes;
 import org.djunits.unit.unitsystem.UnitSystem;
-import org.djunits.value.vdouble.scalar.AbstractDoubleScalarAbs;
-import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
-import org.djunits.value.vfloat.scalar.AbstractFloatScalarAbs;
-import org.djunits.value.vfloat.scalar.AbstractFloatScalarRel;
+import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarAbs;
+import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
+import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarAbs;
+import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarRel;
 import org.junit.Test;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -90,13 +105,16 @@ public class DistributionsTest
     @Test
     public final void testConstructors() throws ClassNotFoundException
     {
-        AbsoluteLinearUnit<?, ?>[] absoluteUnits =
-                {DirectionUnit.BASE, PositionUnit.BASE, AbsoluteTemperatureUnit.KELVIN, TimeUnit.BASE, AbsJunkUnit.BASE};
-        Unit<?>[] relativeUnits = {AccelerationUnit.SI, AngleUnit.SI, AngleSolidUnit.SI, AreaUnit.SI, DensityUnit.SI,
+        AbsoluteLinearUnit<?, ?>[] absoluteUnits = {DirectionUnit.DEFAULT, PositionUnit.DEFAULT, AbsoluteTemperatureUnit.KELVIN,
+                TimeUnit.DEFAULT/*, AbsJunkUnit.DEFAULT*/};
+        Unit<?>[] relativeUnits = {AccelerationUnit.SI, AngleUnit.SI, SolidAngleUnit.SI, AreaUnit.SI, DensityUnit.SI,
                 DimensionlessUnit.SI, ElectricalChargeUnit.SI, ElectricalCurrentUnit.SI, ElectricalPotentialUnit.SI,
                 ElectricalResistanceUnit.SI, EnergyUnit.SI, FlowMassUnit.SI, FlowVolumeUnit.SI, ForceUnit.SI, FrequencyUnit.SI,
                 LengthUnit.SI, LinearDensityUnit.SI, MassUnit.SI, PowerUnit.SI, PressureUnit.SI, SpeedUnit.SI,
-                TemperatureUnit.SI, DurationUnit.SI, TorqueUnit.SI, VolumeUnit.SI, JunkUnit.SI};
+                TemperatureUnit.SI, DurationUnit.SI, TorqueUnit.SI, VolumeUnit.SI, AbsorbedDoseUnit.SI,
+                AmountOfSubstanceUnit.SI, CatalyticActivityUnit.SI, ElectricalCapacitanceUnit.SI, ElectricalConductanceUnit.SI,
+                ElectricalInductanceUnit.SI, EquivalentDoseUnit.SI, IlluminanceUnit.SI, LuminousFluxUnit.SI,
+                LuminousIntensityUnit.SI, MagneticFluxDensityUnit.SI, MagneticFluxUnit.SI /*, JunkUnit.SI */};
 
         DistContinuous distCont = new DistContinuous(null)
         {
@@ -169,14 +187,14 @@ public class DistributionsTest
         ContinuousDistDoubleScalar.Abs dist = new ContinuousDistDoubleScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
         AbstractDoubleScalarAbs result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", this.nextDoubleResult, result.si, 0.0001);
         this.nextDoubleResult = 23.456;
         result = dist.draw();
         assertEquals("Value matches", this.nextDoubleResult, result.si, 0.0001);
         dist = new ContinuousDistDoubleScalar.Abs(1.234, unit);
         result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", 1.234, result.si, 0.0001);
         assertTrue("toString result contains ContinuousDistDoubleScalar.Abs",
                 dist.toString().contains("ContinuousDistDoubleScalar.Abs"));
@@ -195,14 +213,14 @@ public class DistributionsTest
         ContinuousDistDoubleScalar.Rel dist = new ContinuousDistDoubleScalar.Rel(distribution, unit);
         this.nextDoubleResult = 123.456;
         AbstractDoubleScalarRel result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", this.nextDoubleResult, result.si, 0.0001);
         this.nextDoubleResult = 23.456;
         result = dist.draw();
         assertEquals("Value matches", this.nextDoubleResult, result.si, 0.0001);
         dist = new ContinuousDistDoubleScalar.Rel(1.234, unit);
         result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", 1.234, result.si, 0.0001);
         assertTrue("toString result contains ContinuousDistDoubleScalar.Rel",
                 dist.toString().contains("ContinuousDistDoubleScalar.Rel"));
@@ -221,14 +239,14 @@ public class DistributionsTest
         DiscreteDistDoubleScalar.Abs dist = new DiscreteDistDoubleScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
         AbstractDoubleScalarAbs result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", this.nextLongResult, result.si, 0.0001);
         this.nextDoubleResult = 23.456;
         result = dist.draw();
         assertEquals("Value matches", this.getLongNextResult(), result.si, 0.0001);
         dist = new DiscreteDistDoubleScalar.Abs(1234, unit);
         result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", 1234, result.si, 0.0001);
         assertTrue("toString result contains DiscreteDistDoubleScalar.Abs",
                 dist.toString().contains("DiscreteDistDoubleScalar.Abs"));
@@ -247,14 +265,14 @@ public class DistributionsTest
         DiscreteDistDoubleScalar.Rel dist = new DiscreteDistDoubleScalar.Rel(distribution, unit);
         this.nextDoubleResult = 123.456;
         AbstractDoubleScalarRel result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", this.nextLongResult, result.si, 0.0001);
         this.nextDoubleResult = 23.456;
         result = dist.draw();
         assertEquals("Value matches", this.nextLongResult, result.si, 0.0001);
         dist = new DiscreteDistDoubleScalar.Rel(1234, unit);
         result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", 1234, result.si, 0.0001);
         assertTrue("toString result contains DiscreteDistDoubleScalar.Rel",
                 dist.toString().contains("DiscreteDistDoubleScalar.Rel"));
@@ -273,14 +291,14 @@ public class DistributionsTest
         ContinuousDistFloatScalar.Abs dist = new ContinuousDistFloatScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
         AbstractFloatScalarAbs result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", this.nextDoubleResult, result.si, 0.0001);
         this.nextDoubleResult = 23.456;
         result = dist.draw();
         assertEquals("Value matches", this.nextDoubleResult, result.si, 0.0001);
         dist = new ContinuousDistFloatScalar.Abs(1.234f, unit);
         result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", 1.234, result.si, 0.0001);
         assertTrue("toString result contains ContinuousDistFloatScalar.Abs",
                 dist.toString().contains("ContinuousDistFloatScalar.Abs"));
@@ -299,14 +317,14 @@ public class DistributionsTest
         ContinuousDistFloatScalar.Rel dist = new ContinuousDistFloatScalar.Rel(distribution, unit);
         this.nextDoubleResult = 123.456;
         AbstractFloatScalarRel result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", this.nextDoubleResult, result.si, 0.0001);
         this.nextDoubleResult = 23.456;
         result = dist.draw();
         assertEquals("Value matches", this.nextDoubleResult, result.si, 0.0001);
         dist = new ContinuousDistFloatScalar.Rel(1.234f, unit);
         result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", 1.234, result.si, 0.0001);
         assertTrue("toString result contains ContinuousDistFloatScalar.Rel",
                 dist.toString().contains("ContinuousDistFloatScalar.Rel"));
@@ -325,14 +343,14 @@ public class DistributionsTest
         DiscreteDistFloatScalar.Abs dist = new DiscreteDistFloatScalar.Abs(distribution, unit);
         this.nextDoubleResult = 123.456;
         AbstractFloatScalarAbs result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", this.nextLongResult, result.si, 0.0001);
         this.nextDoubleResult = 23.456;
         result = dist.draw();
         assertEquals("Value matches", this.getLongNextResult(), result.si, 0.0001);
         dist = new DiscreteDistFloatScalar.Abs(1234, unit);
         result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", 1234, result.si, 0.0001);
         assertTrue("toString result contains DiscreteDistFloatScalar.Abs",
                 dist.toString().contains("DiscreteDistFloatScalar.Abs"));
@@ -351,14 +369,14 @@ public class DistributionsTest
         DiscreteDistFloatScalar.Rel dist = new DiscreteDistFloatScalar.Rel(distribution, unit);
         this.nextDoubleResult = 123.456;
         AbstractFloatScalarRel result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", this.nextLongResult, result.si, 0.0001);
         this.nextDoubleResult = 23.456;
         result = dist.draw();
         assertEquals("Value matches", this.nextLongResult, result.si, 0.0001);
         dist = new DiscreteDistFloatScalar.Rel(1234, unit);
         result = dist.draw();
-        assertEquals("Unit matches", unit, result.getUnit());
+        assertEquals("Unit matches", unit, result.getDisplayUnit());
         assertEquals("Value matches", 1234, result.si, 0.0001);
         assertTrue("toString result contains DiscreteDistFloatScalar.Rel",
                 dist.toString().contains("DiscreteDistFloatScalar.Rel"));
@@ -369,43 +387,21 @@ public class DistributionsTest
     /**
      * Relative Unit used for testing. Based on a LengthUnit.
      */
-    static class JunkUnit extends LinearUnit<JunkUnit>
+    static class JunkUnit extends Unit<JunkUnit>
     {
         /** */
         private static final long serialVersionUID = 1L;
 
-        /** The SI unit. */
-        public static final JunkUnit SI;
+        /** The base, with "m5" as the SI signature. */
+        public static final Quantity<JunkUnit> BASE = new Quantity<>("Junk", "m5");
 
-        /**
-         * @param lengthUnit LengthUnit ...
-         * @param name String ...
-         * @param abbreviation String ...
-         * @param unitSystem UnitSystem ...
-         */
-        JunkUnit(final LengthUnit lengthUnit, final String name, final String abbreviation, final UnitSystem unitSystem)
-        {
-            super(name, abbreviation, unitSystem);
-        }
+        /** The SI unit for junk is m5. */
+        public static final JunkUnit SI = new JunkUnit().build(new Unit.Builder<JunkUnit>().setQuantity(BASE).setId("m5")
+                .setName("meter^5").setUnitSystem(UnitSystem.SI_DERIVED).setSiPrefixes(SIPrefixes.NONE, 1.0)
+                .setScale(IdentityScale.SCALE));
 
-        static
-        {
-            SI = new JunkUnit(LengthUnit.METER, "Junk", "JNK", null);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public JunkUnit getStandardUnit()
-        {
-            return SI;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getSICoefficientsString()
-        {
-            return "m5";
-        }
+        /** m/s3. */
+        public static final JunkUnit JUNK = SI;
     }
 
     /**
@@ -416,37 +412,16 @@ public class DistributionsTest
         /** */
         private static final long serialVersionUID = 1L;
 
-        /** The BASE unit. */
-        public static final AbsJunkUnit BASE;
+        /** The base, with "m" as the SI signature. */
+        public static final Quantity<AbsJunkUnit> BASE = new Quantity<>("AbsJunk", "m5");
 
-        /**
-         * @param positionUnit PositionUnit ...
-         * @param name String ...
-         * @param abbreviation String ...
-         * @param unitSystem UnitSystem ...
-         */
-        AbsJunkUnit(final PositionUnit positionUnit, final String name, final String abbreviation, final UnitSystem unitSystem)
-        {
-            super(name, abbreviation, unitSystem, 1.0, 0.0, JunkUnit.SI);
-        }
+        /** The SI unit for position is meter. */
+        public static final AbsJunkUnit DEFAULT =
+                new AbsJunkUnit().build(new AbsoluteLinearUnit.Builder<AbsJunkUnit, JunkUnit>().setQuantity(BASE).setId("m5")
+                        .setName("meter^5").setUnitSystem(UnitSystem.SI_BASE).setSiPrefixes(SIPrefixes.NONE, 1.0)
+                        .setScale(new OffsetLinearScale(1.0, 0.0)).setRelativeUnit(JunkUnit.JUNK));
 
-        static
-        {
-            BASE = new AbsJunkUnit(PositionUnit.METER, "Junk", "JNK", null);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public AbsJunkUnit getStandardUnit()
-        {
-            return BASE;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getSICoefficientsString()
-        {
-            return "m5";
-        }
+        /** meter. */
+        public static final AbsJunkUnit ABSJUNK = DEFAULT;
     }
 }

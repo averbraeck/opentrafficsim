@@ -36,7 +36,7 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
      */
     public AccelerationChecker(final OTSNetwork network)
     {
-        this(network, Acceleration.createSI(-10.0), Acceleration.createSI(5), Speed.createSI(2.5));
+        this(network, Acceleration.instantiateSI(-10.0), Acceleration.instantiateSI(5), Speed.instantiateSI(2.5));
     }
 
     /**

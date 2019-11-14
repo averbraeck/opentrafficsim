@@ -226,7 +226,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         for (int index = 0; index < numPoints; index++)
         {
             double fraction = index * 1.0 / (numPoints - 1);
-            Length lengthAtCrossSection = parentLength.multiplyBy(fraction);
+            Length lengthAtCrossSection = parentLength.times(fraction);
             double relativeOffsetAtFraction = (1 + Math.sin((fraction - 0.5) * Math.PI)) / 2;
             Length offsetAtFraction = Length.interpolate(lateralOffsetAtBegin, lateralOffsetAtEnd, relativeOffsetAtFraction);
             result.add(new CrossSectionSlice(lengthAtCrossSection, offsetAtFraction,
@@ -579,7 +579,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         {
             designLineOffset = Length.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(),
                     fractionalLongitudinalPosition);
-            halfWidth = Length.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).multiplyBy(0.5);
+            halfWidth = Length.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).times(0.5);
         }
         else
         {
@@ -591,7 +591,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
                     fractionalLongitudinalPosition - startFractionalPosition);
             halfWidth = Length.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(),
                     this.crossSectionSlices.get(sliceNr + 1).getWidth(),
-                    fractionalLongitudinalPosition - startFractionalPosition).multiplyBy(0.5);
+                    fractionalLongitudinalPosition - startFractionalPosition).times(0.5);
         }
 
         switch (lateralDirection)

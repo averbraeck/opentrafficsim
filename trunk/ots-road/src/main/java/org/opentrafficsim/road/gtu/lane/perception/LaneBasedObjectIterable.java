@@ -29,7 +29,7 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
 {
 
     /** Margin for start and end of lane. */
-    private static final Length MARGIN = Length.createSI(1e-9);
+    private static final Length MARGIN = Length.instantiateSI(1e-9);
 
     /** Class of lane based objects to return. */
     private final Class<L> clazz;

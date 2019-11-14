@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.strategical.od;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
@@ -135,7 +135,7 @@ public enum Interpolation
                 }
             }
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // should not happen, vector lengths are checked when given is input
             throw new RuntimeException("Index out of bounds.", ve);

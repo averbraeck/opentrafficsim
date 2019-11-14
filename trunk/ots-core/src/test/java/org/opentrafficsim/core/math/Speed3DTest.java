@@ -6,11 +6,12 @@ import static org.junit.Assert.fail;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.junit.Test;
 
 /**
@@ -28,63 +29,63 @@ public class Speed3DTest
 
     /**
      * Test the constructors and getters of the Speed3D class.
-     * @throws ValueException should not happen; test has failed if it does happen
+     * @throws ValueRuntimeException should not happen; test has failed if it does happen
      */
     @Test
-    public final void speed3DTest() throws ValueException
+    public final void speed3DTest() throws ValueRuntimeException
     {
         double x = 2.2;
         double y = 3.3;
         double z = 5.5;
         Speed3D s3d = new Speed3D(x, y, z, SpeedUnit.SI);
         checkSpeed(s3d, x, y, z);
-        SpeedVector sv = new SpeedVector(new double[] {x, y, z}, SpeedUnit.SI, StorageType.DENSE);
+        SpeedVector sv = DoubleVector.instantiate(new double[] {x, y, z}, SpeedUnit.SI, StorageType.DENSE);
         s3d = new Speed3D(sv);
         checkSpeed(s3d, x, y, z);
-        sv = new SpeedVector(new double[] {x, y, z}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = DoubleVector.instantiate(new double[] {x, y, z}, SpeedUnit.SI, StorageType.SPARSE);
         s3d = new Speed3D(sv);
         checkSpeed(s3d, x, y, z);
-        sv = new SpeedVector(new double[] {x, y}, SpeedUnit.SI, StorageType.DENSE);
+        sv = DoubleVector.instantiate(new double[] {x, y}, SpeedUnit.SI, StorageType.DENSE);
         try
         {
             new Speed3D(sv);
             fail("Short vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
-        sv = new SpeedVector(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.DENSE);
+        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.DENSE);
         try
         {
             new Speed3D(sv);
             fail("Long vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
-        sv = new SpeedVector(new double[] {x, y}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = DoubleVector.instantiate(new double[] {x, y}, SpeedUnit.SI, StorageType.SPARSE);
         try
         {
             new Speed3D(sv);
             fail("Short vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
-        sv = new SpeedVector(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.SPARSE);
+        sv = DoubleVector.instantiate(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.SPARSE);
         try
         {
             new Speed3D(sv);
             fail("Long vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
-        s3d = new Speed3D(Speed.createSI(x), Speed.createSI(y), Speed.createSI(z));
+        s3d = new Speed3D(Speed.instantiateSI(x), Speed.instantiateSI(y), Speed.instantiateSI(z));
         checkSpeed(s3d, x, y, z);
         s3d = new Speed3D(new Speed(x, SpeedUnit.KM_PER_HOUR), new Speed(y, SpeedUnit.KM_PER_HOUR),
                 new Speed(z, SpeedUnit.KM_PER_HOUR));
@@ -92,7 +93,7 @@ public class Speed3DTest
         double theta = Math.PI * 0.4;
         double phi = Math.PI * 0.3;
         double length = 10;
-        s3d = new Speed3D(Speed.createSI(length), new Direction(theta, DirectionUnit.EAST_RADIAN),
+        s3d = new Speed3D(Speed.instantiateSI(length), new Direction(theta, DirectionUnit.EAST_RADIAN),
                 new Direction(phi, DirectionUnit.EAST_RADIAN));
         checkSpeed(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));

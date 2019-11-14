@@ -380,7 +380,7 @@ public class OperationalPlan implements Serializable
             if (this.startTime.si + this.segmentStartTimesRelSI[i + 1] >= time.si)
             {
                 return new SegmentProgress(this.operationalPlanSegmentList.get(i),
-                        new Time(this.startTime.si + this.segmentStartTimesRelSI[i], TimeUnit.BASE),
+                        new Time(this.startTime.si + this.segmentStartTimesRelSI[i], TimeUnit.DEFAULT),
                         new Length(cumulativeDistance, LengthUnit.SI));
             }
             cumulativeDistance += this.operationalPlanSegmentList.get(i).distanceSI();
@@ -407,13 +407,13 @@ public class OperationalPlan implements Serializable
             double distanceOfSegment = segment.distanceSI();
             if (distanceOfSegment > remainingDistanceSI)
             {
-                return new Time(timeAtStartOfSegment + segment.timeAtDistance(Length.createSI(remainingDistanceSI)).si,
-                        TimeUnit.BASE);
+                return new Time(timeAtStartOfSegment + segment.timeAtDistance(Length.instantiateSI(remainingDistanceSI)).si,
+                        TimeUnit.DEFAULT);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
         }
-        return new Time(Double.NaN, TimeUnit.BASE);
+        return new Time(Double.NaN, TimeUnit.DEFAULT);
     }
 
     /**
@@ -586,7 +586,7 @@ public class OperationalPlan implements Serializable
                 OTSPoint3D p = OTSPoint3D.intersectionOfLines(this.path.get(0), this.path.get(1), p1, p2);
                 double dist = traveledDistanceAlongPath - this.path.get(0).distance(p).si;
                 dist = dist >= 0.0 ? dist : 0.0; // negative in case of a gap
-                return timeAtDistance(Length.createSI(dist));
+                return timeAtDistance(Length.instantiateSI(dist));
             }
             for (int i = 0; i < this.path.size() - 1; i++)
             {
@@ -614,10 +614,10 @@ public class OperationalPlan implements Serializable
                     traveledDistanceAlongPath += this.path.get(i).distance(p).si;
                     if (traveledDistanceAlongPath > this.path.getLengthSI())
                     {
-                        return Time.createSI(Double.NaN); // Time.createSI(getEndTime().si - 1e-9); // -1e-9 prevents that next
+                        return Time.instantiateSI(Double.NaN); // Time.instantiateSI(getEndTime().si - 1e-9); // -1e-9 prevents that next
                                                           // move() reschedules enter
                     }
-                    return timeAtDistance(Length.createSI(traveledDistanceAlongPath));
+                    return timeAtDistance(Length.instantiateSI(traveledDistanceAlongPath));
                 }
                 else
                 {
@@ -916,7 +916,7 @@ public class OperationalPlan implements Serializable
         @Override
         final Speed endSpeed()
         {
-            return this.v0.plus(this.acceleration.multiplyBy(getDuration()));
+            return this.v0.plus(this.acceleration.times(getDuration()));
         }
 
         /** {@inheritDoc} */

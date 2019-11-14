@@ -59,7 +59,7 @@ public interface StrategicalPlannerFactorySupplierOD
             {
                 ParameterFactoryByType params = new ParameterFactoryByType();
                 params.addParameter(origin.getNetwork().getGtuType(DEFAULTS.TRUCK), ParameterTypes.A,
-                        Acceleration.createSI(0.4));
+                        Acceleration.instantiateSI(0.4));
                 return new LaneBasedStrategicalRoutePlannerFactory(
                         new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()), params,
                         RouteGeneratorOD.getDefaultRouteSupplier(randomStream));

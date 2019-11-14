@@ -10,14 +10,14 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -101,9 +101,10 @@ public class N201ODfactory
         try
         {
             matrix = new ODMatrix("N201demo", origins, destinations, Categorization.UNCATEGORIZED,
-                    new TimeVector(new double[] {0, 3600}, TimeUnit.BASE, StorageType.DENSE), Interpolation.STEPWISE);
+                    DoubleVector.instantiate(new double[] {0, 3600}, TimeUnit.DEFAULT, StorageType.DENSE),
+                    Interpolation.STEPWISE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             throw new RuntimeException(exception);
         }

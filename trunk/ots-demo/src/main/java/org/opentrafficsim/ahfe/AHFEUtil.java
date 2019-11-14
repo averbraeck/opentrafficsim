@@ -13,8 +13,8 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -23,6 +23,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -132,7 +133,7 @@ public final class AHFEUtil
      * @param distanceError double; distance error
      * @param speedError double; speed error
      * @param accelerationError double; acceleration error
-     * @throws ValueException on value error
+     * @throws ValueRuntimeException on value error
      * @throws ParameterException on parameter error
      * @throws GTUException on gtu error
      * @throws ProbabilityException on probability error
@@ -144,7 +145,7 @@ public final class AHFEUtil
             final Duration reactionTime, final Duration anticipationTime, final double truckFraction, final Time simulationTime,
             final Frequency leftDemand, final Frequency rightDemand, final double leftFraction, final double distanceError,
             final double speedError, final double accelerationError)
-            throws ValueException, ParameterException, GTUException, SimRuntimeException, ProbabilityException
+            throws ValueRuntimeException, ParameterException, GTUException, SimRuntimeException, ProbabilityException
     {
 
         Random seedGenerator = new Random(replication);
@@ -223,19 +224,21 @@ public final class AHFEUtil
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
                 new ContinuousDistDoubleScalar.Rel<>(new DistNormal(streams.get("gtuClass"), 80, 2.5), SpeedUnit.KM_PER_HOUR);
 
-        LaneBasedTemplateGTUType carLeft = new LaneBasedTemplateGTUType(
-                new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)), new ConstantGenerator<>(Length.createSI(4.0)),
-                new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, fixedRouteGeneratorLeft);
+        LaneBasedTemplateGTUType carLeft =
+                new LaneBasedTemplateGTUType(new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)),
+                        new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
+                        speedCar, strategicalFactory, fixedRouteGeneratorLeft);
         LaneBasedTemplateGTUType truckLeft =
                 new LaneBasedTemplateGTUType(new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
-                        new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                        new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                         speedTruck, strategicalFactory, fixedRouteGeneratorLeft);
-        LaneBasedTemplateGTUType carRight = new LaneBasedTemplateGTUType(
-                new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)), new ConstantGenerator<>(Length.createSI(4.0)),
-                new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, fixedRouteGeneratorRight);
+        LaneBasedTemplateGTUType carRight =
+                new LaneBasedTemplateGTUType(new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)),
+                        new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
+                        speedCar, strategicalFactory, fixedRouteGeneratorRight);
         LaneBasedTemplateGTUType truckRight =
                 new LaneBasedTemplateGTUType(new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
-                        new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                        new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                         speedTruck, strategicalFactory, fixedRouteGeneratorRight);
 
         // GTUTypeGenerator gtuTypeGeneratorLeft = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
@@ -270,21 +273,21 @@ public final class AHFEUtil
         }
 
         TimeVector timeVector =
-                new TimeVector(new double[] {0, 360, 1560, 2160, 3960}, TimeUnit.BASE_SECOND, StorageType.DENSE);
+                DoubleVector.instantiate(new double[] {0, 360, 1560, 2160, 3960}, TimeUnit.BASE_SECOND, StorageType.DENSE);
         double leftLeft = leftDemand.si * leftFraction;
-        FrequencyVector leftLeftDemandPattern = new FrequencyVector(
+        FrequencyVector leftLeftDemandPattern = DoubleVector.instantiate(
                 new double[] {leftLeft * 0.5, leftLeft * 0.5, leftLeft, leftLeft, 0.0}, FrequencyUnit.SI, StorageType.DENSE);
         double leftRight = leftDemand.si * (1 - leftFraction);
         FrequencyVector leftRightDemandPattern =
-                new FrequencyVector(new double[] {leftRight * 0.5, leftRight * 0.5, leftRight, leftRight, 0.0},
+                DoubleVector.instantiate(new double[] {leftRight * 0.5, leftRight * 0.5, leftRight, leftRight, 0.0},
                         FrequencyUnit.SI, StorageType.DENSE);
         double rightLeft = rightDemand.si * leftFraction;
         FrequencyVector rightLeftDemandPattern =
-                new FrequencyVector(new double[] {rightLeft * 0.5, rightLeft * 0.5, rightLeft, rightLeft, 0.0},
+                DoubleVector.instantiate(new double[] {rightLeft * 0.5, rightLeft * 0.5, rightLeft, rightLeft, 0.0},
                         FrequencyUnit.SI, StorageType.DENSE);
         double rightRight = rightDemand.si * (1 - leftFraction);
         FrequencyVector rightRightDemandPattern =
-                new FrequencyVector(new double[] {rightRight * 0.5, rightRight * 0.5, rightRight, rightRight, 0.0},
+                DoubleVector.instantiate(new double[] {rightRight * 0.5, rightRight * 0.5, rightRight, rightRight, 0.0},
                         FrequencyUnit.SI, StorageType.DENSE);
         // This defaults to stepwise interpolation, should have been linear.
         HeadwayGeneratorDemand leftLeftHeadways = new HeadwayGeneratorDemand(timeVector, leftLeftDemandPattern, simulator);
@@ -605,7 +608,7 @@ public final class AHFEUtil
                     Throw.when(timeVector.get(i).ge(timeVector.get(i + 1)), IllegalArgumentException.class,
                             "Time vector is not increasing.");
                 }
-                catch (ValueException exception)
+                catch (ValueRuntimeException exception)
                 {
                     throw new RuntimeException(
                             "Value out of range of time vector. Note that HeadwayGenerator does not create a safe copy.",
@@ -647,7 +650,7 @@ public final class AHFEUtil
                     throw new RuntimeException("Could not obtain replication.", exception);
                 }
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 throw new RuntimeException(
                         "Value out of range of time or demand vector. Note that HeadwayGenerator does not create safe copies.",
@@ -662,17 +665,17 @@ public final class AHFEUtil
          * @param start Duration; reference time from start of period i, pertains to previous arrival, or zero during recursion
          * @param fractionRemaining double; remaining fraction of headway to apply due to time in earlier time periods
          * @return time of next arrival
-         * @throws ValueException in case of an illegal time vector
+         * @throws ValueRuntimeException in case of an illegal time vector
          * @throws RemoteException in case of not being able to retrieve the replication
          */
         private Time nextArrival(final int i, final Duration start, final double fractionRemaining)
-                throws ValueException, RemoteException
+                throws ValueRuntimeException, RemoteException
         {
 
             // escape if beyond specified time by infinite next arrival (= no traffic)
             if (i == this.timeVector.size() - 1)
             {
-                return new Time(Double.POSITIVE_INFINITY, TimeUnit.BASE);
+                return new Time(Double.POSITIVE_INFINITY, TimeUnit.DEFAULT);
             }
 
             // skip zero-demand periods
@@ -697,7 +700,7 @@ public final class AHFEUtil
             double t = -Math.log(this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble()) / demand.si;
 
             // calculate arrival
-            Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.BASE);
+            Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.DEFAULT);
 
             // go to next period if arrival is beyond current period
             if (arrival.gt(this.timeVector.get(i + 1)))

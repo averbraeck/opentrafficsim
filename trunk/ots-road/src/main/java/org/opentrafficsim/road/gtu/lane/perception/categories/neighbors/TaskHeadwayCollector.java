@@ -62,7 +62,7 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
             public Intermediate<Duration> accumulate(final Intermediate<Duration> intermediate, final LaneBasedGTU object,
                     final Length distance)
             {
-                intermediate.setObject(distance.divideBy(TaskHeadwayCollector.this.speed));
+                intermediate.setObject(distance.divide(TaskHeadwayCollector.this.speed));
                 intermediate.stop(); // need only 1 leader
                 return intermediate;
             }

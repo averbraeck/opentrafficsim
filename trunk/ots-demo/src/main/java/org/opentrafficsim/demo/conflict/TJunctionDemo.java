@@ -79,7 +79,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
         {
             OTSAnimator simulator = new OTSAnimator();
             final TJunctionModel junctionModel = new TJunctionModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), junctionModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(junctionModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, junctionModel, DEFAULT_COLORER, junctionModel.getNetwork());
             TJunctionDemo app = new TJunctionDemo("T-Junction demo", animationPanel, junctionModel);

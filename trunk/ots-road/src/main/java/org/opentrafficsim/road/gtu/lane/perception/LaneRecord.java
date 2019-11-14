@@ -15,7 +15,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 feb. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>\
  * @param <R> lane record type
  */
 public interface LaneRecord<R extends LaneRecord<R>>
@@ -65,7 +65,7 @@ public interface LaneRecord<R extends LaneRecord<R>>
      */
     default Length getDistanceToPosition(final Length position)
     {
-        return Length.createSI(getStartDistance().si + (getDirection().isPlus() ? position.si : getLength().si - position.si));
+        return Length.instantiateSI(getStartDistance().si + (getDirection().isPlus() ? position.si : getLength().si - position.si));
     }
 
     /**

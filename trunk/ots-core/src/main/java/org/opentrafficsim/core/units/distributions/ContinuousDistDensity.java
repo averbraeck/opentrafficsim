@@ -35,7 +35,7 @@ public class ContinuousDistDensity extends ContinuousDistDoubleScalar.Rel<Densit
     @Override
     public Density draw()
     {
-        return new Density(getDistribution().draw(), (DensityUnit) getUnit());
+        return new Density(getDistribution().draw(), (DensityUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

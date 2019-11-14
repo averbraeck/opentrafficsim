@@ -45,13 +45,13 @@ public final class Generators
     }
 
     /**
-     * Parse a Length distribution into a Generator for Lengths
+     * Parse a Length distribution into a Generator for Lengths.
      * @param streamMap the map with predefined streams
      * @param lengthDist the tag to parse
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Length> makeLengthGenerator(Map<String, StreamInformation> streamMap,
+    public static Generator<Length> makeLengthGenerator(final Map<String, StreamInformation> streamMap,
             final LENGTHDISTTYPE lengthDist) throws XmlParserException
     {
         try
@@ -70,7 +70,7 @@ public final class Generators
                 @Override
                 public String toString()
                 {
-                    return "Generator<Length>(" + dist.getDistribution().toString() + " " + dist.getUnit() + ")";
+                    return "Generator<Length>(" + dist.getDistribution().toString() + " " + dist.getDisplayUnit() + ")";
                 }
             };
             return generator;
@@ -82,13 +82,13 @@ public final class Generators
     }
 
     /**
-     * Parse a Position distribution into a Generator for Positions
+     * Parse a Position distribution into a Generator for Positions.
      * @param streamMap the map with predefined streams
      * @param positionDist the tag to parse
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Position> makePositionGenerator(Map<String, StreamInformation> streamMap,
+    public static Generator<Position> makePositionGenerator(final Map<String, StreamInformation> streamMap,
             final POSITIONDISTTYPE positionDist) throws XmlParserException
     {
         try
@@ -107,7 +107,7 @@ public final class Generators
                 @Override
                 public String toString()
                 {
-                    return "Generator<Position>(" + dist.getDistribution().toString() + " " + dist.getUnit() + ")";
+                    return "Generator<Position>(" + dist.getDistribution().toString() + " " + dist.getDisplayUnit() + ")";
                 }
             };
             return generator;
@@ -119,13 +119,13 @@ public final class Generators
     }
 
     /**
-     * Parse a Duration distribution into a Generator for Durations
+     * Parse a Duration distribution into a Generator for Durations.
      * @param streamMap the map with predefined streams
      * @param durationDist the tag to parse
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Duration> makeDurationGenerator(Map<String, StreamInformation> streamMap,
+    public static Generator<Duration> makeDurationGenerator(final Map<String, StreamInformation> streamMap,
             final DURATIONDISTTYPE durationDist) throws XmlParserException
     {
         try
@@ -144,7 +144,7 @@ public final class Generators
                 @Override
                 public String toString()
                 {
-                    return "Generator<Duration>(" + dist.getDistribution().toString() + " " + dist.getUnit() + ")";
+                    return "Generator<Duration>(" + dist.getDistribution().toString() + " " + dist.getDisplayUnit() + ")";
                 }
             };
             return generator;
@@ -156,13 +156,13 @@ public final class Generators
     }
 
     /**
-     * Parse a Time distribution into a Generator for Times
+     * Parse a Time distribution into a Generator for Times.
      * @param streamMap the map with predefined streams
      * @param timeDist the tag to parse
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Time> makeTimeGenerator(Map<String, StreamInformation> streamMap, final TIMEDISTTYPE timeDist)
+    public static Generator<Time> makeTimeGenerator(final Map<String, StreamInformation> streamMap, final TIMEDISTTYPE timeDist)
             throws XmlParserException
     {
         try
@@ -181,7 +181,7 @@ public final class Generators
                 @Override
                 public String toString()
                 {
-                    return "Generator<Time>(" + dist.getDistribution().toString() + " " + dist.getUnit() + ")";
+                    return "Generator<Time>(" + dist.getDistribution().toString() + " " + dist.getDisplayUnit() + ")";
                 }
             };
             return generator;
@@ -193,14 +193,14 @@ public final class Generators
     }
 
     /**
-     * Parse a Speed distribution into a Generator for Speeds
+     * Parse a Speed distribution into a Generator for Speeds.
      * @param streamMap the map with predefined streams
      * @param speedDist the tag to parse
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Speed> makeSpeedGenerator(Map<String, StreamInformation> streamMap, final SPEEDDISTTYPE speedDist)
-            throws XmlParserException
+    public static Generator<Speed> makeSpeedGenerator(final Map<String, StreamInformation> streamMap,
+            final SPEEDDISTTYPE speedDist) throws XmlParserException
     {
         try
         {
@@ -218,7 +218,7 @@ public final class Generators
                 @Override
                 public String toString()
                 {
-                    return "Generator<Speed>(" + dist.getDistribution().toString() + " " + dist.getUnit() + ")";
+                    return "Generator<Speed>(" + dist.getDistribution().toString() + " " + dist.getDisplayUnit() + ")";
                 }
             };
             return generator;
@@ -236,7 +236,7 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Acceleration> makeAccelerationGenerator(Map<String, StreamInformation> streamMap,
+    public static Generator<Acceleration> makeAccelerationGenerator(final Map<String, StreamInformation> streamMap,
             final ACCELERATIONDISTTYPE accelerationDist) throws XmlParserException
     {
         try
@@ -255,7 +255,7 @@ public final class Generators
                 @Override
                 public String toString()
                 {
-                    return "Generator<Acceleration>(" + dist.getDistribution().toString() + " " + dist.getUnit() + ")";
+                    return "Generator<Acceleration>(" + dist.getDistribution().toString() + " " + dist.getDisplayUnit() + ")";
                 }
             };
             return generator;
@@ -267,13 +267,13 @@ public final class Generators
     }
 
     /**
-     * Parse an Acceleration distribution into a Generator for Decelerations (accceleration with a minus sign).
+     * Parse an Acceleration distribution into a Generator for Decelerations (acceleration with a minus sign).
      * @param streamMap the map with predefined streams
      * @param decelerationDist the tag to parse
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Acceleration> makeDecelerationGenerator(Map<String, StreamInformation> streamMap,
+    public static Generator<Acceleration> makeDecelerationGenerator(final Map<String, StreamInformation> streamMap,
             final ACCELERATIONDISTTYPE decelerationDist) throws XmlParserException
     {
         try
@@ -285,14 +285,14 @@ public final class Generators
                 @Override
                 public Acceleration draw() throws ProbabilityException, ParameterException
                 {
-                    return dist.draw().multiplyBy(-1.0);
+                    return dist.draw().times(-1.0);
                 }
 
                 /** {@inheritDoc} */
                 @Override
                 public String toString()
                 {
-                    return "Generator<Deceleration>(" + dist.getDistribution().toString() + " " + dist.getUnit() + ")";
+                    return "Generator<Deceleration>(" + dist.getDistribution().toString() + " " + dist.getDisplayUnit() + ")";
                 }
             };
             return generator;

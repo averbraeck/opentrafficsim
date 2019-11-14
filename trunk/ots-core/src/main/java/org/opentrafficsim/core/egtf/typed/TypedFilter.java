@@ -2,9 +2,10 @@ package org.opentrafficsim.core.egtf.typed;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.StorageType;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.LengthVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.egtf.Filter;
 import org.opentrafficsim.core.egtf.Quantity;
@@ -48,7 +49,7 @@ public class TypedFilter implements Filter
      */
     public LengthVector getLocationVector()
     {
-        return Try.assign(() -> new LengthVector(getLocation(), LengthUnit.SI, StorageType.DENSE),
+        return Try.assign(() -> DoubleVector.instantiate(getLocation(), LengthUnit.SI, StorageType.DENSE),
                 "Exception while creating LengthVector");
     }
 
@@ -65,7 +66,7 @@ public class TypedFilter implements Filter
      */
     public DurationVector getTimeVector()
     {
-        return Try.assign(() -> new DurationVector(getTime(), DurationUnit.SI, StorageType.DENSE),
+        return Try.assign(() -> DoubleVector.instantiate(getTime(), DurationUnit.SI, StorageType.DENSE),
                 "Exception while creating DurationVector");
     }
 

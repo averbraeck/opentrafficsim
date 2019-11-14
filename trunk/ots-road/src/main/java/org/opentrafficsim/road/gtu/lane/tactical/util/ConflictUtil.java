@@ -98,7 +98,7 @@ public final class ConflictUtil
 
     /** Parameter of how much time before departure a bus indicates its departure to get priority. */
     public static final ParameterTypeDuration TI = new ParameterTypeDuration("ti", "Indicator time before bus departure",
-            Duration.createSI(3.0), ConstraintInterface.POSITIVE);
+            Duration.instantiateSI(3.0), ConstraintInterface.POSITIVE);
 
     /** Time step for free acceleration anticipation. */
     private static final Duration TIME_STEP = new Duration(0.5, DurationUnit.SI);
@@ -146,7 +146,7 @@ public final class ConflictUtil
         conflictPlans.cleanPlans();
 
         Acceleration a = Acceleration.POS_MAXVALUE;
-        Length stoppingDistance = Length.createSI(
+        Length stoppingDistance = Length.instantiateSI(
                 parameters.getParameter(S0).si + vehicleLength.si + .5 * speed.si * speed.si / parameters.getParameter(B).si);
         Iterator<HeadwayConflict> it = conflicts.iterator();
         if (it.hasNext() && it.next().getDistance().gt(stoppingDistance))
@@ -570,8 +570,8 @@ public final class ConflictUtil
         {
             HeadwayGTU conflictingGTU = conflict.getDownstreamConflictingGTUs().first();
             Acceleration b = parameters.getParameter(BCRIT);
-            double t = conflictingGTU.getSpeed().divideBy(b).si;
-            Length stopDistance = Length.createSI(conflictingGTU.getSpeed().si * t - .5 * b.si * t * t);
+            double t = conflictingGTU.getSpeed().divide(b).si;
+            Length stopDistance = Length.instantiateSI(conflictingGTU.getSpeed().si * t - .5 * b.si * t * t);
             Length room = conflict
                     .getDistance().plus(stopDistance).plus(conflictingGTU.isAhead()
                             ? conflict.getLength().plus(conflictingGTU.getDistance()) : conflictingGTU.getOverlapRear())
@@ -844,8 +844,8 @@ public final class ConflictUtil
                 // 1) will clear the conflict after the conflict vehicle enters
                 // 2) not sufficient time to overcome speed difference
                 // 3) conflict vehicle will be too near after adjusting speed
-                if (ttcOa.getDuration().multiplyBy(f).plus(gap).gt(tteCa.getDuration())
-                        || ttcOa.getDuration().plus(additionalTime).multiplyBy(f).plus(gap).gt(tteCs.getDuration())
+                if (ttcOa.getDuration().times(f).plus(gap).gt(tteCa.getDuration())
+                        || ttcOa.getDuration().plus(additionalTime).times(f).plus(gap).gt(tteCs.getDuration())
                         || (!Double.isInfinite(tteCa.getDuration().si) && tteCa.getDuration().si > 0.0
                                 && ownRear < (followerFront + (tMax.si + gap.si) * vSelf + s0.si) * f))
                 {
@@ -862,9 +862,9 @@ public final class ConflictUtil
                 // 2) must clear the conflict before the conflict vehicle will enter
                 // 3) if leader decelerates with b, conflict vehicle should be able to safely delay entering conflict
                 // 4) conflict vehicle will never leave enough space beyond the conflict
-                if (ttpDz.getDuration().multiplyBy(f).plus(gap).gt(tteCa.getDuration())
-                        || ttcOa.getDuration().multiplyBy(f).plus(gap).gt(tteCa.getDuration())
-                        || ttpDs.getDuration().multiplyBy(f).plus(gap).gt(tteCs.getDuration())
+                if (ttpDz.getDuration().times(f).plus(gap).gt(tteCa.getDuration())
+                        || ttcOa.getDuration().times(f).plus(gap).gt(tteCa.getDuration())
+                        || ttpDs.getDuration().times(f).plus(gap).gt(tteCs.getDuration())
                         || ttpDs.getDuration().equals(Duration.POSITIVE_INFINITY))
                 {
                     return true;

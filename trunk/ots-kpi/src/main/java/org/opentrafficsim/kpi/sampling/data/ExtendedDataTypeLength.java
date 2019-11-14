@@ -1,12 +1,11 @@
 package org.opentrafficsim.kpi.sampling.data;
 
-import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.Unit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.djunits.value.vfloat.vector.FloatLengthVector;
+import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 
 /**
@@ -29,7 +28,7 @@ public abstract class ExtendedDataTypeLength<G extends GtuDataInterface>
      * Constructor setting the id.
      * @param id String; id
      */
-    public ExtendedDataTypeLength(String id)
+    public ExtendedDataTypeLength(final String id)
     {
         super(id);
     }
@@ -38,20 +37,19 @@ public abstract class ExtendedDataTypeLength<G extends GtuDataInterface>
     @Override
     protected final FloatLength convertValue(final float value)
     {
-        return FloatLength.createSI(value);
+        return FloatLength.instantiateSI(value);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final FloatLengthVector convert(final float[] storage) throws ValueException
+    protected final FloatLengthVector convert(final float[] storage) throws ValueRuntimeException
     {
-        return new FloatLengthVector(storage, LengthUnit.SI, StorageType.DENSE);
+        return FloatVector.instantiate(storage, LengthUnit.SI, StorageType.DENSE);
     }
 
     /** {@inheritDoc} */
     @Override
-    public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>> FloatLength interpolate(final FloatLength value0,
-            final FloatLength value1, final double f)
+    public FloatLength interpolate(final FloatLength value0, final FloatLength value1, final double f)
     {
         return FloatLength.interpolate(value0, value1, (float) f);
     }

@@ -44,7 +44,7 @@ public class MeanSpeed extends AbstractIndicator<Speed>
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         return this.travelDistance.getValue(query, startTime, endTime, trajectoryGroups)
-                .divideBy(this.travelTime.getValue(query, startTime, endTime, trajectoryGroups));
+                .divide(this.travelTime.getValue(query, startTime, endTime, trajectoryGroups));
     }
 
     /** {@inheritDoc} */

@@ -107,7 +107,7 @@ public interface Tailgating
                 double tNew = rho * tMin.si + (1.0 - rho) * tMax.si;
                 if (tNew < t.si)
                 {
-                    parameters.setParameter(ParameterTypes.T, Duration.createSI(tNew));
+                    parameters.setParameter(ParameterTypes.T, Duration.instantiateSI(tNew));
                 }
             }
             catch (ParameterException exception)

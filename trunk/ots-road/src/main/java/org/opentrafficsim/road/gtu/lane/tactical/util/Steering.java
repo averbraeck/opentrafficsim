@@ -42,7 +42,7 @@ public final class Steering
 
     /** Time step parameter. */
     static final ParameterTypeDuration DT =
-            new ParameterTypeDuration("DTS", "Steering update time step", Duration.createSI(0.01), NumericConstraint.POSITIVE);
+            new ParameterTypeDuration("DTS", "Steering update time step", Duration.instantiateSI(0.01), NumericConstraint.POSITIVE);
 
     /** Front tire cornering stiffness. */
     static final ParameterTypeDouble C_FRONT = new ParameterTypeDouble("C_FRONT", "Front tire cornering stiffness", 80000);

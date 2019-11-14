@@ -44,7 +44,7 @@ public class PloegACC extends LinearACC
         double es =
                 leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDACC).si - settings.getParameter(X0).si;
         double esd = leader.getSpeed().si - gtu.getSpeed().si - gtu.getAcceleration().si * settings.getParameter(TDACC).si;
-        return Acceleration.createSI(settings.getParameter(KS) * es + settings.getParameter(KD) * esd);
+        return Acceleration.instantiateSI(settings.getParameter(KS) * es + settings.getParameter(KD) * esd);
     }
 
 }

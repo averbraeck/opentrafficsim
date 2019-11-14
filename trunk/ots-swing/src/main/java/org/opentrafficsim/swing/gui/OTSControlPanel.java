@@ -170,7 +170,7 @@ public class OTSControlPanel extends JPanel
         buttonPanel.add(this.clockPanel);
         speedLabel.setMaximumSize(new Dimension(66, 35));
         buttonPanel.add(speedLabel);
-        this.timeEdit = new TimeEdit(new Time(0, TimeUnit.BASE));
+        this.timeEdit = new TimeEdit(new Time(0, TimeUnit.DEFAULT));
         this.timeEdit.setMaximumSize(new Dimension(133, 35));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
@@ -287,7 +287,7 @@ public class OTSControlPanel extends JPanel
             final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<SimTimeDoubleUnit> simEvent =
-                new SimEvent<>(new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source,
+                new SimEvent<>(new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source,
                         eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
@@ -399,7 +399,7 @@ public class OTSControlPanel extends JPanel
                 // System.out.println("now is " + now);
                 try
                 {
-                    this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.BASE), SimEventInterface.MIN_PRIORITY, this, this,
+                    this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.DEFAULT), SimEventInterface.MIN_PRIORITY, this, this,
                             "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
@@ -552,7 +552,7 @@ public class OTSControlPanel extends JPanel
                 // System.out.println("Re-Scheduling at " + nextTick);
                 try
                 {
-                    this.stopAtEvent = scheduleEvent(new Time(nextTick, TimeUnit.BASE), SimEventInterface.MAX_PRIORITY, this,
+                    this.stopAtEvent = scheduleEvent(new Time(nextTick, TimeUnit.DEFAULT), SimEventInterface.MAX_PRIORITY, this,
                             this, "autoPauseSimulator", null);
                     // System.out.println("AutoPauseSimulator: starting simulator");
                     getSimulator().start();
@@ -630,7 +630,7 @@ public class OTSControlPanel extends JPanel
         {
             try
             {
-                this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.BASE), SimEventInterface.MAX_PRIORITY, this, this,
+                this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.DEFAULT), SimEventInterface.MAX_PRIORITY, this, this,
                         "autoPauseSimulator", null);
             }
             catch (SimRuntimeException exception)

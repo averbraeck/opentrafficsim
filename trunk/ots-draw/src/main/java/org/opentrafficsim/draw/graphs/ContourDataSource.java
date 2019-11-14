@@ -78,10 +78,10 @@ public class ContourDataSource<G extends GtuDataInterface>
     private static final int KERNEL_FACTOR = 5;
 
     /** Spatial kernel size. Larger value may be used when using a large granularity. */
-    private static final Length SIGMA = Length.createSI(300);
+    private static final Length SIGMA = Length.instantiateSI(300);
 
     /** Temporal kernel size. Larger value may be used when using a large granularity. */
-    private static final Duration TAU = Duration.createSI(30);
+    private static final Duration TAU = Duration.instantiateSI(30);
 
     /** Maximum free flow propagation speed. */
     private static final Speed MAX_C_FREE = new Speed(80.0, SpeedUnit.KM_PER_HOUR);
@@ -200,7 +200,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      */
     public ContourDataSource(final Sampler<G> sampler, final GraphPath<KpiLaneDirection> path)
     {
-        this(sampler, Duration.createSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
+        this(sampler, Duration.instantiateSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
                 DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
                 AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND);
     }
@@ -223,7 +223,7 @@ public class ContourDataSource<G extends GtuDataInterface>
             final Time start, final Time initialEnd)
     {
         this.sampler = sampler;
-        this.updateInterval = Duration.createSI(timeGranularity[initTimeIndex]);
+        this.updateInterval = Duration.instantiateSI(timeGranularity[initTimeIndex]);
         this.delay = delay;
         this.path = path;
         this.spaceAxis = new Axis(0.0, path.getTotalLength().si, spaceGranularity[initSpaceIndex], spaceGranularity);
@@ -231,7 +231,7 @@ public class ContourDataSource<G extends GtuDataInterface>
 
         // get length-weighted mean speed limit from path to determine cFree and Vc for smoothing
         this.cFree = Speed.min(path.getSpeedLimit(), MAX_C_FREE);
-        this.vc = Speed.min(path.getSpeedLimit().multiplyBy(VC_FACRTOR), MAX_C_FREE);
+        this.vc = Speed.min(path.getSpeedLimit().times(VC_FACRTOR), MAX_C_FREE);
 
         // setup updater to do the actual work in another thread
         this.graphUpdater = new GraphUpdater<>("Contour Data Source worker", Thread.currentThread(), (t) -> update(t));
@@ -350,8 +350,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @return double[]; available granularities that a linked plot may use
      */
     @SuppressWarnings("synthetic-access")
-    public
-    final double[] getGranularities(final Dimension dimension)
+    public final double[] getGranularities(final Dimension dimension)
     {
         return dimension.getAxis(this).granularities;
     }
@@ -362,8 +361,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @return double; granularity that a linked plot should use
      */
     @SuppressWarnings("synthetic-access")
-    public
-    final double getGranularity(final Dimension dimension)
+    public final double getGranularity(final Dimension dimension)
     {
         return dimension.getAxis(this).granularity;
     }
@@ -409,7 +407,7 @@ public class ContourDataSource<G extends GtuDataInterface>
             this.desiredTimeGranularity = granularity;
             for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
             {
-                contourPlot.setUpdateInterval(Duration.createSI(granularity));
+                contourPlot.setUpdateInterval(Duration.instantiateSI(granularity));
                 contourPlot.setTimeGranularity(granularity);
             }
         }
@@ -439,7 +437,7 @@ public class ContourDataSource<G extends GtuDataInterface>
 
     /**
      * Sets the adaptive smoothing enabled or disabled. This will invalidate the plot triggering a redraw.
-     * @param smooth boolean; whether to smooth the plot
+     * @param smooth boolean; whether to smooth the plor
      */
     public final void setSmooth(final boolean smooth)
     {
@@ -596,7 +594,7 @@ public class ContourDataSource<G extends GtuDataInterface>
 
                 // create data source and its data streams for speed, distance traveled, time traveled, and additional
                 DataSource generic = this.egtf.getDataSource("generic");
-                generic.addStream(TypedQuantity.SPEED, Speed.createSI(1.0), Speed.createSI(1.0));
+                generic.addStream(TypedQuantity.SPEED, Speed.instantiateSI(1.0), Speed.instantiateSI(1.0));
                 generic.addStreamSI(this.travelTimeQuantity, 1.0, 1.0);
                 generic.addStreamSI(this.travelDistanceQuantity, 1.0, 1.0);
                 this.speedStream = generic.getStream(TypedQuantity.SPEED);
@@ -661,8 +659,8 @@ public class ContourDataSource<G extends GtuDataInterface>
         // loop cells to update data
         for (int j = fromTimeIndex; j <= toTimeIndex; j++)
         {
-            Time tFrom = Time.createSI(timeTicks[j]);
-            Time tTo = Time.createSI(timeTicks[j + 1]);
+            Time tFrom = Time.instantiateSI(timeTicks[j]);
+            Time tTo = Time.instantiateSI(timeTicks[j + 1]);
 
             // we never filter time, time always spans the entire simulation, it will contain tFrom till tTo
 
@@ -679,8 +677,8 @@ public class ContourDataSource<G extends GtuDataInterface>
 
                 // only first loop with offset, later in time, none of the space was done in the previous update
                 fromSpaceIndex = 0;
-                Length xFrom = Length.createSI(spaceTicks[i]);
-                Length xTo = Length.createSI(Math.min(spaceTicks[i + 1], this.path.getTotalLength().si));
+                Length xFrom = Length.instantiateSI(spaceTicks[i]);
+                Length xTo = Length.instantiateSI(Math.min(spaceTicks[i + 1], this.path.getTotalLength().si));
 
                 // init cell data
                 double totalDistance = 0.0;
@@ -716,8 +714,8 @@ public class ContourDataSource<G extends GtuDataInterface>
                             included.add(trajectoryGroup);
                             double scale = this.path.get(k).getLength().si / lane.getLaneData().getLength().si;
                             // divide by scale, so we go from base length to section length
-                            xStart.add(Length.max(xFrom.minus(startDistance).divideBy(scale), Length.ZERO));
-                            xEnd.add(Length.min(xTo.minus(startDistance).divideBy(scale),
+                            xStart.add(Length.max(xFrom.minus(startDistance).divide(scale), Length.ZERO));
+                            xEnd.add(Length.min(xTo.minus(startDistance).divide(scale),
                                     trajectoryGroup.getLaneDirection().getLaneData().getLength()));
                         }
                     }

@@ -45,8 +45,8 @@ public interface Anticipation
         {
             // upstream neighbor approaches when faster
             Length distance = downstream
-                    ? neighborTriplet.getHeadway().plus(neighborTriplet.getSpeed().multiplyBy(duration)).minus(traveledDistance)
-                    : neighborTriplet.getHeadway().minus(neighborTriplet.getSpeed().multiplyBy(duration))
+                    ? neighborTriplet.getHeadway().plus(neighborTriplet.getSpeed().times(duration)).minus(traveledDistance)
+                    : neighborTriplet.getHeadway().minus(neighborTriplet.getSpeed().times(duration))
                             .plus(traveledDistance);
             return new NeighborTriplet(distance, neighborTriplet.getSpeed(), neighborTriplet.getAcceleration());
         }
@@ -54,7 +54,7 @@ public interface Anticipation
         @Override
         public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
         {
-            return speed.multiplyBy(duration);
+            return speed.times(duration);
         }
     };
 
@@ -71,20 +71,20 @@ public interface Anticipation
                 double t = neighborTriplet.getSpeed().si / -neighborTriplet.getAcceleration().si;
                 double dx = neighborTriplet.getSpeed().si * t + .5 * neighborTriplet.getAcceleration().si * t * t;
                 dx = downstream ? dx : -dx; // upstream neighbor approaches when faster
-                return new NeighborTriplet(Length.createSI(neighborTriplet.getHeadway().si + dx - traveledDistance.si),
+                return new NeighborTriplet(Length.instantiateSI(neighborTriplet.getHeadway().si + dx - traveledDistance.si),
                         Speed.ZERO, Acceleration.ZERO);
             }
             double dx = neighborTriplet.getSpeed().si * duration.si
                     + .5 * neighborTriplet.getAcceleration().si * duration.si * duration.si;
             double dv = neighborTriplet.getAcceleration().si * duration.si;
-            return new NeighborTriplet(Length.createSI(neighborTriplet.getHeadway().si + dx - traveledDistance.si),
-                    Speed.createSI(neighborTriplet.getSpeed().si + dv), neighborTriplet.getAcceleration());
+            return new NeighborTriplet(Length.instantiateSI(neighborTriplet.getHeadway().si + dx - traveledDistance.si),
+                    Speed.instantiateSI(neighborTriplet.getSpeed().si + dv), neighborTriplet.getAcceleration());
         }
 
         @Override
         public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
         {
-            return speed.multiplyBy(duration);
+            return speed.times(duration);
         }
     };
 

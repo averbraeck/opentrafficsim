@@ -57,7 +57,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     public static final EventType GRAPH_REMOVE_EVENT = new EventType("GRAPH.REMOVE");
 
     /** Initial upper bound for the time scale. */
-    public static final Time DEFAULT_INITIAL_UPPER_TIME_BOUND = Time.createSI(300.0);
+    public static final Time DEFAULT_INITIAL_UPPER_TIME_BOUND = Time.instantiateSI(300.0);
 
     /** Simulator. */
     private final OTSSimulatorInterface simulator;
@@ -276,7 +276,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
         }
         this.updates = (int) (this.simulator.getSimulatorTime().si / interval.si);
         this.updateInterval = interval;
-        this.updateTime = Time.createSI(this.updates * this.updateInterval.si);
+        this.updateTime = Time.instantiateSI(this.updates * this.updateInterval.si);
         scheduleNextUpdateEvent();
     }
 
@@ -310,7 +310,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
             this.updates++;
             // events are scheduled slightly later, so all influencing movements have occurred
             this.updateEvent = this.simulator.scheduleEventAbs(
-                    Time.createSI(this.updateInterval.si * this.updates + this.delay.si), this, this, "update", null);
+                    Time.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this, this, "update", null);
         }
         catch (SimRuntimeException exception)
         {

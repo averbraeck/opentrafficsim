@@ -2,7 +2,6 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
@@ -84,7 +83,7 @@ public class LengthBeginEndAdapter extends XmlAdapter<String, LengthBeginEnd>
         }
 
         String prefix = lbe.isBegin() ? "" : "END-";
-        return prefix + Scalar.textualStringOfDefaultLocale(lbe.getOffset());
+        return prefix + lbe.getOffset().getInUnit() + " " + lbe.getOffset().getDisplayUnit().getDefaultTextualAbbreviation();
     }
 
 }

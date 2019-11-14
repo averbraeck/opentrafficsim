@@ -51,7 +51,7 @@ public class ConfigurationErrorsException extends Exception
 
     /**
      * @param message String; description of the problem
-     * @param cause Throwable; the cause of this ValueException
+     * @param cause Throwable; the cause of this ValueRuntimeException
      * @param enableSuppression boolean; whether or not suppression is enabled or disabled
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */

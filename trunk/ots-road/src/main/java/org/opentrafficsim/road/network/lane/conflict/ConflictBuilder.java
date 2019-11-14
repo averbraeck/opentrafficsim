@@ -468,10 +468,10 @@ public final class ConflictBuilder
         double f2end = dir2.isPlus() ? 1.0 : 0.0;
 
         // Get locations and length
-        Length longitudinalPosition1 = lane1.getLength().multiplyBy(f1start);
-        Length longitudinalPosition2 = lane2.getLength().multiplyBy(f2start);
-        Length length1 = lane1.getLength().multiplyBy(Math.abs(f1end - f1start));
-        Length length2 = lane2.getLength().multiplyBy(Math.abs(f2end - f2start));
+        Length longitudinalPosition1 = lane1.getLength().times(f1start);
+        Length longitudinalPosition2 = lane2.getLength().times(f2start);
+        Length length1 = lane1.getLength().times(Math.abs(f1end - f1start));
+        Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
         OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
@@ -521,10 +521,10 @@ public final class ConflictBuilder
         double f2start = dir2.isPlus() ? 0.0 : 1.0;
 
         // Get locations and length
-        Length longitudinalPosition1 = lane1.getLength().multiplyBy(f1start);
-        Length longitudinalPosition2 = lane2.getLength().multiplyBy(f2start);
-        Length length1 = lane1.getLength().multiplyBy(Math.abs(f1end - f1start));
-        Length length2 = lane2.getLength().multiplyBy(Math.abs(f2end - f2start));
+        Length longitudinalPosition1 = lane1.getLength().times(f1start);
+        Length longitudinalPosition2 = lane2.getLength().times(f2start);
+        Length length1 = lane1.getLength().times(Math.abs(f1end - f1start));
+        Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
         OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);
@@ -581,10 +581,10 @@ public final class ConflictBuilder
         }
 
         // Get locations and length
-        Length longitudinalPosition1 = lane1.getLength().multiplyBy(f1startDirected);
-        Length longitudinalPosition2 = lane2.getLength().multiplyBy(f2startDirected);
-        Length length1 = lane1.getLength().multiplyBy(Math.abs(f1end - f1start));
-        Length length2 = lane2.getLength().multiplyBy(Math.abs(f2end - f2start));
+        Length longitudinalPosition1 = lane1.getLength().times(f1startDirected);
+        Length longitudinalPosition2 = lane2.getLength().times(f2startDirected);
+        Length length1 = lane1.getLength().times(Math.abs(f1end - f1start));
+        Length length2 = lane2.getLength().times(Math.abs(f2end - f2start));
 
         // Get geometries
         OTSLine3D geometry1 = getGeometry(lane1, f1start, f1end, widthGenerator);

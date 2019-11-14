@@ -36,7 +36,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
     private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP =
             new AccelerationStep(new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI),
-                    new Time(Double.NaN, TimeUnit.BASE), new Duration(Double.NaN, DurationUnit.SI));
+                    new Time(Double.NaN, TimeUnit.DEFAULT), new Duration(Double.NaN, DurationUnit.SI));
 
     /** Return value if lane change causes immediate collision. */
     public static final DualAccelerationStep TOODANGEROUS =

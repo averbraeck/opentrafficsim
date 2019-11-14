@@ -92,7 +92,7 @@ public class XmlOdParserTest
                 return XmlOdParserTest.this.network;
             }
         };
-        this.simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), model);
+        this.simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
         this.gtuTypes.add(this.network.getGtuType(GTUType.DEFAULTS.CAR));
         this.gtuTypes.add(this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
         // TODO verify that Direction.ZERO will not cause problems...
@@ -354,7 +354,7 @@ public class XmlOdParserTest
         xml.append("  </DEMAND>");
         xml.append("</OD>");
         od = fromString(xml.toString());
-        assertAboutEquals(od.getDemand(A, B, Category.UNCATEGORIZED, Time.createSI(1800), true).si, 150);
+        assertAboutEquals(od.getDemand(A, B, Category.UNCATEGORIZED, Time.instantiateSI(1800), true).si, 150);
 
         // the next tests will keep adding factors, and check whether the demand increases accordingly
         xml = new StringBuilder();
@@ -369,7 +369,7 @@ public class XmlOdParserTest
         xml.append("  </DEMAND>");
         xml.append("</OD>");
         od = fromString(xml.toString());
-        assertAboutEquals(od.getDemand(A, B, Category.UNCATEGORIZED, Time.createSI(1800), true).si, 300);
+        assertAboutEquals(od.getDemand(A, B, Category.UNCATEGORIZED, Time.instantiateSI(1800), true).si, 300);
 
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\" GLOBALFACTOR=\"2\">"); // x2
@@ -383,7 +383,7 @@ public class XmlOdParserTest
         xml.append("  </DEMAND>");
         xml.append("</OD>");
         od = fromString(xml.toString());
-        assertAboutEquals(od.getDemand(A, B, Category.UNCATEGORIZED, Time.createSI(1800), true).si, 600);
+        assertAboutEquals(od.getDemand(A, B, Category.UNCATEGORIZED, Time.instantiateSI(1800), true).si, 600);
 
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\" GLOBALFACTOR=\"2\">");
@@ -398,7 +398,7 @@ public class XmlOdParserTest
         xml.append("  </DEMAND>");
         xml.append("</OD>");
         od = fromString(xml.toString());
-        assertAboutEquals(od.getDemand(A, B, getCategory("CAR"), Time.createSI(1800), true).si, 1200);
+        assertAboutEquals(od.getDemand(A, B, getCategory("CAR"), Time.instantiateSI(1800), true).si, 1200);
 
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\" GLOBALFACTOR=\"2\">");
@@ -417,7 +417,7 @@ public class XmlOdParserTest
         xml.append("  </DEMAND>");
         xml.append("</OD>");
         od = fromString(xml.toString());
-        assertAboutEquals(od.getDemand(A, B, getCategory("CAR"), Time.createSI(1800), true).si, 2400);
+        assertAboutEquals(od.getDemand(A, B, getCategory("CAR"), Time.instantiateSI(1800), true).si, 2400);
 
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\" GLOBALFACTOR=\"2\">");
@@ -436,7 +436,7 @@ public class XmlOdParserTest
         xml.append("  </DEMAND>");
         xml.append("</OD>");
         od = fromString(xml.toString());
-        assertAboutEquals(od.getDemand(A, B, getCategory("CAR"), Time.createSI(1800), true).si, 4800);
+        assertAboutEquals(od.getDemand(A, B, getCategory("CAR"), Time.instantiateSI(1800), true).si, 4800);
     }
 
     /**

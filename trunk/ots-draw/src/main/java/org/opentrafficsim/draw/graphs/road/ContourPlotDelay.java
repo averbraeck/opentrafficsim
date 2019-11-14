@@ -5,9 +5,10 @@ import java.util.List;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LinearDensityUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.matrix.DurationMatrix;
+import org.djunits.value.vdouble.matrix.base.DoubleMatrix;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -47,7 +48,6 @@ import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
  */
 public class ContourPlotDelay extends AbstractContourPlot<Duration>
 {
-
     /** */
     private static final long serialVersionUID = 20181010L;
 
@@ -60,9 +60,9 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
         {
             try
             {
-                return new DurationMatrix(filteredData, DurationUnit.SI, StorageType.DENSE);
+                return DoubleMatrix.instantiate(filteredData, DurationUnit.SI, StorageType.DENSE);
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 // should not happen as filtered data comes from the EGTF
                 throw new RuntimeException("Unexpected exception while converting duration to output format.", exception);
@@ -105,7 +105,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
                                 sumRefTime += (x[j + 1] - x[j]) / ref.get(j).si;
                             }
                         }
-                        catch (SamplingException | ValueException exception)
+                        catch (SamplingException | ValueRuntimeException exception)
                         {
                             throw new RuntimeException("Unexpected exception while calculating delay.", exception);
                         }
@@ -113,7 +113,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
                     }
                 }
             }
-            return Duration.createSI(intermediate.si + sumActualTime - sumRefTime);
+            return Duration.instantiateSI(intermediate.si + sumActualTime - sumRefTime);
         }
 
         /** {@inheritDoc} */

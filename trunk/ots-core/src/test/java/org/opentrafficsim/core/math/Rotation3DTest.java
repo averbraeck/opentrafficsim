@@ -6,12 +6,11 @@ import static org.junit.Assert.fail;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.DirectionUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.vector.AngleVector;
-import org.djunits.value.vdouble.vector.DirectionVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.junit.Test;
 
 /**
@@ -30,10 +29,10 @@ public class Rotation3DTest
 
     /**
      * Test the constructors and getters.
-     * @throws ValueException should not happen; test has failed if it does happen
+     * @throws ValueRuntimeException should not happen; test has failed if it does happen
      */
     @Test
-    public final void constructorTest() throws ValueException
+    public final void constructorTest() throws ValueRuntimeException
     {
         double roll = Math.toRadians(10);
         double pitch = Math.toRadians(20);
@@ -41,95 +40,96 @@ public class Rotation3DTest
         Direction3D r3d = new Direction3D(roll, pitch, yaw, DirectionUnit.EAST_RADIAN);
         checkRotation3D(r3d, roll, pitch, yaw);
         r3d = new Direction3D(
-                new DirectionVector(new double[] {roll, pitch, yaw}, DirectionUnit.EAST_RADIAN, StorageType.DENSE));
+                DoubleVector.instantiate(new double[] {roll, pitch, yaw}, DirectionUnit.EAST_RADIAN, StorageType.DENSE));
         checkRotation3D(r3d, roll, pitch, yaw);
         r3d = new Direction3D(
-                new DirectionVector(new double[] {roll, pitch, yaw}, DirectionUnit.EAST_RADIAN, StorageType.SPARSE));
+                DoubleVector.instantiate(new double[] {roll, pitch, yaw}, DirectionUnit.EAST_RADIAN, StorageType.SPARSE));
         checkRotation3D(r3d, roll, pitch, yaw);
         r3d = new Direction3D(new Direction(roll, DirectionUnit.EAST_RADIAN), new Direction(pitch, DirectionUnit.EAST_RADIAN),
                 new Direction(yaw, DirectionUnit.EAST_RADIAN));
         checkRotation3D(r3d, roll, pitch, yaw);
         try
         {
-            new Direction3D(new DirectionVector(new double[] {roll, pitch}, DirectionUnit.EAST_RADIAN, StorageType.DENSE));
+            new Direction3D(DoubleVector.instantiate(new double[] {roll, pitch}, DirectionUnit.EAST_RADIAN, StorageType.DENSE));
             fail("Short vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            new Direction3D(DoubleVector.instantiate(new double[] {roll, pitch, yaw, pitch}, DirectionUnit.EAST_RADIAN,
+                    StorageType.DENSE));
+            fail("Long vector should have thrown an exception");
+        }
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
         try
         {
             new Direction3D(
-                    new DirectionVector(new double[] {roll, pitch, yaw, pitch}, DirectionUnit.EAST_RADIAN, StorageType.DENSE));
-            fail("Long vector should have thrown an exception");
-        }
-        catch (ValueException ve)
-        {
-            // Ignore expected exception
-        }
-        try
-        {
-            new Direction3D(new DirectionVector(new double[] {roll, pitch}, DirectionUnit.EAST_RADIAN, StorageType.SPARSE));
+                    DoubleVector.instantiate(new double[] {roll, pitch}, DirectionUnit.EAST_RADIAN, StorageType.SPARSE));
             fail("Short vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
         try
         {
-            new Direction3D(new DirectionVector(new double[] {roll, pitch, yaw, pitch}, DirectionUnit.EAST_RADIAN,
+            new Direction3D(DoubleVector.instantiate(new double[] {roll, pitch, yaw, pitch}, DirectionUnit.EAST_RADIAN,
                     StorageType.SPARSE));
             fail("Long vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
         assertTrue("toString contains class name", r3d.toString().contains("Rotation3D"));
         Angle3D a3d = new Angle3D(roll, pitch, yaw, AngleUnit.RADIAN);
         checkRotation3D(a3d, roll, pitch, yaw);
-        a3d = new Angle3D(new AngleVector(new double[] {roll, pitch, yaw}, AngleUnit.RADIAN, StorageType.DENSE));
+        a3d = new Angle3D(DoubleVector.instantiate(new double[] {roll, pitch, yaw}, AngleUnit.RADIAN, StorageType.DENSE));
         checkRotation3D(a3d, roll, pitch, yaw);
-        a3d = new Angle3D(new AngleVector(new double[] {roll, pitch, yaw}, AngleUnit.RADIAN, StorageType.SPARSE));
+        a3d = new Angle3D(DoubleVector.instantiate(new double[] {roll, pitch, yaw}, AngleUnit.RADIAN, StorageType.SPARSE));
         checkRotation3D(a3d, roll, pitch, yaw);
         a3d = new Angle3D(new Angle(roll, AngleUnit.RADIAN), new Angle(pitch, AngleUnit.RADIAN),
                 new Angle(yaw, AngleUnit.RADIAN));
         checkRotation3D(a3d, roll, pitch, yaw);
         try
         {
-            new Angle3D(new AngleVector(new double[] {roll, pitch}, AngleUnit.RADIAN, StorageType.DENSE));
+            new Angle3D(DoubleVector.instantiate(new double[] {roll, pitch}, AngleUnit.RADIAN, StorageType.DENSE));
             fail("Short vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
         try
         {
-            new Angle3D(new AngleVector(new double[] {roll, pitch, yaw, pitch}, AngleUnit.RADIAN, StorageType.DENSE));
+            new Angle3D(DoubleVector.instantiate(new double[] {roll, pitch, yaw, pitch}, AngleUnit.RADIAN, StorageType.DENSE));
             fail("Long vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
         try
         {
-            new Angle3D(new AngleVector(new double[] {roll, pitch}, AngleUnit.RADIAN, StorageType.SPARSE));
+            new Angle3D(DoubleVector.instantiate(new double[] {roll, pitch}, AngleUnit.RADIAN, StorageType.SPARSE));
             fail("Short vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }
         try
         {
-            new Angle3D(new AngleVector(new double[] {roll, pitch, yaw, pitch}, AngleUnit.RADIAN, StorageType.SPARSE));
+            new Angle3D(DoubleVector.instantiate(new double[] {roll, pitch, yaw, pitch}, AngleUnit.RADIAN, StorageType.SPARSE));
             fail("Long vector should have thrown an exception");
         }
-        catch (ValueException ve)
+        catch (ValueRuntimeException ve)
         {
             // Ignore expected exception
         }

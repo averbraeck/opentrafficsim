@@ -77,29 +77,29 @@ public final class InputParameterHelper
                     probabilityDisplayPriority));
 
             carMap.add(new InputParameterDoubleScalar<AccelerationUnit, Acceleration>("a", "Maximum acceleration (m/s2)",
-                    "Maximum acceleration (m/s2)", Acceleration.createSI(1.56), Acceleration.createSI(0.5),
-                    Acceleration.createSI(5.0), true, true, "%.0f", 1.0));
+                    "Maximum acceleration (m/s2)", Acceleration.instantiateSI(1.56), Acceleration.instantiateSI(0.5),
+                    Acceleration.instantiateSI(5.0), true, true, "%.0f", 1.0));
             carMap.add(new InputParameterDoubleScalar<AccelerationUnit, Acceleration>("b",
                     "Maximum comfortable deceleration (m/s2)", "Maximum comfortable deceleration (m/s2)",
-                    Acceleration.createSI(2.09), Acceleration.createSI(1.0), Acceleration.createSI(4.0), true, true, "%.0f",
+                    Acceleration.instantiateSI(2.09), Acceleration.instantiateSI(1.0), Acceleration.instantiateSI(4.0), true, true, "%.0f",
                     2.0));
             carMap.add(new InputParameterDoubleScalar<LengthUnit, Length>("s0", "Distance headway (m)", "Distance headway (m)",
-                    Length.createSI(3.0), Length.createSI(1.0), Length.createSI(10.0), true, true, "%.0f", 3.0));
+                    Length.instantiateSI(3.0), Length.instantiateSI(1.0), Length.instantiateSI(10.0), true, true, "%.0f", 3.0));
             carMap.add(new InputParameterDoubleScalar<DurationUnit, Duration>("tSafe", "Time headway (s)", "Time headway (s)",
-                    Duration.createSI(1.2), Duration.createSI(1.0), Duration.createSI(4.0), true, true, "%.0f", 4.0));
+                    Duration.instantiateSI(1.2), Duration.instantiateSI(1.0), Duration.instantiateSI(4.0), true, true, "%.0f", 4.0));
 
             truckMap.add(new InputParameterDoubleScalar<AccelerationUnit, Acceleration>("a", "Maximum acceleration (m/s2)",
-                    "Maximum acceleration (m/s2)", Acceleration.createSI(0.75), Acceleration.createSI(0.5),
-                    Acceleration.createSI(5.0), true, true, "%.0f", 1.0));
+                    "Maximum acceleration (m/s2)", Acceleration.instantiateSI(0.75), Acceleration.instantiateSI(0.5),
+                    Acceleration.instantiateSI(5.0), true, true, "%.0f", 1.0));
             truckMap.add(new InputParameterDoubleScalar<AccelerationUnit, Acceleration>("b",
                     "Maximum comfortable deceleration (m/s2)", "Maximum comfortable deceleration (m/s2)",
-                    Acceleration.createSI(1.25), Acceleration.createSI(1.0), Acceleration.createSI(4.0), true, true, "%.0f",
+                    Acceleration.instantiateSI(1.25), Acceleration.instantiateSI(1.0), Acceleration.instantiateSI(4.0), true, true, "%.0f",
                     2.0));
             truckMap.add(
                     new InputParameterDoubleScalar<LengthUnit, Length>("s0", "Distance headway (m)", "Distance headway (m)",
-                            Length.createSI(3.0), Length.createSI(1.0), Length.createSI(10.0), true, true, "%.0f", 3.0));
+                            Length.instantiateSI(3.0), Length.instantiateSI(1.0), Length.instantiateSI(10.0), true, true, "%.0f", 3.0));
             truckMap.add(new InputParameterDoubleScalar<DurationUnit, Duration>("tSafe", "Time headway (s)", "Time headway (s)",
-                    Duration.createSI(1.2), Duration.createSI(1.0), Duration.createSI(4.0), true, true, "%.0f", 4.0));
+                    Duration.instantiateSI(1.2), Duration.instantiateSI(1.0), Duration.instantiateSI(4.0), true, true, "%.0f", 4.0));
 
         }
         catch (InputParameterException exception)

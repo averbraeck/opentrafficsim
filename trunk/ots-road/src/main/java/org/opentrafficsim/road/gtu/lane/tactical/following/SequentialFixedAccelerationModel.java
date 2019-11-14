@@ -107,7 +107,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
      */
     public final Time timeAfterCompletionOfStep(final int index)
     {
-        Time sum = new Time(0, TimeUnit.BASE);
+        Time sum = new Time(0, TimeUnit.DEFAULT);
         for (int i = 0; i <= index; i++)
         {
             sum = sum.plus(this.steps.get(i).getDuration());

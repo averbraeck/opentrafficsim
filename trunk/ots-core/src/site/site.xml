@@ -55,7 +55,7 @@
       <item name="Surefire report" href="surefire-report.html" />
       <item name="JaCoCo" href="jacoco/index.html" target="_blank" />
       <item name="Tag List" href="taglist.html" />
-      <item name="FindBugs" href="findbugs.html" />
+      <item name="SpotBugs" href="spotbugs.html" />
       <item name="CPD" href="cpd.html" />
       <item name="PMD" href="pmd.html" />
     </menu>

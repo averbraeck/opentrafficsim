@@ -32,7 +32,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
@@ -139,7 +138,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             // TODO: This seed is Aimsun specific.
             map.put("generation", new MersenneTwister(6L));
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel, map);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             new LoadXML(xmlModel, animationPanel);
@@ -194,8 +193,8 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
                         (CrossSectionLink) this.network.getLink("925_J2"));
                 LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)), ignoreList, permittedList);
-                new GTUDumper(simulator, Time.ZERO, Duration.createSI(60), network, "C:/Temp/loadxml");
+                        new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
+                new GTUDumper(simulator, Time.ZERO, Duration.instantiateSI(60), network, "C:/Temp/loadxml");
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GTUException exception)

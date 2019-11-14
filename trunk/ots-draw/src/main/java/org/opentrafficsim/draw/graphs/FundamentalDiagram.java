@@ -803,7 +803,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             for (KpiLaneDirection laneDirection : space)
             {
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion(laneDirection, Length.ZERO,
-                        laneDirection.getLaneData().getLength(), Time.ZERO, Time.createSI(Double.MAX_VALUE)));
+                        laneDirection.getLaneData().getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
 
                 // info per kpi lane direction
                 this.lastConsecutivelyAssignedTrajectories.put(laneDirection, -1);
@@ -894,7 +894,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                                 + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si <= time.si)
                         {
                             increaseTime(
-                                    Time.createSI((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
+                                    Time.instantiateSI((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
                                             + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si));
                             fd.notifyPlotChange();
                         }
@@ -908,7 +908,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         @Override
         public Duration getDelay()
         {
-            return Duration.createSI(1.0);
+            return Duration.instantiateSI(1.0);
         }
 
         /** {@inheritDoc} */

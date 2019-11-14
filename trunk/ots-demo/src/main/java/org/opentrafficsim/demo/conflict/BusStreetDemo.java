@@ -134,7 +134,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         {
             OTSAnimator simulator = new OTSAnimator();
             BusStreetModel busModel = new BusStreetModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), busModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), busModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(busModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, busModel, DEFAULT_COLORER, busModel.getNetwork());
             BusStreetDemo app = new BusStreetDemo("Bus street demo", animationPanel, busModel);
@@ -254,7 +254,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             Generator<Duration> headwayGenerator =
                     new HeadwayGenerator(new Frequency(800, FrequencyUnit.PER_HOUR), this.simulator);
             LaneBasedGTUCharacteristicsGenerator characteristicsGenerator =
-                    new CharacteristicsGenerator(this.simulator, new double[] { 0.9, 0.06, 0.04 }, this.network);
+                    new CharacteristicsGenerator(this.simulator, new double[] {0.9, 0.06, 0.04}, this.network);
             RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
             LaneBasedGTUGenerator gen = new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
@@ -490,7 +490,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             }
 
             GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, length, width, maximumSpeed,
-                    Acceleration.createSI(3.0), Acceleration.createSI(-8.0), length.multiplyBy(0.5));
+                    Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), length.times(0.5));
 
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route, null, null,
                     VehicleModel.MINMAX);

@@ -802,7 +802,7 @@ public class Lane extends CrossSectionElement implements Serializable
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
                         }
                         OperationalPlan oPlan = gtu.getOperationalPlan();
-                        Time triggerTime = oPlan.timeAtDistance(Length.createSI(d));
+                        Time triggerTime = oPlan.timeAtDistance(Length.instantiateSI(d));
                         if (triggerTime.gt(oPlan.getEndTime()))
                         {
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getSI()
@@ -811,7 +811,7 @@ public class Lane extends CrossSectionElement implements Serializable
                             System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane=" + toString()
                                     + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
-                                    new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()), TimeUnit.BASE);
+                                    new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()), TimeUnit.DEFAULT);
                         }
                         SimEvent<SimTimeDoubleUnit> event = new SimEvent<>(new SimTimeDoubleUnit(triggerTime), this, sensor,
                                 "trigger", new Object[] { gtu });
@@ -954,11 +954,11 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final Length position(final double fraction)
     {
-        if (this.length.getUnit().isBaseSIUnit())
+        if (this.length.getDisplayUnit().isBaseSIUnit())
         {
             return new Length(this.length.si * fraction, LengthUnit.SI);
         }
-        return new Length(this.length.getInUnit() * fraction, this.length.getUnit());
+        return new Length(this.length.getInUnit() * fraction, this.length.getDisplayUnit());
     }
 
     /**

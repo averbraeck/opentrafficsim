@@ -71,17 +71,17 @@ public class TaskLaneChanging extends TaskHeadwayBased
         Duration h2 = neighbors.getFollowers(lane).collect(new TaskHeadwayCollector(getSpeed()));
         if (h1 == null)
         {
-            return h2 == null ? null : h2.divideBy(lat);
+            return h2 == null ? null : h2.divide(lat);
         }
         if (h2 == null)
         {
-            return h1 == null ? null : h1.divideBy(lat);
+            return h1 == null ? null : h1.divide(lat);
         }
         if (h1.eq0() && h2.eq0())
         {
             return Duration.ZERO;
         }
-        return Duration.createSI(h1.si * h2.si / (lat * (h1.si + h2.si)));
+        return Duration.instantiateSI(h1.si * h2.si / (lat * (h1.si + h2.si)));
     }
 
     /**

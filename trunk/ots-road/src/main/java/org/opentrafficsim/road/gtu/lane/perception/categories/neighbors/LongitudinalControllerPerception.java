@@ -27,11 +27,11 @@ public interface LongitudinalControllerPerception extends PerceptionCategory<Lan
 
     /** Sensor range parameter. */
     ParameterTypeLength RANGE =
-            new ParameterTypeLength("range", "Sensor range", Length.createSI(200), NumericConstraint.POSITIVE);
+            new ParameterTypeLength("range", "Sensor range", Length.instantiateSI(200), NumericConstraint.POSITIVE);
     
     /** Sensor delay parameter. */
     ParameterTypeDuration DELAY =
-            new ParameterTypeDuration("delay", "Sensor delay", Duration.createSI(0.2), NumericConstraint.POSITIVE);
+            new ParameterTypeDuration("delay", "Sensor delay", Duration.instantiateSI(0.2), NumericConstraint.POSITIVE);
 
     /**
      * Returns the leaders.

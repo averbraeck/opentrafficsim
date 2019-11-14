@@ -37,7 +37,7 @@ public class ContinuousDistAbsoluteTemperature
     @Override
     public AbsoluteTemperature draw()
     {
-        return new AbsoluteTemperature(getDistribution().draw(), (AbsoluteTemperatureUnit) getUnit());
+        return new AbsoluteTemperature(getDistribution().draw(), (AbsoluteTemperatureUnit) getDisplayUnit());
     }
 
     /** {@inheritDoc} */

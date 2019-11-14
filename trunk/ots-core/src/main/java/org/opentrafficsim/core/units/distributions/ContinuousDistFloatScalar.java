@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.AngleSolidUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
@@ -27,6 +26,7 @@ import org.djunits.unit.MassUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
 import org.djunits.unit.PressureUnit;
+import org.djunits.unit.SolidAngleUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TemperatureUnit;
 import org.djunits.unit.TimeUnit;
@@ -34,13 +34,9 @@ import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
-import org.djunits.value.Relative;
-import org.djunits.value.vfloat.scalar.AbstractFloatScalarAbs;
-import org.djunits.value.vfloat.scalar.AbstractFloatScalarRel;
 import org.djunits.value.vfloat.scalar.FloatAbsoluteTemperature;
 import org.djunits.value.vfloat.scalar.FloatAcceleration;
 import org.djunits.value.vfloat.scalar.FloatAngle;
-import org.djunits.value.vfloat.scalar.FloatAngleSolid;
 import org.djunits.value.vfloat.scalar.FloatArea;
 import org.djunits.value.vfloat.scalar.FloatDensity;
 import org.djunits.value.vfloat.scalar.FloatDimensionless;
@@ -61,12 +57,15 @@ import org.djunits.value.vfloat.scalar.FloatMass;
 import org.djunits.value.vfloat.scalar.FloatPosition;
 import org.djunits.value.vfloat.scalar.FloatPower;
 import org.djunits.value.vfloat.scalar.FloatPressure;
-import org.djunits.value.vfloat.scalar.FloatScalar;
+import org.djunits.value.vfloat.scalar.FloatSolidAngle;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djunits.value.vfloat.scalar.FloatTemperature;
 import org.djunits.value.vfloat.scalar.FloatTime;
 import org.djunits.value.vfloat.scalar.FloatTorque;
 import org.djunits.value.vfloat.scalar.FloatVolume;
+import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarAbs;
+import org.djunits.value.vfloat.scalar.base.AbstractFloatScalarRel;
+import org.djunits.value.vfloat.scalar.base.FloatScalar;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 
@@ -114,26 +113,26 @@ public interface ContinuousDistFloatScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         public final T draw()
         {
-            switch (getUnit().getClass().getSimpleName())
+            switch (getDisplayUnit().getClass().getSimpleName())
             {
                 case "DirectionUnit":
-                    return (T) new FloatDirection((float) getDistribution().draw(), (DirectionUnit) getUnit());
+                    return (T) new FloatDirection((float) getDistribution().draw(), (DirectionUnit) getDisplayUnit());
 
                 case "PositionUnit":
-                    return (T) new FloatPosition((float) getDistribution().draw(), (PositionUnit) getUnit());
+                    return (T) new FloatPosition((float) getDistribution().draw(), (PositionUnit) getDisplayUnit());
 
                 case "AbsoluteTemperatureUnit":
                     return (T) new FloatAbsoluteTemperature((float) getDistribution().draw(),
-                            (AbsoluteTemperatureUnit) getUnit());
+                            (AbsoluteTemperatureUnit) getDisplayUnit());
 
                 case "TimeUnit":
-                    return (T) new FloatTime((float) getDistribution().draw(), (TimeUnit) getUnit());
+                    return (T) new FloatTime((float) getDistribution().draw(), (TimeUnit) getDisplayUnit());
 
                 default:
-                    return (T) new FloatScalar.Abs((float) getDistribution().draw(), (AU) getUnit());
+                    return (T) FloatScalar.instantiate((float) getDistribution().draw(), (AU) getDisplayUnit());
             }
         }
 
@@ -141,7 +140,7 @@ public interface ContinuousDistFloatScalar
         @Override
         public final String toString()
         {
-            return "ContinuousDistFloatScalar.Abs [T=" + getUnit().getClass().getSimpleName() + "]";
+            return "ContinuousDistFloatScalar.Abs [T=" + getDisplayUnit().getClass().getSimpleName() + "]";
         }
 
     }
@@ -152,7 +151,7 @@ public interface ContinuousDistFloatScalar
      * @param <U> The unit type used
      */
     class Rel<T extends AbstractFloatScalarRel<U, T>, U extends Unit<U>> extends AbstractContinuousDistScalar
-            implements Relative, Serializable
+            implements Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -178,90 +177,90 @@ public interface ContinuousDistFloatScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         public final T draw()
         {
-            switch (getUnit().getClass().getSimpleName())
+            switch (getDisplayUnit().getClass().getSimpleName())
             {
                 case "AccelerationUnit":
-                    return (T) new FloatAcceleration((float) getDistribution().draw(), (AccelerationUnit) getUnit());
+                    return (T) new FloatAcceleration((float) getDistribution().draw(), (AccelerationUnit) getDisplayUnit());
 
                 case "AngleUnit":
-                    return (T) new FloatAngle((float) getDistribution().draw(), (AngleUnit) getUnit());
+                    return (T) new FloatAngle((float) getDistribution().draw(), (AngleUnit) getDisplayUnit());
 
-                case "AngleSolidUnit":
-                    return (T) new FloatAngleSolid((float) getDistribution().draw(), (AngleSolidUnit) getUnit());
+                case "SolidAngleUnit":
+                    return (T) new FloatSolidAngle((float) getDistribution().draw(), (SolidAngleUnit) getDisplayUnit());
 
                 case "AreaUnit":
-                    return (T) new FloatArea((float) getDistribution().draw(), (AreaUnit) getUnit());
+                    return (T) new FloatArea((float) getDistribution().draw(), (AreaUnit) getDisplayUnit());
 
                 case "DensityUnit":
-                    return (T) new FloatDensity((float) getDistribution().draw(), (DensityUnit) getUnit());
+                    return (T) new FloatDensity((float) getDistribution().draw(), (DensityUnit) getDisplayUnit());
 
                 case "DimensionlessUnit":
-                    return (T) new FloatDimensionless((float) getDistribution().draw(), (DimensionlessUnit) getUnit());
+                    return (T) new FloatDimensionless((float) getDistribution().draw(), (DimensionlessUnit) getDisplayUnit());
 
                 case "DurationUnit":
-                    return (T) new FloatDuration((float) getDistribution().draw(), (DurationUnit) getUnit());
+                    return (T) new FloatDuration((float) getDistribution().draw(), (DurationUnit) getDisplayUnit());
 
                 case "ElectricalChargeUnit":
-                    return (T) new FloatElectricalCharge((float) getDistribution().draw(), (ElectricalChargeUnit) getUnit());
+                    return (T) new FloatElectricalCharge((float) getDistribution().draw(), (ElectricalChargeUnit) getDisplayUnit());
 
                 case "ElectricalCurrentUnit":
-                    return (T) new FloatElectricalCurrent((float) getDistribution().draw(), (ElectricalCurrentUnit) getUnit());
+                    return (T) new FloatElectricalCurrent((float) getDistribution().draw(), (ElectricalCurrentUnit) getDisplayUnit());
 
                 case "ElectricalPotentialUnit":
                     return (T) new FloatElectricalPotential((float) getDistribution().draw(),
-                            (ElectricalPotentialUnit) getUnit());
+                            (ElectricalPotentialUnit) getDisplayUnit());
 
                 case "ElectricalResistanceUnit":
                     return (T) new FloatElectricalResistance((float) getDistribution().draw(),
-                            (ElectricalResistanceUnit) getUnit());
+                            (ElectricalResistanceUnit) getDisplayUnit());
 
                 case "EnergyUnit":
-                    return (T) new FloatEnergy((float) getDistribution().draw(), (EnergyUnit) getUnit());
+                    return (T) new FloatEnergy((float) getDistribution().draw(), (EnergyUnit) getDisplayUnit());
 
                 case "FlowMassUnit":
-                    return (T) new FloatFlowMass((float) getDistribution().draw(), (FlowMassUnit) getUnit());
+                    return (T) new FloatFlowMass((float) getDistribution().draw(), (FlowMassUnit) getDisplayUnit());
 
                 case "FlowVolumeUnit":
-                    return (T) new FloatFlowVolume((float) getDistribution().draw(), (FlowVolumeUnit) getUnit());
+                    return (T) new FloatFlowVolume((float) getDistribution().draw(), (FlowVolumeUnit) getDisplayUnit());
 
                 case "ForceUnit":
-                    return (T) new FloatForce((float) getDistribution().draw(), (ForceUnit) getUnit());
+                    return (T) new FloatForce((float) getDistribution().draw(), (ForceUnit) getDisplayUnit());
 
                 case "FrequencyUnit":
-                    return (T) new FloatFrequency((float) getDistribution().draw(), (FrequencyUnit) getUnit());
+                    return (T) new FloatFrequency((float) getDistribution().draw(), (FrequencyUnit) getDisplayUnit());
 
                 case "LengthUnit":
-                    return (T) new FloatLength((float) getDistribution().draw(), (LengthUnit) getUnit());
+                    return (T) new FloatLength((float) getDistribution().draw(), (LengthUnit) getDisplayUnit());
 
                 case "LinearDensityUnit":
-                    return (T) new FloatLinearDensity((float) getDistribution().draw(), (LinearDensityUnit) getUnit());
+                    return (T) new FloatLinearDensity((float) getDistribution().draw(), (LinearDensityUnit) getDisplayUnit());
 
                 case "MassUnit":
-                    return (T) new FloatMass((float) getDistribution().draw(), (MassUnit) getUnit());
+                    return (T) new FloatMass((float) getDistribution().draw(), (MassUnit) getDisplayUnit());
 
                 case "PowerUnit":
-                    return (T) new FloatPower((float) getDistribution().draw(), (PowerUnit) getUnit());
+                    return (T) new FloatPower((float) getDistribution().draw(), (PowerUnit) getDisplayUnit());
 
                 case "PressureUnit":
-                    return (T) new FloatPressure((float) getDistribution().draw(), (PressureUnit) getUnit());
+                    return (T) new FloatPressure((float) getDistribution().draw(), (PressureUnit) getDisplayUnit());
 
                 case "SpeedUnit":
-                    return (T) new FloatSpeed((float) getDistribution().draw(), (SpeedUnit) getUnit());
+                    return (T) new FloatSpeed((float) getDistribution().draw(), (SpeedUnit) getDisplayUnit());
 
                 case "TemperatureUnit":
-                    return (T) new FloatTemperature((float) getDistribution().draw(), (TemperatureUnit) getUnit());
+                    return (T) new FloatTemperature((float) getDistribution().draw(), (TemperatureUnit) getDisplayUnit());
 
                 case "TorqueUnit":
-                    return (T) new FloatTorque((float) getDistribution().draw(), (TorqueUnit) getUnit());
+                    return (T) new FloatTorque((float) getDistribution().draw(), (TorqueUnit) getDisplayUnit());
 
                 case "VolumeUnit":
-                    return (T) new FloatVolume((float) getDistribution().draw(), (VolumeUnit) getUnit());
+                    return (T) new FloatVolume((float) getDistribution().draw(), (VolumeUnit) getDisplayUnit());
 
                 default:
-                    return (T) new FloatScalar.Rel((float) getDistribution().draw(), getUnit());
+                    return (T) FloatScalar.instantiate((float) getDistribution().draw(), (U) getDisplayUnit());
             }
         }
 
@@ -269,7 +268,7 @@ public interface ContinuousDistFloatScalar
         @Override
         public final String toString()
         {
-            return "ContinuousDistFloatScalar.Rel [T=" + getUnit().getClass().getSimpleName() + "]";
+            return "ContinuousDistFloatScalar.Rel [T=" + getDisplayUnit().getClass().getSimpleName() + "]";
         }
 
     }

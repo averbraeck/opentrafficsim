@@ -345,7 +345,7 @@ public final class GeneratorSinkParser
                 CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(generatorTag.getLINK());
                 Lane lane = (Lane) link.getCrossSectionElement(generatorTag.getLANE());
                 // TODO: remove this hack for testing
-                Length position = Length.createSI(5.0); // Transformer.parseLengthBeginEnd(generatorTag.getPOSITION(),
+                Length position = Length.instantiateSI(5.0); // Transformer.parseLengthBeginEnd(generatorTag.getPOSITION(),
                                                         // lane.getLength());
                 GTUDirectionality direction = GTUDirectionality.valueOf(generatorTag.getDIRECTION());
                 Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();

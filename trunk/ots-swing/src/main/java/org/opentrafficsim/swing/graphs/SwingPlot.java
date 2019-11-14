@@ -46,8 +46,9 @@ public class SwingPlot extends JFrame
     private static final long serialVersionUID = 20190823L;
 
     /** The JFreeChart plot. */
-    private final AbstractPlot plot;
-    
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected final AbstractPlot plot;
+
     /** Status label. */
     private JLabel statusLabel;
 
@@ -66,14 +67,14 @@ public class SwingPlot extends JFrame
         add(this.statusLabel, BorderLayout.SOUTH);
         setChart(plot.getChart());
     }
-    
+
     /**
      * Add the chart.
      * @param chart JFreeChart; the chart
      */
     protected void setChart(final JFreeChart chart)
     {
-        //this.plot.setChart(chart);
+        // this.plot.setChart(chart);
         // override to gain some control over the auto bounds
         ChartPanel chartPanel = new ChartPanel(chart)
         {
@@ -87,7 +88,7 @@ public class SwingPlot extends JFrame
                 super.restoreAutoDomainBounds();
                 if (chart.getPlot() instanceof XYPlot)
                 {
-                    plot.setAutoBoundDomain(chart.getXYPlot());
+                    SwingPlot.this.plot.setAutoBoundDomain(chart.getXYPlot());
                 }
             }
 
@@ -98,7 +99,7 @@ public class SwingPlot extends JFrame
                 super.restoreAutoRangeBounds();
                 if (chart.getPlot() instanceof XYPlot)
                 {
-                    plot.setAutoBoundRange(chart.getXYPlot());
+                    SwingPlot.this.plot.setAutoBoundRange(chart.getXYPlot());
                 }
             }
 
@@ -170,7 +171,7 @@ public class SwingPlot extends JFrame
                         h = getHeight();
                     }
                     OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(filename)));
-                    out.write(plot.encodeAsPng(w, h, fs));
+                    out.write(SwingPlot.this.plot.encodeAsPng(w, h, fs));
                     out.close();
                 }
             }
@@ -239,7 +240,7 @@ public class SwingPlot extends JFrame
         popupMenu.add(this.detach);
         addPopUpMenuItems(popupMenu);
     }
-    
+
     /**
      * Manually set status label from sub class. Will be overwritten by a moving mouse pointer over the axes.
      * @param label String; label to set
@@ -276,7 +277,7 @@ public class SwingPlot extends JFrame
      */
     public AbstractPlot getPlot()
     {
-        return plot;
+        return this.plot;
     }
 
 }

@@ -108,7 +108,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
         @Override
         public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
         {
-            return parameters.getParameter(HSTAR).multiplyBy(speed);
+            return parameters.getParameter(HSTAR).times(speed);
         }
     };
 
@@ -119,7 +119,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
         public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
         {
             return parameters.getParameter(CDS).plus(parameters.getParameter(BETADS)).plus(parameters.getParameter(ALPHADS)
-                    .multiplyBy(parameters.getParameter(ToledoLaneChangeParameters.ERROR_TERM)));
+                    .times(parameters.getParameter(ToledoLaneChangeParameters.ERROR_TERM)));
         }
     };
 

@@ -136,7 +136,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             // TODO: This seed is Aimsun specific.
             map.put("generation", new MersenneTwister(6L));
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel, map);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             new LoadXML(xmlModel, animationPanel);
@@ -198,7 +198,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
                 }
                 LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)), ignoreList, permittedList);
+                        new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GTUException exception)

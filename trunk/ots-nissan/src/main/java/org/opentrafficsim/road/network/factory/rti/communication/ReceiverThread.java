@@ -19,7 +19,6 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.rti.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.rti.data.RTIToOTSData;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -55,7 +54,6 @@ public class ReceiverThread extends Thread
      * @param network OTSRoadNetwork; the network
      * @throws SocketException when communication fails
      */
-    @SuppressFBWarnings("IL_INFINITE_LOOP")
     public ReceiverThread(OTSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
             final OTSRoadNetwork network) throws SocketException
     {
@@ -70,7 +68,6 @@ public class ReceiverThread extends Thread
 
     /** {@inheritDoc} */
     @Override
-    @SuppressFBWarnings("IL_INFINITE_LOOP")
     public void run()
     {
         while (this.receiveData != null)

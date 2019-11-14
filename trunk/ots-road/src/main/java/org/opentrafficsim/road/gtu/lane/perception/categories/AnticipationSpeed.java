@@ -173,7 +173,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
          */
         public final Speed getLeft()
         {
-            return Speed.createSI(this.left);
+            return Speed.instantiateSI(this.left);
         }
 
         /**
@@ -182,7 +182,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
          */
         public final Speed getCurrent()
         {
-            return Speed.createSI(this.current);
+            return Speed.instantiateSI(this.current);
         }
 
         /**
@@ -191,7 +191,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
          */
         public final Speed getRight()
         {
-            return Speed.createSI(this.right);
+            return Speed.instantiateSI(this.right);
         }
     }
 

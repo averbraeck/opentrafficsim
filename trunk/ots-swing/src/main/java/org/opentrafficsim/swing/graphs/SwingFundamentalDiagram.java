@@ -26,8 +26,8 @@ import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.Range;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
-import org.opentrafficsim.draw.graphs.GraphUtil;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
+import org.opentrafficsim.draw.graphs.GraphUtil;
 
 /**
  * Embed a FundamentalDiagram in a Swing JPanel.
@@ -213,12 +213,12 @@ public class SwingFundamentalDiagram extends SwingPlot
                     if ((int) (.5 + getPlot().getSource().getAggregationPeriod().si
                             / getPlot().getSource().getUpdateInterval().si) != f)
                     {
-                        Duration interval = Duration.createSI(getPlot().getSource().getAggregationPeriod().si / f);
+                        Duration interval = Duration.instantiateSI(getPlot().getSource().getAggregationPeriod().si / f);
                         getPlot().setUpdateInterval(interval);
                         // the above setUpdateInterval also recalculates the virtual last update time
                         // add half an interval to avoid any rounding issues
                         getPlot().getSource().setUpdateInterval(interval,
-                                getPlot().getUpdateTime().plus(interval.multiplyBy(0.5)), getPlot());
+                                getPlot().getUpdateTime().plus(interval.times(0.5)), getPlot());
                         getPlot().getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
                         getPlot().getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
                         getPlot().notifyPlotChange();
@@ -255,12 +255,12 @@ public class SwingFundamentalDiagram extends SwingPlot
                     {
                         int n = (int) (0.5 + getPlot().getSource().getAggregationPeriod().si
                                 / getPlot().getSource().getUpdateInterval().si);
-                        Duration period = Duration.createSI(t);
-                        getPlot().setUpdateInterval(period.divideBy(n));
+                        Duration period = Duration.instantiateSI(t);
+                        getPlot().setUpdateInterval(period.divide(n));
                         // add half an interval to avoid any rounding issues
                         getPlot().getSource().setAggregationPeriod(period);
-                        getPlot().getSource().setUpdateInterval(period.divideBy(n),
-                                getPlot().getUpdateTime().plus(period.divideBy(n).multiplyBy(0.5)),
+                        getPlot().getSource().setUpdateInterval(period.divide(n),
+                                getPlot().getUpdateTime().plus(period.divide(n).times(0.5)),
                                 getPlot());
                         getPlot().getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
                         getPlot().getChart().getXYPlot().zoomRangeAxes(0.0, null, null);

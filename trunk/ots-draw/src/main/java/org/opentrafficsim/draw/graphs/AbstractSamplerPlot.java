@@ -62,7 +62,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
             for (KpiLaneDirection kpiLaneDirection : section)
             {
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion(kpiLaneDirection, Length.ZERO,
-                        kpiLaneDirection.getLaneData().getLength(), Time.ZERO, Time.createSI(Double.MAX_VALUE)));
+                        kpiLaneDirection.getLaneData().getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
             }
         }
         for (int i = 0; i < path.getNumberOfSeries(); i++)

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
+import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;

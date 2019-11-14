@@ -103,7 +103,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
@@ -151,7 +151,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         RoadSampler sampler = new RoadSampler(simulator);
         ContourDataSource<?> dataPool0 = new ContourDataSource<>(sampler, path0);
         ContourDataSource<?> dataPool1 = new ContourDataSource<>(sampler, path1);
-        Duration updateInterval = Duration.createSI(10.0);
+        Duration updateInterval = Duration.instantiateSI(10.0);
 
         SwingPlot plot = null;
         GraphPath<KpiLaneDirection> path = null;
@@ -183,11 +183,11 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         }
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY,
-                Quantity.FLOW, simulator, sampler, crossSection, true, Duration.createSI(60.0), false));
+                Quantity.FLOW, simulator, sampler, crossSection, true, Duration.instantiateSI(60.0), false));
         trajectoryChart.setCell(plot.getContentPane(), 1, 0);
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW,
-                Quantity.SPEED, simulator, sampler, crossSection, false, Duration.createSI(60.0), false));
+                Quantity.SPEED, simulator, sampler, crossSection, false, Duration.instantiateSI(60.0), false));
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",

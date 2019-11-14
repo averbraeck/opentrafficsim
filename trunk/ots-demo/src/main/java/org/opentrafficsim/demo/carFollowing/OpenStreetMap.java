@@ -15,7 +15,7 @@ import java.util.List;
 import javax.naming.NamingException;
 import javax.swing.JFrame;
 
-import org.djunits.unit.UNITS;
+import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -100,7 +100,7 @@ public class OpenStreetMap extends OTSSimulationApplication<OSMModel> implements
             {
                 OTSAnimator simulator = new OTSAnimator();
                 final OSMModel osmModel = new OSMModel(simulator, filepath);
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), osmModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), osmModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(osmModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, osmModel, DEFAULT_COLORER, osmModel.getNetwork());
                 OpenStreetMap app = new OpenStreetMap(osmModel, animationPanel);

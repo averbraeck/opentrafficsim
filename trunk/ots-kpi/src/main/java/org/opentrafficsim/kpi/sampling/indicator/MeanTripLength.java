@@ -40,7 +40,7 @@ public class MeanTripLength extends AbstractIndicator<Length>
                 gtuIds.add(trajectory.getGtuId());
             }
         }
-        return sum.divideBy(gtuIds.size());
+        return sum.divide(gtuIds.size());
     }
 
     /** {@inheritDoc} */

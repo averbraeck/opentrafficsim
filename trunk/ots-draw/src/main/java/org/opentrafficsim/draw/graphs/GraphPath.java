@@ -80,7 +80,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         {
             mean.add(section.getSpeedLimit().si, section.getLength().si);
         }
-        this.speedLimit = Speed.createSI(mean.getMean());
+        this.speedLimit = Speed.instantiateSI(mean.getMean());
     }
 
     /**

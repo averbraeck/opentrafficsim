@@ -69,7 +69,7 @@ public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInter
     {
         if (this.historyManager == null)
         {
-            this.historyManager = new HistoryManagerDEVS(simulator, Duration.ZERO, Duration.createSI(10.0));
+            this.historyManager = new HistoryManagerDEVS(simulator, Duration.ZERO, Duration.instantiateSI(10.0));
         }
         return this.historyManager;
     }

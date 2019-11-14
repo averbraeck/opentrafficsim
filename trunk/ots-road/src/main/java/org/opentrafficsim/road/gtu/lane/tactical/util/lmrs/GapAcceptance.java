@@ -74,7 +74,7 @@ public interface GapAcceptance
             }
 
             Acceleration aSelf = egoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat);
-            Acceleration threshold = b.multiplyBy(-desire);
+            Acceleration threshold = b.times(-desire);
             return aFollow.ge(threshold) && aSelf.ge(threshold) && ownAcceleration.ge(threshold);
         }
 
@@ -122,7 +122,7 @@ public interface GapAcceptance
             }
 
             Acceleration aSelf = egoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat);
-            Acceleration threshold = b.multiplyBy(-desire);
+            Acceleration threshold = b.times(-desire);
             return aFollow.ge(threshold) && aSelf.ge(threshold);
         }
 

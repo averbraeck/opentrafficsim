@@ -4,13 +4,13 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.Unit;
-import org.djunits.value.Scalar;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.matrix.DoubleMatrixInterface;
+import org.djunits.value.AbstractScalar;
+import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.matrix.FrequencyMatrix;
 import org.djunits.value.vdouble.matrix.LinearDensityMatrix;
 import org.djunits.value.vdouble.matrix.SpeedMatrix;
+import org.djunits.value.vdouble.matrix.base.DoubleMatrixInterface;
+import org.djunits.value.vdouble.matrix.data.DoubleMatrixDataDense;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -31,7 +31,8 @@ import org.opentrafficsim.core.egtf.Quantity;
  * @param <T> data type
  * @param <K> grid output format
  */
-public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends DoubleMatrixInterface<U>> extends Quantity<T, K>
+public class TypedQuantity<U extends Unit<U>, T extends AbstractScalar<U, T>, K extends DoubleMatrixInterface<U, ?, ?, ?>>
+        extends Quantity<T, K>
 {
     /** Standard quantity for speed. */
     public static final Quantity<Speed, SpeedMatrix> SPEED = new TypedQuantity<>("Speed", true, new Converter<SpeedMatrix>()
@@ -41,9 +42,9 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends Dou
         {
             try
             {
-                return new SpeedMatrix(data, SpeedUnit.SI, StorageType.DENSE);
+                return new SpeedMatrix(new DoubleMatrixDataDense(data), SpeedUnit.SI);
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 // should not happen
                 throw new RuntimeException("Unexcepted exception: data is null when converting.", exception);
@@ -59,9 +60,9 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends Dou
         {
             try
             {
-                return new FrequencyMatrix(data, FrequencyUnit.SI, StorageType.DENSE);
+                return new FrequencyMatrix(new DoubleMatrixDataDense(data), FrequencyUnit.SI);
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 // should not happen
                 throw new RuntimeException("Unexcepted exception: data is null when converting.", exception);
@@ -78,9 +79,9 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends Dou
                 {
                     try
                     {
-                        return new LinearDensityMatrix(data, LinearDensityUnit.SI, StorageType.DENSE);
+                        return new LinearDensityMatrix(new DoubleMatrixDataDense(data), LinearDensityUnit.SI);
                     }
-                    catch (ValueException exception)
+                    catch (ValueRuntimeException exception)
                     {
                         // should not happen
                         throw new RuntimeException("Unexcepted exception: data is null when converting.", exception);

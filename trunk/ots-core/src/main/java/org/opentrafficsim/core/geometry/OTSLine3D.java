@@ -25,7 +25,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.language.d3.BoundingBox;
@@ -121,7 +120,7 @@ public class OTSLine3D implements Locatable, Serializable
             this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + pts[i - 1].distanceSI(pts[i]);
         }
         this.points = pts;
-        this.length = Length.createSI(this.lengthIndexedLine[this.lengthIndexedLine.length - 1]);
+        this.length = Length.instantiateSI(this.lengthIndexedLine[this.lengthIndexedLine.length - 1]);
     }
 
     /** Which offsetLine method to use... */
@@ -586,7 +585,6 @@ public class OTSLine3D implements Locatable, Serializable
      * @return OTSLine3D; the selected sub-section
      * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; length
      */
-    @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
     public final OTSLine3D extract(final double start, final double end) throws OTSGeometryException
     {
         if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > getLengthSI())
@@ -1548,10 +1546,10 @@ public class OTSLine3D implements Locatable, Serializable
 
         // use directions at start and end to get unit offset points to the left at a distance of 1
         double ang = (start == null ? Math.atan2(this.points[1].y - this.points[0].y, this.points[1].x - this.points[0].x)
-                : start.getInUnit(DirectionUnit.BASE)) + Math.PI / 2; // start.si + Math.PI / 2;
+                : start.getInUnit(DirectionUnit.DEFAULT)) + Math.PI / 2; // start.si + Math.PI / 2;
         OTSPoint3D p1 = new OTSPoint3D(this.points[0].x + Math.cos(ang), this.points[0].y + Math.sin(ang));
         ang = (end == null ? Math.atan2(this.points[n].y - this.points[n - 1].y, this.points[n].x - this.points[n - 1].x)
-                : end.getInUnit(DirectionUnit.BASE)) + Math.PI / 2; // end.si + Math.PI / 2;
+                : end.getInUnit(DirectionUnit.DEFAULT)) + Math.PI / 2; // end.si + Math.PI / 2;
         OTSPoint3D p2 = new OTSPoint3D(this.points[n].x + Math.cos(ang), this.points[n].y + Math.sin(ang));
 
         // calculate first and last center (i.e. intersection of unit offset segments), which depend on inputs 'start' and 'end'
@@ -1701,7 +1699,7 @@ public class OTSLine3D implements Locatable, Serializable
         OTSPoint3D intersection = OTSPoint3D.intersectionOfLines(p1, p2, p3, p4);
         if (null == intersection)
         {
-            return Length.createSI(Double.NaN);
+            return Length.instantiateSI(Double.NaN);
         }
         // determine left or right
         double refLength = length1 < length2 ? length1 : length2;
@@ -1830,7 +1828,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)

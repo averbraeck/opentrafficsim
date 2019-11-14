@@ -1091,7 +1091,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         laneDirectionList.add(new LaneDirection(adjacentLane, lpi.getReferenceLaneDirection().getDirection()));
         DirectedLanePosition ref = getGtu().getReferencePosition();
         Length referencePosition =
-                Length.createSI(adjacentLane.getLength().si * ref.getPosition().si / ref.getLane().getLength().si);
+                Length.instantiateSI(adjacentLane.getLength().si * ref.getPosition().si / ref.getLane().getLength().si);
         for (int i = 1; i < lpi.getLaneDirectionList().size(); i++)
         {
             LaneDirection ld = lpi.getLaneDirectionList().get(i);

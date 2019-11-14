@@ -467,17 +467,17 @@ class RoadTag implements Serializable
                 if (leftLane.widthTags.size() == 1)
                 {
                     leftLane.widthTags.get(0).sOffst =
-                            leftLane.widthTags.get(0).a.plus(leftLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
-                                    .plus(leftLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
-                                    .plus(leftLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
+                            leftLane.widthTags.get(0).a.plus(leftLane.widthTags.get(0).b.times(ds.doubleValue()))
+                                    .plus(leftLane.widthTags.get(0).c.times(Math.pow(ds.doubleValue(), 2)))
+                                    .plus(leftLane.widthTags.get(0).d.times(Math.pow(ds.doubleValue(), 3)));
 
                     Length laneWidth_start = leftLane.widthTags.get(0).a;
                     Length laneWidth_end = leftLane.widthTags.get(0).sOffst;
 
                     Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin()
-                            .plus(lastLane.getBeginWidth().multiplyBy(0.5)).plus(laneWidth_start.multiplyBy(0.5));
-                    Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().multiplyBy(0.5))
-                            .plus(laneWidth_end.multiplyBy(0.5));
+                            .plus(lastLane.getBeginWidth().times(0.5)).plus(laneWidth_start.times(0.5));
+                    Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().times(0.5))
+                            .plus(laneWidth_end.times(0.5));
 
                     Length length = currentLink.getLength();
 
@@ -496,18 +496,18 @@ class RoadTag implements Serializable
                     for (WidthTag widthTag : leftLane.widthTags)
                     {
                         Length relativeLength = widthTag.sOffst;
-                        double factor = relativeLength.divideBy(lengthofLane).doubleValue();
+                        double factor = relativeLength.divide(lengthofLane).doubleValue();
 
                         if (factor < 0.98)
                         {
-                            Length width = widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
-                                    .plus(widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2)))
-                                    .plus(widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
+                            Length width = widthTag.a.plus(widthTag.b.times(relativeLength.doubleValue()))
+                                    .plus(widthTag.c.times(Math.pow(relativeLength.doubleValue(), 2)))
+                                    .plus(widthTag.d.times(Math.pow(relativeLength.doubleValue(), 3)));
 
                             Length offSet = lastLane.getLateralCenterPosition(factor)
-                                    .plus(lastLane.getWidth(factor).multiplyBy(0.5)).plus(width.multiplyBy(0.5));
+                                    .plus(lastLane.getWidth(factor).times(0.5)).plus(width.times(0.5));
 
-                            relativeLength = currentLink.getLength().multiplyBy(factor);
+                            relativeLength = currentLink.getLength().times(factor);
 
                             CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
                             crossSectionSlices.add(slice);
@@ -668,17 +668,17 @@ class RoadTag implements Serializable
                 if (rightLane.widthTags.size() == 1)
                 {
                     rightLane.widthTags.get(0).sOffst =
-                            rightLane.widthTags.get(0).a.plus(rightLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
-                                    .plus(rightLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
-                                    .plus(rightLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
+                            rightLane.widthTags.get(0).a.plus(rightLane.widthTags.get(0).b.times(ds.doubleValue()))
+                                    .plus(rightLane.widthTags.get(0).c.times(Math.pow(ds.doubleValue(), 2)))
+                                    .plus(rightLane.widthTags.get(0).d.times(Math.pow(ds.doubleValue(), 3)));
 
                     Length laneWidth_start = rightLane.widthTags.get(0).a;
                     Length laneWidth_end = rightLane.widthTags.get(0).sOffst;
 
                     Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin()
-                            .minus(lastLane.getBeginWidth().multiplyBy(0.5)).minus(laneWidth_start.multiplyBy(0.5));
-                    Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().multiplyBy(0.5))
-                            .minus(laneWidth_end.multiplyBy(0.5));
+                            .minus(lastLane.getBeginWidth().times(0.5)).minus(laneWidth_start.times(0.5));
+                    Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().times(0.5))
+                            .minus(laneWidth_end.times(0.5));
 
                     Length length = currentLink.getLength();
 
@@ -697,18 +697,18 @@ class RoadTag implements Serializable
                     for (WidthTag widthTag : rightLane.widthTags)
                     {
                         Length relativeLength = widthTag.sOffst;
-                        double factor = relativeLength.divideBy(lengthofLane).doubleValue();
+                        double factor = relativeLength.divide(lengthofLane).doubleValue();
 
                         if (factor < 0.98)
                         {
-                            Length width = widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
-                                    .plus(widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2)))
-                                    .plus(widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
+                            Length width = widthTag.a.plus(widthTag.b.times(relativeLength.doubleValue()))
+                                    .plus(widthTag.c.times(Math.pow(relativeLength.doubleValue(), 2)))
+                                    .plus(widthTag.d.times(Math.pow(relativeLength.doubleValue(), 3)));
 
                             Length offSet = lastLane.getLateralCenterPosition(factor)
-                                    .minus(lastLane.getWidth(factor).multiplyBy(0.5)).minus(width.multiplyBy(0.5));
+                                    .minus(lastLane.getWidth(factor).times(0.5)).minus(width.times(0.5));
 
-                            relativeLength = currentLink.getLength().multiplyBy(factor);
+                            relativeLength = currentLink.getLength().times(factor);
 
                             CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
                             crossSectionSlices.add(slice);

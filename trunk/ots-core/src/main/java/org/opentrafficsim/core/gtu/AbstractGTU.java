@@ -302,7 +302,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                 double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
                 DirectedPoint p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
-                this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(new Time(tNext, TimeUnit.BASE)), this, this, "move",
+                this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(new Time(tNext, TimeUnit.DEFAULT)), this, this, "move",
                         new Object[] { p });
                 ALIGN_COUNT++;
             }
@@ -580,7 +580,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     }
 
     /** cache time. */
-    private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.BASE);
+    private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.DEFAULT);
 
     /** caced position at time. */
     private DirectedPoint cacheLocation = null;

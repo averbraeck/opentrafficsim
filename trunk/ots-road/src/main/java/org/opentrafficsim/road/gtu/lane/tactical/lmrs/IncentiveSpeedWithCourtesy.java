@@ -91,7 +91,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         if (aCur.si > 0)
         {
             Acceleration a = parameters.getParameter(A);
-            aGain = a.minus(aCur).divideBy(a);
+            aGain = a.minus(aCur).divide(a);
         }
         else
         {

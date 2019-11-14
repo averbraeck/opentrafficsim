@@ -38,7 +38,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
 {
 
     /** Margin of 1 millisecond. */
-    private static final Duration MARGIN = Duration.createSI(0.001);
+    private static final Duration MARGIN = Duration.instantiateSI(0.001);
 
     /** */
     private static final long serialVersionUID = 20170217L;
@@ -52,7 +52,8 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     }
 
     /** Map of info type and list of time stamped data of that info type. */
-    private final LinkedHashMap<DelayedInfoType<?>, LinkedHashMap<RelativeLane, List<TimeStampedObject<?>>>> map = new LinkedHashMap<>();
+    private final LinkedHashMap<DelayedInfoType<?>, LinkedHashMap<RelativeLane, List<TimeStampedObject<?>>>> map =
+            new LinkedHashMap<>();
 
     /**
      * Set info of given delayed info type, not pertaining to any lane.

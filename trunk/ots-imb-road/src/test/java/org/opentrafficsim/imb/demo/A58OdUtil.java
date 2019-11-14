@@ -1,7 +1,5 @@
 package org.opentrafficsim.imb.demo;
 
-import static org.djunits.value.StorageType.DENSE;
-
 import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -14,7 +12,8 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -23,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -101,9 +101,9 @@ public class A58OdUtil
         }
         try
         {
-            timeVector = new TimeVector(t, TimeUnit.BASE_MINUTE, DENSE);
+            timeVector = DoubleVector.instantiate(t, TimeUnit.BASE_MINUTE, StorageType.DENSE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             exception.printStackTrace();
         }
@@ -218,9 +218,9 @@ public class A58OdUtil
             FrequencyVector demandVector;
             try
             {
-                demandVector = new FrequencyVector(demandArray, FrequencyUnit.PER_HOUR, DENSE);
+                demandVector = DoubleVector.instantiate(demandArray, FrequencyUnit.PER_HOUR, StorageType.DENSE);
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 throw new RuntimeException(exception);
             }
@@ -245,21 +245,22 @@ public class A58OdUtil
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck = new ContinuousDistDoubleScalar.Rel<>(
                     new DistUniform(streams.get("gtuClass"), 80, 95), SpeedUnit.KM_PER_HOUR);
 
-            LaneBasedTemplateGTUType car = new LaneBasedTemplateGTUType(
-                    new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)), new ConstantGenerator<>(Length.createSI(4.0)),
-                    new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, routeGenerator);
+            LaneBasedTemplateGTUType car =
+                    new LaneBasedTemplateGTUType(new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)),
+                            new ConstantGenerator<>(Length.instantiateSI(4.0)),
+                            new ConstantGenerator<>(Length.instantiateSI(2.0)), speedCar, strategicalFactory, routeGenerator);
             LaneBasedTemplateGTUType carEquipped =
                     new LaneBasedTemplateGTUType(new GTUType("car_equipped", network.getGtuType(GTUType.DEFAULTS.CAR)),
-                            new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
-                            speedCar, strategicalFactory, routeGenerator);
+                            new ConstantGenerator<>(Length.instantiateSI(4.0)),
+                            new ConstantGenerator<>(Length.instantiateSI(2.0)), speedCar, strategicalFactory, routeGenerator);
             LaneBasedTemplateGTUType truck =
                     new LaneBasedTemplateGTUType(new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
-                            new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
-                            speedTruck, strategicalFactory, routeGenerator);
+                            new ConstantGenerator<>(Length.instantiateSI(15.0)),
+                            new ConstantGenerator<>(Length.instantiateSI(2.5)), speedTruck, strategicalFactory, routeGenerator);
             LaneBasedTemplateGTUType truckEquipped =
                     new LaneBasedTemplateGTUType(new GTUType("truck_equipped", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
-                            new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
-                            speedTruck, strategicalFactory, routeGenerator);
+                            new ConstantGenerator<>(Length.instantiateSI(15.0)),
+                            new ConstantGenerator<>(Length.instantiateSI(2.5)), speedTruck, strategicalFactory, routeGenerator);
 
             Distribution<LaneBasedTemplateGTUType> gtuTypeLeft = new Distribution<>(streams.get("gtuClass"));
             gtuTypeLeft.add(new FrequencyAndObject<>(1.0 - penetrationRate, car));
@@ -908,7 +909,7 @@ public class A58OdUtil
                     Throw.when(timeVector.get(i).ge(timeVector.get(i + 1)), IllegalArgumentException.class,
                             "Time vector is not increasing.");
                 }
-                catch (ValueException exception)
+                catch (ValueRuntimeException exception)
                 {
                     throw new RuntimeException(
                             "Value out of range of time vector. Note that HeadwayGenerator does not create a safe copy.",
@@ -950,7 +951,7 @@ public class A58OdUtil
                     throw new RuntimeException("Could not obtain replication.", exception);
                 }
             }
-            catch (ValueException exception)
+            catch (ValueRuntimeException exception)
             {
                 throw new RuntimeException(
                         "Value out of range of time or demand vector. Note that HeadwayGenerator does not create safe copies.",
@@ -965,17 +966,17 @@ public class A58OdUtil
          * @param start Duration; reference time from start of period i, pertains to previous arrival, or zero during recursion
          * @param fractionRemaining double; remaining fraction of headway to apply due to time in earlier time periods
          * @return time of next arrival
-         * @throws ValueException in case of an illegal time vector
+         * @throws ValueRuntimeException in case of an illegal time vector
          * @throws RemoteException in case of not being able to retrieve the replication
          */
         private Time nextArrival(final int i, final Duration start, final double fractionRemaining)
-                throws ValueException, RemoteException
+                throws ValueRuntimeException, RemoteException
         {
 
             // escape if beyond specified time by infinite next arrival (= no traffic)
             if (i == this.timeVector.size() - 1)
             {
-                return new Time(Double.POSITIVE_INFINITY, TimeUnit.BASE);
+                return new Time(Double.POSITIVE_INFINITY, TimeUnit.DEFAULT);
             }
 
             // skip zero-demand periods
@@ -1000,7 +1001,7 @@ public class A58OdUtil
             double t = -Math.log(this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble()) / demand.si;
 
             // calculate arrival
-            Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.BASE);
+            Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.DEFAULT);
 
             // go to next period if arrival is beyond current period
             if (arrival.gt(this.timeVector.get(i + 1)))

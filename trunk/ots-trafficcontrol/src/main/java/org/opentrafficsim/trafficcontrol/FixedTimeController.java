@@ -232,20 +232,20 @@ public class FixedTimeController extends AbstractTrafficController
                         Flank flank = flanks.get(index);
                         if (null == sgOffset)
                         {
-                            sgOffset = Duration.createSI(flank.getOffset());
+                            sgOffset = Duration.instantiateSI(flank.getOffset());
                         }
                         if (TrafficLightColor.GREEN == flank.getTrafficLightColor())
                         {
-                            preGreen = Duration.createSI(flank.getOffset() - sgOffset.si);
+                            preGreen = Duration.instantiateSI(flank.getOffset() - sgOffset.si);
                         }
                         if (TrafficLightColor.YELLOW == flank.getTrafficLightColor())
                         {
-                            green = Duration.createSI(flank.getOffset() - cumulativeOffset);
+                            green = Duration.instantiateSI(flank.getOffset() - cumulativeOffset);
                         }
                         if (TrafficLightColor.RED == flank.getTrafficLightColor())
                         {
                             nextNumber++;
-                            yellow = Duration.createSI(flank.getOffset() - cumulativeOffset);
+                            yellow = Duration.instantiateSI(flank.getOffset() - cumulativeOffset);
                             Set<String> trafficLightIds = new LinkedHashSet<>(1);
                             trafficLightIds.add(trafficLightId);
                             SignalGroup newSignalGroup = new SignalGroup(newSignalGroupName + "_" + nextNumber, trafficLightIds,
@@ -462,7 +462,7 @@ public class FixedTimeController extends AbstractTrafficController
             {
                 totalOffsetSI += cycleTime.si;
             }
-            Duration totalOffset = Duration.createSI(totalOffsetSI % cycleTime.si);
+            Duration totalOffset = Duration.instantiateSI(totalOffsetSI % cycleTime.si);
             this.red = cycleTime.minus(this.preGreen).minus(this.green).minus(this.yellow);
             Throw.when(this.red.lt0(), IllegalArgumentException.class, "Cycle time shorter than sum of non-red times.");
 

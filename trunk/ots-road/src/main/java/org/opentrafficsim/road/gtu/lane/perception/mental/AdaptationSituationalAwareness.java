@@ -73,7 +73,7 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
 
     /** Maximum reaction time at 0 situational awareness. */
     public static final ParameterTypeDuration TR_MAX =
-            new ParameterTypeDuration("TRmax", "Maximum reaction time", Duration.createSI(2.0), POSITIVE);
+            new ParameterTypeDuration("TRmax", "Maximum reaction time", Duration.instantiateSI(2.0), POSITIVE);
 
     /** {@inheritDoc} */
     @Override
@@ -88,7 +88,7 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
                 : (taskSaturation >= tsMax ? saMin : saMax - (saMax - saMin) * (taskSaturation - tsCrit) / (tsMax - tsCrit));
         parameters.setParameter(SA, sa);
         // reaction time
-        parameters.setParameter(ParameterTypes.TR, parameters.getParameter(TR_MAX).multiplyBy(saMax - sa));
+        parameters.setParameter(ParameterTypes.TR, parameters.getParameter(TR_MAX).times(saMax - sa));
     }
 
 }

@@ -3,9 +3,9 @@ package org.opentrafficsim.kpi.sampling.data;
 import java.util.Arrays;
 
 import org.djunits.unit.Unit;
-import org.djunits.value.ValueException;
-import org.djunits.value.vfloat.scalar.AbstractFloatScalar;
-import org.djunits.value.vfloat.vector.AbstractFloatVector;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.vfloat.scalar.base.AbstractFloatScalar;
+import org.djunits.value.vfloat.vector.base.AbstractFloatVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.SamplingException;
@@ -26,7 +26,7 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <G> gtu data type
  */
 public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>,
-        O extends AbstractFloatVector<U, O>, G extends GtuDataInterface> extends ExtendedDataType<T, O, float[], G>
+        O extends AbstractFloatVector<U, T, O>, G extends GtuDataInterface> extends ExtendedDataType<T, O, float[], G>
 {
     /**
      * Constructor setting the id.
@@ -70,15 +70,14 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public final T getOutputValue(final O output, final int i) throws SamplingException
     {
         try
         {
-            return (T) output.get(i);
+            return output.get(i);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             throw new SamplingException("Index out of range.", exception);
         }
@@ -97,7 +96,7 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
      * @param value float; float value
      * @return typed value
      */
-    protected abstract T convertValue(final float value);
+    protected abstract T convertValue(float value);
 
     /** {@inheritDoc} */
     @Override
@@ -108,7 +107,7 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
             // cut array to size and delegate
             return convert(Arrays.copyOf(storage, size));
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             throw new RuntimeException("Could not create typed vector from float array.", exception);
         }
@@ -118,8 +117,8 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
      * Convert float array to typed array.
      * @param storage float[]; float array storage
      * @return typed array
-     * @throws ValueException when float array cannot be converted
+     * @throws ValueRuntimeException when float array cannot be converted
      */
-    protected abstract O convert(final float[] storage) throws ValueException;
+    protected abstract O convert(float[] storage) throws ValueRuntimeException;
 
 }

@@ -53,8 +53,8 @@ public class ReactionTimeColorer implements GTUColorer
     {
         this.maxReactionTime = maxReactionTime;
         this.legend = new ArrayList<>();
-        this.legend.add(new LegendEntry(LOW, maxReactionTime.multiplyBy(0.0).toString(), "small reaction time"));
-        this.legend.add(new LegendEntry(MID, maxReactionTime.multiplyBy(0.5).toString(), "medium reaction time"));
+        this.legend.add(new LegendEntry(LOW, maxReactionTime.times(0.0).toString(), "small reaction time"));
+        this.legend.add(new LegendEntry(MID, maxReactionTime.times(0.5).toString(), "medium reaction time"));
         this.legend.add(new LegendEntry(HIGH, maxReactionTime.toString(), "large reaction time"));
         this.legend.add(new LegendEntry(NA, "N/A", "N/A"));
     }

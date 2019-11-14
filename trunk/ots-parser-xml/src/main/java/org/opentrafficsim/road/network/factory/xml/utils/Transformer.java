@@ -49,7 +49,7 @@ public final class Transformer
         }
         else
         {
-            return laneLength.multiplyBy(lbe.getFraction());
+            return laneLength.times(lbe.getFraction());
         }
     }
 
@@ -117,7 +117,7 @@ public final class Transformer
         }
         else if (v.equals("TTC"))
         {
-            return new TTCRoomChecker(Duration.createSI(10));
+            return new TTCRoomChecker(Duration.instantiateSI(10));
         }
         return new TTCRoomChecker(Duration.valueOf(v.substring(4, v.length() - 1)));
     }

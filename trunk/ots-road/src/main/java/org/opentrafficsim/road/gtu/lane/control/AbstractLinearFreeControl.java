@@ -59,7 +59,7 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
             throw new RuntimeException("Infrastructure perception is not available.", exception);
         }
         Speed v0 = gtu.getTacticalPlanner().getCarFollowingModel().desiredSpeed(gtu.getParameters(), speedInfo);
-        Acceleration a = Acceleration.createSI(settings.getParameter(KF) * (v0.si - gtu.getSpeed().si));
+        Acceleration a = Acceleration.instantiateSI(settings.getParameter(KF) * (v0.si - gtu.getSpeed().si));
         if (leaders.isEmpty())
         {
             return a;

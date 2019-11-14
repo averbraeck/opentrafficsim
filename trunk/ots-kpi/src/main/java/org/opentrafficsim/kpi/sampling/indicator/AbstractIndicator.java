@@ -2,8 +2,8 @@ package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.List;
 
-import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarInterface;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;

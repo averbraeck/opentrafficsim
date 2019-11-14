@@ -19,10 +19,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -313,7 +314,7 @@ public class XmlOdParser implements Serializable
         {
             timeArray[i] = it.next().si;
         }
-        this.globalTime = Try.assign(() -> new TimeVector(timeArray, TimeUnit.BASE, StorageType.DENSE),
+        this.globalTime = Try.assign(() -> DoubleVector.instantiate(timeArray, TimeUnit.DEFAULT, StorageType.DENSE),
                 XmlParserException.class, "Unexpected exception while creating global time vector.");
         CategoryTag.parse(odNodeList, this);
         DemandTag.parse(odNodeList, this);

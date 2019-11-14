@@ -10,8 +10,8 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.StorageType;
-import org.djunits.value.ValueException;
+import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -21,6 +21,7 @@ import org.djunits.value.vfloat.vector.FloatAccelerationVector;
 import org.djunits.value.vfloat.vector.FloatLengthVector;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.djunits.value.vfloat.vector.FloatTimeVector;
+import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
@@ -340,9 +341,9 @@ public final class Trajectory<G extends GtuDataInterface>
     {
         try
         {
-            return new FloatLengthVector(getX(), LengthUnit.SI, StorageType.DENSE);
+            return FloatVector.instantiate(getX(), LengthUnit.SI, StorageType.DENSE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should not happen, inputs are not null
             throw new RuntimeException("Could not return trajectory data.", exception);
@@ -356,9 +357,9 @@ public final class Trajectory<G extends GtuDataInterface>
     {
         try
         {
-            return new FloatSpeedVector(getV(), SpeedUnit.SI, StorageType.DENSE);
+            return FloatVector.instantiate(getV(), SpeedUnit.SI, StorageType.DENSE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should not happen, inputs are not null
             throw new RuntimeException("Could not return trajectory data.", exception);
@@ -372,9 +373,9 @@ public final class Trajectory<G extends GtuDataInterface>
     {
         try
         {
-            return new FloatAccelerationVector(getA(), AccelerationUnit.SI, StorageType.DENSE);
+            return FloatVector.instantiate(getA(), AccelerationUnit.SI, StorageType.DENSE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should not happen, inputs are not null
             throw new RuntimeException("Could not return trajectory data.", exception);
@@ -388,9 +389,9 @@ public final class Trajectory<G extends GtuDataInterface>
     {
         try
         {
-            return new FloatTimeVector(getT(), TimeUnit.BASE_SECOND, StorageType.DENSE);
+            return FloatVector.instantiate(getT(), TimeUnit.BASE_SECOND, StorageType.DENSE);
         }
-        catch (ValueException exception)
+        catch (ValueRuntimeException exception)
         {
             // should not happen, inputs are not null
             throw new RuntimeException("Could not return trajectory data.", exception);
@@ -532,7 +533,7 @@ public final class Trajectory<G extends GtuDataInterface>
             xTo = this.x[bounds.to];
             tTo = this.t[bounds.to];
         }
-        return new SpaceTimeView(Length.createSI(xTo - xFrom), Duration.createSI(tTo - tFrom));
+        return new SpaceTimeView(Length.instantiateSI(xTo - xFrom), Duration.instantiateSI(tTo - tFrom));
     }
 
     /**
@@ -715,7 +716,7 @@ public final class Trajectory<G extends GtuDataInterface>
      */
     public Time getTimeAtPosition(final Length position)
     {
-        return Time.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.t));
+        return Time.instantiateSI(getBoundaryAtPosition((float) position.si, false).getValue(this.t));
     }
 
     /**
@@ -725,7 +726,7 @@ public final class Trajectory<G extends GtuDataInterface>
      */
     public Speed getSpeedAtPosition(final Length position)
     {
-        return Speed.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.v));
+        return Speed.instantiateSI(getBoundaryAtPosition((float) position.si, false).getValue(this.v));
     }
 
     /**
@@ -735,7 +736,7 @@ public final class Trajectory<G extends GtuDataInterface>
      */
     public Acceleration getAccelerationAtPosition(final Length position)
     {
-        return Acceleration.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.a));
+        return Acceleration.instantiateSI(getBoundaryAtPosition((float) position.si, false).getValue(this.a));
     }
 
     /**
@@ -745,7 +746,7 @@ public final class Trajectory<G extends GtuDataInterface>
      */
     public Length getPositionAtTime(final Time time)
     {
-        return Length.createSI(getBoundaryAtTime((float) time.si, false).getValue(this.x));
+        return Length.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.x));
     }
 
     /**
@@ -755,7 +756,7 @@ public final class Trajectory<G extends GtuDataInterface>
      */
     public Speed getSpeedAtTime(final Time time)
     {
-        return Speed.createSI(getBoundaryAtTime((float) time.si, false).getValue(this.v));
+        return Speed.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.v));
     }
 
     /**
@@ -765,7 +766,7 @@ public final class Trajectory<G extends GtuDataInterface>
      */
     public Acceleration getAccelerationAtTime(final Time time)
     {
-        return Acceleration.createSI(getBoundaryAtTime((float) time.si, false).getValue(this.a));
+        return Acceleration.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.a));
     }
 
     /**

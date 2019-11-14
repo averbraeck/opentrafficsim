@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
-import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
-import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
+import org.djunits.unit.Unit;
+import org.djunits.value.vdouble.scalar.base.AbstractDoubleScalarRel;
 
 /**
  * <p>
@@ -12,19 +12,19 @@ import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <U> the unit type
  * @param <T> type of the value
  */
-public class PersistentStatistic<T extends AbstractDoubleScalarRel<?, T>> implements DoubleScalarInterface
+public class PersistentStatistic<U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>>
 {
-
     /** Wrapped persistent. */
-    private final Persistent<?, T, ?> persistent;
+    private final Persistent<U, T, ?> persistent;
 
     /**
      * Constructor.
      * @param persistent Persistent&lt;?,T,?&gt;; the persistent statistic that gathers the data
      */
-    public PersistentStatistic(final Persistent<?, T, ?> persistent)
+    public PersistentStatistic(final Persistent<U, T, ?> persistent)
     {
         this.persistent = persistent.copy();
     }
@@ -102,20 +102,6 @@ public class PersistentStatistic<T extends AbstractDoubleScalarRel<?, T>> implem
     public long getN()
     {
         return this.persistent.getN();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getSI()
-    {
-        return this.persistent.getMean().si;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getInUnit()
-    {
-        return this.persistent.getMean().si;
     }
 
     /** {@inheritDoc} */

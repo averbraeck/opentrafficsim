@@ -76,7 +76,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
                 Speed vGain = parameters.getParameter(VGAIN);
                 HeadwayGTU follower = followers.first();
                 double rhoFollower = follower.getParameters().getParameter(RHO);
-                desiredSpeed = Speed.createSI(desiredSpeed.si + rhoFollower * sigma * vGain.si);
+                desiredSpeed = Speed.instantiateSI(desiredSpeed.si + rhoFollower * sigma * vGain.si);
             }
         }
         return desiredSpeed;

@@ -1313,13 +1313,13 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                 Length maximumPosition;
                 if (record.getDirection().isPlus())
                 {
-                    minimumPosition = Length.createSI(ds - record.getStartDistance().si);
-                    maximumPosition = Length.createSI(record.getLane().getLength().si);
+                    minimumPosition = Length.instantiateSI(ds - record.getStartDistance().si);
+                    maximumPosition = Length.instantiateSI(record.getLane().getLength().si);
                 }
                 else
                 {
                     minimumPosition = Length.ZERO;
-                    maximumPosition = Length.createSI(record.getLane().getLength().si + record.getStartDistance().si - ds);
+                    maximumPosition = Length.instantiateSI(record.getLane().getLength().si + record.getStartDistance().si - ds);
                 }
 
                 for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
@@ -1332,7 +1332,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                         double distance = record.getDistanceToPosition(object.getLongitudinalPosition()).si - ds;
                         if (distance <= this.lookAhead.si)
                         {
-                            set.add(new Entry<>(Length.createSI(distance), (T) object));
+                            set.add(new Entry<>(Length.instantiateSI(distance), (T) object));
                         }
                     }
                 }
@@ -1420,7 +1420,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
                         double distance = next.getDistanceToPosition(object.getLongitudinalPosition()).si - ds;
                         if (distance <= this.lookAhead.si)
                         {
-                            set.add(new Entry<>(Length.createSI(distance), (T) object));
+                            set.add(new Entry<>(Length.instantiateSI(distance), (T) object));
                         }
                         else
                         {
