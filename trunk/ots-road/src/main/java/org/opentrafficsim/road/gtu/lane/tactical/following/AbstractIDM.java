@@ -87,9 +87,9 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /**
      * Determination of car-following acceleration, possibly based on multiple leaders. This implementation calculates the IDM
-     * free term, which is returned if there are no leaders. If there are leaders <tt>combineInteractionTerm()</tt> is invoked
+     * free term, which is returned if there are no leaders. If there are leaders <code>combineInteractionTerm()</code> is invoked
      * to combine the free term with some implementation specific interaction term. The IDM free term is limited by a
-     * deceleration of <tt>B0</tt> for cases where the current speed is above the desired speed. This method can be overridden
+     * deceleration of <code>B0</code> for cases where the current speed is above the desired speed. This method can be overridden
      * if the free term needs to be redefined.
      * @param parameters Parameters; Parameters.
      * @param speed Speed; Current speed.
