@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LINKTYPES xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd
+  http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.01.02/ots-definitions.xsd">
+  
+  <!-- 
+    GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null); 
+    NONE = new LinkType("NONE", null, compatibility); 
+    // 
+    compatibility = new GTUCompatibility<>((LinkType) null); 
+    compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH); 
+    ROAD = new LinkType("ROAD", null, compatibility); 
+    // 
+    compatibility = new GTUCompatibility<>((LinkType) null); 
+    compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS); 
+    compatibility.addAllowedGTUType(GTUType.PEDESTRIAN, LongitudinalDirectionality.DIR_NONE); 
+    compatibility.addAllowedGTUType(GTUType.BICYCLE, LongitudinalDirectionality.DIR_NONE); 
+    FREEWAY = new LinkType("FREEWAY", ROAD, compatibility); 
+    // 
+    compatibility = new GTUCompatibility<>((LinkType) null); 
+    compatibility.addAllowedGTUType(GTUType.WATERWAY_USER, LongitudinalDirectionality.DIR_BOTH); 
+    WATERWAY = new LinkType("WATERWAY", null, compatibility); 
+    // 
+    compatibility = new GTUCompatibility<>((LinkType) null); 
+    compatibility.addAllowedGTUType(GTUType.RAILWAY_USER, LongitudinalDirectionality.DIR_BOTH); 
+    RAILWAY = new LinkType("RAILWAY", null, compatibility); 
+    // 
+    compatibility = new GTUCompatibility<>((LinkType) null); 
+    compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS); 
+    compatibility.addAllowedGTUType(GTUType.WATERWAY_USER, LongitudinalDirectionality.DIR_PLUS); 
+    compatibility.addAllowedGTUType(GTUType.RAILWAY_USER, LongitudinalDirectionality.DIR_PLUS); 
+    CONNECTOR = new LinkType("CONNECTOR", null, compatibility); 
+  -->
+
+  <LINKTYPE ID="NONE" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="NONE" DIRECTION="NONE"/>
+  </LINKTYPE>
+
+  <LINKTYPE ID="ROAD" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+  </LINKTYPE>
+
+  <LINKTYPE ID="FREEWAY" PARENT="ROAD" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+    <COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="NONE" />
+    <COMPATIBILITY GTUTYPE="BICYCLE" DIRECTION="NONE" />
+  </LINKTYPE>
+
+  <LINKTYPE ID="WATERWAY" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="WATERWAY_USER" DIRECTION="FORWARD" />
+  </LINKTYPE>
+
+  <LINKTYPE ID="RAILWAY" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="RAILWAY_USER" DIRECTION="FORWARD" />
+  </LINKTYPE>
+
+  <LINKTYPE ID="CONNECTOR" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+    <COMPATIBILITY GTUTYPE="WATERWAY_USER" DIRECTION="FORWARD" />
+    <COMPATIBILITY GTUTYPE="RAILWAY_USER" DIRECTION="FORWARD" />
+  </LINKTYPE>
+</LINKTYPES>
