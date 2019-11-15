@@ -1,0 +1,1090 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 changes.xsd" xml:space="preserve">
+  
+  <body>
+
+    <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
+    
+    <release version="1.03.00" date="2019-10-12" description="xsd-parser, ots-web ready; gradual lane change">
+      <action dev="averbraeck" type="update">
+        DJUNITS has been updated to 4.01.03, to be ready for Java9+ (tested with Java-13). As the structure of
+        the Scalars, Vectors and Matrices has changed, this caused quite a number of changes in ots classes.
+      </action>
+      <action dev="averbraeck" type="update">
+        DJUTILS has been updated to 1.03.02, enabling the CLI utilities in djutils-ext. This version
+        is also ready for Java 9+ (and tested with Java-13).
+      </action>
+      <action dev="averbraeck" type="update">
+        DSOL has been updated to 3.03.12. This version is also ready for Java 9+ (and tested with Java-13).
+      </action>
+      <action dev="averbraeck" type="update">
+        SIM0MQ has been updated to 2.00.01, enabling new message components of sim0mq version 2. This version
+        is also ready for Java 9+ (and tested with Java-13). It is dependent on the latest version of 
+        djutils-serialization, which is included as of DJUTILS version 1.03.00. Note that the message structure
+        of sim0mq version 2 is not compatible with sim0mq version 1.
+      </action>
+    </release>
+
+    <release version="1.02.02" date="2019-10-10" description="ots-xsd; GTUType, LinkType, LaneType in Defaults">
+      <action dev="averbraeck" type="add">
+        CLI utilities built into the demo project.  
+      </action>
+      <action dev="averbraeck" type="update">
+        XmlNetworkLaneParser in ots-parser-xml now also takes a URL as basis for the parsing. This helps with the 
+        fallback of the imports when no network is available, and with parsing from files from within a jar. 
+      </action>
+      <action dev="averbraeck" type="fix">
+        Fallback options for xinclude in the xml files provided to guarantee parsing during offline use. 
+      </action>
+      <action dev="averbraeck" type="update">
+        All HashMaps updated to LinkedHashMap and all HashSets updated to LinkedHashSet to guarantee reproducibility.
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-web is now completely working. Animation is sent to the web client, and actions such as zooming,
+        panning, introspection, starting and stopping of the simulation clock have all been implemented.
+      </action>
+      <action dev="pknoppers" type="add">
+        XML parsing of TRAFCOD traffic control can now be done through XML, including the visual representation
+        and the TRAFCOD program.
+      </action>
+      <action dev="wjschakel" type="add">
+        Gradual lane changes have been introduced.
+      </action>
+      <action dev="averbraeck" type="update">
+        DJUTILS updated to 1.00.06 to use ImmutableEntry in the ImmutableMap.
+      </action>
+      <action dev="averbraeck" type="update">
+        DSOL updated to version 3.03.07 to solve 'jumps' in the animation, to 3.03.08 to repair the
+        min/max settings in the InputParameters, and to 3.03.09 for some bugs in InputParameters and
+        the size of the extent in Swing.
+      </action>
+      <action dev="averbraeck" type="update">
+        On a SHORTESTROUTE, either DISTANCECOST or TIMECOST or both should be present now.
+      </action>
+      <action dev="averbraeck" type="update">
+        All demos that use an xml-parser in ots-demo have been upgraded to the latest xml-format and parser.
+      </action>
+      <action dev="averbraeck" type="update">
+        DJUNITS version updated to 3.01.04.
+      </action>
+      <action dev="averbraeck" type="update">
+        Explicit error messages added to the XML adapters, as JAXB silently ignores the exceptions. 
+      </action>
+      <action dev="averbraeck" type="update">
+        All ROUTE information moved to the NETWORKDEMAND tag instead of the NETWORK tag. 
+      </action>
+      <action dev="averbraeck" type="update">
+        xml code in the ots-demo project updated to the latest xsd-standard. 
+      </action>
+      <action dev="averbraeck" type="update">
+        In the xsds, SIGNEDLENGTHTYPE is now LENGTHTYPE. The old LENGTHTYPE (which had to be non-negative) is now called
+        POSITIVELENGTHTYPE.  
+      </action>
+      <action dev="averbraeck" type="update">
+        In the xml NETWORK tag: NODE, LINK and CONNECTOR entries can be mixed to allow for subnetworks to be kept together. 
+      </action>
+      <action dev="averbraeck" type="add">
+        An extra attribute called FIXGRADUALOFFSET has been added to the LINK definition in XML, and a parameter 
+        called fixGradualLateralOffset has been added to constructors of CrossSectionElement, Lane, Shoulder, 
+        NoTrafficLane, RoadMarkerAlong, Stripe. This either gradually offsets the line with a sine wave or not
+        when the lateral offset changes. Default false.
+      </action>
+    </release>
+    
+    <release version="1.02.01" date="2019-04-19" description="ots-xsd; GTUType, LinkType, LaneType in Defaults">
+     <action dev="averbraeck" type="update">
+        EASTING replaces NORTHING in Scalar3D, Speed3D, Acceleration3D, Clothoid, AngleUnits.
+      </action>
+     <action dev="averbraeck" type="update">
+        DSOL version 3.03.06 to allow for introspection of Maps and ImmutableCollections.
+      </action>
+     <action dev="averbraeck" type="update">
+        NodeAnimation now work with a delegate animation class (new in DSOL 3.03.06) to allow for increasing the
+        Z-value for display, but not increasing it in the Node itself. When introspecting the 
+        NodeAnimation.ElevatedNode, the information of the actual Node that delegated the animation is
+        shown instead.
+      </action>
+      <action dev="averbraeck" type="add">
+        Extensive work on the xsd files to parse complex files. All categories of the xsd have been changed. 
+        The old parser is still present, and will be removed in one of the future versions.
+      </action>
+      <action dev="averbraeck" type="remove">
+        OvertakingConditions have been removed from the Lane. Overtaking is not something that concerns
+        single lanes.
+      </action>
+      <action dev="averbraeck" type="update">
+        ots.xsd and this changes file got an xml:space="preserve" tag to indicate that the formatter
+        should not mess with text strings. A changed xsd=file is therefore included in the changes folder.
+      </action>
+      <action dev="averbraeck" type="update">
+        The GTUType does not have static definitions anymore, to allow alternative GTUTypes for different situations.
+        An enum called GTUType.DEFAULTS has been added that indicates the names of the GTUTypes that are defined by default.
+        GTUTypes are registered in the Network, and can be retrieved from the network. A method called
+        addDefaultGtuTypes() has been added to the network to instantiate all default types in a default way.
+      </action>
+      <action dev="averbraeck" type="update">
+        The LinkType does not have static definitions anymore, to allow alternative LinkTypes for
+        different situations. An enum called LinkType.DEFAULTS has been added that indicates the names of
+        the LinkTypes that are defined by default. LinkTypes are registered in the Network, and can be retrieved
+        from the network. A method called addDefaultLinkTypes() has been added to the network to instantiate all default
+        types in a default way.
+      </action>
+      <action dev="averbraeck" type="add">
+        An interface called 'Definitions' has been added that allows to retrieve the LinkTypes and GTUTypes defined in the
+        current context. Both the Network interface and the PerceivableContext interface inherit from Definitions, so both
+        the GTUs and the Nodes/Links have access to the definitions that exist in the current simulation context.
+      </action>
+      <action dev="averbraeck" type="update">
+        The constructor of the OTSNetwork (and OTSRoadNetwork) has been given an boolean whether to construct the defaults or not.
+      </action>
+      <action dev="averbraeck" type="update">
+        The LaneType does not have static definitions anymore, to allow alternative LaneTypes for different situations.
+        An enum called LaneType.DEFAULTS has been added that indicates the names of the LaneTypes that are defined by default.
+        LaneTypes are registered in the RoadNetwork, and can be retrieved from the road network.
+        A method called addDefaultLaneTypes() has been added to the RoadNetwork to instantiate all default types in a default way.
+      </action>
+      <action dev="averbraeck" type="add">
+        In order to give specific definitions to the network for Roads, a RoadNetwork interface and an 
+        OTSRoadNetwork class have been added. These hold for instance information about the LaneTypes.
+      </action>
+      <action dev="averbraeck" type="add">
+        An interface called 'RoadDefinitions' has been added that allows to retrieve the LaneTypes defined in the
+        current context. The RoadNetwork interface inherit from Definitions (and therefore the OTSRoadNetwork class implements
+        the interfaces), so both the LaneBasedGTUs and the Nodes/Links have access to the Lane definitions that exist in the 
+        current simulation context. As RoadDefinitions inherits from Definitions, LinkTypes and GTUTypes are also accessible.
+      </action>
+      <action>
+        All code and demos has been adapted to work with the new GTUType, LinkType, LaneType, Definitions, and RoadDefinitions.
+      </action>
+    </release>
+
+    <release version="1.01.01" date="2019-03-16" description="ots-xsd project; geotools dependency removed">
+      <action dev="averbraeck" type="add">
+        XSDs versioned.
+      </action>
+      <action dev="averbraeck" type="add">
+        New folder for xsds on the Web: https: https://opentrafficsim.org/docs/xsd/
+      </action>
+      <action dev="averbraeck" type="update">
+        All demos now reference the new xsds (and the old parser).
+      </action>
+      <action dev="averbraeck" type="fix">
+        All xmls and xsds (including pom.xml, site.xml, and others) are error free
+        with validation.
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-xsd: bindings.xsd renamed to bindings.xml (it is an xml...)
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-xsd: pom.xml updated with latest changes.
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-xsd: ROADTYPE renamed to LINKTYPE, consistent with java naming.
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-xsd: defaults files for definitions added.
+      </action>
+      <action dev="averbraeck" type="update">
+        Naming of a few GTUTypes changed (WATER_WAY => WATERWAY; RAIL_WAY => RAILWAY)
+      </action>
+      <action dev="averbraeck" type="add">
+        Default GTUTypes XML file added to ots-xsd project.
+        In order to do so,
+        GTUTYPES tag with multiple
+        GTUTYPE entries added to DEFINITIONS.
+      </action>
+      <action dev="averbraeck" type="update">
+        djunits version has been updated to 3.01.01, which includes Scalar.stringOf(SomeScalar) and e.g., Length.valueOf(String).
+      </action>
+      <action dev="averbraeck" type="update">
+        djutils version has been updated to 1.00.05, which includes the ImmutableCollections (static) class.
+      </action>
+      <action dev="averbraeck" type="update">
+        In XML-parsing, the use of nodes and links has been simplified. All nodes have to be given full
+        coordinates. Slope and direction are calculated automatically. Lengths for links do not have
+        to be provided as a result; they will be calculated and correspond to the actual lengths of what is drawn,
+        not the theoretical lengths. An arc has a theoretical length that is different from the e.g., 32 or 64, segments
+        from which it is created, and algorithms make false calculations based on the difference between the length of
+        OTSLine3D and the provided length of the link. Arcs, Bezier curves, clothoids, polylines and straight segments
+        can have a slope. The correct length including the slope is calculated (note that this this differs from the length of
+        the projection in the animation).
+      </action>
+      <action dev="averbraeck" type="update">
+        In XML-parsing, directions are taken as ENU (East=x, North=y, z=up) coordinates, where absolute
+        direction goes counter-clockwise. E = +x = 0 degrees, N = +y = 90 degrees, W = -x = 180 degrees,
+        S = -y = 270 degrees. See https://en.wikipedia.org/wiki/Axes_conventions
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-types.xsd got several changes: DURATIONTYPE has been added, and all relative times in
+        ots-network.xsd have been changed to DURATIONTYPE. PERTIMETYPE has been renamed to FREQUENCYTYPE.
+        VEHICLESTYPE has been renamed to VEHICLEINTENSITYTYPE. VEHICLESPERTIMETYPE has been renamed to
+        VEHICLEFREQUENCYTYPE. DIRECTIONTYPE has been added. ANGLETYPE has been replaced by DIRECTIONTYPE where an
+        absolute angle was intended.
+        The old DIRECTIONTYPE that indicated the driving direction of a vehicle has been renamed to DRIVINGDIRECTIONTYPE.
+      </action>
+      <action dev="averbraeck" type="add">
+        JAXB parsing has been introduced in the new ots-xsd project.
+      </action>
+      <action issue="OTS-383" dev="wjschakel" type="add">
+        OTS-383. Develop fixed time traffic light control
+      </action>
+      <action issue="OTS-382" dev="wjschakel" type="update">
+        OTS-382. Apply lazy evaluation and memoization in perception categories
+      </action>
+      <action issue="OTS-381" dev="wjschakel" type="add">
+        OTS-381. Allow Anticipation Reliance in the Mental module
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-core was dependent on the heavyweight geotools project. Except for the projects where maps
+        are parsed, 99% of geotools was not used. Therefore, ots-core has been made dependent on the
+        jts project instead. The version of jts that is used is compatible with geotools. Therefore,
+        ots-parser-shape and ots-demo can easily use the geotools extension, while still being compatible
+        with definitions for Point, Coordinate, Geometry, etc. in ots-core.
+      </action>
+      <action dev="averbraeck" type="fix">
+        A small typo was made in the url of the osgeo repository. This has now been corrected.
+      </action>
+    </release>
+
+    <release version="1.01.00" date="2019-01-19"
+  description="Update to ots 1.01.00, djutils, animation, major refactoring">
+      <action dev="averbraeck" type="update">
+        All demos and tests have been updated and repaired to be in line with DSOL version 3.03.
+      </action>
+      <action dev="averbraeck" type="fix">
+        GTUIDColorer used the following formula for the color:
+<![CDATA[
+<pre>
+LEGEND.get(gtu.getId().hashCode() % LEGEND.size()).getColor()
+</pre>
+]]>
+        However, (-2 % 10) returns -2 in Java. Therefore, the GTUIDColorer failed.
+        Changed to always return a positive number using Math.abs().
+      </action>
+      <action dev="averbraeck" type="update">
+        The OTSReplication now has a compulsory id. This is in line with the new DSOL 3.03 Replication class.
+      </action>
+      <action dev="averbraeck" type="update">
+        DSOL version has been updated to 3.03.05.
+      </action>
+      <action dev="averbraeck" type="update">
+        djutils version has been updated to 1.00.02.
+      </action>
+      <action dev="averbraeck" type="update">
+        HexDump class and package have been moved to djutils.
+      </action>
+      <action dev="pknoppers" type="update">
+        The means package has been moved from ots to the djutils project.
+      </action>
+      <action dev="averbraeck" type="update">
+        Copyright years updated to 2019.
+      </action>
+      <action dev="averbraeck" type="update">
+        The DSOL version has been updated to 3.03. This has quite a number of consequences.
+        Examples are anew use of the DSOLModel, more time-based inner classes of the Simulators,
+        DistContinuousTime has been renamed intoDistContinuousSimulationTime, models have
+        specified input parameters and output parameters, which makes the use of the
+        ModelPropertiessuperfluous, charts have been moved into one class each, etc.
+        See https://simulation.tudelft.nl/dsol/3.0/changes-report.html#a3.03.00
+        for more information.
+      </action>
+      <action dev="averbraeck" type="add">
+        Three projects for OTS animation have been added. ots-swing for animation
+        using Swing and ots-web for animation using the Web. The generic drawing clases that 
+        are used for ots-swing and ots-web (using a virtual screen for ots-web)
+        are in the project ots-draw-swing.
+      </action>
+      <action dev="averbraeck" type="update">
+        The swing-specific classes of ots-core and ots-road have been moved to the
+        ots-swing project. This makes the core OTS classes independent from swing, 
+        so versions running on servers, or using the web or sim0mq can guarantee no swing
+        code is executed.
+      </action>
+      <action dev="averbraeck" type="update">
+        Because the animation classes have been moved from the dsol-core and dsol-road project,
+        code such as the following in one of the base packages or in the parsers is not possible
+        anymore:
+<![CDATA[
+<pre>
+if (simulator instanceof AnimatorInterface)
+   new LaneAnimation(newLane, simulator, color, false);
+</pre>
+]]>
+        Instead, animation has to be added in the application, specifically for Swing, JavaFX,
+        or the Web. If drawing data has to be stored for specific types of objects or for
+        specific instances (line width, outline color, drawing color, etc.), this has to be
+        done in separate objects, which are e.g., accessible via a Map&lt;Road, DrawingInfo&gt;
+        or a Map&lt;Class&lt;?&gt;, DrawingInfo&gt;, where the DrawingInfo can be specified
+        by the user. A first implementation of DrawingInfo has been included in ots-core, in the
+        [ots].core.animation package. This object can be used by different visualizations.
+      </action>
+      <action dev="averbraeck" type="update">
+        The Try class has been moved to the DJUTILS project.
+      </action>
+      <action dev="averbraeck" type="update">
+        The demo in the ots-parser-shape project and the A58 data has been moved to
+        the src/test/java and src/test/resources locations.
+      </action>
+      <action dev="averbraeck" type="update">
+        The [ots].gtu.animation package has been renamed to [ots].gtu.colorer.
+      </action>
+      <action dev="averbraeck" type="fix">
+        The destroy() method of DefaultCarAnimation is repaired to not call
+        Renderable2D.destroy() twice.
+      </action>
+      <action dev="averbraeck" type="add">
+        A program called ParamComments has been added in ots-build-tools to help
+        enter/repair the correct types in the @param entries in the method comments. 
+        All classes have been repaired using this program. After running the utility, do a
+        refresh on all projects, followed by a Source - Format.
+      </action>
+      <action dev="averbraeck" type="fix">
+        The .classpath files have a classpathentry for /src/main/resources after a
+        Maven Update with an entry 'excluding="**" kind="src"'. The exclusion means that the export of a Runnable jar
+        in Eclipse does not work. Therefore this update on svn ensures that the export of a jar file
+        works. Ensure that after each Maven Update in Eclipse, the "Excludes:" entry for
+        /src/main/resources in each project's Properties - Build path - Source is set to (None)
+        before committing the sources!
+      </action>
+      <action dev="averbraeck" type="add">
+        A small program called CleanClassfileFiles has been added to ots-build-tools
+        to help in setting the exclusions correctly in the build path. After running this program, do a
+        Project - Clean - All.
+      </action>
+      <action dev="averbraeck" type="fix">
+        The pom file in aimsun-proto was not properly compiling the proto-files
+        within Eclipse. Following the suggestions in https://github.com/trustin/os-maven-plugin 
+        the problem was solved. A readme.txt in the root of the ots-aimsun-proto
+        project provides instructions.
+      </action>
+      <action dev="averbraeck" type="update">
+        The CategoryLogger and SimLogger have been moved to dsol-base, so dsol can
+        use the same loggers.
+        As a result it becomes easier to e.g., suppress dsol logger-messages and still see ots
+        logger messages.
+      </action>
+      <action dev="averbraeck" type="fix">
+        ots-core: toString() method of OTSCapacityNode made non-final.
+      </action>
+      <action dev="averbraeck" type="fix">
+        ots-ntm project updated to latest ots, dsol, and djunits version.
+      </action>
+      <action dev="averbraeck" type="fix">
+        Recent Java-8 compilers are more strict on generics. Therefore the class
+        definition of ToledoPerception has been adapted as follows: public class ToledoPerception extends
+        LaneBasedAbstractPerceptionCategory implements LaneBasedPerceptionCategory. 
+        DirectEgoPerception's class definition has been updated to:
+        public class DirectEgoPerception&lt;G extends GTU, P extends Perception&lt;G&gt;&gt;
+        extends AbstractPerceptionCategory&lt;G, P&gt; implements EgoPerception&lt;G, P&gt; 
+      </action>
+      <action dev="averbraeck" type="update">
+        The projects have been adapted to the latest Eclipse version (4.8; Photon).
+        Test sources and classes are more strictly separated from regular classes. 
+        This asked for several small changes in the Eclipse environment that have
+        been included in the .classpath file in the root folder of the projects.
+      </action>
+    </release>
+
+    <release version="1.00.02" date="2018-09-20" description="Demo repairs, ots-aimsun integrated, Logger">
+      <action dev="wschakel" type="fix">
+        Demo CircularRoad + LMRS fixed; dynamic extension of the LaneStructure was not
+        correct.
+      </action>
+      <action dev="wschakel" type="fix">
+        Demo Merge 1 plus 1 into 1: CanPlaceDemoCode replaced by CFRoomChecker;
+        CanPlaceDemoCode still used IDMOld.
+      </action>
+      <action dev="wschakel" type="fix">
+        Demo LoadXML with an aimsun network has been repaired.
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-aimsun-proto, ots-aimsun-demo and ots-aimsun projects are now part of
+        ots. The proto-compiler is loaded dynamically based on the OS version and 
+        protobuf-version. protobuf compiles into src/main/java so other projects can use
+        the generated code.
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-base now has a logger package, where proper logging using tinylog will be
+        developed. Instead of system.out.println, system.err.println, DEBUG messages, 
+        and other output that cannot be sent to file or a Console will be removed
+        step-by-step and replaced by calls to the Logger.
+      </action>
+    </release>
+
+    <release version="1.00.01" date="2018-09-19" description="Major upgrade">
+      <action dev="averbraeck" type="update">
+        Using newest version of DSOL. Removing several classes for OTSSimulator as
+        these are perfectly covered using DJUNITS by DSOL 3.02 and up.
+      </action>
+      <action dev="averbraeck" type="update">
+        Updating all used jars to the latest version. Updating all Maven packages to
+        the latest version.
+      </action>
+      <action dev="averbraeck" type="update">
+        The mocking package jmockit needs to set agent-injections for junit tests in
+        the latest version.
+        Therefore jmockit has been replaced by Mockito + Powermock (also known as PowerMockito).
+        The mocking structure for the tests had to be adapted to this new structure.
+      </action>
+      <action dev="averbraeck" type="update">
+        As log4j2 is quite complicated to configure, it has been replaced by the
+        faster and smaller tinylog package.
+      </action>
+      <action dev="averbraeck" type="update">
+        As a result of the above updates, around 3000 smaller and larger changes had
+        to be made to the code base.
+      </action>
+      <action dev="averbraeck" type="update">
+        Site structure and Velocity files changed to comply with the latest
+        maven-site plugin.
+      </action>
+    </release>
+
+    <release version="0.16.00" date="2018-09-17" description="Release 0.16.00">
+
+      <action issue="OTS-331" type="update">
+        OTS-331. Change ParameterTypes to referenced Types.
+      </action>
+      <action issue="OTS-337" type="fix">
+        OTS-337. RoadSampler that starts for t&gt;0s may give a NullPointer
+      </action>
+      <action issue="OTS-333" type="update">
+        OTS-333. Create interface for getId()
+      </action>
+      <action issue="OTS-332" type="update">
+        OTS-332. Make GTUType and LaneType hierarchal
+      </action>
+      <action issue="OTS-345" type="add">
+        OTS-345. Create utility to apply an OD matrix on the network
+      </action>
+      <action issue="OTS-346" type="update">
+        OTS-346. Streamline parameter creation using factories
+      </action>
+      <action issue="OTS-347" type="add">
+        OTS-347. Create Generator&lt;O&gt; for constant values
+      </action>
+      <action issue="OTS-349" type="add">
+        OTS-349. Provide default GTUCharacteristics for GTUTypes
+      </action>
+      <action issue="OTS-350" type="fix">
+        OTS-350. Acceleration &lt;-10m/s^2 at vehicle generation with LMRS
+      </action>
+      <action issue="OTS-353" type="add">
+        OTS-353. Markov chains in vehicle generation
+      </action>
+      <action issue="OTS-352" type="add">
+        OTS-352. Division of origin demand over multiple links and lanes
+      </action>
+      <action issue="OTS-354" type="add">
+        OTS-354. Remove initial speed and position from LaneBasedGTUCharacteristics
+      </action>
+      <action issue="OTS-358" type="fix">
+        OTS-358. Different simulation outcome in debugger mode
+      </action>
+      <action issue="OTS-359" type="add">
+        OTS-359. Add origin and destination to strategical planner
+      </action>
+      <action issue="OTS-360" type="fix">
+        OTS-360. Clean up GTU Renderable2D raw code
+      </action>
+      <action issue="OTS-361" type="add">
+        OTS-361. No lane change distance in LaneBasedGTUGenerator and ODOptions
+      </action>
+      <action issue="OTS-147" type="update">
+        OTS-147. Tactical planner methods for GTU generation
+      </action>
+      <action issue="OTS-355" type="add">
+        OTS-355. Tools for perception in the recent past
+      </action>
+      <action issue="OTS-364" type="update">
+        OTS-364. Dynamic LaneStructure
+      </action>
+      <action issue="OTS-365" type="add">
+        OTS-365. Historical Collections
+      </action>
+      <action issue="OTS-366" type="add">
+        OTS-366. Iterable perception
+      </action>
+      <action issue="OTS-372" type="add">
+        OTS-372. Add detector
+      </action>
+      <action issue="OTS-373" type="fix">
+        OTS-373. GTU initialization; events and operational plan
+      </action>
+      <action issue="OTS-374" type="update">
+        OTS-374. Gradual lane changes and exact lane and sensor events
+      </action>
+      <action issue="OTS-375" type="update">
+        OTS-375. Add lane choice at split function to tactical planner
+      </action>
+      <action issue="OTS-376" type="update">
+        OTS-376. Offset at start and end for all cross-section elements
+      </action>
+      <action issue="OTS-377" type="update">
+        OTS377. Add YIELD and TOR to priority
+      </action>
+      <action issue="OTS-378" type="update">
+        OTS378. Allow demand to be split over several connectors
+      </action>
+      <action issue="OTS-380" type="fix">
+        OTS380. GTU-Lane connections with instantaneous lane changes
+      </action>
+    </release>
+
+    <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
+      <action issue="OTS-126" type="add">
+        OTS-126. Add class for a speed sign.
+      </action>
+      <action issue="OTS-156" type="add">
+        OTS-156. Make conflicts GTUType dependent. Priority at conflicts may depend on
+        the GTUType, e.g. at some conflicts, trams have absolute priority over cars, 
+        but cars may behave according to a right-has-priority rule.
+      </action>
+      <action issue="OTS-217" type="update">
+        OTS-217. Initial operational plans and lane changes. In some cases, tactical
+        planners should not create an operational plan containing a lane change. 
+        E.g. filling the network at t=0, some surrounding GTUs may not yet be generated.
+      </action>
+      <action issue="OTS-319" type="add">
+        OTS-319. Alignment with DJUNITS 3.00. Units for absolute and relative values
+        have been separated.
+        They are truly different and should never have been mixed. As an example, an
+        AbsoluteTemperature of 10 degrees Celsius has an offset of 283.15 Kelvin from absolute zero. 
+        A relative temperature of 10 degrees Celsius, however, is equivalent to 10 Kelvin, and does not
+        have any offset. The same holds for Direction, Time, and Position. This has quite some effects 
+        on the code, as TimeUnits in Durations had to be replaced with a DurationUnit. Same for Directions
+        that now have their own DirectionUnit (e.g., NORTH_RADIANS: radians relative
+        to NORTH, or EAST_DEGREES: degrees relative to EAST). Time can be stated relative to the POSIX
+        Epoch (1-1-1970), AD 1, or the J2000.1 Epoch.
+      </action>
+      <action issue="OTS-320" type="fix">
+        OTS-320. SpeedSign ENDOFDAY
+      </action>
+      <action issue="OTS-321" type="add">
+        OTS-321. AIMSUN classes have to go into ots-aimsun project.
+        ots-aimsun for aimsun classes on the OTS side. 
+        ots-aimsun-demo for demos with aimsun classes.
+        ots-aimsun-proto for proto files and generated classes.
+        The last one is important to separate because of suppression of javadoc and formatting error
+        messages because of checkstyle.
+      </action>
+      <action issue="OTS-325" type="fix">
+        OTS-325. Toledo demos complain about missing TacticalPlanner
+      </action>
+      <action issue="OTS-327" type="fix">
+        OTS-327. Demo Crossing with Traffic Lights has a casting error. There was
+        still a reference to the TimeUnit in the typed distributions, where a DurationUnit 
+        should have been used. This has been solved in all four typed Distributions.
+      </action>
+      <action issue="OTS-328" type="fix">
+        OTS-328. TRAFCOD2 demo does not start anymore. To make the registration work
+        better in the OTSNetwork, the name of any registered object should be unique within a lane. 
+        In order to make a) inspecting ids easy, while b) still registering full ids with a cross 
+        section name and a cross section element name, the method getFullId() has been added in addition to
+        getId(). When displaying objects, getId() is used. When registering objects, getFullId() is used.
+      </action>
+      <action issue="OTS-329" type="fix">
+        OTS-329. N201 XML Parser demo throws error. All sensor, trafficlight, and
+        sensor objects in XML files have to be globally unique in the network. 
+        N201v8.xml in the ots-parser-xml project test has been updated to make the names of
+        Lane objects unique.
+      </action>
+      <action issue="OTS-330" type="fix">
+        OTS-330. Directions not interpreted correctly when parsing. This was caused by
+        the fact that the DirectionUnit uses NORTH_RADIANS as the BASE, and EAST_RADIANS 
+        is -90 degrees rotated with respect to NORTH_RADIANS. Instead of using
+        getSI() or .si for the direction, getInUnit() should be used in Links.java.
+      </action>
+      <action type="update">
+        Updated to DJUNITS version 3.00.01.
+      </action>
+    </release>
+
+    <release version="0.14.00" date="2017-04-17" description="Release 0.14.00">
+      <action issue="OTS-269" type="update">
+        OTS-269. Settable deletion of GTU's if in trouble.
+      </action>
+      <action issue="OTS-265" type="update">
+        OTS-265. BLOCK should have a cloneable class and should have animation
+        capabilities.
+      </action>
+      <action issue="OTS-263" type="fix">
+        OTS-263. Fixed bug in detection of intersecting lines (shapes).
+      </action>
+      <action issue="OTS-273" type="fix">
+        OTS-273. XML parser parsed wrong value for use as Z-coordinate.
+      </action>
+      <action issue="OTS-279" type="add">
+        OTS-279. Added BusStop.
+      </action>
+      <action issue="OTS-280" type="add">
+        OTS-280. Added BusSchedule.
+      </action>
+      <action issue="OTS-280" type="update">
+        OTS-277. Removed LaneBlock.
+      </action>
+      <action issue="OTS-295" type="add">
+        OTS-295. PRIORITY added to LINK tag in xml parser.
+      </action>
+      <action issue="OTS-299" type="add">
+        OTS-299. Method projectedPosition was actually translatedPosition; method name
+        fixed. Added new method projectedPosition.
+      </action>
+      <action issue="OTS-297" type="update">
+        OTS-297. DJUNITS version 2.01.03 used. Scalars in SI units with the exception
+        of Money scalars can now be created with e.g., Length len = Length.createSI(5.0).
+      </action>
+      <action issue="OTS-298" type="update">
+        OTS-298. DJUNITS version 2.01.03 used. Constants NaN, POSITIVI_INFINITY,
+        NEGATIVE_INFINITY, POS_MAXVALUE and NEG_MAXVALUE have been added to scalars,
+        with the exception of Money scalars.
+      </action>
+      <action issue="OTS-278" type="add">
+        OTS-278. Scheduled busses and bus stops.
+      </action>
+      <action issue="OTS-316" type="update">
+        OTS-316. Allow non default GTU colorers in visualization.
+      </action>
+      <action issue="OTS-267" type="update">
+        OTS-267. Researched parallelization of the gtu's move() method and provided
+        options for synchronized update of the GTU's positions as well as position caching.
+      </action>
+      <action type="update">
+        Updated to DJUNITS version 2.02.00 and DSOL version 3.01.05.
+      </action>
+    </release>
+
+    <release version="0.13.04" date="2017-01-16" description="Intermediate Release 0.13.04">
+      <action issue="OTS-156" type="update">
+        OTS-156. Make conflicts GTUType dependent.
+      </action>
+      <action issue="OTS-156" type="fix">
+        OTS-246. Demo model XMLNetworks merge with LMRS throws error.
+      </action>
+      <action issue="OTS-250" type="update">
+        OTS-250. Interaction conflicts and traffic lights.
+      </action>
+      <action issue="OTS-251" type="fix">
+        OTS-251. Memory leak in simulation when GTUs leave the system.
+        DefaultCarAnimation object changed.
+      </action>
+      <action issue="OTS-252" type="fix">
+        OTS-252. GTUs do not have a hashCode function
+      </action>
+      <action issue="OTS-253" type="fix">
+        OTS-253. Memory leak in infrastructure animation after cloning. Extra
+        functions in OTSNetwork to clone and destroy networks.
+      </action>
+      <action issue="OTS-254" type="update">
+        OTS-254. ToggleAnimationButtons should be aligned to the left.
+      </action>
+      <action issue="OTS-255" type="update">
+        OTS-255. As a result of update OTS-253, the constructor of the OTSLink and CrossSectionLink have
+        changed to include the simulator.
+      </action>
+      <action type="update">
+        Default jog4j-2 configuration file added.
+      </action>
+      <action type="update">
+        Updated to use DSOL version 3.01.03, which allows to override the Renderable2D.destroy()
+        function.
+      </action>
+    </release>
+
+
+    <release version="0.13.03" date="2017-01-05" description="Intermediate Release 0.13.03">
+      <action issue="OTS-244" type="fix">
+        OTS-244. OTSNetwork.shortestPath does not calculate shortest route when
+        direction is BOTH.
+      </action>
+      <action issue="OTS-245" type="update">
+        OTS-245. Several methods of AbstractGTU and AbstractLaneBasedGTU should be declared
+        non-final to allow extensions.
+      </action>
+    </release>
+
+
+    <release version="0.13.02" date="2017-01-03" description="Intermediate Release 0.13.02">
+      <action issue="OTS-242" type="fix">
+        OTS-242. Repair of Bezier curve.
+      </action>
+      <action type="update">
+        toString() methods added to several classes in ots-core.
+      </action>
+      <action type="update">
+        Throw.when(...) added to constructor of Distribution.java.
+      </action>
+      <action type="update">
+        Unit tests added for several classes in ots-core.
+      </action>
+      <action type="update">
+        Hierarchical GTUType class.
+      </action>
+    </release>
+
+
+    <release version="0.13.01" date="2016-12-20" description="Intermediate Release 0.13.01">
+      <action issue="OTS-235" type="add">
+        OTS-235: Arc with variable radius.
+      </action>
+      <action issue="OTS-236" type="add">
+        OTS-236: Bezier SHAPE and control points limited to intersection of control
+        lines.
+      </action>
+      <action issue="OTS-237" type="fix">
+        OTS-237: Clone of CrossSectionLink added CrossSectionElements twice.
+      </action>
+      <action issue="OTS-238" type="fix">
+        OTS-238: GTU should not immediately change lane on initialization with the DirectedLaneChange
+        tactical planner.
+      </action>
+      <action issue="OTS-239" type="fix">
+        OTS-239: Time to not change lanes after a lane change with the DirectedLaneChange tactical planner
+        should be settable.
+      </action>
+      <action issue="OTS-240" type="add">
+        OTS-240: The threshold distance for differences between initial locations of the GTU on
+        different lanes should be settable.
+      </action>
+    </release>
+
+
+    <release version="0.13.00" date="2016-12-11" description="Sprint 8">
+      <action issue="OTS-64" type="add">
+        OTS-64: LMRS - Relaxation.
+      </action>
+      <action issue="OTS-65" type="add">
+        OTS-65: Level of lane change desire by other drivers.
+      </action>
+      <action issue="OTS-66" type="add">
+        OTS-66: Relaxation response to lane change in front.
+      </action>
+      <action issue="OTS-200" type="add">
+        OTS-200: Implement TrafCOD traffic controller.
+      </action>
+      <action issue="OTS-214" type="add">
+        OTS-214: TrafficLight implementation for car following + instantaneous lane
+        change
+        model.
+      </action>
+      <action issue="OTS-215" type="add">
+        OTS-215: TrafficLight implementation for LMRS.
+      </action>
+      <action issue="OTS-218" type="update">
+        OTS-218: Automatically register LaneBasedObject on their Lane.
+      </action>
+      <action issue="OTS-219" type="update">
+        OTS-219: Store the GTUs that trigger a Sensor in the Sensor and not in the
+        Lane.
+      </action>
+      <action issue="OTS-221" type="add">
+        OTS-221: Bring back LaneBasedGTUFollowingDirectedChangeTacticalPlanner.
+      </action>
+      <action issue="OTS-222" type="fix">
+        OTS-222: Z-order drawing.
+      </action>
+      <action issue="OTS-223" type="fix">
+        OTS-223: Repair parsing for ARC.
+      </action>
+      <action issue="OTS-224" type="add">
+        OTS-224: Allow for selection of layers in animation.
+      </action>
+      <action issue="OTS-225" type="add">
+        OTS-225: Provide default zoom for animation, and fix zoomAll method.
+      </action>
+      <action issue="OTS-226" type="add">
+        OTS-226: Allow animation of ids for Node, Link, Lane, Sensor, TrafficLight,
+        and GTU.
+      </action>
+      <action type="update">
+        Moved ImmutableCollections to DSOL version 3.01.01.
+      </action>
+      <action type="update">
+        Updated to use DSOL version 3.01.01.
+      </action>
+    </release>
+
+
+    <release version="0.12.02" date="2016-11-20" description="Intermediate Release 0.12.02">
+      <action issue="OTS-87" type="update">
+        OTS-87 Implement mandatory incentives for LMRS.
+      </action>
+      <action issue="OTS-88" type="update">
+        OTS-88 Implement voluntary incentives for LMRS.
+      </action>
+      <action issue="OTS-160" type="update">
+        OTS-160 Categorize perception.
+      </action>
+      <action issue="OTS-216" type="update">
+        OTS-216 Added neg() function to djunits and updated djunits in ots to version
+        2.01.01.
+      </action>
+    </release>
+
+
+    <release version="0.12.01" date="2016-11-07" description="Intermediate release 0.12.01">
+      <action issue="OTS-213" type="fix">
+        OTS-213 Change SimpleWeightedGraph in OTSNetwork into
+        SimpleDirectedWeightedGraph
+      </action>
+      <action issue="OTS-214" type="add">
+        OTS-214 TrafficLight implementation for car following + instantaneous lane
+        change
+        model
+      </action>
+      <action issue="OTS-215" type="add">
+        OTS-215 TrafficLight implementation for LMRS
+      </action>
+    </release>
+
+
+    <release version="0.12.00" date="2016-11-02" description="Sprint 7">
+      <action issue="OTS-106" type="add">
+        OTS-106 Traffic lights as separate objects that can be observed instead of a
+        'fake'
+        GTU
+      </action>
+      <action issue="OTS-181" type="add">
+        OTS-181 Observable object hierarchy
+      </action>
+      <action issue="OTS-171" type="add">
+        OTS-174 Retrieve network saved with xstream for a new simulation
+      </action>
+      <action issue="OTS-151" type="update">
+        OTS-151 Simplify registration of GTU on lanes
+      </action>
+      <action issue="OTS-209" type="update">
+        OTS-209 DJUNITS Scalars should import Comparable individually
+      </action>
+      <action issue="OTS-210" type="add">
+        OTS-210 GTU to handle its own instantaneous lane change
+      </action>
+      <action issue="OTS-211" type="update">
+        OTS-211 GTU should be able to provide its reference position
+      </action>
+      <action type="add">
+        Separate project 'ots' to act as the root instead of ots-base as ots-base now contains code
+      </action>
+    </release>
+
+
+    <release version="0.11.00" date="2016-10-07" description="Sprint 6">
+      <action issue="OTS-104" type="fix">
+        OTS-104 XML parser dependent on order of parsing
+      </action>
+      <action issue="OTS-115" type="fix">
+        OTS-115 Repair error with lane direction in parser while link direction not
+        yet set
+      </action>
+      <action issue="OTS-128" type="add">
+        OTS-128 Add ROADCLASS definition in XML and as element under ROADTYPE
+      </action>
+      <action issue="OTS-177" type="add">
+        OTS-177 Make a list of changes based on JIRA sprints in POM file
+      </action>
+      <action issue="OTS-179" type="add">
+        OTS-179 OD Matrix class
+      </action>
+      <action issue="OTS-180" type="add">
+        OTS-180 IMB Callback for SimSmartMobility
+      </action>
+      <action issue="OTS-173" type="add">
+        OTS-173 Add events for adding/removing and for triggering of sensors
+      </action>
+      <action issue="OTS-182" type="add">
+        OTS-182 Links and Nodes should automatically be added to a Network
+      </action>
+      <action issue="OTS-183" type="update">
+        OTS-183 Simplify IMB connection in OTS demos
+      </action>
+      <action issue="OTS-184" type="add">
+        OTS-184 SimSmartMobility: SimulationTransceiver: add comments about payload
+      </action>
+      <action issue="OTS-185" type="add">
+        OTS-185 SimSmartMobility: IMB NetworkTransceiver
+      </action>
+      <action issue="OTS-186" type="add">
+        OTS-186 SimSmartMobility: IMB NodeTransceiver
+      </action>
+      <action issue="OTS-187" type="add">
+        OTS-187 SimSmartMobility: IMB LinkGTUTransceiver
+      </action>
+      <action issue="OTS-188" type="add">
+        OTS-188 SimSmartMobility: IMB LaneGTUTransceiver
+      </action>
+      <action issue="OTS-189" type="add">
+        OTS-189 SimSmartMobility: IMB GTUTransceiver conform SSM v1 standard
+      </action>
+      <action issue="OTS-190" type="add">
+        OTS-190 IMB SensorGTUTransceiver
+      </action>
+      <action issue="OTS-192" type="add">
+        OTS-192 XML parser has to be adapted to latest changes in the way a network is
+        built
+      </action>
+      <action issue="OTS-193" type="add">
+        OTS-193 Sampling framework to calculate KPIs
+      </action>
+      <action issue="OTS-194" type="update">
+        OTS-194 ImmutableCollections have to be updated
+      </action>
+    </release>
+
+
+    <release version="0.10.00" date="2016-08-28" description="Sprint 5">
+      <action issue="OTS-84" type="fix">
+        OTS-84 Demo simulations don't check for sufficient headway.
+      </action>
+      <action issue="OTS-148" type="update">
+        OTS-148 Direction should not implement &gt;, &gt;=, &lt;, &lt;=.
+      </action>
+      <action issue="OTS-150" type="add">
+        OTS-150 min and max functions for djunit scalars.
+      </action>
+      <action issue="OTS-154" type="add">
+        OTS-154 getLength() in Headway.
+      </action>
+      <action issue="OTS-155" type="add">
+        OTS-155 Add split as merge type.
+      </action>
+      <action issue="OTS-158" type="add">
+        OTS-158 Method to add default values of parameters defined in given class.
+      </action>
+      <action issue="OTS-159" type="add">
+        OTS-159 Add first offramp info in perception.
+      </action>
+      <action issue="OTS-161" type="update">
+        OTS-161 Replace Velocity by Speed in all code.
+      </action>
+      <action issue="OTS-163" type="add">
+        OTS-163 Save network with xstream.
+      </action>
+      <action issue="OTS-164" type="add">
+        OTS-164 POLYLINE element for LINK in XML.
+      </action>
+      <action issue="OTS-165" type="update">
+        OTS-165 Tidy up XML definitions.
+      </action>
+      <action issue="OTS-169" type="add">
+        OTS-169 Split ots-road project: separate projects for the different parsers.
+      </action>
+      <action issue="OTS-171" type="update">
+        OTS-171 Create separate ots-imb project.
+      </action>
+      <action issue="OTS-172" type="add">
+        OTS-172 Pub/sub between GTU, Lane and Graphs.
+      </action>
+    </release>
+
+
+    <release version="0.09.00" date="2016-05-27" description="Sprint 4">
+      <action issue="OTS-107" type="add">
+        OTS-107 Unit test verifies equals(), hashCode(), toString(), Serializable.
+      </action>
+      <action issue="OTS-111" type="update">
+        OTS-111 DJUNITS names of Abs quantities.
+      </action>
+      <action issue="OTS-116" type="fix">
+        OTS-116 Animation objects not shown after toString() changes in OTS.
+      </action>
+      <action issue="OTS-118" type="update">
+        OTS-118 Change Velocity to Speed in GTU methods.
+      </action>
+      <action issue="OTS-120" type="add">
+        OTS-120 Create a getCenter() method in all GTUs.
+      </action>
+      <action issue="OTS-123" type="update">
+        OTS-123 Exception.throwIf() method to separate class.
+      </action>
+      <action issue="OTS-131" type="add">
+        OTS-131 Add class for speed limit types with static defaults and uniqueness.
+        check
+      </action>
+      <action issue="OTS-133" type="add">
+        OTS-133 Add utility class for tactical planners for current active speed
+        limit.
+        types
+      </action>
+      <action issue="OTS-134" type="add">
+        OTS-134 Add interface for perception with common lane change and
+        car-following.
+        info
+      </action>
+      <action issue="OTS-135" type="fix">
+        OTS-135 Throw.when cannot throw Exceptions that can be internally thrown.
+      </action>
+      <action issue="OTS-137" type="update">
+        OTS-137 Immutable collection classes.
+      </action>
+      <action issue="OTS-138" type="update">
+        OTS-138 Implement GTUType as a Type.
+      </action>
+      <action issue="OTS-139" type="update">
+        OTS-139 LinkType and LaneType should become Types.
+      </action>
+    </release>
+
+
+    <release version="0.08.00" date="2016-04-08" description="Sprint 3">
+      <action issue="OTS-17" type="update">
+        OTS-17 Zoom whole network, zoom to home extent, toggle grid on/off.
+      </action>
+      <action issue="OTS-50" type="update">
+        OTS-50 Mouse-centered zoom in animation panel.
+      </action>
+      <action issue="OTS-55" type="fix">
+        OTS-55 Some demos don't check room for generated GTUs.
+      </action>
+      <action issue="OTS-63" type="add">
+        OTS-63 Display x and y coordinates on animation screen.
+      </action>
+      <action issue="OTS-89" type="fix">
+        OTS-89 Runtime error in dsol repaint.
+      </action>
+      <action issue="OTS-90" type="update">
+        OTS-90 Play and pause buttons should be merged.
+      </action>
+      <action issue="OTS-101" type="add">
+        OTS-101 Create list of driver characteristics.
+      </action>
+      <action issue="OTS-102" type="update">
+        OTS-102 New implementations of IDM and car-following interface.
+      </action>
+      <action issue="OTS-103" type="add">
+        OTS-103 Create a runUpToAndIncluding method for the dsol DEVSSimulator.
+      </action>
+      <action issue="OTS-108" type="update">
+        OTS-108 New implementation of headway algorithms.
+      </action>
+      <action issue="OTS-109" type="add">
+        OTS-109 Link new algorithms to RTI software for Nissan.
+      </action>
+    </release>
+
+
+    <release version="0.07.00" date="2016-03-15" description="Sprint 2">
+      <action issue="OTS-76" type="fix">
+        OTS-76 Circular road demo gives errors around simulation time 10 minutes.
+      </action>
+    </release>
+
+
+    <release version="0.06.00" date="2016-01-27" description="Sprint 1">
+    </release>
+
+
+    <release version="0.05.00" date="2015-12-20" description="Major upgrade">
+      <action dev="averbraeck" type="add">
+        ots-core: Perception added.
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-core: OperationalPlan, TacticalPlanner, and StrategicalPlanner added.
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-core, ots-road: All GTUs are free ranging; Lane-based behavior is just a constraint.
+      </action>
+    </release>
+
+  </body>
+</document>
