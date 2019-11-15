@@ -1,0 +1,944 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xsd/src/main/resources/xsd/1.03.00/ots.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <DEFINITIONS>
+  
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.03.00/defaults/default_gtutypes.xml">
+          <xi:fallback>
+            <xi:include href="xsd/1.03.00/defaults/default_gtutypes.xml" />
+          </xi:fallback>
+        </xi:include>
+      </xi:fallback>
+    </xi:include>
+    
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_linktypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.03.00/defaults/default_linktypes.xml">
+          <xi:fallback>
+            <xi:include href="xsd/1.03.00/defaults/default_linktypes.xml" />
+          </xi:fallback>
+        </xi:include>
+      </xi:fallback>
+    </xi:include>
+
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_lanetypes.xml">
+      <xi:fallback>
+        <xi:include href="../xsd/1.03.00/defaults/default_lanetypes.xml">
+          <xi:fallback>
+            <xi:include href="xsd/1.03.00/defaults/default_lanetypes.xml" />
+          </xi:fallback>
+        </xi:include>
+      </xi:fallback>
+    </xi:include>
+
+    <GTUTEMPLATES>
+      <GTUTEMPLATE DEFAULT="true" GTUTYPE="CAR" ID="CAR">
+        <LENGTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="3.0" MAX="4.0" />
+        </LENGTHDIST>
+        <WIDTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="1.7" MAX="2.0" />
+        </WIDTHDIST>
+        <MAXSPEEDDIST SPEEDUNIT="km/h">
+          <CONSTANT C="120" />
+        </MAXSPEEDDIST>
+      </GTUTEMPLATE>
+      <GTUTEMPLATE DEFAULT="true" GTUTYPE="TRUCK" ID="TRUCK">
+        <LENGTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="16.0" MAX="24.0" />
+        </LENGTHDIST>
+        <WIDTHDIST LENGTHUNIT="m">
+          <UNIFORM MIN="2.2" MAX="2.7" />
+        </WIDTHDIST>
+        <MAXSPEEDDIST SPEEDUNIT="km/h">
+          <CONSTANT C="100" />
+        </MAXSPEEDDIST>
+      </GTUTEMPLATE>
+    </GTUTEMPLATES>
+
+    <LINKTYPES>
+      <LINKTYPE ID="STREET">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="FORWARD" />
+        <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="40km/h" />
+        <SPEEDLIMIT GTUTYPE="TRUCK" LEGALSPEEDLIMIT="40km/h" />
+      </LINKTYPE>
+    </LINKTYPES>
+
+    <ROADLAYOUTS>
+      <ROADLAYOUT ID="r1" LINKTYPE="STREET">
+        <SHOULDER>
+          <CENTEROFFSET>-2.85m</CENTEROFFSET>
+          <WIDTH>2m</WIDTH>
+        </SHOULDER>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>-1.85m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="FORWARD" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <CENTEROFFSET>0.0m</CENTEROFFSET>
+          <WIDTH>3.5m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID">
+          <CENTEROFFSET>1.85m</CENTEROFFSET>
+        </STRIPE>
+        <SHOULDER>
+          <CENTEROFFSET>2.85m</CENTEROFFSET>
+          <WIDTH>2m</WIDTH>
+        </SHOULDER>
+      </ROADLAYOUT>
+    </ROADLAYOUTS>
+  </DEFINITIONS>
+
+  <NETWORK>
+    <NODE ID="N" COORDINATE="(0,300)" DIRECTION="270 deg" />
+    <NODE ID="E" COORDINATE="(100,0)" DIRECTION="0 deg" />
+    <NODE ID="S" COORDINATE="(0,-100)" DIRECTION="270 deg" />
+    <NODE ID="W" COORDINATE="(-300,0)" DIRECTION="0 deg" />
+    <NODE ID="XE" COORDINATE="(0,0)" DIRECTION="0 deg" />
+    <NODE ID="XS" COORDINATE="(0,0)" DIRECTION="270 deg" />
+
+    <LINK ID="NX" NODESTART="N" NODEEND="XS" TYPE="STREET">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK ID="WX" NODESTART="W" NODEEND="XE" TYPE="STREET">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK ID="XS" NODESTART="XS" NODEEND="S" TYPE="STREET">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK ID="XE" NODESTART="XE" NODEEND="E" TYPE="STREET">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
+    </LINK>
+
+  </NETWORK>
+
+  <NETWORKDEMAND>
+
+    <ROUTE ID="NS" GTUTYPE="VEHICLE">
+      <NODE ID="N" />
+      <NODE ID="XS" />
+      <NODE ID="S" />
+    </ROUTE>
+
+    <ROUTE ID="WE" GTUTYPE="VEHICLE">
+      <NODE ID="W" />
+      <NODE ID="XE" />
+      <NODE ID="E" />
+    </ROUTE>
+
+    <!-- TODO: GTUTEMPLATEMIX is not parsed yet -->
+
+    <GTUTEMPLATEMIX ID="C60T40">
+      <GTUTEMPLATE ID="CAR" WEIGHT="60" />
+      <GTUTEMPLATE ID="TRUCK" WEIGHT="40" />
+    </GTUTEMPLATEMIX>
+
+    <GTUTEMPLATEMIX ID="C80T20">
+      <GTUTEMPLATE ID="CAR" WEIGHT="80" />
+      <GTUTEMPLATE ID="TRUCK" WEIGHT="20" />
+    </GTUTEMPLATEMIX>
+
+    <GENERATOR LINK="NX" LANE="FORWARD" POSITION="10m" DIRECTION="DIR_PLUS">
+      <GTUTEMPLATE>CAR</GTUTEMPLATE>
+      <ROUTE>NS</ROUTE>
+      <FREQUENCY>8/min</FREQUENCY>
+      <ROOMCHECKER>CF</ROOMCHECKER>
+    </GENERATOR>
+    <GENERATOR LINK="WX" LANE="FORWARD" POSITION="10m" DIRECTION="DIR_PLUS">
+      <GTUTEMPLATE>CAR</GTUTEMPLATE>
+      <ROUTE>WE</ROUTE>
+      <FREQUENCY>8/min</FREQUENCY>
+      <ROOMCHECKER>CF</ROOMCHECKER>
+    </GENERATOR>
+
+    <SINK LINK="XS" LANE="FORWARD" POSITION="50m" DIRECTION="DIR_PLUS" />
+    <SINK LINK="XE" LANE="FORWARD" POSITION="50m" DIRECTION="DIR_PLUS" />
+
+  </NETWORKDEMAND>
+  <CONTROL>
+    <TRAFCOD ID="Simple TrafCOD demo">
+      <SIGNALGROUP ID="08">
+        <TRAFFICLIGHT LINK="WX" LANE="FORWARD1" TRAFFICLIGHTID="08" />
+      </SIGNALGROUP>
+      <SIGNALGROUP ID="qq">
+        <TRAFFICLIGHT LINK="NX" LANE="FORWARD1" TRAFFICLIGHTID="11" />
+      </SIGNALGROUP>
+      <SENSOR ID="D081">
+        <SINGLELANE>
+          <LINK>NX</LINK>
+          <LANE>FORWARD</LANE>
+          <ENTRYPOSITION>END-8m</ENTRYPOSITION>
+          <EXITPOSITION>END-6m</EXITPOSITION>
+        </SINGLELANE>
+      </SENSOR>
+      <SENSOR ID="D082">
+        <SINGLELANE>
+          <LINK>NX</LINK>
+          <LANE>FORWARD</LANE>
+          <ENTRYPOSITION>END-30m</ENTRYPOSITION>
+          <EXITPOSITION>END-15m</EXITPOSITION>
+        </SINGLELANE>
+      </SENSOR>
+      <SENSOR ID="D111">
+        <SINGLELANE>
+          <LINK>WX</LINK>
+          <LANE>FORWARD</LANE>
+          <ENTRYPOSITION>END-8m</ENTRYPOSITION>
+          <EXITPOSITION>END-6m</EXITPOSITION>
+        </SINGLELANE>
+      </SENSOR>
+      <SENSOR ID="D112">
+        <SINGLELANE>
+          <LINK>WX</LINK>
+          <LANE>FORWARD</LANE>
+          <ENTRYPOSITION>END-30m</ENTRYPOSITION>
+          <EXITPOSITION>END-15m</EXITPOSITION>
+        </SINGLELANE>
+      </SENSOR>
+      
+      <PROGRAM>
+# Trafcod rules for D:\amsalomons\My Documents\surfdrive\Documents\____TrafcodTest\simpleTest.vri
+# Produced 2016-11-15 11:33:57
+# tfc output from Version: 3.40  Version Date: 2016-05-12 Time: 15:23:44
+# trafcod-version=100
+
+
+#PK manually removed the form-feed characters
+
+# *************************************************************************
+# *** Selected sequence                                                 ***
+# *** Structure: 1                                                      ***
+# *************************************************************************
+
+# Sequence
+# Conflictgroups Conflictgroupsize
+1 2
+# Selected sequence
+# Structure: 1
+08  11
+
+# *************************************************************************
+# *** TRAFFIC                                                           ***
+# *************************************************************************
+
+F=F08+F11+ 0
+FM=FM08+FM11+ 0
+
+# *** STRUCTURE SEQUENCE HANDLING ***
+
+MRbN.=MRV11.TMN
+MRaN.=MRV08.TMN
+
+# row activations for MRV's
+
+RAb=A11.MRVN11
+RAa=A08.MRVN08
+
+MRb.=EMRa
+MRa.=EMRb
+
+%init MRV08 1
+%init MRV11 0
+
+%init MRa
+
+%init MP0811
+
+RITM.=SMRa+SMRb
+%time TM 1
+
+# *************************************************************************
+# *** EXPLANATION                                                       ***
+# ***                                                                   ***
+# *** PHASE TIME:                                                       ***
+# ***                                                                   ***
+# *** G    : Green                                                      ***
+# *** GP   : Parallel green                                             ***
+# *** GX   : eXtension green                                            ***
+# *** GW   : Waiting green                                              ***
+# *** GF   : Fixed time green                                           ***
+# *** GA   : Advance green                                              ***
+# *** L    : yeLlow                                                     ***
+# *** R    : Red                                                        ***
+# ***                                                                   ***
+# *** TIMERS:                                                           ***
+# ***                                                                   ***
+# *** TGF  : Fixed green                                                ***
+# *** TGX  : eXtention green                                            ***
+# *** TGG  : Guarantee green                                            ***
+# *** TL   : yeLlow time                                                ***
+# *** TRG  : Guarantee red                                              ***
+# *** TOFF : Offset time: not used yet                                  ***
+# *** TGXC : eXtention green extra: not used yet                        ***
+# ***                                                                   ***
+# *** CONTROLLERS:                                                      ***
+# ***                                                                   ***
+# *** A    : Actuation                                                  ***
+# *** B    : Blocking start green                                       ***
+# *** Y    : Yielding start green                                       ***
+# *** Z    : Cut off (forced end of green)                              ***
+# *** O    : Omit (skip by passing through in 0 sec)                    ***
+# ***                                                                   ***
+# *************************************************************************
+
+
+
+#************************************************************ PHASE 08 ***
+# *************************************************************************
+# *** PHASE 08 CONFLICT HANDLING                                        ***
+# *************************************************************************
+
+RITO1108.=SR11
+%time TO1108 0
+
+KP1108.=SG11
+KPN1108.=ETO1108.R11
+
+K08=KP1108+ 0
+
+# *************************************************************************
+# ***     Traffic          :  F                                         ***
+# ***                                                                   ***
+# ***     Real             :  Fr                                        ***
+# ***        Actual        :   Fa                                       ***
+# ***        Coordination  :   Fc                                       ***
+# ***     Induced          :  Fi                                        ***
+# ***     Virtual          :  Fv (also generated if waiting green)      ***
+# ***                                                                   ***
+# ***     Conflicting                 :  FK                             ***
+# ***     Real Conflicting            :  FKr                            ***
+# ***                                                                   ***
+# ***     Module                      :  FM                             ***
+# *************************************************************************
+
+FaN08.=GP08.XN08
+Fa08.=R08.(D081+D082+0)
+
+Fr08=Fa08.ON08
+
+F08=Fr08.ON08.GPN08
+
+FK08=F11+ 0
+
+FKr08=Fr11+ 0
+
+
+FM08=F08.FK08
+
+
+# *************************************************************************
+# ***     Demand conflicting traffic:  AK                               ***
+# *************************************************************************
+
+AK08 = A11
+
+# *************************************************************************
+# ***     SEQUENCE HANDLING                                             ***
+# ***     (structure)                                                   ***
+# *************************************************************************
+
+MRVN08 .= MRb
+MRV08  .= MRa.TMN.(GP08+GW08.CW08.FM+FN08)
+
+MPN1108 .= MP0811+EA11+O11+FN11
+MP1108  .= F11.F08.AN11.R11.(MRa.MRV08+MRb.MRVN11+0)
+
+MPT08 = F08.(MPN1108)+FKN08
+
+# *************************************************************************
+# ***          Actuation: A                                             ***
+# *************************************************************************
+
+AN08 .= EGX08 + GW08.CW08.XN08 +Y08
+A08  .= YN08.R08.TRGN08.(F08.MPT08.MRVN08+Fr08.FKN08.ON08)
+
+# *************************************************************************
+# ***          Blocking criterion: B                                    ***
+# ***              (before RN)                                          ***
+# *************************************************************************
+
+B08 = K08+TRG08+G08+L08
+
+# *************************************************************************
+# ***          Yielding start                           : Y             ***
+# ***          By conflics                              : Yk            ***
+# ***          Start delay                              : Yd            ***
+# ***          Vehicle coordination                     : Yv            ***
+# ***          Yield by coordination cut off            : Yz            ***
+# ***          Yield conflicting queue discharge        : Yq            ***
+# ***          Yield opposing streams with common start : Yo            ***
+# *************************************************************************
+
+Yk08=(A11+0).(MRaN+0)
+
+
+Y08 = Yk08+MRV08.FK08
+
+# *************************************************************************
+# ***          Cut Off Criterion:  Z                                    ***
+# ***                                Zp (by priority stream)            ***
+# ***                                Zv (coordination cut off vehicles) ***
+# ***                                Zs (priority cut off)              ***
+# ***                                Za (alternative cut off)           ***
+# ***                                Zg (maximum green off)             ***
+# ***                                Zr (ramp metering request green off) ***
+# ***                                Zq (cut off green because of queue) ***
+# *************************************************************************
+
+
+# *************************************************************************
+# ***          Omitting: O                                              ***
+# ***                     Help:     HO                                  ***
+# *************************************************************************
+
+
+# *************************************************************************
+# *** End Green                                                         ***
+# *************************************************************************
+
+GN08 .= EGP08
+
+# *************************************************************************
+# *** Parallel Green: GP                                                ***
+# *** (continue):     CP                                                ***
+# ***                     CPb: basis parallel green                     ***
+# ***                     CPs: (stategy, see tactics)                   ***
+# ***                     CPi: parallel induced                         ***
+# ***                     CPv: parallel green coordination vehicles     ***
+# ***                     CPp: parallel green coordination peds/bikes   ***
+# *************************************************************************
+
+CPb08=FM.MPTN11.F
+
+CP08=CPb08
+
+GPN08 .= TGGN08.(CPN08+Z08+O08)
+GP08  .= EGX08
+
+RITGG08.=MPT08.GN08.ON08
+%time TGG08 40
+
+# *************************************************************************
+# *** Extension Green: GX                                               ***
+# ***                                                                   ***
+# *** Extension criterion: X:                                           ***
+# ***                        Xr (extend by request detector)            ***
+# ***                        Xx (extend by extension detector)          ***
+# ***                        Xv (coordination lag end follow vehicle)   ***
+# ***                        Xp (coordination lag end follow peds/bikes) ***
+# ***                        Xt (extend by transit detector)            ***
+# *************************************************************************
+
+
+Xx081  .= G08.(D082+DN082.TD082)
+Xx081N .= SR08+DN082.ETD082
+
+RITD082.=D082
+%time TD082 15
+
+Xx08=Xx081
+
+Xr081  .= (D081+DN081.TD081)
+Xr081N .= SR08+DN081.ETD081
+
+RITD081.=D081
+%time TD081 25
+
+
+Xr08.=Xr081.XxN08
+XrN08.=Xr081N+Xx08
+
+X08 = Xr08+Xx08
+
+GXN08 .= MRa.ETGX08+MRaN.AK08+XN08+Z08+O08
+GX08  .= EGW08
+
+RITGX08.=MRa.SGX08 + SMRa.GX08
+%time TGX08 210
+
+# *************************************************************************
+# *** Waiting Green: GW                                                 ***
+# *** (continue):    CW:                                                ***
+# ***                   CWs (strategy, see tactics)                     ***
+# ***                   CWv (coordination vehicles)                     ***
+# ***                   CWp (coordination pedestrians and bikes)        ***
+# ***                   CWd (traffic demand and no conflicting traffic) ***
+# ***                   CWt (transit priority)                          ***
+# ***                        Xt (extend by transit detector)            ***
+# *************************************************************************
+
+
+CWd08 = Fr08.X08.FKN08
+
+
+CW08 = CWd08
+
+GWN08 .= CWN08+Z08+O08
+GW08  .= EGF08
+
+# *************************************************************************
+# *** Fixed time Green: GF                                              ***
+# *************************************************************************
+
+GFN08 .= TGFN08+Z08+O08
+GF08  .= EGA08
+
+RITGF08.=SGF08
+%time TGF08 60
+
+# *************************************************************************
+# *** Advance Green: GA                                                 ***
+# ***  (continue):   CA                                                 ***
+# ***                  CAb (basis CA)                                   ***
+# ***                  CAv (coordination vehicles)                      ***
+# *************************************************************************
+
+
+CA08  = 0
+
+GAN08 .= CAN08+Z08+O08
+GA08  .= SG08
+
+
+
+# *************************************************************************
+# *** YeLLow: L                                                         ***
+# *************************************************************************
+
+LN08 .= TLN08
+L08  .= EG08
+
+RITL08.=SL08.HON08
+%time  TL08 30
+
+# *************************************************************************
+# *** Green: G                                                          ***
+# *************************************************************************
+
+G08   .= ER08
+
+# *************************************************************************
+# *** Red: R                                                            ***
+# *************************************************************************
+
+RN08   .=TRGN08.A08.BN08
+R08    .=EL08
+
+RITRG08.=SR08.HON08
+%time TRG08 30
+
+
+# *************************************************************************
+# *** PHASE 08  INITIALIZE VARIABLES                                    ***
+# *** all stream to red                             (R)                 ***
+# *** all streams have minimum guarantee red period (TRG)               ***
+# *** all streams have actual traffic               (Fa)                ***
+# *************************************************************************
+
+%init R08
+%init Re08
+%init TRG08
+%init Fa08
+
+# *************************************************************************
+# *** PHASE 08 EXTERN DISPLAY                                           ***
+# *************************************************************************
+
+Ge08  .=SG08
+GeN08 .=EG08
+GLe08 .=SL08
+GLeN08.=EL08
+Re08  .=SR08
+ReN08 .=ER08
+
+%export GE08  71
+%export GLE08 89
+%export RE08  82
+
+
+#************************************************************ PHASE 11 ***
+# *************************************************************************
+# *** PHASE 11 CONFLICT HANDLING                                        ***
+# *************************************************************************
+
+RITO0811.=SR08
+%time TO0811 0
+
+KP0811.=SG08
+KPN0811.=ETO0811.R08
+
+K11=KP0811+ 0
+
+# *************************************************************************
+# ***     Traffic          :  F                                         ***
+# ***                                                                   ***
+# ***     Real             :  Fr                                        ***
+# ***        Actual        :   Fa                                       ***
+# ***        Coordination  :   Fc                                       ***
+# ***     Induced          :  Fi                                        ***
+# ***     Virtual          :  Fv (also generated if waiting green)      ***
+# ***                                                                   ***
+# ***     Conflicting                 :  FK                             ***
+# ***     Real Conflicting            :  FKr                            ***
+# ***                                                                   ***
+# ***     Module                      :  FM                             ***
+# *************************************************************************
+
+FaN11.=GP11.XN11
+Fa11.=R11.(D111+D112+0)
+
+Fr11=Fa11.ON11
+
+F11=Fr11.ON11.GPN11
+
+FK11=F08+ 0
+
+FKr11=Fr08+ 0
+
+
+FM11=F11.FK11
+
+
+# *************************************************************************
+# ***     Demand conflicting traffic:  AK                               ***
+# *************************************************************************
+
+AK11 = A08
+
+# *************************************************************************
+# ***     SEQUENCE HANDLING                                             ***
+# ***     (structure)                                                   ***
+# *************************************************************************
+
+MRVN11 .= MRa
+MRV11  .= MRb.TMN.(GP11+GW11.CW11.FM+FN11)
+
+MPN0811 .= MP1108+EA08+O08+FN08
+MP0811  .= F08.F11.AN08.R08.(MRb.MRV11+MRa.MRVN08+0)
+
+MPT11 = F11.(MPN0811)+FKN11
+
+# *************************************************************************
+# ***          Actuation: A                                             ***
+# *************************************************************************
+
+AN11 .= EGX11 + GW11.CW11.XN11 +Y11
+A11  .= YN11.R11.TRGN11.(F11.MPT11.MRVN11+Fr11.FKN11.ON11)
+
+# *************************************************************************
+# ***          Blocking criterion: B                                    ***
+# ***              (before RN)                                          ***
+# *************************************************************************
+
+B11 = K11+TRG11+G11+L11
+
+# *************************************************************************
+# ***          Yielding start                           : Y             ***
+# ***          By conflics                              : Yk            ***
+# ***          Start delay                              : Yd            ***
+# ***          Vehicle coordination                     : Yv            ***
+# ***          Yield by coordination cut off            : Yz            ***
+# ***          Yield conflicting queue discharge        : Yq            ***
+# ***          Yield opposing streams with common start : Yo            ***
+# *************************************************************************
+
+Yk11=(A08+0).(MRbN+0)
+
+
+Y11 = Yk11+MRV11.FK11
+
+# *************************************************************************
+# ***          Cut Off Criterion:  Z                                    ***
+# ***                                Zp (by priority stream)            ***
+# ***                                Zv (coordination cut off vehicles) ***
+# ***                                Zs (priority cut off)              ***
+# ***                                Za (alternative cut off)           ***
+# ***                                Zg (maximum green off)             ***
+# ***                                Zr (ramp metering request green off) ***
+# ***                                Zq (cut off green because of queue) ***
+# *************************************************************************
+
+
+# *************************************************************************
+# ***          Omitting: O                                              ***
+# ***                     Help:     HO                                  ***
+# *************************************************************************
+
+
+# *************************************************************************
+# *** End Green                                                         ***
+# *************************************************************************
+
+GN11 .= EGP11
+
+# *************************************************************************
+# *** Parallel Green: GP                                                ***
+# *** (continue):     CP                                                ***
+# ***                     CPb: basis parallel green                     ***
+# ***                     CPs: (stategy, see tactics)                   ***
+# ***                     CPi: parallel induced                         ***
+# ***                     CPv: parallel green coordination vehicles     ***
+# ***                     CPp: parallel green coordination peds/bikes   ***
+# *************************************************************************
+
+CPb11=FM.MPTN08.F
+
+CP11=CPb11
+
+GPN11 .= TGGN11.(CPN11+Z11+O11)
+GP11  .= EGX11
+
+RITGG11.=MPT11.GN11.ON11
+%time TGG11 40
+
+# *************************************************************************
+# *** Extension Green: GX                                               ***
+# ***                                                                   ***
+# *** Extension criterion: X:                                           ***
+# ***                        Xr (extend by request detector)            ***
+# ***                        Xx (extend by extension detector)          ***
+# ***                        Xv (coordination lag end follow vehicle)   ***
+# ***                        Xp (coordination lag end follow peds/bikes) ***
+# ***                        Xt (extend by transit detector)            ***
+# *************************************************************************
+
+
+Xx111  .= G11.(D112+DN112.TD112)
+Xx111N .= SR11+DN112.ETD112
+
+RITD112.=D112
+%time TD112 15
+
+Xx11=Xx111
+
+Xr111  .= (D111+DN111.TD111)
+Xr111N .= SR11+DN111.ETD111
+
+RITD111.=D111
+%time TD111 25
+
+
+Xr11.=Xr111.XxN11
+XrN11.=Xr111N+Xx11
+
+X11 = Xr11+Xx11
+
+GXN11 .= MRb.ETGX11+MRbN.AK11+XN11+Z11+O11
+GX11  .= EGW11
+
+RITGX11.=MRb.SGX11 + SMRb.GX11
+%time TGX11 210
+
+# *************************************************************************
+# *** Waiting Green: GW                                                 ***
+# *** (continue):    CW:                                                ***
+# ***                   CWs (strategy, see tactics)                     ***
+# ***                   CWv (coordination vehicles)                     ***
+# ***                   CWp (coordination pedestrians and bikes)        ***
+# ***                   CWd (traffic demand and no conflicting traffic) ***
+# ***                   CWt (transit priority)                          ***
+# ***                        Xt (extend by transit detector)            ***
+# *************************************************************************
+
+
+CWd11 = Fr11.X11.FKN11
+
+
+CW11 = CWd11
+
+GWN11 .= CWN11+Z11+O11
+GW11  .= EGF11
+
+# *************************************************************************
+# *** Fixed time Green: GF                                              ***
+# *************************************************************************
+
+GFN11 .= TGFN11+Z11+O11
+GF11  .= EGA11
+
+RITGF11.=SGF11
+%time TGF11 60
+
+# *************************************************************************
+# *** Advance Green: GA                                                 ***
+# ***  (continue):   CA                                                 ***
+# ***                  CAb (basis CA)                                   ***
+# ***                  CAv (coordination vehicles)                      ***
+# *************************************************************************
+
+
+CA11  = 0
+
+GAN11 .= CAN11+Z11+O11
+GA11  .= SG11
+
+
+
+# *************************************************************************
+# *** YeLLow: L                                                         ***
+# *************************************************************************
+
+LN11 .= TLN11
+L11  .= EG11
+
+RITL11.=SL11.HON11
+%time  TL11 30
+
+# *************************************************************************
+# *** Green: G                                                          ***
+# *************************************************************************
+
+G11   .= ER11
+
+# *************************************************************************
+# *** Red: R                                                            ***
+# *************************************************************************
+
+RN11   .=TRGN11.A11.BN11
+R11    .=EL11
+
+RITRG11.=SR11.HON11
+%time TRG11 30
+
+
+# *************************************************************************
+# *** PHASE 11  INITIALIZE VARIABLES                                    ***
+# *** all stream to red                             (R)                 ***
+# *** all streams have minimum guarantee red period (TRG)               ***
+# *** all streams have actual traffic               (Fa)                ***
+# *************************************************************************
+
+%init R11
+%init Re11
+%init TRG11
+%init Fa11
+
+# *************************************************************************
+# *** PHASE 11 EXTERN DISPLAY                                           ***
+# *************************************************************************
+
+Ge11  .=SG11
+GeN11 .=EG11
+GLe11 .=SL11
+GLeN11.=EL11
+Re11  .=SR11
+ReN11 .=ER11
+
+%export GE11  71
+%export GLE11 89
+%export RE11  82
+
+
+      </PROGRAM>
+      <CONSOLE>
+        <MAP TYPE="PNG" ENCODING="base64">
+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
+AABJRU5ErkJggg==
+        </MAP>
+        <COORDINATES>
+        <!--  mapfile=simpleTest.bmp -->
+light=08: 232, 478  232, 478
+detector=08.1: 184, 472 184, 472
+detector=08.2: 166, 472 166, 472
+light=11: 246, 380  246, 380
+detector=11.1: 240, 344 240, 344
+detector=11.2: 240, 326 240, 326
+        </COORDINATES>
+      </CONSOLE>
+    </TRAFCOD>
+  </CONTROL>
+  <SCENARIO></SCENARIO>
+
+  <RUN>
+    <RUNLENGTH>1h</RUNLENGTH>
+    <RANDOMSTREAMS>
+      <RANDOMSTREAM ID="default">
+        <REPLICATION ID="1" SEED="1" />
+      </RANDOMSTREAM>
+      <RANDOMSTREAM ID="generation">
+        <REPLICATION ID="1" SEED="1" />
+      </RANDOMSTREAM>
+    </RANDOMSTREAMS>
+  </RUN>
+
+  <ANIMATION>
+    <DEFAULTS>
+      <SHOULDER COLOR="GREEN" />
+    </DEFAULTS>
+  </ANIMATION>
+</OTS>
