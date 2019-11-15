@@ -1,0 +1,31 @@
+                   -----------------------
+                   OTS-AIMSUN
+                   -----------------------
+                   September, 2018
+                   -----------------------
+                   
+OTS - Open Traffic Simulation connection to AIMSUN
+
+	The ots-aimsun project enables model editing and model running with AIMSUN:
+
+    * network editing.
+
+    * starting and stopping of model execution.
+    
+    * viewing of animation within AIMSUN.
+      
+    * viewing of statistics within AIMSUN.
+    
+    []
+
+======
+
+	OpenTrafficSim has an open source BSD 3-clause license.
+
+    * Third party components used in OpenTrafficSim can not have a license that is more restrictive than BSD, Apache, MIT, LGPL, Eclipse.
+
+    * OpenTrafficSim can be incorporated in part or in full in other products for any use (educational, commercial, whatever).
+
+    * OpenTrafficSim may be extended, evolved by anyone into anything else for any purpose.
+	
+	[]
