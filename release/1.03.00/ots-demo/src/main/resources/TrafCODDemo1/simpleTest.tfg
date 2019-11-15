@@ -1,7 +1,0 @@
-mapfile=simpleTest.bmp
-light=08: 232, 478	232, 478
-detector=08.1: 184, 472	184, 472
-detector=08.2: 166, 472	166, 472
-light=11: 246, 380	246, 380
-detector=11.1: 240, 344	240, 344
-detector=11.2: 240, 326	240, 326
