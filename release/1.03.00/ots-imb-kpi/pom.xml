@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>1.03.00</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-imb-kpi</artifactId>
+  <name>Stand-alone OTS-KPI module for IMB </name>
+  <description>Project that can calculate KPI's received from the IMB bus</description>
+
+  <!-- Don't make javadoc crash on the missing HTML tags for generated classes -->
+  <properties>
+    <doclint>accessibility,reference,syntax</doclint>
+  </properties>
+
+  <dependencies>
+  
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-imb</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-kpi</artifactId>
+    </dependency>
+    
+  </dependencies>
+
+</project>
