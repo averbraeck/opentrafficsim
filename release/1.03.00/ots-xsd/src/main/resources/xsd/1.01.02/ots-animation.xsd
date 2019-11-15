@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+
+  <!-- http://www.w3.org/2009/01/xml.xsd -->
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../ref/xml.xsd" />
+  <!-- http://www.w3.org/2001/xinclude.xsd -->
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="../ref/xinclude.xsd" />
+
+  <xsd:include schemaLocation="ots-types.xsd" />
+
+  <xsd:complexType name="GTUCOLORERTYPE">
+    <xsd:sequence>
+      <xsd:element name="PARAMETER" type="PARAMETERTYPE" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:attribute name="ID" default="DEFAULT" use="optional">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:pattern
+            value="(\
+{0})DEFAULT|ID|SPEED|ACCELERATION" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="optional"/>
+  </xsd:complexType>
+
+  <xsd:element name="ANIMATION">
+    <xsd:complexType>
+      <xsd:choice>
+        <xsd:element name="GTUCOLORERS" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="GTUCOLORER" type="GTUCOLORERTYPE" minOccurs="1" maxOccurs="unbounded" />
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="GTUCOLORER" type="GTUCOLORERTYPE" maxOccurs="1" />
+      </xsd:choice>
+    </xsd:complexType>
+
+    <!-- Animation check marks -->
+    <!-- Network colors -->
+
+  </xsd:element>
+
+</xsd:schema>
