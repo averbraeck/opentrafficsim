@@ -1,0 +1,41 @@
+// To compile under MS-Windows to generate java output AimsunControlProtoBuf.java in this directory:
+// 1: chdir to this directory 
+// 2: Run the compiler like: protoc ots-aimsun.proto --java_out=..
+
+syntax = "proto2";
+
+package org.opentrafficsim.aimsun.proto;
+
+option java_outer_classname = "AimsunControlProtoBuf";
+
+message CreateSimulation {
+	required string networkXML = 3;
+}
+
+message SimulateUntil {
+	required double time = 1;
+}
+
+message GTUPositions {
+	message GTUPosition {
+		required string gtuId = 1;
+		required double x = 2;
+		required double y = 3;
+		optional double z = 4;
+		required double angle = 5;
+		required double width = 6;
+		required double length = 7;
+		required int32 gtuTypeId = 8;
+		required double speed = 9;
+	}
+	repeated GTUPosition gtuPos = 1;
+	required string status = 2; 
+}
+
+message OTSMessage {
+	oneof msg {
+		CreateSimulation createSimulation = 1;
+		SimulateUntil simulateUntil = 2;
+		GTUPositions gtuPositions = 3;
+	}
+}

@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>1.03.00</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-aimsun-proto</artifactId>
+  <name>OTS AIMSUN protobuf classes</name>
+  <description>OTS AIMSUN protobuf and generated Java classes</description>
+
+  <!-- 
+    Note for making changes to the proto-file and automatic compilation in Eclipse:
+  
+    If you are using Eclipse, you need to install an additional Eclipse plugin because m2e does 
+    not evaluate the extension specified in a pom.xml. Download os-maven-plugin-1.6.0.jar and 
+    put it into the <ECLIPSE_HOME>/plugins directory. The location of the jar file is:
+    http://repo1.maven.org/maven2/kr/motd/maven/os-maven-plugin/1.6.0/os-maven-plugin-1.6.0.jar
+    (os-maven-plugin is a Maven extension, a Maven plugin, and an Eclipse plugin.) 
+       
+    Alternatively, after a change, do run-as on the project, and use Maven build... 
+    specify "compile" as the Goal. Add a parameter, and use os.detected.classifier
+    as the parameter name, and e.g., windows-x86_64 as the value, or any other os classifier 
+    as described at https://github.com/trustin/os-maven-plugin 
+  -->
+  
+  <!-- Don't make javadoc crash on the missing HTML tags for generated classes -->
+  <properties>
+    <doclint>none</doclint>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- see https://www.xolstice.org/protobuf-maven-plugin/examples/protoc-artifact.html -->
+    <extensions>
+      <extension>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>1.6.0</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+      <!-- Suppress checkstyle checks on this project. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven.checkstyle.version}</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      
+      <!-- see https://www.xolstice.org/protobuf-maven-plugin/compile-mojo.html -->
+      <plugin>
+        <groupId>org.xolstice.maven.plugins</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+        <version>0.5.1</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <protocArtifact>com.google.protobuf:protoc:3.4.0:exe:${os.detected.classifier}</protocArtifact>
+              <outputDirectory>${basedir}/src/main/java</outputDirectory>
+              <clearOutputDirectory>false</clearOutputDirectory>
+              <checkStaleness>true</checkStaleness>
+              <includeDependenciesInDescriptorSet>true</includeDependenciesInDescriptorSet>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
