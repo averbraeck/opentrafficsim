@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="${artifactId} ${project.version}" xmlns="http://maven.apache.org/DECORATION/1.6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+
+  <publishDate position="left" format="dd-MM-yyyy hh:mm" />
+
+  <bannerRight>
+    <name>${artifactId} ${project.version}</name>
+  </bannerRight>
+
+  <body>
+
+   <menu name="MODULES">
+      <item name="ots" href="http://opentrafficsim.org/docs/${project.version}/index.html" />
+      <item name="ots-base" href="http://opentrafficsim.org/docs/${project.version}/ots-base/index.html" />
+      <item name="ots-core" href="http://opentrafficsim.org/docs/${project.version}/ots-core/index.html" />
+      <item name="ots-kpi" href="http://opentrafficsim.org/docs/${project.version}/ots-kpi/index.html" />
+      <item name="ots-animation" href="http://opentrafficsim.org/docs/${project.version}/ots-animation/index.html" />
+      <item name="ots-road" href="http://opentrafficsim.org/docs/${project.version}/ots-road/index.html" />
+      <item name="ots-rail" href="http://opentrafficsim.org/docs/${project.version}/ots-rail/index.html" />
+      <item name="ots-water" href="http://opentrafficsim.org/docs/${project.version}/ots-water/index.html" />
+      <item name="ots-multimodal" href="http://opentrafficsim.org/docs/${project.version}/ots-multimodal/index.html" />
+      <item name="ots-trafficcontrol" href="http://opentrafficsim.org/docs/${project.version}/ots-trafficcontrol/index.html" />
+      <item name="ots-parser-xml" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-xml/index.html" />
+      <item name="ots-parser-opendrive" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-opendrive/index.html" />
+      <item name="ots-parser-osm" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-osm/index.html" />
+      <item name="ots-parser-shape" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-shape/index.html" />
+      <item name="ots-parser-vissim" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-vissim/index.html" />
+      <item name="ots-sim0mq" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq/index.html" />
+      <item name="ots-sim0mq-kpi" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-kpi/index.html" />
+      <item name="ots-sim0mq-road" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-road/index.html" />
+      <item name="ots-sim0mq-multimodal" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-multimodal/index.html" />
+      <item name="ots-draw" href="http://opentrafficsim.org/docs/${project.version}/ots-draw/index.html" />
+      <item name="ots-swing" href="http://opentrafficsim.org/docs/${project.version}/ots-swing/index.html" />
+      <item name="ots-web" href="http://opentrafficsim.org/docs/${project.version}/ots-web/index.html" />
+      <item name="ots-demo" href="http://opentrafficsim.org/docs/${project.version}/ots-demo/index.html" />
+      <item name="ots-aimsun" href="http://opentrafficsim.org/docs/${project.version}/ots-aimsun/index.html" />
+      <item name="ots-aimsun-proto" href="http://opentrafficsim.org/docs/${project.version}/ots-aimsun-proto/index.html" />
+      <item name="ots-aimsun-demo" href="http://opentrafficsim.org/docs/${project.version}/ots-aimsun-demo/index.html" />
+    </menu>
+     
+    <menu name="API">
+      <item name="JavaDocs" href="apidocs/index.html" target="_blank" />
+    </menu>
+
+    <menu name="PROJECT REPORTS">
+      <item name="Reports" href="project-reports.html" />
+      <item name="Dependencies" href="dependencies.html" />
+      <item name="Source Xref" href="xref/index.html" target="_blank" />
+      <item name="Test JavaDocs" href="testapidocs/index.html" target="_blank" />
+      <item name="Test Xref" href="xref-test/index.html" target="_blank" />
+      <item name="Checkstyle" href="checkstyle.html" />
+      <item name="Surefire report" href="surefire-report.html" />
+      <item name="JaCoCo" href="jacoco/index.html" target="_blank" />
+      <item name="Tag List" href="taglist.html" />
+      <item name="SpotBugs" href="spotbugs.html" />
+      <item name="CPD" href="cpd.html" />
+      <item name="PMD" href="pmd.html" />
+    </menu>
+
+  </body>
+</project>
