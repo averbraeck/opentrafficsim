@@ -3,7 +3,7 @@
   <parent>
     <groupId>opentrafficsim</groupId>
     <artifactId>ots</artifactId>
-    <version>1.03.00</version>
+    <version>1.03.01-SNAPSHOT</version>
     <relativePath>../ots/pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <description>OTS XSD schema definitions for XML files</description>
 
   <properties>
-    <xsd.version>1.03.00</xsd.version>
+    <xsd.version>1.03.01-SNAPSHOT</xsd.version>
   </properties>
 
   <build>
