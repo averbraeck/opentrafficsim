@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>1.03.00</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-nissan</artifactId>
+  <name>Open Traffic Sim classes for linking to the RTI driving simulator software</name>
+  <description>Open Traffic Sim classes for linking to the RTI driving simulator software as used within Nissan Research</description>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-road</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-swing</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-parser-opendrive</artifactId>
+    </dependency>
+
+  </dependencies>
+
+</project>
