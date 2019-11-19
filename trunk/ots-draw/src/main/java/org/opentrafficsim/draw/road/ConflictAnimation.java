@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -18,6 +19,7 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Animate a conflict.
@@ -54,6 +56,11 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         Conflict conflict = this.getSource();
+//        if ((!conflict.getLane().toString().equals("Lane FORWARD1 of 6077_J8854"))
+//                && (!conflict.getOtherConflict().getLane().toString().equals("Lane FORWARD1 of 6077_J8854")))
+//        {
+//            return;
+//        }
         Color fillColor;
         switch (conflict.conflictPriority())
         {
@@ -79,18 +86,18 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
         super.paint(graphics, observer);
 
         Stroke oldStroke = graphics.getStroke();
-        
+
         BasicStroke stroke;
         float factor = conflict.isPermitted() ? .5f : 1f;
         if (conflict.getConflictType().equals(ConflictType.CROSSING))
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-                    new float[] {factor * 1.0f, factor * 2.0f}, 0.0f);
+                    new float[] { factor * 1.0f, factor * 2.0f }, 0.0f);
         }
         else
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-                    new float[] {factor * 1.0f, factor * 0.95f, factor * 0.1f, factor * 0.95f}, 0.0f);
+                    new float[] { factor * 1.0f, factor * 0.95f, factor * 0.1f, factor * 0.95f }, 0.0f);
         }
         graphics.setStroke(stroke);
         AffineTransform saveAT = graphics.getTransform();
@@ -102,6 +109,16 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
         if (conflict.getGeometry() != null)
         {
             PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getGeometry(), false);
+            // if (conflict.conflictPriority().isPriority())
+            // {
+            // graphics.setColor(Color.BLACK);
+            // DirectedPoint from = conflict.getLocation();
+            // DirectedPoint to = conflict.getOtherConflict().getLocation();
+            // System.out.println("from: " + from + ", to " + to);
+            // graphics.setStroke(new BasicStroke(0.1f));
+            // Line2D line = new Line2D.Double(0, 0, to.x - from.x, from.y - to.y);
+            // graphics.draw(line);
+            // }
         }
         if (isRotate() && angle != 0.0)
         {
