@@ -430,7 +430,7 @@ public final class ConflictBuilder
                     {
                         SimLogger.always().warn("NOT YET Fixing fractions of crossing conflict");
                     }
-                    buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction2(), lane2, dir2, f2Start, f2End,
+                    buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start, f2End,
                             gtuType, simulator, widthGenerator, permitted);
                     f1Start = Double.NaN;
                     f2Start = Double.NaN;
