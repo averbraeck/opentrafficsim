@@ -122,7 +122,7 @@
                     </xsd:element>
                     <xsd:element name="PROGRAMFILE" type="xsd:anyURI" />
                   </xsd:choice>
-                  <xsd:element name="CONSOLE" minOccurs="0" maxOccurs="1">
+                  <xsd:element name="CONSOLE">
                     <xsd:complexType>
                       <xsd:sequence>
                         <xsd:choice>
