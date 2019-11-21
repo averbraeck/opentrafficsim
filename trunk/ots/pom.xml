@@ -71,7 +71,7 @@
     <ots.version>${project.version}</ots.version>
     <djunits.version>4.01.03</djunits.version>
     <djutils.version>1.03.02</djutils.version>
-    <dsol.version>3.03.12</dsol.version>
+    <dsol.version>3.03.14</dsol.version>
     <sim0mq.version>2.00.01</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>
@@ -88,7 +88,7 @@
     <xstream.version>1.4.10</xstream.version>
     <powermock.version>2.0.4</powermock.version>
     <protobuf.version>3.4.0</protobuf.version>
-    <jaxb.version>2.3.0</jaxb.version>
+    <jaxb.version>2.3.1</jaxb.version>
 
     <maven.compiler.version>3.8.1</maven.compiler.version>
     <maven.site.version>3.8.2</maven.site.version>
@@ -1158,8 +1158,14 @@
         <artifactId>jaxb-api</artifactId>
         <version>${jaxb.version}</version>
       </dependency>
-    
+
       <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>${jaxb.version}</version>
+      </dependency>
+    
+      <!-- dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-core</artifactId>
         <version>${jaxb.version}</version>
@@ -1169,7 +1175,7 @@
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
         <version>${jaxb.version}</version>
-      </dependency>
+      </dependency -->
 
     </dependencies>
   </dependencyManagement>
