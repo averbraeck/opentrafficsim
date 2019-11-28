@@ -268,6 +268,7 @@ public final class ConflictBuilder
         }
 
         // Get left and right lines at specified width
+        // TODO: we cache, but the width generator may be different
         OTSLine3D left1 = leftEdges.get(lane1);
         OTSLine3D right1 = rightEdges.get(lane1);
         if (null == left1)
