@@ -373,7 +373,6 @@ public class LaneChange implements Serializable
 
         OTSLine3D path = this.laneChangePath.getPath(timeStep, planDistance, meanSpeed, fromAdjusted, startPosition,
                 laneChangeDirection, fromLine, toLine, Duration.instantiateSI(laneChangeDuration), this.fraction);
-
         // update
         // TODO: this assumes the time step will not be interrupted
         this.fraction += timeStep.si / laneChangeDuration; // the total fraction this step increases
@@ -817,7 +816,8 @@ public class LaneChange implements Serializable
                 double distFromTo = Math.sqrt(dx * dx + dy * dy);
                 double startLateralFraction = distFromLoc / distFromTo;
                 // Location is not on path in z-direction, so using .distance() create bugs 
-                if (startLateralFraction > 1.0)
+                // PK: added test for NaN (which occurs when fromLine and toLine start on top of each other.
+                if (Double.isNaN(startLateralFraction) || startLateralFraction > 1.0)
                 {
                     startLateralFraction = 1.0;
                 }
