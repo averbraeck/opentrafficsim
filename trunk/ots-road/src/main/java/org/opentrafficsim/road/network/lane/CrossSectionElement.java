@@ -138,13 +138,13 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         DirectedPoint linkFrom = Try.assign(() -> parentLink.getStartNode().getLocation(), "Cannot happen");
         double fromDirection = linkFrom.getRotZ();
         points.remove(0);
-        points.add(0, new OTSPoint3D(linkFrom.x + getDesignLineOffsetAtBegin().getSI() * Math.cos(fromDirection + Math.PI / 2), 
+        points.add(0, new OTSPoint3D(linkFrom.x + getDesignLineOffsetAtBegin().getSI() * Math.cos(fromDirection + Math.PI / 2),
                 linkFrom.y + getDesignLineOffsetAtBegin().getSI() * Math.sin(fromDirection + Math.PI / 2)));
         // Make position at end exact
         DirectedPoint linkTo = Try.assign(() -> parentLink.getEndNode().getLocation(), "Cannot happen");
         double toDirection = linkTo.getRotZ();
         points.remove(points.size() - 1);
-        points.add(new OTSPoint3D(linkTo.x + getDesignLineOffsetAtEnd().getSI() * Math.cos(toDirection + Math.PI / 2), 
+        points.add(new OTSPoint3D(linkTo.x + getDesignLineOffsetAtEnd().getSI() * Math.cos(toDirection + Math.PI / 2),
                 linkTo.y + getDesignLineOffsetAtEnd().getSI() * Math.sin(toDirection + Math.PI / 2)));
         // Check direction at begin
         double direction = points.get(0).horizontalDirectionSI(points.get(1));
@@ -154,8 +154,9 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             // Insert an extra point to ensure that the new CrossSectionElement starts off in the right direction
             OTSPoint3D from = points.get(0);
             OTSPoint3D next = points.get(1);
-            double distance = from.horizontalDistanceSI(next) * FIXUPPOINTPROPORTION;
-            extraPointAfterStart = new OTSPoint3D(from.x + Math.cos(fromDirection) * distance, 
+            double distance =
+                    Math.min(from.horizontalDistanceSI(next) * FIXUPPOINTPROPORTION, crossSectionSlices.get(0).getWidth().si);
+            extraPointAfterStart = new OTSPoint3D(from.x + Math.cos(fromDirection) * distance,
                     from.y + Math.sin(fromDirection) * distance, from.z + FIXUPPOINTPROPORTION * (next.z - from.z));
             // Do not insert it yet because that could cause a similar point near the end to be put at the wrong distance
         }
@@ -167,8 +168,9 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             // Insert an extra point to ensure that the new CrossSectionElement ends in the right direction
             OTSPoint3D to = points.get(pointCount - 1);
             OTSPoint3D before = points.get(pointCount - 2);
-            double distance = before.horizontalDistanceSI(to) * FIXUPPOINTPROPORTION;
-            points.add(pointCount - 1, new OTSPoint3D(to.x - Math.cos(toDirection) * distance, 
+            double distance = Math.min(before.horizontalDistanceSI(to) * FIXUPPOINTPROPORTION,
+                    crossSectionSlices.get(Math.max(0, crossSectionSlices.size() - 2)).getWidth().si);
+            points.add(pointCount - 1, new OTSPoint3D(to.x - Math.cos(toDirection) * distance,
                     to.y - Math.sin(toDirection) * distance, to.z - FIXUPPOINTPROPORTION * (before.z - to.z)));
         }
         if (null != extraPointAfterStart)
@@ -292,7 +294,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             {
                 // TODO: this produces near-duplicate points on lane 925_J1.FORWARD1 in the Aimsun network
                 // hack: clean nearby points
-                OTSLine3D line = designLine.offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
+                OTSLine3D line =
+                        designLine.offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
                 List<OTSPoint3D> points = new ArrayList<>(Arrays.asList(line.getPoints()));
                 Iterator<OTSPoint3D> it = points.iterator();
                 OTSPoint3D prevPoint = null;
