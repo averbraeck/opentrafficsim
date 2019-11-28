@@ -780,10 +780,10 @@ public final class ConflictBuilder
                 throws OTSGeometryException
         {
             SortedSet<Intersection> out = new TreeSet<>();
-            if (!line1.getBounds().intersect(line2.getBounds()))
-            {
-                return out;
-            }
+            // if (!line1.getBounds().intersect(line2.getBounds()))
+            // {
+            // return out;
+            // }
             double cumul1 = 0.0;
             OTSPoint3D start1 = null;
             OTSPoint3D end1 = line1.get(0);
