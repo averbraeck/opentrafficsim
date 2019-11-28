@@ -8,7 +8,6 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Colors;
 import org.opentrafficsim.core.network.factory.xml.units.Directions;
-import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -71,7 +70,7 @@ class LaneOverrideTag implements Serializable
 
         if (attributes.getNamedItem("SPEED") != null)
         {
-            laneOverrideTag.speed = SpeedUnits.parseSpeed(attributes.getNamedItem("SPEED").getNodeValue().trim());
+            laneOverrideTag.speed = Speed.valueOf(attributes.getNamedItem("SPEED").getNodeValue().trim());
         }
 
         if (attributes.getNamedItem("DIRECTION") != null)

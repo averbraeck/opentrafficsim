@@ -4,13 +4,14 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.ValueRuntimeException;
@@ -18,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -40,7 +40,8 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
+import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
@@ -199,15 +200,14 @@ public class A58IMB extends OTSSimulationApplication<A58Model>
 
             // Stream to allow the xml-file to be retrievable from a JAR file
             InputStream stream = URLResource.getResourceAsStream("/A58v2.xml");
-            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
             try
             {
-                nlp.build(stream, this.network, true);
+                XmlNetworkLaneParser.build(stream, this.network, this.simulator);
                 // ODMatrixTrips matrix = A58ODfactory.get(network);
                 // A58ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueRuntimeException | ParameterException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
+                    | ValueRuntimeException | JAXBException | URISyntaxException | XmlParserException exception)
             {
                 exception.printStackTrace();
             }

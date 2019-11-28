@@ -8,14 +8,13 @@ import java.util.List;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.storage.StorageType;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.network.factory.xml.units.DurationUnits;
-import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -156,7 +155,7 @@ public class DemandTag implements Serializable
                     Node timeNode = levelAttributes.getNamedItem("TIME");
                     Throw.when(timeNode == null, XmlParserException.class, "A LEVEL tag is missing attribute TIME.");
                     String timeString = timeNode.getNodeValue().trim();
-                    Time time = Try.assign(() -> TimeUnits.parseTime(timeString), XmlParserException.class,
+                    Time time = Try.assign(() -> Time.valueOf(timeString), XmlParserException.class,
                             "Unable to parse %s as time.", timeString);
                     timeList.add(time.si);
                 }
@@ -169,7 +168,7 @@ public class DemandTag implements Serializable
                 if (tag.demandType.equals(DemandType.TIMED_FREQUENCIES) || tag.demandType.equals(DemandType.FREQUENCIES))
                 {
                     String valueString = valueNode.getNodeValue().trim().toLowerCase();
-                    valueList.add(Try.assign(() -> DurationUnits.parseFrequency(valueString.replace("veh", "")).getInUnit(UNIT),
+                    valueList.add(Try.assign(() -> Frequency.valueOf(valueString.replace("veh", "")).getInUnit(UNIT),
                             "Unable to parse %s as frequency.", valueString));
                 }
             }

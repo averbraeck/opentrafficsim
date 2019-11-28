@@ -30,7 +30,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
-import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
@@ -304,7 +303,7 @@ public class XmlOdParser implements Serializable
                 NamedNodeMap timeAttributes = timeNode.getAttributes();
                 Node valueNode = timeAttributes.getNamedItem("VALUE");
                 Throw.when(valueNode == null, XmlParserException.class, "LEVEL tag is missing VALUE attribute.");
-                timeSet.add(Try.assign(() -> TimeUnits.parseTime(valueNode.getNodeValue()), XmlParserException.class,
+                timeSet.add(Try.assign(() -> Time.valueOf(valueNode.getNodeValue()), XmlParserException.class,
                         "Unable to parse time %s.", valueNode.getNodeValue()));
             }
         }

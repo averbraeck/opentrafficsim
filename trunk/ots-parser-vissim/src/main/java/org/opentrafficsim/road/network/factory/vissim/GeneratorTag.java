@@ -18,7 +18,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
-import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -240,12 +239,12 @@ class GeneratorTag implements Serializable
 
         if (attributes.getNamedItem("STARTTIME") != null)
         {
-            generatorTag.startTime = TimeUnits.parseTime(attributes.getNamedItem("STARTTIME").getNodeValue());
+            generatorTag.startTime = Time.valueOf(attributes.getNamedItem("STARTTIME").getNodeValue());
         }
 
         if (attributes.getNamedItem("ENDTIME") != null)
         {
-            generatorTag.endTime = TimeUnits.parseTime(attributes.getNamedItem("ENDTIME").getNodeValue());
+            generatorTag.endTime = Time.valueOf(attributes.getNamedItem("ENDTIME").getNodeValue());
         }
 
         int numberRouteTags = 0;

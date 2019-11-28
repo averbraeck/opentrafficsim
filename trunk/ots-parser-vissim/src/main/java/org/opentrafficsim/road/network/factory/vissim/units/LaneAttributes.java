@@ -6,7 +6,6 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.factory.vissim.VissimNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
@@ -95,7 +94,7 @@ public final class LaneAttributes
             {
                 throw new NetworkException("Speed in overtaking conditions string: '" + ocStr + "' not coded right");
             }
-            Speed speed = SpeedUnits.parseSpeed(ocStr.substring(lb + 1, rb));
+            Speed speed = Speed.valueOf(ocStr.substring(lb + 1, rb));
             return new OvertakingConditions.LeftAlwaysRightSpeed(speed);
         }
         else if (ocStr.startsWith("RIGHTALWAYS LEFTSPEED"))
@@ -106,7 +105,7 @@ public final class LaneAttributes
             {
                 throw new NetworkException("Speed in overtaking conditions string: '" + ocStr + "' not coded right");
             }
-            Speed speed = SpeedUnits.parseSpeed(ocStr.substring(lb + 1, rb));
+            Speed speed = Speed.valueOf(ocStr.substring(lb + 1, rb));
             return new OvertakingConditions.RightAlwaysLeftSpeed(speed);
         }
         else if (ocStr.startsWith("LEFTSET"))
@@ -130,7 +129,7 @@ public final class LaneAttributes
                 {
                     throw new NetworkException("Speed in overtaking conditions string: '" + ocStr + "' not coded right");
                 }
-                Speed speed = SpeedUnits.parseSpeed(ocStr.substring(lb + 1, rb));
+                Speed speed = Speed.valueOf(ocStr.substring(lb + 1, rb));
                 return new OvertakingConditions.LeftSetRightSpeed(overtakingGTUs, overtakenGTUs, speed);
             }
             return new OvertakingConditions.LeftSet(overtakingGTUs, overtakenGTUs);
@@ -156,7 +155,7 @@ public final class LaneAttributes
                 {
                     throw new NetworkException("Speed in overtaking conditions string: '" + ocStr + "' not coded right");
                 }
-                Speed speed = SpeedUnits.parseSpeed(ocStr.substring(lb + 1, rb));
+                Speed speed = Speed.valueOf(ocStr.substring(lb + 1, rb));
                 return new OvertakingConditions.RightSetLeftSpeed(overtakingGTUs, overtakenGTUs, speed);
             }
             return new OvertakingConditions.RightSet(overtakingGTUs, overtakenGTUs);
