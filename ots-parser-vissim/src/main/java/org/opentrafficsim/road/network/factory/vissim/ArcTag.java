@@ -6,8 +6,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
-import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -75,14 +73,14 @@ class ArcTag implements Serializable
         {
             throw new SAXException("ARC: missing attribute RADIUS");
         }
-        linkTag.arcTag.radius = LengthUnits.parseLength(radius.getNodeValue());
+        linkTag.arcTag.radius = Length.valueOf(radius.getNodeValue());
 
         Node angle = arcAttributes.getNamedItem("ANGLE");
         if (angle == null)
         {
             throw new SAXException("ARC: missing attribute ANGLE");
         }
-        linkTag.arcTag.angle = AngleUnits.parseDirection(angle.getNodeValue());
+        linkTag.arcTag.angle = Direction.valueOf(angle.getNodeValue());
 
         Node dirNode = arcAttributes.getNamedItem("DIRECTION");
         if (dirNode == null)

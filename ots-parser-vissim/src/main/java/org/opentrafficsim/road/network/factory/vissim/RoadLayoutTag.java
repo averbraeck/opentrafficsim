@@ -9,8 +9,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
-import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.factory.vissim.units.LaneAttributes;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
@@ -198,7 +196,7 @@ class RoadLayoutTag implements Serializable
         Node width = attributes.getNamedItem("WIDTH");
         if (width != null)
         {
-            roadLayoutTag.defaultLaneWidth = LengthUnits.parseLength(width.getNodeValue());
+            roadLayoutTag.defaultLaneWidth = Length.valueOf(width.getNodeValue());
         }
 
         Node lkp = attributes.getNamedItem("LANEKEEPING");
@@ -240,7 +238,7 @@ class RoadLayoutTag implements Serializable
                 throw new NetworkException("ROADLAYOUT.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuType.getId()
                         + ": LEGALSPEEDLIMIT not defined");
             }
-            Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
+            Speed speed = Speed.valueOf(speedNode.getNodeValue().trim());
 
             roadLayoutTag.legalSpeedLimits.put(gtuType, speed);
         }

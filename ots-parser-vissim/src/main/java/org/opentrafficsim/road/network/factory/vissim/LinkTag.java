@@ -19,7 +19,6 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Coordinates;
-import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -657,7 +656,7 @@ final class LinkTag implements Serializable
         if (posStr.trim().startsWith("END-"))
         {
             String s = posStr.substring(4).trim();
-            double offset = LengthUnits.parseLength(s).getSI();
+            double offset = Length.valueOf(s).getSI();
             if (offset > length)
             {
                 throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
@@ -666,7 +665,7 @@ final class LinkTag implements Serializable
             return new Length(length - offset, LengthUnit.METER);
         }
 
-        Length offset = LengthUnits.parseLength(posStr);
+        Length offset = Length.valueOf(posStr);
         if (offset.getSI() > length)
         {
             throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr + " invalid for lane "

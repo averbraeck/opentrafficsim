@@ -15,8 +15,6 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Colors;
 import org.opentrafficsim.core.network.factory.xml.units.Directions;
-import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
-import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -205,7 +203,7 @@ class CrossSectionElementTag implements Serializable
 
         if (attributes.getNamedItem("OFFSET") != null)
         {
-            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+            cseTag.offset = Length.valueOf(attributes.getNamedItem("OFFSET").getNodeValue());
         }
         else
         {
@@ -214,7 +212,7 @@ class CrossSectionElementTag implements Serializable
 
         if (attributes.getNamedItem("WIDTH") != null)
         {
-            cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
+            cseTag.width = Length.valueOf(attributes.getNamedItem("WIDTH").getNodeValue());
         }
         else if (roadLayoutTag.defaultLaneWidth != null)
         {
@@ -256,7 +254,7 @@ class CrossSectionElementTag implements Serializable
                 throw new NetworkException("ROADLAYOUT.LANE.SPEEDLIMIT: " + roadLayoutTag.name + " GTUTYPE " + gtuType.getId()
                         + ": LEGALSPEEDLIMIT not defined");
             }
-            Speed speed = SpeedUnits.parseSpeed(speedNode.getNodeValue().trim());
+            Speed speed = Speed.valueOf(speedNode.getNodeValue().trim());
 
             cseTag.legalSpeedLimits.put(gtuType, speed);
         }
@@ -353,7 +351,7 @@ class CrossSectionElementTag implements Serializable
 
         if (attributes.getNamedItem("OFFSET") != null)
         {
-            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+            cseTag.offset = Length.valueOf(attributes.getNamedItem("OFFSET").getNodeValue());
         }
         else
         {
@@ -362,7 +360,7 @@ class CrossSectionElementTag implements Serializable
 
         if (attributes.getNamedItem("WIDTH") != null)
         {
-            cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
+            cseTag.width = Length.valueOf(attributes.getNamedItem("WIDTH").getNodeValue());
         }
         else if (roadLayoutTag.defaultLaneWidth != null)
         {
@@ -426,7 +424,7 @@ class CrossSectionElementTag implements Serializable
 
         if (attributes.getNamedItem("OFFSET") != null)
         {
-            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+            cseTag.offset = Length.valueOf(attributes.getNamedItem("OFFSET").getNodeValue());
         }
         else
         {
@@ -435,7 +433,7 @@ class CrossSectionElementTag implements Serializable
 
         if (attributes.getNamedItem("WIDTH") != null)
         {
-            cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
+            cseTag.width = Length.valueOf(attributes.getNamedItem("WIDTH").getNodeValue());
         }
         else if (roadLayoutTag.defaultLaneWidth != null)
         {
@@ -504,7 +502,7 @@ class CrossSectionElementTag implements Serializable
 
         if (attributes.getNamedItem("OFFSET") != null)
         {
-            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+            cseTag.offset = Length.valueOf(attributes.getNamedItem("OFFSET").getNodeValue());
         }
         else
         {
@@ -513,7 +511,7 @@ class CrossSectionElementTag implements Serializable
 
         if (attributes.getNamedItem("WIDTH") != null)
         {
-            cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
+            cseTag.width = Length.valueOf(attributes.getNamedItem("WIDTH").getNodeValue());
         }
         else
         {
