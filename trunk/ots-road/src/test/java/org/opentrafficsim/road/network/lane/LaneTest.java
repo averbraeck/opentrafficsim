@@ -40,6 +40,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -86,7 +87,7 @@ public class LaneTest implements UNITS
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         CrossSectionLink link =
-                new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.ROAD),
+                new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
                         new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
@@ -118,7 +119,6 @@ public class LaneTest implements UNITS
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // TODO: This test for expectedLateralCenterOffset fails
-        /*-
         for (int i = 0; i < 10; i++)
         {
             double expectedLateralCenterOffset =
@@ -145,7 +145,6 @@ public class LaneTest implements UNITS
             assertEquals("Right edge at " + longitudinalPosition + " should be " + expectedRightOffset, expectedRightOffset,
                     lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(), 0.001);
         }
-        */
 
         // Harder case; create a Link with form points along the way
         // System.out.println("Constructing Link and Lane with one form point");
@@ -153,17 +152,20 @@ public class LaneTest implements UNITS
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(200, 100);
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
-        // FIXME what overtaking conditions do we ant to test in this unit test?
+        link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo,
+                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(coordinates), simulator,
+                LaneKeepingPolicy.KEEPRIGHT);
+        // FIXME what overtaking conditions do we want to test in this unit test?
         lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
-        assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size());
-        assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
+        assertEquals("PrevLanes should contain one lane from the other link", 1, lane.prevLanes(gtuTypeCar).size());
+        assertEquals("NextLanes should contain one lane from the other link", 1, lane.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour = 2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(coordinates[2]))
                 + startWidth.getSI() + endWidth.getSI();
+        // System.out.println("contour of lane is " + lane.getContour());
+        // System.out.println(lane.getContour().toPlot());
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
-                lane.getContour().getLengthSI(), 4); // This lane takes a path that is about 3m longer
+                lane.getContour().getLengthSI(), 4); // This lane takes a path that is about 3m longer than the design line
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // System.out.println("Add another Lane at the inside of the corner in the design line");
