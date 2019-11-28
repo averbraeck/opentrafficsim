@@ -154,7 +154,7 @@ public final class ODParser
                     }
                     if (!destinations.contains(otsNetwork.getNode(demand.getDESTINATION())))
                     {
-                        Node destinationNode = otsNetwork.getNode(demand.getORIGIN());
+                        Node destinationNode = otsNetwork.getNode(demand.getDESTINATION());
                         if (null == destinationNode)
                         {
                             CategoryLogger.filter(Cat.PARSER).trace("Parse demand: cannot find destination {}",
