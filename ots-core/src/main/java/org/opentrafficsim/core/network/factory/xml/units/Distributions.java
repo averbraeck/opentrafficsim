@@ -147,10 +147,10 @@ public final class Distributions
         String[] s1 = s.split("\\(");
         String ds = s1[0];
         String[] s2 = s1[1].split("\\)");
-        String unit = LengthUnits.parseLengthUnit(s2[1]);
+        String unit = s2[1].trim();
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(dist, LengthUnits.LENGTH_UNITS.get(unit));
+        return new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(dist, LengthUnit.BASE.getUnitByAbbreviation(unit));
     }
 
     /**
@@ -165,11 +165,11 @@ public final class Distributions
         String[] s1 = s.split("\\(");
         String ds = s1[0];
         String[] s2 = s1[1].split("\\)");
-        String unit = LengthUnits.parseLengthUnit(s2[1]);
+        String unit = s2[1].trim();
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
         return new ContinuousDistDoubleScalar.Abs<Position, PositionUnit, LengthUnit>(dist,
-                PositionUnits.POSITION_UNITS.get(unit));
+                PositionUnit.BASE.getUnitByAbbreviation(unit));
     }
 
     /**
@@ -184,10 +184,10 @@ public final class Distributions
         String[] s1 = s.split("\\(");
         String ds = s1[0];
         String[] s2 = s1[1].split("\\)");
-        String unit = DurationUnits.parseDurationUnit(s2[1]);
+        String unit = s2[1].trim();
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new ContinuousDistDoubleScalar.Rel<Duration, DurationUnit>(dist, DurationUnits.DURATION_UNITS.get(unit));
+        return new ContinuousDistDoubleScalar.Rel<Duration, DurationUnit>(dist, DurationUnit.BASE.getUnitByAbbreviation(unit));
     }
 
     /**
@@ -202,10 +202,11 @@ public final class Distributions
         String[] s1 = s.split("\\(");
         String ds = s1[0];
         String[] s2 = s1[1].split("\\)");
-        String unit = TimeUnits.parseTimeUnit(s2[1]);
+        String unit = s2[1].trim();
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit>(dist, TimeUnits.TIME_UNITS.get(unit));
+        return new ContinuousDistDoubleScalar.Abs<Time, TimeUnit, DurationUnit>(dist,
+                TimeUnit.BASE.getUnitByAbbreviation(unit));
     }
 
     /**
@@ -219,10 +220,10 @@ public final class Distributions
         String[] s1 = s.split("\\(");
         String ds = s1[0];
         String[] s2 = s1[1].split("\\)");
-        String unit = SpeedUnits.parseSpeedUnit(s2[1]);
+        String unit = s2[1].trim();
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(dist, SpeedUnits.SPEED_UNITS.get(unit));
+        return new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(dist, SpeedUnit.BASE.getUnitByAbbreviation(unit));
     }
 
 }
