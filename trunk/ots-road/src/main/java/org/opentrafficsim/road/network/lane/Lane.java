@@ -1446,7 +1446,7 @@ public class Lane extends CrossSectionElement implements Serializable
                             Lane lane = (Lane) cse;
                             Length jumpToStart = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
                             Length jumpToEnd = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
-                            // this, parentLink <--- O ---> lane, link
+                            // lane, link <---- O ----> this, parentLink
                             if (jumpToStart.lt(MARGIN) && jumpToStart.lt(jumpToEnd)
                                     && link.getStartNode().equals(getParentLink().getStartNode()))
                             {
@@ -1462,7 +1462,7 @@ public class Lane extends CrossSectionElement implements Serializable
                                     laneMap.put(lane, GTUDirectionality.DIR_MINUS);
                                 }
                             }
-                            // this, parentLink <--- O <--- lane, link
+                            // lane, link ----> O ----> this, parentLink
                             else if (jumpToEnd.lt(MARGIN) && jumpToEnd.lt(jumpToStart)
                                     && link.getEndNode().equals(getParentLink().getStartNode()))
                             {
