@@ -2,6 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -965,6 +966,20 @@ public class OTSLine3DTest
             expectedSize = 2 + (steps - 1) / 3;
             assertEquals("filtering with a filter slightly larger than twice the length of each segment should return a "
                     + "line with " + expectedSize + " points", expectedSize, filteredLine.size());
+            // Special case where start and end point are equal and all intermediate points are within the margin
+            points.clear();
+            points.add(from);
+            for (int i = 1; i < 10; i++)
+            {
+                points.add(new OTSPoint3D(from.x + 0.0001 * i, from.y + 0.0001 * i, from.z));
+            }
+            points.add(from);
+            line = new OTSLine3D(points);
+            filteredLine = line.noiseFilteredLine(0.2);
+            assertEquals("filter returns line of three points", 3, filteredLine.getPoints().length);
+            assertEquals("first point matches", from, filteredLine.getPoints()[0]);
+            assertEquals("last point matches", from, filteredLine.getPoints()[filteredLine.getPoints().length - 1]);
+            assertNotEquals("intermediate point differs from first point", from, filteredLine.getPoints()[1]);
         }
     }
 
@@ -972,7 +987,6 @@ public class OTSLine3DTest
      * Tests the fractional projection method.
      * @throws OTSGeometryException should not happen (if it does, this test has failed)
      */
-    // TODO: FAILS
     @Test
     public final void testFractionalProjection() throws OTSGeometryException
     {
