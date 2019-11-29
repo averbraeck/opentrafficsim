@@ -210,4 +210,5 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
         }
         return tryParentsOfGTUType ? LongitudinalDirectionality.DIR_NONE : null;
     }
+    
 }
