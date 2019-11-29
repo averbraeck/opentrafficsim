@@ -305,6 +305,6 @@ public class OTSShape extends OTSLine3D
     @Override
     public final String toString()
     {
-        return "OTSShape [shape=" + this.shape + "]";
+        return "OTSShape [shape=" + super.toString() + "]";
     }
 }
