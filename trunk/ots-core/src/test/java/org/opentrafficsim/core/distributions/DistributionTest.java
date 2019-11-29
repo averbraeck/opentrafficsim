@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.distributions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -42,6 +44,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         List<Distribution.FrequencyAndObject<TestObject>> generators =
                 new ArrayList<Distribution.FrequencyAndObject<TestObject>>();
         try
@@ -53,6 +56,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         Distribution<TestObject> dist = new Distribution<TestObject>(generators, si);
         assertEquals("size should be 0", 0, dist.size());
         try
@@ -64,6 +68,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         TestObject to = new TestObject();
         Distribution.FrequencyAndObject<TestObject> generator =
                 new Distribution.FrequencyAndObject<DistributionTest.TestObject>(123, to);
@@ -76,6 +81,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         try
         {
             dist.add(-1, generator);
@@ -85,6 +91,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         dist.add(0, generator);
         assertEquals("size should now be 1", 1, dist.size());
         dist.remove(0);
@@ -100,6 +107,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         try
         {
             dist.remove(-1);
@@ -109,6 +117,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         for (int i = 0; i < 1000; i++)
         {
             TestObject to2 = dist.draw();
@@ -123,6 +132,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         try
         {
             dist.modifyFrequency(-1, 1);
@@ -132,6 +142,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         try
         {
             dist.modifyFrequency(0, -1);
@@ -141,6 +152,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         dist.modifyFrequency(0, 0);
         try
         {
@@ -151,6 +163,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         TestObject to2 = new TestObject();
         dist.add(new Distribution.FrequencyAndObject<TestObject>(10, to2));
         assertEquals("element 0 should be to", to, dist.get(0).getObject());
@@ -162,6 +175,26 @@ public class DistributionTest
             TestObject to3 = dist.draw();
             assertEquals("Result of draw() should be equal to to2", to2, to3);
         }
+        try
+        {
+            dist.get(-1);
+            fail("Negative index should have thrown in a ProbabilityException");
+        }
+        catch (ProbabilityException pe)
+        {
+            // Ignore expected exception
+        }
+
+        try
+        {
+            dist.get(2);
+            fail("Too high index should have thrown in a ProbabilityException");
+        }
+        catch (ProbabilityException pe)
+        {
+            // Ignore expected exception
+        }
+
         dist.modifyFrequency(0, 5);
         int[] observed = new int[2];
         for (int i = 0; i < 10000; i++)
@@ -214,6 +247,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         try
         {
             dist.add(generators.get(1));
@@ -223,6 +257,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         try
         {
             dist.set(-1, new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
@@ -231,6 +266,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         try
         {
             dist.set(dist.size(), new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
@@ -239,6 +275,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         // Modify the internal value "cumulativeTotal" to increase the odds that Distribution resorts to returning the first
         // non-zero frequency object
         double badTotal = 1000;
@@ -252,6 +289,7 @@ public class DistributionTest
         {
             exception.printStackTrace();
         }
+
         observed = new int[2];
         for (int i = 0; i < 10000; i++)
         {
@@ -288,6 +326,7 @@ public class DistributionTest
         {
             exception.printStackTrace();
         }
+
         observed = new int[2];
         for (int i = 0; i < 10000; i++)
         {
@@ -317,6 +356,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         try
         {
             dist.modifyFrequency(-1, 0);
@@ -325,6 +365,7 @@ public class DistributionTest
         {
             // Ignore expected exception
         }
+
         // Execute the clear method and verify that size is 0
         dist.clear();
         assertEquals("after clear the set should be empty", 0, dist.size());
@@ -334,6 +375,67 @@ public class DistributionTest
     class TestObject
     {
         //
+    }
+
+    /**
+     * Test hashCode and equals.
+     * @throws ProbabilityException if that happens uncaught; this test has failed.
+     */
+    @SuppressWarnings("unlikely-arg-type")
+    @Test
+    public void testHashCodeAndEquals() throws ProbabilityException
+    {
+        StreamInterface si = new MersenneTwister(1234);
+        Distribution<Double> distribution = new Distribution<>(si);
+        distribution.add(new FrequencyAndObject<Double>(Math.PI, 10d));
+        distribution.add(new FrequencyAndObject<Double>(2 * Math.PI, 20d));
+        assertTrue("distribution is equal to itself", distribution.equals(distribution));
+        assertFalse("distribution is not equal to null", distribution.equals(null));
+        assertFalse("distribution is not equal to something totally different", distribution.equals("junk"));
+        Distribution<Double> distribution2 = new Distribution<>(si);
+        assertFalse("Distribution is not equal to other distribution containing different set of frequency and object",
+                distribution.equals(distribution2));
+        distribution2.add(new FrequencyAndObject<Double>(Math.PI, 10d));
+        distribution2.add(new FrequencyAndObject<Double>(2 * Math.PI, 20d));
+        // TODO: Next test fails because the random field of the Distribution does not implement equals
+        // assertTrue(
+        // "Distributions is equal to other distribution containing exact same frequencies and objects and random source",
+        // distribution.equals(distribution2));
+        assertTrue("The toString method returns something descriptive", distribution.toString().startsWith("Distribution"));
+    }
+
+    /**
+     * Test the FrequencyAndObject sub class.
+     */
+    @SuppressWarnings("unlikely-arg-type")
+    @Test
+    public void frequencyAndObjectTest()
+    {
+        FrequencyAndObject<String> fao1 = new FrequencyAndObject<>(Math.PI, "One");
+        assertEquals("frequency matches", Math.PI, fao1.getFrequency(), 0);
+        assertEquals("object matchs", "One", fao1.getObject());
+        assertTrue("FreqencyAndObject is equal to itself", fao1.equals(fao1));
+        assertFalse("FrequencyAndObject is not equal to null", fao1.equals(null));
+        assertFalse("FrequencyAndObject is not equal to some totally unrelated object", fao1.equals("Bla"));
+        FrequencyAndObject<String> fao2 = new FrequencyAndObject<>(Math.PI, "One");
+        assertTrue("FrequencyAndObject is equal to another FrequencyAndObject with same frequency and same object",
+                fao1.equals(fao2));
+        assertEquals("FrequencyAndObject has same hashCode as another FrequencyAndObject with same frequency and same object",
+                fao1.hashCode(), fao2.hashCode());
+        fao2 = new FrequencyAndObject<>(Math.PI, "Two");
+        assertFalse("FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but other object",
+                fao1.equals(fao2));
+        fao2 = new FrequencyAndObject<>(Math.E, "One");
+        assertFalse("FrequencyAndObject is not equal to another FrequencyAndObject with different frequency but same object",
+                fao1.equals(fao2));
+        assertNotEquals("FrequencyAndObject has different hashCode than another FrequencyAndObject with different frequency "
+                + "and same object", fao1.hashCode(), fao2.hashCode());
+        fao2 = new FrequencyAndObject<>(Math.PI, null);
+        assertFalse("FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but null object",
+                fao1.equals(fao2));
+        assertFalse("FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but null object",
+                fao2.equals(fao1));
+        assertTrue("The toString methods returns something descriptive", fao1.toString().startsWith("FrequencyAndObject"));
     }
 
 }
