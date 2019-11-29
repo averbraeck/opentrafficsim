@@ -2,6 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -109,6 +110,19 @@ public class OTSShapeTest
         partlyOutRect = new Rectangle2D.Double(5, 5, 1, 30);
         assertFalse("Rectangle is not fully inside shape", s.contains(partlyOutRect));
         assertTrue("toString result contains class name", s.toString().contains("OTSShape"));
+        path.closePath();
+        OTSShape s2 = new OTSShape(path);
+        System.out.println("s:  " + s);
+        System.out.println("s2: " + s2);
+        assertNotEquals("shape from closed path is not equal to shape from unclosed path", s, s2);
+        assertEquals("Size of shape from closed path is one longer than size of shape from unclosed path", s.size() + 1,
+                s2.size());
+        for (int index = 0; index < s.size(); index++)
+        {
+            assertEquals("point at index matches", s.getCoordinates()[index], s2.getCoordinates()[index]);
+        }
+        assertEquals("Last coordinate of closed shape equals first coordinate", s2.getCoordinates()[0],
+                s2.getCoordinates()[s2.size() - 1]);
     }
 
     /**
