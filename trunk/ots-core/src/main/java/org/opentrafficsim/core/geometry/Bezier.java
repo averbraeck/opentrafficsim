@@ -283,31 +283,4 @@ public final class Bezier
         return f;
     }
 
-    /**
-     * @param args String[]; args
-     * @throws OTSGeometryException ne
-     */
-    public static void main(final String[] args) throws OTSGeometryException
-    {
-        // DirectedPoint s = new DirectedPoint(0, 0, 0, 0, 0, -Math.PI/2.0);
-        // DirectedPoint e = new DirectedPoint(10, 10, 20, 0, 0, Math.PI);
-        // OTSLine3D b1 = Bezier.cubic(s, e);
-        // for (OTSPoint3D p : b1.getPoints())
-        // {
-        // System.out.println(p.x + "\t" + p.y + "\t" + p.z);
-        // }
-
-        OTSPoint3D s = new OTSPoint3D(0, 0, 0);
-        OTSPoint3D s1 = new OTSPoint3D(10, 0, 0);
-        OTSPoint3D m1 = new OTSPoint3D(25, 5, 0);
-        OTSPoint3D m2 = new OTSPoint3D(-15, 5, 0);
-        OTSPoint3D e0 = new OTSPoint3D(0, 10, 20);
-        OTSPoint3D e = new OTSPoint3D(10, 10, 20);
-        OTSLine3D b1 = Bezier.bezier(s, s1, m1, m2, e0, e);
-        for (OTSPoint3D p : b1.getPoints())
-        {
-            System.out.println(p.x + "\t" + p.y + "\t" + p.z);
-        }
-
-    }
 }

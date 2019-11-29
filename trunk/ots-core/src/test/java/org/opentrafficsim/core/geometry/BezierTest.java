@@ -59,14 +59,22 @@ public class BezierTest
         }
         for (int n : new int[] {2, 3, 4, 100})
         {
-            OTSLine3D line = Bezier.cubic(n, new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, -Math.PI / 2, 0),
-                    new DirectedPoint(to.x, to.y, to.z, Math.PI, 0, -Math.PI / 2));
-            for (int i = 1; i < line.size() - 1; i++)
+            for (double shape : new double[] {0.5, 1.0, 2.0})
             {
-                OTSPoint3D p = line.get(i);
-                assertTrue("z of intermediate point has reasonable value", p.z > line.get(i - 1).z && p.z < line.get(i + 1).z);
-                assertTrue("x of intermediate point has reasonable value", p.x > 0 && p.x < 15);
-                assertTrue("y of intermediate point has reasonable value", p.y > 0 && p.y < 15);
+                for (boolean weighted : new boolean[] { false, true })
+                {
+                    DirectedPoint start = new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, -Math.PI / 2, 0);
+                    DirectedPoint end = new DirectedPoint(to.x, to.y, to.z, Math.PI, 0, -Math.PI / 2);
+                    OTSLine3D line = 1.0 == shape ? Bezier.cubic(n, start, end) : Bezier.cubic(n, start, end, shape, weighted);
+                    for (int i = 1; i < line.size() - 1; i++)
+                    {
+                        OTSPoint3D p = line.get(i);
+                        assertTrue("z of intermediate point has reasonable value",
+                                p.z > line.get(i - 1).z && p.z < line.get(i + 1).z);
+                        assertTrue("x of intermediate point has reasonable value", p.x > 0 && p.x < 15);
+                        assertTrue("y of intermediate point has reasonable value", p.y > 0 && p.y < 15);
+                    }
+                }
             }
         }
         // Pity that the value 64 is private in the Bezier class.
@@ -101,4 +109,5 @@ public class BezierTest
             }
         }
     }
+    
 }
