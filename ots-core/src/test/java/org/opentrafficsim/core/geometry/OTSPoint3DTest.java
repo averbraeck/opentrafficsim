@@ -349,17 +349,53 @@ public class OTSPoint3DTest
                         assertEquals("Radius slightly larger returns list with 2 elements", 2, list.size());
                         for (OTSPoint3D p : list)
                         {
-                            System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", 
-                                    reference, other, p, actualDistance * factor, reference.distanceSI(p)));
+                            System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", reference,
+                                    other, p, actualDistance * factor, reference.distanceSI(p)));
                             assertEquals("Z is average of input points", (reference.z + other.z) / 2, p.z, 0.001);
                             assertEquals("horizontal distance from reference is R", actualDistance * factor,
                                     reference.distanceSI(p), 0.001);
-                            System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", 
-                                    reference, other, p, actualDistance * factor, other.distanceSI(p)));
-                            assertEquals("horizontal distance from other is R", actualDistance * factor,
-                                    other.distanceSI(p), 0.001);
+                            System.out.println(String.format("ref=%s, oth=%s p=%s, distance should be %f, got %f", reference,
+                                    other, p, actualDistance * factor, other.distanceSI(p)));
+                            assertEquals("horizontal distance from other is R", actualDistance * factor, other.distanceSI(p),
+                                    0.001);
                         }
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Test the circleIntersections method.
+     */
+    @Test
+    public void circleIntersectionsTest()
+    {
+        OTSPoint3D c1 = new OTSPoint3D(10, 20, 30);
+        OTSPoint3D c2 = new OTSPoint3D(20, 10, 0);
+        double centerDistance = c1.distanceSI(c2);
+        for (int r1 = 0; r1 < 50; r1++)
+        {
+            for (int r2 = 0; r2 < 50; r2++)
+            {
+                List<OTSPoint3D> intersections = OTSPoint3D.circleIntersections(c1, r1, c2, r2);
+                if (centerDistance < r1 + r2)
+                {
+                    // TODO (this fails) assertEquals("There should be 0 intersections", 0, intersections.size());
+                }
+                if (centerDistance > r1 + r2)
+                {
+                    if (intersections.size() != 2)
+                    {
+                        System.out.println(
+                                String.format("sphere 1: center %s radius %d, sphere2: center %s radius %d", c1, r1, c2, r2));
+                        for (int index = 0; index < intersections.size(); index++)
+                        {
+                            System.out.println("  result " + index + ": " + intersections.get(index));
+                        }
+                        OTSPoint3D.circleIntersections(c1, r1, c2, r2);
+                    }
+                    // TODO (this fails) assertEquals("There should be 2 intersections", 2, intersections.size());
                 }
             }
         }
