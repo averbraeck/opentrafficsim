@@ -34,11 +34,11 @@ public final class OTSGeometryUtil
     }
 
     /**
-     * Print an array of coordinates on the console.
+     * Build a string description from an array of coordinates.
      * @param prefix String; text to put before the coordinates
      * @param coordinates OTSPoint3D[]; the points to print
      * @param separator String; prepended to each coordinate
-     * @return String
+     * @return String; description of the array of coordinates
      */
     public static String printCoordinates(final String prefix, final OTSPoint3D[] coordinates, final String separator)
     {
@@ -46,11 +46,11 @@ public final class OTSGeometryUtil
     }
 
     /**
-     * Print an array of coordinates on the console.
+     * Build a string description from an OTSLine3D.
      * @param prefix String; text to put before the coordinates
      * @param line OTSLine3D; the line for which to print the points
      * @param separator String; prepended to each coordinate
-     * @return String
+     * @return String; description of the OTSLine3D
      */
     public static String printCoordinates(final String prefix, final OTSLine3D line, final String separator)
     {
@@ -58,13 +58,13 @@ public final class OTSGeometryUtil
     }
 
     /**
-     * Print part of an array of coordinates on the console.
+     * Built a string description from part of an array of coordinates.
      * @param prefix String; text to put before the output
      * @param points OTSPoint3D[]; the coordinates to print
      * @param fromIndex int; index of the first coordinate to print
      * @param toIndex int; one higher than the index of the last coordinate to print
      * @param separator String; prepended to each coordinate
-     * @return String
+     * @return String; description of the selected part of the array of coordinates
      */
     public static String printCoordinates(final String prefix, final OTSPoint3D[] points, final int fromIndex,
             final int toIndex, final String separator)
@@ -80,4 +80,5 @@ public final class OTSGeometryUtil
         }
         return result.toString();
     }
+    
 }
