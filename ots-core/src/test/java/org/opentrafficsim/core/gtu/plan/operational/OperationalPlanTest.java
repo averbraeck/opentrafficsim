@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.djunits.unit.AccelerationUnit;
@@ -182,4 +183,180 @@ public class OperationalPlanTest
             assertEquals("traveled distanceSI at rel time", expectedDistance, op.getTraveledDistanceSI(relTime), 0.0001);
         }
     }
+
+    /**
+     * Test the constant speed plan builder.
+     * @throws OperationalPlanException when that happens uncaught; this test has failed
+     * @throws OTSGeometryException when that happens uncaught; this test has failed
+     */
+    @Test
+    public void constantSpeedPlanBuilderTest() throws OperationalPlanException, OTSGeometryException
+    {
+        OTSLine3D path = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0));
+        Time startTime = Time.valueOf("100 s");
+        Speed speed = Speed.valueOf("20 m/s");
+        OperationalPlan csp = OperationalPlanBuilder.buildConstantSpeedPlan(null, path, startTime, speed);
+        assertEquals("path is returned", path, csp.getPath());
+        assertEquals("start time is returned", startTime, csp.getStartTime());
+        Time endTime = startTime.plus(path.getLength().divide(speed));
+        assertEquals("endTime matches", endTime.si, csp.getEndTime().si, (endTime.si - startTime.si) / 10000);
+        assertEquals("startSpeed is speed", speed, csp.getStartSpeed());
+        assertEquals("endSpeed is speed", speed, csp.getEndSpeed());
+        DirectedPoint endLocation = csp.getEndLocation();
+        assertEquals("endLocation matched end of path", 0, path.get(path.size() - 1).distanceSI(new OTSPoint3D(endLocation)),
+                0.001);
+        // Test at a couple of intermediate times (this is more like testing the operational plan)
+        for (int step = 0; step < 10; step++)
+        {
+            double fraction = step / 10d;
+            Time when = startTime.plus(endTime.minus(startTime).times(fraction));
+            DirectedPoint actualLocation = csp.getLocation(when);
+            OTSPoint3D expectedLocation = new OTSPoint3D(path.getLocationFraction(fraction));
+            assertEquals("actual location matches expected location", 0,
+                    expectedLocation.distanceSI(new OTSPoint3D(actualLocation)), 0.001);
+        }
+    }
+
+    /**
+     * Test the builder for constant acceleration plans (misnomered gradual acceleration) and the builder for maximum
+     * acceleration plans.
+     * @throws OperationalPlanException when that happens uncaught; this test has failed
+     * @throws OTSGeometryException when that happens uncaught; this test has failed
+     */
+    @Test
+    public void constantAccelerationPlanBuilderTest() throws OTSGeometryException, OperationalPlanException
+    {
+        OTSLine3D path = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0));
+        Time startTime = Time.valueOf("100 s");
+        for (double startSpeedDouble : new double[] { 0, 10, 20, 30 })
+        {
+            Speed startSpeed = Speed.instantiateSI(startSpeedDouble);
+            for (double endSpeedDouble : new double[] { 0, 10, 20, 30 })
+            {
+                Speed endSpeed = Speed.instantiateSI(endSpeedDouble);
+                if (startSpeedDouble == 0 && endSpeedDouble == 0)
+                {
+                    try
+                    {
+                        OperationalPlanBuilder.buildGradualAccelerationPlan(null, path, startTime, startSpeed, endSpeed);
+                        fail("operational plan builder should have throw an OperationalPlanException when trying to build a "
+                                + "constant acceleration plan with 0 start and 0 end speed and non-zero path length");
+                    }
+                    catch (OperationalPlanException ope)
+                    {
+                        // Ignore expected exception
+                    }
+
+                    try
+                    {
+                        OperationalPlanBuilder.buildGradualAccelerationPlan(null, path, startTime, startSpeed, endSpeed,
+                                Acceleration.instantiateSI(5), Acceleration.instantiateSI(-5));
+                        fail("operational plan builder should have throw an OperationalPlanException when trying to build a "
+                                + "constant acceleration plan with 0 start and 0 end speed and non-zero path length");
+                    }
+                    catch (OperationalPlanException ope)
+                    {
+                        // Ignore expected exception
+                    }
+
+                    try
+                    {
+                        OperationalPlanBuilder.buildMaximumAccelerationPlan(null, path, startTime, startSpeed, endSpeed,
+                                Acceleration.ONE, Acceleration.ONE.neg());
+                        fail("operational plan builder should have throw an OperationalPlanException when trying to build a "
+                                + "constant acceleration plan with 0 start and 0 end speed and non-zero path length");
+                    }
+                    catch (OperationalPlanException ope)
+                    {
+                        // Ignore expected exception
+                    }
+
+                    continue;
+                }
+                OperationalPlan cap =
+                        OperationalPlanBuilder.buildGradualAccelerationPlan(null, path, startTime, startSpeed, endSpeed);
+                assertEquals("path is returned", path, cap.getPath());
+                assertEquals("start time is returned", startTime, cap.getStartTime());
+                assertEquals("startSpeed is start speed", startSpeed, cap.getStartSpeed());
+                assertEquals("endSpeed is end speed", endSpeed, cap.getEndSpeed());
+                Time endTime = cap.getEndTime();
+                Acceleration a = cap.getAcceleration(startTime);
+                assertEquals("acceleration is the same at start time and end time", a.si, cap.getAcceleration(endTime).si,
+                        0.0001);
+                for (int step = 0; step < 10; step++)
+                {
+                    double fraction = step / 10d;
+                    Duration fractionTime = endTime.minus(startTime).times(fraction);
+                    a = cap.getAcceleration(startTime.plus(fractionTime));
+                    assertEquals("acceleration is the same at any time", a.si, cap.getAcceleration(endTime).si, 0.0001);
+                    // S(t) v0 * t + 0.5 * a * t * t
+                    double distance = startSpeed.si * fractionTime.si + 0.5 * a.si * fractionTime.si * fractionTime.si;
+                    OTSPoint3D expectedPoint = new OTSPoint3D(path.getLocationFraction(distance / path.getLengthSI()));
+                    DirectedPoint p = cap.getLocation(fractionTime);
+                    assertEquals("position along the way matches", 0, expectedPoint.distance(new OTSPoint3D(p)).si, 0.001);
+                }
+                Acceleration maximumAcceleration = Acceleration.instantiateSI(5);
+                Acceleration maximumDeceleration = Acceleration.instantiateSI(-1);
+                OperationalPlan map = OperationalPlanBuilder.buildMaximumAccelerationPlan(null, path, startTime, startSpeed,
+                        endSpeed, maximumAcceleration, maximumDeceleration);
+                if (endSpeed.si != 0) // if endSpeed == 0; path may have been reduced.
+                {
+                    assertEquals("path is returned", path, map.getPath());
+                }
+                assertEquals("start time is returned", startTime, map.getStartTime());
+                assertEquals("startSpeed is start speed", startSpeed, map.getStartSpeed());
+                assertEquals("endSpeed is end speed", endSpeed, cap.getEndSpeed());
+            }
+        }
+        OperationalPlan op = OperationalPlanBuilder.buildGradualAccelerationPlan(null, path, startTime, Speed.instantiateSI(10),
+                Speed.instantiateSI(100), Acceleration.ONE, Acceleration.ONE.neg());
+        assertEquals("acceleration is limited", Acceleration.ONE, op.getAcceleration(startTime));
+        op = OperationalPlanBuilder.buildGradualAccelerationPlan(null, path, startTime, Speed.instantiateSI(100),
+                Speed.instantiateSI(10), Acceleration.ONE, Acceleration.ONE.neg());
+        assertEquals("deceleration is limited", Acceleration.ONE.neg(), op.getAcceleration(startTime));
+        op = OperationalPlanBuilder.buildMaximumAccelerationPlan(null, path, startTime, Speed.instantiateSI(10),
+                Speed.instantiateSI(100), Acceleration.ONE, Acceleration.ONE.neg());
+        assertEquals("acceleration is limited", Acceleration.ONE, op.getAcceleration(startTime));
+        op = OperationalPlanBuilder.buildMaximumAccelerationPlan(null, path, startTime, Speed.instantiateSI(100),
+                Speed.instantiateSI(10), Acceleration.ONE, Acceleration.ONE.neg());
+        assertEquals("deceleration is limited", Acceleration.ONE.neg(), op.getAcceleration(startTime));
+    }
+    
+    /**
+     * Test the stop plan builder.
+     * @throws OperationalPlanException when that happens uncaught; this test has failed
+     * @throws OTSGeometryException when that happens uncaught; this test has failed
+     */
+    @Test
+    public void stopPlanBuilderTest() throws OTSGeometryException, OperationalPlanException
+    {
+        OTSLine3D path = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0));
+        Time startTime = Time.valueOf("100 s");
+        Acceleration deceleration = Acceleration.instantiateSI(-4);
+        for (double startSpeedDouble : new double[] { 10, 20, 30 })
+        {
+            Speed startSpeed = Speed.instantiateSI(startSpeedDouble);
+            OperationalPlan sp = OperationalPlanBuilder.buildStopPlan(null, path, startTime, startSpeed, deceleration);
+            assertEquals("start time is returned", startTime, sp.getStartTime());
+            assertEquals("startSpeed is start speed", startSpeed, sp.getStartSpeed());
+            assertEquals("endSpeed is end speed", Speed.ZERO, sp.getEndSpeed());
+            OTSLine3D reducedPath = sp.getPath();
+            assertTrue("length of path was reduced", reducedPath.getLengthSI() < path.getLengthSI());
+        }
+        Speed startSpeed = Speed.instantiateSI(100);
+        path = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 0, 0));        
+        OperationalPlan sp = OperationalPlanBuilder.buildStopPlan(null, path, startTime, startSpeed, deceleration);
+        assertEquals("entire path is returned", path, sp.getPath());
+        assertTrue("speed at end is larger than zero", sp.getEndSpeed().si > 0);
+        try
+        {
+            OperationalPlanBuilder.buildStopPlan(null, path, startTime, Speed.ZERO, deceleration);
+            fail("Path extraction should have failed");
+        }
+        catch (OperationalPlanException ope)
+        {
+            // Ignore expected exception
+        }
+    }
+
 }
