@@ -45,6 +45,12 @@ public final class ConflictBuilder
     /** Default width generator for conflicts which uses 80% of the lane width. */
     public static final WidthGenerator DEFAULT_WIDTH_GENERATOR = new RelativeWidthGenerator(0.8);
 
+    private static int numberMergeConflicts = 0;
+
+    private static int numberSplitConflicts = 0;
+
+    private static int numberCrossConflicts = 0;
+
     /**
      * Empty constructor.
      */
@@ -133,6 +139,7 @@ public final class ConflictBuilder
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
+        System.out.println("GENERATING CONFLICTS. " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
         Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
         Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
@@ -179,6 +186,9 @@ public final class ConflictBuilder
                 }
             }
         }
+        System.out.println("MERGE CONFLICTS = " + numberMergeConflicts);
+        System.out.println("SPLIT CONFLICTS = " + numberSplitConflicts);
+        System.out.println("CROSS CONFLICTS = " + numberCrossConflicts);
     }
 
     /**
@@ -494,6 +504,8 @@ public final class ConflictBuilder
         // Make conflict
         Conflict.generateConflictPair(ConflictType.MERGE, conflictRule, permitted, lane1, longitudinalPosition1, length1, dir1,
                 geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+
+        numberMergeConflicts++;
     }
 
     /**
@@ -534,6 +546,8 @@ public final class ConflictBuilder
         // Make conflict
         Conflict.generateConflictPair(ConflictType.SPLIT, new SplitConflictRule(), false, lane1, longitudinalPosition1, length1,
                 dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+        
+        numberSplitConflicts++;
     }
 
     /**
@@ -607,6 +621,8 @@ public final class ConflictBuilder
         // Make conflict
         Conflict.generateConflictPair(ConflictType.CROSSING, conflictRule, permitted, lane1, longitudinalPosition1, length1,
                 dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+        
+        numberCrossConflicts++;
     }
 
     /**
