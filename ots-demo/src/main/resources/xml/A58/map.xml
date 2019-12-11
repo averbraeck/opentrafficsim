@@ -34,7 +34,7 @@
   <gisbeans:layer>
     <name>landuse</name>
     <data>
-      <shapeFile>/A58/landuse.shp</shapeFile>
+      <shapeFile>/xml/A58/landuse.shp</shapeFile>
     </data>
     <outlineColor>
       <r>225</r>
@@ -47,7 +47,7 @@
   <gisbeans:layer>
     <name>roads</name>
     <data>
-      <shapeFile>/A58/roads.shp</shapeFile>
+      <shapeFile>/xml/A58/roads.shp</shapeFile>
     </data>
     <color>
       <r>120</r>
@@ -65,7 +65,7 @@
   <gisbeans:layer>
     <name>buildings</name>
     <data>
-      <shapeFile>/A58/buildings.shp</shapeFile>
+      <shapeFile>/xml/A58/buildings.shp</shapeFile>
     </data>
     <color>
       <r>200</r>
@@ -83,7 +83,7 @@
   <gisbeans:layer>
     <name>natural</name>
     <data>
-      <shapeFile>/A58/natural.shp</shapeFile>
+      <shapeFile>/xml/A58/natural.shp</shapeFile>
     </data>
     <outlineColor>
       <r>207</r>
@@ -96,7 +96,7 @@
   <gisbeans:layer>
     <name>railways</name>
     <data>
-      <shapeFile>/A58/railways.shp</shapeFile>
+      <shapeFile>/xml/A58/railways.shp</shapeFile>
     </data>
     <color>
       <r>0</r>
@@ -114,7 +114,7 @@
   <gisbeans:layer>
     <name>waterways</name>
     <data>
-      <shapeFile>/A58/waterways.shp</shapeFile>
+      <shapeFile>/xml/A58/waterways.shp</shapeFile>
     </data>
     <color>
       <r>175</r>
