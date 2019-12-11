@@ -140,11 +140,11 @@ public final class ConflictBuilder
         for (int i = 0; i < lanes.size(); i++)
         {
             long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
-            if (combinationsDone / 1000000 > lastReported)
+            if (combinationsDone / 100000000 > lastReported)
             {
                 SimLogger.always()
-                        .debug(String.format("generating conflicts at %.2f%%", 100.0 * combinationsDone / totalCombinations));
-                lastReported = combinationsDone / 1000000;
+                        .debug(String.format("generating conflicts at %.0f%%", 100.0 * combinationsDone / totalCombinations));
+                lastReported = combinationsDone / 100000000;
             }
             Lane lane1 = lanes.get(i);
             for (GTUDirectionality dir1 : lane1.getLaneType().getDirectionality(gtuType).getDirectionalities())
@@ -633,6 +633,19 @@ public final class ConflictBuilder
         {
             f1 = fEnd;
             f2 = fStart;
+        }
+        if (f1 == f2)
+        {
+            SimLogger.always().debug("f1 (" + f1 + ") equals f2 (" + f2 + "); problematic lane is " + lane.toString());
+            // Fix up
+            if (f1 > 0)
+            {
+                f1 = f1 - f1 / 1000;
+            }
+            else
+            {
+                f2 = f2 + f2 / 1000;
+            }
         }
         OTSLine3D centerLine = lane.getCenterLine().extractFractional(f1, f2);
         OTSLine3D left = centerLine.offsetLine(widthGenerator.getWidth(lane, f1) / 2, widthGenerator.getWidth(lane, f2) / 2);
