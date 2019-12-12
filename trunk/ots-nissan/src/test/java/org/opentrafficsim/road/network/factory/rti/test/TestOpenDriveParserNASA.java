@@ -51,8 +51,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
-import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.opendrive.old.GeneratorAnimation;
+import org.opentrafficsim.road.network.factory.opendrive.old.OpenDriveNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.rti.communication.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -174,7 +174,7 @@ public class TestOpenDriveParserNASA extends OTSSimulationApplication<OTSModelIn
             URL url = URLResource.getResource("/NASAames.xodr");
             // URL url = URLResource.getResource("/OpenDrive.xodr");
             this.simulator.setPauseOnError(false);
-            OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
+            OpenDriveNetworkLaneParserOld nlp = new OpenDriveNetworkLaneParserOld(this.simulator);
             this.network = null;
             try
             {

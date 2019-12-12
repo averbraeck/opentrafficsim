@@ -52,8 +52,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.factory.opendrive.LaneAnimationOD;
-import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.opendrive.old.LaneAnimationOD;
+import org.opentrafficsim.road.network.factory.opendrive.old.OpenDriveNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.rti.communication.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -216,7 +216,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
             // URL url = URLResource.getResource("/testod.xodr");
             URL url = URLResource.getResource("/OpenDrive.xodr");
             this.simulator.setPauseOnError(false);
-            OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
+            OpenDriveNetworkLaneParserOld nlp = new OpenDriveNetworkLaneParserOld(this.simulator);
             this.network = null;
             try
             {
@@ -694,7 +694,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
          * @throws NamingException in case destroying fails
          * @throws NetworkException in case link cannot be found in the network
          */
-        private void destroyLink(final OpenDriveNetworkLaneParser nlp, final OTSRoadNetwork network, final String linkId)
+        private void destroyLink(final OpenDriveNetworkLaneParserOld nlp, final OTSRoadNetwork network, final String linkId)
                 throws NamingException, NetworkException
         {
             try

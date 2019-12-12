@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -53,31 +54,31 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     private final String id;
 
     /** Map of Nodes. */
-    private Map<String, Node> nodeMap = new LinkedHashMap<>();
+    private Map<String, Node> nodeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of Links. */
-    private Map<String, Link> linkMap = new LinkedHashMap<>();
+    private Map<String, Link> linkMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of ObjectInterface. */
-    private Map<String, ObjectInterface> objectMap = new LinkedHashMap<>();
+    private Map<String, ObjectInterface> objectMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of InvisibleObjects. */
-    private Map<String, InvisibleObjectInterface> invisibleObjectMap = new LinkedHashMap<>();
+    private Map<String, InvisibleObjectInterface> invisibleObjectMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of Routes. */
-    private Map<GTUType, Map<String, Route>> routeMap = new LinkedHashMap<>();
+    private Map<GTUType, Map<String, Route>> routeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Graphs to calculate shortest paths per GTUType. */
     private Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new LinkedHashMap<>();
 
     /** GTUTypes registered for this network. */
-    private Map<String, GTUType> gtuTypeMap = new LinkedHashMap<>();
+    private Map<String, GTUType> gtuTypeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** LinkTypes registered for this network. */
-    private Map<String, LinkType> linkTypeMap = new LinkedHashMap<>();
+    private Map<String, LinkType> linkTypeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** GTUs registered in this network. */
-    private Map<String, GTU> gtuMap = new LinkedHashMap<>();
+    private Map<String, GTU> gtuMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Construction of an empty network.
@@ -980,8 +981,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /***************************************************************************************/
 
     /** Extra clearance around boundaries of network as fraction of width and height. */
-    public static final  double EXTENT_MARGIN = 0.05;
-            
+    public static final double EXTENT_MARGIN = 0.05;
+
     /**
      * Calculate the extent of the network based on the network objects' locations and return the dimensions.
      * @return Rectangle2D.Double; the extent of the network

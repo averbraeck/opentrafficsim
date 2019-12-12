@@ -6,6 +6,16 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
     
+    <release>
+      <action dev="averbraeck" type="update">
+        com.sun.xml.bind package gone; replaced by javax.xml.bind:jaxb-api and org.glassfish.jaxb:jaxb-runtime.
+        JAXB version updated to 2.3.1.
+      </action>
+      <action dev="averbraeck" type="fix">
+        XML files adapted for new DJUNITS standards.
+      </action>
+    </release>
+    
     <release version="1.03.00" date="2019-10-12" description="xsd-parser, ots-web ready; gradual lane change">
       <action dev="averbraeck" type="update">
         DJUNITS has been updated to 4.01.03, to be ready for Java9+ (tested with Java-13). As the structure of

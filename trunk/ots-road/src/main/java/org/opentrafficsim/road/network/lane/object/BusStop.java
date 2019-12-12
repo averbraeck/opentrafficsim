@@ -64,6 +64,8 @@ public class BusStop extends AbstractLaneBasedObject
         super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
                 LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
         this.name = name;
+        
+        init();
     }
 
     /**

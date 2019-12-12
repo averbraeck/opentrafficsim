@@ -99,7 +99,7 @@ public class OTSShape extends OTSLine3D
     /**
      * @return shape
      */
-    public final Path2D getShape()
+    public final synchronized Path2D getShape()
     {
         if (this.shape == null)
         {
@@ -111,7 +111,7 @@ public class OTSShape extends OTSLine3D
     /**
      * calculate the java.awt.Shape, and close it if needed.
      */
-    private void calculateShape()
+    private synchronized void calculateShape()
     {
         this.shape = new Path2D.Double();
         this.shape.moveTo(getPoints()[0].x, getPoints()[0].y);
@@ -126,7 +126,7 @@ public class OTSShape extends OTSLine3D
      * @param point OTSPoint3D; the point to check if it is inside the shape
      * @return whether the point is inside the shape
      */
-    public final boolean contains(final OTSPoint3D point)
+    public final synchronized boolean contains(final OTSPoint3D point)
     {
         return getShape().contains(point.x, point.y);
     }
@@ -138,7 +138,7 @@ public class OTSShape extends OTSLine3D
      *         java.awt.geom.Path2D.contains found it prohibitively expensive to decide. Let us hope that this cannot happen
      *         with OTSShape objects. Peter has been unable to find out when this might happen.
      */
-    public final boolean contains(final Rectangle2D rectangle)
+    public final synchronized boolean contains(final Rectangle2D rectangle)
     {
         return getShape().contains(rectangle);
     }
@@ -147,7 +147,7 @@ public class OTSShape extends OTSLine3D
      * @param otsShape OTSShape; the shape to test the intersection with
      * @return whether the shapes intersect or whether one shape contains the other
      */
-    public final boolean intersects(final OTSShape otsShape)
+    public final synchronized boolean intersects(final OTSShape otsShape)
     {
         // step 1: quick check to see if the bounds intersect
         if (!getEnvelope().intersects(otsShape.getEnvelope()))

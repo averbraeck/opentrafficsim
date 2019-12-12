@@ -839,7 +839,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param laneBasedObject LaneBasedObject; the laneBasedObject to add
      * @throws NetworkException when the position of the laneBasedObject is beyond (or before) the range of this Lane
      */
-    public final void addLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
+    public final synchronized void addLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
         double position = laneBasedObject.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
@@ -867,7 +867,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param laneBasedObject LaneBasedObject; the laneBasedObject to remove.
      * @throws NetworkException when the laneBasedObject was not found on this Lane
      */
-    public final void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
+    public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
         fireEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] { laneBasedObject });
         List<LaneBasedObject> laneBasedObjectList =

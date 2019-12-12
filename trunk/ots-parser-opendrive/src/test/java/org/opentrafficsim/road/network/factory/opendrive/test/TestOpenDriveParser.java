@@ -1,12 +1,13 @@
 package org.opentrafficsim.road.network.factory.opendrive.test;
 
 import java.awt.Dimension;
-import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -21,7 +22,9 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.factory.opendrive.OpenDriveParserException;
+import org.opentrafficsim.road.network.factory.opendrive.parser.OpenDriveNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
@@ -105,7 +108,7 @@ public class TestOpenDriveParser extends OTSSimulationApplication<OTSModelInterf
         private static final long serialVersionUID = 20150811L;
 
         /** the network. */
-        private OTSNetwork network;
+        private OTSRoadNetwork network;
 
         /**
          * @param simulator the simulator
@@ -121,14 +124,13 @@ public class TestOpenDriveParser extends OTSSimulationApplication<OTSModelInterf
         {
             URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
-            OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
-            this.network = null;
+            this.network = new OTSRoadNetwork(url.getPath(), true);
             try
             {
-                this.network = nlp.build(url);
+                OpenDriveNetworkLaneParser.build(url, this.network, this.simulator);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
+                    | JAXBException | URISyntaxException | OpenDriveParserException exception)
             {
                 exception.printStackTrace();
             }
