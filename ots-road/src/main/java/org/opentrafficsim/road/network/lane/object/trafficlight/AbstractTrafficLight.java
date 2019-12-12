@@ -51,8 +51,9 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
 
         Throw.whenNull(simulator, "Simulator may not be null");
         this.simulator = simulator;
-
         this.trafficLightColor = TrafficLightColor.RED;
+        
+        init();
     }
 
     /**

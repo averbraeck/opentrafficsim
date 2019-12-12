@@ -2,11 +2,13 @@ package org.opentrafficsim.draw.factory;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.naming.NamingException;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -67,10 +69,10 @@ public class DefaultAnimationFactory implements EventListenerInterface
     private final GTUColorer gtuColorer;
 
     /** rendered gtus. */
-    private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = new LinkedHashMap<>();
+    private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** rendered static objects. */
-    private Map<ObjectInterface, Renderable2D<?>> animatedObjects = new LinkedHashMap<>();
+    public Map<ObjectInterface, Renderable2D<?>> animatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
@@ -162,6 +164,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
         {
             throw new OTSDrawingException("Exception while creating network animation.", exception);
         }
+
     }
 
     /**
@@ -170,12 +173,13 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @param network OTSNetwork; the network
      * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GTUColorer; GTU colorer
+     * @return the DefaultAnimationFactory
      * @throws OTSDrawingException on drawing error
      */
-    public static void animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator,
+    public static DefaultAnimationFactory animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator,
             final GTUColorer gtuColorer) throws OTSDrawingException
     {
-        new DefaultAnimationFactory(network, simulator, gtuColorer, true);
+        return new DefaultAnimationFactory(network, simulator, gtuColorer, true);
     }
 
     /**
@@ -184,12 +188,13 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @param network OTSNetwork; the network
      * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GTUColorer; GTU colorer
+     * @return the DefaultAnimationFactory
      * @throws OTSDrawingException on drawing error
      */
-    public static void animateXmlNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator,
+    public static DefaultAnimationFactory animateXmlNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator,
             final GTUColorer gtuColorer) throws OTSDrawingException
     {
-        new DefaultAnimationFactory(network, simulator, gtuColorer, false);
+        return new DefaultAnimationFactory(network, simulator, gtuColorer, false);
     }
 
     /** {@inheritDoc} */
@@ -296,7 +301,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
         }
         catch (RemoteException | NamingException exception)
         {
-            SimLogger.always().error(exception, "Exception while drawing Object of class ObjectInterface.");
+            CategoryLogger.always().error(exception, "Exception while drawing Object of class ObjectInterface.");
         }
     }
 

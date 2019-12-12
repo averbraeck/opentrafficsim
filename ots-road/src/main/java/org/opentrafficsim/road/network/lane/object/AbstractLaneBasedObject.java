@@ -16,7 +16,10 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * An abstract implementation of the LaneBasedObject interface with the required fields being initialized and getters for those
- * fields. All StaticObjects are EventProducers, allowing them to provide state changes to subscribers.
+ * fields. All StaticObjects are EventProducers, allowing them to provide state changes to subscribers.<br>
+ * <br>
+ * Note that extending classes must use a create(...) factory method that calls init() after fully constructing the object to
+ * avoid "half constructed" objects to be registered in the network.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -56,7 +59,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param height Length; the height of the object, in case it is a 3D object
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final String id, final Lane lane, final LongitudinalDirectionality direction,
+    protected AbstractLaneBasedObject(final String id, final Lane lane, final LongitudinalDirectionality direction,
             final Length longitudinalPosition, final OTSLine3D geometry, final Length height) throws NetworkException
     {
         super(id, geometry, height);
@@ -72,12 +75,6 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         this.longitudinalPosition = longitudinalPosition;
         DirectedPoint p = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
         this.location = new DirectedPoint(p.x, p.y, p.z + 0.01, p.getRotX(), p.getRotY(), p.getRotZ());
-
-        // OTS-218: sensors register themselves.
-        if (!(this instanceof SingleSensor))
-        {
-            this.lane.addLaneBasedObject(this); // implements OTS-218
-        }
     }
 
     /**
@@ -91,7 +88,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param height Length; the height of the object, in case it is a 3D object
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
+    protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
             final OTSLine3D geometry, final Length height) throws NetworkException
     {
         this(id, lane, LongitudinalDirectionality.DIR_BOTH, longitudinalPosition, geometry, height);
@@ -107,7 +104,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final String id, final Lane lane, final LongitudinalDirectionality direction,
+    protected AbstractLaneBasedObject(final String id, final Lane lane, final LongitudinalDirectionality direction,
             final Length longitudinalPosition, final OTSLine3D geometry) throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, geometry, Length.ZERO);
@@ -122,10 +119,23 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
-    public AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
+    protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
             final OTSLine3D geometry) throws NetworkException
     {
         this(id, lane, longitudinalPosition, geometry, Length.ZERO);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void init() throws NetworkException
+    {
+        super.init();
+
+        // OTS-218: sensors register themselves.
+        if (!(this instanceof SingleSensor))
+        {
+            this.lane.addLaneBasedObject(this); // implements OTS-218
+        }
     }
 
     /** {@inheritDoc} */

@@ -47,9 +47,11 @@
         <module>../ots-sim0mq-multimodal</module>
         <module>../ots-xsd</module>
         <module>../ots-parser-xml</module>
+        <module>../ots-xsd-opendrive</module>
         <module>../ots-parser-opendrive</module>
         <module>../ots-parser-osm</module>
         <module>../ots-parser-shape</module>
+        <module>../ots-xsd-vissim</module>
         <module>../ots-parser-vissim</module>
         <module>../ots-aimsun</module>
         <module>../ots-aimsun-proto</module>
@@ -341,9 +343,11 @@
             <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-xsd/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-xsd-opendrive/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-shape/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-xsd-vissim/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-vissim/apidocs/</link>
           </links>
 
@@ -555,9 +559,11 @@
             <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-xsd/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-xsd-opendrive/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-shape/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-xsd-vissim/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-vissim/apidocs/</link>
           </links>
 
@@ -975,6 +981,12 @@
 
       <dependency>
         <groupId>opentrafficsim</groupId>
+        <artifactId>ots-xsd-opendrive</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
         <artifactId>ots-parser-opendrive</artifactId>
         <version>${ots.version}</version>
       </dependency>
@@ -988,6 +1000,12 @@
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-parser-shape</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-xsd-vissim</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

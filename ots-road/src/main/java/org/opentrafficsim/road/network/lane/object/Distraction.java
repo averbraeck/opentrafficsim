@@ -43,6 +43,8 @@ public class Distraction extends AbstractLaneBasedObject
         super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
                 LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
         this.profile = profile;
+        
+        init();
     }
 
     /** {@inheritDoc} */

@@ -67,6 +67,8 @@ public class SpeedSign extends AbstractLaneBasedObject
         this.gtuType = gtuType;
         this.startTimeOfDay = startTimeOfDay;
         this.endTimeOfDay = endTimeOfDay;
+        
+        init();
     }
 
     /**

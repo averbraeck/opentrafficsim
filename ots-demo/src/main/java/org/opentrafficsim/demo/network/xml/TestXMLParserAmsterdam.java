@@ -30,7 +30,6 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.conflict.ConflictBuilderParallel;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -64,9 +63,7 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
             throws OTSDrawingException
     {
         super(model, animationPanel);
-
         System.out.println("ANIMATEMAP.SIZE = " + this.defaultAnimationFactory.animatedObjects.size());
-
     }
 
     /** */
@@ -82,7 +79,7 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
         this.defaultAnimationFactory = DefaultAnimationFactory.animateNetwork(getModel().getNetwork(),
                 getModel().getSimulator(), getAnimationPanel().getGTUColorer());
     }
-
+    
     /** {@inheritDoc} */
     @Override
     protected void setAnimationToggles()
@@ -168,8 +165,8 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
             {
                 XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
                 System.out.println("\nGENERATING CONFLICTS");
-                ConflictBuilderParallel.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
-                        this.simulator, new ConflictBuilderParallel.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+                ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+                        this.simulator, new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 System.out.println("OBJECTMAP.SIZE  = " + this.network.getObjectMap().size());
 

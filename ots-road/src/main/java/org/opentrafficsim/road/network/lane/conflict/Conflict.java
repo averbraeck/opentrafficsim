@@ -477,8 +477,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         Object cloneLock = new Object();
         Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, direction1, geometry1, conflictType, conflictRule,
                 simulator, gtuType1, permitted, cloneLock);
+        conf1.init(); // fire events and register on lane
         Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, direction2, geometry2, conflictType, conflictRule,
                 simulator, gtuType2, permitted, cloneLock);
+        conf2.init(); // fire events and register on lane
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
     }
@@ -506,6 +508,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         Conflict out = new Conflict((Lane) newCSE, getLongitudinalPosition(), this.length, this.direction, getGeometry(),
                 this.conflictType, this.conflictRule.clone(newSimulator), newSimulator, this.gtuType, this.permitted,
                 this.cloneLock);
+        out.init();
         synchronized (this.cloneLock)
         {
             // couple both clones

@@ -896,7 +896,7 @@ public class OTSLine3D implements Locatable, Serializable
     /**
      * Make the length indexed line if it does not exist yet, and cache it.
      */
-    private void makeLengthIndexedLine()
+    private synchronized void makeLengthIndexedLine()
     {
         if (this.lengthIndexedLine == null)
         {
@@ -927,7 +927,7 @@ public class OTSLine3D implements Locatable, Serializable
      *            units
      * @return a directed point
      */
-    public final DirectedPoint getLocationExtendedSI(final double positionSI)
+    public final synchronized DirectedPoint getLocationExtendedSI(final double positionSI)
     {
         makeLengthIndexedLine();
         if (positionSI >= 0.0 && positionSI <= getLengthSI())
@@ -1063,7 +1063,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return a directed point
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final DirectedPoint getLocationSI(final double positionSI) throws OTSGeometryException
+    public final synchronized DirectedPoint getLocationSI(final double positionSI) throws OTSGeometryException
     {
         makeLengthIndexedLine();
         if (positionSI < 0.0 || positionSI > getLengthSI())
@@ -1102,7 +1102,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return a new OTSLine3D truncated at the exact position where line.getLength() == lengthSI
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final OTSLine3D truncate(final double lengthSI) throws OTSGeometryException
+    public final synchronized OTSLine3D truncate(final double lengthSI) throws OTSGeometryException
     {
         makeLengthIndexedLine();
         if (lengthSI <= 0.0 || lengthSI > getLengthSI())
@@ -1185,7 +1185,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param y double; y-coordinate of point to project
      * @return fractional position along this line of the orthogonal projection on this line of a point
      */
-    public final double projectOrthogonal(final double x, final double y)
+    public final synchronized double projectOrthogonal(final double x, final double y)
     {
 
         // prepare
@@ -1304,8 +1304,8 @@ public class OTSLine3D implements Locatable, Serializable
      * @param fallback FractionalFallback; fallback method for when fractional projection fails
      * @return fractional position along this line of the fractional projection on that line of a point
      */
-    public final double projectFractional(final Direction start, final Direction end, final double x, final double y,
-            final FractionalFallback fallback)
+    public final synchronized double projectFractional(final Direction start, final Direction end, final double x,
+            final double y, final FractionalFallback fallback)
     {
 
         // prepare
@@ -1472,7 +1472,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param start Direction; direction in first point
      * @param end Direction; direction in last point
      */
-    private void determineFractionalHelpers(final Direction start, final Direction end)
+    private synchronized void determineFractionalHelpers(final Direction start, final Direction end)
     {
 
         final int n = this.points.length - 1;
@@ -1583,7 +1583,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param segment int; segment number
      * @return parallel line to the left of a segment at a distance of 1
      */
-    private OTSLine3D unitOffsetSegment(final int segment)
+    private synchronized OTSLine3D unitOffsetSegment(final int segment)
     {
 
         // double angle = Math.atan2(this.points[segment + 1].y - this.points[segment].y,
@@ -1632,7 +1632,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return Length; radius
      * @throws OTSGeometryException fraction out of bounds
      */
-    public Length getRadius(final double fraction) throws OTSGeometryException
+    public synchronized Length getRadius(final double fraction) throws OTSGeometryException
     {
         Throw.when(fraction < 0.0 || fraction > 1.0, OTSGeometryException.class, "Fraction %f is out of bounds [0.0 ... 1.0]",
                 fraction);
@@ -1670,7 +1670,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return Length; radius at the vertex
      * @throws OTSGeometryException if the index is out of bounds
      */
-    public Length getVertexRadius(final int index) throws OTSGeometryException
+    public synchronized Length getVertexRadius(final int index) throws OTSGeometryException
     {
         Throw.when(index < 1 || index > size() - 2, OTSGeometryException.class, "Index %d is out of bounds [1 ... size() - 2].",
                 index);
@@ -1720,7 +1720,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return double; length fraction at the vertex
      * @throws OTSGeometryException if the index is out of bounds
      */
-    public double getVertexFraction(final int index) throws OTSGeometryException
+    public synchronized double getVertexFraction(final int index) throws OTSGeometryException
     {
         Throw.when(index < 0 || index > size() - 1, OTSGeometryException.class, "Index %d is out of bounds [0 %d].", index,
                 size() - 1);
@@ -1731,7 +1731,7 @@ public class OTSLine3D implements Locatable, Serializable
     /**
      * Calculate the centroid of this line, and the bounds, and cache for later use.
      */
-    private void calcCentroidBounds()
+    private synchronized void calcCentroidBounds()
     {
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
@@ -1761,7 +1761,7 @@ public class OTSLine3D implements Locatable, Serializable
      * Retrieve the centroid of this OTSLine3D.
      * @return OTSPoint3D; the centroid of this OTSLine3D
      */
-    public final OTSPoint3D getCentroid()
+    public synchronized final OTSPoint3D getCentroid()
     {
         if (this.centroid == null)
         {
@@ -1774,7 +1774,7 @@ public class OTSLine3D implements Locatable, Serializable
      * Get the bounding rectangle of this OTSLine3D.
      * @return Rectangle2D; the bounding rectangle of this OTSLine3D
      */
-    public final Envelope getEnvelope()
+    public final synchronized Envelope getEnvelope()
     {
         if (this.envelope == null)
         {
@@ -1786,7 +1786,7 @@ public class OTSLine3D implements Locatable, Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation()
+    public synchronized DirectedPoint getLocation()
     {
         if (this.centroid == null)
         {
@@ -1798,7 +1798,7 @@ public class OTSLine3D implements Locatable, Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds getBounds()
+    public synchronized Bounds getBounds()
     {
         if (this.bounds == null)
         {

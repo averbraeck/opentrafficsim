@@ -47,10 +47,8 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
      * @param geometry OTSLine3D; the top-level 2D outline of the object
      * @param height Length; the height of the object
      */
-    public StaticObject(final String id, final OTSLine3D geometry, final Length height)
+    protected StaticObject(final String id, final OTSLine3D geometry, final Length height)
     {
-        super();
-
         Throw.whenNull(id, "object id cannot be null");
         Throw.whenNull(geometry, "geometry cannot be null");
         Throw.whenNull(height, "height cannot be null");
@@ -58,19 +56,45 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
         this.id = id;
         this.geometry = geometry;
         this.height = height;
+    }
 
+    /**
+     * Initialize the object after it has been fully created.
+     * @throws NetworkException, e.g. on error registering the object in the network
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected void init() throws NetworkException
+    {
         // notify the potential animation of the existence of a StaticObject
-        fireEvent(Network.OBJECT_ADD_EVENT, id);
+        fireEvent(Network.OBJECT_ADD_EVENT, this.id);
         fireEvent(Network.ANIMATION_OBJECT_ADD_EVENT, this);
     }
 
     /**
+     * Make a static object and carry out the initialization after it has been fully created.
      * @param id String; the id
      * @param geometry OTSLine3D; the top-level 2D outline of the object
+     * @param height Length; the height of the object
+     * @return the static object
+     * @throws NetworkException, e.g. on error registering the object in the network
      */
-    public StaticObject(final String id, final OTSLine3D geometry)
+    public static StaticObject create(final String id, final OTSLine3D geometry, final Length height) throws NetworkException
     {
-        this(id, geometry, Length.ZERO);
+        StaticObject staticObject = new StaticObject(id, geometry, height);
+        staticObject.init();
+        return staticObject;
+    }
+
+    /**
+     * Make a static object with zero height and carry out the initialization after it has been fully created.
+     * @param id String; the id
+     * @param geometry OTSLine3D; the top-level 2D outline of the object
+     * @return the static object
+     * @throws NetworkException, e.g. on error registering the object in the network
+     */
+    public static StaticObject create(final String id, final OTSLine3D geometry) throws NetworkException
+    {
+        return create(id, geometry, Length.ZERO);
     }
 
     /** {@inheritDoc} */

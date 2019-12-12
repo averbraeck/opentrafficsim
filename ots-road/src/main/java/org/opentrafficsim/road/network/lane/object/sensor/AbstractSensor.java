@@ -69,6 +69,9 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
         this.positionType = positionType;
         this.simulator = simulator;
         this.detectedGTUTypes = detectedGTUTypes;
+        
+        init();
+        
         getLane().addSensor(this); // Implements OTS-218
     }
 
