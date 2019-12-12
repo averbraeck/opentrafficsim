@@ -150,7 +150,9 @@ public final class ConflictBuilder
             if (combinationsDone / 100000000 > lastReported)
             {
                 SimLogger.always()
-                        .debug(String.format("generating conflicts at %.0f%%", 100.0 * combinationsDone / totalCombinations));
+                        .debug(String.format("generating conflicts at %.0f%% (generated %d merge conflicts, %d split "
+                                + "conflicts, %d crossing conflicts)", 100.0 * combinationsDone / totalCombinations, 
+                                numberMergeConflicts, numberSplitConflicts, numberCrossConflicts));
                 lastReported = combinationsDone / 100000000;
             }
             Lane lane1 = lanes.get(i);
@@ -186,9 +188,11 @@ public final class ConflictBuilder
                 }
             }
         }
-        System.out.println("MERGE CONFLICTS = " + numberMergeConflicts);
-        System.out.println("SPLIT CONFLICTS = " + numberSplitConflicts);
-        System.out.println("CROSS CONFLICTS = " + numberCrossConflicts);
+        SimLogger.always()
+                .debug(String.format(
+                        "generating conflicts complete (generated %d merge conflicts, %d split "
+                                + "conflicts, %d crossing conflicts)",
+                        numberMergeConflicts, numberSplitConflicts, numberCrossConflicts));
     }
 
     /**
