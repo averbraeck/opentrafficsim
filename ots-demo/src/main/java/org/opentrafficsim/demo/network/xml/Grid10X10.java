@@ -194,7 +194,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
     //@formatter:on
 
     /** number of x/y. */
-    private static final int SIZE = 10;
+    private static final int SIZE = 100;
 
     /** spacing. */
     private static final int SPACING = 50;

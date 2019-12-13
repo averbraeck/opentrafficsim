@@ -111,7 +111,7 @@ public final class ConflictBuilderParallel
                 }
             }
         }
-        buildConflictsParallel(lanes, gtuType, simulator, widthGenerator, ignoreList, permittedList);
+        buildConflictsParallelBig(lanes, gtuType, simulator, widthGenerator, ignoreList, permittedList);
     }
 
     /**
@@ -126,11 +126,12 @@ public final class ConflictBuilderParallel
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
             throws OTSGeometryException
     {
-        buildConflictsParallel(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
+        buildConflictsParallelBig(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(),
+                new LaneCombinationList());
     }
 
     /**
-     * Build conflicts on list of lanes.
+     * Build conflicts on list of lanes. Small jobs for parallelization.
      * @param lanes List&lt;Lane&gt;; list of Lanes
      * @param gtuType GTUType; the GTU type
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
@@ -139,13 +140,13 @@ public final class ConflictBuilderParallel
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OTSGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallel(final List<Lane> lanes, final GTUType gtuType,
+    public static void buildConflictsParallelSmall(final List<Lane> lanes, final GTUType gtuType,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
             final LaneCombinationList ignoreList, final LaneCombinationList permittedList) throws OTSGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
-        System.out.println("GENERATING CONFLICTS. " + totalCombinations + " COMBINATIONS");
+        System.out.println("GENERATING CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
         CategoryLogger.setAllLogLevel(Level.DEBUG);
         long lastReported = 0;
         Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
@@ -156,11 +157,11 @@ public final class ConflictBuilderParallel
         {
             lane.getContour().getEnvelope();
         }
-        
+
         // make a threadpool and execute buildConflicts for all records
         int cores = Runtime.getRuntime().availableProcessors();
         System.out.println("USING " + cores + " CORES");
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2*cores);
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2 * cores);
         AtomicInteger numberOfJobs = new AtomicInteger(0);
         final int maxqueue = 200;
 
@@ -209,7 +210,7 @@ public final class ConflictBuilderParallel
                         {
                             try
                             {
-                                Thread.sleep(1);
+                                Thread.sleep(0, 10);
                             }
                             catch (InterruptedException exception)
                             {
@@ -241,27 +242,173 @@ public final class ConflictBuilderParallel
                 // ignore
             }
         }
-        System.out.println("OBJECTMAP.SIZE  = " + gtuType.getNetwork().getObjectMap().size());
-        System.out.println("LAST " + maxqueue + " JOBS DONE OR TIMEOUT. REMAINING NR OF JOBS = " + numberOfJobs.get());
-        System.out.println("MERGE CONFLICTS = " + numberMergeConflicts);
-        System.out.println("SPLIT CONFLICTS = " + numberSplitConflicts);
-        System.out.println("CROSS CONFLICTS = " + numberCrossConflicts);
 
         executor.shutdown();
         while (!executor.isTerminated())
         {
-            // nothing
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException exception)
+            {
+                // ignore
+            }
         }
-        
-        try
+
+        System.out.println("MERGE CONFLICTS = " + numberMergeConflicts);
+        System.out.println("SPLIT CONFLICTS = " + numberSplitConflicts);
+        System.out.println("CROSS CONFLICTS = " + numberCrossConflicts);
+
+        CategoryLogger.setAllLogLevel(Level.WARNING);
+    }
+
+    /**
+     * Build conflicts on list of lanes. Parallelize bigger jobs
+     * @param lanes List&lt;Lane&gt;; list of Lanes
+     * @param gtuType GTUType; the GTU type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param widthGenerator WidthGenerator; the width generator
+     * @param ignoreList LaneCombinationList; lane combinations to ignore
+     * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
+     * @throws OTSGeometryException in case of geometry exception
+     */
+    public static void buildConflictsParallelBig(final List<Lane> lanes, final GTUType gtuType,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
+            final LaneCombinationList ignoreList, final LaneCombinationList permittedList) throws OTSGeometryException
+    {
+        // Loop Lane / GTUDirectionality combinations
+        long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
+        System.out.println("GENERATING CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
+        CategoryLogger.setAllLogLevel(Level.DEBUG);
+        long lastReported = 0;
+        Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
+
+        // force the envelopes to be built first
+        for (Lane lane : lanes)
         {
-            Thread.sleep(5000);
+            lane.getContour().getEnvelope();
         }
-        catch (InterruptedException exception)
+
+        // make a threadpool and execute buildConflicts for all records
+        int cores = Runtime.getRuntime().availableProcessors();
+        System.out.println("USING " + cores + " CORES");
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2 * cores);
+        AtomicInteger numberOfJobs = new AtomicInteger(0);
+        final int maxqueue = 200;
+
+        for (int i = 0; i < lanes.size(); i++)
         {
-            exception.printStackTrace();
+            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
+            if (combinationsDone / 1000000 > lastReported)
+            {
+                SimLogger.always()
+                        .debug(String.format("generating conflicts at %.2f%%", 100.0 * combinationsDone / totalCombinations));
+                lastReported = combinationsDone / 1000000;
+            }
+            Lane lane1 = lanes.get(i);
+            for (GTUDirectionality dir1 : lane1.getLaneType().getDirectionality(gtuType).getDirectionalities())
+            {
+                ImmutableMap<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
+                ImmutableMap<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
+
+                while (numberOfJobs.get() > maxqueue) // keep max maxqueue jobs in the pool
+                {
+                    try
+                    {
+                        Thread.sleep(0, 10);
+                    }
+                    catch (InterruptedException exception)
+                    {
+                        // ignore
+                    }
+                }
+                numberOfJobs.incrementAndGet();
+                final int starti = i;
+
+                // START JOB
+
+                executor.execute(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        for (int j = starti + 1; j < lanes.size(); j++)
+                        {
+                            Lane lane2 = lanes.get(j);
+                            if (ignoreList.contains(lane1, lane2))
+                            {
+                                continue;
+                            }
+                            // Quick contour check, skip if non-overlapping envelopes
+                            try
+                            {
+                                if (!lane1.getContour().intersects(lane2.getContour()))
+                                {
+                                    continue;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                System.err.println("Contour problem - lane1 = [" + lane1.getFullId() + "], lane2 = ["
+                                        + lane2.getFullId() + "]; skipped");
+                                continue;
+                            }
+
+                            boolean permitted = permittedList.contains(lane1, lane2);
+
+                            for (GTUDirectionality dir2 : lane2.getLaneType().getDirectionality(gtuType).getDirectionalities())
+                            {
+                                ImmutableMap<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
+                                ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
+
+                                try
+                                {
+                                    buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted,
+                                            simulator, widthGenerator, leftEdges, rightEdges);
+                                }
+                                catch (NetworkException | OTSGeometryException ne)
+                                {
+                                    SimLogger.always().error(ne, "Conflict build with bad combination of types / rules.");
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // END JOB
+            }
         }
-        
+
+        System.out.println("WAITING FOR LAST " + maxqueue + " JOBS");
+        long time = System.currentTimeMillis();
+        // wait max 60 sec for last maxqueue jobs
+        while (numberOfJobs.get() > 0 && System.currentTimeMillis() - time < 60000)
+        {
+            try
+            {
+                Thread.sleep(10);
+            }
+            catch (InterruptedException exception)
+            {
+                // ignore
+            }
+        }
+
+        executor.shutdown();
+        while (!executor.isTerminated())
+        {
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException exception)
+            {
+                // ignore
+            }
+        }
+
         System.out.println("MERGE CONFLICTS = " + numberMergeConflicts);
         System.out.println("SPLIT CONFLICTS = " + numberSplitConflicts);
         System.out.println("CROSS CONFLICTS = " + numberCrossConflicts);
@@ -393,7 +540,7 @@ public final class ConflictBuilderParallel
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
-    private static void buildConflicts(final Lane lane1, final GTUDirectionality dir1,
+    static void buildConflicts(final Lane lane1, final GTUDirectionality dir1,
             final ImmutableMap<Lane, GTUDirectionality> down1, final ImmutableMap<Lane, GTUDirectionality> up1,
             final Lane lane2, final GTUDirectionality dir2, final ImmutableMap<Lane, GTUDirectionality> down2,
             final ImmutableMap<Lane, GTUDirectionality> up2, final GTUType gtuType, final boolean permitted,

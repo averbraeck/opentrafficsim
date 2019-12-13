@@ -613,8 +613,7 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         sensorList.add(sensor);
         this.parentLink.getNetwork().addObject(sensor);
-        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] { sensor.getId(), sensor },
-                sensor.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] {sensor.getId(), sensor}, sensor.getSimulator().getSimulatorTime());
     }
 
     /**
@@ -624,7 +623,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void removeSensor(final SingleSensor sensor) throws NetworkException
     {
-        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] { sensor.getId(), sensor },
+        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] {sensor.getId(), sensor},
                 sensor.getSimulator().getSimulatorTime());
         List<SingleSensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().si);
         if (null == sensorList)
@@ -810,11 +809,11 @@ public class Lane extends CrossSectionElement implements Serializable
                                     + "s. (nextEvalTime) for sensor " + sensor + " , gtu " + gtu);
                             System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane=" + toString()
                                     + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
-                            triggerTime =
-                                    new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()), TimeUnit.DEFAULT);
+                            triggerTime = new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()),
+                                    TimeUnit.DEFAULT);
                         }
-                        SimEvent<SimTimeDoubleUnit> event = new SimEvent<>(new SimTimeDoubleUnit(triggerTime), this, sensor,
-                                "trigger", new Object[] { gtu });
+                        SimEvent<SimTimeDoubleUnit> event =
+                                new SimEvent<>(new SimTimeDoubleUnit(triggerTime), this, sensor, "trigger", new Object[] {gtu});
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -824,7 +823,7 @@ public class Lane extends CrossSectionElement implements Serializable
                         // due to curvature
                         SimEvent<SimTimeDoubleUnit> event =
                                 new SimEvent<>(new SimTimeDoubleUnit(gtu.getSimulator().getSimulatorTime()), this, sensor,
-                                        "trigger", new Object[] { gtu });
+                                        "trigger", new Object[] {gtu});
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -859,7 +858,7 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         laneBasedObjectList.add(laneBasedObject);
         this.parentLink.getNetwork().addObject(laneBasedObject);
-        fireEvent(Lane.OBJECT_ADD_EVENT, new Object[] { laneBasedObject });
+        fireEvent(Lane.OBJECT_ADD_EVENT, new Object[] {laneBasedObject});
     }
 
     /**
@@ -869,7 +868,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
-        fireEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] { laneBasedObject });
+        fireEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject});
         List<LaneBasedObject> laneBasedObjectList =
                 this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
         if (null == laneBasedObjectList)
@@ -1050,7 +1049,7 @@ public class Lane extends CrossSectionElement implements Serializable
                 */
             }
         }
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), gtu, this.gtuList.size()},
                 gtu.getSimulator().getSimulatorTime());
         getParentLink().addGTU(gtu);
         return index;
@@ -1080,7 +1079,7 @@ public class Lane extends CrossSectionElement implements Serializable
         boolean contained = this.gtuList.remove(gtu);
         if (contained)
         {
-            fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position },
+            fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] {gtu.getId(), gtu, this.gtuList.size(), position},
                     gtu.getSimulator().getSimulatorTime());
         }
         if (removeFromParentLink)
@@ -1492,7 +1491,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType GTUType; gtu type
      * @return lanes that can be followed in a given direction and for the given GTU type
      */
-    public final ImmutableMap<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
+    public final synchronized ImmutableMap<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction,
+            final GTUType gtuType)
     {
         return this.downLanes.getValue(() ->
         {
@@ -1520,7 +1520,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtuType GTUType; gtu type
      * @return lanes that can be followed in a given direction and for the given GTU type
      */
-    public final ImmutableMap<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
+    public final synchronized ImmutableMap<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction,
+            final GTUType gtuType)
     {
         return this.upLanes.getValue(() ->
         {
@@ -1895,7 +1896,7 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
     public boolean equals(final Object obj)
     {

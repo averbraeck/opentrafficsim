@@ -16,7 +16,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableIterator;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableMap.ImmutableEntry;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -28,7 +27,6 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.pmw.tinylog.Level;
 
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -146,7 +144,7 @@ public final class ConflictBuilder
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
-        System.out.println("GENERATING CONFLICTS. " + totalCombinations + " COMBINATIONS");
+        System.out.println("GENERATING CONFLICTS (NON-PARALLEL MODE). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
         Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
         Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
@@ -276,7 +274,7 @@ public final class ConflictBuilder
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
-    private static void buildConflicts(final Lane lane1, final GTUDirectionality dir1,
+    static void buildConflicts(final Lane lane1, final GTUDirectionality dir1,
             final ImmutableMap<Lane, GTUDirectionality> down1, final ImmutableMap<Lane, GTUDirectionality> up1,
             final Lane lane2, final GTUDirectionality dir2, final ImmutableMap<Lane, GTUDirectionality> down2,
             final ImmutableMap<Lane, GTUDirectionality> up2, final GTUType gtuType, final boolean permitted,
@@ -1015,7 +1013,7 @@ public final class ConflictBuilder
     /* ******************************************************************************************************************** */
     /* ******************************************************************************************************************** */
     /* ******************************************************************************************************************** */
-    /* **************************** PARALLEL IMPLEMENTATION ******************************** */
+    /* ********************************************* PARALLEL IMPLEMENTATION ********************************************** */
     /* ******************************************************************************************************************** */
     /* ******************************************************************************************************************** */
     /* ******************************************************************************************************************** */
@@ -1067,7 +1065,7 @@ public final class ConflictBuilder
                 }
             }
         }
-        buildConflictsParallel(lanes, gtuType, simulator, widthGenerator, ignoreList, permittedList);
+        buildConflictsParallelBig(lanes, gtuType, simulator, widthGenerator, ignoreList, permittedList);
     }
 
     /**
@@ -1082,11 +1080,12 @@ public final class ConflictBuilder
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
             throws OTSGeometryException
     {
-        buildConflictsParallel(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
+        buildConflictsParallelBig(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(),
+                new LaneCombinationList());
     }
 
     /**
-     * Build conflicts on list of lanes; parallel implementation.
+     * Build conflicts on list of lanes; parallel implementation. Small jobs.
      * @param lanes List&lt;Lane&gt;; list of Lanes
      * @param gtuType GTUType; the GTU type
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
@@ -1095,14 +1094,13 @@ public final class ConflictBuilder
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OTSGeometryException in case of geometry exception
      */
-    public static void buildConflictsParallel(final List<Lane> lanes, final GTUType gtuType,
+    public static void buildConflictsParallelSmall(final List<Lane> lanes, final GTUType gtuType,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
             final LaneCombinationList ignoreList, final LaneCombinationList permittedList) throws OTSGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
-        System.out.println("PARALLEL GENERATING OF CONFLICTS. " + totalCombinations + " COMBINATIONS");
-        CategoryLogger.setAllLogLevel(Level.DEBUG);
+        System.out.println("PARALLEL GENERATING OF CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
         Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
         Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
@@ -1118,16 +1116,20 @@ public final class ConflictBuilder
         System.out.println("USING " + cores + " CORES");
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cores);
         AtomicInteger numberOfJobs = new AtomicInteger(0);
-        final int maxqueue = 200;
+        final int maxqueue = 2 * cores;
 
         for (int i = 0; i < lanes.size(); i++)
         {
             long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
-            if (combinationsDone / 1000000 > lastReported)
+            if (combinationsDone / 100000000 > lastReported)
             {
                 SimLogger.always()
-                        .debug(String.format("generating conflicts at %.2f%%", 100.0 * combinationsDone / totalCombinations));
-                lastReported = combinationsDone / 1000000;
+                        .debug(String.format(
+                                "generating conflicts at %.0f%% (generated %d merge conflicts, %d split "
+                                        + "conflicts, %d crossing conflicts)",
+                                100.0 * combinationsDone / totalCombinations, numberMergeConflicts.get(),
+                                numberSplitConflicts.get(), numberCrossConflicts.get()));
+                lastReported = combinationsDone / 100000000;
             }
             Lane lane1 = lanes.get(i);
             for (GTUDirectionality dir1 : lane1.getLaneType().getDirectionality(gtuType).getDirectionalities())
@@ -1175,9 +1177,9 @@ public final class ConflictBuilder
                         numberOfJobs.incrementAndGet();
                         ImmutableMap<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
                         ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
-                        ConflictBuilderRecord cbr = new ConflictBuilderRecord(lane1, dir1, down1, up1, lane2, dir2, down2, up2,
-                                gtuType, permitted, simulator, widthGenerator, leftEdges, rightEdges);
-                        executor.execute(new CbrTask(numberOfJobs, cbr));
+                        ConflictBuilderRecordSmall cbr = new ConflictBuilderRecordSmall(lane1, dir1, down1, up1, lane2, dir2,
+                                down2, up2, gtuType, permitted, simulator, widthGenerator, leftEdges, rightEdges);
+                        executor.execute(new CbrTaskSmall(numberOfJobs, cbr));
                     }
                 }
             }
@@ -1196,31 +1198,139 @@ public final class ConflictBuilder
                 // ignore
             }
         }
-        System.out.println("OBJECTMAP.SIZE  = " + gtuType.getNetwork().getObjectMap().size());
 
         executor.shutdown();
         while (!executor.isTerminated())
         {
-            // nothing
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException exception)
+            {
+                // ignore
+            }
         }
 
-        try
+        SimLogger.always()
+                .debug(String.format(
+                        "generating conflicts complete (generated %d merge conflicts, %d split "
+                                + "conflicts, %d crossing conflicts)",
+                        numberMergeConflicts.get(), numberSplitConflicts.get(), numberCrossConflicts.get()));
+    }
+
+    /**
+     * Build conflicts on list of lanes; parallel implementation. Big jobs.
+     * @param lanes List&lt;Lane&gt;; list of Lanes
+     * @param gtuType GTUType; the GTU type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param widthGenerator WidthGenerator; the width generator
+     * @param ignoreList LaneCombinationList; lane combinations to ignore
+     * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
+     * @throws OTSGeometryException in case of geometry exception
+     */
+    public static void buildConflictsParallelBig(final List<Lane> lanes, final GTUType gtuType,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
+            final LaneCombinationList ignoreList, final LaneCombinationList permittedList) throws OTSGeometryException
+    {
+        // Loop Lane / GTUDirectionality combinations
+        long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
+        System.out.println("PARALLEL GENERATING OF CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
+        long lastReported = 0;
+        Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
+        Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
+
+        // force the envelopes to be built first
+        for (Lane lane : lanes)
         {
-            Thread.sleep(5000);
-        }
-        catch (InterruptedException exception)
-        {
-            exception.printStackTrace();
+            lane.getContour().getEnvelope();
         }
 
-        CategoryLogger.setAllLogLevel(Level.WARNING);
+        // make a threadpool and execute buildConflicts for all records
+        int cores = Runtime.getRuntime().availableProcessors();
+        System.out.println("USING " + cores + " CORES");
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cores);
+        AtomicInteger numberOfJobs = new AtomicInteger(0);
+        final int maxqueue = 200;
+
+        for (int i = 0; i < lanes.size(); i++)
+        {
+            long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
+            if (combinationsDone / 100000000 > lastReported)
+            {
+                SimLogger.always()
+                        .debug(String.format(
+                                "generating conflicts at %.0f%% (generated %d merge conflicts, %d split "
+                                        + "conflicts, %d crossing conflicts)",
+                                100.0 * combinationsDone / totalCombinations, numberMergeConflicts.get(),
+                                numberSplitConflicts.get(), numberCrossConflicts.get()));
+                lastReported = combinationsDone / 100000000;
+            }
+            Lane lane1 = lanes.get(i);
+            for (GTUDirectionality dir1 : lane1.getLaneType().getDirectionality(gtuType).getDirectionalities())
+            {
+                ImmutableMap<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
+                ImmutableMap<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
+
+                while (numberOfJobs.get() > maxqueue) // keep max maxqueue jobs in the pool
+                {
+                    try
+                    {
+                        Thread.sleep(0, 10);
+                    }
+                    catch (InterruptedException exception)
+                    {
+                        // ignore
+                    }
+                }
+                numberOfJobs.incrementAndGet();
+
+                ConflictBuilderRecordBig cbr = new ConflictBuilderRecordBig(i, lanes, ignoreList, permittedList, lane1, dir1,
+                        down1, up1, gtuType, simulator, widthGenerator, leftEdges, rightEdges);
+                executor.execute(new CbrTaskBig(numberOfJobs, cbr));
+
+            }
+        }
+
+        long time = System.currentTimeMillis();
+        // wait max 60 sec for last maxqueue jobs
+        while (numberOfJobs.get() > 0 && System.currentTimeMillis() - time < 60000)
+        {
+            try
+            {
+                Thread.sleep(10);
+            }
+            catch (InterruptedException exception)
+            {
+                // ignore
+            }
+        }
+
+        executor.shutdown();
+        while (!executor.isTerminated())
+        {
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException exception)
+            {
+                // ignore
+            }
+        }
+
+        SimLogger.always()
+                .debug(String.format(
+                        "generating conflicts complete (generated %d merge conflicts, %d split "
+                                + "conflicts, %d crossing conflicts)",
+                        numberMergeConflicts.get(), numberSplitConflicts.get(), numberCrossConflicts.get()));
     }
 
     /** */
-    static class CbrTask implements Runnable
+    static class CbrTaskSmall implements Runnable
     {
         /** */
-        final ConflictBuilderRecord cbr;
+        final ConflictBuilderRecordSmall cbr;
 
         /** */
         final AtomicInteger nrOfJobs;
@@ -1229,7 +1339,7 @@ public final class ConflictBuilder
          * @param nrOfJobs nr
          * @param cbr the record to execute
          */
-        CbrTask(final AtomicInteger nrOfJobs, final ConflictBuilderRecord cbr)
+        CbrTaskSmall(final AtomicInteger nrOfJobs, final ConflictBuilderRecordSmall cbr)
         {
             this.nrOfJobs = nrOfJobs;
             this.cbr = cbr;
@@ -1241,7 +1351,7 @@ public final class ConflictBuilder
             // System.err.println("conflict #" + this.nr);
             try
             {
-                buildConflicts(this.cbr);
+                buildConflictsSmall(this.cbr);
             }
             catch (Exception e)
             {
@@ -1255,7 +1365,7 @@ public final class ConflictBuilder
      * Build conflicts for one record.
      * @param cbr the lane record
      */
-    static void buildConflicts(final ConflictBuilderRecord cbr)
+    static void buildConflictsSmall(final ConflictBuilderRecordSmall cbr)
     {
         // See if conflict needs to be build, and build if so
         try
@@ -1271,7 +1381,7 @@ public final class ConflictBuilder
 
     /** */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    static class ConflictBuilderRecord
+    static class ConflictBuilderRecordSmall
     {
         /** */
         final Lane lane1;
@@ -1333,12 +1443,12 @@ public final class ConflictBuilder
          * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
-        ConflictBuilderRecord(final Lane lane1, final GTUDirectionality dir1, final ImmutableMap<Lane, GTUDirectionality> down1,
-                final ImmutableMap<Lane, GTUDirectionality> up1, final Lane lane2, final GTUDirectionality dir2,
-                final ImmutableMap<Lane, GTUDirectionality> down2, final ImmutableMap<Lane, GTUDirectionality> up2,
-                final GTUType gtuType, final boolean permitted, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
-                final WidthGenerator widthGenerator, final Map<Lane, OTSLine3D> leftEdges,
-                final Map<Lane, OTSLine3D> rightEdges)
+        ConflictBuilderRecordSmall(final Lane lane1, final GTUDirectionality dir1,
+                final ImmutableMap<Lane, GTUDirectionality> down1, final ImmutableMap<Lane, GTUDirectionality> up1,
+                final Lane lane2, final GTUDirectionality dir2, final ImmutableMap<Lane, GTUDirectionality> down2,
+                final ImmutableMap<Lane, GTUDirectionality> up2, final GTUType gtuType, final boolean permitted,
+                final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
+                final Map<Lane, OTSLine3D> leftEdges, final Map<Lane, OTSLine3D> rightEdges)
         {
             this.lane1 = lane1;
             this.dir1 = dir1;
@@ -1350,6 +1460,165 @@ public final class ConflictBuilder
             this.up2 = up2;
             this.gtuType = gtuType;
             this.permitted = permitted;
+            this.simulator = simulator;
+            this.widthGenerator = widthGenerator;
+            this.leftEdges = leftEdges;
+            this.rightEdges = rightEdges;
+        }
+    }
+
+    /** */
+    static class CbrTaskBig implements Runnable
+    {
+        /** */
+        final ConflictBuilderRecordBig cbr;
+
+        /** */
+        final AtomicInteger nrOfJobs;
+
+        /**
+         * @param nrOfJobs nr
+         * @param cbr the record to execute
+         */
+        CbrTaskBig(final AtomicInteger nrOfJobs, final ConflictBuilderRecordBig cbr)
+        {
+            this.nrOfJobs = nrOfJobs;
+            this.cbr = cbr;
+        }
+
+        @Override
+        public void run()
+        {
+            // System.err.println("conflict #" + this.nr);
+            try
+            {
+                for (int j = this.cbr.starti + 1; j < this.cbr.lanes.size(); j++)
+                {
+                    Lane lane2 = this.cbr.lanes.get(j);
+                    if (this.cbr.ignoreList.contains(this.cbr.lane1, lane2))
+                    {
+                        continue;
+                    }
+                    // Quick contour check, skip if non-overlapping envelopes
+                    try
+                    {
+                        if (!this.cbr.lane1.getContour().intersects(lane2.getContour()))
+                        {
+                            continue;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.err.println("Contour problem - lane1 = [" + this.cbr.lane1.getFullId() + "], lane2 = ["
+                                + lane2.getFullId() + "]; skipped");
+                        continue;
+                    }
+
+                    boolean permitted = this.cbr.permittedList.contains(this.cbr.lane1, lane2);
+
+                    for (GTUDirectionality dir2 : lane2.getLaneType().getDirectionality(this.cbr.gtuType).getDirectionalities())
+                    {
+                        ImmutableMap<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, this.cbr.gtuType);
+                        ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, this.cbr.gtuType);
+
+                        try
+                        {
+                            buildConflicts(this.cbr.lane1, this.cbr.dir1, this.cbr.down1, this.cbr.up1, lane2, dir2, down2, up2,
+                                    this.cbr.gtuType, permitted, this.cbr.simulator, this.cbr.widthGenerator,
+                                    this.cbr.leftEdges, this.cbr.rightEdges, false);
+                        }
+                        catch (NetworkException | OTSGeometryException ne)
+                        {
+                            SimLogger.always().error(ne, "Conflict build with bad combination of types / rules.");
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            this.nrOfJobs.decrementAndGet();
+        }
+    }
+
+    /** */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    static class ConflictBuilderRecordBig
+    {
+        /** */
+        final int starti;
+
+        /** */
+        final List<Lane> lanes;
+
+        /** */
+        final LaneCombinationList ignoreList;
+
+        /** */
+        final LaneCombinationList permittedList;
+
+        /** */
+        final Lane lane1;
+
+        /** */
+        final GTUDirectionality dir1;
+
+        /** */
+        final ImmutableMap<Lane, GTUDirectionality> down1;
+
+        /** */
+        final ImmutableMap<Lane, GTUDirectionality> up1;
+
+        /** */
+        final GTUType gtuType;
+
+        /** */
+        final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+
+        /** */
+        final WidthGenerator widthGenerator;
+
+        /** */
+        final Map<Lane, OTSLine3D> leftEdges;
+
+        /** */
+        final Map<Lane, OTSLine3D> rightEdges;
+
+        /**
+         * Stores conflicts about a single lane pair.
+         * @param starti int; the start index
+         * @param lanes List of lanes
+         * @param ignoreList list of lane combinations to ignore
+         * @param permittedList list of lane combinations to permit
+         * @param lane1 Lane; lane 1
+         * @param dir1 GTUDirectionality; gtu direction 1
+         * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
+         * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
+         * @param gtuType GTUType; gtu type
+         * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+         * @param widthGenerator WidthGenerator; width generator
+         * @param leftEdges Map<Lane, OTSLine3D>; cache of left edge lines
+         * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
+         */
+        @SuppressWarnings("checkstyle:parameternumber")
+        ConflictBuilderRecordBig(final int starti, final List<Lane> lanes, final LaneCombinationList ignoreList,
+                final LaneCombinationList permittedList, final Lane lane1, final GTUDirectionality dir1,
+                final ImmutableMap<Lane, GTUDirectionality> down1, final ImmutableMap<Lane, GTUDirectionality> up1,
+                final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+                final WidthGenerator widthGenerator, final Map<Lane, OTSLine3D> leftEdges,
+                final Map<Lane, OTSLine3D> rightEdges)
+        {
+            this.starti = starti;
+            this.lanes = lanes;
+            this.ignoreList = ignoreList;
+            this.permittedList = permittedList;
+            this.lane1 = lane1;
+            this.dir1 = dir1;
+            this.down1 = down1;
+            this.up1 = up1;
+            this.gtuType = gtuType;
             this.simulator = simulator;
             this.widthGenerator = widthGenerator;
             this.leftEdges = leftEdges;
