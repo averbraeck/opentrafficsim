@@ -495,7 +495,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
             {
                 URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
                 this.network = new OTSRoadNetwork("AHFE", true);
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
 
                 // Space-time regions for sampler
                 LinkData linkData = new LinkData((CrossSectionLink) this.network.getLink("LEFTIN"));

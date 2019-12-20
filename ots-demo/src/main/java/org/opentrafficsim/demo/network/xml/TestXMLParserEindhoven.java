@@ -143,7 +143,7 @@ public class TestXMLParserEindhoven extends OTSSimulationApplication<TestXMLMode
             this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
                     | URISyntaxException | XmlParserException | GTUException exception)

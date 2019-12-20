@@ -166,7 +166,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
             {
                 this.network = new OTSRoadNetwork(getShortName(), true);
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                        getSimulator());
+                        getSimulator(), false);
 
                 String controllerName = "TrafCOD_complex";
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),

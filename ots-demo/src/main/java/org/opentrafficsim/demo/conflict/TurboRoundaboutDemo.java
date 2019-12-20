@@ -16,7 +16,6 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -25,7 +24,6 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -120,11 +118,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
             {
                 URL xmlURL = URLResource.getResource("/conflict/TurboRoundabout.xml");
                 this.network = new OTSRoadNetwork("TurboRoundabout", true);
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
-
-                // add conflicts
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
-                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);
 
                 // add trafficlights
                 for (Lane lane : ((CrossSectionLink) this.network.getLink("SEXITS2")).getLanes())

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
@@ -27,6 +28,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.pmw.tinylog.Level;
 
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -144,7 +146,7 @@ public final class ConflictBuilder
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
-        System.out.println("GENERATING CONFLICTS (NON-PARALLEL MODE). " + totalCombinations + " COMBINATIONS");
+        SimLogger.always().debug("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
         long lastReported = 0;
         Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
         Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
@@ -1326,6 +1328,44 @@ public final class ConflictBuilder
                         numberMergeConflicts.get(), numberSplitConflicts.get(), numberCrossConflicts.get()));
     }
 
+    /**
+     * Build conflicts on network using only the groups of links that have been identified as candidates with conflicts;
+     * parallel implementation.
+     * @param network OTSRoadNetwork; network
+     * @param conflictCandidateMap Map&lt;String, Set&lt;Link&gt;&gt;; the map of the conflicting links to implement
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
+     * @throws OTSGeometryException in case of geometry exception
+     */
+    public static void buildConflictsParallel(final OTSRoadNetwork network, final Map<String, Set<Link>> conflictCandidateMap,
+            final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
+            throws OTSGeometryException
+    {
+        for (String conflictId : conflictCandidateMap.keySet())
+        {
+            System.out.println(conflictId);
+            List<Lane> lanes = new ArrayList<>();
+            for (Link link : conflictCandidateMap.get(conflictId))
+            {
+                if (link instanceof CrossSectionLink)
+                {
+                    for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
+                    {
+                        if (element instanceof Lane)
+                        {
+                            lanes.add((Lane) element);
+                        }
+                    }
+                }
+            }
+            // TODO: make parallel
+            SimLogger.setAllLogLevel(Level.WARNING);
+            buildConflicts(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
+            SimLogger.setAllLogLevel(Level.DEBUG);
+        }
+    }
+
     /** */
     static class CbrTaskSmall implements Runnable
     {
@@ -1359,6 +1399,7 @@ public final class ConflictBuilder
             }
             this.nrOfJobs.decrementAndGet();
         }
+
     }
 
     /**

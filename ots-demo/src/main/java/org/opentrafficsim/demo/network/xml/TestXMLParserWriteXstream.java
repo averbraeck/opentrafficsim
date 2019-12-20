@@ -135,7 +135,7 @@ public class TestXMLParserWriteXstream extends OTSSimulationApplication<OTSModel
             this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
 
                 System.out.println("parsing took : " + (System.currentTimeMillis() - millis) + " ms");
 

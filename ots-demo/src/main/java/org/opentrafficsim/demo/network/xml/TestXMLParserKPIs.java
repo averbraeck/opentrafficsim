@@ -152,7 +152,7 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
             this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
 
                 for (TrafficLight tl : this.network.getObjectMap(TrafficLight.class).values())
                 {
