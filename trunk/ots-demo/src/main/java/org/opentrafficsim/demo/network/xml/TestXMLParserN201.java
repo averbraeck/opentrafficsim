@@ -142,7 +142,7 @@ public class TestXMLParserN201 extends OTSSimulationApplication<TestXMLModelN201
             this.network = new OTSRoadNetwork("Example network", true);
             try
             {
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
                     | URISyntaxException | XmlParserException | GTUException exception)

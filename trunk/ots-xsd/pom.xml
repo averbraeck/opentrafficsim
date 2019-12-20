@@ -12,7 +12,7 @@
   <description>OTS XSD schema definitions for XML files</description>
 
   <properties>
-    <xsd.version>1.03.01-SNAPSHOT</xsd.version>
+    <xsd.version>1.03.00</xsd.version>
   </properties>
 
   <build>

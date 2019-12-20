@@ -118,7 +118,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
             {
                 URL xmlURL = URLResource.getResource("/conflict/TJunction.xml");
                 this.network = new OTSRoadNetwork("TJunction", true);
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
 
                 // add conflicts
                 // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);

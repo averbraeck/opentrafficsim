@@ -94,8 +94,8 @@ public class AimsunControl
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueRuntimeException,
-            ParameterException, SimRuntimeException
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException,
+            ValueRuntimeException, ParameterException, SimRuntimeException
     {
         // TODO: LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
         SimLogger.setAllLogLevel(Level.WARNING);
@@ -232,8 +232,7 @@ public class AimsunControl
         }
         try
         {
-            simulator.scheduleEventAbs(this.simulateUntil, this, this, "sendGTUPositionsToAimsun",
-                    new Object[] { outputStream });
+            simulator.scheduleEventAbs(this.simulateUntil, this, this, "sendGTUPositionsToAimsun", new Object[] {outputStream});
         }
         catch (SimRuntimeException exception)
         {
@@ -410,7 +409,7 @@ public class AimsunControl
                         {
                             simulatorStarted = true;
                             simulator.scheduleEventAbs(stopTime, this, this, "sendGTUPositionsToAimsun",
-                                    new Object[] { outputStream });
+                                    new Object[] {outputStream});
                             System.out.println("Starting simulator");
                             this.simulateUntil = stopTime;
                             simulator.start();
@@ -583,7 +582,7 @@ public class AimsunControl
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                        getSimulator());
+                        getSimulator(), false);
                 // TODO: These links are Aimsun specific.
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
@@ -591,8 +590,9 @@ public class AimsunControl
                 ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
                         (CrossSectionLink) this.network.getLink("925_J2"));
                 LaneCombinationList permittedList = new LaneCombinationList();
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
+                ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+                        getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList,
+                        permittedList);
                 new GTUDumper(simulator, Time.ZERO, Duration.instantiateSI(60), network, "C:/Temp/aimsun");
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException

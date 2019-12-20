@@ -6,13 +6,21 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
     
-    <release>
+    <release version="1.03.01" date="2019-12-XX" description="XML parsing extended, ">
       <action dev="averbraeck" type="update">
         com.sun.xml.bind package gone; replaced by javax.xml.bind:jaxb-api and org.glassfish.jaxb:jaxb-runtime.
         JAXB version updated to 2.3.1.
       </action>
       <action dev="averbraeck" type="fix">
         XML files adapted for new DJUNITS standards.
+      </action>
+      <action dev="averbraeck" type="add">
+        Parallel implementations of ConflictBuilder for large networks.
+      </action>
+      <action dev="averbraeck" type="add">
+        OTS-XML: Extending the LINK tag with a possibility to store a ConflictID for a guided generation 
+        of conflicts. The XMLParser and ConflictBuilder have been extended to allow for the usage of the 
+        ConflictID information.
       </action>
     </release>
     

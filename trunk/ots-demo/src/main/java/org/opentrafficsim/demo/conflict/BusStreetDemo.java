@@ -74,7 +74,6 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -176,10 +175,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             {
                 URL xmlURL = URLResource.getResource("/conflict/BusStreet.xml");
                 this.network = new OTSRoadNetwork("BusStreet", true);
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator());
-
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
-                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);
 
                 // Add bus stops
                 Lane lane = ((CrossSectionLink) this.network.getLink("B1B2")).getLanes().get(0);

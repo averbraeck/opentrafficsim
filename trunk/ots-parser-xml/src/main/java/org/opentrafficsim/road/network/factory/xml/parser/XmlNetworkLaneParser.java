@@ -17,7 +17,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
@@ -29,6 +31,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
@@ -39,9 +42,11 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
+import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.GTUTEMPLATE;
+import org.opentrafficsim.xml.generated.LINK;
 import org.opentrafficsim.xml.generated.MODELTYPE;
 import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NETWORKDEMAND;
@@ -83,6 +88,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @param filename String; the name of the file to parse
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param simulator OTSSimulatorInterface; the simulator
+     * @param buildConflicts boolean; whether to build conflicts or not
      * @return the network that contains the parsed objects
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
@@ -95,12 +101,12 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     public static OTSRoadNetwork build(final String filename, final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator)
+            final OTSSimulatorInterface simulator, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GTUException
     {
         URL xmlURL = URLResource.getResource(filename);
-        build(xmlURL, otsNetwork, simulator);
+        build(xmlURL, otsNetwork, simulator, buildConflicts);
         return otsNetwork;
     }
 
@@ -109,6 +115,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @param xmlStream InputStream; the xml input stream
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param simulator OTSSimulatorInterface; the simulator
+     * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
@@ -121,11 +128,11 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final InputStream xmlStream,
-            final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator)
+            final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GTUException
     {
-        return build(parseXML(xmlStream), otsNetwork, simulator);
+        return build(parseXML(xmlStream), otsNetwork, simulator, buildConflicts);
     }
 
     /**
@@ -173,6 +180,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @param xmlURL URL; the URL for the xml input file
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param simulator OTSSimulatorInterface; the simulator
+     * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
@@ -185,11 +193,11 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator)
+            final OTSSimulatorInterface simulator, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GTUException
     {
-        return build(parseXML(xmlURL), otsNetwork, simulator);
+        return build(parseXML(xmlURL), otsNetwork, simulator, buildConflicts);
     }
 
     /**
@@ -197,6 +205,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @param ots OTS; the OTS object
      * @param otsNetwork OTSRoadNetwork; the network to insert the parsed objects in
      * @param simulator OTSSimulatorInterface; the simulator
+     * @param buildConflicts boolean; whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
@@ -209,7 +218,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final OTS ots, final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator)
+            final OTSSimulatorInterface simulator, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
             ParserConfigurationException, SimRuntimeException, GTUException
     {
@@ -287,6 +296,43 @@ public final class XmlNetworkLaneParser implements Serializable
         {
             e.printStackTrace();
         }
+
+        // conflicts
+        if (buildConflicts)
+        {
+            System.out.println("\nGENERATING CONFLICTS");
+            Map<String, Set<Link>> conflictCandidateMap = new LinkedHashMap<String, Set<Link>>();
+            for (Object o : network.getIncludeOrNODEOrCONNECTOR())
+            {
+                if (o instanceof LINK)
+                {
+                    LINK link = (LINK) o;
+                    if (link.getCONFLICTID() != null)
+                    {
+                        if (!conflictCandidateMap.containsKey(link.getCONFLICTID()))
+                        {
+                            conflictCandidateMap.put(link.getCONFLICTID(), new LinkedHashSet<Link>());
+                        }
+                        conflictCandidateMap.get(link.getCONFLICTID()).add(otsNetwork.getLink(link.getID()));
+                    }
+                }
+            }
+            System.out.println("MAP SIZE OF CONFLICT CANDIDATE REGIONS = " + conflictCandidateMap.size());
+
+            if (conflictCandidateMap.size() == 0)
+            {
+                ConflictBuilder.buildConflictsParallel(otsNetwork, otsNetwork.getGtuType(GTUType.DEFAULTS.VEHICLE), simulator,
+                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+            }
+            else
+            {
+                ConflictBuilder.buildConflictsParallel(otsNetwork, conflictCandidateMap,
+                        otsNetwork.getGtuType(GTUType.DEFAULTS.VEHICLE), simulator,
+                        new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
+            }
+            System.out.println("OBJECTMAP.SIZE  = " + otsNetwork.getObjectMap().size());
+        }
+
         // The code below can be used to visualize the LaneStructure of a particular GTU
         /*-EventListenerInterface listener = new EventListenerInterface()
         {
@@ -331,7 +377,7 @@ public final class XmlNetworkLaneParser implements Serializable
     public static void main(final String[] args) throws Exception
     {
         OTSSimulatorInterface simulator = new OTSSimulator();
-        build("/example.xml", new OTSRoadNetwork("", true), simulator);
+        build("/example.xml", new OTSRoadNetwork("", true), simulator, false);
         System.exit(0);
     }
 }

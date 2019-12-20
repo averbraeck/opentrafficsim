@@ -344,7 +344,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
         OTSRoadNetwork network = new OTSRoadNetwork("Distraction", true);
         new CollisionDetector(network); // XXX: is this needed here? was in old version...
-        XmlNetworkLaneParser.build(xmlURL, network, sim);
+        XmlNetworkLaneParser.build(xmlURL, network, sim, false);
 
         // new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0),
         // Length.instantiateSI(1000),

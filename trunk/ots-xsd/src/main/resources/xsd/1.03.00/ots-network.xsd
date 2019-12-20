@@ -115,6 +115,7 @@
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" default="KEEPRIGHT" />
       <xsd:attribute name="PRIORITY" type="PRIORITYTYPE" use="optional" />
       <xsd:attribute name="FIXGRADUALOFFSET" type="xsd:boolean" use="optional" default="false" />
+      <xsd:attribute name="CONFLICTID" type="xsd:string" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
