@@ -52,6 +52,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -133,6 +134,10 @@ public final class ODApplier
         // TODO sinks? white extension links?
         for (Node destination : od.getDestinations())
         {
+            if ("Centroid 127393 at 121669.799_487786.120".equals(destination.getId()))
+            {
+                System.out.println("processing destination " + destination);
+            }
             createSinksAtDestination(destination, simulator);
         }
 
@@ -265,6 +270,13 @@ public final class ODApplier
                         throw new RuntimeException(ge);
                     }
                     initialPositions.put(demandNode, initialPosition);
+                    for (DirectedLanePosition dlp : initialPosition)
+                    {
+                        if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
+                        {
+                            System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
+                        }
+                    }
                 }
             }
             else
@@ -300,13 +312,42 @@ public final class ODApplier
                                         linkWeights.put(((CrossSectionLink) connectedLink),
                                                 ((CrossSectionLink) link).getDemandWeight() / served);
                                     }
+                                    for (DirectedLanePosition dlp : positionSet)
+                                    {
+                                        if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
+                                        {
+                                            System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
+                                        }
+                                    }
                                     setDirectedLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
+                                    for (DirectedLanePosition dlp : positionSet)
+                                    {
+                                        if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
+                                        {
+                                            System.out.println("Directed lane position me t GTUDirectionality.DIR_MINUS: " + dlp);
+                                        }
+                                    }
                                 }
                             }
                         }
+                        for (DirectedLanePosition dlp : positionSet)
+                        {
+                            if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
+                            {
+                                System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
+                            }
+                        }
+
                     }
                     else if (link instanceof CrossSectionLink)
                     {
+                        for (DirectedLanePosition dlp : positionSet)
+                        {
+                            if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
+                            {
+                                System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
+                            }
+                        }
                         setDirectedLanePosition((CrossSectionLink) link, origin, positionSet);
                     }
                 }
@@ -319,6 +360,13 @@ public final class ODApplier
             for (DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root : initialPositions.keySet())
             {
                 Set<DirectedLanePosition> initialPosition = initialPositions.get(root);
+                for (DirectedLanePosition dlp : initialPosition)
+                {
+                    if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
+                    {
+                        System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
+                    }
+                }
                 // id
                 Node o = root.getObject();
                 String id = o.getId();
@@ -345,6 +393,13 @@ public final class ODApplier
                 {
                     lane = null;
                     linkType = getLinkTypeFromNode(o);
+                }
+                for (DirectedLanePosition dlp : initialPosition)
+                {
+                    if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
+                    {
+                        System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp + " o=" + o);
+                    }
                 }
                 HeadwayDistribution randomization = odOptions.get(ODOptions.HEADWAY_DIST, lane, o, linkType);
                 ArrivalsHeadwayGenerator headwayGenerator =
@@ -391,6 +446,78 @@ public final class ODApplier
         {
             if (link.getLinkType().isConnector() && !link.getStartNode().equals(destination))
             {
+                createSinksAtDestinationNode(link.getStartNode(), simulator);
+            }
+            else
+            {
+                createSinksAtDestinationNode(destination, simulator);
+            }
+        }
+    }
+    
+    /**
+     * Create sinks at all lanes connected to this node. This method does not handle connectors.
+     * @param destination Node; the destination node
+     * @param simulator OTSSimulatorInterface; simulator
+     */
+    private static void createSinksAtDestinationNode(final Node destination, final OTSSimulatorInterface simulator)
+    {
+        for (Link link : destination.getLinks())
+        {
+            if (link instanceof CrossSectionLink)
+            {
+                for (Lane lane : ((CrossSectionLink) link).getLanes())
+                {
+                    try
+                    {
+                        // if the lane already contains a SinkSensor, skip creating a new one
+                        boolean sinkSensorExists = false;
+                        for (Sensor sensor : lane.getSensors())
+                        {
+                            if (sensor instanceof SinkSensor)
+                            {
+                                sinkSensorExists = true;
+                            }
+                        }
+                        if (!sinkSensorExists)
+                        {
+                            if (link.getEndNode().equals(destination))
+                            {
+                                new SinkSensor(lane, lane.getLength(), GTUDirectionality.DIR_PLUS, simulator);
+                            }
+                            else if (link.getStartNode().equals(destination))
+                            {
+                                new SinkSensor(lane, Length.ZERO, GTUDirectionality.DIR_MINUS, simulator);
+                            }
+                        }
+                    }
+                    catch (NetworkException exception)
+                    {
+                        // can not happen, we use Length.ZERO and lane.getLength()
+                        throw new RuntimeException(exception);
+                    }
+                }
+            }
+        }
+    }
+    
+    private static int depth = 0;
+    /**
+     * Create sinks at all lanes connected to a destination node. This method considers connectors too.
+     * @param destination Node; destination node
+     * @param simulator OTSSimulatorInterface; simulator
+     */
+    private static void createSinksAtDestinationOld(final Node destination, final OTSSimulatorInterface simulator)
+    {
+        if (depth >= 3)
+        {
+            SimLogger.always().debug("Entering (depth = {}, destination = {})", depth, destination.getId());
+        }
+        depth++;
+        for (Link link : destination.getLinks())
+        {
+            if (link.getLinkType().isConnector() && !link.getStartNode().equals(destination))
+            {
                 createSinksAtDestination(link.getStartNode(), simulator);
             }
             if (link instanceof CrossSectionLink)
@@ -428,6 +555,7 @@ public final class ODApplier
                 }
             }
         }
+        depth--;
     }
 
     /**
@@ -521,6 +649,12 @@ public final class ODApplier
     {
         for (Lane lane : link.getLanes())
         {
+            // TODO should be GTU type dependent.
+            if (!lane.getParentLink().getStartNode().equals(node))
+            {
+                return;
+                // TODO handle lanes that ARE drivable contrary to the design direction of the link
+            }
             try
             {
                 positionSet.add(lane.getParentLink().getStartNode().equals(node)

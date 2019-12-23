@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -60,6 +62,48 @@ public class Route implements Serializable, Identifiable
         this.id = id;
         this.nodes = new ArrayList<>(nodes); // defensive copy
         this.nodeSet.addAll(nodes);
+        verify();
+    }
+    
+    /**
+     * Verify that there are normal (non Connectors) between adjacent nodes, except at start and end (where Connectors are OK.
+     */
+    public void verify()
+    {
+        // XXX Sanity check - there should be no Connectors (except at start and end)
+        for (int index = 0; index < nodes.size() - 1; index++)
+        {
+            Node from = nodes.get(index);
+            Node to = nodes.get(index + 1);
+            boolean normalLinkFound = false;
+            boolean connectorFound = false;
+            for (Link link : from.getLinks())
+            {
+                if (link.getStartNode().equals(to) || link.getEndNode().equals(to))
+                {
+                    if (link.getLinkType().isConnector())
+                    {
+                        connectorFound = true;
+                    }
+                    else
+                    {
+                        normalLinkFound = true;
+                    }
+                }
+            }
+            if ((!normalLinkFound) && (!connectorFound))
+            {
+                SimLogger.always()
+                        .error(String.format("Unlike this route, the network has no link from %s (index %d of %d) to %s", from,
+                                index, nodes.size(), to));
+            }
+            else if ((!normalLinkFound) && index > 0 && index < nodes.size() - 2)
+            {
+                SimLogger.always()
+                        .error(String.format("Route includes connector along the way (from %s (index %d of %d) to %s)", from,
+                                index, nodes.size(), to));
+            }
+        }
     }
 
     /**
@@ -73,6 +117,7 @@ public class Route implements Serializable, Identifiable
     {
         this.nodes.add(node);
         this.nodeSet.add(node);
+        verify();
         return this;
     }
 

@@ -603,7 +603,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final void buildGraph(final GTUType gtuType)
     {
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = buildGraph(gtuType, LinkWeight.LENGTH);
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = buildGraph(gtuType, LinkWeight.LENGTH_NO_CONNECTORS);
         this.linkGraphs.put(gtuType, graph);
     }
 
@@ -656,6 +656,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         GraphPath<Node, LinkEdge<Link>> path = DijkstraShortestPath.findPathBetween(graph, nodeFrom, nodeTo);
         if (path == null)
         {
+            SimLogger.always().debug("No path from " + nodeFrom + " to " + nodeTo + " for gtuType " + gtuType);
             return null;
         }
         route.addNode(nodeFrom);
@@ -708,19 +709,31 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             GraphPath<Node, LinkEdge<Link>> path = dijkstra.getPath(from, to);
             if (path == null)
             {
+                SimLogger.always().debug("Cannot find a path from " + nodeFrom + " via " + nodesVia + " to " + nodeTo
+                        + " (failing between " + from + " and " + to + ")");
+                //dijkstra.getPath(from, to);
                 return null;
             }
-            for (LinkEdge<Link> link : path.getEdgeList())
+            // System.out.println("Path:");
+            // for (LinkEdge<Link> link : path.getEdgeList())
+            // {
+            // System.out.println(" " + link);
+            // }
+            for (LinkEdge<Link> linkEdge : path.getEdgeList())
             {
-                if (!link.getLink().getEndNode().equals(route.destinationNode())
-                        && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
+                if (linkEdge.getLink().getEndNode().equals(route.destinationNode()))
                 {
-                    route.addNode(link.getLink().getEndNode());
+                    System.out.println("Let op");
                 }
-                else if (!link.getLink().getStartNode().equals(route.destinationNode())
-                        && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
+                if (!linkEdge.getLink().getEndNode().equals(route.destinationNode())
+                        && route.destinationNode().isDirectionallyConnectedTo(gtuType, linkEdge.getLink().getEndNode()))
                 {
-                    route.addNode(link.getLink().getStartNode());
+                    route.addNode(linkEdge.getLink().getEndNode());
+                }
+                else if (!linkEdge.getLink().getStartNode().equals(route.destinationNode())
+                        && route.destinationNode().isDirectionallyConnectedTo(gtuType, linkEdge.getLink().getStartNode()))
+                {
+                    route.addNode(linkEdge.getLink().getStartNode());
                 }
                 else
                 {

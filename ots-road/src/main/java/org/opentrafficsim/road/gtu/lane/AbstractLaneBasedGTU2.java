@@ -670,6 +670,12 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             Time enterTime = timeAtLine(enterLine, getFront());
             if (enterTime != null)
             {
+                if (enterTime.lt(getSimulator().getSimulatorTime()))
+                {
+                    System.err.println(
+                            "Time travel? enterTime=" + enterTime + "; simulator time=" + getSimulator().getSimulatorTime());
+                    enterTime = getSimulator().getSimulatorTime();
+                }
                 this.pendingEnterTrigger = getSimulator().scheduleEventAbs(enterTime, this, this, "enterCrossSection", null);
             }
         }

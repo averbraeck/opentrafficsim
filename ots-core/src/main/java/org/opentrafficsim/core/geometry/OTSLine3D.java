@@ -221,7 +221,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         if (list.size() == 2 && list.get(0).equals(list.get(1)))
         {
-            SimLogger.always().debug("Fixing up degenerate noiseFilteredLine by inserting an intermediate point");
+            // SimLogger.always().debug("Fixing up degenerate noiseFilteredLine by inserting an intermediate point");
             // Find something to insert along the way
             for (int index = 1; index < this.size() - 1; index++)
             {

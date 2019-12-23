@@ -58,6 +58,7 @@ import org.opentrafficsim.xml.generated.SPEEDLIMIT;
 import org.opentrafficsim.xml.generated.TRAFFICLIGHTTYPE;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -159,7 +160,17 @@ public final class NetworkParser
         for (CONNECTOR xmlConnector : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), CONNECTOR.class))
         {
             OTSRoadNode startNode = (OTSRoadNode) otsNetwork.getNode(xmlConnector.getNODESTART());
+            if (null == startNode)
+            {
+                SimLogger.always()
+                        .debug("No start node (" + xmlConnector.getNODESTART() + ") for CONNECTOR " + xmlConnector.getID());
+            }
             OTSRoadNode endNode = (OTSRoadNode) otsNetwork.getNode(xmlConnector.getNODEEND());
+            if (null == endNode)
+            {
+                SimLogger.always()
+                        .debug("No end node (" + xmlConnector.getNODEEND() + ")for CONNECTOR " + xmlConnector.getID());
+            }
             String id = xmlConnector.getID();
             double demandWeight = xmlConnector.getDEMANDWEIGHT();
             OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());

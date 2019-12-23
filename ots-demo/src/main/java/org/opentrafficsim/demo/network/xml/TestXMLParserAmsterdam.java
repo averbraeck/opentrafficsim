@@ -10,7 +10,9 @@ import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -19,6 +21,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.network.xml.TestXMLParserAmsterdam.TestXMLModelAmsterdam;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -26,6 +29,7 @@ import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -59,7 +63,7 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
             throws OTSDrawingException
     {
         super(model, animationPanel);
-        System.out.println("ANIMATEMAP.SIZE = " + this.defaultAnimationFactory.animatedObjects.size());
+        //System.out.println("ANIMATEMAP.SIZE = " + this.defaultAnimationFactory.animatedObjects.size());
     }
 
     /** */
@@ -72,7 +76,7 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
     @Override
     protected void animateNetwork() throws OTSDrawingException
     {
-        this.defaultAnimationFactory = DefaultAnimationFactory.animateNetwork(getModel().getNetwork(),
+        DefaultAnimationFactory.animateNetwork(getModel().getNetwork(),
                 getModel().getSimulator(), getAnimationPanel().getGTUColorer());
     }
     
@@ -160,6 +164,7 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
             try
             {
                 XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);
+                // System.out.println("OBJECTMAP.SIZE  = " + this.network.getObjectMap().size());
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
                     | URISyntaxException | XmlParserException | GTUException exception)

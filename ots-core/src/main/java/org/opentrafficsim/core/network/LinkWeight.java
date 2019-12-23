@@ -32,6 +32,38 @@ public interface LinkWeight
         }
     };
 
+    /** Link weight with very high penalty for Connectors. */
+    LinkWeight LENGTH_NO_CONNECTORS = new LinkWeight()
+    {
+        /**
+         * Length that should encourage Dijkstra to not include links that have this length. On the other hand, this value 
+         * (when on an unavoidable link) should not cause underflow problems.
+         */
+        static final double PROHIBITIVE_CONNECTOR_LENGTH = 1000000;
+
+        /** {@inheritDoc} */
+        @Override
+        public double getWeight(final Link link)
+        {
+            if (link instanceof OTSLink)
+            {
+                OTSLink otsLink = (OTSLink) link;
+                if (otsLink.getLinkType().isConnector())
+                {
+                    return PROHIBITIVE_CONNECTOR_LENGTH;
+                }
+            }
+            return link.getLength().si;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "LENGTH_NO_CONNECTORS";
+        }
+    };
+
     /**
      * Returns the link weight.
      * @param link Link; link
