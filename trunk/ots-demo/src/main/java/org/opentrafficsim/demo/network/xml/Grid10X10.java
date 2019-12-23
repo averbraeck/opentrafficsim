@@ -203,7 +203,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
     public Grid10X10(final TestXMLModelGrid model, final OTSAnimationPanel panel) throws OTSDrawingException
     {
         super(model, panel);
-        System.out.println("ANIMATEMAP.SIZE = " + this.defaultAnimationFactory.animatedObjects.size());
+        //System.out.println("ANIMATEMAP.SIZE = " + this.defaultAnimationFactory.animatedObjects.size());
     }
 
     /** */

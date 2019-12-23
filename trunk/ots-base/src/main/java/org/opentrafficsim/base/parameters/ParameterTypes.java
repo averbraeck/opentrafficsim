@@ -175,13 +175,13 @@ public class ParameterTypes implements ConstraintInterface
                         "Value of Tmax is below or equal to Tmin");
             }
         };
-
+// TODO undo temporary changes to PERCEPTION and LOOKAHEAD
         TAU = new ParameterTypeDuration("tau", "Headway relaxation time", Duration.instantiateSI(25.0), POSITIVE);
 
         T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes", Duration.instantiateSI(43.0),
                 POSITIVE);
 
-        LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance", Length.instantiateSI(295.0), POSITIVE);
+        LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance", Length.instantiateSI(50.0), POSITIVE);
 
         LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance", Length.instantiateSI(200.0), POSITIVE);
 
@@ -196,7 +196,7 @@ public class ParameterTypes implements ConstraintInterface
         LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration", Duration.instantiateSI(3.0), POSITIVE);
 
         PERCEPTION =
-                new ParameterTypeLength("perception", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
+                new ParameterTypeLength("perception", "Mental map length", new Length(0.2, LengthUnit.KILOMETER), POSITIVE);
 
         TR = new ParameterTypeDuration("Tr", "Reaction time", Duration.instantiateSI(0.5), POSITIVEZERO);
 

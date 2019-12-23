@@ -52,7 +52,7 @@ public class LinkEdge<LINK extends Link> extends DefaultWeightedEdge
     @Override
     public final String toString()
     {
-        return "LinkEdge [link=" + this.link + "]";
+        return "LinkEdge [weight=" + getWeight() + ", link=" + this.link + "]";
     }
 
 }

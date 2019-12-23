@@ -81,6 +81,13 @@ public final class GeneratorPositions implements Locatable
     private GeneratorPositions(final GeneratorZonePosition position, final LaneBiases biases, final StreamInterface stream)
     {
         this.position = position;
+        for (GeneratorLinkPosition glp : this.position.positions)
+        {
+            if (glp.getDirection().equals(GTUDirectionality.DIR_MINUS))
+            {
+                System.out.println("Hmm... GTUDirectionality is DIR_MINUS: " + glp);
+            }
+        }
         this.biases = biases;
         this.stream = stream;
         double x = 0.0;
@@ -537,6 +544,10 @@ public final class GeneratorPositions implements Locatable
                     // cumulWeights[i] = totalWeight;
                 }
             }
+            if (0 == map.size())
+            {
+                System.err.println("This really, really can't work...");
+            }
             return Draw.drawWeighted(map, stream);
             // double r = totalWeight * stream.nextDouble();
             // for (int i = 0; i < this.positions.size(); i++)
@@ -593,7 +604,7 @@ public final class GeneratorPositions implements Locatable
         {
             this.positions = positions;
         }
-
+        
         /**
          * Draws a GeneratorLinkPosition using number of accessible lanes for the GTUType as weight, and a GeneratorLanePosition
          * from that.

@@ -583,12 +583,19 @@ public class AimsunControl
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                         getSimulator(), false);
-                // TODO: These links are Aimsun specific.
                 LaneCombinationList ignoreList = new LaneCombinationList();
-                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
-                        (CrossSectionLink) this.network.getLink("928_J6"));
-                ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
-                        (CrossSectionLink) this.network.getLink("925_J2"));
+                try
+                {
+                    // TODO: These links are Aimsun Barcelona network specific.
+                    ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
+                            (CrossSectionLink) this.network.getLink("928_J6"));
+                    ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
+                            (CrossSectionLink) this.network.getLink("925_J2"));
+                }
+                catch (NullPointerException npe)
+                {
+                    // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
+                }
                 LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
                         getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList,

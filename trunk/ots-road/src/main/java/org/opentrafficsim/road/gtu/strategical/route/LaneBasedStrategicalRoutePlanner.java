@@ -359,8 +359,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             // LinkDirection ld = ref.getLinkDirection();
             // Node n = ld.getNodeTo();
             // Route r = this.routeSupplier.getRoute(n, this.destination, gtuType);
-            nodes.addAll(
-                    this.routeGenerator.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType).getNodes());
+            Route route = this.routeGenerator.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType);
+            if (null == route)
+            {
+                // TODO do something sensible
+                System.err.println("route is null!");
+                return;
+            }
+            nodes.addAll(route.getNodes());
             this.route =
                     Try.assign(
                             () -> new CompleteRoute("Route for " + gtuType + " from " + this.origin + "to " + this.destination

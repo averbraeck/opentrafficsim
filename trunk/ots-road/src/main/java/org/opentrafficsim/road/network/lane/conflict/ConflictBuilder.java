@@ -1344,7 +1344,7 @@ public final class ConflictBuilder
     {
         for (String conflictId : conflictCandidateMap.keySet())
         {
-            System.out.println(conflictId);
+            // System.out.println(conflictId);
             List<Lane> lanes = new ArrayList<>();
             for (Link link : conflictCandidateMap.get(conflictId))
             {

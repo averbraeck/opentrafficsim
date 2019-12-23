@@ -251,6 +251,7 @@ public final class XmlNetworkLaneParser implements Serializable
                     GeneratorSinkParser.parseShortestRouteMix(otsNetwork, demand);
             List<LaneBasedGTUGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates,
                     routeMixMap, shortestRouteMixMap, simulator, streamMap);
+            System.out.println("Created " + generators.size() + " generators (1)");
             GeneratorSinkParser.parseSinks(otsNetwork, demand, simulator);
         }
 
@@ -291,6 +292,7 @@ public final class XmlNetworkLaneParser implements Serializable
         {
             List<LaneBasedGTUGenerator> generators =
                     ODParser.parseDemand(otsNetwork, simulator, demands, gtuTemplates, factories, modelIdReferrals, streamMap);
+            System.out.println("Created " + generators.size() + " generators (2)");
         }
         catch (Exception e)
         {
