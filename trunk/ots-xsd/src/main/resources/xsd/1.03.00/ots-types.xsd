@@ -20,7 +20,7 @@
 
   <xsd:simpleType name="ACCELERATIONUNITTYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(m/s2|m/sec\^2|ft/s2|ft/sec\^2|in/s2|in/sec\^2|km/h2|km/hr\^2|km/hour\^2|kt/s|kt/sec|mi/h/s|mi/h/sec|mi/hr/s|mi/hr/sec|mi/hour/s|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|Gal|g)"></xsd:pattern>
+      <xsd:pattern value="(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -33,6 +33,18 @@
   <xsd:simpleType name="ANGLEUNITTYPE">
      <xsd:restriction base="xsd:string">
       <xsd:pattern value="(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ANGULARACCELERATIONUNITTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ANGULARVELOCITYUNITTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -140,7 +152,7 @@
 
   <xsd:simpleType name="FREQUENCYUNITTYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/mus|/\\u03BCs|1/mus|1/\\u03BCs|/musec|/\\u03BCsec|1/musec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|rpm)"></xsd:pattern>
+      <xsd:pattern value="(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -192,6 +204,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="MOMENTUMUNITTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(kgm/s|kgm/sec)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="POSITIONUNITTYPE">
      <xsd:restriction base="xsd:string">
       <xsd:pattern value="(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
@@ -236,7 +254,7 @@
 
   <xsd:simpleType name="TIMEUNITTYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
+      <xsd:pattern value="(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -270,7 +288,7 @@
 
   <xsd:simpleType name="ACCELERATIONTYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|ft/s2|ft/sec\^2|in/s2|in/sec\^2|km/h2|km/hr\^2|km/hour\^2|kt/s|kt/sec|mi/h/s|mi/h/sec|mi/hr/s|mi/hr/sec|mi/hour/s|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|Gal|g)"></xsd:pattern>
+      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -283,6 +301,18 @@
   <xsd:simpleType name="ANGLETYPE">
      <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ANGULARACCELERATIONTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ANGULARVELOCITYTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -390,7 +420,7 @@
 
   <xsd:simpleType name="FREQUENCYTYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/mus|/\\u03BCs|1/mus|1/\\u03BCs|/musec|/\\u03BCsec|1/musec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|rpm)"></xsd:pattern>
+      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -442,6 +472,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="MOMENTUMTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kgm/s|kgm/sec)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="POSITIONTYPE">
      <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
@@ -486,7 +522,7 @@
 
   <xsd:simpleType name="TIMETYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
+      <xsd:pattern value="[+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -520,7 +556,7 @@
 
   <xsd:simpleType name="POSITIVEACCELERATIONTYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|ft/s2|ft/sec\^2|in/s2|in/sec\^2|km/h2|km/hr\^2|km/hour\^2|kt/s|kt/sec|mi/h/s|mi/h/sec|mi/hr/s|mi/hr/sec|mi/hour/s|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|Gal|g)"></xsd:pattern>
+      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -533,6 +569,18 @@
   <xsd:simpleType name="POSITIVEANGLETYPE">
      <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="POSITIVEANGULARACCELERATIONTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="POSITIVEANGULARVELOCITYTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -640,7 +688,7 @@
 
   <xsd:simpleType name="POSITIVEFREQUENCYTYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/mus|/\\u03BCs|1/mus|1/\\u03BCs|/musec|/\\u03BCsec|1/musec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|rpm)"></xsd:pattern>
+      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -692,6 +740,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="POSITIVEMOMENTUMTYPE">
+     <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kgm/s|kgm/sec)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="POSITIVEPOSITIONTYPE">
      <xsd:restriction base="xsd:string">
       <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
@@ -736,7 +790,7 @@
 
   <xsd:simpleType name="POSITIVETIMETYPE">
      <xsd:restriction base="xsd:string">
-      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
+      <xsd:pattern value="[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
