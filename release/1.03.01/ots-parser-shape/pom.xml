@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>1.03.01</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-parser-shape</artifactId>
+  <name>Open Traffic Sim parser classes for ESRI shape files</name>
+  <description>Open Traffic Sim parser classes for ESRI shape files</description>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-swing</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-shapefile</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+</project>
