@@ -1,0 +1,30 @@
+                   -----------------------
+                   OTS-ANIMATION
+                   -----------------------
+                   December, 2018
+                   -----------------------
+                   
+OTS - Open Traffic Simulation generic animation classes.
+
+	The ots-animation project provides lightweight classes for animation, that are not dependent on any solution. 
+	They can be used with Swing, Web-based solutions, JavaFX, or external graphical packages. The main components are:  
+
+    * generic shape information that can be used in e.g., parsers.
+
+    * colorers for GTUs and network structures, which provide generic color information and the conditions under which color will change.
+    
+    * coordinate transform methods for GIS.
+      
+    []
+
+======
+
+	OpenTrafficSim has an open source BSD 3-clause license.
+
+    * Third party components used in OpenTrafficSim can not have a license that is more restrictive than BSD, Apache, MIT, LGPL, Eclipse.
+
+    * OpenTrafficSim can be incorporated in part or in full in other products for any use (educational, commercial, whatever).
+
+    * OpenTrafficSim may be extended, evolved by anyone into anything else for any purpose.
+	
+	[]
