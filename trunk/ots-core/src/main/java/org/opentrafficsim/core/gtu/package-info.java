@@ -1,7 +1,7 @@
 /**
  * GTU (Generalized Travel Unit) is the base class for cars, trains, pedestrians, etc.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
  * <p>

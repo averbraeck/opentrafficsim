@@ -33,7 +33,7 @@ import org.opentrafficsim.core.perception.HistoryManager.HistoricalElement;
  * This class is defined with a single event type parameter {@code E}. Subclasses can use different event classes, so long as
  * all of them derive from a common ancestor. For instance an 'add' and a 'remove' event that inherit from an abstract super.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 1 jan. 2018 <br>
@@ -166,7 +166,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     /**
      * Interface for event types.
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -189,7 +189,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     /**
      * Standard event which stores a time and value.
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

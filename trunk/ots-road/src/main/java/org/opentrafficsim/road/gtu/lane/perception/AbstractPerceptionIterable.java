@@ -22,7 +22,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 /**
  * Abstract iterable that figures out how to find the next nearest object, including splits.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 16 feb. 2018 <br>
@@ -129,7 +129,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * The primary iterator is used by all returned iterators to find the next object. This contains the core algorithm to deal
      * with splits and multiple objects at a single location.
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -369,7 +369,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * Class of objects for subclasses to return. This can contain either a single object, or a set if there are multiple
      * objects at a single location.
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

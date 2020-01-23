@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.perception.Perception;
  * combination with {@code onSuper()} at a higher-level method with a GTU or perception. <i>This class requires the user to set
  * a break point in the method {@code trigger()}.</i>
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 apr. 2017 <br>

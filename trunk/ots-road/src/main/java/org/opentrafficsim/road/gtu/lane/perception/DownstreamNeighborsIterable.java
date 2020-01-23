@@ -32,7 +32,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
  * <li>From the other direction of a merge: the GTU needs to be considered.</li>
  * </ol>
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 feb. 2018 <br>

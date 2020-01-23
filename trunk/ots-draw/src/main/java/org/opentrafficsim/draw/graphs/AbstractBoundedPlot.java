@@ -13,7 +13,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  * Plot that allows hard bounds to be set, with upper and lower bound independent. Manual zooming and auto ranges are bounded
  * within the bounds.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 21 okt. 2018 <br>

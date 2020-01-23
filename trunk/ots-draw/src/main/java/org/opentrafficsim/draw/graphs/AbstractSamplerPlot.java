@@ -19,7 +19,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * path, consisting of a list of lanes. Start distance along the path for each lane is provided to sub classes using
  * {@code getStartDistance(KpiLaneDirection)}. Total length is obtained using {@code getEndLocation()}.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 4 okt. 2018 <br>

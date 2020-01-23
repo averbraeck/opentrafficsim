@@ -12,7 +12,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 /**
  * Paint a (series of) filled polygon(s) defined as a Path2D.Double
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2018-10-10 23:23:48 +0200 (Wed, 10 Oct 2018) $, @version $Revision: 4693 $, by $Author: averbraeck $,

@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.GTU;
 /**
  * GTU colorer that uses a coloring method that can be switched by the user of the program.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 4742 $, $LastChangedDate: 2018-11-18 20:48:30 +0100 (Sun, 18 Nov 2018) $, by $Author: averbraeck $,
@@ -104,7 +104,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     /**
      * Builder for SwitchableGTUColorer.
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

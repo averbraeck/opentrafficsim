@@ -33,7 +33,7 @@ import org.opentrafficsim.trafficcontrol.TrafficController;
  * Functions that can draw a schematic diagram of an intersection given the list of traffic streams. The traffic stream numbers
  * must follow the Dutch conventions.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 1, 2016 <br>

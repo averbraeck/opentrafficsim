@@ -8,7 +8,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * Interface for mental modules operating on perception. This is a first step of perception, where parameters both for the
  * perception and tactical models can be set.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 apr. 2018 <br>

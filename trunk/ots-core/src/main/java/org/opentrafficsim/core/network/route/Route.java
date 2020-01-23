@@ -20,7 +20,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * route and have a valid successor node (connected by a Link), the strategical planner is able to make a plan. An extension of
  * the Route class exists that contains a complete route, where all nodes on the route have to be present and connected.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,

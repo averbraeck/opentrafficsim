@@ -18,7 +18,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 /**
  * A DestinationSensor is a sensor that deletes a GTU that has the node it will pass after this sensor as its destination.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
