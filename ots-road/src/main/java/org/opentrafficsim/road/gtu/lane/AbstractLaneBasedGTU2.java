@@ -812,6 +812,12 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             }
             if (leaveTime != null)
             {
+                if (leaveTime.lt(getSimulator().getSimulatorTime()))
+                {
+                    System.err.println(
+                            "Time travel? leaveTime=" + leaveTime + "; simulator time=" + getSimulator().getSimulatorTime());
+                    leaveTime = getSimulator().getSimulatorTime();
+                }
                 this.pendingLeaveTrigger = getSimulator().scheduleEventAbs(leaveTime, this, this, "leaveCrossSection", null);
             }
         }

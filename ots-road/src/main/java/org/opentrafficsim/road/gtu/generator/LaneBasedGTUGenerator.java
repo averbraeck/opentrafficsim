@@ -78,8 +78,9 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     public static final EventType GTU_GENERATED_EVENT = new EventType("GENERATOR.GTU_GENERATED");
 
     /** FIFO for templates that have not been generated yet due to insufficient room/headway, per position, and per link. */
-    private final Map<CrossSectionLink, Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
-            new LinkedHashMap<>();
+    private final Map<CrossSectionLink,
+            Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
+                    new LinkedHashMap<>();
 
     /** Name of the GTU generator. */
     private final String id;
@@ -201,7 +202,21 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
         synchronized (this.unplacedTemplates)
         {
             // this.generatedGTUs++;
+            // XXX try a few times until a valid route has been found
+            // XXX see ODApplier.draw() : LaneBasedGTUCharacteristics
             LaneBasedGTUCharacteristics characteristics = this.laneBasedGTUCharacteristicsGenerator.draw();
+            /*-
+            LaneBasedGTUCharacteristics characteristics = null;
+            for (int tryRoute = 0; tryRoute < 10; tryRoute++)
+            {
+                characteristics = this.laneBasedGTUCharacteristicsGenerator.draw();
+                if (characteristics.getRoute() != null)
+                {
+                    break;
+                }
+            }
+            */
+            // XXX this should actually have been tested in the draw() method as a valid route also links to the GTUType...
             GTUType gtuType = characteristics.getGTUType();
             // gather information on number of unplaced templates per lane, and per link, for the drawing of a new position
             Map<CrossSectionLink, Map<Integer, Integer>> unplaced = new LinkedHashMap<>();
@@ -287,12 +302,12 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
             placeGtu(characteristics, placement.getPosition(), placement.getSpeed());
             if (queue.size() > 0)
             {
-                this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { position });
+                this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {position});
             }
         }
         else if (queue.size() > 0)
         {
-            this.simulator.scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU", new Object[] { position });
+            this.simulator.scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU", new Object[] {position});
         }
     }
 
@@ -355,7 +370,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
         queue.add(new TimeStampedObject<>(characteristics, this.simulator.getSimulatorTime()));
         if (queue.size() == 1)
         {
-            this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { lanePosition });
+            this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {lanePosition});
         }
     }
 
@@ -470,7 +485,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     public void disable(final Time start, final Time end, final Set<LaneDirection> laneDirections) throws SimRuntimeException
     {
         Throw.when(end.lt(start), SimRuntimeException.class, "End time %s is before start time %s.", end, start);
-        this.simulator.scheduleEventAbs(start, this, this, "disable", new Object[] { laneDirections });
+        this.simulator.scheduleEventAbs(start, this, this, "disable", new Object[] {laneDirections});
         this.simulator.scheduleEventAbs(end, this, this, "enable", new Object[0]);
     }
 

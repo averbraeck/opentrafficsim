@@ -48,8 +48,8 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
-import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
@@ -134,11 +134,7 @@ public final class ODApplier
         // TODO sinks? white extension links?
         for (Node destination : od.getDestinations())
         {
-            if ("Centroid 127393 at 121669.799_487786.120".equals(destination.getId()))
-            {
-                System.out.println("processing destination " + destination);
-            }
-            createSinksAtDestination(destination, simulator);
+            createSensorsAtDestination(destination, simulator);
         }
 
         final Categorization categorization = od.getCategorization();
@@ -270,13 +266,6 @@ public final class ODApplier
                         throw new RuntimeException(ge);
                     }
                     initialPositions.put(demandNode, initialPosition);
-                    for (DirectedLanePosition dlp : initialPosition)
-                    {
-                        if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
-                        {
-                            System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
-                        }
-                    }
                 }
             }
             else
@@ -312,42 +301,13 @@ public final class ODApplier
                                         linkWeights.put(((CrossSectionLink) connectedLink),
                                                 ((CrossSectionLink) link).getDemandWeight() / served);
                                     }
-                                    for (DirectedLanePosition dlp : positionSet)
-                                    {
-                                        if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
-                                        {
-                                            System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
-                                        }
-                                    }
                                     setDirectedLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
-                                    for (DirectedLanePosition dlp : positionSet)
-                                    {
-                                        if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
-                                        {
-                                            System.out.println("Directed lane position me t GTUDirectionality.DIR_MINUS: " + dlp);
-                                        }
-                                    }
                                 }
                             }
                         }
-                        for (DirectedLanePosition dlp : positionSet)
-                        {
-                            if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
-                            {
-                                System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
-                            }
-                        }
-
                     }
                     else if (link instanceof CrossSectionLink)
                     {
-                        for (DirectedLanePosition dlp : positionSet)
-                        {
-                            if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
-                            {
-                                System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
-                            }
-                        }
                         setDirectedLanePosition((CrossSectionLink) link, origin, positionSet);
                     }
                 }
@@ -360,13 +320,6 @@ public final class ODApplier
             for (DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root : initialPositions.keySet())
             {
                 Set<DirectedLanePosition> initialPosition = initialPositions.get(root);
-                for (DirectedLanePosition dlp : initialPosition)
-                {
-                    if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
-                    {
-                        System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp);
-                    }
-                }
                 // id
                 Node o = root.getObject();
                 String id = o.getId();
@@ -394,13 +347,6 @@ public final class ODApplier
                     lane = null;
                     linkType = getLinkTypeFromNode(o);
                 }
-                for (DirectedLanePosition dlp : initialPosition)
-                {
-                    if (dlp.getGtuDirection().equals(GTUDirectionality.DIR_MINUS))
-                    {
-                        System.out.println("Directed lane position met GTUDirectionality.DIR_MINUS: " + dlp + " o=" + o);
-                    }
-                }
                 HeadwayDistribution randomization = odOptions.get(ODOptions.HEADWAY_DIST, lane, o, linkType);
                 ArrivalsHeadwayGenerator headwayGenerator =
                         new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
@@ -423,11 +369,13 @@ public final class ODApplier
                 catch (SimRuntimeException exception)
                 {
                     // should not happen, we check that time is 0
+                    SimLogger.always().error(exception);
                     throw new RuntimeException(exception);
                 }
                 catch (ProbabilityException exception)
                 {
                     // should not happen, as we define probabilities in the headwayGenerator
+                    SimLogger.always().error(exception);
                     throw new RuntimeException(exception);
                 }
             }
@@ -436,31 +384,31 @@ public final class ODApplier
     }
 
     /**
-     * Create sinks at all lanes connected to a destination node. This method considers connectors too.
+     * Create destination sensors at all lanes connected to a destination node. This method considers connectors too.
      * @param destination Node; destination node
      * @param simulator OTSSimulatorInterface; simulator
      */
-    private static void createSinksAtDestination(final Node destination, final OTSSimulatorInterface simulator)
+    private static void createSensorsAtDestination(final Node destination, final OTSSimulatorInterface simulator)
     {
         for (Link link : destination.getLinks())
         {
             if (link.getLinkType().isConnector() && !link.getStartNode().equals(destination))
             {
-                createSinksAtDestinationNode(link.getStartNode(), simulator);
+                createSensorsAtDestinationNode(link.getStartNode(), simulator);
             }
             else
             {
-                createSinksAtDestinationNode(destination, simulator);
+                createSensorsAtDestinationNode(destination, simulator);
             }
         }
     }
     
     /**
-     * Create sinks at all lanes connected to this node. This method does not handle connectors.
+     * Create sensors at all lanes connected to this node. This method does not handle connectors.
      * @param destination Node; the destination node
      * @param simulator OTSSimulatorInterface; simulator
      */
-    private static void createSinksAtDestinationNode(final Node destination, final OTSSimulatorInterface simulator)
+    private static void createSensorsAtDestinationNode(final Node destination, final OTSSimulatorInterface simulator)
     {
         for (Link link : destination.getLinks())
         {
@@ -471,29 +419,30 @@ public final class ODApplier
                     try
                     {
                         // if the lane already contains a SinkSensor, skip creating a new one
-                        boolean sinkSensorExists = false;
+                        boolean destinationSensorExists = false;
                         for (Sensor sensor : lane.getSensors())
                         {
-                            if (sensor instanceof SinkSensor)
+                            if (sensor instanceof DestinationSensor)
                             {
-                                sinkSensorExists = true;
+                                destinationSensorExists = true;
                             }
                         }
-                        if (!sinkSensorExists)
+                        if (!destinationSensorExists)
                         {
                             if (link.getEndNode().equals(destination))
                             {
-                                new SinkSensor(lane, lane.getLength(), GTUDirectionality.DIR_PLUS, simulator);
+                                new DestinationSensor(lane, lane.getLength(), GTUDirectionality.DIR_PLUS, simulator);
                             }
                             else if (link.getStartNode().equals(destination))
                             {
-                                new SinkSensor(lane, Length.ZERO, GTUDirectionality.DIR_MINUS, simulator);
+                                new DestinationSensor(lane, Length.ZERO, GTUDirectionality.DIR_MINUS, simulator);
                             }
                         }
                     }
                     catch (NetworkException exception)
                     {
                         // can not happen, we use Length.ZERO and lane.getLength()
+                        SimLogger.always().error(exception);
                         throw new RuntimeException(exception);
                     }
                 }
@@ -501,63 +450,6 @@ public final class ODApplier
         }
     }
     
-    private static int depth = 0;
-    /**
-     * Create sinks at all lanes connected to a destination node. This method considers connectors too.
-     * @param destination Node; destination node
-     * @param simulator OTSSimulatorInterface; simulator
-     */
-    private static void createSinksAtDestinationOld(final Node destination, final OTSSimulatorInterface simulator)
-    {
-        if (depth >= 3)
-        {
-            SimLogger.always().debug("Entering (depth = {}, destination = {})", depth, destination.getId());
-        }
-        depth++;
-        for (Link link : destination.getLinks())
-        {
-            if (link.getLinkType().isConnector() && !link.getStartNode().equals(destination))
-            {
-                createSinksAtDestination(link.getStartNode(), simulator);
-            }
-            if (link instanceof CrossSectionLink)
-            {
-                for (Lane lane : ((CrossSectionLink) link).getLanes())
-                {
-                    try
-                    {
-                        // if the lane already contains a SinkSensor, skip creating a new one
-                        boolean sinkSensorExists = false;
-                        for (Sensor sensor : lane.getSensors())
-                        {
-                            if (sensor instanceof SinkSensor)
-                            {
-                                sinkSensorExists = true;
-                            }
-                        }
-                        if (!sinkSensorExists)
-                        {
-                            if (link.getEndNode().equals(destination))
-                            {
-                                new SinkSensor(lane, lane.getLength(), GTUDirectionality.DIR_PLUS, simulator);
-                            }
-                            else if (link.getStartNode().equals(destination))
-                            {
-                                new SinkSensor(lane, Length.ZERO, GTUDirectionality.DIR_MINUS, simulator);
-                            }
-                        }
-                    }
-                    catch (NetworkException exception)
-                    {
-                        // can not happen, we use Length.ZERO and lane.getLength()
-                        throw new RuntimeException(exception);
-                    }
-                }
-            }
-        }
-        depth--;
-    }
-
     /**
      * Returns the common ancestor {@code LinkType} of all links connected to the node, moving through connectors.
      * @param node Node; origin node
@@ -663,6 +555,7 @@ public final class ODApplier
             }
             catch (GTUException ge)
             {
+                SimLogger.always().error(ge);
                 throw new RuntimeException(ge);
             }
         }
@@ -951,7 +844,7 @@ public final class ODApplier
         private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** Characteristics generator based on OD information. */
-        private final GTUCharacteristicsGeneratorOD charachteristicsGenerator;
+        private final GTUCharacteristicsGeneratorOD characteristicsGenerator;
 
         /** Stream for random numbers. */
         private final StreamInterface randomStream;
@@ -959,16 +852,16 @@ public final class ODApplier
         /**
          * @param root DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; root node with origin
          * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
-         * @param charachteristicsGenerator GTUCharacteristicsGeneratorOD; characteristics generator based on OD information
+         * @param characteristicsGenerator GTUCharacteristicsGeneratorOD; characteristics generator based on OD information
          * @param randomStream StreamInterface; stream for random numbers
          */
         GTUCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
                 final DEVSSimulatorInterface.TimeDoubleUnit simulator,
-                final GTUCharacteristicsGeneratorOD charachteristicsGenerator, final StreamInterface randomStream)
+                final GTUCharacteristicsGeneratorOD characteristicsGenerator, final StreamInterface randomStream)
         {
             this.root = root;
             this.simulator = simulator;
-            this.charachteristicsGenerator = charachteristicsGenerator;
+            this.characteristicsGenerator = characteristicsGenerator;
             this.randomStream = randomStream;
         }
 
@@ -983,7 +876,8 @@ public final class ODApplier
             Node destination = destinationNode.getObject();
             Category category = destinationNode.draw(time).getObject();
             // forward to lower-level generator
-            return this.charachteristicsGenerator.draw(origin, destination, category, this.randomStream);
+            // XXX typically calls DefaultGTUCharacteristicsGeneratorOD.draw(...)
+            return this.characteristicsGenerator.draw(origin, destination, category, this.randomStream);
         }
 
         /** {@inheritDoc} */
@@ -991,7 +885,7 @@ public final class ODApplier
         public String toString()
         {
             return "GTUCharacteristicsGeneratorODWrapper [root=" + this.root + ", simulator=" + this.simulator
-                    + ", charachteristicsGenerator=" + this.charachteristicsGenerator + ", randomStream=" + this.randomStream
+                    + ", characteristicsGenerator=" + this.characteristicsGenerator + ", randomStream=" + this.randomStream
                     + "]";
         }
 
@@ -1019,19 +913,19 @@ public final class ODApplier
         private final Generator<Duration> headwayGenerator;
 
         /** Generator of GTU characteristics. */
-        private final LaneBasedGTUCharacteristicsGenerator charachteristicsGenerator;
+        private final LaneBasedGTUCharacteristicsGenerator characteristicsGenerator;
 
         /**
          * @param generator LaneBasedGTUGenerator; main generator for GTU's
          * @param headwayGenerator Generator&lt;Duration&gt;; generator of headways
-         * @param charachteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of GTU characteristics
+         * @param characteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of GTU characteristics
          */
         public GeneratorObjects(final LaneBasedGTUGenerator generator, final Generator<Duration> headwayGenerator,
-                final LaneBasedGTUCharacteristicsGenerator charachteristicsGenerator)
+                final LaneBasedGTUCharacteristicsGenerator characteristicsGenerator)
         {
             this.generator = generator;
             this.headwayGenerator = headwayGenerator;
-            this.charachteristicsGenerator = charachteristicsGenerator;
+            this.characteristicsGenerator = characteristicsGenerator;
         }
 
         /**
@@ -1058,7 +952,7 @@ public final class ODApplier
          */
         public LaneBasedGTUCharacteristicsGenerator getCharachteristicsGenerator()
         {
-            return this.charachteristicsGenerator;
+            return this.characteristicsGenerator;
         }
 
     }

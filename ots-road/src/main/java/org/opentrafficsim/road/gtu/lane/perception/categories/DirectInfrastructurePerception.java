@@ -293,6 +293,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         // sink
         for (SingleSensor s : record.getLane().getSensors())
         {
+            // XXX for now, we do allow to lower speed for a DestinationSensor (e.g., to brake for parking)
             if (s instanceof SinkSensor)
             {
                 this.anyNextOkCache.put(record, true);

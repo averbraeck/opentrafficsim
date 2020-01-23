@@ -236,6 +236,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
         else
         {
             // get route from supplier
+            // XXX typically gets the route from RouteGeneratorOD.getRoute(...)
             route = this.routeGenerator.getRoute(origin, destination, gtuType);
         }
         // vehicle model

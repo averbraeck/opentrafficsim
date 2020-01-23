@@ -105,6 +105,7 @@ public interface RouteGeneratorOD
                 Link via = Draw.drawWeighted(links, this.stream);
                 viaNodes.add(via.getStartNode().equals(destination) ? via.getEndNode() : via.getStartNode());
             }
+            // XXX make silent, as the higher level method should draw another destination if the route does not exist 
             return this.shortestRouteCache.getValue(
                     () -> Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes),
                             "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes),

@@ -7,7 +7,7 @@
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
     
     <release version="1.03.01" date="2019-12-XX" description="XML parsing extended, ">
-      <action dev="averbraeck" type="update">
+      <action dev="averbraeck" type="fix">
         com.sun.xml.bind package gone; replaced by javax.xml.bind:jaxb-api and org.glassfish.jaxb:jaxb-runtime.
         JAXB version updated to 2.3.1.
       </action>
@@ -21,6 +21,18 @@
         OTS-XML: Extending the LINK tag with a possibility to store a ConflictID for a guided generation 
         of conflicts. The XMLParser and ConflictBuilder have been extended to allow for the usage of the 
         ConflictID information.
+      </action>
+      <action dev="averbraeck" type="add">
+        The Node has an isCentroid() method indicating that it has links, and all of those links are connectors. 
+      </action>
+      <action dev="averbraeck" type="add">
+        OTSNetwork has a new method called getUnbalancedCentroids to provide a list of Centroid nodes that 
+        have incoming connectors without corresponding outgoing connectors to the same node or vice versa.
+      </action>
+      <action dev="averbraeck" type="add">
+        DestinationSensor has been added to deal with only destroying the GTUs that have reached their destination, 
+        and not every GTU that happens to pass the sensor (as was the case with the SinkSensor used for this
+        purpose). 
       </action>
     </release>
     

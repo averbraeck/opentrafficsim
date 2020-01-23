@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
@@ -23,6 +24,7 @@ import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.demo.network.xml.TestXMLParserAmsterdam.TestXMLModelAmsterdam;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
@@ -79,7 +81,7 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
         DefaultAnimationFactory.animateNetwork(getModel().getNetwork(),
                 getModel().getSimulator(), getAnimationPanel().getGTUColorer());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected void setAnimationToggles()
@@ -164,6 +166,8 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
             try
             {
                 XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);
+                List<Node> unbalancedCentroids = this.network.getUnbalancedCentroids(this.network.getGtuType("Car.53"));
+                System.out.println("The network has " + unbalancedCentroids.size() + " unbalanced centroids");
                 // System.out.println("OBJECTMAP.SIZE  = " + this.network.getObjectMap().size());
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException

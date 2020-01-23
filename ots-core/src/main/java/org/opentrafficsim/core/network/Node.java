@@ -76,4 +76,9 @@ public interface Node extends Locatable, Serializable, Identifiable, Drawable
      */
     boolean isDirectionallyConnectedTo(GTUType gtuType, Node toNode);
 
+    /**
+     * Checks whether the node has only connector links going in and/or out, and no other links.
+     * @return boolean; whether the node is a centroid, i.e. it <b>only</b> has connector links going in and out
+     */
+    boolean isCentroid();
 }
