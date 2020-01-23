@@ -44,6 +44,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
@@ -817,7 +818,8 @@ public class Lane extends CrossSectionElement implements Serializable
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
-                    else if (sensor.getLongitudinalPosition().si < minPos && sensor instanceof SinkSensor)
+                    else if (sensor.getLongitudinalPosition().si < minPos
+                            && (sensor instanceof SinkSensor || sensor instanceof DestinationSensor))
                     {
                         // TODO this is a hack for when sink sensors aren't perfectly adjacent or the GTU overshoots with nose
                         // due to curvature

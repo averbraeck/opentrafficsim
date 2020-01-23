@@ -333,6 +333,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                     for (SingleSensor sensor : prevFrom.getLane().getSensors(pos, pos, gtu.getGTUType(),
                             prevFrom.getDirection()))
                     {
+                        // XXX for now, the same is not done for the DestinationSensor (e.g., decrease speed for parking)
                         if (sensor instanceof SinkSensor)
                         {
                             // just add some length so the GTU is happy to go to the sink

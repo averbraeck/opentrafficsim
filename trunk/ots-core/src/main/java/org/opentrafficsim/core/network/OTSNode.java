@@ -351,6 +351,25 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
+    public boolean isCentroid()
+    {
+        boolean result = false;
+        for (Link link : getLinks())
+        {
+            if (!link.getLinkType().isConnector())
+            {
+                return false;
+            }
+            else
+            {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint getLocation()
     {

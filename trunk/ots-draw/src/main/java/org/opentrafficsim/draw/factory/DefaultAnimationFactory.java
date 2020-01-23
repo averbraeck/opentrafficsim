@@ -27,9 +27,11 @@ import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.ConflictAnimation;
+import org.opentrafficsim.draw.road.DestinationAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.SensorAnimation;
 import org.opentrafficsim.draw.road.ShoulderAnimation;
+import org.opentrafficsim.draw.road.SinkAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
@@ -43,7 +45,9 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
+import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -273,7 +277,23 @@ public class DefaultAnimationFactory implements EventListenerInterface
     {
         try
         {
-            if (object instanceof SingleSensor)
+            if (object instanceof SinkSensor)
+            {
+                SinkSensor sensor = (SinkSensor) object;
+                // Renderable2D<SinkSensor> objectAnimation = new SinkAnimation(sensor, this.simulator);
+                Renderable2D<SingleSensor> objectAnimation =
+                        new SensorAnimation(sensor, sensor.getLongitudinalPosition(), this.simulator, Color.YELLOW);
+                this.animatedObjects.put(object, objectAnimation);
+            }
+            else if (object instanceof DestinationSensor)
+            {
+                DestinationSensor sensor = (DestinationSensor) object;
+                // Renderable2D<DestinationSensor> objectAnimation = new DestinationAnimation(sensor, this.simulator);
+                Renderable2D<SingleSensor> objectAnimation =
+                        new SensorAnimation(sensor, sensor.getLongitudinalPosition(), this.simulator, Color.ORANGE);
+                this.animatedObjects.put(object, objectAnimation);
+            }
+            else if (object instanceof SingleSensor)
             {
                 SingleSensor sensor = (SingleSensor) object;
                 Renderable2D<SingleSensor> objectAnimation =

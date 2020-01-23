@@ -173,6 +173,67 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return this.nodeMap.get(nodeId);
     }
 
+    /**
+     * Return a list of Centroid nodes that have incoming connectors without corresponding outgoing connectors to the same node
+     * or vice versa (which can be fully okay, especially when the lanes are a dead end, or when lanes / links only go in a
+     * single direction).
+     * @param gtuType GTUType; the GTU type for which to check the connectors
+     * @return List&lt;Node&gt;; a list of Centroid nodes that have incoming connectors without corresponding outgoing
+     *         connectors to the same node or vice versa.
+     */
+    public List<Node> getUnbalancedCentroids(final GTUType gtuType)
+    {
+        List<Node> centroidList = new ArrayList<>();
+        for (Node node : getRawNodeMap().values())
+        {
+            if (node.isCentroid())
+            {
+                for (Link link : node.getLinks())
+                {
+                    if (link.getDirectionality(gtuType).isBoth())
+                    {
+                        continue;
+                    }
+                    if (link.getDirectionality(gtuType).isForward())
+                    {
+                        boolean found = false;
+                        for (Link reverseLink : link.getEndNode().getLinks())
+                        {
+                            if (reverseLink.getDirectionality(gtuType).isBackward() && reverseLink.getEndNode().equals(node))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                        {
+                            centroidList.add(node);
+                            break;
+                        }
+                    }
+                    else if (link.getDirectionality(gtuType).isBackward())
+                    {
+                        boolean found = false;
+                        for (Link reverseLink : link.getStartNode().getLinks())
+                        {
+                            if (reverseLink.getDirectionality(gtuType).isForward() && reverseLink.getStartNode().equals(node))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                        {
+                            centroidList.add(node);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return centroidList;
+    }
+
     /***************************************************************************************/
     /**************************************** LINKS ****************************************/
     /***************************************************************************************/
@@ -711,7 +772,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             {
                 SimLogger.always().debug("Cannot find a path from " + nodeFrom + " via " + nodesVia + " to " + nodeTo
                         + " (failing between " + from + " and " + to + ")");
-                //dijkstra.getPath(from, to);
+                // dijkstra.getPath(from, to);
                 return null;
             }
             // System.out.println("Path:");
