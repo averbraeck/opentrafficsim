@@ -2,7 +2,7 @@
  * Package for the Stochastic Distraction Model by and in cooperation with Manuel Lindorfer (manuel.lindorfer@fh-ooe.at). This
  * is a statistical model that describes the occurrence of distraction while driving.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 28 jun. 2018 <br>

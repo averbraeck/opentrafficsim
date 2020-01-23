@@ -4,7 +4,7 @@
  * indicates when to change lanes and how long it takes to change lanes. The lateral position of the reference point of the GTU
  * relative to the center line of the lanes in which the vehicle is registered can be determined that way.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
  * <p>

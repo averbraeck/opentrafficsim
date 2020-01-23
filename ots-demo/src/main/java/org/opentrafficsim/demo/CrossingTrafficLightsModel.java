@@ -75,7 +75,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 /**
  * Simulate four double lane roads with a crossing in the middle.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2016-10-28 16:34:11 +0200 (Fri, 28 Oct 2016) $, @version $Revision: 2429 $, by $Author: pknoppers $,

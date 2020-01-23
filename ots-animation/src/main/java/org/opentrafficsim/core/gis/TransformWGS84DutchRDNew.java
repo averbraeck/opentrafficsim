@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
  * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on
  * <a href="http://home.solcon.nl/pvanmanen/Download/Transformatieformules.pdf">this</a> paper.
  * <p>
- * Copyright (c) ~2000-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) ~2000-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 4, 2016 <br>

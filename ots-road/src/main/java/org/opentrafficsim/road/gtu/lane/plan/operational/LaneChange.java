@@ -39,7 +39,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * having to deal with many complexities concerning paths and lane registration. The main purpose of the tactical planner is to
  * request a path using {@code getPath()} for each step of the tactical planner.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 26, 2016 <br>
@@ -561,7 +561,7 @@ public class LaneChange implements Serializable
     /**
      * Provides a (partial) path during lane changes.
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -665,7 +665,7 @@ public class LaneChange implements Serializable
          * A helper class to allow a lane change to follow a sequential determination of the target position (including
          * rotation) for each time step.
          * <p>
-         * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+         * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
          * reserved. <br>
          * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
          * <p>
@@ -788,7 +788,7 @@ public class LaneChange implements Serializable
         /**
          * Helper class for interpolation between the from and to center lines.
          * <p>
-         * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+         * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
          * reserved. <br>
          * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
          * <p>

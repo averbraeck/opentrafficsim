@@ -6,7 +6,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 /**
  * Interface for tactical planners that can return desire information for visualization.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 feb. 2018 <br>

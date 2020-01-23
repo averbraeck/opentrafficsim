@@ -28,7 +28,7 @@ import org.zeromq.ZMQ;
  * above shows three nodes with priority 10, and the localhost with a lower priority. So only when 24 federates are running,
  * localhost will be used.
  * <p>
- * Copyright (c) 2016-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2016-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/current/license.html">OTS License</a>.
  * </p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

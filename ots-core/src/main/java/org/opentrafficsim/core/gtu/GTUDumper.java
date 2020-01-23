@@ -14,7 +14,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 /**
  * GTUDUmper; create a text file with the locations, directions and speeds of all GTUs at regular intervals.
  * <p>
- * Copyright (c) 2019-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2019-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version July 5, 2019 <br>

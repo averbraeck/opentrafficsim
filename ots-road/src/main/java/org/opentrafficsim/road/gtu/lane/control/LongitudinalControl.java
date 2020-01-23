@@ -8,7 +8,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * Longitudinal controller, such as ACC or CACC. The controller is part of a tactical planner and does not function
  * automatically.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 12, 2019 <br>

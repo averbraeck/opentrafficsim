@@ -13,7 +13,7 @@ import org.djutils.exceptions.Throw;
  * Utility class to cache data based on a variable (between cache instances) number of keys of any type. This replaces nested
  * {@code Map}s.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 20 apr. 2018 <br>

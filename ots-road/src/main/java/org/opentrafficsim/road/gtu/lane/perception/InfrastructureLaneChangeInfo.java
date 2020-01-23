@@ -11,7 +11,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * Contains information by which drivers know when they need to leave a lane in order to be able to stay on the infrastructure
  * and follow their route.
  * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 2, 2016 <br>
@@ -177,7 +177,7 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     /**
      * Extension which sets the distance to 0 always, used for fully inaccessible lanes regarding the route.
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
