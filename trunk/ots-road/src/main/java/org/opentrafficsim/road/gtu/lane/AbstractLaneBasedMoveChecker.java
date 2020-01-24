@@ -46,7 +46,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListenerInter
         {
             try
             {
-                checkMove((LaneBasedGTU) this.network.getGTU(event.getSourceId().toString()));
+                checkMove((LaneBasedGTU) event.getSourceId());
             }
             catch (Exception ex)
             {
