@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html style="width: 100%; height: 100%; margin: 0">
+<head>
+  <meta charset="ISO-8859-1">
+  <title>DSOL animation</title>
+  <script src="/js/jquery-3.3.1.js"></script>
+
+  <script>
+  var alertShown = false;
+
+  function requestTitle() {
+    var content = {
+      "message" : "getTitle"
+    };
+    $.post({
+      url : "model.html" + window.location.search,
+      type : 'POST',
+      dataType : 'text',
+      data : content,
+      success : function(data) {
+        document.getElementsByTagName('title')[0].innerHTML = $(data).text();
+      },
+      error : function(data, status, er) {
+        alert("error: " + data + " status: " + status + " er:" + er);
+      }
+    });
+  };
+  
+  function init() {
+    requestTitle();
+  }
+  </script>
+</head>
+
+<body style="width: 100%; height: 100%; margin: 0" bgcolor="#BBBBBB" onload="init()">
+  <div style="height: 50px; width: 100%; margin: 0; border: 0px; border-spacing: 0px; padding: 0px; overflow: hidden;">
+    <table style="height: 48px; width: 100%; margin: 0; border: 0px; border-spacing: 0px; padding: 0px; overflow: hidden;">
+      <tr style="height: 48px; width: 100%; margin: 0; border: 0px; border-spacing: 0px; padding: 0px; overflow: hidden;">
+        <td bgcolor="#BBBBBB" style="height: 48px; width: 100%; margin: 0; border: 0px; border-spacing: 0px; padding: 0px; overflow: hidden;">
+          <iframe name="control" src="/frame/control.html" frameBorder="0" scrolling="no" height="48px" width="640px"></iframe>
+          <iframe name="time" src="/frame/time.html" frameBorder="0" scrolling="no" height="48px" width="150px"></iframe>
+          <iframe name="speed" src="/frame/speed.html" frameBorder="0" scrolling="no" height="48px" width="75px"></iframe>
+          <iframe name="rununtil" src="/frame/rununtil.html" frameBorder="0" scrolling="no" height="48px" width="160px"></iframe>
+          <iframe name="homegrid" src="/frame/homegrid.html" frameBorder="0" scrolling="no" height="48px" width="165px"></iframe>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <table style="height: calc(100% - 55px); width: 100%; margin: 0; border: 0px; border-spacing: 0px; padding: 0px;">
+    <tr valign="top">
+      <td bgcolor="#BBBBBB">
+        <iframe name="content" src="/frame/content.html" scrolling="no"
+          style="position: absolute; top: 55px; left: 0; right: 0; bottom: 0; display: block; width: 100%; height: calc(100% - 56px); border: none;"></iframe>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
