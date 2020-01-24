@@ -72,8 +72,8 @@
     <tinylog.version>1.3.5</tinylog.version>
     <ots.version>${project.version}</ots.version>
     <djunits.version>4.01.05</djunits.version>
-    <djutils.version>1.04.04</djutils.version>
-    <dsol.version>3.04.00</dsol.version>
+    <djutils.version>1.04.05</djutils.version>
+    <dsol.version>3.04.01</dsol.version>
     <sim0mq.version>2.00.01</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>

@@ -11,6 +11,29 @@
         Code has been adapted to the changes in DSOL, DJUNITS and DJUTILS. Several constructors, methods
         and package names changed.
       </action>
+      <action dev="averbraeck" type="update">
+        DJUNITS has been updated to version 4.01.05. Several new units have been added that can be useful for driving
+        and driving simulators, such as the Momentum, the AngularVelocity and the AngularAcceleration.
+      </action>
+      <action dev="averbraeck" type="update">
+        DJUTILS has been updated to version 1.04.05. DJUTILS now contains the Event package that originally was within DSOL.
+        The new EventProducer demands that there is a serializable sourceId for each EventProducer that is sent as the
+        source of the event that is fired with the fireEvent method. This leads to changes in the Model (extra method needed)
+        as well as the construction of the Simulator (extra argument needed). By the way, the sourceId can be any object
+        as long as it is serializable, so also 'this' is allowed. For the GTU and the Lane, 'this' is sent as the source
+        to allow receiving notify methods to identify the sender.   
+      </action>
+      <action dev="averbraeck" type="update">
+        The way the SimLogger works has been updated to prepare the SimLogger to be able to log to different streams 
+        per (parallel) running simulation. Therefore, the construction simulator.getLogger().always()... or
+        getSimulator().getLogger().filter()... is used to log to the simulator-dependent SimLogger. Where this was
+        impossible, the CategoryLogger has been used instead.   
+      </action>
+      <action dev="averbraeck" type="update">
+        DSOL has been updated to version 3.04.01. The event package has been moved from DSOL to DJUTILS. This resulted
+        in name changes for the packages of the EventProducer, EventListener, EventType and Event. In addition, the
+        naming package has been extensively updated, resulting in a different registration of the animation and statistics.
+      </action>
     </release>
       
     <release version="1.03.01" date="2019-12-22" description="XML parsing extended, Conflicts">

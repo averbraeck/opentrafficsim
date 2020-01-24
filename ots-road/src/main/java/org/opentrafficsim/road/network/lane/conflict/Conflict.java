@@ -337,7 +337,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        LaneBasedGTU gtu = (LaneBasedGTU) getLane().getNetwork().getGTU(event.getSourceId().toString());
+        LaneBasedGTU gtu = (LaneBasedGTU) event.getSourceId();
         if (this.upstreamListening.contains(gtu))
         {
             this.upstreamTime = null;

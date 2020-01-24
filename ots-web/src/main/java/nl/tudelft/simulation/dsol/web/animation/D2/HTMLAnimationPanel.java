@@ -206,17 +206,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (this.simulator.getSourceId().equals(event.getSourceId())
-                && event.getType().equals(AnimatorInterface.UPDATE_ANIMATION_EVENT) && this.isShowing())
-        {
-            if (this.getWidth() > 0 || this.getHeight() > 0)
-            {
-                this.repaint();
-            }
-            return;
-        }
-
-        else if (event.getType().equals(ContextInterface.OBJECT_ADDED_EVENT))
+        if (event.getType().equals(ContextInterface.OBJECT_ADDED_EVENT))
         {
             objectAdded((Renderable2DInterface<? extends Locatable>) ((Object[]) event.getContent())[2]);
         }

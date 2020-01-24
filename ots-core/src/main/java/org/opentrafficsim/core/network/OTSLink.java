@@ -315,6 +315,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     @Override
     public Serializable getSourceId()
     {
-        return this.id;
+        return this;
     }
 }
