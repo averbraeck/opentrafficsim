@@ -68,7 +68,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -261,8 +260,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         // init event
         DirectedLanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] { getId(), initialLocation, getLength(), getWidth(), referencePosition.getLane(),
-                        referencePosition.getPosition(), referencePosition.getGtuDirection(), getGTUType() },
+                new Object[] {getId(), initialLocation, getLength(), getWidth(), referencePosition.getLane(),
+                        referencePosition.getPosition(), referencePosition.getGtuDirection(), getGTUType()},
                 getSimulator().getSimulatorTime());
 
         // register the GTU on the lanes
@@ -343,7 +342,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         this.cachedPositions.clear();
 
         // fire event
-        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection, from },
+        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
                 getSimulator().getSimulatorTime());
 
     }
@@ -532,7 +531,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             throw new RuntimeException(exception);
         }
-        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection, from },
+        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
                 getSimulator().getSimulatorTime());
         this.finalizeLaneChangeEvent = null;
     }
@@ -597,9 +596,9 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 }
             }
 
-            fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
-                    new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getTurnIndicatorStatus(),
-                            getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection() },
+            fireTimedEvent(
+                    LaneBasedGTU.LANEBASED_MOVE_EVENT, new Object[] {getId(), fromLocation, getSpeed(), getAcceleration(),
+                            getTurnIndicatorStatus(), getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection()},
                     getSimulator().getSimulatorTime());
 
             return false;
@@ -807,7 +806,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 {
                     pos = position(lane, getRear());
                     this.pendingLeaveTrigger = getSimulator().scheduleEventNow(this, this, "leaveCrossSection", null);
-                    SimLogger.always().info("Forcing leave for GTU {} on lane {}", getId(), lane.getFullId());
+                    getSimulator().getLogger().always().info("Forcing leave for GTU {} on lane {}", getId(), lane.getFullId());
                 }
             }
             if (leaveTime != null)
@@ -879,8 +878,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 Time time = timeAtLine(sensor.getGeometry(), pos);
                 if (time != null)
                 {
-                    this.sensorEvents
-                            .add(getSimulator().scheduleEventAbs(time, this, sensor, "trigger", new Object[] { this }));
+                    this.sensorEvents.add(getSimulator().scheduleEventAbs(time, this, sensor, "trigger", new Object[] {this}));
                 }
             }
         }
@@ -1277,13 +1275,13 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), location, getOdometer(), referenceLane, dlp.getPosition(), dlp.getGtuDirection() },
+                    new Object[] {getId(), location, getOdometer(), referenceLane, dlp.getPosition(), dlp.getGtuDirection()},
                     getSimulator().getSimulatorTime());
         }
         else
         {
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), location, getOdometer(), null, Length.ZERO, null },
+                    new Object[] {getId(), location, getOdometer(), null, Length.ZERO, null},
                     getSimulator().getSimulatorTime());
         }
         cancelAllEvents();

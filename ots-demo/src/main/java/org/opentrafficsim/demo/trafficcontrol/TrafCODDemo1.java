@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
@@ -22,6 +23,9 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -45,9 +49,7 @@ import org.opentrafficsim.xml.generated.CONTROL.TRAFCOD;
 import org.opentrafficsim.xml.generated.OTS;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -105,13 +107,13 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
     /**
      * Start the demo.
      * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
-     * @throws IOException when reading the file fails 
+     * @throws IOException when reading the file fails
      */
     public static void demo(final boolean exitOnClose) throws IOException
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("TrafCODDemo1");
             URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
             String xml = readStringFromURL(url);
             final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
@@ -121,7 +123,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
             TrafCODDemo1 app = new TrafCODDemo1("TrafCOD demo simple crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -225,7 +227,6 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
                 this.trafCOD = new TrafCOD(controllerName, program, getSimulator(), this.controllerDisplayPanel,
                         backgroundImage, displayObjectLocations);
 
-                
                 Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "XS")).getCrossSectionElement("FORWARD");
                 Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "XE")).getCrossSectionElement("FORWARD");
                 SimpleTrafficLight tl08 = new SimpleTrafficLight(String.format("%s.%02d", controllerName, 8), laneWX,
@@ -335,6 +336,13 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
                 }
                 System.out.println("]");
             }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TrafCODModel";
         }
 
     }

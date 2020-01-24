@@ -1,5 +1,6 @@
 package org.opentrafficsim.web.test;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -130,5 +131,12 @@ public class TJunctionModel extends AbstractOTSModel
     public OTSRoadNetwork getNetwork()
     {
         return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "TJunctionModel";
     }
 }

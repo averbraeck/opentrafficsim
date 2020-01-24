@@ -1,9 +1,8 @@
 package org.opentrafficsim.trafficcontrol;
 
+import org.djutils.event.EventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-
-import nl.tudelft.simulation.event.EventProducer;
 
 /**
  * <p>

@@ -23,6 +23,7 @@ import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.cli.CliUtil;
+import org.djutils.event.EventInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.CompressedFileWriter;
@@ -122,8 +123,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
-import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -246,8 +245,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
     @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
-        SimLogger.setSimulator(sim);
-
         OTSRoadNetwork network = new OTSRoadNetwork("RampMetering", true);
         if (this.output)
         {

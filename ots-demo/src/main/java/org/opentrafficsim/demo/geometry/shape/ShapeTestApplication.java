@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.Event;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -24,7 +25,7 @@ import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
-import nl.tudelft.simulation.event.Event;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -55,10 +56,12 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
      * @throws NamingException on ???
      * @throws IOException on ???
      * @throws OTSDrawingException on drawing error
+     * @throws DSOLException when the simulator does not implement the AnimatorInterface
      */
-    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException, OTSDrawingException
+    public static void main(final String[] args)
+            throws SimRuntimeException, NamingException, IOException, OTSDrawingException, DSOLException
     {
-        OTSAnimator simulator = new OTSAnimator();
+        OTSAnimator simulator = new OTSAnimator("ShapeTestApplication");
         ShapeModel model = new ShapeModel(simulator);
         OTSReplication replication =
                 OTSReplication.create("rep1", Time.ZERO, Duration.ZERO, new Duration(7200.0, SECOND), model);

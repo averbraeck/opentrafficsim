@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.dsol;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -10,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -37,10 +37,11 @@ public class OTSLoggingAnimator extends OTSAnimator
     /**
      * Construct an OTSAnimator.
      * @param path path for logging
+     * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSLoggingAnimator(final String path)
+    public OTSLoggingAnimator(final String path, final Serializable simulatorId)
     {
-        super();
+        super(simulatorId);
     }
 
     /** {@inheritDoc} */
@@ -271,7 +272,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                         }
                         catch (Exception exception)
                         {
-                            SimLogger.always().error(exception);
+                            getLogger().always().error(exception);
                             if (this.isPauseOnError())
                             {
                                 try
@@ -280,7 +281,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                                 }
                                 catch (SimRuntimeException stopException)
                                 {
-                                    SimLogger.always().error(stopException);
+                                    getLogger().always().error(stopException);
                                 }
                             }
                         }

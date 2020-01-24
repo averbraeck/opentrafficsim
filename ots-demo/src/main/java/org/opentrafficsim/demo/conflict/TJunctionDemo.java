@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -31,6 +32,7 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -77,7 +79,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("TJunctionDemo");
             final TJunctionModel junctionModel = new TJunctionModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(junctionModel.getNetwork().getExtent(),
@@ -85,7 +87,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
             TJunctionDemo app = new TJunctionDemo("T-Junction demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -191,6 +193,13 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
         public OTSRoadNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TJunctionModel";
         }
 
     }

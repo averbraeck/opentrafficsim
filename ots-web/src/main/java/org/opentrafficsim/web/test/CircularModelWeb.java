@@ -29,7 +29,8 @@ public class CircularModelWeb extends OTSWebServer
      * @param model the model
      * @throws Exception on jetty error
      */
-    public CircularModelWeb(final String title, final OTSSimulatorInterface simulator, final OTSModelInterface model) throws Exception
+    public CircularModelWeb(final String title, final OTSSimulatorInterface simulator, final OTSModelInterface model)
+            throws Exception
     {
         super(title, simulator, new Rectangle2D.Double(-200, -200, 400, 400));
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), simulator, new DefaultSwitchableGTUColorer());
@@ -41,7 +42,7 @@ public class CircularModelWeb extends OTSWebServer
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSAnimator simulator = new OTSAnimator();
+        OTSAnimator simulator = new OTSAnimator("CircularModelWeb");
         simulator.setAnimation(false);
         CircularRoadModel model = new CircularRoadModel(simulator);
         if (TabbedParameterDialog.process(model.getInputParameterMap()))

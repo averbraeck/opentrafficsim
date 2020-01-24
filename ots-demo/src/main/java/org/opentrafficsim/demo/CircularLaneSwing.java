@@ -33,6 +33,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Circular lane simulation demo.
@@ -89,7 +90,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("CircularLaneSwing");
             final CircularLaneModel otsModel = new CircularLaneModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -107,7 +108,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -134,7 +135,8 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
 
-        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler, path));
+        plot = new SwingTrajectoryPlot(
+                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler, path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));

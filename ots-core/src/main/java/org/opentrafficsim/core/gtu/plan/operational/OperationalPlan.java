@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -24,7 +25,6 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.math.Solver;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -443,7 +443,7 @@ public class OperationalPlan implements Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.always().error("OperationalPlan.getLocation(): " + exception.getMessage());
+            this.gtu.getSimulator().getLogger().always().error("OperationalPlan.getLocation(): " + exception.getMessage());
             p = this.path.getLocationFractionExtended(fraction);
         }
         p.setZ(p.getZ() + 0.001);
@@ -614,8 +614,8 @@ public class OperationalPlan implements Serializable
                     traveledDistanceAlongPath += this.path.get(i).distance(p).si;
                     if (traveledDistanceAlongPath > this.path.getLengthSI())
                     {
-                        return Time.instantiateSI(Double.NaN); // Time.instantiateSI(getEndTime().si - 1e-9); // -1e-9 prevents that next
-                                                          // move() reschedules enter
+                        return Time.instantiateSI(Double.NaN);
+                        // Time.instantiateSI(getEndTime().si - 1e-9); // -1e-9 prevents that next move() reschedules enter
                     }
                     return timeAtDistance(Length.instantiateSI(traveledDistanceAlongPath));
                 }
@@ -629,7 +629,7 @@ public class OperationalPlan implements Serializable
         {
             throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
         }
-        SimLogger.always().error("timeAtPoint failed");
+        this.gtu.getSimulator().getLogger().always().error("timeAtPoint failed");
         return null;
     }
 
@@ -659,7 +659,7 @@ public class OperationalPlan implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
     @Override
     public boolean equals(final Object obj)
     {
@@ -832,7 +832,7 @@ public class OperationalPlan implements Serializable
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
+        @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
         @Override
         public boolean equals(final Object obj)
         {
@@ -964,7 +964,7 @@ public class OperationalPlan implements Serializable
                     return new Duration(solution, DurationUnit.SI);
                 }
             }
-            SimLogger.always().error("AccelerationSegment " + this + " timeAtDistance( " + distance + ") failed");
+            CategoryLogger.always().error("AccelerationSegment " + this + " timeAtDistance( " + distance + ") failed");
             return null; // No valid solution
         }
 
@@ -1047,7 +1047,7 @@ public class OperationalPlan implements Serializable
             {
                 return new Duration(solution[0], DurationUnit.SI);
             }
-            SimLogger.always().error("SpeedSegment " + this + " timeAtDistance( " + distance + ") failed");
+            CategoryLogger.always().error("SpeedSegment " + this + " timeAtDistance( " + distance + ") failed");
             return null; // No valid solution
         }
 

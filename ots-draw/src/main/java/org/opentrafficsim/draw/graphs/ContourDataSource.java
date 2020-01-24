@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.DataSource;
 import org.opentrafficsim.core.egtf.DataStream;
@@ -30,8 +31,6 @@ import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.Trajectory.SpaceTimeView;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Class that contains data for contour plots. One data source can be shared between contour plots, in which case the
@@ -738,7 +737,7 @@ public class ContourDataSource<G extends GtuDataInterface>
                                 }
                                 catch (IllegalArgumentException exception)
                                 {
-                                    SimLogger.always().debug(exception,
+                                    CategoryLogger.always().debug(exception,
                                             "Unable to generate space-time view from x = {} to {} and t = {} to {}.",
                                             xStart.get(k), xEnd.get(k), tFrom, tTo);
                                     continue;

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
@@ -20,6 +21,9 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -39,9 +43,7 @@ import org.opentrafficsim.xml.generated.CONTROL.TRAFCOD;
 import org.opentrafficsim.xml.generated.OTS;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -105,7 +107,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("TrafCODDemo2");
             URL url = URLResource.getResource("/TrafCODDemo2/TrafCODDemo2.xml");
             System.out.println("url is " + url);
             String xml = readStringFromURL(url);
@@ -116,7 +118,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
             TrafCODDemo2 app = new TrafCODDemo2("TrafCOD demo complex crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -303,6 +305,13 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                 }
                 System.out.println("]");
             }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TrafCODModel";
         }
 
     }

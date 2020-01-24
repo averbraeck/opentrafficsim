@@ -4,16 +4,16 @@ import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventProducer;
+import org.djutils.event.EventProducerInterface;
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.event.EventProducerInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * Provide the basic implementation of a Transceiver from which targeted classes can extend.

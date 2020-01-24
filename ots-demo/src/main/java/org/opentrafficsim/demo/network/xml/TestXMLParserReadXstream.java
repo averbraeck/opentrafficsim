@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.network.xml;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,6 +30,7 @@ import com.thoughtworks.xstream.XStream;
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -69,7 +71,7 @@ public class TestXMLParserReadXstream extends OTSSimulationApplication<OTSModelI
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("TestXMLParserReadXstream");
                     TestXMLModelReadXStream xmlModel = new TestXMLModelReadXStream(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel =
@@ -77,7 +79,7 @@ public class TestXMLParserReadXstream extends OTSSimulationApplication<OTSModelI
                                     xmlModel, new DefaultSwitchableGTUColorer(), xmlModel.getNetwork());
                     new TestXMLParserReadXstream(xmlModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -161,6 +163,13 @@ public class TestXMLParserReadXstream extends OTSSimulationApplication<OTSModelI
         public final String toString()
         {
             return "TestXMLModel [simulator=" + this.simulator + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TestXMLModelReadXStream";
         }
 
     }

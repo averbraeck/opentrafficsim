@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.network.xml;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
@@ -32,6 +33,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Grid10X10.java.
@@ -203,7 +205,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
     public Grid10X10(final TestXMLModelGrid model, final OTSAnimationPanel panel) throws OTSDrawingException
     {
         super(model, panel);
-        //System.out.println("ANIMATEMAP.SIZE = " + this.defaultAnimationFactory.animatedObjects.size());
+        // System.out.println("ANIMATEMAP.SIZE = " + this.defaultAnimationFactory.animatedObjects.size());
     }
 
     /** */
@@ -239,8 +241,8 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
         {
             xml.append(String.format(" <NODE ID=\"W%d\" COORDINATE=\"(%d,%d)\" DIRECTION=\"0 deg(E)\" />\n", y, 0,
                     SPACING * y + SPACING / 2));
-            xml.append(String.format(" <NODE ID=\"E%d\" COORDINATE=\"(%d,%d)\" DIRECTION=\"0 deg(E)\" />\n", y,
-                    SIZE * SPACING, SPACING * y + SPACING / 2));
+            xml.append(String.format(" <NODE ID=\"E%d\" COORDINATE=\"(%d,%d)\" DIRECTION=\"0 deg(E)\" />\n", y, SIZE * SPACING,
+                    SPACING * y + SPACING / 2));
         }
 
         //@formatter:off
@@ -272,14 +274,14 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("Grid10X10");
                     TestXMLModelGrid xmlModel = new TestXMLModelGrid(simulator, xml.toString());
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new Grid10X10(xmlModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -362,6 +364,13 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
         public final String toString()
         {
             return "TestXMLModelGrid [simulator=" + this.simulator + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TestXMLModelGrid";
         }
 
     }

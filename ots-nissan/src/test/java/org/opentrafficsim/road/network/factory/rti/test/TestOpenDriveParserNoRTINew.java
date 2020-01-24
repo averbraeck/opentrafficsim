@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.factory.rti.test;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.SocketException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -76,6 +77,7 @@ import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -117,14 +119,14 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("TestOpenDriveParserNoRTINew");
                     TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), openDriveModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, openDriveModel, DEFAULT_COLORER, openDriveModel.getNetwork());
                     new TestOpenDriveParserNoRTINew(openDriveModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -811,6 +813,13 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
         {
             return "TestOpenDriveModel [rtiCar.sizes=" + this.rtiCars.size() + ", carType=" + this.carType + ", lastId="
                     + this.lastId + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TestOpenDriveModel";
         }
     }
 

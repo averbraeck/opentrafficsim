@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.following;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -67,7 +68,7 @@ public class IDMPlusTest implements UNITS
     {
         // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
         // cars have #10 and up
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("IDMPlusTest");
         IDMPlusTestModel model = new IDMPlusTestModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         Length s0 = new Length(2, METER);
@@ -390,6 +391,13 @@ class IDMPlusTestModel extends AbstractOTSModel
     public OTSRoadNetwork getNetwork()
     {
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "IDMPlusTest.Model";
     }
 
 }

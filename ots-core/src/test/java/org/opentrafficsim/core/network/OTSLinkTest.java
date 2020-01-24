@@ -9,6 +9,9 @@ import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
 
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventType;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -20,9 +23,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockGTU;
 import org.opentrafficsim.core.mock.MockSimulator;
 
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**

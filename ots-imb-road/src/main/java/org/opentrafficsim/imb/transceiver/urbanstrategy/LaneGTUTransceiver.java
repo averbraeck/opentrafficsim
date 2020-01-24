@@ -1,10 +1,15 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.Event;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventType;
+import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Link;
@@ -19,10 +24,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.Event;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * OTS publishes events about the lanes to IMB, e.g. to know about the number of vehicles on a particular lane.<br>
@@ -353,7 +354,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
         {
             Object[] content = (Object[]) event.getContent();
             String laneId = (String) content[2];
-            CrossSectionLink csl = (CrossSectionLink) event.getSource();
+            CrossSectionLink csl = (CrossSectionLink) event.getSourceId();
             Lane lane = (Lane) csl.getCrossSectionElement(laneId);
 
             lane.removeListener(this, Lane.GTU_ADD_EVENT);
@@ -443,7 +444,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
         Object[] gtuInfo = (Object[]) event.getContent();
         String gtuId = (String) gtuInfo[0];
         int countAfterEvent = (Integer) gtuInfo[2];
-        Lane lane = (Lane) event.getSource();
+        Lane lane = (Lane) event.getSourceId();
         double timestamp = getSimulator().getSimulatorTime().si;
         if (Lane.GTU_ADD_EVENT.equals(event.getType()))
         {
@@ -477,6 +478,13 @@ public class LaneGTUTransceiver extends AbstractTransceiver
         }
         System.err.println("LaneGTUTransceiver.transformDelete: Don't know how to transform event " + event);
         return new Object[] {};
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "LaneGTUTransceiver";
     }
 
 }

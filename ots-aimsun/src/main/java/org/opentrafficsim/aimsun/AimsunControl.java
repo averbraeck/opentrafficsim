@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URISyntaxException;
@@ -27,6 +28,9 @@ import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.logger.CategoryLogger;
 import org.djutils.logger.LogCategory;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions;
@@ -60,13 +64,11 @@ import org.pmw.tinylog.Level;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -98,8 +100,8 @@ public class AimsunControl
             ValueRuntimeException, ParameterException, SimRuntimeException
     {
         // TODO: LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = false;
-        SimLogger.setAllLogLevel(Level.WARNING);
-        SimLogger.setLogCategories(LogCategory.ALL);
+        CategoryLogger.setAllLogLevel(Level.WARNING);
+        CategoryLogger.setLogCategories(LogCategory.ALL);
 
         String ip = null;
         Integer port = null;
@@ -363,7 +365,7 @@ public class AimsunControl
                         Duration warmupDuration = new Duration(0, DurationUnit.SECOND);
                         try
                         {
-                            OTSAnimator animator = new OTSLoggingAnimator("C:/Temp/AimsunEventlog.txt");
+                            OTSAnimator animator = new OTSLoggingAnimator("C:/Temp/AimsunEventlog.txt", "AimsunControl");
                             this.model = new AimsunModel(animator, "Aimsun generated model", "Aimsun model", networkXML);
                             Map<String, StreamInterface> map = new LinkedHashMap<>();
                             // TODO: This seed is Aimsun specific.
@@ -391,7 +393,7 @@ public class AimsunControl
                             }
                             animationPanel.actionPerformed(new ActionEvent(this, 0, "ZoomAll"));
                         }
-                        catch (SimRuntimeException | NamingException | OTSDrawingException exception1)
+                        catch (SimRuntimeException | NamingException | OTSDrawingException | DSOLException exception1)
                         {
                             exception1.printStackTrace();
                             // Stop the simulation
@@ -617,6 +619,13 @@ public class AimsunControl
         public OTSNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "AimsunModel";
         }
 
     }

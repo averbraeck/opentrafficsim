@@ -1,5 +1,7 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import java.io.Serializable;
+
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.imb.IMBException;
@@ -71,6 +73,13 @@ public class NetworkTransceiver extends AbstractTransceiver
         super("Network", connector, simulator);
         Throw.whenNull(network, "Network cannot be null");
         connector.postIMBMessage("Network", IMBEventType.NEW, new Object[] {simulator.getSimulatorTime().si, network.getId()});
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "NetworkTransceiver";
     }
 
 }

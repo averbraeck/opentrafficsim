@@ -11,7 +11,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -78,7 +77,7 @@ public class DestinationSensor extends AbstractSensor
         }
         catch (NetworkException exception)
         {
-            SimLogger.always().error(exception, "Error destroying GTU: {} at destination sensor: {}", gtu, toString());
+            getSimulator().getLogger().always().error(exception, "Error destroying GTU: {} at destination sensor: {}", gtu, toString());
         }
     }
 

@@ -193,7 +193,7 @@ public class ContourPlotTest implements UNITS
     public final void densityContourTest() throws Exception
     {
         OTSRoadNetwork network = new OTSRoadNetwork("density contour test network", true);
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("densityContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(simulator);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
@@ -212,7 +212,7 @@ public class ContourPlotTest implements UNITS
     public final void flowContourTest() throws Exception
     {
         OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true);
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("flowContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(simulator);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
@@ -231,7 +231,7 @@ public class ContourPlotTest implements UNITS
     public final void speedContourTest() throws Exception
     {
         OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true);
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("speedContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(simulator);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
@@ -304,12 +304,12 @@ public class ContourPlotTest implements UNITS
         int xBins = cp.getDataPool().timeAxis.getBinCount();
         int yBins = cp.getDataPool().spaceAxis.getBinCount();
         int expectedXBins = (int) Math.ceil(((AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND).getSI())
-                / ContourDataSource.DEFAULT_TIME_GRANULARITIES[ContourDataSource.DEFAULT_TIME_GRANULARITY_INDEX] 
-                        + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0));
+                / ContourDataSource.DEFAULT_TIME_GRANULARITIES[ContourDataSource.DEFAULT_TIME_GRANULARITY_INDEX]
+                + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0));
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
         int expectedYBins = (int) Math.ceil(path.getTotalLength().getSI()
                 / ContourDataSource.DEFAULT_SPACE_GRANULARITIES[ContourDataSource.DEFAULT_SPACE_GRANULARITY_INDEX]
-                        + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0));
+                + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0));
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
         assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);

@@ -5,9 +5,8 @@ package org.opentrafficsim.water;
 
 import javax.vecmath.Point3d;
 
+import org.djutils.event.EventProducer;
 import org.locationtech.jts.geom.Coordinate;
-
-import nl.tudelft.simulation.event.EventProducer;
 
 /**
  * Base abstract class for a located object that can produce events.

@@ -6,8 +6,7 @@ import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
-
-import nl.tudelft.simulation.dsol.logger.SimLogger;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * Generate an OTSLine3D for a clothoid. <br>
@@ -336,7 +335,7 @@ public final class Clothoid
             catch (OTSGeometryException ge)
             {
                 // cannot happen
-                SimLogger.always().error(ge, "CANNOT HAPPEN; if you see this; let us know what you did.");
+                CategoryLogger.always().error(ge, "CANNOT HAPPEN; if you see this; let us know what you did.");
             }
         }
         return new OTSLine3D(list);

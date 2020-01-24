@@ -276,7 +276,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
-        OTSSimulator simulator = new OTSSimulator();
+        OTSSimulator simulator = new OTSSimulator("LaneChangeGraph");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), this);
 
         // Set up the network

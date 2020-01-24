@@ -3,6 +3,8 @@ package org.opentrafficsim.road.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
+
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
@@ -75,7 +77,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGTUTypeTest");
         OTSModelInterface model = new DummyModelForTemplateGTUTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         LaneBasedTemplateGTUType passengerCar = new LaneBasedTemplateGTUType(pcType, new Generator<Length>()
@@ -326,6 +328,13 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         public final OTSRoadNetwork getNetwork()
         {
             return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "LaneBasedTemplateGTUTypeTest.Model";
         }
     }
 

@@ -4,7 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
+import org.djutils.logger.CategoryLogger;
 
 /**
  * The GrapghUpdater can be used to repeatedly offer a value that is automatically processed in order of offering in a parallel
@@ -52,7 +52,7 @@ public class GraphUpdater<T>
                     }
                     catch (InterruptedException exception)
                     {
-                        SimLogger.always().error(exception, "Worker {} thread stopped.", workerName);
+                        CategoryLogger.always().error(exception, "Worker {} thread stopped.", workerName);
                         break;
                     }
                 }

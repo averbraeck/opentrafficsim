@@ -3,6 +3,8 @@ package org.opentrafficsim.core.network;
 import java.util.List;
 import java.util.Set;
 
+import org.djutils.event.EventProducerInterface;
+import org.djutils.event.EventType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.definitions.Definitions;
@@ -11,9 +13,6 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
-
-import nl.tudelft.simulation.event.EventProducerInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * Interface that defines what information a network should be able to provide about Nodes, Links and Routes.

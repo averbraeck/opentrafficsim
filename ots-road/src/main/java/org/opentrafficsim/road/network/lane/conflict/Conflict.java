@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -44,8 +46,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * Conflicts deal with traffic on different links/roads that need to consider each other as their paths may be in conflict
@@ -337,7 +337,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        LaneBasedGTU gtu = (LaneBasedGTU) event.getSource();
+        LaneBasedGTU gtu = (LaneBasedGTU) getLane().getNetwork().getGTU(event.getSourceId().toString());
         if (this.upstreamListening.contains(gtu))
         {
             this.upstreamTime = null;

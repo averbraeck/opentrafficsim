@@ -4,14 +4,13 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.logger.CategoryLogger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.core.network.NetworkException;
-
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * <p>
@@ -170,7 +169,8 @@ public final class OTSBufferingJTS
                                 }
                                 if (Math.abs(totalAngle) > 0.01)
                                 {
-                                    // SimLogger.trace(Cat.CORE, "preceding segment " + pPoint + " to " + p + ", this segment "
+                                    // CategoryLogger.trace(Cat.CORE, "preceding segment " + pPoint + " to " + p + ", this
+                                    // segment "
                                     // + segmentFrom + " to " + segmentTo + " totalAngle " + totalAngle);
                                     OTSPoint3D intermediatePoint =
                                             intersectionOfLineSegments(pPoint, p, segmentFrom, segmentTo);
@@ -179,7 +179,8 @@ public final class OTSBufferingJTS
                                         // mark it as added point at inside corner
                                         intermediatePoint =
                                                 new OTSPoint3D(intermediatePoint.x, intermediatePoint.y, Double.NaN);
-                                        // SimLogger.trace(Cat.CORE, "Inserting intersection of preceding segment and this "
+                                        // CategoryLogger.trace(Cat.CORE, "Inserting intersection of preceding segment and this
+                                        // "
                                         // + "segment " + intermediatePoint);
                                         points.add(intermediatePoint);
                                     }
@@ -217,7 +218,8 @@ public final class OTSBufferingJTS
                             }
                             OTSPoint3D intermediatePoint = new OTSPoint3D(prevPoint.x - Math.sin(intermediateAngle) * offset,
                                     prevPoint.y + Math.cos(intermediateAngle) * offset);
-                            // SimLogger.trace(Cat.CORE, "inserting intermediate point " + intermediatePoint + " for angle "
+                            // CategoryLogger.trace(Cat.CORE, "inserting intermediate point " + intermediatePoint + " for angle
+                            // "
                             // + Math.toDegrees(intermediateAngle));
                             points.add(intermediatePoint);
                         }
@@ -228,7 +230,8 @@ public final class OTSBufferingJTS
                 prevPoint = nextPoint;
                 prevAngle = angle;
             }
-            // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#before cleanup: \nc0,0,0\n#", new OTSLine3D(points), "\n
+            // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#before cleanup: \nc0,0,0\n#", new
+            // OTSLine3D(points), "\n
             // "));
             // Remove points that are closer than the specified offset
             for (int index = 1; index < points.size() - 1; index++)
@@ -248,7 +251,8 @@ public final class OTSBufferingJTS
                             double distance = closestPoint.horizontalDistanceSI(checkPoint);
                             if (distance < bufferOffset - circlePrecision)
                             {
-                                // SimLogger.trace(Cat.CORE, "point " + checkPoint + " inside buffer (distance is " + distance +
+                                // CategoryLogger.trace(Cat.CORE, "point " + checkPoint + " inside buffer (distance is " +
+                                // distance +
                                 // ")");
                                 tooClose = true;
                                 break;
@@ -263,7 +267,7 @@ public final class OTSBufferingJTS
                 }
                 if (tooClose || !somewhereAtCorrectDistance)
                 {
-                    // SimLogger.trace(Cat.CORE, "Removing " + checkPoint);
+                    // CategoryLogger.trace(Cat.CORE, "Removing " + checkPoint);
                     points.remove(index);
                     index--;
                 }
@@ -281,7 +285,7 @@ public final class OTSBufferingJTS
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.always().error(exception, "Exception in offsetLine - should never happen");
+            CategoryLogger.always().error(exception, "Exception in offsetLine - should never happen");
             return null;
         }
     }
@@ -389,8 +393,8 @@ public final class OTSBufferingJTS
         }
         if (dS > 0.01)
         {
-            SimLogger.filter(Cat.CORE).trace(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
-                    + "\n\n\n\n" + sExpected + "\n" + eExpected);
+            CategoryLogger.filter(Cat.CORE).trace(referenceLine.toExcel() + "\n\n\n\n"
+                    + new OTSLine3D(bufferCoordinates).toExcel() + "\n\n\n\n" + sExpected + "\n" + eExpected);
             throw new OTSGeometryException("offsetGeometry: startDistance too big (" + dS + ") for line " + referenceLine);
         }
         if (dE > 0.01)
@@ -442,7 +446,7 @@ public final class OTSBufferingJTS
             lastC = c;
         }
 
-        /*- SimLogger.trace(Cat.CORE, referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
+        /*- CategoryLogger.trace(Cat.CORE, referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
             + "\n\n\n\n" + sExpected + "\n" + eExpected); */
         throw new OTSGeometryException("offsetGeometry: could not find offset in either direction for line " + referenceLine);
     }
@@ -479,7 +483,7 @@ public final class OTSBufferingJTS
     public static OTSLine3D offsetLine(final OTSLine3D referenceLine, final double offsetAtStart, final double offsetAtEnd)
             throws OTSGeometryException
     {
-        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is " +
+        // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is " +
         // offsetAtStart + " at end is " + offsetAtEnd + "\n#", referenceLine, "\n "));
 
         OTSLine3D offsetLineAtStart = offsetLine(referenceLine, offsetAtStart);
@@ -487,10 +491,11 @@ public final class OTSBufferingJTS
         {
             return offsetLineAtStart; // offset does not change
         }
-        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at start: \nc0,0,0\n#", offsetLineAtStart,
+        // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at start: \nc0,0,0\n#", offsetLineAtStart,
         // "\n"));
         OTSLine3D offsetLineAtEnd = offsetLine(referenceLine, offsetAtEnd);
-        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at end: \nc0.7,0.7,0.7\n#", offsetLineAtEnd,
+        // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at end: \nc0.7,0.7,0.7\n#",
+        // offsetLineAtEnd,
         // "\n"));
         Geometry startGeometry = offsetLineAtStart.getLineString();
         Geometry endGeometry = offsetLineAtEnd.getLineString();

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.event.EventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
@@ -13,7 +14,6 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -163,6 +163,13 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
             final boolean animation) throws NetworkException
     {
         return new StaticObject(this.id, this.geometry, this.height);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return this.id;
     }
 
 }

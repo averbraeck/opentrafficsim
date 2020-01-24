@@ -45,7 +45,7 @@ public class TJunctionDemo extends OTSWebServer
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSAnimator simulator = new OTSAnimator();
+        OTSAnimator simulator = new OTSAnimator("TJunctionDemo");
         simulator.setAnimation(false);
         TJunctionModel junctionModel = new TJunctionModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);

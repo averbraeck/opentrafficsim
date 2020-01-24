@@ -6,13 +6,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -64,17 +64,17 @@ public class Route implements Serializable, Identifiable
         this.nodeSet.addAll(nodes);
         verify();
     }
-    
+
     /**
      * Verify that there are normal (non Connectors) between adjacent nodes, except at start and end (where Connectors are OK.
      */
     public void verify()
     {
         // XXX Sanity check - there should be no Connectors (except at start and end)
-        for (int index = 0; index < nodes.size() - 1; index++)
+        for (int index = 0; index < this.nodes.size() - 1; index++)
         {
-            Node from = nodes.get(index);
-            Node to = nodes.get(index + 1);
+            Node from = this.nodes.get(index);
+            Node to = this.nodes.get(index + 1);
             boolean normalLinkFound = false;
             boolean connectorFound = false;
             for (Link link : from.getLinks())
@@ -93,15 +93,15 @@ public class Route implements Serializable, Identifiable
             }
             if ((!normalLinkFound) && (!connectorFound))
             {
-                SimLogger.always()
+                CategoryLogger.always()
                         .error(String.format("Unlike this route, the network has no link from %s (index %d of %d) to %s", from,
-                                index, nodes.size(), to));
+                                index, this.nodes.size(), to));
             }
-            else if ((!normalLinkFound) && index > 0 && index < nodes.size() - 2)
+            else if ((!normalLinkFound) && index > 0 && index < this.nodes.size() - 2)
             {
-                SimLogger.always()
+                CategoryLogger.always()
                         .error(String.format("Route includes connector along the way (from %s (index %d of %d) to %s)", from,
-                                index, nodes.size(), to));
+                                index, this.nodes.size(), to));
             }
         }
     }

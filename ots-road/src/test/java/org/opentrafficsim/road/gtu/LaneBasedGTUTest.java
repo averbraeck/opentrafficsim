@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -94,7 +95,7 @@ public class LaneBasedGTUTest implements UNITS
         {
             fail("truckUpToLane must be >= truckFromLane");
         }
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("leaderFollowerParallel");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         GTUType carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
@@ -370,7 +371,7 @@ public class LaneBasedGTUTest implements UNITS
         {
             this.network = new OTSRoadNetwork("test", true); // new network every time, otherwise nodes cannot be added again
             // Create a car with constant acceleration
-            OTSSimulatorInterface simulator = new OTSSimulator();
+            OTSSimulatorInterface simulator = new OTSSimulator("timeAtDistanceTest");
             Model model = new Model(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
             // Run the simulator clock to some non-zero value
@@ -545,6 +546,13 @@ public class LaneBasedGTUTest implements UNITS
         public final OTSRoadNetwork getNetwork()
         {
             return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "LaneBasedGTUTest.Model";
         }
     }
 }

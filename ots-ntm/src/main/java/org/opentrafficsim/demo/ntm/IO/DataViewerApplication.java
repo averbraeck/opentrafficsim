@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.Event;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.demo.ntm.NTMModel;
 
@@ -23,7 +24,7 @@ import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
 import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
-import nl.tudelft.simulation.event.Event;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -54,11 +55,12 @@ public class DataViewerApplication extends DSOLApplication
      * @throws RemoteException
      * @throws NamingException
      * @throws IOException
+     * @throws DSOLException 
      * @throws InputParameterException
      */
-    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException
+    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException, DSOLException
     {
-        OTSAnimator simulator = new OTSAnimator();
+        OTSAnimator simulator = new OTSAnimator("DataViewerApplication");
         DataViewer model = new DataViewer(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(7200.0, DurationUnit.SECOND), model);
 

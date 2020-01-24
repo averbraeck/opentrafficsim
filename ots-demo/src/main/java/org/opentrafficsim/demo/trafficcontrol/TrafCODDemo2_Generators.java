@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
@@ -14,6 +15,9 @@ import javax.swing.JPanel;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventType;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -28,9 +32,7 @@ import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -95,7 +97,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("TrafCODDemo2_Generators");
             URL url = URLResource.getResource("/TrafCODDemo2/TrafCODDemo2_Generators.xml");
             String xml = readStringFromURL(url);
             final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
@@ -106,7 +108,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
                     new TrafCODDemo2_Generators("TrafCOD demo complex crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -170,8 +172,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
 
                 String controllerName = "TrafCOD_complex";
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),
-                        getSimulator(), this.controllerDisplayPanel,
-                        null, null);
+                        getSimulator(), this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
@@ -255,6 +256,13 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
                 }
                 System.out.println("]");
             }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TrafCODModel";
         }
 
     }

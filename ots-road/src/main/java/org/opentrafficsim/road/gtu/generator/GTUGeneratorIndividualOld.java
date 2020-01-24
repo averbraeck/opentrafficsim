@@ -137,4 +137,11 @@ public class GTUGeneratorIndividualOld extends AbstractGTUGeneratorOld implement
                 + this.maximumSpeedDist + "]";
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return getName();
+    }
+
 }

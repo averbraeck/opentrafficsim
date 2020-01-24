@@ -41,6 +41,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Circular road simulation demo.
@@ -99,7 +100,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("CircularRoadSwing");
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -117,7 +118,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

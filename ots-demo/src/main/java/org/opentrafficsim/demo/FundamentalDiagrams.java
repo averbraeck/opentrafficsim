@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -63,6 +64,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Demonstrate the FundamentalDiagram plot.
@@ -120,7 +122,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("FundamentalDiagrams");
             final FundamentalDiagramPlotsModel otsModel = new FundamentalDiagramPlotsModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -138,7 +140,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | OTSSimulationException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | OTSSimulationException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -380,6 +382,13 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         public Lane getLane()
         {
             return this.lane;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "FundamentalDiagramPlotsModel";
         }
     }
 

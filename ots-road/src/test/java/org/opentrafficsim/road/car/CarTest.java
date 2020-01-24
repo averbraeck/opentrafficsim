@@ -2,6 +2,7 @@ package org.opentrafficsim.road.car;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -106,7 +107,7 @@ public class CarTest implements UNITS
      */
     public static OTSSimulatorInterface makeSimulator() throws SimRuntimeException, NamingException
     {
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("CarTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         return simulator;
@@ -199,6 +200,13 @@ public class CarTest implements UNITS
         public final OTSRoadNetwork getNetwork()
         {
             return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "CarTestModel";
         }
     }
 }

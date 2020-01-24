@@ -1,6 +1,6 @@
 package org.opentrafficsim.imb.transceiver;
 
-import nl.tudelft.simulation.event.EventInterface;
+import org.djutils.event.EventInterface;
 
 /**
  * Convert an OTS/DSOL event received to an equivalent event for IMB.

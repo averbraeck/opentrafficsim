@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -269,6 +270,13 @@ public class StraightModel extends AbstractOTSModel implements UNITS
     public Lane getLane()
     {
         return this.lane;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "StraightModel";
     }
 
 }

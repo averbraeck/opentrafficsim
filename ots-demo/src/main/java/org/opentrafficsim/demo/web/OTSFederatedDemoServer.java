@@ -204,7 +204,7 @@ public class OTSFederatedDemoServer implements Checkable
                 if (!OTSFederatedDemoServer.this.sessionModelMap.containsKey(sessionId))
                 {
                     System.out.println("parameters: " + modelId);
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("OTSFederatedDemoServer");
                     simulator.setAnimation(false);
                     OTSModelInterface model = null;
 

@@ -2,13 +2,13 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.event.EventType;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * A sensor is a lane-based object that can be triggered by a relative position of the GTU (e.g., front, back) when that

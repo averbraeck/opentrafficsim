@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -20,7 +21,6 @@ import org.opentrafficsim.draw.core.TextAnimation;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -79,7 +79,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         catch (OTSGeometryException exception)
         {
             // Cannot happen
-            SimLogger.always().error(exception);
+            CategoryLogger.always().error(exception);
         }
     }
 
@@ -108,17 +108,17 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.always().error(exception);
+            CategoryLogger.always().error(exception);
         }
         catch (RemoteException exception)
         {
-            SimLogger.always().error(exception);
+            CategoryLogger.always().error(exception);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException
+    public final void destroy() throws NamingException, RemoteException
     {
         super.destroy();
         this.text.destroy();

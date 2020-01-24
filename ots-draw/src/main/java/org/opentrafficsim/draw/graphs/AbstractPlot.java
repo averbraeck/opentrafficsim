@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventType;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -27,7 +28,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * Super class of all plots. This schedules regular updates, creates menus and deals with listeners. There are a number of

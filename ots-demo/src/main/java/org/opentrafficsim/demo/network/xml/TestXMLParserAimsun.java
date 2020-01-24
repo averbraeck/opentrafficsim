@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.network.xml;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -29,6 +30,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * New parser test.
@@ -70,14 +72,14 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("TestXMLParserAimsun");
                     TestAimsunModel xmlModel = new TestAimsunModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new TestXMLParserAimsun(xmlModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -149,6 +151,13 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
         public final String toString()
         {
             return "TestXMLParserAimsunNew [simulator=" + this.simulator + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TestAimsunModel";
         }
 
     }

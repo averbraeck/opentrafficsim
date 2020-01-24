@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -26,6 +27,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -52,8 +55,6 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -83,7 +84,7 @@ public class LaneTest implements UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[2];
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         CrossSectionLink link =
@@ -580,7 +581,7 @@ public class LaneTest implements UNITS
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
         OTSLine3D line = new OTSLine3D(coordinates);
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, network.getLinkType(LinkType.DEFAULTS.ROAD),
@@ -666,7 +667,7 @@ public class LaneTest implements UNITS
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
-                    OTSSimulatorInterface simulator = new OTSSimulator();
+                    OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
                     Model model = new Model(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end,
@@ -856,6 +857,13 @@ public class LaneTest implements UNITS
         public final OTSRoadNetwork getNetwork()
         {
             return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "LaneTest.Model";
         }
     }
 

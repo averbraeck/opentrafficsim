@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -27,11 +29,9 @@ import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.BusStopAnimation;
 import org.opentrafficsim.draw.road.ConflictAnimation;
-import org.opentrafficsim.draw.road.DestinationAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.SensorAnimation;
 import org.opentrafficsim.draw.road.ShoulderAnimation;
-import org.opentrafficsim.draw.road.SinkAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
@@ -52,9 +52,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * DefaultAnimationFactory.java. <br>
@@ -248,7 +245,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
         }
         catch (NamingException | SimRuntimeException exception)
         {
-            SimLogger.always().error(exception, "Exception while updating network animation.");
+            CategoryLogger.always().error(exception, "Exception while updating network animation.");
         }
     }
 
@@ -265,7 +262,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
         }
         catch (RemoteException | NamingException exception)
         {
-            SimLogger.always().error(exception, "Exception while drawing GTU.");
+            gtu.getSimulator().getLogger().always().error(exception, "Exception while drawing GTU.");
         }
     }
 

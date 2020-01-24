@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.dsol;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -13,7 +14,6 @@ import org.opentrafficsim.core.gtu.GTU;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -41,20 +41,22 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
     /**
      * Create a new OTSRealTimeClock.
      * @param moveThreads int; The number of move threads to use
+     * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSDEVSRTParallelMove(final int moveThreads)
+    public OTSDEVSRTParallelMove(final int moveThreads, final Serializable simulatorId)
     {
-        super();
+        super(simulatorId);
         setMoveThreads(moveThreads);
         setEventList(new SynchronizedRedBlackTree<>());
     }
 
     /**
      * Create a new OTSRealTimeClock.
+     * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSDEVSRTParallelMove()
+    public OTSDEVSRTParallelMove(final Serializable simulatorId)
     {
-        this(1);
+        this(1, simulatorId);
     }
 
     /**
@@ -100,7 +102,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
         SimTimeDoubleUnit simTime0 = this.simulatorTime; // _______ current zero for the sim clock
         double factor = getSpeedFactor(); // _____________________ local copy of speed factor to detect change
         double msec1 = simulatorTimeForWallClockMillis(1.0).doubleValue(); // _____ translation factor for 1 msec for sim clock
-        Duration rSim = this.simulatorTimeForWallClockMillis(getUpdateMsec() * factor); // sim clock change for 'updateMsec' wall clock
+        Duration rSim = this.simulatorTimeForWallClockMillis(getUpdateMsec() * factor); // sim clock change for 'updateMsec'
+                                                                                        // wall clock
 
         while (this.isRunning() && !this.eventList.isEmpty()
                 && this.getSimulatorTime().le(this.replication.getTreatment().getEndTime()))
@@ -220,7 +223,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                         }
                         catch (Exception exception)
                         {
-                            SimLogger.always().error(exception);
+                            getLogger().always().error(exception);
                             if (this.isPauseOnError())
                             {
                                 try
@@ -229,7 +232,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                 }
                                 catch (SimRuntimeException exception1)
                                 {
-                                    SimLogger.always().error(exception1);
+                                    getLogger().always().error(exception1);
                                 }
                             }
                         }
@@ -267,7 +270,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                SimLogger.always().error(exception);
+                                getLogger().always().error(exception);
                                 if (this.isPauseOnError())
                                 {
                                     try
@@ -276,7 +279,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                     }
                                     catch (SimRuntimeException exception1)
                                     {
-                                        SimLogger.always().error(exception1);
+                                        getLogger().always().error(exception1);
                                     }
                                 }
                             }
@@ -308,7 +311,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                SimLogger.always().error(exception);
+                                getLogger().always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     try
@@ -317,7 +320,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                     }
                                     catch (SimRuntimeException exception1)
                                     {
-                                        SimLogger.always().error(exception1);
+                                        getLogger().always().error(exception1);
                                     }
                                 }
                             }
@@ -351,7 +354,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                SimLogger.always().error(exception);
+                                getLogger().always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     try
@@ -360,7 +363,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                     }
                                     catch (SimRuntimeException exception1)
                                     {
-                                        SimLogger.always().error(exception1);
+                                        getLogger().always().error(exception1);
                                     }
                                 }
                             }
@@ -394,7 +397,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                SimLogger.always().error(exception);
+                                getLogger().always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     try
@@ -403,7 +406,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                     }
                                     catch (SimRuntimeException exception1)
                                     {
-                                        SimLogger.always().error(exception1);
+                                        getLogger().always().error(exception1);
                                     }
                                 }
                             }

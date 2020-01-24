@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
@@ -74,7 +75,7 @@ public class GTUTest
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
         OTSNetwork perceivableContext = new OTSNetwork("network", true);
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("testAbstractGTU");
         GTUModel model = new GTUModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
@@ -355,6 +356,13 @@ public class GTUTest
         public final OTSNetwork getNetwork()
         {
             return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "GTUModel";
         }
     }
 

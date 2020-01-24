@@ -69,7 +69,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -1145,7 +1144,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             else
             {
-                SimLogger.always().error("Distance on downstream lane could not be determined.");
+                getSimulator().getLogger().always().error("Distance on downstream lane could not be determined.");
             }
         }
         // TODO When requesting the position at the end of the plan, which will be on a further lane, this lane is not yet

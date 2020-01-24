@@ -116,7 +116,7 @@ public class SuperDemoWebApplication implements Checkable
      */
     protected void init() throws SimRuntimeException, NamingException, Sim0MQException, SerializationException, IOException
     {
-        this.simulator = new OTSAnimator();
+        this.simulator = new OTSAnimator("SuperDemoWebApplication");
         this.modelId = this.modelId.trim();
         if (this.modelId.toLowerCase().contains("circularroad"))
         {

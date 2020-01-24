@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
+import org.djutils.logger.CategoryLogger;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -55,6 +57,7 @@ import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Test model for parsing ESRI shape files.
@@ -80,11 +83,12 @@ public class TestShapeParser extends DSOLApplication
      * @throws SimRuntimeException should never happen
      * @throws NamingException on animation creation error
      * @throws RemoteException on animation panel failure
+     * @throws DSOLException when simulator does not implement AnimatorInterface
      */
-    public static void main(final String[] args) throws SimRuntimeException, NamingException, RemoteException
+    public static void main(final String[] args) throws SimRuntimeException, NamingException, RemoteException, DSOLException
     {
-        SimLogger.setAllLogLevel(Level.TRACE);
-        OTSAnimator simulator = new OTSAnimator();
+        CategoryLogger.setAllLogLevel(Level.TRACE);
+        OTSAnimator simulator = new OTSAnimator("TestShapeParser");
         GisNDWImport model = new GisNDWImport(simulator);
         DSOLPanel panel = new DSOLPanel(model, simulator);
         AnimationPanel animationPanel =
@@ -96,7 +100,6 @@ public class TestShapeParser extends DSOLApplication
         OTSReplication replication =
                 OTSReplication.create("rep1", Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
-        SimLogger.setSimulator(simulator);
         new TestShapeParser("TestShapeParser", panel);
     }
 
@@ -517,7 +520,7 @@ public class TestShapeParser extends DSOLApplication
          * @param property Property;
          * @return a double
          */
-        private Double parseDouble(Property property)
+        private Double parseDouble(final Property property)
         {
             if (property.getValue() != null)
             {
@@ -541,6 +544,13 @@ public class TestShapeParser extends DSOLApplication
         public final String toString()
         {
             return "TestXMLModel [simulator=" + this.simulator + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "GisNDWImport";
         }
 
     }

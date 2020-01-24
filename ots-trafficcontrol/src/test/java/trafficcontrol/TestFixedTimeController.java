@@ -137,7 +137,7 @@ public class TestFixedTimeController
         assertTrue("toString returns something descriptive", sg.toString().startsWith("SignalGroup ["));
 
         String ftcId = "FTCid";
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("TestFixedTimeController");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
@@ -289,7 +289,7 @@ public class TestFixedTimeController
         SignalGroup sg2 = new SignalGroup(signalGroupId2, trafficLightIds2, signalGroupOffset, preGreen, green, yellow);
 
         String ftcId = "FTCid";
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("TestFixedTimeController");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
@@ -351,7 +351,7 @@ public class TestFixedTimeController
                                 signalGroups.clear();
                                 signalGroups.add(sg);
                                 String ftcId = "FTCid";
-                                OTSSimulatorInterface simulator = new OTSSimulator();
+                                OTSSimulatorInterface simulator = new OTSSimulator("TestFixedTimeController");
                                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
                                 Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
                                 String networkId = "networkID";

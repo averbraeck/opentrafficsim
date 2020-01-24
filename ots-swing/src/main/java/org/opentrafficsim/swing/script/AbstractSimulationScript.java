@@ -13,6 +13,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.cli.Checkable;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
@@ -34,8 +36,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import picocli.CommandLine.Command;
@@ -111,7 +111,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             CliUtil.changeCommandVersion(this,
                     formatter.format(new Date(ClassUtil.classFileDescriptor(this.getClass()).getLastChangedDate())));
         }
-        catch (NoSuchFieldException | IllegalStateException | IllegalArgumentException | CliException exception)
+        catch (IllegalStateException | IllegalArgumentException | CliException exception)
         {
             throw new RuntimeException("Exception while setting properties in @Command annotation.", exception);
         }
@@ -199,7 +199,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     {
         if (isAutorun())
         {
-            this.simulator = new OTSSimulator();
+            this.simulator = new OTSSimulator(getNetwork().getId());
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
@@ -221,7 +221,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
         else
         {
-            this.simulator = new OTSAnimator();
+            this.simulator = new OTSAnimator(getNetwork().getId());
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             OTSAnimationPanel animationPanel =

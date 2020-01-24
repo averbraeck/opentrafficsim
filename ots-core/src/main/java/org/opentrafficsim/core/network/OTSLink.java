@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.event.EventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -14,7 +15,6 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -309,5 +309,12 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     public OTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         return new OTSLink(newNetwork, newSimulator, this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return this.id;
     }
 }

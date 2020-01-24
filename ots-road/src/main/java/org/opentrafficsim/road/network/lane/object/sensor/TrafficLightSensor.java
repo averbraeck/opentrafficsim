@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -10,6 +11,10 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventProducer;
+import org.djutils.event.EventProducerInterface;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -26,10 +31,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -562,6 +563,13 @@ public class TrafficLightSensor extends EventProducer
                 + this.entryB + ", exitB=" + this.exitB + ", currentGTUs=" + this.currentGTUs + ", lanes=" + this.lanes
                 + ", directionalityA=" + this.directionalityA + ", directionalityB=" + this.directionalityB + ", path="
                 + this.path + "]";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return this.id;
     }
 
 }

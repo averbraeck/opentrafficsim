@@ -369,13 +369,13 @@ public final class ODApplier
                 catch (SimRuntimeException exception)
                 {
                     // should not happen, we check that time is 0
-                    SimLogger.always().error(exception);
+                    simulator.getLogger().always().error(exception);
                     throw new RuntimeException(exception);
                 }
                 catch (ProbabilityException exception)
                 {
                     // should not happen, as we define probabilities in the headwayGenerator
-                    SimLogger.always().error(exception);
+                    simulator.getLogger().always().error(exception);
                     throw new RuntimeException(exception);
                 }
             }
@@ -442,7 +442,7 @@ public final class ODApplier
                     catch (NetworkException exception)
                     {
                         // can not happen, we use Length.ZERO and lane.getLength()
-                        SimLogger.always().error(exception);
+                        simulator.getLogger().always().error(exception);
                         throw new RuntimeException(exception);
                     }
                 }
@@ -555,7 +555,7 @@ public final class ODApplier
             }
             catch (GTUException ge)
             {
-                SimLogger.always().error(ge);
+                link.getSimulator().getLogger().always().error(ge);
                 throw new RuntimeException(ge);
             }
         }

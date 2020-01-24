@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -21,6 +22,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -54,8 +57,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * Test the TrafficLightSensor class.
@@ -165,7 +166,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
             for (int pos = 50; pos < 130; pos++)
             {
                 System.out.println("Number of lanes is " + lengthList.length + " pos is " + pos);
-                OTSSimulatorInterface simulator = new OTSSimulator();
+                OTSSimulatorInterface simulator = new OTSSimulator("TrafficLightSensorTest");
                 Model model = new Model(simulator);
                 simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                 Lane[] lanes = buildNetwork(lengthList, simulator);
@@ -301,6 +302,13 @@ public class TrafficLightSensorTest implements EventListenerInterface
         public final OTSRoadNetwork getNetwork()
         {
             return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TrafficLightSensorTest.Model";
         }
     }
 

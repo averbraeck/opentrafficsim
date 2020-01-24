@@ -1,5 +1,7 @@
 package org.opentrafficsim.imb.transceiver;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TByteBuffer;
@@ -15,7 +17,7 @@ import nl.tno.imb.TByteBuffer;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface IMBMessageHandler
+public interface IMBMessageHandler extends Serializable
 {
     /**
      * Handle an IMB payload for OTS.

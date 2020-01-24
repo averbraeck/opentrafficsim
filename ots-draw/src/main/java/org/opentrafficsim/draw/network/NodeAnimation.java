@@ -99,7 +99,7 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException
+    public final void destroy() throws NamingException, RemoteException
     {
         super.destroy();
         this.text.destroy();

@@ -23,10 +23,6 @@
       <groupId>opentrafficsim</groupId>
       <artifactId>ots-base</artifactId>
     </dependency>   
-    <dependency>
-      <groupId>dsol</groupId>
-      <artifactId>dsol-event</artifactId>
-    </dependency>   
   </dependencies>
 
   <contributors>

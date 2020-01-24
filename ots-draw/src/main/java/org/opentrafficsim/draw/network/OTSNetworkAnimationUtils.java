@@ -4,10 +4,7 @@ import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.naming.Binding;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.event.EventContext;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
@@ -23,7 +20,8 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.naming.context.ContextUtil;
+import nl.tudelft.simulation.naming.context.ContextInterface;
+import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
 /**
  * OTSNetworkAnimationUtils can make a deep clone of a network, including animation, and can destroy the animation. <br>
@@ -99,14 +97,12 @@ public final class OTSNetworkAnimationUtils
 
         try
         {
-            EventContext context =
-                    (EventContext) ContextUtil.lookup(oldSimulator.getReplication().getContext(), "/animation/2D");
-            NamingEnumeration<Binding> list = context.listBindings("");
-            while (list.hasMore())
+            ContextInterface context =
+                    ContextUtil.lookupOrCreateSubContext(oldSimulator.getReplication().getContext(), "animation/2D");
+            for (Object element : context.values())
             {
-                Binding binding = list.next();
                 @SuppressWarnings("unchecked")
-                Renderable2DInterface<T> animationObject = (Renderable2DInterface<T>) binding.getObject();
+                Renderable2DInterface<T> animationObject = (Renderable2DInterface<T>) element;
                 T locatable = animationObject.getSource();
                 if (oldSource.equals(locatable) && animationObject instanceof ClonableRenderable2DInterface)
                 {
@@ -131,12 +127,11 @@ public final class OTSNetworkAnimationUtils
         Set<Renderable2DInterface<?>> animationObjects = new LinkedHashSet<>();
         try
         {
-            EventContext context = (EventContext) ContextUtil.lookup(simulator.getReplication().getContext(), "/animation/2D");
-            NamingEnumeration<Binding> list = context.listBindings("");
-            while (list.hasMore())
+            ContextInterface context =
+                    ContextUtil.lookupOrCreateSubContext(simulator.getReplication().getContext(), "animation/2D");
+            for (Object element : context.values())
             {
-                Binding binding = list.next();
-                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) binding.getObject();
+                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) element;
                 animationObjects.add(animationObject);
             }
 
@@ -152,7 +147,7 @@ public final class OTSNetworkAnimationUtils
                 }
             }
         }
-        catch (NamingException exception)
+        catch (NamingException | RemoteException exception)
         {
             System.err.println("Error when destroying animation objects");
         }
@@ -176,13 +171,11 @@ public final class OTSNetworkAnimationUtils
 
         try
         {
-            EventContext context =
-                    (EventContext) ContextUtil.lookup(oldSimulator.getReplication().getContext(), "/animation/2D");
-            NamingEnumeration<Binding> list = context.listBindings("");
-            while (list.hasMore())
+            ContextInterface context =
+                    ContextUtil.lookupOrCreateSubContext(oldSimulator.getReplication().getContext(), "animation/2D");
+            for (Object element : context.values())
             {
-                Binding binding = list.next();
-                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) binding.getObject();
+                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) element;
                 Locatable locatable = animationObject.getSource();
                 if (clazz.isAssignableFrom(locatable.getClass()))
                 {

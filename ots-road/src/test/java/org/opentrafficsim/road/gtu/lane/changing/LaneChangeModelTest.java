@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.changing;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -80,7 +81,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
      */
     public LaneChangeModelTest()
     {
-        super(new OTSSimulator());
+        super(new OTSSimulator("LaneChangeModelTest"));
     }
 
     /**
@@ -321,6 +322,13 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     public final OTSRoadNetwork getNetwork()
     {
         return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "LaneChangeModelTest.Model";
     }
 
 }

@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -384,5 +385,12 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
     public OTSRoadNetwork getNetwork()
     {
         return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "CrossingTrafficLightsModel";
     }
 }

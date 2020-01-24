@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.factory.opendrive.test;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -27,6 +28,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -65,14 +67,14 @@ public class TestOpenDriveParserOld extends OTSSimulationApplication<OTSModelInt
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("TestOpenDriveParserOld");
                     TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), openDriveModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, openDriveModel, DEFAULT_COLORER, openDriveModel.getNetwork());
                     new TestOpenDriveParserOld(openDriveModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -155,6 +157,13 @@ public class TestOpenDriveParserOld extends OTSSimulationApplication<OTSModelInt
         /** {@inheritDoc} */
         @Override
         public String toString()
+        {
+            return "TestOpenDriveModel";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
         {
             return "TestOpenDriveModel";
         }

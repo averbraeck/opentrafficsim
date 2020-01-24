@@ -23,7 +23,6 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -31,7 +30,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.pmw.tinylog.Level;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
@@ -170,7 +168,7 @@ public final class ConflictBuilderParallel
             long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
             if (combinationsDone / 1000000 > lastReported)
             {
-                SimLogger.always()
+                simulator.getLogger().always()
                         .debug(String.format("generating conflicts at %.2f%%", 100.0 * combinationsDone / totalCombinations));
                 lastReported = combinationsDone / 1000000;
             }
@@ -303,7 +301,7 @@ public final class ConflictBuilderParallel
             long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
             if (combinationsDone / 1000000 > lastReported)
             {
-                SimLogger.always()
+                simulator.getLogger().always()
                         .debug(String.format("generating conflicts at %.2f%%", 100.0 * combinationsDone / totalCombinations));
                 lastReported = combinationsDone / 1000000;
             }
@@ -370,7 +368,8 @@ public final class ConflictBuilderParallel
                                 }
                                 catch (NetworkException | OTSGeometryException ne)
                                 {
-                                    SimLogger.always().error(ne, "Conflict build with bad combination of types / rules.");
+                                    simulator.getLogger().always().error(ne,
+                                            "Conflict build with bad combination of types / rules.");
                                 }
                             }
                         }
@@ -637,7 +636,7 @@ public final class ConflictBuilderParallel
                     }
                     if (Double.isNaN(fraction1))
                     {
-                        SimLogger.always().warn("Fixing fractions of merge conflict");
+                        simulator.getLogger().always().warn("Fixing fractions of merge conflict");
                         fraction1 = 0;
                         fraction2 = 0;
                     }
@@ -691,7 +690,7 @@ public final class ConflictBuilderParallel
                     }
                     if (Double.isNaN(fraction1))
                     {
-                        SimLogger.always().warn("Fixing fractions of split conflict");
+                        simulator.getLogger().always().warn("Fixing fractions of split conflict");
                         fraction1 = 1;
                         fraction2 = 1;
                     }
@@ -735,7 +734,7 @@ public final class ConflictBuilderParallel
                     }
                     if (Double.isNaN(f1Start) || Double.isNaN(f2Start) || Double.isNaN(f2End))
                     {
-                        SimLogger.always().warn("NOT YET Fixing fractions of crossing conflict");
+                        simulator.getLogger().always().warn("NOT YET Fixing fractions of crossing conflict");
                     }
                     buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start, f2End,
                             gtuType, simulator, widthGenerator, permitted);

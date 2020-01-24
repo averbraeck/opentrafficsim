@@ -23,8 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +48,8 @@ import javax.swing.text.MaskFormatter;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -60,8 +60,8 @@ import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.naming.context.ContextInterface;
+import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
 /**
  * Peter's improved simulation control panel.
@@ -85,9 +85,6 @@ public class OTSControlPanel extends JPanel
 
     /** The model, needed for its properties. */
     private final OTSModelInterface model;
-
-    /** Logger. */
-    private final Logger logger;
 
     /** The clock. */
     private final ClockLabel clockPanel;
@@ -125,7 +122,6 @@ public class OTSControlPanel extends JPanel
     {
         this.simulator = simulator;
         this.model = model;
-        this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         JPanel buttonPanel = new JPanel();
@@ -399,13 +395,14 @@ public class OTSControlPanel extends JPanel
                 // System.out.println("now is " + now);
                 try
                 {
-                    this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.DEFAULT), SimEventInterface.MIN_PRIORITY, this, this,
-                            "autoPauseSimulator", null);
+                    this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.DEFAULT), SimEventInterface.MIN_PRIORITY, this,
+                            this, "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
                 {
-                    this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator", "Caught an exception "
-                            + "while trying to schedule an autoPauseSimulator event at the current simulator time");
+                    this.simulator.getLogger().always()
+                            .error("Caught an exception while trying to schedule an autoPauseSimulator event "
+                                    + "at the current simulator time");
                 }
                 // System.out.println("NextTime: Starting simulator");
                 this.simulator.start();
@@ -461,6 +458,14 @@ public class OTSControlPanel extends JPanel
                     }
 
                     // unbind the old animation and statistics
+                    // TODO: change getExperiment().removeFromContext() so it works properly...
+                    // Now: ConcurrentModificationException...
+                    if (getSimulator().getReplication().getContext().hasKey("animation"))
+                        getSimulator().getReplication().getContext().destroySubcontext("animation");
+                    if (getSimulator().getReplication().getContext().hasKey("statistics"))
+                        getSimulator().getReplication().getContext().destroySubcontext("statistics");
+                    if (getSimulator().getReplication().getExperiment().getContext().hasKey("statistics"))
+                        getSimulator().getReplication().getExperiment().getContext().destroySubcontext("statistics");
                     getSimulator().getReplication().getExperiment().removeFromContext(); // clean up the context
                     getSimulator().cleanUp();
                 }
@@ -517,7 +522,7 @@ public class OTSControlPanel extends JPanel
             }
             else
             {
-                this.logger.logp(Level.SEVERE, "ControlPanel", "fixButtons", "", new Exception("Unknown button?"));
+                this.simulator.getLogger().always().error(new Exception("Unknown button?"));
             }
         }
         // System.out.println("FixButtons finishing");
@@ -559,8 +564,8 @@ public class OTSControlPanel extends JPanel
                 }
                 catch (SimRuntimeException exception)
                 {
-                    this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
-                            "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
+                    this.simulator.getLogger().always()
+                            .error("Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
                 }
             }
             else
@@ -630,13 +635,13 @@ public class OTSControlPanel extends JPanel
         {
             try
             {
-                this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.DEFAULT), SimEventInterface.MAX_PRIORITY, this, this,
-                        "autoPauseSimulator", null);
+                this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.DEFAULT), SimEventInterface.MAX_PRIORITY, this,
+                        this, "autoPauseSimulator", null);
             }
             catch (SimRuntimeException exception)
             {
-                this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
-                        "Caught an exception while trying to schedule an autoPauseSimulator event");
+                this.simulator.getLogger().always()
+                        .error("Caught an exception while trying to schedule an autoPauseSimulator event");
             }
         }
     }

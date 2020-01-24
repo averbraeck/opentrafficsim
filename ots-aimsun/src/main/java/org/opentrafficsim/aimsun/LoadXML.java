@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -46,6 +47,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -133,7 +135,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         xml = new String(Files.readAllBytes(Paths.get(fileName)));
         try
         {
-            OTSLoggingAnimator simulator = new OTSLoggingAnimator("C:/Temp/loadXMLeventlog.txt");
+            OTSLoggingAnimator simulator = new OTSLoggingAnimator("C:/Temp/loadXMLeventlog.txt", "LoadXML");
             XMLModel xmlModel = new XMLModel(simulator, "XML model", "Model built from XML file " + fileName, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             // TODO: This seed is Aimsun specific.
@@ -143,7 +145,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             new LoadXML(xmlModel, animationPanel);
         }
-        catch (SimRuntimeException | OTSDrawingException sre)
+        catch (SimRuntimeException | OTSDrawingException | DSOLException sre)
         {
             JOptionPane.showMessageDialog(null, sre.getMessage(), "Exception occured", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
@@ -212,6 +214,13 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         public OTSRoadNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "XMLModel";
         }
 
     }

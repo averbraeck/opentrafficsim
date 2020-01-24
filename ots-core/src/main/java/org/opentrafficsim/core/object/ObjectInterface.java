@@ -1,11 +1,13 @@
 package org.opentrafficsim.core.object;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.event.EventProducerInterface;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventProducerInterface;
 
 /**
  * Generic object that can be placed in the model. This could be implemented for a traffic light, a road sign, or an obstacle.
@@ -18,7 +20,7 @@ import nl.tudelft.simulation.event.EventProducerInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface ObjectInterface extends Locatable, Identifiable, EventProducerInterface
+public interface ObjectInterface extends Locatable, Identifiable, EventProducerInterface, Serializable
 {
     /** @return the outline geometry of the object. */
     OTSLine3D getGeometry();

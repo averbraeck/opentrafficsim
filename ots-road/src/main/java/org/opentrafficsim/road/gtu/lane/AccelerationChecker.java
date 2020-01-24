@@ -5,8 +5,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.OTSNetwork;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
-
 /**
  * Checks acceleration bounds.
  * <p>
@@ -62,7 +60,7 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
         if (gtu.getOperationalPlan().getSpeed(Duration.ZERO).si > this.minSpeed.si
                 && (a.si < this.min.si || a.si > this.max.si))
         {
-            SimLogger.always().error("GTU: {} acceleration out of bounds ({}, {})", this.min, this.max);
+            gtu.getSimulator().getLogger().always().error("GTU: {} acceleration out of bounds ({}, {})", this.min, this.max);
         }
     }
 

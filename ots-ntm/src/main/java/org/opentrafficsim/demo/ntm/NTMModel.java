@@ -3,6 +3,7 @@ package org.opentrafficsim.demo.ntm;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -1237,6 +1238,13 @@ public class NTMModel extends AbstractOTSModel
     public OTSNetwork getNetwork()
     {
         return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "NTMModel";
     }
 
     /*

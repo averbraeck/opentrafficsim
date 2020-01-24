@@ -7,6 +7,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventProducerInterface;
+import org.djutils.event.EventType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
@@ -19,8 +21,6 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventProducerInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * Generalized Travel Unit. <br>
@@ -48,12 +48,12 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     @Override
     String getId();
 
-    /** @return the context to which the GTU belongs*/
+    /** @return the context to which the GTU belongs */
     PerceivableContext getPerceivableContext();
-    
+
     /** @return the maximum length of the GTU (parallel with driving direction). */
     Length getLength();
-    
+
     /** @return the maximum width of the GTU (perpendicular to driving direction). */
     Length getWidth();
 
@@ -202,7 +202,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * @return Set&lt;GTU&gt;; children GTU's
      */
     Set<GTU> getChildren();
-    
+
     /**
      * Sets the error handler.
      * @param errorHandler GTUErrorHandler; error handler

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.factory.vissim.demo;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -28,6 +29,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * TestVissimParser.java. <br>
@@ -66,14 +68,14 @@ public class TestVissimParser extends OTSSimulationApplication<OTSModelInterface
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("TestVissimParser");
                     VissimImport model = new VissimImport(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(model.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, model, DEFAULT_COLORER, model.getNetwork());
                     new TestVissimParser(model, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -174,6 +176,13 @@ public class TestVissimParser extends OTSSimulationApplication<OTSModelInterface
         public final String toString()
         {
             return "TestVissimParser [simulator=" + this.simulator + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "VissimImport";
         }
 
     }

@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -19,6 +20,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventType;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -67,9 +71,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionMap;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistErlang;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
@@ -541,6 +542,13 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     public final Length getMaximumDistance()
     {
         return this.maximumDistance;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "NetworksModel";
     }
 
 }
