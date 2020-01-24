@@ -1,0 +1,1332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/xsd/1.03.00/ots.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <DEFINITIONS>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutypes.xml">
+      <xi:fallback>
+        <xi:include href="xsd/1.03.00/defaults/default_gtutypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_linktypes.xml">
+      <xi:fallback>
+        <xi:include href="xsd/1.03.00/defaults/default_linktypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_lanetypes.xml">
+      <xi:fallback>
+        <xi:include href="xsd/1.03.00/defaults/default_lanetypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutemplates.xml">
+      <xi:fallback>
+        <xi:include href="xsd/1.03.00/defaults/default_gtutemplates.xml" />
+      </xi:fallback>
+    </xi:include>
+
+    <LINKTYPES>
+      <LINKTYPE ID="OUTSIDECITY">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="BOTH"/>
+        <SPEEDLIMIT GTUTYPE="VEHICLE" LEGALSPEEDLIMIT="80 km/h" />
+      </LINKTYPE>
+      <LINKTYPE ID="CITYSTREET">
+        <COMPATIBILITY GTUTYPE="VEHICLE" DIRECTION="BOTH"/>
+        <SPEEDLIMIT GTUTYPE="VEHICLE" LEGALSPEEDLIMIT="50 km/h" />
+      </LINKTYPE>
+    </LINKTYPES>
+
+    <ROADLAYOUTS>
+    
+      <ROADLAYOUT ID="NR1" LINKTYPE="OUTSIDECITY">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="NR2" LINKTYPE="OUTSIDECITY">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+    
+      <ROADLAYOUT ID="NR3" LINKTYPE="OUTSIDECITY">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="NR4" LINKTYPE="OUTSIDECITY">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A4" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="NR5" LINKTYPE="OUTSIDECITY">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A4" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A5" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="NR6" LINKTYPE="OUTSIDECITY">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A4" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A5" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A6" DESIGNDIRECTION="true" LANETYPE="TWO_WAY_LANE">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="CR1" LINKTYPE="CITYSTREET">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="CR2" LINKTYPE="CITYSTREET">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+    
+      <ROADLAYOUT ID="CR3" LINKTYPE="CITYSTREET">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="CR4" LINKTYPE="CITYSTREET">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+        </STRIPE>
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A4" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+
+      <ROADLAYOUT ID="CR5" LINKTYPE="CITYSTREET">
+        <STRIPE TYPE="SOLID" />
+        <LANE ID="A1" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A2" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A3" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <CENTEROFFSET>0m</CENTEROFFSET>
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A4" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="DASHED" />
+        <LANE ID="A5" DESIGNDIRECTION="true" LANETYPE="URBAN_ROAD">
+          <WIDTH>3m</WIDTH>
+        </LANE>
+        <STRIPE TYPE="SOLID" />
+      </ROADLAYOUT>
+    
+    </ROADLAYOUTS>
+  </DEFINITIONS>
+
+  <NETWORK>
+    <NODE ID="N1a" COORDINATE="(104445, 482844)" />
+    <NODE ID="N2a" COORDINATE="(104524, 482766)" />
+    <NODE ID="N3a" COORDINATE="(104589, 482695)" />
+    <NODE ID="N5a" COORDINATE="(104629, 482653)" />
+    <NODE ID="N6a" COORDINATE="(104732, 482545)" />
+    <NODE ID="N7a" COORDINATE="(104948, 482349)" />
+    <NODE ID="N8a" COORDINATE="(105026, 482277)" />
+    <NODE ID="N10a" COORDINATE="(105067, 482241)" />
+    <NODE ID="N12a" COORDINATE="(105185, 482134)" />
+    <NODE ID="N13a" COORDINATE="(105300, 482031)" />
+    <NODE ID="N15a" COORDINATE="(105342, 481992)" />
+    <NODE ID="N17a" COORDINATE="(105482, 481876)" />
+    <NODE ID="N18a" COORDINATE="(105603, 481764)" />
+    <NODE ID="N20a" COORDINATE="(105647, 481725)" />
+    <NODE ID="N22a" COORDINATE="(106015, 481403)" />
+    <NODE ID="N23a" COORDINATE="(106087, 481343)" />
+    <NODE ID="N25a" COORDINATE="(106130, 481309)" />
+    <NODE ID="N26a" COORDINATE="(106329, 481151)" />
+    <NODE ID="N27a" COORDINATE="(106344, 481140)" DIRECTION="335 deg(E)" />
+    <NODE ID="N28a" COORDINATE="(106474, 481103)" DIRECTION="350 deg(E)" />
+    <NODE ID="N30a" COORDINATE="(106529, 481104)" DIRECTION="10 deg(E)" />
+    <NODE ID="N31a" COORDINATE="(106644, 481125)" DIRECTION="12 deg(E)" />
+    <NODE ID="N32a" COORDINATE="(106767, 481151)" />
+    <NODE ID="N33a" COORDINATE="(107337, 481276)" />
+    <NODE ID="N34a" COORDINATE="(107712, 481220)" />
+    <NODE ID="N35a" COORDINATE="(107789, 481150)" />
+    <NODE ID="N36a" COORDINATE="(107899, 481050)" />
+    <NODE ID="N37a" COORDINATE="(107953, 481001)" />
+    <NODE ID="N38a" COORDINATE="(108017, 480945)" />
+    <NODE ID="N39a" COORDINATE="(108292, 480700)" />
+    <NODE ID="N40a" COORDINATE="(108575, 480442)" />
+    <NODE ID="N41a" COORDINATE="(108592, 480427)" />
+    <NODE ID="N42a" COORDINATE="(108693, 480339)" />
+    <NODE ID="N43a" COORDINATE="(108973, 480090)" />
+    <NODE ID="N44a" COORDINATE="(109054, 479665)" />
+    <NODE ID="N45a" COORDINATE="(108777, 479205)" />
+    <NODE ID="N46a" COORDINATE="(108760, 479170)" DIRECTION="255 deg(E)" />
+    <NODE ID="N47a" COORDINATE="(108747, 479050)" DIRECTION="275 deg(E)" />
+    <NODE ID="N49a" COORDINATE="(108758, 478992)" DIRECTION="285 deg(E)" />
+    <NODE ID="N50a" COORDINATE="(108851, 478845)" DIRECTION="315 deg(E)" />
+    
+    <NODE ID="N50b" COORDINATE="(108870, 478849)"  DIRECTION="135 deg(E)"/>
+    <NODE ID="N49b" COORDINATE="(108777, 478992)"  DIRECTION="100 deg(E)"/>
+    <NODE ID="N47b" COORDINATE="(108766, 479052)"  DIRECTION="93 deg(E)"/>
+    <NODE ID="N46b" COORDINATE="(108779, 479165)"  DIRECTION="75 deg(E)"/>
+    <NODE ID="N45b" COORDINATE="(108804, 479224)" />
+    <NODE ID="N44b" COORDINATE="(109047, 479628)" />
+    <NODE ID="N43b" COORDINATE="(108981, 480098)" />
+    <NODE ID="N42b" COORDINATE="(108702, 480348)" />
+    <NODE ID="N41b" COORDINATE="(108605, 480440)" />
+    <NODE ID="N40b" COORDINATE="(108588, 480455)" />
+    <NODE ID="N39b" COORDINATE="(108300, 480708)" />
+    <NODE ID="N38b" COORDINATE="(108028, 480956)" />
+    <NODE ID="N37b" COORDINATE="(107962, 481012)" />
+    <NODE ID="N36b" COORDINATE="(107908, 481060)" />
+    <NODE ID="N35b" COORDINATE="(107793, 481162)" />
+    <NODE ID="N34b" COORDINATE="(107737, 481212)" />
+    <NODE ID="N33b" COORDINATE="(107363, 481293)" />
+    <NODE ID="N32b" COORDINATE="(106762, 481162)" />
+    <NODE ID="N31b" COORDINATE="(106640, 481141)" />
+    <NODE ID="N30b" COORDINATE="(106528, 481119)" DIRECTION="190 deg(E)" />
+    <NODE ID="N28b" COORDINATE="(106469, 481121)" DIRECTION="170 deg(E)" />
+    <NODE ID="N28t" COORDINATE="(106383, 481144)" DIRECTION="160 deg(E)" />
+    <NODE ID="N27b" COORDINATE="(106321, 481180)" />
+    <NODE ID="N26b" COORDINATE="(106240, 481241)" />
+    <NODE ID="N25b" COORDINATE="(106142, 481322)" />
+    <NODE ID="N23b" COORDINATE="(106098, 481357)" />
+    <NODE ID="N21b" COORDINATE="(105810, 481601)" />
+    <NODE ID="N20b" COORDINATE="(105660, 481736)" />
+    <NODE ID="N18b" COORDINATE="(105613, 481781)" />
+    <NODE ID="N16b" COORDINATE="(105462, 481910)" />
+    <NODE ID="N15b" COORDINATE="(105354, 482004)" />
+    <NODE ID="N13b" COORDINATE="(105311, 482043)" />
+    <NODE ID="N12b" COORDINATE="(105203, 482141)" />
+    <NODE ID="N11b" COORDINATE="(105179, 482163)" />
+    <NODE ID="N10b" COORDINATE="(105073, 482252)" />
+    <NODE ID="N8b" COORDINATE="(105036, 482290)" />
+    <NODE ID="N7b" COORDINATE="(104960, 482358)" />
+    <NODE ID="N6b" COORDINATE="(104741, 482558)" />
+    <NODE ID="N5b" COORDINATE="(104640, 482664)" />
+    <NODE ID="N3b" COORDINATE="(104602, 482706)" />
+    <NODE ID="N2b" COORDINATE="(104533, 482779)" />
+    <NODE ID="N1b" COORDINATE="(104453, 482856)" />
+    
+    <NODE ID="N225a_uit" COORDINATE="(104590, 482665)" />
+    <NODE ID="N225a_uit2" COORDINATE="(104568, 482630)" />
+    <NODE ID="N225a_in" COORDINATE="(104595, 482657)" />
+    <NODE ID="N225a_in2" COORDINATE="(104574, 482626)" />
+    <NODE ID="N225b_uit" COORDINATE="(104640, 482709)" />
+    <NODE ID="N225b_uit2" COORDINATE="(104671, 482744)" />
+    <NODE ID="N225b_in" COORDINATE="(104628, 482711)" />
+    <NODE ID="N225b_in2" COORDINATE="(104666, 482752)" />
+
+    <NODE ID="N231a_in" COORDINATE="(105039, 482242)" />
+    <NODE ID="N231a_uit" COORDINATE="(105032, 482248)" />
+    <NODE ID="N231a_in2" COORDINATE="(104992, 482189)" />
+    <NODE ID="N231a_uit2" COORDINATE="(104984, 482196)" />
+
+    <NODE ID="N234b_in" COORDINATE="(105344, 482044)" />
+    <NODE ID="N234b_uit" COORDINATE="(105353, 482036)" />
+    <NODE ID="N234b_in2" COORDINATE="(105430, 482141)" />
+    <NODE ID="N234b_uit2" COORDINATE="(105437, 482131)" />
+
+    <NODE ID="N239a_in" COORDINATE="(105620, 481723)" />
+    <NODE ID="N239a_uit" COORDINATE="(105608, 481727)" />
+    <NODE ID="N239a_in2" COORDINATE="(105545, 481638)" />
+    <NODE ID="N239a_uit2" COORDINATE="(105534, 481647)" />
+
+    <NODE ID="N245a_uit" COORDINATE="(106080, 481295)" />
+    <NODE ID="N245a_uit2" COORDINATE="(106002, 481210)" />
+    <NODE ID="N245a_in" COORDINATE="(106084, 481292)" />
+    <NODE ID="N245a_in2" COORDINATE="(106007, 481207)" />
+    <NODE ID="N245b_uit" COORDINATE="(106149, 481365)" />
+    <NODE ID="N245b_uit2" COORDINATE="(106226, 481452)" />
+    <NODE ID="N245b_in" COORDINATE="(106145, 481368)" />
+    <NODE ID="N245b_in2" COORDINATE="(106223, 481455)" />
+
+    <NODE ID="N249a_uit" COORDINATE="(106486, 481077)" DIRECTION="265 deg(E)" />
+    <NODE ID="N249a_uit2" COORDINATE="(106462, 481010)" DIRECTION="235 deg(E)" />
+    <NODE ID="N249a_in" COORDINATE="(106500, 481082)" DIRECTION="90 deg(E)" />
+    <NODE ID="N249a_in2" COORDINATE="(106472, 481001)" DIRECTION="55 deg(E)" />
+    <NODE ID="N249b_uit" COORDINATE="(106499, 481144)" />
+    <NODE ID="N249b_uit2" COORDINATE="(106501, 481195)" />
+    <NODE ID="N249b_in" COORDINATE="(106491, 481136)" />
+    <NODE ID="N249b_in2" COORDINATE="(106494, 481195)" />
+
+    <NODE ID="N270b_in" COORDINATE="(108324, 480764)" DIRECTION="138 deg(E)" />
+    <NODE ID="N270b_uit" COORDINATE="(108352, 480737)" DIRECTION="138 deg(E)" />
+    <NODE ID="N270a_in" COORDINATE="(108278, 480654)" DIRECTION="318 deg(E)" />
+    <NODE ID="N270a_uit" COORDINATE="(108250, 480678)" DIRECTION="318 deg(E)" />
+    
+    <NODE ID="N291a_uit" COORDINATE="(108722, 479019)" />
+    <NODE ID="N291a_uit1" COORDINATE="(108701, 479014)" />
+    <NODE ID="N291a_uit2" COORDINATE="(108656, 479002)" />
+    <NODE ID="N291a_in" COORDINATE="(108729, 479006)" />
+    <NODE ID="N291a_in2" COORDINATE="(108662, 478987)" />
+    <NODE ID="N291b_uit" COORDINATE="(108780, 479020)" />
+    <NODE ID="N291b_uit2" COORDINATE="(108803, 479006)" DIRECTION="250 deg(E)" />
+    <NODE ID="N291b_in" COORDINATE="(108779, 479030)" DIRECTION="170 deg(E)" />
+    <NODE ID="N291b_in2" COORDINATE="(108808, 479006)" DIRECTION="70 deg(E)" />
+    
+
+    <!--- CLASS="org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor" 
+      CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" -->
+
+    <LINK TYPE="OUTSIDECITY" ID="L1a" NODESTART="N1a" NODEEND="N2a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L2a" NODESTART="N2a" NODEEND="N3a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T225_01.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_02.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_02.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_03.1" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L3a4a" NODESTART="N3a" NODEEND="N5a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L5a" NODESTART="N5a" NODEEND="N6a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L6a" NODESTART="N6a" NODEEND="N7a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L7a" NODESTART="N7a" NODEEND="N8a" OFFSETSTART="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T231_01.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T231_02.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T231_02.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L8a10a" NODESTART="N8a" NODEEND="N10a" OFFSETSTART="1.5 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L10a11a" NODESTART="N10a" NODEEND="N12a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L12a" NODESTART="N12a" NODEEND="N13a" OFFSETSTART="3.0 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T234_02.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T234_02.2" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T234_03.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T234_03.2" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L13a14a" NODESTART="N13a" NODEEND="N15a" OFFSETSTART="-3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L15a16a" NODESTART="N15a" NODEEND="N17a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L17a" NODESTART="N17a" NODEEND="N18a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T239_01.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_02.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_02.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_02.3" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L18a19a" NODESTART="N18a" NODEEND="N20a" OFFSETSTART="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L20a21a" NODESTART="N20a" NODEEND="N22a" OFFSETEND="1.5 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L22a" NODESTART="N22a" NODEEND="N23a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T245_01.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T245_02.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T245_02.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T245_02.3" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L23a24a" NODESTART="N23a" NODEEND="N25a" OFFSETSTART="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L25a" NODESTART="N25a" NODEEND="N26a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L26a" NODESTART="N26a" NODEEND="N27a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L27a" NODESTART="N27a" NODEEND="N28a" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR6</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T249_01.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_01.2" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_02.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_02.2" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_02.3" LANE="A5" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_03.1" LANE="A6" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L28a29a" NODESTART="N28a" NODEEND="N30a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L30a" NODESTART="N30a" NODEEND="N31a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L31a" NODESTART="N31a" NODEEND="N32a" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L32a" NODESTART="N32a" NODEEND="N33a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L33a" NODESTART="N33a" NODEEND="N34a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L34a" NODESTART="N34a" NODEEND="N35a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L35a" NODESTART="N35a" NODEEND="N36a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L36a" NODESTART="N36a" NODEEND="N37a" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L37a" NODESTART="N37a" NODEEND="N38a" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L38a" NODESTART="N38a" NODEEND="N39a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L39a" NODESTART="N39a" NODEEND="N40a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L40a" NODESTART="N40a" NODEEND="N41a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L41a" NODESTART="N41a" NODEEND="N42a" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L42a" NODESTART="N42a" NODEEND="N43a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L43a" NODESTART="N43a" NODEEND="N44a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L44a" NODESTART="N44a" NODEEND="N45a">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L45a" NODESTART="N45a" NODEEND="N46a" OFFSETSTART="1.5 m" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L46a" NODESTART="N46a" NODEEND="N47a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T291_01.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_02.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_02.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_02.3" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L47a48a" NODESTART="N47a" NODEEND="N49a" OFFSETSTART="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L49a" NODESTART="N49a" NODEEND="N50a">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+    
+    <!-- ================ OTHER DIRECTION ================ -->
+
+    <LINK TYPE="OUTSIDECITY" ID="L49b" NODESTART="N50b" NODEEND="N49b" OFFSETEND="3.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T291_08.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_08.2" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_09.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_09.2" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L48b47b" NODESTART="N49b" NODEEND="N47b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L46b" NODESTART="N47b" NODEEND="N46b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L45b" NODESTART="N46b" NODEEND="N45b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L44b" NODESTART="N45b" NODEEND="N44b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L43b" NODESTART="N44b" NODEEND="N43b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L42b" NODESTART="N43b" NODEEND="N42b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L41b" NODESTART="N42b" NODEEND="N41b" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L40b" NODESTART="N41b" NODEEND="N40b" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L39b" NODESTART="N40b" NODEEND="N39b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L38b" NODESTART="N39b" NODEEND="N38b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L37b" NODESTART="N38b" NODEEND="N37b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L36b" NODESTART="N37b" NODEEND="N36b" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L35b" NODESTART="N36b" NODEEND="N35b" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L34b" NODESTART="N35b" NODEEND="N34b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L33b" NODESTART="N34b" NODEEND="N33b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L32b" NODESTART="N33b" NODEEND="N32b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L31b" NODESTART="N32b" NODEEND="N31b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L30b" NODESTART="N31b" NODEEND="N30b" OFFSETSTART="0.0 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR6</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T249_07.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_08.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_08.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_08.3" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_09.1" LANE="A5" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_09.2" LANE="A6" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L29b28b" NODESTART="N30b" NODEEND="N28b" OFFSETSTART="-3.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L29b28b2" NODESTART="N28b" NODEEND="N28t" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L27b" NODESTART="N28t" NODEEND="N27b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L26b" NODESTART="N27b" NODEEND="N26b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L25b" NODESTART="N26b" NODEEND="N25b" OFFSETSTART="1.5 m" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR3</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T245_08.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T245_08.2" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T245_09.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L24b23b" NODESTART="N25b" NODEEND="N23b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L22b21b" NODESTART="N23b" NODEEND="N21b" OFFSETEND="-3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L20b" NODESTART="N21b" NODEEND="N20b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T239_08.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_08.2" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_09.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_09.2" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L19b18b" NODESTART="N20b" NODEEND="N18b" OFFSETSTART="-3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L17b16b" NODESTART="N18b" NODEEND="N16b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L15b" NODESTART="N16b" NODEEND="N15b" OFFSETSTART="-3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T234_07.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T234_07.2" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T234_08.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T234_08.2" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L14b13b" NODESTART="N15b" NODEEND="N13b" OFFSETSTART="3 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L12b" NODESTART="N13b" NODEEND="N12b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L11b" NODESTART="N12b" NODEEND="N11b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L10b" NODESTART="N11b" NODEEND="N10b" OFFSETSTART="3 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T231_08.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T231_08.2" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T231_09.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T231_09.2" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L9b8b" NODESTART="N10b" NODEEND="N8b" OFFSETSTART="-3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L7b" NODESTART="N8b" NODEEND="N7b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L6b" NODESTART="N7b" NODEEND="N6b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L5b" NODESTART="N6b" NODEEND="N5b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T225_07.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_08.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_08.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_09.1" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L4b3b" NODESTART="N5b" NODEEND="N3b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L2b" NODESTART="N3b" NODEEND="N2b">
+      <BEZIER />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="OUTSIDECITY" ID="L1b" NODESTART="N2b" NODEEND="N1b">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>NR2</DEFINEDLAYOUT>
+    </LINK>
+
+    <!-- =============== SIDE LANES ================ -->
+
+    <LINK TYPE="CITYSTREET" ID="L225_01.1" NODESTART="N3a" NODEEND="N225a_uit" OFFSETSTART="-4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_uit_a" NODESTART="N225a_uit" NODEEND="N225a_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_03.1" NODESTART="N3a" NODEEND="N225b_uit" OFFSETSTART="4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_07.1" NODESTART="N5b" NODEEND="N225b_uit" OFFSETSTART="-4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_uit_b" NODESTART="N225b_uit" NODEEND="N225b_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_09.1" NODESTART="N5b" NODEEND="N225a_uit" OFFSETSTART="4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_10.1" NODESTART="N225a_in" NODEEND="N5a" OFFSETSTART="-3.0 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_11.1" NODESTART="N225a_in" NODEEND="N225b_uit">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_11.2" NODESTART="N225a_in" NODEEND="N3b" OFFSETSTART="3.0 m" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_in_a" NODESTART="N225a_in2" NODEEND="N225a_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR3</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T225_10.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_11.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_11.2" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_in_b" NODESTART="N225b_in2" NODEEND="N225b_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T225_04.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T225_05.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_04.1" NODESTART="N225b_in" NODEEND="N3b" OFFSETSTART="-1.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_05.1" NODESTART="N225b_in" NODEEND="N225a_uit" OFFSETSTART="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L225_06.1" NODESTART="N225b_in" NODEEND="N5a" OFFSETSTART="1.5 m" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>    
+    
+    <LINK TYPE="CITYSTREET" ID="L231_01" NODESTART="N8a" NODEEND="N231a_uit" OFFSETSTART="-3 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L231_09" NODESTART="N10b" NODEEND="N231a_uit" OFFSETSTART="3.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L231_uit_a" NODESTART="N231a_uit" NODEEND="N231a_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L231_10" NODESTART="N231a_in" NODEEND="N10a" OFFSETSTART="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L231_12" NODESTART="N231a_in" NODEEND="N8b" OFFSETSTART="3 m" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L231_in_a" NODESTART="N231a_in2" NODEEND="N231a_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR3</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T231_10.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T231_10.2" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T231_12.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="CITYSTREET" ID="L234_03" NODESTART="N13a" NODEEND="N234b_uit" OFFSETSTART="3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L234_07" NODESTART="N15b" NODEEND="N234b_uit" OFFSETSTART="-3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L234_uit_b" NODESTART="N234b_uit" NODEEND="N234b_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L234_06" NODESTART="N234b_in" NODEEND="N15a" OFFSETSTART="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L234_in_b" NODESTART="N234b_in2" NODEEND="N234b_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR3</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T234_04.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T234_06.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T234_06.2" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L234_04" NODESTART="N234b_in" NODEEND="N13b" OFFSETSTART="-3 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="CITYSTREET" ID="L239_01" NODESTART="N18a" NODEEND="N239a_uit" OFFSETSTART="-4.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L239_09" NODESTART="N20b" NODEEND="N239a_uit" OFFSETSTART="3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L239_uit_b" NODESTART="N239a_uit" NODEEND="N239a_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L239_10" NODESTART="N239a_in" NODEEND="N20a" OFFSETSTART="-3 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L239_12" NODESTART="N239a_in" NODEEND="N18b" OFFSETSTART="3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L239_in_a" NODESTART="N239a_in2" NODEEND="N239a_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T239_10.1" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_10.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_12.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T239_12.2" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+
+    <LINK TYPE="CITYSTREET" ID="L245_01" NODESTART="N23a" NODEEND="N245a_uit" OFFSETSTART="-4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245_09" NODESTART="N25b" NODEEND="N245a_uit" OFFSETSTART="4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245_uit_a" NODESTART="N245a_uit" NODEEND="N245a_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245_in_a" NODESTART="N245a_in2" NODEEND="N245a_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T245_11.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245_in_b" NODESTART="N245b_in2" NODEEND="N245b_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T245_05.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245_uit_b" NODESTART="N245b_uit" NODEEND="N245b_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245b_inR" NODESTART="N245b_in" NODEEND="N23b" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245_11r" NODESTART="N245a_in" NODEEND="N25a" OFFSETEND="-3.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245_11l" NODESTART="N245a_in" NODEEND="N23b" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245b_inL" NODESTART="N245b_in" NODEEND="N25a" OFFSETEND="3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245b_ab" NODESTART="N245a_in" NODEEND="N245b_uit">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L245b_ba" NODESTART="N245b_in" NODEEND="N245a_uit">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="CITYSTREET" ID="L249_01" NODESTART="N28a" NODEEND="N249a_uit" OFFSETSTART="-7.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_03" NODESTART="N28a" NODEEND="N249b_uit" OFFSETSTART="6.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_uit_b" NODESTART="N249b_uit" NODEEND="N249b_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_07" NODESTART="N30b" NODEEND="N249b_uit" OFFSETSTART="-9.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_09" NODESTART="N30b" NODEEND="N249a_uit" OFFSETSTART="4.5 m" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_uit_a" NODESTART="N249a_uit" NODEEND="N249a_uit2">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR3</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_10" NODESTART="N249a_in" NODEEND="N30a" OFFSETSTART="-4.5 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_in_a" NODESTART="N249a_in2" NODEEND="N249a_in">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR5</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T249_10.1" LANE="A5" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_10.2" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_11.1" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_12.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_12.2" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_12" NODESTART="N249a_in" NODEEND="N28b" OFFSETSTART="4.5 m" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_05" NODESTART="N249b_in" NODEEND="N249a_uit" OFFSETSTART="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_05R" NODESTART="N249b_in" NODEEND="N28b" OFFSETSTART="-1.5 m" OFFSETEND="-3 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_05l" NODESTART="N249b_in" NODEEND="N30a" OFFSETSTART="1.5 m" OFFSETEND="3.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_in_b" NODESTART="N249b_in2" NODEEND="N249b_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T249_05.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T249_05.2" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L249_11" NODESTART="N249a_in" NODEEND="N249b_uit">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="CITYSTREET" ID="L270_uit_a" NODESTART="N38a" NODEEND="N270a_uit" OFFSETSTART="-4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L270_in_a" NODESTART="N270a_in" NODEEND="N41a" OFFSETEND="-4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L270_uit_b" NODESTART="N40b" NODEEND="N270b_uit" OFFSETSTART="-4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L270_in_b" NODESTART="N270b_in" NODEEND="N37b" OFFSETEND="-4.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+
+    <LINK TYPE="CITYSTREET" ID="L291_01" NODESTART="N47a" NODEEND="N291a_uit" OFFSETSTART="-4.5 m" OFFSETEND="-3.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_09" NODESTART="N49b" NODEEND="N291a_uit" OFFSETSTART="6.0 m" OFFSETEND="1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_uit_a" NODESTART="N291a_uit" NODEEND="N291a_uit1">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR3</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_uit_a2" NODESTART="N291a_uit1" NODEEND="N291a_uit2">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR5</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_10" NODESTART="N291a_in" NODEEND="N49a" OFFSETSTART="-3.0 m" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_in_a" NODESTART="N291a_in2" NODEEND="N291a_in">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR4</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T291_10.1" LANE="A4" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_10.2" LANE="A3" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_11.1" LANE="A2" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+      <TRAFFICLIGHT ID="T291_11.2" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_11" NODESTART="N291a_in" NODEEND="N47b" OFFSETSTART="3.0 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR2</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_04" NODESTART="N291b_in" NODEEND="N47b" OFFSETEND="-1.5 m">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_in_b" NODESTART="N291b_in2" NODEEND="N291b_in">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+      <TRAFFICLIGHT ID="T291_04.1" LANE="A1" POSITION="END-6.55m"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" />
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_ab" NODESTART="N291a_in" NODEEND="N291b_uit" OFFSETSTART="1.5 m">
+      <STRAIGHT />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+    <LINK TYPE="CITYSTREET" ID="L291_uit_b2" NODESTART="N291b_uit" NODEEND="N291b_uit2">
+      <BEZIER />
+      <DEFINEDLAYOUT>CR1</DEFINEDLAYOUT>
+    </LINK>
+
+  </NETWORK>
+
+
+  <NETWORKDEMAND>
+
+    <SHORTESTROUTE ID="A" GTUTYPE="CAR">
+      <FROM NODE="N1a" />
+      <TO NODE="N50a" />
+      <DISTANCECOST>1.0/km</DISTANCECOST>
+      <TIMECOST>0.0/s</TIMECOST>
+    </SHORTESTROUTE>
+
+    <SHORTESTROUTE ID="B" GTUTYPE="CAR">
+      <FROM NODE="N50b" />
+      <TO NODE="N1b" />
+      <DISTANCECOST>1.0/km</DISTANCECOST>
+      <TIMECOST>0.0/s</TIMECOST>
+    </SHORTESTROUTE>
+    
+    <GENERATOR LINK="L49b" DIRECTION="DIR_PLUS" LANE="A1" POSITION="10m">
+      <GTUTEMPLATE>CAR</GTUTEMPLATE>
+      <SHORTESTROUTE>B</SHORTESTROUTE>
+      <FREQUENCY>20.0/min</FREQUENCY>
+      <ROOMCHECKER>CF</ROOMCHECKER>
+    </GENERATOR>
+    <GENERATOR LINK="L49b" DIRECTION="DIR_PLUS" LANE="A2" POSITION="10m">
+      <GTUTEMPLATE>CAR</GTUTEMPLATE>
+      <SHORTESTROUTE>B</SHORTESTROUTE>
+      <FREQUENCY>20.0/min</FREQUENCY>
+      <ROOMCHECKER>CF</ROOMCHECKER>
+    </GENERATOR>
+
+    <GENERATOR LINK="L1a" DIRECTION="DIR_PLUS" LANE="A1" POSITION="10m">
+      <GTUTEMPLATE>CAR</GTUTEMPLATE>
+      <SHORTESTROUTE>A</SHORTESTROUTE>
+      <FREQUENCY>20.0/min</FREQUENCY>
+      <ROOMCHECKER>CF</ROOMCHECKER>
+    </GENERATOR>
+    <GENERATOR LINK="L1a" DIRECTION="DIR_PLUS" LANE="A2" POSITION="10m">
+      <GTUTEMPLATE>CAR</GTUTEMPLATE>
+      <SHORTESTROUTE>A</SHORTESTROUTE>
+      <FREQUENCY>20.0/min</FREQUENCY>
+      <ROOMCHECKER>CF</ROOMCHECKER>
+    </GENERATOR>
+
+    <SINK LINK="L49a" LANE="A1" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+    <SINK LINK="L49a" LANE="A2" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+    <SINK LINK="L49a" LANE="A3" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+
+    <SINK LINK="L1b" LANE="A1" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+    <SINK LINK="L1b" LANE="A2" DIRECTION="DIR_PLUS" POSITION="END-20m" />
+
+  </NETWORKDEMAND>
+
+  <SCENARIO></SCENARIO>
+  
+  <RUN>
+    <RUNLENGTH>1h</RUNLENGTH>
+  </RUN>
+
+</OTS>
