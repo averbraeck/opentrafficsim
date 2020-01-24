@@ -189,7 +189,7 @@ final class Links
      * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; to be able to make the animation
      * @throws NetworkException when the stripe cannot be instantiated
-     * @throws NamingException when the /animation/2D tree cannot be found in the context
+     * @throws NamingException when the animation/2D tree cannot be found in the context
      * @throws SAXException when the stripe type cannot be parsed correctly
      * @throws GTUException when lane block cannot be created
      * @throws OTSGeometryException when construction of the offset-line or contour fails
@@ -304,7 +304,7 @@ final class Links
      * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; to be able to make the animation
      * @throws NetworkException when the stripe cannot be instantiated
-     * @throws NamingException when the /animation/2D tree cannot be found in the context
+     * @throws NamingException when the animation/2D tree cannot be found in the context
      * @throws SAXException when the stripe type cannot be parsed correctly
      * @throws GTUException when lane block cannot be created
      * @throws OTSGeometryException when construction of the offset-line or contour fails

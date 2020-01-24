@@ -83,7 +83,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException
+    public final void destroy() throws NamingException, RemoteException
     {
         super.destroy();
         this.text.destroy();
@@ -155,7 +155,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
     {
         /** Drawing color for the center line. */
         private static final Color COLOR = Color.MAGENTA.darker().darker();
-        
+
         /**  */
         private static final long serialVersionUID = 20180426L;
 
@@ -183,8 +183,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
         {
-            PaintLine.paintLine(graphics, COLOR, 0.1, getSource().getLocation(),
-                    ((CenterLine) getSource()).getCenterLine());
+            PaintLine.paintLine(graphics, COLOR, 0.1, getSource().getLocation(), ((CenterLine) getSource()).getCenterLine());
         }
 
     }

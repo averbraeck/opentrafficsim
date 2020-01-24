@@ -17,6 +17,7 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
@@ -26,7 +27,6 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -160,7 +160,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.always().error(exception);
+            CategoryLogger.always().error(exception);
             return null;
         }
     }
@@ -221,7 +221,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         if (list.size() == 2 && list.get(0).equals(list.get(1)))
         {
-            // SimLogger.always().debug("Fixing up degenerate noiseFilteredLine by inserting an intermediate point");
+            // CategoryLogger.always().debug("Fixing up degenerate noiseFilteredLine by inserting an intermediate point");
             // Find something to insert along the way
             for (int index = 1; index < this.size() - 1; index++)
             {
@@ -238,7 +238,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.always().error(exception);
+            CategoryLogger.always().error(exception);
             throw new Error(exception);
         }
     }
@@ -291,7 +291,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.always().error(exception); // Peter thinks this cannot happen ...
+            CategoryLogger.always().error(exception); // Peter thinks this cannot happen ...
             return null;
         }
     }
@@ -306,7 +306,7 @@ public class OTSLine3D implements Locatable, Serializable
      */
     public final OTSLine3D offsetLine(final double offsetAtStart, final double offsetAtEnd) throws OTSGeometryException
     {
-        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is "
+        // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is "
         // + offsetAtStart + " at end is " + offsetAtEnd + "\n#", referenceLine, "\n "));
 
         OTSLine3D offsetLineAtStart = offsetLine(offsetAtStart);
@@ -314,10 +314,10 @@ public class OTSLine3D implements Locatable, Serializable
         {
             return offsetLineAtStart; // offset does not change
         }
-        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at start: \nc0,0,0\n#",
+        // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at start: \nc0,0,0\n#",
         // offsetLineAtStart, "\n "));
         OTSLine3D offsetLineAtEnd = offsetLine(offsetAtEnd);
-        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at end: \nc0.7,0.7,0.7\n#",
+        // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at end: \nc0.7,0.7,0.7\n#",
         // offsetLineAtEnd, "\n "));
         Geometry startGeometry = offsetLineAtStart.getLineString();
         Geometry endGeometry = offsetLineAtEnd.getLineString();
@@ -382,7 +382,7 @@ public class OTSLine3D implements Locatable, Serializable
         for (int i = 0; i < offsets.length; i++)
         {
             offsetLine[i] = offsetLine(offsets[i]);
-            // SimLogger.trace(Cat.CORE, offsetLine[i].toExcel() + "\n");
+            // CategoryLogger.trace(Cat.CORE, offsetLine[i].toExcel() + "\n");
         }
 
         ArrayList<Coordinate> out = new ArrayList<>();
@@ -491,7 +491,7 @@ public class OTSLine3D implements Locatable, Serializable
      */
     public static OTSLine3D concatenate(final double toleranceSI, final OTSLine3D... lines) throws OTSGeometryException
     {
-        // SimLogger.trace(Cat.CORE, "Concatenating " + lines.length + " lines.");
+        // CategoryLogger.trace(Cat.CORE, "Concatenating " + lines.length + " lines.");
         if (0 == lines.length)
         {
             throw new OTSGeometryException("Empty argument list");
@@ -597,7 +597,7 @@ public class OTSLine3D implements Locatable, Serializable
         double segmentLength = 0;
         int index = 0;
         List<OTSPoint3D> pointList = new ArrayList<>();
-        // SimLogger.trace(Cat.CORE, "interval " + start + ".." + end);
+        // CategoryLogger.trace(Cat.CORE, "interval " + start + ".." + end);
         while (start > cumulativeLength)
         {
             OTSPoint3D fromPoint = this.points[index];
@@ -662,7 +662,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.always().error(exception, "interval " + start + ".." + end + " too short");
+            CategoryLogger.always().error(exception, "interval " + start + ".." + end + " too short");
             throw new OTSGeometryException("interval " + start + ".." + end + "too short");
         }
     }
@@ -1391,7 +1391,7 @@ public class OTSLine3D implements Locatable, Serializable
              * inside an area where numerical difficulties arise (i.e. far away outside of very slight bend which is considered
              * parallel).
              */
-            // SimLogger.info(Cat.CORE, "projectFractional failed to project " + point + " on " + this
+            // CategoryLogger.info(Cat.CORE, "projectFractional failed to project " + point + " on " + this
             // + "; using fallback approach");
             return fallback.getFraction(this, x, y);
         }

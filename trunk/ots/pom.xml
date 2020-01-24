@@ -71,9 +71,9 @@
 
     <tinylog.version>1.3.5</tinylog.version>
     <ots.version>${project.version}</ots.version>
-    <djunits.version>4.01.03</djunits.version>
-    <djutils.version>1.03.02</djutils.version>
-    <dsol.version>3.03.14</dsol.version>
+    <djunits.version>4.01.05</djunits.version>
+    <djutils.version>1.04.04</djutils.version>
+    <dsol.version>3.04.00</dsol.version>
     <sim0mq.version>2.00.01</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>
@@ -299,7 +299,6 @@
             <!-- link>https://xerces.apache.org/xerces2-j/javadocs/api</link -->
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</link>
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</link>
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</link>
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
@@ -515,7 +514,6 @@
             <!-- link>https://xerces.apache.org/xerces2-j/javadocs/api</link -->
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</link>
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</link>
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</link>
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
@@ -820,12 +818,6 @@
       <dependency>
         <groupId>dsol</groupId>
         <artifactId>dsol-base</artifactId>
-        <version>${dsol.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>dsol</groupId>
-        <artifactId>dsol-event</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 

@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network;
 
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.perception.PerceivableContext;
 import org.opentrafficsim.road.definitions.RoadDefinitions;
 
 /**
@@ -11,7 +12,7 @@ import org.opentrafficsim.road.definitions.RoadDefinitions;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public interface RoadNetwork extends Network, RoadDefinitions
+public interface RoadNetwork extends Network, PerceivableContext, RoadDefinitions
 {
     // interfaces that are unique to a Roadnetwork as opposed to a Network
 }

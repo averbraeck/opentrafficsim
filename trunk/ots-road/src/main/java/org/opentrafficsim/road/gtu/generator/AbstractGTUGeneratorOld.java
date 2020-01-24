@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventProducer;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -48,7 +49,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**

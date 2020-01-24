@@ -1,12 +1,16 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.TimedEvent;
+import org.djutils.event.ref.ReferenceType;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -23,8 +27,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.TimedEvent;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -375,9 +377,9 @@ public class GTUTransceiver extends AbstractTransceiver
             {
                 String gtuId = event.getContent().toString();
                 GTU gtu = this.network.getGTU(gtuId);
-                gtu.addListener(this, LaneBasedGTU.LANEBASED_INIT_EVENT, true);
-                gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, true);
-                gtu.addListener(this, LaneBasedGTU.LANEBASED_DESTROY_EVENT, true);
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_INIT_EVENT, ReferenceType.WEAK);
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
+                gtu.addListener(this, LaneBasedGTU.LANEBASED_DESTROY_EVENT, ReferenceType.WEAK);
             }
 
             else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
@@ -484,7 +486,7 @@ public class GTUTransceiver extends AbstractTransceiver
         Object[] moveInfo = (Object[]) event.getContent();
         String gtuId = moveInfo[0].toString();
         DirectedPoint location = (DirectedPoint) moveInfo[1];
-        LaneBasedGTU gtu = (LaneBasedGTU) event.getSource();
+        LaneBasedGTU gtu = (LaneBasedGTU) event.getSourceId();
         Lane lane = (Lane) moveInfo[6];
         double longitudinalPosition = ((Length) moveInfo[7]).si;
         double speed = ((Speed) moveInfo[2]).si;
@@ -522,7 +524,7 @@ public class GTUTransceiver extends AbstractTransceiver
             Object[] moveInfo = (Object[]) event.getContent();
             String gtuId = moveInfo[0].toString();
             DirectedPoint location = (DirectedPoint) moveInfo[1];
-            LaneBasedGTU gtu = (LaneBasedGTU) event.getSource();
+            LaneBasedGTU gtu = (LaneBasedGTU) event.getSourceId();
             Lane lane = (Lane) moveInfo[6];
             double longitudinalPosition = ((Length) moveInfo[7]).si;
             double speed = ((Speed) moveInfo[2]).si;
@@ -535,5 +537,12 @@ public class GTUTransceiver extends AbstractTransceiver
                     lane.getParentLink().getNetwork().getId(), lane.getParentLink().getId(), lane.getId(), longitudinalPosition,
                     speed, acceleration, turnIndicatorStatus, brakingLights, odometer};
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "GTUTransceiver";
     }
 }

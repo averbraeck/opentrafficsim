@@ -6,13 +6,12 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Simplified plan containing an acceleration value and possible lane change direction.
@@ -80,9 +79,9 @@ public class SimpleOperationalPlan implements Serializable
     {
         return this.acceleration;
     }
-    
+
     /**
-     * Sets acceleration. 
+     * Sets acceleration.
      * @param acceleration Acceleration; acceleration
      */
     public final void setAcceleration(final Acceleration acceleration)
@@ -122,7 +121,8 @@ public class SimpleOperationalPlan implements Serializable
     public final void minimizeAcceleration(final Acceleration a)
     {
         checkAcceleration(a);
-        this.acceleration = Acceleration.max(Acceleration.instantiateSI(-100.0), Acceleration.min(this.acceleration, a)); // XXX: AV
+        // XXX: AV
+        this.acceleration = Acceleration.max(Acceleration.instantiateSI(-100.0), Acceleration.min(this.acceleration, a));
     }
 
     /**
@@ -133,7 +133,8 @@ public class SimpleOperationalPlan implements Serializable
     {
         if (a.equals(Acceleration.NEGATIVE_INFINITY) || a.equals(Acceleration.NEG_MAXVALUE))
         {
-            SimLogger.always().error("Model has calculated a negative infinite or negative max value acceleration."); // XXX: AV
+            // XXX: AV
+            CategoryLogger.always().error("Model has calculated a negative infinite or negative max value acceleration.");
         }
     }
 

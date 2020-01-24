@@ -2,7 +2,7 @@ package org.opentrafficsim.imb.transceiver;
 
 import java.io.Serializable;
 
-import nl.tudelft.simulation.event.EventListenerInterface;
+import org.djutils.event.EventListenerInterface;
 
 /**
  * Store the results of an IBM message transformation, as the aTByteBuffer message can only be parsed once.
@@ -22,7 +22,7 @@ public class IMBTransformResult implements Serializable
     private static final long serialVersionUID = 20160911L;
 
     /** the event content to store. */
-    private final Object eventContent;
+    private final Serializable eventContent;
 
     /** the event listener to store. */
     private final EventListenerInterface eventListener;
@@ -32,7 +32,7 @@ public class IMBTransformResult implements Serializable
      * @param eventContent Object; the event content to store
      * @param eventListener EventListenerInterface; the event listener to store
      */
-    public IMBTransformResult(Object eventContent, EventListenerInterface eventListener)
+    public IMBTransformResult(final Serializable eventContent, final EventListenerInterface eventListener)
     {
         super();
         this.eventContent = eventContent;
@@ -42,7 +42,7 @@ public class IMBTransformResult implements Serializable
     /**
      * @return eventContent Object; the stored event content
      */
-    public final Object getEventContent()
+    public final Serializable getEventContent()
     {
         return this.eventContent;
     }

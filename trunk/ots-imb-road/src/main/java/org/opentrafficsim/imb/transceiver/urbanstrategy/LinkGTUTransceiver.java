@@ -1,10 +1,14 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventType;
+import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
@@ -18,9 +22,6 @@ import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * OTS publishes events about the links to IMB, e.g. to know about the number of vehicles on a link.<br>
@@ -379,7 +380,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
         Object[] gtuInfo = (Object[]) event.getContent();
         String gtuId = (String) gtuInfo[0];
         int countAfterEvent = (Integer) gtuInfo[2];
-        Link link = (Link) event.getSource();
+        Link link = (Link) event.getSourceId();
         double timestamp = getSimulator().getSimulatorTime().si;
         if (Link.GTU_ADD_EVENT.equals(event.getType()))
         {
@@ -408,6 +409,13 @@ public class LinkGTUTransceiver extends AbstractTransceiver
         }
         System.err.println("LinkGTUTransceiver.transformDelete: Don't know how to transform event " + event);
         return new Object[] {};
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "LinkGTUTransceiver";
     }
 
 }

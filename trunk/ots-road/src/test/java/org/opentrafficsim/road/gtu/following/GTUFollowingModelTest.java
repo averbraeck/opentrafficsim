@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -76,7 +77,7 @@ public class GTUFollowingModelTest implements UNITS
      */
     private void gtuFollowingModelTests(final GTUFollowingModelOld gtuFollowingModel) throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("GTUFollowingModelTest");
         Model model = new Model(simulator, this.network);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
 
@@ -377,6 +378,13 @@ public class GTUFollowingModelTest implements UNITS
         public final OTSRoadNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "GTUFollowingModelTest.Model";
         }
     }
 }

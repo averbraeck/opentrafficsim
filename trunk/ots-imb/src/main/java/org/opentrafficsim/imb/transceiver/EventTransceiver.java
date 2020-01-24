@@ -1,7 +1,7 @@
 package org.opentrafficsim.imb.transceiver;
 
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducerInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventProducerInterface;
 
 /**
  * Relay events between IMB domain and OTS domain, enabled by pub/sub.

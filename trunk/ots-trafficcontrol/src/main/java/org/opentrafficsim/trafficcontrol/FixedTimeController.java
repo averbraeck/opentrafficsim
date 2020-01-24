@@ -1,5 +1,6 @@
 package org.opentrafficsim.trafficcontrol;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
@@ -27,7 +29,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
 
 /**
  * Fixed time traffic light control.
@@ -775,6 +776,13 @@ public class FixedTimeController extends AbstractTrafficController
             return 0;
         }
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return getId();
     }
 
 }

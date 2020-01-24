@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.graphs.imb;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -298,5 +299,12 @@ public class GraphTransceiver extends AbstractTransceiver
         getConnector().postIMBMessage("Graph", IMBEventType.CHANGE,
                 new Object[] {getSimulator().getSimulatorTime().si, plot.getId(), this.width, this.height, png});
         getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] {plot});
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "GraphTransceiver";
     }
 }

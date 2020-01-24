@@ -3,7 +3,7 @@
  */
 package org.opentrafficsim.water;
 
-import nl.tudelft.simulation.event.EventProducer;
+import org.djutils.event.EventProducer;
 
 /**
  * Base abstract class for a located object that produces events.

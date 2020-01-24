@@ -36,6 +36,9 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
+import org.djutils.event.Event;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -51,9 +54,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.GridPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.mouse.InputListener;
-import nl.tudelft.simulation.event.Event;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.language.DSOLException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -149,9 +150,11 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param gtuColorer GTUColorer; the colorer to use for the GTUs.
      * @param network OTSNetwork; network
      * @throws RemoteException when notification of the animation panel fails
+     * @throws DSOLException when simulator does not implement AnimatorInterface
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSAnimator simulator,
-            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network) throws RemoteException
+            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network)
+            throws RemoteException, DSOLException
     {
         super(simulator, otsModel);
 
@@ -258,7 +261,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         setGtuCountText();
 
         // Tell the animation to build the list of animation objects.
-        this.animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
+        this.animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator.getSourceId(), null));
 
         // switch off the X and Y coordinates in a tooltip.
         this.animationPanel.setShowToolTip(false);
@@ -875,9 +878,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; simulator
          * @param network OTSNetwork; network
          * @throws RemoteException on remote animation error
+         * @throws DSOLException when simulator does not implement AnimatorInterface
          */
         AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final SimulatorInterface<?, ?, ?> simulator,
-                final OTSNetwork network) throws RemoteException
+                final OTSNetwork network) throws RemoteException, DSOLException
         {
             super(extent, size, simulator);
             this.network = network;

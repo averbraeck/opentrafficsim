@@ -56,6 +56,7 @@ import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -106,7 +107,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("N201IMB");
             final N201Model otsModel = new N201Model(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -124,7 +125,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -253,6 +254,13 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
         public final String toString()
         {
             return "N201Model [simulator=" + this.simulator + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "N201Model";
         }
 
     }

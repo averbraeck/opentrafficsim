@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.factory.nwb;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Access to the NWB (Nationaal WegenBestand - Dutch National Road database) shape files.
@@ -79,10 +81,11 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
      * @throws IllegalArgumentException on error
      * @throws SecurityException on error
      * @throws NoSuchFieldException on error
+     * @throws DSOLException when simulator does not implement AnimatorInterface
      */
     public static void main(final String[] args)
             throws OTSDrawingException, SimRuntimeException, NamingException, IOException, OTSGeometryException,
-            NetworkException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException
+            NetworkException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, DSOLException
     {
         System.out.println("Parsing road sections");
         String baseDir = "c:\\NWB";
@@ -165,7 +168,7 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
         LinkType freeWayLinkType = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LinkType roadLinkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
 
-        OTSAnimator simulator = new OTSAnimator();
+        OTSAnimator simulator = new OTSAnimator("Importer");
 
         NWBModel nwbModel = new NWBModel(simulator, network, "NWB network", "NWB network");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), nwbModel);
@@ -293,6 +296,13 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
         public void constructModel() throws SimRuntimeException
         {
             return; // Do nothing
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "NWBModel";
         }
     }
 }

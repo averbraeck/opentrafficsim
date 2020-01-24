@@ -3,7 +3,6 @@ package org.opentrafficsim.road.network.control.rampmetering;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Ramp metering. This consist of a {@code RampMeteringSwitch} and a {@code RampMeteringLightController}.
@@ -49,12 +48,12 @@ public class RampMetering
     {
         if (this.rampSwitch.isEnabled())
         {
-            SimLogger.always().info("Ramp-metering enabled.");
+            this.simulator.getLogger().always().info("Ramp-metering enabled.");
             this.rampLightController.enable(this.rampSwitch.getCycleTime());
         }
         else
         {
-            SimLogger.always().info("Ramp-metering disabled.");
+            this.simulator.getLogger().always().info("Ramp-metering disabled.");
             this.rampLightController.disable();
         }
         try

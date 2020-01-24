@@ -245,7 +245,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException
+    public final void destroy() throws NamingException, RemoteException
     {
         this.isDestroyed = true;
         super.destroy();

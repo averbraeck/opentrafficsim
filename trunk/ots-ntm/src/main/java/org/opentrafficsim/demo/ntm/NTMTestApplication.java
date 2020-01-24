@@ -13,6 +13,7 @@ import javax.swing.JTextArea;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.Event;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.demo.ntm.IO.ProjectConfigurations;
 
@@ -22,7 +23,6 @@ import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
 import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
-import nl.tudelft.simulation.event.Event;
 
 /**
  * <p>
@@ -58,7 +58,7 @@ public class NTMTestApplication extends DSOLApplication
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSAnimator simulator = new OTSAnimator();
+        OTSAnimator simulator = new OTSAnimator("NTMTestApplication");
         NTMModel model = new NTMModel(simulator);
         InputNTM inputNTM = new InputNTM();
         model.setInputNTM(inputNTM);

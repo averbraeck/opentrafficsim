@@ -34,10 +34,11 @@ public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSim
 
     /**
      * Construct an OTSSimulator.
+     * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSSimulator()
+    public OTSSimulator(final Serializable simulatorId)
     {
-        super();
+        super(simulatorId);
     }
 
     /** {@inheritDoc} */

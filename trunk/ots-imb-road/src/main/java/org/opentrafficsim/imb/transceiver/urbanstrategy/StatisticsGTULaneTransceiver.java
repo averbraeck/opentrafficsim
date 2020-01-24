@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -468,6 +469,13 @@ public class StatisticsGTULaneTransceiver<G extends GtuDataInterface> extends Ab
                 exception.printStackTrace();
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "StatisticsGTULaneTransceiver";
     }
 
 }

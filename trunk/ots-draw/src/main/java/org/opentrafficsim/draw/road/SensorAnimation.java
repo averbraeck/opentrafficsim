@@ -83,7 +83,7 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException
+    public final void destroy() throws NamingException, RemoteException
     {
         super.destroy();
         this.text.destroy();

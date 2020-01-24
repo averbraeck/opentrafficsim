@@ -163,7 +163,7 @@ public class TestDemoServer
                 if (!TestDemoServer.this.sessionModelMap.containsKey(sessionId))
                 {
                     System.out.println("parameters: " + modelId);
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("TestDemoServer");
                     simulator.setAnimation(false);
                     OTSModelInterface model = null;
                     if (modelId.toLowerCase().contains("circularroad"))

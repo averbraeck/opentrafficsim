@@ -1,5 +1,8 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import java.io.Serializable;
+
+import org.djutils.event.EventInterface;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
@@ -11,7 +14,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
 
 /**
  * The SimulatorTranseiver sends and listens to start, stop and change speed messages. The SimulatorTransceiver publishes the
@@ -216,5 +218,12 @@ public class SimulatorTransceiver extends AbstractTransceiver
             System.out.println("Transmitting speed " + speed + " to IMB");
             return new Object[] {speed};
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "SimulatorTransceiver";
     }
 }

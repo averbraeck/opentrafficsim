@@ -5,9 +5,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.animation.ColorInterpolator;
-
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Paint scale interpolating between colors at values.
@@ -140,8 +139,8 @@ public class BoundsPaintScale implements ColorPaintScale, Serializable
         }
         if (Double.isInfinite(ratio))
         {
-            SimLogger.always().error("Interpolation value for color is infinite based on {} in {} obtaining index {}.", value,
-                    this.bounds, index);
+            CategoryLogger.always().error("Interpolation value for color is infinite based on {} in {} obtaining index {}.",
+                    value, this.bounds, index);
         }
         Color mix = ColorInterpolator.interpolateColor(this.boundColors[index], this.boundColors[index + 1], ratio);
         return mix;

@@ -5,6 +5,7 @@ import java.awt.FileDialog;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
@@ -44,6 +45,7 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -98,7 +100,7 @@ public class OpenStreetMap extends OTSSimulationApplication<OSMModel> implements
             String filepath = chooseFile();
             if (filepath != null)
             {
-                OTSAnimator simulator = new OTSAnimator();
+                OTSAnimator simulator = new OTSAnimator("OpenStreetMap");
                 final OSMModel osmModel = new OSMModel(simulator, filepath);
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), osmModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(osmModel.getNetwork().getExtent(),
@@ -114,7 +116,7 @@ public class OpenStreetMap extends OTSSimulationApplication<OSMModel> implements
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -351,5 +353,12 @@ class OSMModel extends AbstractOTSModel
     public final Rectangle2D getRectangle()
     {
         return this.rectangle;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "OSMModel";
     }
 }

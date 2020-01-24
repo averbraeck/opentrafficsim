@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -16,7 +17,6 @@ import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
-import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**

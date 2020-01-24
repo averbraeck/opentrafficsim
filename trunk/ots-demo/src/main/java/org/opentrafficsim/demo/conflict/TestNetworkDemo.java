@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -27,6 +28,7 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -73,7 +75,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("TestNetworkDemo");
             final TestNetworkModel networkModel = new TestNetworkModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), networkModel);
             OTSAnimationPanel animationPanel =
@@ -82,7 +84,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
             TestNetworkDemo app = new TestNetworkDemo("Network test demo", animationPanel, networkModel);
             app.setExitOnClose(exitOnClose);
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -153,6 +155,13 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
         public OTSRoadNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TestNetworkModel";
         }
 
     }

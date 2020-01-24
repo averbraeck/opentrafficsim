@@ -97,7 +97,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException
+    public final void destroy() throws NamingException, RemoteException
     {
         super.destroy();
         this.text.destroy();

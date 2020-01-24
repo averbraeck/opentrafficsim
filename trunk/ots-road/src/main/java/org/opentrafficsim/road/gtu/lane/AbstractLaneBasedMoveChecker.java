@@ -2,12 +2,11 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.rmi.RemoteException;
 
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.gtu.MoveCheckerException;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
-
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * Abstract class that listens to move events of GTUs so checks can be performed.
@@ -22,6 +21,8 @@ import nl.tudelft.simulation.event.EventListenerInterface;
  */
 public abstract class AbstractLaneBasedMoveChecker implements EventListenerInterface
 {
+    /** */
+    private static final long serialVersionUID = 1L;
 
     /** Network. */
     private final OTSNetwork network;
@@ -45,7 +46,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListenerInter
         {
             try
             {
-                checkMove(((LaneBasedGTU) event.getSource()));
+                checkMove((LaneBasedGTU) this.network.getGTU(event.getSourceId().toString()));
             }
             catch (Exception ex)
             {

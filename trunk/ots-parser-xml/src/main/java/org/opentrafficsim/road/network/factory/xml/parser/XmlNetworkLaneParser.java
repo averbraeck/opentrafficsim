@@ -378,7 +378,7 @@ public final class XmlNetworkLaneParser implements Serializable
      */
     public static void main(final String[] args) throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("XmlNetworkLaneParser");
         build("/example.xml", new OTSRoadNetwork("", true), simulator, false);
         System.exit(0);
     }

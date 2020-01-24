@@ -1,8 +1,12 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventType;
+import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -12,9 +16,6 @@ import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.event.TimedEvent;
 
 /**
  * OTS publishes events about the Nodes to IMB to be able to identify the nodes in the network.<br>
@@ -191,5 +192,12 @@ public class NodeTransceiver extends AbstractTransceiver
         {
             System.err.println("NodeTransceiver.notify: Unhandled event: " + event);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "NodeTransceiver";
     }
 }

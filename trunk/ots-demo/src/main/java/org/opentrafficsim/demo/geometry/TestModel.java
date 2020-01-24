@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.geometry;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -206,6 +207,13 @@ public class TestModel extends AbstractOTSModel implements UNITS
     public final OTSRoadNetwork getNetwork()
     {
         return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "TestModel";
     }
 
 }

@@ -11,6 +11,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -33,8 +35,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Neighbor
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 
 /**

@@ -20,7 +20,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface.TimeDoubleUnit;
 
@@ -112,7 +111,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     @Override
     public void enable(final Duration cycleTime)
     {
-        SimLogger.always().info("Traffic light uses " + cycleTime);
+        this.simulator.getLogger().always().info("Traffic light uses " + cycleTime);
         this.cTime = cycleTime;
         if (!this.enabled)
         {
@@ -131,7 +130,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     protected void setRed(final TrafficLight trafficLight)
     {
         this.redEvents.remove(trafficLight);
-        SimLogger.always().info("Traffic light set to RED");
+        this.simulator.getLogger().always().info("Traffic light set to RED");
         trafficLight.setTrafficLightColor(TrafficLightColor.RED);
     }
 
@@ -143,7 +142,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     {
         this.greenEvents.remove(trafficLight);
         this.greenStarts.put(trafficLight, this.simulator.getSimulatorTime());
-        SimLogger.always().info("Traffic light set to GREEN");
+        this.simulator.getLogger().always().info("Traffic light set to GREEN");
         trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
     }
 
@@ -187,22 +186,22 @@ public class CycleTimeLightController implements RampMeteringLightController
                     Time green;
                     if (minRedTime.ge(cycleRedTime))
                     {
-                        SimLogger.always().info("Traffic light set to RED");
+                        getSimulator().getLogger().always().info("Traffic light set to RED");
                         this.trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                         green = minRedTime;
                     }
                     else
                     {
-                        SimLogger.always().info("Traffic light set to YELLOW (RED over 'MIN_RED_TIME')");
+                        getSimulator().getLogger().always().info("Traffic light set to YELLOW (RED over 'MIN_RED_TIME')");
                         this.trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
                         CycleTimeLightController.this.redEvents.put(this.trafficLight,
                                 CycleTimeLightController.this.simulator.scheduleEventRel(MIN_RED_TIME, this,
-                                        CycleTimeLightController.this, "setRed", new Object[] { this.trafficLight }));
+                                        CycleTimeLightController.this, "setRed", new Object[] {this.trafficLight}));
                         green = cycleRedTime;
                     }
                     CycleTimeLightController.this.greenEvents.put(this.trafficLight,
                             CycleTimeLightController.this.simulator.scheduleEventAbs(green, this, CycleTimeLightController.this,
-                                    "setGreen", new Object[] { this.trafficLight }));
+                                    "setGreen", new Object[] {this.trafficLight}));
                 }
                 catch (SimRuntimeException exception)
                 {

@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
-
 /**
  * GTU error handler.
  * <p>
@@ -25,14 +23,14 @@ public interface GTUErrorHandler
             throw ex;
         }
     };
-    
+
     /** GTU error handler that deletes the GTU upon an exception. */
     GTUErrorHandler DELETE = new GTUErrorHandler()
     {
         @Override
         public void handle(final GTU gtu, final Exception ex) throws Exception
         {
-            SimLogger.always().info("Deleting GTU {} due to exception.", gtu.getId());
+            gtu.getSimulator().getLogger().always().info("Deleting GTU {} due to exception.", gtu.getId());
             gtu.destroy();
         }
     };

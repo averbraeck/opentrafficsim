@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,6 +46,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -80,9 +82,10 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
      * @throws OTSSimulationException when an error occurs during simulation
      * @throws NamingException when a name collision is detected
      * @throws SimRuntimeException should never happen
+     * @throws DSOLException when simulator does not implement AnimatorInterface
      */
-    public static void main(final String[] args)
-            throws IOException, SimRuntimeException, NamingException, OTSSimulationException, InputParameterException
+    public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException,
+            OTSSimulationException, InputParameterException, DSOLException
     {
         String fileName;
         String xml;
@@ -131,7 +134,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         xml = new String(Files.readAllBytes(Paths.get(fileName)));
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("LoadXML");
             XMLModel xmlModel = new XMLModel(simulator, "XML model", "Model built from XML file " + fileName, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             // TODO: This seed is Aimsun specific.
@@ -215,6 +218,13 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         public OTSRoadNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "LoadXML.Model";
         }
 
     }

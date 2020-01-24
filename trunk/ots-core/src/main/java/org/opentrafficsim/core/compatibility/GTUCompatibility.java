@@ -4,13 +4,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Directional GTUType dependent compatibility.
@@ -79,7 +78,7 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
             case DIR_PLUS:
                 return GTUDirectionality.DIR_PLUS == directionality;
             default:
-                SimLogger.always().warn("Unknown type in isCompatible - Cannot happen");
+                CategoryLogger.always().warn("Unknown type in isCompatible - Cannot happen");
                 return null;
         }
     }

@@ -8,9 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.locationtech.jts.geom.Envelope;
-
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Set of OTSShape objects and provides methods for fast selection of those objects that intersect an OTSShape. <br>
@@ -121,7 +120,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
         }
         if (!this.quadTree.add(e))
         {
-            SimLogger.always().error("add: ERROR object could not be added to the quad tree");
+            CategoryLogger.always().error("add: ERROR object could not be added to the quad tree");
         }
         return this.allShapes.add(e);
     }
@@ -136,7 +135,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
         }
         if (!this.quadTree.remove((OTSShape) o))
         {
-            SimLogger.always().error("remove: ERROR object could not be removed from the quad tree");
+            CategoryLogger.always().error("remove: ERROR object could not be removed from the quad tree");
         }
         return true;
     }
@@ -308,7 +307,8 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
             this.theIterator.remove();
             if (!OTS2DSet.this.quadTree.remove(this.lastResult))
             {
-                SimLogger.always().error("iterator.remove: ERROR: could not remove {} from the quad tree", this.lastResult);
+                CategoryLogger.always().error("iterator.remove: ERROR: could not remove {} from the quad tree",
+                        this.lastResult);
             }
         }
 
@@ -503,7 +503,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
             }
             catch (OTSGeometryException exception)
             {
-                SimLogger.always().error(exception);
+                CategoryLogger.always().error(exception);
                 return null;
             }
         }

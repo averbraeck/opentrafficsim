@@ -14,9 +14,11 @@ import java.util.Set;
 
 import javax.vecmath.Point3d;
 
+import org.djutils.event.EventProducer;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.logger.CategoryLogger;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -29,8 +31,6 @@ import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
-import nl.tudelft.simulation.dsol.logger.SimLogger;
-import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 
 /**
@@ -717,7 +717,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         GraphPath<Node, LinkEdge<Link>> path = DijkstraShortestPath.findPathBetween(graph, nodeFrom, nodeTo);
         if (path == null)
         {
-            SimLogger.always().debug("No path from " + nodeFrom + " to " + nodeTo + " for gtuType " + gtuType);
+            CategoryLogger.always().debug("No path from " + nodeFrom + " to " + nodeTo + " for gtuType " + gtuType);
             return null;
         }
         route.addNode(nodeFrom);
@@ -770,7 +770,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             GraphPath<Node, LinkEdge<Link>> path = dijkstra.getPath(from, to);
             if (path == null)
             {
-                SimLogger.always().debug("Cannot find a path from " + nodeFrom + " via " + nodesVia + " to " + nodeTo
+                CategoryLogger.always().debug("Cannot find a path from " + nodeFrom + " via " + nodesVia + " to " + nodeTo
                         + " (failing between " + from + " and " + to + ")");
                 // dijkstra.getPath(from, to);
                 return null;
@@ -1108,7 +1108,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         catch (RemoteException exception)
         {
-            SimLogger.always().error(exception);
+            CategoryLogger.always().error(exception);
         }
         if (content)
         {
@@ -1121,6 +1121,13 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             return new Rectangle2D.Double(-500, -500, 1000, 1000);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return this.id;
     }
 
     /** {@inheritDoc} */

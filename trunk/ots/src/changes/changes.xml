@@ -5,8 +5,15 @@
   <body>
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
-    
-    <release version="1.03.01" date="2019-12-XX" description="XML parsing extended, ">
+
+    <release version="1.04.00" date="2019-12-23" description="New version of djunits, djutils, dsol">
+      <action dev="averbraeck" type="update">
+        Code has been adapted to the changes in DSOL, DJUNITS and DJUTILS. Several constructors, methods
+        and package names changed.
+      </action>
+    </release>
+      
+    <release version="1.03.01" date="2019-12-22" description="XML parsing extended, Conflicts">
       <action dev="averbraeck" type="fix">
         com.sun.xml.bind package gone; replaced by javax.xml.bind:jaxb-api and org.glassfish.jaxb:jaxb-runtime.
         JAXB version updated to 2.3.1.

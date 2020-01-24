@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -74,7 +75,7 @@ public class XmlOdParserTest
      */
     public XmlOdParserTest() throws NetworkException, OTSGeometryException, SimRuntimeException, NamingException
     {
-        this.simulator = new OTSSimulator();
+        this.simulator = new OTSSimulator("XmlOdParserTest");
         OTSModelInterface model = new AbstractOTSModel(this.simulator)
         {
             /** */
@@ -90,6 +91,12 @@ public class XmlOdParserTest
             public OTSRoadNetwork getNetwork()
             {
                 return XmlOdParserTest.this.network;
+            }
+
+            @Override
+            public Serializable getSourceId()
+            {
+                return "XmlOdParserTest.Model";
             }
         };
         this.simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);

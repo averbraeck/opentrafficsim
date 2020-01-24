@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -70,7 +71,7 @@ public class SensorTest implements UNITS
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("SensorTest");
         OTSModelInterface model = new DummyModelForSensorTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
@@ -225,5 +226,12 @@ class DummyModelForSensorTest extends AbstractOTSModel
     public final OTSRoadNetwork getNetwork()
     {
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "SensorTest.Model";
     }
 }

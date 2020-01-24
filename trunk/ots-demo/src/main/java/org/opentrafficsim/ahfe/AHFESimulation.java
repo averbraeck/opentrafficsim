@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -281,7 +282,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
             {
                 try
                 {
-                    OTSSimulator simulator = new OTSSimulator();
+                    OTSSimulator simulator = new OTSSimulator("AHFESimulation");
                     final AHFEModel ahfeModel = new AHFEModel(simulator, finalReplication, finalAnticipationStrategy,
                             finalReactionTime, finalAnticipationTime, finalTruckFraction, finalDistanceError, finalSpeedError,
                             finalAccelerationError, finalLeftDemand, finalRightDemand, finalLeftFraction);
@@ -620,6 +621,13 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
         public final Sampler<GtuData> getSampler()
         {
             return this.sampler;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "AHFESimulation.Model";
         }
 
     }

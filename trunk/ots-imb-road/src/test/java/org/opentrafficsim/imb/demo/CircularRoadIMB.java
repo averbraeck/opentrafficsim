@@ -2,6 +2,7 @@ package org.opentrafficsim.imb.demo;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -98,6 +99,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Circular road simulation demo.
@@ -153,7 +155,7 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("CircularRoadIMB");
             final CircularRoadModelIMB otsModel = new CircularRoadModelIMB(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -171,7 +173,7 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -643,5 +645,12 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
                 throw new NetworkException(exception);
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "CircularRoadModelIMB";
     }
 }

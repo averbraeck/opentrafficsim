@@ -16,6 +16,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Demonstration of a crossing with traffic lights.
@@ -64,7 +65,7 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("CrossingTrafficLightsSwing");
             final CrossingTrafficLightsModel otsModel = new CrossingTrafficLightsModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -83,7 +84,7 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

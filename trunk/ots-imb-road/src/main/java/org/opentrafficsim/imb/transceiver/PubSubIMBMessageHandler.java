@@ -1,13 +1,13 @@
 package org.opentrafficsim.imb.transceiver;
 
+import org.djutils.event.Event;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventType;
 import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.Event;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * The PubSubIMBMessageHandler handles the IMB message by transforming it into a DSOL Event and sending it to an EventListener

@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.geometry.shape;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -68,6 +69,13 @@ public class ShapeModel extends AbstractOTSModel
     public final OTSRoadNetwork getNetwork()
     {
         return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "ShapeModel";
     }
 
 }

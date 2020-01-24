@@ -41,6 +41,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.AbstractInputField;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputField;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Simplest contour plots demonstration.
@@ -96,7 +97,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("NetworksSwing");
             final NetworksModel otsModel = new NetworksModel(simulator);
             if (NetworksParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -114,7 +115,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }

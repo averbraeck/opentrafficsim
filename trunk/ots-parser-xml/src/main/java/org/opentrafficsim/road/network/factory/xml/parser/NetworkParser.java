@@ -58,7 +58,6 @@ import org.opentrafficsim.xml.generated.SPEEDLIMIT;
 import org.opentrafficsim.xml.generated.TRAFFICLIGHTTYPE;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -162,13 +161,13 @@ public final class NetworkParser
             OTSRoadNode startNode = (OTSRoadNode) otsNetwork.getNode(xmlConnector.getNODESTART());
             if (null == startNode)
             {
-                SimLogger.always()
+                simulator.getLogger().always()
                         .debug("No start node (" + xmlConnector.getNODESTART() + ") for CONNECTOR " + xmlConnector.getID());
             }
             OTSRoadNode endNode = (OTSRoadNode) otsNetwork.getNode(xmlConnector.getNODEEND());
             if (null == endNode)
             {
-                SimLogger.always()
+                simulator.getLogger().always()
                         .debug("No end node (" + xmlConnector.getNODEEND() + ")for CONNECTOR " + xmlConnector.getID());
             }
             String id = xmlConnector.getID();
@@ -473,9 +472,9 @@ public final class NetworkParser
                 Length position = Transformer.parseLengthBeginEnd(trafficLight.getPOSITION(), lane.getLength());
                 try
                 {
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(), new Class[] {
-                            String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
-                    trafficLightConstructor.newInstance(new Object[] { trafficLight.getID(), lane, position, simulator });
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(),
+                            new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
+                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getID(), lane, position, simulator});
                 }
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException exception)
@@ -609,13 +608,11 @@ public final class NetworkParser
 
         if (!startOffset)
         {
-            cseDataList.get(0).centerOffsetStart =
-                    totalWidthStart.times(-0.5).minus(cseDataList.get(0).widthStart.times(-0.5));
+            cseDataList.get(0).centerOffsetStart = totalWidthStart.times(-0.5).minus(cseDataList.get(0).widthStart.times(-0.5));
         }
         if (!endOffset)
         {
-            cseDataList.get(0).centerOffsetEnd =
-                    totalWidthEnd.times(-0.5).minus(cseDataList.get(0).widthEnd.times(-0.5));
+            cseDataList.get(0).centerOffsetEnd = totalWidthEnd.times(-0.5).minus(cseDataList.get(0).widthEnd.times(-0.5));
         }
 
         // forward pass

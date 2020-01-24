@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -83,7 +84,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
         LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSSimulatorInterface simulator = new OTSSimulator("abstractLaneBasedGTUTest");
         OTSModelInterface model = new DummyModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
 
@@ -422,6 +423,13 @@ class DummyModel extends AbstractOTSModel
     public final OTSRoadNetwork getNetwork()
     {
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "AbstractLaneBasedGTUTest.DummyModel";
     }
 
 }

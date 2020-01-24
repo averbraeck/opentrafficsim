@@ -37,10 +37,11 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
 
     /**
      * Construct an OTSAnimator.
+     * @param simulatorId the id of the simulator to use in remote communication
      */
-    public OTSAnimator()
+    public OTSAnimator(final Serializable simulatorId)
     {
-        super();
+        super(simulatorId);
     }
 
     /** {@inheritDoc} */
@@ -54,7 +55,7 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
                 OTSReplication.create("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, model);
         super.initialize(newReplication, ReplicationMode.TERMINATING);
     }
-    
+
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime Time; the start time of the simulation
@@ -67,7 +68,8 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
      * @throws NamingException when the context for the replication cannot be created
      */
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final Map<String, StreamInterface> streams) throws SimRuntimeException, NamingException
+            final OTSModelInterface model, final Map<String, StreamInterface> streams)
+            throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
@@ -93,8 +95,9 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
     public final SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<SimTimeDoubleUnit> result = new SimEvent<>(
-                new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source, target, method, args);
+        SimEvent<SimTimeDoubleUnit> result =
+                new SimEvent<>(new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source,
+                        target, method, args);
         scheduleEvent(result);
         return result;
     }

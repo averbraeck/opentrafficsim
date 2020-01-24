@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -33,6 +34,8 @@ import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.CompressedFileWriter;
@@ -164,8 +167,6 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
@@ -403,7 +404,7 @@ public class LmrsStrategies implements EventListenerInterface
         {
             try
             {
-                OTSSimulator simulator = new OTSSimulator();
+                OTSSimulator simulator = new OTSSimulator("LmrsStrategies");
                 final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si + 1e-9), lmrsModel);
@@ -432,7 +433,7 @@ public class LmrsStrategies implements EventListenerInterface
         {
             try
             {
-                OTSAnimator simulator = new OTSAnimator();
+                OTSAnimator simulator = new OTSAnimator("LmrsStrategies");
                 final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si + 1e-9), lmrsModel);
@@ -741,19 +742,20 @@ public class LmrsStrategies implements EventListenerInterface
                         new Speed(120, SpeedUnit.KM_PER_HOUR));
                 Set<GTUType> gtuTypes = new LinkedHashSet<>();
                 gtuTypes.add(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
-                Stripe stripeAB1 = new Stripe(linkAB, Length.instantiateSI(-1.75), Length.instantiateSI(-1.75), Length.instantiateSI(0.2));
-                Stripe stripeAB2 = new Stripe(linkAB, Length.instantiateSI(1.75), Length.instantiateSI(1.75), Length.instantiateSI(0.2),
-                        gtuTypes, Permeable.BOTH);
-                Stripe stripeAB3 = new Stripe(linkAB, Length.instantiateSI(5.25), Length.instantiateSI(5.25), Length.instantiateSI(0.2),
-                        gtuTypes, Permeable.BOTH);
-                Stripe stripeAB4 = new Stripe(linkAB, Length.instantiateSI(8.75), Length.instantiateSI(8.75), Length.instantiateSI(0.2),
-                        gtuTypes, Permeable.BOTH);
-                Stripe stripeBC1 = new Stripe(linkBC, Length.instantiateSI(-1.75), Length.instantiateSI(-1.75), Length.instantiateSI(0.2),
-                        gtuTypes, Permeable.BOTH);
-                Stripe stripeBC2 = new Stripe(linkBC, Length.instantiateSI(1.75), Length.instantiateSI(1.75), Length.instantiateSI(0.2),
-                        gtuTypes, Permeable.BOTH);
-                Stripe stripeBC3 = new Stripe(linkBC, Length.instantiateSI(5.25), Length.instantiateSI(5.25), Length.instantiateSI(0.2),
-                        gtuTypes, Permeable.BOTH);
+                Stripe stripeAB1 =
+                        new Stripe(linkAB, Length.instantiateSI(-1.75), Length.instantiateSI(-1.75), Length.instantiateSI(0.2));
+                Stripe stripeAB2 = new Stripe(linkAB, Length.instantiateSI(1.75), Length.instantiateSI(1.75),
+                        Length.instantiateSI(0.2), gtuTypes, Permeable.BOTH);
+                Stripe stripeAB3 = new Stripe(linkAB, Length.instantiateSI(5.25), Length.instantiateSI(5.25),
+                        Length.instantiateSI(0.2), gtuTypes, Permeable.BOTH);
+                Stripe stripeAB4 = new Stripe(linkAB, Length.instantiateSI(8.75), Length.instantiateSI(8.75),
+                        Length.instantiateSI(0.2), gtuTypes, Permeable.BOTH);
+                Stripe stripeBC1 = new Stripe(linkBC, Length.instantiateSI(-1.75), Length.instantiateSI(-1.75),
+                        Length.instantiateSI(0.2), gtuTypes, Permeable.BOTH);
+                Stripe stripeBC2 = new Stripe(linkBC, Length.instantiateSI(1.75), Length.instantiateSI(1.75),
+                        Length.instantiateSI(0.2), gtuTypes, Permeable.BOTH);
+                Stripe stripeBC3 = new Stripe(linkBC, Length.instantiateSI(5.25), Length.instantiateSI(5.25),
+                        Length.instantiateSI(0.2), gtuTypes, Permeable.BOTH);
                 new NodeAnimation(nodeA, getSimulator());
                 new NodeAnimation(nodeB, getSimulator());
                 new NodeAnimation(nodeC, getSimulator());
@@ -772,8 +774,10 @@ public class LmrsStrategies implements EventListenerInterface
                 new StripeAnimation(stripeBC2, getSimulator(), TYPE.DASHED);
                 new StripeAnimation(stripeBC3, getSimulator(), TYPE.SOLID);
                 // sensors
-                new SinkSensor(laneBC1, laneBC1.getLength().minus(Length.instantiateSI(100.0)), Compatible.EVERYTHING, getSimulator());
-                new SinkSensor(laneBC2, laneBC2.getLength().minus(Length.instantiateSI(100.0)), Compatible.EVERYTHING, getSimulator());
+                new SinkSensor(laneBC1, laneBC1.getLength().minus(Length.instantiateSI(100.0)), Compatible.EVERYTHING,
+                        getSimulator());
+                new SinkSensor(laneBC2, laneBC2.getLength().minus(Length.instantiateSI(100.0)), Compatible.EVERYTHING,
+                        getSimulator());
 
                 // detectors
                 Lane[][] grid =
@@ -805,13 +809,13 @@ public class LmrsStrategies implements EventListenerInterface
                 origins.add(nodeA);
                 List<Node> destinations = new ArrayList<>();
                 destinations.add(nodeC);
-                TimeVector timeVector =
-                        DoubleVector.instantiate(new double[] {0.0, 300.0, 2700.0, SIMTIME.si}, TimeUnit.DEFAULT, StorageType.DENSE);
+                TimeVector timeVector = DoubleVector.instantiate(new double[] {0.0, 300.0, 2700.0, SIMTIME.si},
+                        TimeUnit.DEFAULT, StorageType.DENSE);
                 ODMatrix od = new ODMatrix("LMRS strategies", origins, destinations, categorization, timeVector,
                         Interpolation.LINEAR);
                 double q = LmrsStrategies.this.qMax;
-                FrequencyVector demand =
-                        DoubleVector.instantiate(new double[] {q * .6, q * .6, q, 0.0}, FrequencyUnit.PER_HOUR, StorageType.DENSE);
+                FrequencyVector demand = DoubleVector.instantiate(new double[] {q * .6, q * .6, q, 0.0}, FrequencyUnit.PER_HOUR,
+                        StorageType.DENSE);
                 Category category = new Category(categorization, LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR));
                 od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR,
                         1.0 - LmrsStrategies.this.fTruck);
@@ -826,8 +830,7 @@ public class LmrsStrategies implements EventListenerInterface
                         .addBias(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT);
                 ODOptions odOptions = new ODOptions().set(ODOptions.MARKOV, markov)
                         .set(ODOptions.getLaneBiasOption(LmrsStrategies.this.network), biases)
-                        .set(ODOptions.NO_LC_DIST, Length.instantiateSI(100.0))
-                        .set(ODOptions.INSTANT_LC, true)
+                        .set(ODOptions.NO_LC_DIST, Length.instantiateSI(100.0)).set(ODOptions.INSTANT_LC, true)
                         .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
                         .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, getSimulator(), odOptions);
@@ -890,8 +893,8 @@ public class LmrsStrategies implements EventListenerInterface
                         {
                             try
                             {
-                                return FloatDuration
-                                        .instantiateSI(gtu.getGtu().getParameters().getParameter(ParameterTypes.T).floatValue());
+                                return FloatDuration.instantiateSI(
+                                        gtu.getGtu().getParameters().getParameter(ParameterTypes.T).floatValue());
                             }
                             catch (ParameterException exception)
                             {
@@ -926,6 +929,13 @@ public class LmrsStrategies implements EventListenerInterface
         public OTSRoadNetwork getNetwork()
         {
             return LmrsStrategies.this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "LmrsStrategiesModel";
         }
 
     }

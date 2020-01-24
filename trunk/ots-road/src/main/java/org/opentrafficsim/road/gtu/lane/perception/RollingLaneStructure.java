@@ -14,6 +14,8 @@ import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -36,9 +38,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * This data structure can clearly indicate the lane structure ahead of us, e.g. in the following situation:

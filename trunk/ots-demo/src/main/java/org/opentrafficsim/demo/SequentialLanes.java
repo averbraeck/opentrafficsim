@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,6 +71,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Single lane road consisting of three consecutive links.<br>
@@ -127,7 +129,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("SequentialLanes");
             final SequentialModel otsModel = new SequentialModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
@@ -145,7 +147,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -403,6 +405,13 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             {
                 exception.printStackTrace();
             }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "SequentialModel";
         }
 
     }

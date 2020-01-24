@@ -61,7 +61,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException
+    public final void destroy() throws NamingException, RemoteException
     {
         super.destroy();
         this.text.destroy();

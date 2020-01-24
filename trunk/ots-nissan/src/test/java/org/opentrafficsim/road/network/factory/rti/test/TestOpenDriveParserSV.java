@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.factory.rti.test;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.SocketException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -75,6 +76,7 @@ import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -115,14 +117,14 @@ public class TestOpenDriveParserSV extends OTSSimulationApplication<OTSModelInte
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("TestOpenDriveParserSV");
                     TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), openDriveModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, openDriveModel, DEFAULT_COLORER, openDriveModel.getNetwork());
                     new TestOpenDriveParserSV(openDriveModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -545,6 +547,13 @@ public class TestOpenDriveParserSV extends OTSSimulationApplication<OTSModelInte
         public final String toString()
         {
             return "TestOpenDriveModel [simulator=" + this.simulator + ", rtiCars.size=" + this.rtiCars.size() + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TestOpenDriveModel";
         }
     }
 

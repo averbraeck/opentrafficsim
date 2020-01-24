@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.Event;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -25,7 +26,7 @@ import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
-import nl.tudelft.simulation.event.Event;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -56,11 +57,12 @@ public class TestGeometry extends DSOLApplication implements UNITS
      * @throws SimRuntimeException if error
      * @throws NamingException if error
      * @throws OTSDrawingException if error
+     * @throws DSOLException when the simulator does not implement AnimatorInterface
      */
     public static void main(final String[] args)
-            throws SimRuntimeException, NamingException, RemoteException, OTSDrawingException
+            throws SimRuntimeException, NamingException, RemoteException, OTSDrawingException, DSOLException
     {
-        OTSAnimator simulator = new OTSAnimator();
+        OTSAnimator simulator = new OTSAnimator("TestGeometry");
         OTSModelInterface model = new TestModel(simulator);
         OTSReplication replication =
                 OTSReplication.create("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, SECOND), model);

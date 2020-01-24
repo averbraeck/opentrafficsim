@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
+import org.djutils.event.EventType;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * <p>

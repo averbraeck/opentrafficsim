@@ -10,6 +10,7 @@ import java.util.List;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.event.EventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
@@ -26,7 +27,6 @@ import org.opentrafficsim.road.network.RoadNetwork;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -696,6 +696,13 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     public Bounds getBounds()
     {
         return this.contour.getBounds();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return this; // TODO: for now, lane object is returned as source. See if this can be an id / simple object
     }
 
     /** {@inheritDoc} */

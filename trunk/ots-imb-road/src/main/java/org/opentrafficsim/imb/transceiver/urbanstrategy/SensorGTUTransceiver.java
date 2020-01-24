@@ -1,8 +1,13 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.Event;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventType;
+import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
@@ -17,10 +22,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.event.Event;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.event.TimedEvent;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -372,7 +373,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
         {
             Object[] content = (Object[]) event.getContent();
             String laneId = (String) content[2];
-            CrossSectionLink csl = (CrossSectionLink) event.getSource();
+            CrossSectionLink csl = (CrossSectionLink) event.getSourceId();
             Lane lane = (Lane) csl.getCrossSectionElement(laneId);
 
             lane.removeListener(this, Lane.SENSOR_ADD_EVENT);
@@ -499,6 +500,13 @@ public class SensorGTUTransceiver extends AbstractTransceiver
         }
         System.err.println("SensorGTUTransceiver.transformDelete: Don't know how to transform event " + event);
         return new Object[] {};
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "SensorGTUTransceiver";
     }
 
 }

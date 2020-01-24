@@ -14,9 +14,10 @@ import java.rmi.RemoteException;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
+import org.djutils.logger.CategoryLogger;
+
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -256,9 +257,10 @@ public abstract class TextAnimation implements Locatable, Serializable
         {
             this.animationImpl.destroy();
         }
-        catch (NamingException exception)
+        catch (NamingException | RemoteException exception)
         {
-            SimLogger.always().warn(exception, "Tried to destroy Text for GTU animation of GTU {}", this.source.toString());
+            CategoryLogger.always().warn(exception, "Tried to destroy Text for GTU animation of GTU {}",
+                    this.source.toString());
         }
     }
 

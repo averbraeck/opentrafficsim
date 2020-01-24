@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -30,6 +31,7 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -76,7 +78,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("TurboRoundaboutDemo");
             final TurboRoundaboutModel junctionModel = new TurboRoundaboutModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
             OTSAnimationPanel animationPanel =
@@ -85,7 +87,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
             TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -206,6 +208,13 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
         public OTSRoadNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TurboRoundaboutModel";
         }
 
     }

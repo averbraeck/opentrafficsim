@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -310,6 +311,13 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             exception.printStackTrace();
         }
         throw new Error(errorMessage);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Serializable getSourceId()
+    {
+        return "CircularRoadModel";
     }
 
 }

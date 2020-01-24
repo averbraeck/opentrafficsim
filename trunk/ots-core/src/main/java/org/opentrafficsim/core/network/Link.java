@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.event.EventType;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -12,7 +13,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * Link as a connection between two Nodes.

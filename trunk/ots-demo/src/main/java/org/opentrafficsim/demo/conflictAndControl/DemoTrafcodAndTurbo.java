@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.conflictAndControl;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
@@ -15,6 +16,9 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventType;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
@@ -42,9 +46,8 @@ import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.DSOLException;
+
 
 /**
  * <p>
@@ -92,7 +95,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("DemoTrafcodAndTurbo");
             final TrafCODModel junctionModel = new TrafCODModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
             OTSAnimationPanel animationPanel =
@@ -101,7 +104,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
             DemoTrafcodAndTurbo app = new DemoTrafcodAndTurbo("TrafCOD Turbo demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -340,6 +343,13 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                 }
                 System.out.println("]");
             }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TrafCODModel";
         }
     }
 }

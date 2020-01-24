@@ -3,13 +3,13 @@ package org.opentrafficsim.road.network.factory;
 import java.io.OutputStream;
 import java.io.Writer;
 
+import org.djutils.event.EventProducer;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
 import com.thoughtworks.xstream.XStream;
 
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.naming.JVMContext;
+import nl.tudelft.simulation.naming.context.JVMContext;
 
 /**
  * <p>

@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.zip.ZipEntry;
@@ -45,6 +46,7 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Simulation for AHFE congress.
@@ -292,7 +294,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("AHFEAnimation");
                     final AHFEModel ahfeModel = new AHFEModel(simulator, finalReplication, finalAnticipationStrategy,
                             finalReactionTime, finalAnticipationTime, finalTruckFraction, finalDistanceError, finalSpeedError,
                             finalAccelerationError, finalLeftDemand, finalRightDemand, finalLeftFraction);
@@ -388,7 +390,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
 
                     }
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -640,6 +642,13 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
         public final Sampler<GtuData> getSampler()
         {
             return this.sampler;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "AHFEAnimation.Model";
         }
 
     }

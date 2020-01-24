@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.network.xml;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -34,6 +35,7 @@ import org.xml.sax.SAXException;
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -81,14 +83,14 @@ public class TestXMLParserA58 extends OTSSimulationApplication<TestXMLModelA58>
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("TestXMLParserA58");
                     TestXMLModelA58 xmlModel = new TestXMLModelA58(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new TestXMLParserA58(xmlModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -181,6 +183,13 @@ public class TestXMLParserA58 extends OTSSimulationApplication<TestXMLModelA58>
         public final String toString()
         {
             return "TestXMLModelA58 [simulator=" + this.simulator + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TestXMLModelA58";
         }
 
     }

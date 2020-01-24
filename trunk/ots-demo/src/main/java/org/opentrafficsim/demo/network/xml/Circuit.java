@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.network.xml;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -29,6 +30,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Circuit demo
@@ -70,14 +72,14 @@ public class Circuit extends OTSSimulationApplication<OTSModelInterface>
             {
                 try
                 {
-                    OTSAnimator simulator = new OTSAnimator();
+                    OTSAnimator simulator = new OTSAnimator("Circuit");
                     TestXMLModel xmlModel = new TestXMLModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new Circuit(xmlModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -149,6 +151,13 @@ public class Circuit extends OTSSimulationApplication<OTSModelInterface>
         public final String toString()
         {
             return "TestXMLModel [simulator=" + this.simulator + "]";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "TestXMLModel";
         }
 
     }

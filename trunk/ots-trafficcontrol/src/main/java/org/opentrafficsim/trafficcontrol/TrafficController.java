@@ -1,11 +1,10 @@
 package org.opentrafficsim.trafficcontrol;
 
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventProducerInterface;
+import org.djutils.event.EventType;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
-
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducerInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * Interface for traffic light controllers.

@@ -8,9 +8,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.road.network.lane.object.sensor.Detector;
-
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Switch implementing the RWS algorithm.
@@ -59,7 +58,7 @@ public class RwsSwitch extends SingleCrossSectionSwitch
     public boolean isEnabled()
     {
         Frequency flow = totalFlow();
-        SimLogger.always().info("Flow is " + flow.getInUnit(FrequencyUnit.PER_HOUR));
+        CategoryLogger.always().info("Flow is " + flow.getInUnit(FrequencyUnit.PER_HOUR));
         if (meanSpeed().le(this.speedThreshold)
                 || (this.lastFlow != null && flow.gt(this.lastFlow) && flow.gt(this.flowThreshold)))
         {

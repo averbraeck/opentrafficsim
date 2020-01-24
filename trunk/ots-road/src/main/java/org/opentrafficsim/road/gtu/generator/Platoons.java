@@ -33,7 +33,6 @@ import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -341,7 +340,8 @@ public abstract class Platoons<T>
             double factor = (total - platooning) / (total - lost);
             if (factor < 0.0)
             {
-                SimLogger.always().warn("Reducing demand of {} by {}, demand is set to 0.", total, total - factor * total);
+                this.simulator.getLogger().always().warn("Reducing demand of {} by {}, demand is set to 0.", total,
+                        total - factor * total);
                 factor = 0.0;
             }
             // create and return factor copy

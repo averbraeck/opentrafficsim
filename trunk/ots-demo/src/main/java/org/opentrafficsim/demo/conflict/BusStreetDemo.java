@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -83,6 +84,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * <p>
@@ -131,7 +133,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
     {
         try
         {
-            OTSAnimator simulator = new OTSAnimator();
+            OTSAnimator simulator = new OTSAnimator("BusStreetDemo");
             BusStreetModel busModel = new BusStreetModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), busModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(busModel.getNetwork().getExtent(), new Dimension(800, 600),
@@ -139,7 +141,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             BusStreetDemo app = new BusStreetDemo("Bus street demo", animationPanel, busModel);
             app.setExitOnClose(exitOnClose);
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -256,6 +258,13 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
                     new IdGenerator(""));
             gen.setInstantaneousLaneChange(true);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Serializable getSourceId()
+        {
+            return "BusStreetModel";
         }
     }
 
