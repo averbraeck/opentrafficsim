@@ -27,6 +27,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.logger.SimLogger;
+
 /**
  * Strategical planner, route-based, with personal driving characteristics, which contain settings for the tactical planner. The
  * tactical planner will only consult the route when the GTU has multiple possibilities on a node, so the route does not have to
@@ -161,6 +163,10 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     {
         assureRoute(gtuType);
         Node nextNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
+        if (!this.route.contains(nextNode))
+        {
+            SimLogger.always().warn("nextNode {} is not in route {}", nextNode, this.route);
+        }
         return nextLinkDirection(nextNode, link, gtuType);
     }
 
@@ -345,7 +351,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     {
         if (this.route == null && this.destination != null && !this.routeGenerator.equals(RouteGeneratorOD.NULL))
         {
-            DirectedLanePosition ref = Try.assign(() -> getGtu().getReferencePosition(), "GTU could not be obtained.");
+            DirectedLanePosition ref =
+                    Try.assign(() -> getGtu().getReferencePosition(), "Could not retrieve GTU reference position.");
             List<Node> nodes = new ArrayList<>();
             if (this.origin != null)
             {
@@ -356,17 +363,19 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             {
                 nodes.add(ref.getLinkDirection().getNodeFrom());
             }
+            nodes.addAll(
+                    this.routeGenerator.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType).getNodes());
             // LinkDirection ld = ref.getLinkDirection();
             // Node n = ld.getNodeTo();
             // Route r = this.routeSupplier.getRoute(n, this.destination, gtuType);
-            Route route = this.routeGenerator.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType);
-            if (null == route)
-            {
-                // TODO do something sensible
-                System.err.println("route is null!");
-                return;
-            }
-            nodes.addAll(route.getNodes());
+//            Route testRoute = this.routeGenerator.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType);
+//            if (null == testRoute)
+//            {
+//                // TODO do something sensible
+//                System.err.println("route is null!");
+//                return;
+//            }
+//            nodes.addAll(route.getNodes());
             this.route =
                     Try.assign(
                             () -> new CompleteRoute("Route for " + gtuType + " from " + this.origin + "to " + this.destination
