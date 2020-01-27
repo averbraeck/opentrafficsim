@@ -81,7 +81,7 @@ public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
     {
         super();
         this.model = model;
-        setTitle(model.getShortName());
+        setTitle("OTS | The Open Traffic Simulator | " + model.getDescription());
         setContentPane(panel);
         pack();
         setExtendedState(Frame.MAXIMIZED_BOTH);
