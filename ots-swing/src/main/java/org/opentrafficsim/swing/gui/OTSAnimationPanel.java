@@ -132,7 +132,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     private String autoPanId = null;
 
     /** Type of object to auto pan to. */
-    private String autoPanKind = null;
+    private OTSSearchPanel.ObjectKind<?> autoPanKind = null;
 
     /** Track auto pan object continuously? */
     private boolean autoPanTrack = false;
@@ -250,17 +250,18 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /**
      * Change auto pan target.
      * @param newAutoPanId String; id of object to track (or
-     * @param newAutoPanKind String; kind of object to track TODO should be a enum
+     * @param newAutoPanKind String; kind of object to track
      * @param newAutoPanTrack boolean; if true; tracking is continuously; if false; tracking is once
      */
-    public void setAutoPan(final String newAutoPanId, final String newAutoPanKind, final boolean newAutoPanTrack)
+    public void setAutoPan(final String newAutoPanId, final OTSSearchPanel.ObjectKind<?> newAutoPanKind,
+            final boolean newAutoPanTrack)
     {
         this.autoPanId = newAutoPanId;
         this.autoPanKind = newAutoPanKind;
         this.autoPanTrack = newAutoPanTrack;
         this.autoPanOnce = true;
         // System.out.println("AutoPan id=" + newAutoPanId + ", kind=" + newAutoPanKind + ", track=" + newAutoPanTrack);
-        if (null != this.autoPanId && this.autoPanId.length() > 0 && null != this.autoPanKind && this.autoPanKind.length() > 0)
+        if (null != this.autoPanId && this.autoPanId.length() > 0 && null != this.autoPanKind)
         {
             OTSAnimationPanel.this.animationPanel.repaint();
         }
@@ -1024,7 +1025,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         @Override
         public void paintComponent(final Graphics g)
         {
-            final String panKind = OTSAnimationPanel.this.autoPanKind;
+            final OTSSearchPanel.ObjectKind<?> panKind = OTSAnimationPanel.this.autoPanKind;
             final String panId = OTSAnimationPanel.this.autoPanId;
             final boolean doPan = OTSAnimationPanel.this.autoPanOnce;
             // System.out.println("panOnce=" + panOnce + ", autoPanTrack=" + OTSAnimationPanel.this.autoPanTrack);
@@ -1034,34 +1035,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 try
                 {
                     DirectedPoint point = null;
-                    switch (panKind)
+                    Locatable locatable = panKind.searchNetwork(this.network, panId);
+                    if (null != locatable)
                     {
-                        case "GTU":
-                            GTU gtu = this.network.getGTU(panId);
-                            if (null != gtu && !gtu.isDestroyed())
-                            {
-                                point = gtu.getLocation();
-                            }
-                            break;
-
-                        case "Link":
-                            Link link = this.network.getLink(panId);
-                            if (null != link)
-                            {
-                                point = link.getLocation();
-                            }
-                            break;
-
-                        case "Node":
-                            Node node = this.network.getNode(panId);
-                            if (null != node)
-                            {
-                                point = node.getLocation();
-                            }
-                            break;
-
-                        default:
-                            break;
+                        point = locatable.getLocation();
                     }
                     if (point != null)
                     {
