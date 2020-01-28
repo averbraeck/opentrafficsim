@@ -42,7 +42,7 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
      * @param network Network; the network to which the animation info is connected
      * @throws RemoteException in case of remote events and network error
      */
-    public NetworkAnimation(Network network) throws RemoteException
+    public NetworkAnimation(final Network network) throws RemoteException
     {
         super();
         this.network = network;
