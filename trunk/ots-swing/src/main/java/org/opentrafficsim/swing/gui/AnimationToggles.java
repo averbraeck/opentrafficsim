@@ -183,7 +183,7 @@ public final class AnimationToggles
      * @param panel OTSAnimationPanel; the OTSAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
-    public final static void showAnimationClass(final OTSAnimationPanel panel, final Class<? extends Locatable> locatableClass)
+    public static void showAnimationClass(final OTSAnimationPanel panel, final Class<? extends Locatable> locatableClass)
     {
         panel.getAnimationPanel().showClass(locatableClass);
         panel.updateAnimationClassCheckBox(locatableClass);
@@ -194,7 +194,7 @@ public final class AnimationToggles
      * @param panel OTSAnimationPanel; the OTSAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
-    public final static void hideAnimationClass(final OTSAnimationPanel panel, final Class<? extends Locatable> locatableClass)
+    public static void hideAnimationClass(final OTSAnimationPanel panel, final Class<? extends Locatable> locatableClass)
     {
         panel.getAnimationPanel().hideClass(locatableClass);
         panel.updateAnimationClassCheckBox(locatableClass);

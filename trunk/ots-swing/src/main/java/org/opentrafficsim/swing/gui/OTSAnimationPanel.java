@@ -43,7 +43,9 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.javel.gisbeans.map.MapInterface;
@@ -126,14 +128,17 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected boolean windowExited = false;
 
-    /** Autopan. */
-    private boolean autoPan = false;
+    /** Id of object to auto pan to. */
+    private String autoPanId = null;
 
-    /** Autopan toggle. */
-    private final JCheckBox autoPanToggle;
+    /** Type of object to auto pan to. */
+    private String autoPanKind = null;
 
-    /** Autopan Id text field. */
-    private final JTextField autoPanField;
+    /** Track auto pan object continuously? */
+    private boolean autoPanTrack = false;
+
+    /** Track auto on the next paintComponent operation; then copy state from autoPanTrack. */
+    private boolean autoPanOnce = false;
 
     /** Initialize the formatter. */
     static
@@ -222,38 +227,6 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 return "AppearanceTextField []";
             }
         }
-        this.autoPanField = new AppearanceTextField();
-        this.autoPanField.setMaximumSize(new Dimension(100, 20));
-        this.autoPanField.setVisible(false);
-        this.autoPanField.addActionListener(new ActionListener()
-        {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                OTSAnimationPanel.this.animationPanel.repaint();
-            }
-        });
-        this.autoPanToggle = new JCheckBox();
-        this.autoPanToggle.setToolTipText("Pan to GTU");
-        this.autoPanToggle.addActionListener(new ActionListener()
-        {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                OTSAnimationPanel.this.autoPan = !OTSAnimationPanel.this.autoPanField.isVisible();
-                OTSAnimationPanel.this.autoPanField.setVisible(OTSAnimationPanel.this.autoPan);
-                if (OTSAnimationPanel.this.autoPan)
-                {
-                    OTSAnimationPanel.this.autoPanField.requestFocusInWindow();
-                    OTSAnimationPanel.this.autoPanField.selectAll();
-                }
-                gtuPanel.revalidate();
-            }
-        });
-        gtuPanel.add(this.autoPanToggle);
-        gtuPanel.add(this.autoPanField);
         // gtu counter
         this.gtuCountField = new JLabel("0 GTU's");
         this.gtuCount = null == network ? 0 : network.getGTUs().size();
@@ -272,6 +245,25 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         // make sure the thread gets killed when the window closes.
         installWindowCloseHandler();
 
+    }
+
+    /**
+     * Change auto pan target.
+     * @param newAutoPanId String; id of object to track (or
+     * @param newAutoPanKind String; kind of object to track TODO should be a enum
+     * @param newAutoPanTrack boolean; if true; tracking is continuously; if false; tracking is once
+     */
+    public void setAutoPan(final String newAutoPanId, final String newAutoPanKind, final boolean newAutoPanTrack)
+    {
+        this.autoPanId = newAutoPanId;
+        this.autoPanKind = newAutoPanKind;
+        this.autoPanTrack = newAutoPanTrack;
+        this.autoPanOnce = true;
+        // System.out.println("AutoPan id=" + newAutoPanId + ", kind=" + newAutoPanKind + ", track=" + newAutoPanTrack);
+        if (null != this.autoPanId && this.autoPanId.length() > 0 && null != this.autoPanKind && this.autoPanKind.length() > 0)
+        {
+            OTSAnimationPanel.this.animationPanel.repaint();
+        }
     }
 
     /**
@@ -902,11 +894,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                         GTU gtu = getSelectedGTU(e.getPoint());
                         if (gtu != null)
                         {
-                            OTSAnimationPanel.this.autoPanField.setText(gtu.getId());
-                            OTSAnimationPanel.this.autoPanField.setVisible(true);
-                            OTSAnimationPanel.this.autoPanToggle.setSelected(true);
-                            OTSAnimationPanel.this.autoPanToggle.getParent().validate();
-                            OTSAnimationPanel.this.autoPan = true;
+                            getOtsControlPanel().getOtsSearchPanel().selectAndTrackObject("GTU", gtu.getId(), true);
                             e.consume(); // sadly doesn't work to prevent a pop up
                         }
                     }
@@ -1036,28 +1024,56 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         @Override
         public void paintComponent(final Graphics g)
         {
-            if (OTSAnimationPanel.this.autoPan)
+            final String panKind = OTSAnimationPanel.this.autoPanKind;
+            final String panId = OTSAnimationPanel.this.autoPanId;
+            final boolean doPan = OTSAnimationPanel.this.autoPanOnce;
+            // System.out.println("panOnce=" + panOnce + ", autoPanTrack=" + OTSAnimationPanel.this.autoPanTrack);
+            OTSAnimationPanel.this.autoPanOnce = OTSAnimationPanel.this.autoPanTrack;
+            if (doPan && panKind != null && panId != null)
             {
-                String id = OTSAnimationPanel.this.autoPanField.getText();
-                if (this.lastGtu == null || !this.lastGtu.getId().equals(id) || this.lastGtu.isDestroyed())
-                {
-                    this.lastGtu = this.network.getGTU(id);
-                }
-                DirectedPoint point;
                 try
                 {
-                    point = this.lastGtu != null ? this.lastGtu.getLocation() : null;
+                    DirectedPoint point = null;
+                    switch (panKind)
+                    {
+                        case "GTU":
+                            GTU gtu = this.network.getGTU(panId);
+                            if (null != gtu && !gtu.isDestroyed())
+                            {
+                                point = gtu.getLocation();
+                            }
+                            break;
+
+                        case "Link":
+                            Link link = this.network.getLink(panId);
+                            if (null != link)
+                            {
+                                point = link.getLocation();
+                            }
+                            break;
+
+                        case "Node":
+                            Node node = this.network.getNode(panId);
+                            if (null != node)
+                            {
+                                point = node.getLocation();
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                    if (point != null)
+                    {
+                        double w = this.extent.getWidth();
+                        double h = this.extent.getHeight();
+                        this.extent = new Rectangle2D.Double(point.getX() - w / 2, point.getY() - h / 2, w, h);
+                    }
                 }
                 catch (RemoteException exception)
                 {
-                    System.err.println("Could not pan to GTU location.");
+                    System.err.println("Could not pan to location.");
                     return;
-                }
-                if (point != null)
-                {
-                    double w = this.extent.getWidth();
-                    double h = this.extent.getHeight();
-                    this.extent = new Rectangle2D.Double(point.getX() - w / 2, point.getY() - h / 2, w, h);
                 }
             }
             super.paintComponent(g);
