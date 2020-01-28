@@ -1,5 +1,6 @@
 package org.opentrafficsim.swing.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -60,8 +61,6 @@ import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.naming.context.ContextInterface;
-import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
 /**
  * Peter's improved simulation control panel.
@@ -100,6 +99,9 @@ public class OTSControlPanel extends JPanel
 
     /** The TimeEdit that lets the user set a time when the simulation will be stopped. */
     private final TimeEdit timeEdit;
+    
+    /** The OTS search panel. */
+    private final OTSSearchPanel otsSearchPanel;
 
     /** The currently registered stop at event. */
     private SimEvent<SimTimeDoubleUnit> stopAtEvent = null;
@@ -115,10 +117,11 @@ public class OTSControlPanel extends JPanel
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @param model OTSModelInterface; if non-null, the restart button should work
+     * @param otsAnimationPanel OTSAnimationPanel; the OTS animation panel
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
-    public OTSControlPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSModelInterface model)
-            throws RemoteException
+    public OTSControlPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSModelInterface model,
+            final OTSAnimationPanel otsAnimationPanel) throws RemoteException
     {
         this.simulator = simulator;
         this.model = model;
@@ -171,12 +174,23 @@ public class OTSControlPanel extends JPanel
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
+        this.otsSearchPanel = new OTSSearchPanel(otsAnimationPanel);
+        this.add(this.otsSearchPanel, BorderLayout.SOUTH);
         fixButtons();
         installWindowCloseHandler();
         this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
         this.simulator.addListener(this, SimulatorInterface.START_EVENT);
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
         this.simulator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
+    }
+
+    /**
+     * Provide access to the search panel. 
+     * @return OTSSearchPanel; the OTS search panel
+     */
+    public OTSSearchPanel getOtsSearchPanel()
+    {
+        return otsSearchPanel;
     }
 
     /**

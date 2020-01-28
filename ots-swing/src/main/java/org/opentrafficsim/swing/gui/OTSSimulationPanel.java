@@ -66,14 +66,13 @@ public class OTSSimulationPanel extends JPanel
     public OTSSimulationPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSModelInterface otsModel)
             throws RemoteException
     {
-
         this.simulator = simulator;
         this.otsModel = otsModel;
 
         this.setLayout(new BorderLayout());
 
         // Let's add our simulationControl
-        this.otsControlPanel = new OTSControlPanel(simulator, otsModel);
+        this.otsControlPanel = new OTSControlPanel(simulator, otsModel, (OTSAnimationPanel) this);
         this.add(this.otsControlPanel, BorderLayout.NORTH);
 
         // Let's display our tabbed contentPane
