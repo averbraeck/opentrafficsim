@@ -91,7 +91,7 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
         this.add(this.trackObject);
         this.trackObject.setActionCommand("Tracking status changed");
         this.idTextField.setActionCommand("Id changed");
-        this.typeToSearch.setActionCommand("Id changed");
+        this.typeToSearch.setActionCommand("Type changed");
         this.trackObject.addActionListener(this);
         this.idTextField.addActionListener(this);
         this.typeToSearch.addActionListener(this);
