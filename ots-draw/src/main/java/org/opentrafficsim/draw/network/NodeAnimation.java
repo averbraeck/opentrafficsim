@@ -77,13 +77,13 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(Color.BLACK);
+        graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
         try
         {
             double direction = getSource().getLocation().getZ();
             if (!Double.isNaN(direction))
             {
-                graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                 GeneralPath arrow = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
                 arrow.moveTo(0.5, -0.5);
                 arrow.lineTo(2, 0);
