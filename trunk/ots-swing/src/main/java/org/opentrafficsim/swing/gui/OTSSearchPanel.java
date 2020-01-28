@@ -15,6 +15,14 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+
 /**
  * The OTS search panel.
  * <p>
@@ -32,13 +40,13 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
 
     /** The animation panel. */
     private final OTSAnimationPanel otsAnimationPanel;
-    
+
     /** The type-of-object-to-search-for selector. */
-    private final JComboBox<String> typeToSearch;
-    
+    private final JComboBox<ObjectKind<?>> typeToSearch;
+
     /** Id of the object to search for. */
     private final JTextField idTextField;
-    
+
     /** Track object check box. */
     private final JCheckBox trackObject;
 
@@ -52,8 +60,29 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.add(new JLabel("    ")); // insert some white space in the GUI
         this.add(new JLabel(OTSControlPanel.loadIcon("/View.png")));
-        String[] items = new String[] {"GTU", "Node", "Link"};
-        this.typeToSearch = new JComboBox<String>(items);
+        ObjectKind<?>[] objectKinds = new ObjectKind[] { new ObjectKind<GTU>("GTU")
+        {
+            @Override
+            GTU searchNetwork(final OTSNetwork network, final String id)
+            {
+                return network.getGTU(id);
+            }
+        }, new ObjectKind<Node>("Node")
+        {
+            @Override
+            Node searchNetwork(final OTSNetwork network, final String id)
+            {
+                return network.getNode(id);
+            }
+        }, new ObjectKind<Link>("Link")
+        {
+            @Override
+            Link searchNetwork(final OTSNetwork network, final String id)
+            {
+                return network.getLink(id);
+            }
+        } };
+        this.typeToSearch = new JComboBox<ObjectKind<?>>(objectKinds);
         this.add(this.typeToSearch);
         this.idTextField = new JTextField("");
         this.idTextField.setPreferredSize(new Dimension(100, 0));
@@ -69,18 +98,18 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
         this.idTextField.addFocusListener(this);
         this.idTextField.getDocument().addDocumentListener(this);
     }
-    
+
     /**
      * Update all values at once.
-     * @param objectType String; type of object to search
+     * @param objectKey String; key of the object type to search
      * @param id String; id of object to search
      * @param track boolean; if true; track continuously; if false; center on it, but do not track
      */
-    public void selectAndTrackObject(final String objectType, final String id, final boolean track)
+    public void selectAndTrackObject(final String objectKey, final String id, final boolean track)
     {
         for (int index = this.typeToSearch.getItemCount(); --index >= 0;)
         {
-            if (this.typeToSearch.getItemAt(index).equals(objectType))
+            if (this.typeToSearch.getItemAt(index).getKey().equals(objectKey))
             {
                 this.typeToSearch.setSelectedIndex(index);
             }
@@ -94,10 +123,8 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
     @Override
     public void actionPerformed(final ActionEvent e)
     {
-        // System.out.println("1 check box isSelected=" + this.trackObject.isSelected());
-        this.otsAnimationPanel.setAutoPan(this.idTextField.getText(), (String) this.typeToSearch.getSelectedItem(),
+        this.otsAnimationPanel.setAutoPan(this.idTextField.getText(), (ObjectKind<?>) this.typeToSearch.getSelectedItem(),
                 this.trackObject.isSelected());
-        // System.out.println("2 check box isSelected=" + this.trackObject.isSelected());
     }
 
     /** {@inheritDoc} */
@@ -135,4 +162,48 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
         actionPerformed(null);
     }
 
+    /**
+     * Entries in the typeToSearch JComboBox of the OTS search panel.
+     * @param <T> Type of object identified by key
+     */
+    abstract static class ObjectKind<T extends Locatable & Identifiable>
+    {
+        /** The key of this ObjectKind. */
+        private final String key;
+
+        /**
+         * Construct a new ObjectKind (entry in the combo box).
+         * @param key String; the key of the new ObjectKind
+         */
+        ObjectKind(final String key)
+        {
+            this.key = key;
+        }
+
+        /**
+         * Retrieve the key.
+         * @return String; the key
+         */
+        public Object getKey()
+        {
+            return this.key;
+        }
+
+        /**
+         * Lookup an object of type T in an OTS network.
+         * @param network OTSNetwork; the OTS network
+         * @param id String; id of the object to return
+         * @return T; the object in the network of the correct type and matching id, or null if no matching object was found.
+         */
+        abstract T searchNetwork(OTSNetwork network, String id);
+
+        /**
+         * Produce the text that will appear in the combo box. This method should be overridden to implement localization.
+         */
+        @Override
+        public String toString()
+        {
+            return this.key;
+        }
+    }
 }
