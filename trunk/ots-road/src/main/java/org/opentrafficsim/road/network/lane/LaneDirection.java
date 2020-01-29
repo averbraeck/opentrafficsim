@@ -126,10 +126,6 @@ public class LaneDirection implements Serializable
         {
             return set.iterator().next();
         }
-        if (set.size() == 0)
-        {
-            // gtu.getSimulator().getLogger().always().warn("set of continuations for " + gtu + " is empty");
-        }
         // check of the GTU is registered on any
         for (LaneDirection l : set)
         {
@@ -140,7 +136,7 @@ public class LaneDirection implements Serializable
         }
         // ask tactical planner
         return Try.assign(() -> gtu.getTacticalPlanner().chooseLaneAtSplit(this, set),
-                "Could not find suitable lane at split.");
+                "Could not find suitable lane at split for GTU %s.", gtu.getId());
     }
 
     /**
@@ -164,27 +160,37 @@ public class LaneDirection implements Serializable
         {
             throw new RuntimeException("Strategical planner experiences exception on network.", exception);
         }
-        //gtu.getSimulator().getLogger().always().info("ld={}", ld);
         Set<LaneDirection> out = new LinkedHashSet<>();
         for (Lane l : next.keySet())
         {
             GTUDirectionality dir = next.get(l);
-            // gtu.getSimulator().getLogger().always().info("examining l={}, dir={}", l, dir);
             if (l.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
             {
                 out.add(new LaneDirection(l, dir));
             }
-            else
-            {
-                // gtu.getSimulator().getLogger().always().info("not including lane {} with direction {} because {}", l, dir,
-                //        l.getParentLink().equals(ld.getLink()) ? "direction does not match" : "parent link does not match");
-            }
         }
-        if (out.size() == 0)
-        {
-            // gtu.getSimulator().getLogger().always().warn("Could not find a next segment for {} on route {}", gtu.getId(),
-            //        next.keySet());
-        }
+//        if (out.size() == 0)
+//        {
+//            gtu.getSimulator().getLogger().always().warn(
+//                    "Could not find a next segment for GTU \"{}\" on lane {}, on route {}; LinkDirection is {}, {}",
+//                    gtu.getId(), this.lane, next.keySet(), ld.getLink().getId(), ld.getDirection());
+//            gtu.getSimulator().getLogger().always().warn(gtu.getStrategicalPlanner().getRoute());
+//            for (Lane l : next.keySet())
+//            {
+//                GTUDirectionality dir = next.get(l);
+//                gtu.getSimulator().getLogger().always().info("examining l={}, dir={}", l, dir);
+//                if (!l.getParentLink().equals(ld.getLink()))
+//                {
+//                    gtu.getSimulator().getLogger().always()
+//                            .info("not including lane {} with direction {} because \"parent link does not match\"", l, dir);
+//                }
+//                if (!dir.equals(ld.getDirection()))
+//                {
+//                    gtu.getSimulator().getLogger().always()
+//                            .info("not including lane {} with direction {} because direction does not match", l, dir);
+//                }
+//            }
+//        }
         return out;
     }
 
