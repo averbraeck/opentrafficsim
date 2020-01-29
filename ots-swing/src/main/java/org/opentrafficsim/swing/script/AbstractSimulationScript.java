@@ -58,6 +58,9 @@ import picocli.CommandLine.Option;
 @Command(description = "Test program for CLI", name = "Program", mixinStandardHelpOptions = true, showDefaultValues = true)
 public abstract class AbstractSimulationScript implements EventListenerInterface, Checkable
 {
+    /** */
+    private static final long serialVersionUID = 20200129L;
+
     /** Name. */
     private final String name;
 
@@ -199,7 +202,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     {
         if (isAutorun())
         {
-            this.simulator = new OTSSimulator(getNetwork().getId());
+            this.simulator = new OTSSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
@@ -221,7 +224,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
         else
         {
-            this.simulator = new OTSAnimator(getNetwork().getId());
+            this.simulator = new OTSAnimator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             OTSAnimationPanel animationPanel =
