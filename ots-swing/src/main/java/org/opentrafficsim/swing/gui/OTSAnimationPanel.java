@@ -135,7 +135,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     private boolean autoPanTrack = false;
 
     /** Track auto on the next paintComponent operation; then copy state from autoPanTrack. */
-    private boolean autoPanOnce = false;
+    private boolean autoPanOnNextPaintComponent = false;
 
     /** Initialize the formatter. */
     static
@@ -243,7 +243,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         this.autoPanId = newAutoPanId;
         this.autoPanKind = newAutoPanKind;
         this.autoPanTrack = newAutoPanTrack;
-        this.autoPanOnce = true;
+        this.autoPanOnNextPaintComponent = true;
         // System.out.println("AutoPan id=" + newAutoPanId + ", kind=" + newAutoPanKind + ", track=" + newAutoPanTrack);
         if (null != this.autoPanId && this.autoPanId.length() > 0 && null != this.autoPanKind)
         {
@@ -1011,30 +1011,30 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         {
             final OTSSearchPanel.ObjectKind<?> panKind = OTSAnimationPanel.this.autoPanKind;
             final String panId = OTSAnimationPanel.this.autoPanId;
-            final boolean doPan = OTSAnimationPanel.this.autoPanOnce;
-            // System.out.println("panOnce=" + panOnce + ", autoPanTrack=" + OTSAnimationPanel.this.autoPanTrack);
-            OTSAnimationPanel.this.autoPanOnce = OTSAnimationPanel.this.autoPanTrack;
+            final boolean doPan = OTSAnimationPanel.this.autoPanOnNextPaintComponent;
+            OTSAnimationPanel.this.autoPanOnNextPaintComponent = OTSAnimationPanel.this.autoPanTrack;
             if (doPan && panKind != null && panId != null)
             {
-                try
+                Locatable locatable = panKind.searchNetwork(this.network, panId);
+                if (null != locatable)
                 {
-                    DirectedPoint point = null;
-                    Locatable locatable = panKind.searchNetwork(this.network, panId);
-                    if (null != locatable)
+                    try
                     {
-                        point = locatable.getLocation();
+                        DirectedPoint point = locatable.getLocation();
+                        if (point != null) // Center extent around point
+                        {
+                            double w = this.extent.getWidth();
+                            double h = this.extent.getHeight();
+                            this.extent = new Rectangle2D.Double(point.getX() - w / 2, point.getY() - h / 2, w, h);
+                        }
                     }
-                    if (point != null)
+                    catch (RemoteException exception)
                     {
-                        double w = this.extent.getWidth();
-                        double h = this.extent.getHeight();
-                        this.extent = new Rectangle2D.Double(point.getX() - w / 2, point.getY() - h / 2, w, h);
+                        getSimulator().getLogger().always().warn(
+                                "Caught RemoteException trying to locate {} with id {} in network {}.", panKind, panId,
+                                network.getId());
+                        return;
                     }
-                }
-                catch (RemoteException exception)
-                {
-                    System.err.println("Could not pan to location.");
-                    return;
                 }
             }
             super.paintComponent(g);
