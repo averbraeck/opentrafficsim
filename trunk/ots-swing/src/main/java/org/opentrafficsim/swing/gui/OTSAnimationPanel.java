@@ -32,7 +32,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
@@ -43,9 +42,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.javel.gisbeans.map.MapInterface;
@@ -213,19 +210,6 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         {
             network.addListener(this, Network.GTU_ADD_EVENT);
             network.addListener(this, Network.GTU_REMOVE_EVENT);
-        }
-        // gtu follow
-        /** Text field with appearance control. */
-        class AppearanceTextField extends JTextField implements AppearanceControl
-        {
-            private static final long serialVersionUID = 20180430L;
-
-            /** {@inheritDoc} */
-            @Override
-            public String toString()
-            {
-                return "AppearanceTextField []";
-            }
         }
         // gtu counter
         this.gtuCountField = new JLabel("0 GTU's");

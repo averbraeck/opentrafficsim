@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -440,7 +439,6 @@ public class OTSControlPanel extends JPanel
                     root = root.getParent();
                 }
                 JFrame frame = (JFrame) root;
-                Rectangle rect = frame.getBounds();
                 frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 frame.dispose();
                 OTSControlPanel.this.cleanup();
@@ -475,11 +473,17 @@ public class OTSControlPanel extends JPanel
                     // TODO: change getExperiment().removeFromContext() so it works properly...
                     // Now: ConcurrentModificationException...
                     if (getSimulator().getReplication().getContext().hasKey("animation"))
+                    {
                         getSimulator().getReplication().getContext().destroySubcontext("animation");
+                    }
                     if (getSimulator().getReplication().getContext().hasKey("statistics"))
+                    {
                         getSimulator().getReplication().getContext().destroySubcontext("statistics");
+                    }
                     if (getSimulator().getReplication().getExperiment().getContext().hasKey("statistics"))
+                    {
                         getSimulator().getReplication().getExperiment().getContext().destroySubcontext("statistics");
+                    }
                     getSimulator().getReplication().getExperiment().removeFromContext(); // clean up the context
                     getSimulator().cleanUp();
                 }
