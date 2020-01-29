@@ -107,6 +107,8 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
         this.voluntaryIncentives.addAll(voluntaryIncentives);
         this.accelerationIncentives.addAll(accelerationIncentives);
     }
+    
+    // TODO: use factory instead of constructors
 
     /** {@inheritDoc} */
     @Override

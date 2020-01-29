@@ -60,6 +60,7 @@ public class IncentiveQueue implements VoluntaryIncentive
         IntersectionPerception inter = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
         PerceptionCollectable<HeadwayConflict, Conflict> conflicts = inter.getConflicts(RelativeLane.CURRENT);
         PerceptionCollectable<HeadwayTrafficLight, TrafficLight> lights = inter.getTrafficLights(RelativeLane.CURRENT);
+        // TODO: a ramp-metering traffic light triggers this incentive with possible cooperation from the main line
         if (conflicts.isEmpty() && lights.isEmpty())
         {
             return Desire.ZERO;
@@ -94,5 +95,13 @@ public class IncentiveQueue implements VoluntaryIncentive
         }
         return new Desire(dLeft, dRight);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "IncentiveQueue";
+    }
+
 
 }

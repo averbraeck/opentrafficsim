@@ -19,6 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
+//TODO: rename MentalTaskRegulator as in paper? (also sub-classes)
 public interface TaskManager
 {
     /**
