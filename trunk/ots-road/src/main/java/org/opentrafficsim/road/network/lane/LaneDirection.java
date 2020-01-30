@@ -136,7 +136,8 @@ public class LaneDirection implements Serializable
         }
         // ask tactical planner
         return Try.assign(() -> gtu.getTacticalPlanner().chooseLaneAtSplit(this, set),
-                "Could not find suitable lane at split for GTU %s.", gtu.getId());
+                "Could not find suitable lane at split after lane %s in %s of link %s for GTU %s.", this.lane.getId(),
+                this.direction, this.lane.getParentLink().getId(), gtu.getId());
     }
 
     /**

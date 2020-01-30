@@ -111,7 +111,7 @@ public final class ConflictBuilder
                 }
             }
         }
-        buildConflicts(lanes, gtuType, simulator, widthGenerator, ignoreList, permittedList);
+        buildConflicts(lanes, gtuType, simulator, widthGenerator, ignoreList, permittedList, null);
     }
 
     /**
@@ -126,7 +126,7 @@ public final class ConflictBuilder
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
             throws OTSGeometryException
     {
-        buildConflicts(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
+        buildConflicts(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList(), null);
     }
 
     /**
@@ -137,15 +137,17 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; the width generator
      * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
+     * @param conflictId String; identification of the conflict (null value permitted)
      * @throws OTSGeometryException in case of geometry exception
      */
     public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
-            final LaneCombinationList ignoreList, final LaneCombinationList permittedList) throws OTSGeometryException
+            final LaneCombinationList ignoreList, final LaneCombinationList permittedList, final String conflictId)
+            throws OTSGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
-        simulator.getLogger().always().debug("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
+        simulator.getLogger().always().trace("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
         long lastReported = 0;
         Map<Lane, OTSLine3D> leftEdges = new LinkedHashMap<>();
         Map<Lane, OTSLine3D> rightEdges = new LinkedHashMap<>();
@@ -186,7 +188,7 @@ public final class ConflictBuilder
                         try
                         {
                             buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted, simulator,
-                                    widthGenerator, leftEdges, rightEdges, true);
+                                    widthGenerator, leftEdges, rightEdges, true, conflictId);
                         }
                         catch (NetworkException ne)
                         {
@@ -197,7 +199,7 @@ public final class ConflictBuilder
             }
         }
         simulator.getLogger().always()
-                .debug(String.format(
+                .trace(String.format(
                         "generating conflicts complete (generated %d merge conflicts, %d split "
                                 + "conflicts, %d crossing conflicts)",
                         numberMergeConflicts.get(), numberSplitConflicts.get(), numberCrossConflicts.get()));
@@ -246,7 +248,7 @@ public final class ConflictBuilder
         try
         {
             buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted, simulator, widthGenerator,
-                    new LinkedHashMap<>(), new LinkedHashMap<>(), true);
+                    new LinkedHashMap<>(), new LinkedHashMap<>(), true, null);
         }
         catch (NetworkException ne)
         {
@@ -270,7 +272,8 @@ public final class ConflictBuilder
      * @param widthGenerator WidthGenerator; width generator
      * @param leftEdges Map<Lane, OTSLine3D>; cache of left edge lines
      * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
-     * @param intersectionCheck indicate whether we have to do a countour intersection check still
+     * @param intersectionCheck indicate whether we have to do a contour intersection check still
+     * @param conflictId String; identification of the conflict (may be null)
      * @throws OTSGeometryException in case of geometry exception
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
@@ -280,8 +283,8 @@ public final class ConflictBuilder
             final Lane lane2, final GTUDirectionality dir2, final ImmutableMap<Lane, GTUDirectionality> down2,
             final ImmutableMap<Lane, GTUDirectionality> up2, final GTUType gtuType, final boolean permitted,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
-            final Map<Lane, OTSLine3D> leftEdges, final Map<Lane, OTSLine3D> rightEdges, final boolean intersectionCheck)
-            throws OTSGeometryException, NetworkException
+            final Map<Lane, OTSLine3D> leftEdges, final Map<Lane, OTSLine3D> rightEdges, final boolean intersectionCheck,
+            final String conflictId) throws OTSGeometryException, NetworkException
     {
         // Quick contour check, skip if not overlapping -- Don't repeat if it has taken place
         if (intersectionCheck)
@@ -294,6 +297,7 @@ public final class ConflictBuilder
 
         // TODO: we cache, but the width generator may be different
 
+        String paddedConflictId = null == conflictId ? "" : (" in conflict group " + conflictId);
         // Get left and right lines at specified width
         OTSLine3D left1;
         OTSLine3D right1;
@@ -374,7 +378,7 @@ public final class ConflictBuilder
                     }
                     if (Double.isNaN(fraction1))
                     {
-                        simulator.getLogger().always().warn("Fixing fractions of merge conflict");
+                        simulator.getLogger().always().info("Fixing fractions of merge conflict{}", paddedConflictId);
                         fraction1 = 0;
                         fraction2 = 0;
                     }
@@ -428,7 +432,7 @@ public final class ConflictBuilder
                     }
                     if (Double.isNaN(fraction1))
                     {
-                        simulator.getLogger().always().warn("Fixing fractions of split conflict");
+                        simulator.getLogger().always().info("Fixing fractions of split conflict{}", paddedConflictId);
                         fraction1 = 1;
                         fraction2 = 1;
                     }
@@ -472,7 +476,8 @@ public final class ConflictBuilder
                     }
                     if (Double.isNaN(f1Start) || Double.isNaN(f2Start) || Double.isNaN(f2End))
                     {
-                        simulator.getLogger().always().warn("NOT YET Fixing fractions of crossing conflict");
+                        simulator.getLogger().always().warn("NOT YET Fixing fractions of crossing conflict{}",
+                                paddedConflictId);
                     }
                     buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start, f2End,
                             gtuType, simulator, widthGenerator, permitted);
@@ -1360,8 +1365,9 @@ public final class ConflictBuilder
                 }
             }
             // TODO: make parallel
-            simulator.getLogger().setAllLogLevel(Level.WARNING);
-            buildConflicts(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
+            //simulator.getLogger().setAllLogLevel(Level.WARNING);
+            buildConflicts(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList(),
+                    conflictId);
             simulator.getLogger().setAllLogLevel(Level.DEBUG);
         }
     }
@@ -1412,7 +1418,7 @@ public final class ConflictBuilder
         try
         {
             buildConflicts(cbr.lane1, cbr.dir1, cbr.down1, cbr.up1, cbr.lane2, cbr.dir2, cbr.down2, cbr.up2, cbr.gtuType,
-                    cbr.permitted, cbr.simulator, cbr.widthGenerator, cbr.leftEdges, cbr.rightEdges, false);
+                    cbr.permitted, cbr.simulator, cbr.widthGenerator, cbr.leftEdges, cbr.rightEdges, false, null);
         }
         catch (NetworkException | OTSGeometryException ne)
         {
@@ -1566,7 +1572,7 @@ public final class ConflictBuilder
                         {
                             buildConflicts(this.cbr.lane1, this.cbr.dir1, this.cbr.down1, this.cbr.up1, lane2, dir2, down2, up2,
                                     this.cbr.gtuType, permitted, this.cbr.simulator, this.cbr.widthGenerator,
-                                    this.cbr.leftEdges, this.cbr.rightEdges, false);
+                                    this.cbr.leftEdges, this.cbr.rightEdges, false, null);
                         }
                         catch (NetworkException | OTSGeometryException ne)
                         {

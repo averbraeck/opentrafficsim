@@ -150,7 +150,9 @@ public final class DefinitionsParser
                     CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
                 }
                 else
+                {
                     CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LinkType {}", linkTag.getID());
+                }
 
                 linkTypeSpeedLimitMap.put(networkLinkType, new LinkedHashMap<>());
                 for (SPEEDLIMIT speedLimitTag : linkTag.getSPEEDLIMIT())
