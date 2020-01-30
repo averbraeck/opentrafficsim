@@ -302,7 +302,7 @@ public final class XmlNetworkLaneParser implements Serializable
         // conflicts
         if (buildConflicts)
         {
-            System.out.println("\nGENERATING CONFLICTS");
+            simulator.getLogger().always().info("Generating conflicts");
             Map<String, Set<Link>> conflictCandidateMap = new LinkedHashMap<String, Set<Link>>();
             for (Object o : network.getIncludeOrNODEOrCONNECTOR())
             {
@@ -319,7 +319,7 @@ public final class XmlNetworkLaneParser implements Serializable
                     }
                 }
             }
-            System.out.println("MAP SIZE OF CONFLICT CANDIDATE REGIONS = " + conflictCandidateMap.size());
+            simulator.getLogger().always().info("Map size of conflict candidate regions = {}", conflictCandidateMap.size());
 
             if (conflictCandidateMap.size() == 0)
             {
@@ -332,7 +332,7 @@ public final class XmlNetworkLaneParser implements Serializable
                         otsNetwork.getGtuType(GTUType.DEFAULTS.VEHICLE), simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
             }
-            System.out.println("OBJECTMAP.SIZE  = " + otsNetwork.getObjectMap().size());
+            simulator.getLogger().always().info("Object map size = {}", otsNetwork.getObjectMap().size());
         }
 
         // The code below can be used to visualize the LaneStructure of a particular GTU
