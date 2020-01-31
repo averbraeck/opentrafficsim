@@ -164,6 +164,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         if (!this.route.contains(nextNode))
         {
             link.getSimulator().getLogger().always().warn("nextNode {} is not in route {}", nextNode, this.route);
+            Node prevNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getStartNode() : link.getEndNode();
+            link.getSimulator().getLogger().always().warn("   other node of link is {}", prevNode);
+            int index = 0;
+            for (Node node : this.route.getNodes())
+            {
+                link.getSimulator().getLogger().always().warn("{} {}{}", index, node.equals(prevNode) ? "--->" : "    ", node);
+                index++;
+            }
         }
         return nextLinkDirection(nextNode, link, gtuType);
     }
@@ -348,8 +356,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     {
         if (this.route == null && this.destination != null && !this.routeGenerator.equals(RouteGeneratorOD.NULL))
         {
-            DirectedLanePosition ref = Try.assign(() -> getGtu().getReferencePosition(),
-                "Could not retrieve GTU reference position.");
+            DirectedLanePosition ref =
+                    Try.assign(() -> getGtu().getReferencePosition(), "Could not retrieve GTU reference position.");
             List<Node> nodes = new ArrayList<>();
             if (this.origin != null)
             {
@@ -360,19 +368,19 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             {
                 nodes.add(ref.getLinkDirection().getNodeFrom());
             }
-            nodes.addAll(this.routeGenerator.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType)
-                .getNodes());
-            // LinkDirection ld = ref.getLinkDirection();
-            // Node n = ld.getNodeTo();
-            // Route r = this.routeSupplier.getRoute(n, this.destination, gtuType);
-            // Route testRoute = this.routeGenerator.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType);
-            // if (null == testRoute)
-            // {
-            // // TODO do something sensible
-            // System.err.println("route is null!");
-            // return;
-            // }
-            // nodes.addAll(route.getNodes());
+            Route newRoute = this.routeGenerator.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType);
+            if (null == newRoute)
+            {
+                System.err.println("this.routeGenerator.getRoute() returned null");
+                throw new RuntimeException("getRoute failed");
+            }
+            List<Node> newNodes = newRoute.getNodes();
+            if (newNodes == null)
+            {
+                System.err.println("Route.getNodes() returned null");
+                newRoute.getNodes();
+            }
+            nodes.addAll(newNodes);
             this.route = Try.assign(() -> new CompleteRoute("Route for " + gtuType + " from " + this.origin + "to "
                 + this.destination + " via " + ref.getLinkDirection(), gtuType, nodes), "No route possible over nodes %s",
                 nodes);
