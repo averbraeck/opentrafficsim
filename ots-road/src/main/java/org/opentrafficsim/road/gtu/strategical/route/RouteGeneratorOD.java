@@ -12,6 +12,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -87,6 +88,7 @@ public interface RouteGeneratorOD
             double cumulWeight = 0.0;
             List<Double> weights = new ArrayList<>();
             Map<Link, Double> links = new LinkedHashMap<>();
+            boolean directLinkExists = false;
             for (Link link : destination.getLinks())
             {
                 GTUDirectionality direction =
@@ -94,16 +96,67 @@ public interface RouteGeneratorOD
                 if (link.getLinkType().isConnector() && link.getDirectionality(gtuType).permits(direction)
                         && link instanceof CrossSectionLink && ((CrossSectionLink) link).getDemandWeight() != null)
                 {
-                    Double weight = ((CrossSectionLink) link).getDemandWeight();
-                    weights.add(weight);
-                    links.put(link, weight);
-                    cumulWeight += weight;
+                    // Verify there is a route from origin to this link
+                    List<Node> testViaNode = new ArrayList<>();
+                    Node linkEntryNode = direction.isPlus() ? link.getStartNode() : link.getEndNode();
+                    testViaNode.add(linkEntryNode);
+                    try
+                    {
+                        if (origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes) != null)
+                        {
+                            Double weight = ((CrossSectionLink) link).getDemandWeight();
+                            weights.add(weight);
+                            links.put(link, weight);
+                            cumulWeight += weight;
+                        }
+                        else
+                        {
+                            System.out.println("No route from origin to link; NOT including link " + link);
+                        }
+                    }
+                    catch (NetworkException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                if (link.getDirectionality(gtuType).permits(direction)
+                        && (link.getStartNode().equals(origin) || link.getEndNode().equals(origin)))
+                {
+                    directLinkExists = true;
                 }
             }
-            if (cumulWeight > 0.0)
+            if (cumulWeight > 0.0 && links.size() > 1 && (!directLinkExists))
             {
+                System.out.println("Need to select access point to destination from " + links.size() + " options:");
+                for (Link link : links.keySet())
+                {
+                    System.out.println(" " + link);
+                }
                 Link via = Draw.drawWeighted(links, this.stream);
-                viaNodes.add(via.getStartNode().equals(destination) ? via.getEndNode() : via.getStartNode());
+                // System.out.println("selected via " + via);
+                if (via.getEndNode().equals(destination))
+                {
+                    // System.out
+                    // .println("using start node to force use of randomly selected access point to destination centroid");
+                    viaNodes.add(via.getStartNode());
+                }
+                else if (via.getStartNode().equals(destination))
+                {
+                    // System.out.println("using end node to force use of randomly selected access point to destination
+                    // centroid");
+                    viaNodes.add(via.getEndNode());
+                }
+                else
+                {
+                    // System.out.println("using end node (could also have used start node) to force use of randomly "
+                    // + "selected access point to destination centroid");
+                    viaNodes.add(via.getEndNode());
+                }
+                if (viaNodes.size() > 0 && viaNodes.get(0).getId().startsWith("Centroid "))
+                {
+                    System.out.println("oops:   via node is a centroid");
+                }
+                System.out.println("Selected via node(s) " + viaNodes);
             }
             // XXX make silent, as the higher level method should draw another destination if the route does not exist 
             return this.shortestRouteCache.getValue(
