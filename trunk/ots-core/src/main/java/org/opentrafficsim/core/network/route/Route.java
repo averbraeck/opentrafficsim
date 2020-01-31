@@ -100,8 +100,11 @@ public class Route implements Serializable, Identifiable
             else if ((!normalLinkFound) && index > 0 && index < this.nodes.size() - 2)
             {
                 CategoryLogger.always()
-                        .error(String.format("Route includes connector along the way (from %s (index %d of %d) to %s)", from,
-                                index, this.nodes.size(), to));
+                        .error(String.format(
+                                "Route (from node %s to node %s) includes connector along the way (index %d; node %s and %d; "
+                                        + "node %s of %d)",
+                                this.nodes.get(0).getId(), this.nodes.get(this.nodes.size() - 1).getId(), index, from,
+                                index + 1, to, this.nodes.size()));
             }
         }
     }
