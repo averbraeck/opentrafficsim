@@ -126,7 +126,7 @@ public class LaneDirection implements Serializable
         {
             return set.iterator().next();
         }
-        // check of the GTU is registered on any
+        // check if the GTU is registered on any
         for (LaneDirection l : set)
         {
             if (l.getLane().getGtuList().contains(gtu))
