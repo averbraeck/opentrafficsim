@@ -746,7 +746,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia) throws NetworkException
     {
-        return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH);
+        return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH_NO_CONNECTORS);
     }
 
     /** {@inheritDoc} */
@@ -775,11 +775,11 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
                 // dijkstra.getPath(from, to);
                 return null;
             }
-            // System.out.println("Path:");
-            // for (LinkEdge<Link> link : path.getEdgeList())
-            // {
-            // System.out.println(" " + link);
-            // }
+//            System.out.println("Dijkstra generated path:");
+//            for (LinkEdge<Link> link : path.getEdgeList())
+//            {
+//                System.out.println((link.getLink().getLinkType().isConnector() ? "CONNECTOR " : "          ") + link);
+//            }
             for (LinkEdge<Link> linkEdge : path.getEdgeList())
             {
                 if (linkEdge.getLink().getEndNode().equals(route.destinationNode()))
