@@ -45,9 +45,10 @@ public class ExtendedCrossSectionLink extends CrossSectionLink
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public ExtendedCrossSectionLink(final RoadNetwork network, final String id, final OTSRoadNode startNode, final OTSRoadNode endNode,
-            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
-            final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
+    @SuppressWarnings("checkstyle:parameternumber")
+    public ExtendedCrossSectionLink(final RoadNetwork network, final String id, final OTSRoadNode startNode,
+            final OTSRoadNode endNode, final LinkType linkType, final OTSLine3D designLine,
+            final OTSSimulatorInterface simulator, final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, simulator, laneKeepingPolicy);
     }

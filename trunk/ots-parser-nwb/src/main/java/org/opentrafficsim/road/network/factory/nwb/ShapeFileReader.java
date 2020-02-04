@@ -45,12 +45,12 @@ public class ShapeFileReader
 
     /**
      * Find the last date, no later than the specified <code>date</code> for which there is a sub directory.
-     * @param date int; date encoded as an 8-digit number (YYYYMMDD)
+     * @param ultimateDate int; date encoded as an 8-digit number (YYYYMMDD)
      * @param dir File; directory to scan for sub-directories that have 8-digit numerical names
      * @return int; the 8-digit number that identifies the best matching sub directory
      * @throws FileNotFoundException when no suitable sub directory exists
      */
-    public int findBestDate(final int date, final File dir) throws FileNotFoundException
+    public int findBestDate(final int ultimateDate, final File dir) throws FileNotFoundException
     {
         int bestDate = 0;
         for (File file : dir.listFiles())
@@ -62,7 +62,7 @@ public class ShapeFileReader
             try
             {
                 int dirDate = Integer.parseInt(file.getName());
-                if (dirDate > bestDate && dirDate <= date)
+                if (dirDate > bestDate && dirDate <= ultimateDate)
                 {
                     bestDate = dirDate;
                 }

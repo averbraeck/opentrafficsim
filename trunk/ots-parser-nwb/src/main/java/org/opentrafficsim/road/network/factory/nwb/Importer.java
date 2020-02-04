@@ -63,7 +63,7 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
      * @param animationPanel animation panel
      * @throws OTSDrawingException when animation panel cannot be drawn
      */
-    public Importer(OTSModelInterface model, OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public Importer(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
     }
@@ -100,7 +100,7 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
             int collected = 0;
 
             @Override
-            public Long qualify(Feature feature)
+            public Long qualify(final Feature feature)
             {
                 if (++count % 100000 == 0)
                 {
@@ -142,7 +142,7 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
             {
 
                 @Override
-                public Long qualify(Feature feature)
+                public Long qualify(final Feature feature)
                 {
                     Long wvkId = (Long) feature.getProperty("WVK_ID").getValue();
                     return roadData.containsKey(wvkId) ? wvkId : null;
@@ -191,7 +191,7 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
             for (OTSPoint3D p : designLine.getPoints())
             {
                 String nodeName = String.format("Node%d", ++nextNodeNumber);
-                Direction direction ;
+                Direction direction;
                 if (null == startNode)
                 {
                     OTSPoint3D nextPoint = designLine.getPoints()[1];
@@ -280,7 +280,8 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
          * @param shortName String; concise name
          * @param description String; descriptive name
          */
-        public NWBModel(OTSSimulatorInterface simulator, OTSRoadNetwork network, String shortName, String description)
+        NWBModel(final OTSSimulatorInterface simulator, final OTSRoadNetwork network, final String shortName,
+                final String description)
         {
             super(simulator, shortName, description);
             this.network = network;
