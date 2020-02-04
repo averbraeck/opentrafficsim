@@ -782,10 +782,6 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 //            }
             for (LinkEdge<Link> linkEdge : path.getEdgeList())
             {
-                if (linkEdge.getLink().getEndNode().equals(route.destinationNode()))
-                {
-                    System.out.println("Let op");
-                }
                 if (!linkEdge.getLink().getEndNode().equals(route.destinationNode())
                         && route.destinationNode().isDirectionallyConnectedTo(gtuType, linkEdge.getLink().getEndNode()))
                 {

@@ -28,7 +28,7 @@ public final class Test3
      */
     public static void main(final String[] args) throws OTSGeometryException
     {
-        OTSOffsetLinePK.debugOffsetLine = true;
+        OTSOffsetLinePK.setDebugOffsetLine(true);
         OTSLine3D referenceLine = new OTSLine3D(new OTSPoint3D(-10.000, -10.000, 0.000), new OTSPoint3D(0.000, -10.000, 0.000),
                 new OTSPoint3D(0.900, -9.960, 0.000), new OTSPoint3D(1.700, -9.800, 0.000),
                 new OTSPoint3D(2.600, -9.700, 0.000), new OTSPoint3D(3.400, -9.400, 0.000),

@@ -22,22 +22,22 @@ public final class OTSOffsetLinePK
     }
 
     /** Debugging flag. */
-    static boolean debugOffsetLine = false;
+    private static boolean debugOffsetLine = false;
 
     /** Precision of approximation of arcs in the offsetLine method. */
-    static double circlePrecision = 0.001;
+    private static double circlePrecision = 0.001;
 
     /** Noise in the reference line less than this value is always filtered. */
-    static double offsetMinimumFilterValue = 0.001;
+    private static double offsetMinimumFilterValue = 0.001;
 
     /** Noise in the reference line greater than this value is never filtered. */
-    static double offsetMaximumFilterValue = 0.1;
+    private static double offsetMaximumFilterValue = 0.1;
 
     /**
      * Noise in the reference line less than <cite>offset / offsetFilterRatio</cite> is filtered except when the resulting value
      * exceeds <cite>offsetMaximumFilterValue</cite>.
      */
-    static double offsetFilterRatio = 10;
+    private static double offsetFilterRatio = 10;
 
     /**
      * Construct an offset line.
@@ -47,6 +47,7 @@ public final class OTSOffsetLinePK
      * @return OTSLine3D; a line at the specified offset from the reference line
      * @throws OTSGeometryException when this method runs into major trouble and cannot produce a decent result
      */
+    @SuppressWarnings("checkstyle:methodlength")
     public static OTSLine3D offsetLine(final OTSLine3D referenceLine, final double offset) throws OTSGeometryException
     {
         // if (referenceLine.size() > 1 && referenceLine.getFirst().horizontalDistanceSI(new OTSPoint3D(-200.376, -111.999)) <
