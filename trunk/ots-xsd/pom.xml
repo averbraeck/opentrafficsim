@@ -56,7 +56,8 @@
           <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
           <markGenerated>true</markGenerated>
           <cleanPackageDirectories>true</cleanPackageDirectories>
-          <scanDependenciesForBindings>true</scanDependenciesForBindings>
+          <!--  Next one appears to fix Peter's mojo problem  -->
+          <scanDependenciesForBindings>false</scanDependenciesForBindings>
           <strict>false</strict>
           <specVersion>2.3</specVersion>
           <verbose>true</verbose>
