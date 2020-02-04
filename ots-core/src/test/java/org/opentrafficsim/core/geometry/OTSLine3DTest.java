@@ -633,7 +633,7 @@ public class OTSLine3DTest
                     }
                     pointsOnTestLine.add(end);
                     OTSLine3D testLine = new OTSLine3D(pointsOnTestLine);
-                    OTSLine3D filteredLine = testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
+                    OTSLine3D filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, useHorizontalDistance);
                     assertEquals("RamerDouglasPeuker filter should have removed all intermediate points", 2,
                             filteredLine.size());
                     // Now add a couple of points that should not be removed and will not cause the current start and end point
@@ -644,7 +644,7 @@ public class OTSLine3DTest
                     // This filter does not find optimal solutions in many cases. Only case where one serious (really far)
                     // "outlier" is added on only one end work most of the time.
                     testLine = new OTSLine3D(pointsOnTestLine);
-                    filteredLine = testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
+                    filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, useHorizontalDistance);
                     // if (3 != filteredLine.size())
                     // {
                     // testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
@@ -655,7 +655,7 @@ public class OTSLine3DTest
                             new OTSPoint3D(end.x + 10 * tolerance * dy / length, end.y - 10 * tolerance * dx / length, end.z);
                     pointsOnTestLine.add(newEnd);
                     testLine = new OTSLine3D(pointsOnTestLine);
-                    filteredLine = testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
+                    filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, useHorizontalDistance);
                     // if (3 != filteredLine.size())
                     // {
                     // testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
@@ -1205,6 +1205,57 @@ public class OTSLine3DTest
                 from);
         assertEquals("Line truncated at intermediate point ends at that intermediate point", 0,
                 truncatedLine.get(1).distanceSI(intermediatePoint), 0.0001);
+    }
+
+    /**
+     * Test the getRadius method.
+     * @throws OTSGeometryException when that happens uncaught; this test has failed
+     */
+    @Test
+    public void testRadius() throws OTSGeometryException
+    {
+        // Single segment line is always straight
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(10, 20, 30), new OTSPoint3D(20, 30, 30) });
+        Length radius = line.getProjectedRadius(0.5);
+        assertTrue("should be NaN", Double.isNaN(radius.getSI()));
+        // Two segment line that is perfectly straight
+        line = new OTSLine3D(
+                new OTSPoint3D[] { new OTSPoint3D(10, 20, 30), new OTSPoint3D(20, 30, 30), new OTSPoint3D(30, 40, 30) });
+        radius = line.getProjectedRadius(0.5);
+        assertTrue("should be NaN", Double.isNaN(radius.getSI()));
+        // Two segment line that is not straight
+        line = new OTSLine3D(
+                new OTSPoint3D[] { new OTSPoint3D(10, 30, 30), new OTSPoint3D(20, 30, 30), new OTSPoint3D(30, 40, 30) });
+        // for a 2-segment OTSLine3D, the result should be independent of the fraction
+        for (int step = 0; step <= 10; step++)
+        {
+            double fraction = step / 10.0;
+            radius = line.getProjectedRadius(fraction);
+            assertEquals("radius should be about 12", 12, radius.si, 0.1);
+        }
+        System.out.println("radius is " + radius);
+        // Now a bit harder
+        line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(10, 30, 30), new OTSPoint3D(20, 30, 30),
+                new OTSPoint3D(30, 40, 30), new OTSPoint3D(30, 30, 30) });
+        System.out.println(line.toPlot());
+        double boundary = 1 / (2 + Math.sqrt(2));
+        double length = line.getLengthSI();
+        for (int percentage = 0; percentage <= 100; percentage++)
+        {
+            double fraction = percentage / 100.0;
+            double radiusAtFraction = line.getProjectedRadius(fraction).si;
+            OTSPoint3D pointAtFraction = new OTSPoint3D(line.getLocationSI(fraction * length));
+            // System.out.println(
+            // "At fraction " + fraction + " (point " + pointAtFraction + "), radius at fraction " + radiusAtFraction);
+            if (fraction < boundary)
+            {
+                assertEquals("in first segment radius should be about 12", 12, radiusAtFraction, 0.1);
+            }
+            else
+            {
+                assertEquals("in other segments radius shoudl be about -2", -2, radiusAtFraction, 0.1);
+            }
+        }
     }
 
 }

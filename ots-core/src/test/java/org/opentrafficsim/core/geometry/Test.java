@@ -636,7 +636,7 @@ public final class Test
                     return OTSOffsetLinePK.offsetLine(referenceLine, offset);
 
                 case JTS:
-                    return OTSBufferingJTS.offsetGeometryOLD(referenceLine, offset);
+                    return OTSBufferingJTS.offsetLine(referenceLine, offset);
 
                 default:
                     return null;

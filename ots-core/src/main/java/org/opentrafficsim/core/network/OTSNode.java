@@ -104,27 +104,22 @@ public class OTSNode implements Node, Locatable, Serializable
         return this.network;
     }
 
-    /**
-     * @return node id.
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.id;
     }
 
-    /**
-     * @return point.
-     */
+    /** {@inheritDoc} */
     @Override
     public final OTSPoint3D getPoint()
     {
         return this.point;
     }
 
-    /**
-     * @return heading.
-     */
+    /** {@inheritDoc} */
+    @Override
     public double getHeading()
     {
         return this.heading;

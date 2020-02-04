@@ -38,6 +38,9 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class OTSLinkTest implements EventListenerInterface
 {
+    /** ... */
+    private static final long serialVersionUID = 1L;
+
     /** Count GTU_ADD events. */
     private int gtuAddedCount = 0;
 
