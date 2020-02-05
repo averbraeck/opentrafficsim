@@ -341,6 +341,14 @@ public class ParameterSet implements Parameters, Serializable
         {
             super(Double.NaN, DimensionlessUnit.SI);
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "Empty []";
+        }
+        
     }
 
 }
