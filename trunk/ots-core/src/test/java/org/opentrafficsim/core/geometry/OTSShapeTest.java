@@ -112,8 +112,8 @@ public class OTSShapeTest
         assertTrue("toString result contains class name", s.toString().contains("OTSShape"));
         path.closePath();
         OTSShape s2 = new OTSShape(path);
-        System.out.println("s:  " + s);
-        System.out.println("s2: " + s2);
+        // System.out.println("s:  " + s);
+        // System.out.println("s2: " + s2);
         assertNotEquals("shape from closed path is not equal to shape from unclosed path", s, s2);
         assertEquals("Size of shape from closed path is one longer than size of shape from unclosed path", s.size() + 1,
                 s2.size());
