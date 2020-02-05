@@ -120,9 +120,14 @@ public class VerifyRequiredMethods
         {
             if (Serializable.class.isAssignableFrom(c))
             {
-                if (c.isEnum())
+                if (c.getSuperclass().isEnum())
                 {
-                    // System.out.println("Class " + c.getName() + " is an enum and (by inheritance) implements Serializable");
+                    System.out.println("Class " + c.getName()
+                            + " is an anonymous extention of an enum and (by inheritance) implements Serializable");
+                }
+                else if (c.isEnum())
+                {
+                    System.out.println("Class " + c.getName() + " is an enum and (by inheritance) implements Serializable");
                 }
                 else if (!ClassList.hasNonStaticFields(c))
                 {
