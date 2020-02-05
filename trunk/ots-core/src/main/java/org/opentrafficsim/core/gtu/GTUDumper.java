@@ -81,4 +81,12 @@ public class GTUDumper
         simulator.scheduleEventAbs(firstDumpTime, this, this, "dump", new Object[] {});
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "GTUDumper [interval=" + interval + ", network=" + network + ", fileNamePrefix=" + fileNamePrefix
+                + ", simulator=" + simulator + "]";
+    }
+
 }
