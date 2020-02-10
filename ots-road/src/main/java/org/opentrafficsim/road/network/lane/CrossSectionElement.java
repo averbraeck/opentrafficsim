@@ -262,7 +262,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             double radius = 1.0;
             try
             {
-                radius = linkCenterLine.getVertexRadius(i).si;
+                radius = linkCenterLine.getProjectedVertexRadius(i).si;
             }
             catch (Exception e)
             {
