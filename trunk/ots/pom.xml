@@ -69,12 +69,12 @@
 
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
-    <tinylog.version>1.3.5</tinylog.version>
+    <tinylog.version>1.3.6</tinylog.version>
     <ots.version>${project.version}</ots.version>
     <djunits.version>4.01.05</djunits.version>
     <djutils.version>1.04.09</djutils.version>
-    <dsol.version>3.04.01</dsol.version>
-    <sim0mq.version>2.00.01</sim0mq.version>
+    <dsol.version>3.04.02</dsol.version>
+    <sim0mq.version>2.00.02</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <geotools.version>20.2</geotools.version>
