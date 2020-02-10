@@ -161,7 +161,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     {
         assureRoute(gtuType);
         Node nextNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
-        if (!this.route.contains(nextNode))
+        if ((null != this.route) && (!this.route.contains(nextNode)))
         {
             link.getSimulator().getLogger().always().warn("nextNode {} is not in route {}", nextNode, this.route);
             Node prevNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getStartNode() : link.getEndNode();
