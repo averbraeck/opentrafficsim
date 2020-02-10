@@ -1,0 +1,482 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
+
+  <xsd:include schemaLocation="ots-definitions.xsd" />
+
+  <!-- ================================================================================================== -->
+  <!-- ================================================ NETWORK ========================================= -->
+  <!-- ================================================================================================== -->
+
+  <!-- The node name is the only key used as an ID, to allow for easy route and intermediate point definition  -->
+
+  <xsd:element name="NODE">
+    <xsd:complexType>
+      <xsd:attribute name="ID" type="xsd:ID" use="required" />
+      <xsd:attribute name="COORDINATE" type="COORDINATETYPE" use="optional" />
+      <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="optional" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LINK">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice>
+          <xsd:element name="BEZIER" />
+          <xsd:element name="CLOTHOID">
+            <xsd:complexType>
+              <xsd:attribute name="STARTDIRECTION" type="DIRECTIONTYPE" use="optional" />
+              <xsd:attribute name="STARTCURVATURE" type="PERLENGTHTYPE" use="required" />
+              <xsd:attribute name="ENDCURVATURE" type="PERLENGTHTYPE" use="required" />
+              <xsd:attribute name="LENGTH" type="POSITIVELENGTHTYPE" use="optional" />
+              <xsd:attribute name="ENDELEVATION" type="POSITIVELENGTHTYPE" use="optional" />
+              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="STRAIGHT">
+            <xsd:complexType>
+              <xsd:attribute name="LENGTH" type="POSITIVELENGTHTYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="ARC">
+            <xsd:complexType>
+              <xsd:attribute name="RADIUS" type="POSITIVELENGTHTYPE" use="required" />
+              <xsd:attribute name="DIRECTION" type="LEFTRIGHTTYPE" use="required" />
+              <xsd:attribute name="ANGLE" type="ANGLETYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="POLYLINE">
+            <xsd:complexType>
+              <xsd:attribute name="LENGTH" type="POSITIVELENGTHTYPE" use="optional" />
+              <xsd:attribute name="INTERMEDIATEPOINTS" type="COORDINATELISTTYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+
+        <xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="1" />
+
+        <xsd:sequence>
+          <xsd:choice minOccurs="0" maxOccurs="unbounded">
+
+            <xsd:element name="LANEOVERRIDE" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required" />
+                <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
+                <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
+                <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
+                <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
+              </xsd:complexType>
+            </xsd:element>
+
+            <!-- TODO EITHER GTU or GTUMIX should be present... -->
+            <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+            <xsd:element name="GENERATOR" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required" />
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
+                <xsd:attribute name="GTU" type="xsd:string" use="optional" />
+                <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
+                <xsd:attribute name="TACTICALPLANNER" type="TACTICALPLANNERTYPE" use="optional" />
+                <xsd:attribute name="IAT" type="TIMEDISTTYPE" use="required" />
+                <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
+                <xsd:attribute name="MAXGTU" type="xsd:double" use="optional" />
+                <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional" />
+                <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional" />
+                <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
+                <xsd:attribute name="ROUTEMIX" type="xsd:string" use="optional" />
+                <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+
+            <!-- TODO EITHER GTU or GTUMIX should be present... -->
+            <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+            <xsd:element name="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="URI" type="xsd:anyURI" use="required" />
+                <xsd:attribute name="LANE" type="xsd:string" use="required" />
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
+                <xsd:attribute name="GTU" type="xsd:string" use="optional" />
+                <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
+                <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
+                <xsd:attribute name="ROUTE" type="xsd:string" use="required" />
+                <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+
+            <!-- TODO EITHER GTU or GTUGROUP should be present... -->
+            <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+            <xsd:element name="FILL" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required" />
+                <xsd:attribute name="GTU" type="xsd:string" use="optional" />
+                <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
+                <xsd:attribute name="DISTANCE" type="LENGTHDISTTYPE" use="required" />
+                <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
+                <xsd:attribute name="MAXGTU" type="xsd:double" use="optional" />
+                <xsd:attribute name="ROUTE" type="xsd:string" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="BLOCK" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required" />
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SENSOR" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="ID" type="xsd:string" use="optional" />
+                <xsd:attribute name="LANE" type="xsd:string" use="required" />
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
+                <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required" />
+                <xsd:attribute name="TRIGGER" type="GTUPOSITIONTYPE" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="TRAFFICLIGHT" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="ID" type="xsd:string" use="optional" />
+                <xsd:attribute name="LANE" type="xsd:string" use="required" />
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
+                <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SINK" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required" />
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:choice>
+        </xsd:sequence>
+      </xsd:sequence>
+
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="NODESTART" type="xsd:IDREF" use="required" />
+      <xsd:attribute name="NODEEND" type="xsd:IDREF" use="required" />
+      <xsd:attribute name="ROADLAYOUT" type="xsd:string" use="optional" />
+      <xsd:attribute name="OFFSETSTART" type="LENGTHTYPE" use="optional" />
+      <xsd:attribute name="OFFSETEND" type="LENGTHTYPE" use="optional" />
+      <xsd:attribute name="ROTATIONSTART" type="DIRECTIONTYPE" use="optional" />
+      <xsd:attribute name="ROTATIONEND" type="DIRECTIONTYPE" use="optional" />
+      <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
+      <xsd:attribute name="PRIORITY" type="PRIORITYTYPE" use="optional" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="ROUTE">
+    <xsd:complexType>
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="NODELIST" type="xsd:IDREFS" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="SHORTESTROUTE">
+    <xsd:complexType>
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute name="FROM" type="xsd:IDREF" use="required" />
+      <xsd:attribute name="TO" type="xsd:IDREF" use="required" />
+      <xsd:attribute name="VIA" type="xsd:IDREFS" use="optional" />
+      <xsd:attribute name="DISTANCECOST" type="DISTANCECOSTTYPE" use="required" />
+      <xsd:attribute name="TIMECOST" type="TIMECOSTTYPE" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="ROUTEMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="ROUTE" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="SHORTESTROUTEMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="SHORTESTROUTE" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="ID" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="NETWORK">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+          <xsd:element ref="DEFINITIONS" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="NODE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="LINK" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="SHORTESTROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+    
+    <!-- define the DEFINITIONS.GTUTYPE.NAME key -->
+
+    <xsd:key name="gtuTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:GTUTYPE" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the DEFINITIONS.GTUMIX.NAME key -->
+
+    <xsd:key name="gtuMixKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:GTUMIX" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the DEFINITIONS.GTU.NAME key -->
+
+    <xsd:key name="gtuKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:GTU" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the DEFINITIONS.ROADLAYOUT.NAME key -->
+
+    <xsd:key name="roadLayoutKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADLAYOUT" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the DEFINITIONS.ROADTYPE.NAME key -->
+
+    <xsd:key name="roadTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADTYPE" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the DEFINITIONS.LANETYPE.NAME key -->
+
+    <xsd:key name="laneTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:LANETYPE" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the NODE.NAME key -->
+
+    <xsd:key name="nodeKey">
+      <xsd:selector xpath="ots:NODE" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the LINK.NAME key -->
+
+    <xsd:key name="linkKey">
+      <xsd:selector xpath="ots:LINK" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the ROUTE.NAME key -->
+
+    <xsd:key name="routeKey">
+      <xsd:selector xpath="ots:ROUTE" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the ROUTEMIX.NAME key -->
+
+    <xsd:key name="routeMixKey">
+      <xsd:selector xpath="ots:ROUTEMIX" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the SHORTESTROUTE.NAME key -->
+
+    <xsd:key name="shortestRouteKey">
+      <xsd:selector xpath="ots:SHORTESTROUTE" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+    <!-- define the SHORTESTROUTEMIX.NAME key -->
+
+    <xsd:key name="shortestRouteMixKey">
+      <xsd:selector xpath="ots:SHORTESTROUTEMIX" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
+
+
+    <!-- DEFINITIONS.GTU.GTUTYPE defined by DEFINITIONS.GTUTYPE.NAME -->
+
+    <xsd:keyref name="gtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:GTU" />
+      <xsd:field xpath="@GTUTYPE" />
+    </xsd:keyref>
+    
+    <!-- DEFINITIONS.GTUMIX.GTU.NAME defined by DEFINITIONS.GTU.NAME -->
+
+    <xsd:keyref name="gtuMixGtuRef" refer="ots:gtuKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:GTUMIX/ots:GTU" />
+      <xsd:field xpath="@NAME" />
+    </xsd:keyref>
+
+    <!-- DEFINITIONS.ROADTYPE.SPEEDLIMITS.GTUTYPE defined by DEFINITIONS.GTUTYPE.NAME -->
+
+    <xsd:keyref name="roadTypeGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADTYPE/ots:SPEEDLIMITS" />
+      <xsd:field xpath="@GTUTYPE" />
+    </xsd:keyref>
+
+    <!-- DEFINITIONS.LANETYPE.GTUTYPE.NAME defined by DEFINITIONS.GTUTYPE.NAME -->
+
+    <xsd:keyref name="laneTypeGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:LANETYPE/ots:GTUTYPE" />
+      <xsd:field xpath="@NAME" />
+    </xsd:keyref>
+    
+    <!-- DEFINITIONS.ROADLAYOUT.ROADTYPE defined by DEFINITIONS.ROADTYPE.NAME -->
+
+    <xsd:keyref name="roadLayoutRoadTypeRef" refer="ots:roadTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADLAYOUT" />
+      <xsd:field xpath="@ROADTYPE" />
+    </xsd:keyref>
+
+    <!-- DEFINITIONS.ROADLAYOUT.LANE.LANETYPE defined by DEFINITIONS.LANETYPE.NAME -->
+
+    <xsd:keyref name="RoadLayoutLanelaneTypeRef" refer="ots:laneTypeKey">
+      <xsd:selector xpath="ots:DEFINITIONS/ots:ROADLAYOUT/ots:LANE" />
+      <xsd:field xpath="@LANETYPE" />
+    </xsd:keyref>
+
+    <!-- LINK.NODESTART defined by NODE.NAME -->
+
+    <xsd:keyref name="linkNodeStartNodeRef" refer="ots:nodeKey">
+      <xsd:selector xpath="ots:LINK" />
+      <xsd:field xpath="@NODESTART" />
+    </xsd:keyref>
+
+    <!-- LINK.NODEEND defined by NODE.NAME -->
+
+    <xsd:keyref name="linkNodeEndNodeRef" refer="ots:nodeKey">
+      <xsd:selector xpath="ots:LINK" />
+      <xsd:field xpath="@NODEEND" />
+    </xsd:keyref>
+    
+    <!-- LINK.GENERATOR.GTU defined by DEFINITIONS.GTU.NAME -->
+
+    <xsd:keyref name="linkGeneratorGtuRef" refer="ots:gtuKey">
+      <xsd:selector xpath="ots:LINK/ots:GENERATOR" />
+      <xsd:field xpath="@GTU" />
+    </xsd:keyref>
+    
+    <!-- LINK.GENERATOR.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
+
+    <xsd:keyref name="linkGeneratorGtuMixRef" refer="ots:gtuMixKey">
+      <xsd:selector xpath="ots:LINK/ots:GENERATOR" />
+      <xsd:field xpath="@GTUMIX" />
+    </xsd:keyref>
+
+    <!-- LINK.GENERATOR.ROUTE defined by ROUTE.NAME -->
+
+    <xsd:keyref name="linkGeneratorRouteRef" refer="ots:routeKey">
+      <xsd:selector xpath="ots:LINK/ots:GENERATOR" />
+      <xsd:field xpath="@ROUTE" />
+    </xsd:keyref>
+    
+    <!-- LINK.LISTGENERATOR.GTU defined by DEFINITIONS.GTU.NAME -->
+
+    <xsd:keyref name="linkListGeneratorGtuRef" refer="ots:gtuKey">
+      <xsd:selector xpath="ots:LINK/ots:LISTGENERATOR" />
+      <xsd:field xpath="@GTU" />
+    </xsd:keyref>
+    
+    <!-- LINK.LISTGENERATOR.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
+
+    <xsd:keyref name="linkListGeneratorGtuMixRef" refer="ots:gtuMixKey">
+      <xsd:selector xpath="ots:LINK/ots:LISTGENERATOR" />
+      <xsd:field xpath="@GTUMIX" />
+    </xsd:keyref>
+
+    <!-- LINK.FILL.GTU defined by DEFINITIONS.GTU.NAME -->
+
+    <xsd:keyref name="linkFillGtuRef" refer="ots:gtuKey">
+      <xsd:selector xpath="ots:LINK/ots:FILL" />
+      <xsd:field xpath="@GTU" />
+    </xsd:keyref>
+    
+    <!-- LINK.LISTGENERATOR.ROUTE defined by ROUTE.NAME -->
+
+    <xsd:keyref name="linkListGeneratorRouteRef" refer="ots:routeKey">
+      <xsd:selector xpath="ots:LINK/ots:LISTGENERATOR" />
+      <xsd:field xpath="@ROUTE" />
+    </xsd:keyref>
+    
+    <!-- LINK.FILL.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
+
+    <xsd:keyref name="linkFillGtuMixRef" refer="ots:gtuMixKey">
+      <xsd:selector xpath="ots:LINK/ots:FILL" />
+      <xsd:field xpath="@GTUMIX" />
+    </xsd:keyref>
+
+    <!-- LINK.FILL.ROUTE defined by ROUTE.NAME -->
+
+    <xsd:keyref name="linkFillRouteRef" refer="ots:routeKey">
+      <xsd:selector xpath="ots:LINK/ots:FILL" />
+      <xsd:field xpath="@ROUTE" />
+    </xsd:keyref>
+    
+    <!-- LINK.ROADTYPE defined by DEFINITIONS.ROADTYPE.NAME -->
+
+    <xsd:keyref name="linkRoadTypeRef" refer="ots:roadTypeKey">
+      <xsd:selector xpath="ots:LINK" />
+      <xsd:field xpath="@ROADTYPE" />
+    </xsd:keyref>
+
+    <!-- SHORTESTROUTE.FROM defined by NODE.NAME -->
+
+    <xsd:keyref name="shortestRouteFromNodeRef" refer="ots:nodeKey">
+      <xsd:selector xpath="ots:SHORTESTROUTE" />
+      <xsd:field xpath="@FROM" />
+    </xsd:keyref>
+
+    <!-- SHORTESTROUTE.TO defined by NODE.NAME -->
+
+    <xsd:keyref name="shortestRouteToNodeRef" refer="ots:nodeKey">
+      <xsd:selector xpath="ots:SHORTESTROUTE" />
+      <xsd:field xpath="@TO" />
+    </xsd:keyref>
+
+    <!-- ROUTEMIX.ROUTE defined by ROUTE.NAME -->
+
+    <xsd:keyref name="RouteMixRouteRef" refer="ots:routeKey">
+      <xsd:selector xpath="ots:ROUTEMIX" />
+      <xsd:field xpath="@ROUTE" />
+    </xsd:keyref>
+
+    <!-- SHORTESTROUTEMIX.SHORTESTROUTE defined by SHORTESTROUTE.NAME -->
+
+    <xsd:keyref name="shortestRouteMixShortestRouteRef" refer="ots:shortestRouteKey">
+      <xsd:selector xpath="ots:SHORTESTROUTEMIX" />
+      <xsd:field xpath="@SHORTESTROUTE" />
+    </xsd:keyref>
+
+  </xsd:element>
+
+</xsd:schema>
