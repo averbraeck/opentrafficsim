@@ -17,18 +17,18 @@ public final class FractionalHelper
     {
         // Do not instantiate
     }
-    
+
     /**
-     * 
      * Test/development code for the fractional helper stuff.
      * @param args String[]; the command line arguments (not used)
      * @throws OTSGeometryException in case of error
      * @throws SecurityException ...
-     * @throws NoSuchFieldException  ...
-     * @throws IllegalAccessException  ...
-     * @throws IllegalArgumentException  ...
+     * @throws NoSuchFieldException ...
+     * @throws IllegalAccessException ...
+     * @throws IllegalArgumentException ...
      */
-    public static void main(final String[] args) throws OTSGeometryException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException
+    public static void main(final String[] args) throws OTSGeometryException, IllegalArgumentException, IllegalAccessException,
+            NoSuchFieldException, SecurityException
     {
         /*-
         OTSLine3D line = new OTSLine3D(new OTSPoint3D(-263.811, -86.551, 1.180), new OTSPoint3D(-262.945, -84.450, 1.180),
@@ -41,8 +41,8 @@ public final class FractionalHelper
         double[] offsets = new double[] { 2.9779999256134, 4.6029999256134, 3.886839156071996, 2.3664845198627207,
                 1.7858981925396709, 1.472348149010167, 2.0416709053157285, 2.798692100483229 };
         System.out.println(line.offsetLine(relativeFractions, offsets).toExcel());         
-    */
-        
+        */
+
         List<OTSPoint3D> list = new ArrayList<>();
         boolean laneOn933 = true;
         if (!laneOn933)
@@ -186,7 +186,7 @@ public final class FractionalHelper
 
     /**
      * Dirty hack.
-     * @param line
+     * @param line OTSLine3D; the line
      * @return OTSPoine3D[]
      * @throws IllegalArgumentException ...
      * @throws IllegalAccessException ...
@@ -200,5 +200,5 @@ public final class FractionalHelper
         fhcArray.setAccessible(true);
         return (OTSPoint3D[]) fhcArray.get(line);
     }
-    
+
 }
