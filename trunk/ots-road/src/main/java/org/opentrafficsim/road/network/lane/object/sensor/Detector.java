@@ -416,10 +416,7 @@ public class Detector extends AbstractSensor
         {
             accumulate(measurement, gtu, true);
         }
-        if (this.listeners.containsKey(DETECTOR_TRIGGERED))
-        {
-            this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] { gtu }, getSimulator().getSimulatorTime());
-        }
+        this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] { gtu }, getSimulator().getSimulatorTime());
     }
 
     /**
@@ -455,7 +452,7 @@ public class Detector extends AbstractSensor
             this.cumulDataMap.put(measurement, measurement.identity());
         }
         this.periodCount = 0;
-        if (this.listeners.containsKey(DETECTOR_AGGREGATE))
+        if (!getListenerReferences(DETECTOR_AGGREGATE).isEmpty())
         {
             Object[] data = new Object[this.dataMap.size() + 1];
             data[0] = frequency;

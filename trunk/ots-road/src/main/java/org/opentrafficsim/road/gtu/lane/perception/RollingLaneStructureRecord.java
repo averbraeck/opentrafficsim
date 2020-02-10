@@ -9,10 +9,10 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -41,8 +41,8 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /** Cache of allows route information. */
     // TODO clear on network change, with an event listener?
-    private static NestedCache<Boolean> allowsRouteCache =
-            new NestedCache<>(Lane.class, Route.class, GTUType.class, Boolean.class);
+    private static MultiKeyMap<Boolean> allowsRouteCache =
+            new MultiKeyMap<>(Lane.class, Route.class, GTUType.class, Boolean.class);
 
     /** The lane of the LSR. */
     private final Lane lane;
@@ -286,7 +286,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
      */
     private boolean allowsRoute(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
     {
-        return allowsRouteCache.getValue(() -> Try.assign(() -> allowsRoute0(route, gtuType, end), "no destination"), this.lane,
+        return allowsRouteCache.get(() -> Try.assign(() -> allowsRoute0(route, gtuType, end), "no destination"), this.lane,
                 route, gtuType, end);
     }
 

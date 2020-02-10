@@ -7,9 +7,9 @@ import java.util.Map;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -66,7 +66,7 @@ public interface RouteGeneratorOD
     class DefaultRouteGenerator implements RouteGeneratorOD
     {
         /** Shortest route cache. */
-        private NestedCache<Route> shortestRouteCache = new NestedCache<>(GTUType.class, Node.class, Node.class, List.class);
+        private MultiKeyMap<Route> shortestRouteCache = new MultiKeyMap<>(GTUType.class, Node.class, Node.class, List.class);
 
         /** Stream of random numbers. */
         private final StreamInterface stream;
@@ -159,7 +159,7 @@ public interface RouteGeneratorOD
                 System.out.println("Selected via node(s) " + viaNodes);
             }
             // XXX make silent, as the higher level method should draw another destination if the route does not exist 
-            return this.shortestRouteCache.getValue(
+            return this.shortestRouteCache.get(
                     () -> Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes),
                             "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes),
                     gtuType, origin, destination, viaNodes);

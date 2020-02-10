@@ -26,10 +26,10 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
@@ -85,8 +85,8 @@ public class XmlOdParser implements Serializable
     Interpolation globalInterpolation;
 
     /** Demand. */
-    NestedCache<Set<DemandTag>> demand =
-            new NestedCache<>(org.opentrafficsim.core.network.Node.class, org.opentrafficsim.core.network.Node.class);
+    MultiKeyMap<Set<DemandTag>> demand =
+            new MultiKeyMap<>(org.opentrafficsim.core.network.Node.class, org.opentrafficsim.core.network.Node.class);
 
     /**
      * Constructor.
@@ -324,7 +324,7 @@ public class XmlOdParser implements Serializable
         for (Object oKey : this.demand.getKeys())
         {
             origins.add((org.opentrafficsim.core.network.Node) oKey);
-            for (Object dKey : this.demand.getChild(oKey).getKeys())
+            for (Object dKey : this.demand.getKeys(oKey))
             {
                 if (!destinations.contains(dKey))
                 {
@@ -340,7 +340,7 @@ public class XmlOdParser implements Serializable
         {
             for (org.opentrafficsim.core.network.Node destination : destinations)
             {
-                Set<DemandTag> set = this.demand.getValue(() -> new LinkedHashSet<>(), origin, destination);
+                Set<DemandTag> set = this.demand.get(() -> new LinkedHashSet<>(), origin, destination);
                 if (!set.isEmpty())
                 {
                     // add demand
