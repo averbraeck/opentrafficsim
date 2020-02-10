@@ -26,11 +26,11 @@ import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -143,16 +143,16 @@ public class Lane extends CrossSectionElement implements Serializable
      * the link (and the direction of the center line of the lane). In terms of offsets, 'left' lanes always have a more
      * positive offset than the current lane. Initially empty so we can calculate and cache the first time the method is called.
      */
-    private final NestedCache<Set<Lane>> leftNeighbours =
-            new NestedCache<>(GTUType.class, GTUDirectionality.class, Boolean.class);
+    private final MultiKeyMap<Set<Lane>> leftNeighbours =
+            new MultiKeyMap<>(GTUType.class, GTUDirectionality.class, Boolean.class);
 
     /**
      * Adjacent right lanes that some GTU types can change onto. Right is defined relative to the direction of the design line
      * of the link (and the direction of the center line of the lane). In terms of offsets, 'right' lanes always have a more
      * negative offset than the current lane. Initially empty so we can calculate and cache the first time the method is called.
      */
-    private final NestedCache<Set<Lane>> rightNeighbours =
-            new NestedCache<>(GTUType.class, GTUDirectionality.class, Boolean.class);
+    private final MultiKeyMap<Set<Lane>> rightNeighbours =
+            new MultiKeyMap<>(GTUType.class, GTUDirectionality.class, Boolean.class);
 
     /**
      * Next lane(s) following this lane that some GTU types can drive from or onto. Next is defined in the direction of the
@@ -170,15 +170,15 @@ public class Lane extends CrossSectionElement implements Serializable
      * Downstream lane(s) following this lane that some GTU types can drive onto given the direction. Initially empty so we can
      * calculate and cache the first time the method is called.
      */
-    private NestedCache<ImmutableMap<Lane, GTUDirectionality>> downLanes =
-            new NestedCache<>(GTUType.class, GTUDirectionality.class);
+    private MultiKeyMap<ImmutableMap<Lane, GTUDirectionality>> downLanes =
+            new MultiKeyMap<>(GTUType.class, GTUDirectionality.class);
 
     /**
      * Previous lane(s) preceding this lane that some GTU types can drive from given the direction. Initially empty so we can
      * calculate and cache the first time the method is called.
      */
-    private NestedCache<ImmutableMap<Lane, GTUDirectionality>> upLanes =
-            new NestedCache<>(GTUType.class, GTUDirectionality.class);
+    private MultiKeyMap<ImmutableMap<Lane, GTUDirectionality>> upLanes =
+            new MultiKeyMap<>(GTUType.class, GTUDirectionality.class);
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
@@ -463,8 +463,8 @@ public class Lane extends CrossSectionElement implements Serializable
     private Set<Lane> neighbors(final LateralDirectionality direction, final GTUType gtuType,
             final GTUDirectionality drivingDirection, final boolean legal)
     {
-        NestedCache<Set<Lane>> cache = direction.isLeft() ? this.leftNeighbours : this.rightNeighbours;
-        return cache.getValue(() ->
+        MultiKeyMap<Set<Lane>> cache = direction.isLeft() ? this.leftNeighbours : this.rightNeighbours;
+        return cache.get(() ->
         {
             Set<Lane> lanes = new LinkedHashSet<>(1);
             for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -1496,7 +1496,7 @@ public class Lane extends CrossSectionElement implements Serializable
     public final synchronized ImmutableMap<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction,
             final GTUType gtuType)
     {
-        return this.downLanes.getValue(() ->
+        return this.downLanes.get(() ->
         {
             Map<Lane, GTUDirectionality> downMap =
                     new LinkedHashMap<>(direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType)); // safe copy
@@ -1525,7 +1525,7 @@ public class Lane extends CrossSectionElement implements Serializable
     public final synchronized ImmutableMap<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction,
             final GTUType gtuType)
     {
-        return this.upLanes.getValue(() ->
+        return this.upLanes.get(() ->
         {
             Map<Lane, GTUDirectionality> upMap =
                     new LinkedHashMap<>(direction.isPlus() ? prevLanes(gtuType) : nextLanes(gtuType)); // safe copy

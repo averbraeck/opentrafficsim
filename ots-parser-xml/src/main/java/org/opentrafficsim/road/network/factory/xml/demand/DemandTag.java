@@ -191,7 +191,7 @@ public class DemandTag implements Serializable
                         "Unexpected exception while converting list of time values to an array.");
             }
 
-            parser.demand.getValue(() -> new LinkedHashSet<>(), tag.origin, tag.destination).add(tag);
+            parser.demand.get(() -> new LinkedHashSet<>(), tag.origin, tag.destination).add(tag);
         }
     }
 

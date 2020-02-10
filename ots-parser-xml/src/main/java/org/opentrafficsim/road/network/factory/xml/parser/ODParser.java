@@ -24,12 +24,12 @@ import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
+import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
@@ -265,19 +265,19 @@ public final class ODParser
                         new ODMatrix(id, origins, destinations, categorization, globalTimeVector, globalInterpolation);
 
                 // Add demand
-                NestedCache<Set<DEMAND>> demandPerOD = new NestedCache<>(Node.class, Node.class);
+                MultiKeyMap<Set<DEMAND>> demandPerOD = new MultiKeyMap<>(Node.class, Node.class);
                 for (DEMAND demand : od.getDEMAND())
                 {
                     Node origin = otsNetwork.getNode(demand.getORIGIN());
                     Node destination = otsNetwork.getNode(demand.getDESTINATION());
-                    demandPerOD.getValue(() -> new LinkedHashSet<>(), origin, destination).add(demand);
+                    demandPerOD.get(() -> new LinkedHashSet<>(), origin, destination).add(demand);
                 }
                 for (Object o : demandPerOD.getKeys())
                 {
-                    NestedCache<Set<DEMAND>> demandPerD = demandPerOD.getChild(o);
+                    MultiKeyMap<Set<DEMAND>> demandPerD = demandPerOD.getSubMap(o);
                     for (Object d : demandPerD.getKeys())
                     {
-                        Set<DEMAND> set = demandPerD.getValue(d);
+                        Set<DEMAND> set = demandPerD.get(d);
                         Node origin = (Node) o;
                         Node destination = (Node) d;
                         Throw.when(categorization.equals(Categorization.UNCATEGORIZED) && set.size() > 1,
