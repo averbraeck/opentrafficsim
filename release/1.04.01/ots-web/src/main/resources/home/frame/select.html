@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Control panel for DSOL simulation</title>
+<script src="/js/jquery-3.3.1.js"></script>
+<!-- 
+
+----------------- JAVASCRIPT --------------
+
+ -->
+<script>
+var alertShown = false;
+var queryString;
+
+function postToggle(message) {
+  var content = {
+    "message" : message
+  };
+  jQuery.post({
+    url : "select.html" + queryString,
+    type : 'POST',
+    dataType : 'text',
+    data : content,
+    success : function(ret) {
+      // ok
+    },
+    error : function(data, status, er) {
+      if (!alertShown) {
+        alert("error: " + data + " status: " + status + " er:" + er);
+        alertShown = true;
+      }
+      console.log("error: " + data + " status: " + status + " er:" + er);
+    }
+  });
+};
+
+function postRequestToggles() {
+  var content = {
+    "message" : "getToggles"
+  };
+  jQuery.post({
+    url : "select.html" + queryString,
+    type : 'POST',
+    dataType : 'text',
+    data : content,
+    success : function(ret) {
+      makeToggles(ret);
+    },
+    error : function(data, status, er) {
+      if (!alertShown) {
+        alert("error: " + data + " status: " + status + " er:" + er);
+        alertShown = true;
+      }
+      console.log("error: " + data + " status: " + status + " er:" + er);
+    }
+  });
+};
+
+function askToggles()
+{
+  queryString = window.parent.parent.location.search;
+  postRequestToggles();
+}
+
+function toggle(buttonText)
+{
+  var button = document.getElementById(buttonText)
+  if (button.getAttribute("buttonType") === "gis") {
+    postToggle("toggle|" + button.getAttribute("layer") + "|gis|" + button.checked);
+  }
+  else {
+    postToggle("toggle|" + buttonText + "|class|" + button.checked);    
+  }
+}
+
+/* we expect lines with <text>name</text> or <class>name,visible</class> or <gis>layerName,visible</gis>. */
+function makeToggles(data)
+{
+  $(data).children().each(function() {
+    var tagName = this.tagName;
+    var content = $(this).text();
+    if (tagName.toUpperCase() === "TEXT") {
+      addText(content);
+    }
+    else if (tagName.toUpperCase() === "CLASS") {
+      var parts = content.split(",");
+      addClassToggle(parts[0], parts[1]);
+    }
+    else if (tagName.toUpperCase() === "GIS") {
+      var parts = content.split(",");
+      addGisToggle(parts[0], parts[1], parts[2]);
+    }
+  });
+}
+
+function addText(name)
+{
+  var textNode = document.createElement("b");
+  var text = document.createTextNode(name);
+  textNode.appendChild(text);
+  document.getElementById("togglePane").appendChild(textNode);
+  var brNode = document.createElement("br");
+  document.getElementById("togglePane").appendChild(brNode);
+}
+
+function addClassToggle(name, visible)
+{
+  var inputNode = document.createElement("input");
+  inputNode.setAttribute("id", name);
+  inputNode.setAttribute("type", "checkbox");
+  inputNode.setAttribute("buttonType", "class");
+  inputNode.setAttribute("onchange", "toggle('" + name + "')");
+  inputNode.checked = visible === "true";
+  document.getElementById("togglePane").appendChild(inputNode);
+  var textNode = document.createElement("b");
+  var text = document.createTextNode(name);
+  textNode.appendChild(text);
+  document.getElementById("togglePane").appendChild(textNode);
+  var brNode = document.createElement("br");
+  document.getElementById("togglePane").appendChild(brNode);
+}
+
+function addGisToggle(name, layer, visible)
+{
+  var inputNode = document.createElement("input");
+  inputNode.setAttribute("id", name);
+  inputNode.setAttribute("type", "checkbox");
+  inputNode.setAttribute("buttonType", "gis");
+  inputNode.setAttribute("layer", layer);
+  inputNode.checked = visible === "true";
+  inputNode.setAttribute("onchange", "toggle('" + name + "')");
+  document.getElementById("togglePane").appendChild(inputNode);
+  var textNode = document.createElement("b");
+  var text = document.createTextNode(name);
+  textNode.appendChild(text);
+  document.getElementById("togglePane").appendChild(textNode);
+  var brNode = document.createElement("br");
+  document.getElementById("togglePane").appendChild(brNode);
+}
+
+</script>
+<!-- 
+
+----------------- CSS --------------
+
+ -->
+<style type="text/css">
+</style>
+</head>
+<!-- 
+
+----------------- HTML --------------
+
+ -->
+<body bgcolor="#BBBBBB" onload="askToggles()" style="margin: 4px; border: 0px; border-spacing: 0px; padding: 0px; overflow: hidden;">
+  <p id="togglePane" style="font-family: verdana; font-size: 12px">
+    <!-- will be filled with dynamic info -->
+  </p>
+</body>
+</html>
