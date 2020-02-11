@@ -197,7 +197,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
                 ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
                         getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList,
                         permittedList);
-                new GTUDumper(simulator, Time.ZERO, Duration.instantiateSI(60), network, "C:/Temp/loadxml");
+                // new GTUDumper(simulator, Time.ZERO, Duration.instantiateSI(60), network, "C:/Temp/loadxml");
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GTUException exception)
