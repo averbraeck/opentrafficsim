@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -48,16 +49,16 @@ public class GTUDumper
             e.printStackTrace();
         }
     }
-    
+
     /** Interval time between dumps. */
     private final Duration interval;
-    
+
     /** The network with the GTUs to dump. */
     private final OTSNetwork network;
-    
+
     /** Directory and first part of the file names. */
     private final String fileNamePrefix;
-    
+
     /** The simulator. */
     private final OTSSimulatorInterface simulator;
 
@@ -74,6 +75,14 @@ public class GTUDumper
     public GTUDumper(final OTSSimulatorInterface simulator, final Time firstDumpTime, final Duration interval,
             final OTSNetwork network, final String fileNamePrefix) throws SimRuntimeException
     {
+        Throw.whenNull(simulator, "Simulator may not be null");
+        Throw.whenNull(firstDumpTime, "firstDumpTime may not be null");
+        Throw.when(firstDumpTime.lt(simulator.getSimulatorTime()), RuntimeException.class,
+                "firstDumptTime may not be before current simulator time");
+        Throw.whenNull(interval, "interval may not be null");
+        Throw.when(interval.le(Duration.ZERO), RuntimeException.class, "Duration must be positive");
+        Throw.whenNull(network, "Network may not be null");
+        Throw.whenNull(fileNamePrefix, "fileNamePrefix may not be null");
         this.simulator = simulator;
         this.interval = interval;
         this.network = network;
