@@ -84,7 +84,36 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
         } };
         this.typeToSearch = new JComboBox<ObjectKind<?>>(objectKinds);
         this.add(this.typeToSearch);
-        this.idTextField = new JTextField("");
+        
+        /** Text field with appearance control. */
+        class AppearanceControlTextField extends JTextField implements AppearanceControl
+        {
+            /** */
+            private static final long serialVersionUID = 20180207L;
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isForeground()
+            {
+                return false;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isBackground()
+            {
+                return false;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public String toString()
+            {
+                return "AppearanceControlLabel []";
+            }
+        }
+        
+        this.idTextField = new AppearanceControlTextField();
         this.idTextField.setPreferredSize(new Dimension(100, 0));
         this.add(this.idTextField);
         this.trackObject = new JCheckBox("track");
