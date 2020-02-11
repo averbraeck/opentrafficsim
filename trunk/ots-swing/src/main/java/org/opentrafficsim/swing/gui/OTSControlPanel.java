@@ -189,7 +189,7 @@ public class OTSControlPanel extends JPanel
      */
     public OTSSearchPanel getOtsSearchPanel()
     {
-        return otsSearchPanel;
+        return this.otsSearchPanel;
     }
 
     /**
