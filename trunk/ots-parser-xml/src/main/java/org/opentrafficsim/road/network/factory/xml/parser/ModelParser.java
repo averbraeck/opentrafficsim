@@ -178,6 +178,7 @@ public class ModelParser
         {
             // Parameter factory
             ParameterFactoryByType paramFactory = new ParameterFactoryByType();
+            map.put(model.getID(), paramFactory);
             // set model parameters
             if (model.getMODELPARAMETERS() != null)
             {
