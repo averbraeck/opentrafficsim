@@ -3,6 +3,7 @@ package org.opentrafficsim.core.math;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.djutils.exceptions.Throw;
 
@@ -41,9 +42,9 @@ public final class Draw
         Throw.whenNull(stream, "Stream may not be null.");
         Throw.when(map.isEmpty(), IllegalArgumentException.class, "Map may not be empty.");
         double sumProb = 0.0;
-        for (E e : map.keySet())
+        for (Entry<E, ? extends Double> e : map.entrySet())
         {
-            double w = map.get(e);
+            double w = e.getValue();
             Throw.when(w < 0.0, IllegalArgumentException.class, "Probabilities should be at least 0.0.");
             sumProb += w;
         }
@@ -56,15 +57,15 @@ public final class Draw
         double r = stream.nextDouble() * sumProb;
         sumProb = 0.0;
         E last = null;
-        for (E e : map.keySet())
+        for (Entry<E, ? extends Double> e : map.entrySet())
         {
-            double f = map.get(e);
+            double f = e.getValue();
             if (sumProb <= r && r <= sumProb + f)
             {
-                return e;
+                return e.getKey();
             }
             sumProb += f;
-            last = e;
+            last = e.getKey();
         }
         return last; // rounding error
     }
