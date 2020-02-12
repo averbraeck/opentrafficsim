@@ -60,7 +60,11 @@ public final class Draw
         for (Entry<E, ? extends Double> e : map.entrySet())
         {
             double f = e.getValue();
-            if (sumProb <= r && r <= sumProb + f)
+            if (f == 0)
+            {
+                continue; // do not assign the key of this one to last
+            }
+            if (r <= sumProb + f)
             {
                 return e.getKey();
             }
