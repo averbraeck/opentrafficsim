@@ -129,10 +129,6 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("Node " + node + " already registered in network " + this.id);
         }
-        if (this.nodeMap.keySet().contains(node.getId()))
-        {
-            throw new NetworkException("Node with name " + node.getId() + " already registered in network " + this.id);
-        }
         this.nodeMap.put(node.getId(), node);
         fireEvent(Network.NODE_ADD_EVENT, node.getId());
         fireEvent(Network.ANIMATION_NODE_ADD_EVENT, node);
