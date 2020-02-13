@@ -106,7 +106,7 @@ public final class OTSNetworkUtils
             }
         }
 
-        // clone the LinkTypes
+        // clone the LinkTypes TODO LinkType should clone itself!
         for (LinkType linkType : network.getLinkTypes().values())
         {
             if (linkType.getParent() != null)
