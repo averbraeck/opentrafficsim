@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.djutils.exceptions.Try;
@@ -49,23 +50,31 @@ public class GTUTypeTest
         OTSNetwork network = new OTSNetwork("network", true);
         StreamInterface randomStream = new MersenneTwister();
         GTUType car = network.getGtuType(DEFAULTS.CAR);
+        String message = "Exception while deriving default GTU characteristics";
         GTUCharacteristics characteristicsCar1 = Try.assign(() -> GTUType.defaultCharacteristics(car, network, randomStream),
-            "Exception while deriving default GTU characteristics");
+            message);
         GTUCharacteristics characteristicsCar2 = Try.assign(() -> GTUType.defaultCharacteristics(car, network, randomStream),
-            "Exception while deriving default GTU characteristics");
+            message);
         GTUType spaceCar = new GTUType("spaceCar", car);
         GTUCharacteristics characteristicsSpaceCar1 = Try.assign(() -> GTUType.defaultCharacteristics(spaceCar, network,
-            randomStream), "Exception while deriving default GTU characteristics");
+            randomStream), message);
         GTUCharacteristics characteristicsSpaceCar2 = Try.assign(() -> GTUType.defaultCharacteristics(spaceCar, network,
-            randomStream), "Exception while deriving default GTU characteristics");
+            randomStream), message);
+        GTUType truck = network.getGtuType(DEFAULTS.TRUCK);
+        GTUCharacteristics characteristicsTruck = Try.assign(() -> GTUType.defaultCharacteristics(truck, network,
+            randomStream), message);
 
         // Note: we can only compare characteristics that we know are not distributed for the used GTU type CAR.
-        String message = "Default characteristics of DEFAULTS and derived GTUType should be equal.";
+        message = "Default characteristics of DEFAULTS and derived GTUType should be equal.";
         assertEquals(message, characteristicsCar1.getLength(), characteristicsCar2.getLength());
         assertEquals(message, characteristicsCar1.getLength(), characteristicsSpaceCar1.getLength());
         assertEquals(message, characteristicsCar1.getLength(), characteristicsSpaceCar2.getLength());
         assertEquals(message, characteristicsCar1.getWidth(), characteristicsCar2.getWidth());
         assertEquals(message, characteristicsCar1.getWidth(), characteristicsSpaceCar1.getWidth());
         assertEquals(message, characteristicsCar1.getWidth(), characteristicsSpaceCar2.getWidth());
+        
+        message = "Default characteristics of distinct DEFAULTS GTUType should not be equal.";
+        assertNotEquals(message, characteristicsCar1.getLength(), characteristicsTruck.getLength());
+        assertNotEquals(message, characteristicsCar1.getWidth(), characteristicsTruck.getWidth());
     }
 }
