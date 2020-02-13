@@ -119,7 +119,8 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     }
 
     /**
-     * @return the gtu compatibility for this LinkType
+     * This method won't work correctly in a ReverseLinkType; it should only be used to clone a network; nowhere else.
+     * @return GTUCompatibility&lt;LinkType&gt;; the GTU compatibility for this LinkType
      */
     public GTUCompatibility<LinkType> getCompatibility()
     {
@@ -197,7 +198,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
+    public LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
     {
         return this.compatibility.getDirectionality(gtuType, tryParentsOfGTUType);
     }
@@ -229,9 +230,16 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
          */
         ReversedLinkType(final LinkType original)
         {
-            super(original.getId() + "_rev", original.getParent().reverse(), new GTUCompatibility<>((LinkType) null),
-                    original.getNetwork());
+            super(original.getId() + "_rev", null == original.getParent() ? null : original.getParent().reverse(),
+                    new GTUCompatibility<>((LinkType) null), original.getNetwork());
             this.original = original;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
+        {
+            return super.compatibility.getDirectionality(gtuType, tryParentsOfGTUType).invert();
         }
 
         /** {@inheritDoc} */
