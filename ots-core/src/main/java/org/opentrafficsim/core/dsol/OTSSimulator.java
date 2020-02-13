@@ -46,10 +46,7 @@ public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSim
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model) throws SimRuntimeException, NamingException
     {
-        setPauseOnError(true);
-        OTSReplication newReplication =
-                OTSReplication.create("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, model);
-        super.initialize(newReplication, ReplicationMode.TERMINATING);
+        initialize(startTime, warmupPeriod, runLength, model, ++this.lastReplication);
     }
 
     /** {@inheritDoc} */
@@ -67,8 +64,9 @@ public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSim
     public final SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<SimTimeDoubleUnit> result = new SimEvent<>(
-                new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source, target, method, args);
+        SimEvent<SimTimeDoubleUnit> result =
+                new SimEvent<>(new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source,
+                        target, method, args);
         scheduleEvent(result);
         return result;
     }
