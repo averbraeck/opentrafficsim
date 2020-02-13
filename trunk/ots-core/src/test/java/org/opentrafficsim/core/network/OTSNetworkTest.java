@@ -99,6 +99,8 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("other event count is 0", 0, this.otherEventCount);
         assertEquals("Node map now contains one node", 1, network.getNodeMap().size());
         assertEquals("Node is node1", node1, network.getNodeMap().values().iterator().next());
+        assertEquals("Raw node map also contains one node", 1, network.getRawNodeMap().size());
+        assertEquals("Raw node map also contains node1", node1, network.getRawNodeMap().values().iterator().next());
         assertEquals("Node can be retrieved by id", node1, network.getNode(node1.getId()));
         assertTrue("network contains a node with id node1", network.containsNode("node1"));
         // Create a node that is NOT in this network; to do that we must create another network
