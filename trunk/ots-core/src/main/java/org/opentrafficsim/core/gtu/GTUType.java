@@ -128,7 +128,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     private final Network network;
 
     /** Templates for GTU characteristics within a network. */
-    private static final Map<Network, Map<DEFAULTS, TemplateGTUType>> DEFAULT_TEMPLATES = new LinkedHashMap<>();
+    private static final Map<Network, Map<GTUType, TemplateGTUType>> DEFAULT_TEMPLATES = new LinkedHashMap<>();
 
     /**
      * @param id String; The id of the GTUType to make it identifiable.
@@ -171,9 +171,9 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         }
         return false;
     }
-    
+
     /**
-     * Whether this equals the given type. 
+     * Whether this equals the given type.
      * @param type DEFAULTS; type
      * @return whether this equals the given type
      */
@@ -193,66 +193,65 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     public static GTUCharacteristics defaultCharacteristics(final GTUType gtuType, final Network network,
             final StreamInterface randomStream) throws GTUException
     {
-        Map<DEFAULTS, TemplateGTUType> map = DEFAULT_TEMPLATES.get(network);
+        Map<GTUType, TemplateGTUType> map = DEFAULT_TEMPLATES.get(network);
         if (map == null)
         {
             map = new LinkedHashMap<>();
             DEFAULT_TEMPLATES.put(network, map);
         }
         TemplateGTUType template = null;
-        if (map.containsKey(gtuType))
-        {
-            template = map.get(gtuType);
-        }
         GTUType type = gtuType;
-        DEFAULTS defaultType = null;
+        boolean store = false;
         while (template == null)
         {
-            if (type.equals(network.getGtuType(DEFAULTS.CAR)))
+            if (map.containsKey(type))
             {
-                // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-                template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(4.19)),
-                        new ConstantGenerator<>(Length.instantiateSI(1.7)),
-                        new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
-                defaultType = DEFAULTS.CAR;
-            }
-            else if (type.equals(network.getGtuType(DEFAULTS.TRUCK)))
-            {
-                // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-                template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
-                        new ConstantGenerator<>(Length.instantiateSI(2.55)),
-                        new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
-                defaultType = DEFAULTS.TRUCK;
-            }
-            else if (type.equals(network.getGtuType(DEFAULTS.BUS)))
-            {
-                template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
-                        new ConstantGenerator<>(Length.instantiateSI(2.55)),
-                        new ConstantGenerator<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
-                defaultType = DEFAULTS.BUS;
-            }
-            else if (type.equals(network.getGtuType(DEFAULTS.VAN)))
-            {
-                template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
-                        new ConstantGenerator<>(Length.instantiateSI(2.4)),
-                        new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
-                defaultType = DEFAULTS.VAN;
-            }
-            else if (type.equals(network.getGtuType(DEFAULTS.EMERGENCY_VEHICLE)))
-            {
-                template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
-                        new ConstantGenerator<>(Length.instantiateSI(2.55)),
-                        new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
-                defaultType = DEFAULTS.EMERGENCY_VEHICLE;
+                template = map.get(type);
             }
             else
             {
-                type = type.getParent();
-                Throw.whenNull(type, "GTUType %s is not of any types with default characteristics.", gtuType);
+                store = true;
+                if (type.equals(network.getGtuType(DEFAULTS.CAR)))
+                {
+                    // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
+                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(4.19)),
+                        new ConstantGenerator<>(Length.instantiateSI(1.7)), new ConstantGenerator<>(new Speed(180,
+                            SpeedUnit.KM_PER_HOUR)));
+                }
+                else if (type.equals(network.getGtuType(DEFAULTS.TRUCK)))
+                {
+                    // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
+                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
+                        new ConstantGenerator<>(Length.instantiateSI(2.55)), new ContinuousDistSpeed(new DistNormal(
+                            randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
+                }
+                else if (type.equals(network.getGtuType(DEFAULTS.BUS)))
+                {
+                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
+                        new ConstantGenerator<>(Length.instantiateSI(2.55)), new ConstantGenerator<>(new Speed(90,
+                            SpeedUnit.KM_PER_HOUR)));
+                }
+                else if (type.equals(network.getGtuType(DEFAULTS.VAN)))
+                {
+                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
+                        new ConstantGenerator<>(Length.instantiateSI(2.4)), new ConstantGenerator<>(new Speed(180,
+                            SpeedUnit.KM_PER_HOUR)));
+                }
+                else if (type.equals(network.getGtuType(DEFAULTS.EMERGENCY_VEHICLE)))
+                {
+                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
+                        new ConstantGenerator<>(Length.instantiateSI(2.55)), new ConstantGenerator<>(new Speed(180,
+                            SpeedUnit.KM_PER_HOUR)));
+                }
+                else
+                {
+                    type = type.getParent();
+                    Throw.whenNull(type, "GTUType %s is not of any types with default characteristics.", gtuType);
+                }
             }
-            if (template != null)
+            if (store && template != null)
             {
-                map.put(defaultType, template);
+                map.put(gtuType, template);
             }
         }
         try
