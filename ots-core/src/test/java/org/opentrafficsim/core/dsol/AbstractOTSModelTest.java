@@ -61,9 +61,9 @@ public class AbstractOTSModelTest
 
         /**
          * Construct the instrumented OTSModel.
-         * @param simulator
-         * @param shortName
-         * @param description
+         * @param simulator the simulator
+         * @param shortName the name of the model
+         * @param description the description of the model
          */
         OTSModel(final OTSSimulatorInterface simulator, final String shortName, final String description)
         {
@@ -72,7 +72,7 @@ public class AbstractOTSModelTest
 
         /**
          * Construct the instrumented OTSModel.
-         * @param simulator
+         * @param simulator the simulator
          */
         OTSModel(final OTSSimulatorInterface simulator)
         {
