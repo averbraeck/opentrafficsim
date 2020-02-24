@@ -117,4 +117,37 @@ public class CompleteRoute extends Route
         return newRoute;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((gtuType == null) ? 0 : gtuType.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CompleteRoute other = (CompleteRoute) obj;
+        if (gtuType == null)
+        {
+            if (other.gtuType != null)
+                return false;
+        }
+        else if (!gtuType.equals(other.gtuType))
+            return false;
+        return true;
+    }
+
 }
