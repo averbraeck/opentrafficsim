@@ -79,7 +79,7 @@ public class LongitudinalDirectionalityTest
      * Test the intersect method.
      */
     @Test
-    public void testIntersectPermitsAndInvert()
+    public void testIntersectPermitsInvertAndGetDirectionalities()
     {
         LongitudinalDirectionality plus = LongitudinalDirectionality.DIR_PLUS;
         LongitudinalDirectionality minus = LongitudinalDirectionality.DIR_MINUS;
@@ -127,6 +127,23 @@ public class LongitudinalDirectionalityTest
         assertEquals("invert of MINUS is PLUS", plus, minus.invert());
         assertEquals("invert of NONE is NONE", none, none.invert());
         assertEquals("invert of BOTH is BOTH", both, both.invert());
+        
+        assertFalse("isNone of PLUS is false", plus.isNone());
+        assertFalse("isNone of MINUS is false", minus.isNone());
+        assertTrue("isNone of NONE is false", none.isNone());
+        assertFalse("isNone of BOTH is false", both.isNone());
+        
+        assertTrue("directions of PLUS contains DIR_PLUS", plus.getDirectionalities().contains(GTUDirectionality.DIR_PLUS));
+        assertEquals("directions of PLUS contains one element", 1, plus.getDirectionalities().size());
+        
+        assertTrue("directions of MINUS contains DIR_MINUS", minus.getDirectionalities().contains(GTUDirectionality.DIR_MINUS));
+        assertEquals("directions of MINUS contains one element", 1, minus.getDirectionalities().size());
+        
+        assertEquals("directions of PLUS contains no elements", 0, none.getDirectionalities().size());
+        
+        assertTrue("directions of BOTH contains DIR_PLUS", both.getDirectionalities().contains(GTUDirectionality.DIR_PLUS));
+        assertTrue("directions of BOTH contains DIR_MINUS", both.getDirectionalities().contains(GTUDirectionality.DIR_MINUS));
+        assertEquals("directions of PLUS contains two elements", 2, both.getDirectionalities().size());
     }
 
 }
