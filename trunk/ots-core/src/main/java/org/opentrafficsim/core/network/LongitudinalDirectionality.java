@@ -23,11 +23,11 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 public enum LongitudinalDirectionality
 {
     /** Direction the same as the direction of the graph, increasing fractional position when driving in this direction. */
-    DIR_PLUS(new GTUDirectionality[] {GTUDirectionality.DIR_PLUS}),
+    DIR_PLUS(new GTUDirectionality[] { GTUDirectionality.DIR_PLUS }),
     /** Direction opposite to the direction of the graph, decreasing fractional position when driving in this direction. */
-    DIR_MINUS(new GTUDirectionality[] {GTUDirectionality.DIR_MINUS}),
+    DIR_MINUS(new GTUDirectionality[] { GTUDirectionality.DIR_MINUS }),
     /** Bidirectional. */
-    DIR_BOTH(new GTUDirectionality[] {GTUDirectionality.DIR_PLUS, GTUDirectionality.DIR_MINUS}),
+    DIR_BOTH(new GTUDirectionality[] { GTUDirectionality.DIR_PLUS, GTUDirectionality.DIR_MINUS }),
     /** No traffic possible. */
     DIR_NONE(new GTUDirectionality[] {});
 
@@ -54,7 +54,8 @@ public enum LongitudinalDirectionality
 
     /**
      * This method looks if this directionality "contains" the provided other directionality. The logic table looks as follows:
-     * <table border="1"><caption>&nbsp;</caption>
+     * <table border="1">
+     * <caption>&nbsp;</caption>
      * <tr>
      * <td><b>THIS &darr; &nbsp; OTHER &rarr;</b></td>
      * <td><b>DIR_BOTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
@@ -143,7 +144,7 @@ public enum LongitudinalDirectionality
     {
         return this.equals(DIR_BOTH);
     }
-    
+
     /**
      * Easy access method to test if the directionality is NONE.
      * @return whether the directionality is NONE
@@ -160,6 +161,11 @@ public enum LongitudinalDirectionality
      */
     public final LongitudinalDirectionality intersect(final LongitudinalDirectionality other)
     {
+        if (null == other)
+        {
+            System.err.println("other LongitudinalDirectionality should not be null; returning DIR_NONE");
+            return DIR_NONE;
+        }
         switch (other)
         {
             case DIR_BOTH:
@@ -187,7 +193,8 @@ public enum LongitudinalDirectionality
                 }
                 return DIR_NONE;
             default:
-                System.err.println("intersect with null (returns DIR_NONE)");
+                // Cannot happen (unless someone manages to change this enum).
+                System.err.println("intersect with ???? (returns DIR_NONE)");
                 return DIR_NONE;
         }
     }
