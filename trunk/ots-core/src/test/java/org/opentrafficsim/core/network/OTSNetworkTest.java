@@ -535,6 +535,9 @@ public class OTSNetworkTest implements EventListenerInterface
                     assertEquals("node in route at position i should match", nodes.get((fromNodeIndex + i) % maxNode),
                             route.getNode(i));
                 }
+                CompleteRoute routeWithExplicitLengthWeight = network.getShortestRouteBetween(
+                        network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode, LinkWeight.LENGTH);
+                assertEquals("route with explicit link weight should be the same", route, routeWithExplicitLengthWeight);
                 // reverse direction
                 route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), toNode, fromNode);
                 // System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
@@ -720,6 +723,10 @@ public class OTSNetworkTest implements EventListenerInterface
                         {
                             assertEquals("node i should match", expectedPath.get(i), route.getNode(i));
                         }
+                        CompleteRoute routeWithExplicitLengthAsWeight = network.getShortestRouteBetween(
+                                network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode, viaNodes, LinkWeight.LENGTH);
+                        assertEquals("route with explicit weight should be same ase route", route,
+                                routeWithExplicitLengthAsWeight);
                     }
                 }
             }
