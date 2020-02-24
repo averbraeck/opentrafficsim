@@ -46,12 +46,14 @@ public class OTSNodeTest
     {
         Network network = new OTSNetwork("Node test network", true);
         OTSPoint3D point1 = new OTSPoint3D(20, 40, 60);
-        OTSNode node1 = new OTSNode(network, "node 1", point1);
+        double heading = Math.toRadians(123);
+        OTSNode node1 = new OTSNode(network, "node 1", point1, heading);
         assertEquals("network matches", network, node1.getNetwork());
         assertEquals("name matches", "node 1", node1.getId());
         assertEquals("point matches", point1, node1.getPoint());
         assertEquals("getLocation", new DirectedPoint(point1.x, point1.y, point1.z), node1.getLocation());
         assertTrue("name is in toString", node1.toString().contains(node1.getId()));
+        assertEquals("heading matches", heading, node1.getHeading(), 0.00001);
         OTSPoint3D point2 = new OTSPoint3D(120, 240, 60);
         OTSNode node2 = new OTSNode(network, "node 2", point2);
         assertEquals("network matches", network, node2.getNetwork());
@@ -60,6 +62,7 @@ public class OTSNodeTest
         assertTrue("Node 1 matches itself", node1.equals(node1));
         assertFalse("Node 1 does not match null", node1.equals(null));
         assertFalse("Node 1 does not match node 2", node1.equals(node2));
+        assertTrue("Node 2 has heading NaN", Double.isNaN(node2.getHeading()));
         // Create another node with name node 1 in another network
         Network otherNetwork = new OTSNetwork("Node test network 2", true);
         OTSNode node3 = new OTSNode(otherNetwork, "node 1", point1);
