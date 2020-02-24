@@ -77,9 +77,17 @@ public class LinkTypeTest
         assertFalse("waterwayType is not equal to some String", waterwayType.equals("Hello world!"));
         assertFalse("waterwayType is not equal to lava", waterwayType.equals(lava));
         // Try to create another waterwayType
-        LinkType waterwayType2 = new LinkType("Waterway", null, waterCompatibility, network);
-        assertTrue("waterwayType2 is equal to the first", waterwayType.equals(waterwayType2));
+        LinkType waterWayType2 = new LinkType("Waterway", null, waterCompatibility, network);
+        assertTrue("waterwayType2 is equal to the first", waterwayType.equals(waterWayType2));
         assertFalse("road is not of type NONE", roadLinkType.isOfType(LinkType.DEFAULTS.NONE));
+        assertFalse("road is not of type NONE (alterative way to test)", roadLinkType.isNone());
+        // TODO how the hell can you obtain a linkType that will return true to isNone() ? 
+        // assertTrue("???", LinkType.DEFAULTS.NONE.isNone());
+        assertFalse("waterWayType2 is not a road", waterWayType2.isRoad());
+        // TODO next one fails - what is wrong?
+        // assertTrue("waterWayType2 is a waterway", waterWayType2.isWaterWay());
+        // TODO next one fails - what is wrong?
+        // assertTrue("roadLinkType is a road", roadLinkType.isRoad());
         GTUCompatibility<LinkType> poorRoadCompatibility = new GTUCompatibility<>((LinkType) null)
                 .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.CAR), LongitudinalDirectionality.DIR_BOTH);
         LinkType poorSurfaceLinkType =
@@ -105,6 +113,7 @@ public class LinkTypeTest
 //                reverseWaterway.getDirectionality(catamaran, true));
 //        assertEquals("Directionality of waterwayType for catamaran is DIR_BOTH", LongitudinalDirectionality.DIR_BOTH,
 //                reverseWaterway.getCompatibility().getDirectionality(catamaran, true));
+        
     }
 
 }
