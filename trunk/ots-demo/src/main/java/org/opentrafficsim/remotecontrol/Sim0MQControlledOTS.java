@@ -178,15 +178,15 @@ public class Sim0MQControlledOTS
                 message = Sim0MQMessage.decode(request).createObjectArray();
                 System.out.println("Received " + Sim0MQMessage.print(message));
 
-                if (message.length > 8 && message[5] instanceof String)
+                if (message.length >= 8 && message[5] instanceof String)
                 {
                     String command = (String) message[5];
                     System.out.println("Command is " + command);
                     switch (command)
                     {
                         case "LOADNETWORK":
-                            if (message.length == 13 && message[9] instanceof String && message[10] instanceof Duration
-                                    && message[11] instanceof Duration && message[12] instanceof Long)
+                            if (message.length == 12 && message[8] instanceof String && message[9] instanceof Duration
+                                    && message[10] instanceof Duration && message[11] instanceof Long)
                             {
                                 if (null != this.model)
                                 {
@@ -196,10 +196,10 @@ public class Sim0MQControlledOTS
                                 {
                                     OTSAnimator animator =
                                             new OTSLoggingAnimator("C:/Temp/AimsunEventlog.txt", "AimsunControl");
-                                    this.model = new Sim0MQOTSModel(animator, "OTS model", "OTS model", (String) message[9]);
+                                    this.model = new Sim0MQOTSModel(animator, "OTS model", "OTS model", (String) message[8]);
                                     Map<String, StreamInterface> map = new LinkedHashMap<>();
-                                    map.put("generation", new MersenneTwister((Long) message[12]));
-                                    animator.initialize(Time.ZERO, (Duration) message[10], (Duration) message[11], this.model,
+                                    map.put("generation", new MersenneTwister((Long) message[11]));
+                                    animator.initialize(Time.ZERO, (Duration) message[9], (Duration) message[10], this.model,
                                             map);
                                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(
                                             this.model.getNetwork().getExtent(), new Dimension(1100, 1000), animator,
@@ -235,10 +235,10 @@ public class Sim0MQControlledOTS
                             {
                                 result = "No model loaded";
                             }
-                            else if (message.length == 10 && message[9] instanceof Time)
+                            else if (message.length == 9 && message[8] instanceof Time)
                             {
                                 OTSSimulatorInterface simulator = this.model.getSimulator();
-                                simulator.runUpTo((Time) message[9]);
+                                simulator.runUpTo((Time) message[8]);
                                 while (simulator.isRunning())
                                 {
                                     try
@@ -262,7 +262,7 @@ public class Sim0MQControlledOTS
                             {
                                 result = "No model loaded";
                             }
-                            else if (message.length == 9)
+                            else if (message.length == 8)
                             {
                                 for (GTU gtu : this.model.network.getGTUs())
                                 {
