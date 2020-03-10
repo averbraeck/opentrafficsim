@@ -325,6 +325,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
             try
             {
                 // Read from remotely controlled OTS
+                // TODO according to http://zguide.zeromq.org/php:chapter2 it is not safe to use the same socket in another thread
                 byte[] bytes = this.requester.recv(0);
                 Object[] message = Sim0MQMessage.decode(bytes).createObjectArray();
                 if (message.length > 8 && message[5] instanceof String)
