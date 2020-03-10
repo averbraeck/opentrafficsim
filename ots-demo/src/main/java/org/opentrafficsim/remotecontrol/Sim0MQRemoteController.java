@@ -399,7 +399,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
                     String xml = readStringFromURL(url);
                     try
                     {
-                        write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "LOADNETWORK", 0, 0, xml,
+                        write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "LOADNETWORK", 0, xml,
                                 warmupDuration, runDuration, seed));
                     }
                     catch (IOException e1)
@@ -439,7 +439,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
                 Time toTime = Time.valueOf(caption.substring(position));
                 try
                 {
-                    write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "SIMULATEUNTIL", 0, 0, toTime));
+                    write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "SIMULATEUNTIL", 0, toTime));
                     toTime = toTime.plus(new Duration(10, DurationUnit.SECOND));
                     button.setText(caption.substring(0, position)
                             + String.format("%.0f %s", toTime.getInUnit(), toTime.getDisplayUnit()));
@@ -455,7 +455,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
             {
                 try
                 {
-                    write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "SENDALLGTUPOSITIONS", 0, 0));
+                    write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "SENDALLGTUPOSITIONS", 0));
                 }
                 catch (IOException | Sim0MQException | SerializationException e1)
                 {
