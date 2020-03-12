@@ -12,6 +12,7 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
@@ -22,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.djunits.unit.DurationUnit;
@@ -56,7 +58,7 @@ import picocli.CommandLine.Option;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Sim0MQRemoteController extends JFrame implements WindowListener, Runnable, ActionListener
+public class Sim0MQRemoteController extends JFrame implements WindowListener, ActionListener
 {
     /** ... */
     private static final long serialVersionUID = 20200304L;
@@ -101,12 +103,14 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
             {
                 throw new Exception("Port should be between 1 and 65535");
             }
-            // TODO verify that host looks valid.
         }
     }
 
     /** The instance of the RemoteControl. */
     private static Sim0MQRemoteController gui = null;
+
+    /** Socket for sending messages that should be relayed to OTS. */
+    private ZMQ.Socket toOTS;
 
     /**
      * Start the OTS remote control program.
@@ -152,33 +156,96 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
     /** ... */
     private ZContext zContext = new ZContext(1);
 
-    /** Communication channel to OTS server. */
-    private ZMQ.Socket requester = zContext.createSocket(SocketType.DEALER);
-
-    /** Receive thread. */
-    private Thread reader = new Thread(this);
+    /** Message relayer. */
+    private Thread pollerThread;
 
     /**
-     * Open connection, then enter the command loop.
+     * Poller thread for relaying messages between the remote OTS and local AWT.
+     */
+    class PollerThread extends Thread
+    {
+        /** The ZContext. */
+        private final ZContext context;
+
+        /** The host that runs the OTS simulation. */
+        private final String slaveHost;
+
+        /** The port on which to connect to the OTS simulation. */
+        private final int slavePort;
+
+        /**
+         * Construct a new PollerThread for relaying messages.
+         * @param context ZContext; the ZMQ context
+         * @param slaveHost String; host name of the OTS server machine
+         * @param slavePort int; port number on which to connect to the OTS server machine
+         */
+        PollerThread(final ZContext context, final String slaveHost, final int slavePort)
+        {
+            this.context = context;
+            this.slaveHost = slaveHost;
+            this.slavePort = slavePort;
+        }
+
+        @Override
+        public final void run()
+        {
+            ZMQ.Socket slaveSocket = context.createSocket(SocketType.DEALER);
+            ZMQ.Socket awtSocketIn = context.createSocket(SocketType.PULL);
+            ZMQ.Socket awtSocketOut = context.createSocket(SocketType.PUSH);
+            slaveSocket.connect("tcp://" + slaveHost + ":" + slavePort);
+            awtSocketIn.bind("inproc://fromAWT");
+            awtSocketOut.bind("inproc://toAWT");
+            ZMQ.Poller items = this.context.createPoller(2);
+            items.register(slaveSocket, ZMQ.Poller.POLLIN);
+            items.register(awtSocketIn, ZMQ.Poller.POLLIN);
+            while (!Thread.currentThread().isInterrupted())
+            {
+                byte[] message;
+                items.poll();
+                if (items.pollin(0))
+                {
+                    message = slaveSocket.recv(0);
+                    // System.out.println("poller has received a message on the fromOTS DEALER socket; transmitting to AWT");
+                    awtSocketOut.send(message);
+                }
+                if (items.pollin(1))
+                {
+                    message = awtSocketIn.recv(0);
+                    // System.out.println("poller has received a message on the fromAWT PULL socket; transmitting to OTS");
+                    slaveSocket.send(message);
+                }
+            }
+
+        }
+
+    }
+
+    /**
+     * Open connections as specified on the command line, then start the message transfer threads.
      * @param host String; host to connect to (listening OTS server should already be running)
      * @param port int; port to connect to (listening OTS server should be listening on that port)
      */
     public void processArguments(final String host, final int port)
     {
         this.output.println("host is " + host + ", port is " + port);
-        // Socket to talk to server
-        this.output.println("Connecting to server...");
-        requester.connect("tcp://" + host + ":" + port);
-        this.output.println("Connected");
-        this.reader.start();
-        // Gotcha: Sim0MQ does not permit starting the receiver before something has been sent
+
+        this.pollerThread = new PollerThread(this.zContext, host, port);
+
+        this.pollerThread.start();
+
+        this.toOTS = this.zContext.createSocket(SocketType.PUSH);
+
+        new OTS2AWT(this.zContext).start();
+
+        this.toOTS.connect("inproc://fromAWT");
+
         // Send something
         try
         {
             byte[] message = Sim0MQMessage.encodeUTF8(true, 0, "master", "slave", 0, 0, "HELLO");
             output.println("Sending HELLO message:");
             output.println(HexDumper.hexDumper(message));
-            this.requester.send(message, 0);
+            this.toOTS.send(message, 0);
         }
         catch (Sim0MQException e)
         {
@@ -188,7 +255,6 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
         {
             e.printStackTrace();
         }
-        // Now start the receiver thread
     }
 
     /**
@@ -198,7 +264,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
      */
     public void write(final String command) throws IOException
     {
-        this.requester.send(command);
+        this.toOTS.send(command);
         // output.println("Wrote " + command.getBytes().length + " bytes");
         output.println("Sent string \"" + command + "\"");
     }
@@ -210,7 +276,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
      */
     public void write(final byte[] bytes) throws IOException
     {
-        this.requester.send(bytes);
+        this.toOTS.send(bytes);
         // output.println("Wrote " + command.getBytes().length + " bytes");
         // output.println(HexDumper.hexDumper(bytes));
     }
@@ -260,11 +326,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
      */
     public void shutDown()
     {
-        if (null != this.requester)
-        {
-            this.requester.close();
-            this.requester = null;
-        }
+        // Do we have to kill anything for a clean exit?
     }
 
     /** {@inheritDoc} */
@@ -316,53 +378,73 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
         // Do nothing
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void run()
+    /**
+     * Thread that reads results from OTS and (for now) writes those to the textArea.
+     */
+    class OTS2AWT extends Thread
     {
-        do
+        /** Socket where the message from OTS will appear. */
+        private final ZMQ.Socket fromOTS;
+
+        /**
+         * Construct a new OTS2AWT thread.
+         * @param zContext ZContext; the ZContext that is needed to construct the PULL socket to read the messages
+         */
+        OTS2AWT(final ZContext zContext)
         {
-            try
+            this.fromOTS = zContext.createSocket(SocketType.PULL);
+            this.fromOTS.connect("inproc://toAWT");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void run()
+        {
+            do
             {
-                // Read from remotely controlled OTS
-                // TODO according to http://zguide.zeromq.org/php:chapter2 it is not safe to use the same socket in another thread
-                byte[] bytes = this.requester.recv(0);
-                Object[] message = Sim0MQMessage.decode(bytes).createObjectArray();
-                if (message.length > 8 && message[5] instanceof String)
+                try
                 {
-                    String command = (String) message[5];
-                    switch (command)
+                    // Read from remotely controlled OTS
+                    byte[] bytes = fromOTS.recv(0);
+                    // System.out.println("remote controller has received a message on the fromOTS PULL socket");
+                    Object[] message = Sim0MQMessage.decode(bytes).createObjectArray();
+                    if (message.length > 8 && message[5] instanceof String)
                     {
-                        case "GTUPOSITION":
-                            output.println(String.format("%10.10s: %s x=%8.3f y=%8.3f z=%8.3f heading=%6.1f, a=%s", message[8],
-                                    message[9], message[10], message[11], message[12], Math.toDegrees((Double) message[13]),
-                                    message[14]));
-                            break;
+                        String command = (String) message[5];
+                        switch (command)
+                        {
+                            case "GTUPOSITION":
+                                output.println(String.format("%10.10s: %s x=%8.3f y=%8.3f z=%8.3f heading=%6.1f, a=%s",
+                                        message[8], message[9], message[10], message[11], message[12],
+                                        Math.toDegrees((Double) message[13]), message[14]));
+                                break;
 
-                        case "READY":
-                            output.println("Slave is ready for the next command");
-                            break;
+                            case "READY":
+                                output.println("Slave is ready for the next command");
+                                break;
 
-                        default:
-                            output.println("Unhandled reply: " + command);
-                            output.println(HexDumper.hexDumper(bytes));
-                            output.println("Received " + Sim0MQMessage.print(message));
-                            break;
+                            default:
+                                output.println("Unhandled reply: " + command);
+                                output.println(HexDumper.hexDumper(bytes));
+                                output.println("Received " + Sim0MQMessage.print(message));
+                                break;
 
+                        }
+                    }
+                    else
+                    {
+                        output.println(HexDumper.hexDumper(bytes));
                     }
                 }
-                else
+                catch (ZMQException | Sim0MQException | SerializationException e)
                 {
-                    output.println(HexDumper.hexDumper(bytes));
+                    e.printStackTrace();
+                    return;
                 }
             }
-            catch (ZMQException | Sim0MQException | SerializationException e)
-            {
-                e.printStackTrace();
-                return;
-            }
+            while (true);
+
         }
-        while (true);
     }
 
     /**
@@ -394,14 +476,14 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ru
                 Duration runDuration = new Duration(3600, DurationUnit.SECOND);
                 Long seed = 123456L;
                 URL url = URLResource.getResource(networkFile);
-                System.out.println("url is " + url);
+                // System.out.println("url is " + url);
                 try
                 {
                     String xml = readStringFromURL(url);
                     try
                     {
-                        write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "LOADNETWORK", 0, xml,
-                                warmupDuration, runDuration, seed));
+                        write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "LOADNETWORK", 0, xml, warmupDuration,
+                                runDuration, seed));
                     }
                     catch (IOException e1)
                     {
@@ -492,15 +574,70 @@ class TextAreaOutputStream extends OutputStream
 
     /** {@inheritDoc} */
     @Override
+    public void write(final byte[] bytes, final int offset, final int length) 
+    {
+        try
+        {
+            SwingUtilities.invokeAndWait(new Runnable()
+            {
+
+                /** {@inheritDoc} */
+                @Override
+                public void run()
+                {
+                    synchronized (textArea)
+                    {
+                        for (int index = offset; index < offset + length; index++)
+                        {
+                            // redirects data to the text area
+                            textArea.append(String.valueOf((char) (bytes[index])));
+                        }
+                        // scrolls the text area to the end of data
+                        textArea.setCaretPosition(textArea.getDocument().getLength());
+                    }
+                }
+            });
+        }
+        catch (InvocationTargetException | InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void write(final byte[] bytes)
+    {
+        write(bytes, 0, bytes.length);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void write(final int b)
     {
-        synchronized (this.textArea)
+        try
         {
-            // redirects data to the text area
-            textArea.append(String.valueOf((char) b));
-            // scrolls the text area to the end of data
-            textArea.setCaretPosition(textArea.getDocument().getLength());
-            // FIXME: PK wonders if it is really safe to call this method from another thread?
+            SwingUtilities.invokeAndWait(new Runnable()
+            {
+
+                /** {@inheritDoc} */
+                @Override
+                public void run()
+                {
+                    synchronized (textArea)
+                    {
+                        // redirects data to the text area
+                        textArea.append(String.valueOf((char) b));
+                        // scrolls the text area to the end of data
+                        textArea.setCaretPosition(textArea.getDocument().getLength());
+                    }
+                }
+            });
+        }
+        catch (InvocationTargetException | InterruptedException e)
+        {
+            e.printStackTrace();
         }
     }
 
