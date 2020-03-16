@@ -24,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -563,6 +564,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     protected synchronized boolean move(final DirectedPoint fromLocation)
             throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
     {
+        if (this.isDestroyed())
+        {
+            return false;
+        }
         try
         {
             if (this.crossSections.isEmpty())
@@ -780,6 +785,11 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
      */
     protected void scheduleLeaveEvent() throws GTUException, OperationalPlanException, SimRuntimeException
     {
+        if (this.crossSections.isEmpty())
+        {
+            CategoryLogger.always().error("GTU {} has empty crossSections", this);
+            return;
+        }
         CrossSection firstCrossSection = this.crossSections.get(0);
         // check, if reference lane is not in first cross section
         boolean possiblyNearNextSection =
