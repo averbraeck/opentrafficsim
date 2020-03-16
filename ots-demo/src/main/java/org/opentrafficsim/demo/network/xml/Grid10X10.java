@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.network.xml;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +31,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -341,7 +343,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
                 XmlNetworkLaneParser.build(bos, this.network, getSimulator(), true);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
-                    | URISyntaxException | XmlParserException | GTUException exception)
+                    | URISyntaxException | XmlParserException | GTUException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();
             }

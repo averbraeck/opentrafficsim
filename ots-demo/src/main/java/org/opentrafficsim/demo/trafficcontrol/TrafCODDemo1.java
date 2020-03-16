@@ -32,6 +32,7 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo1.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
@@ -135,7 +136,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
     @Override
     protected final void addTabs()
     {
-        JScrollPane scrollPane = new JScrollPane(getModel().getControllerDisplayPanel());
+        JScrollPane scrollPane = new JScrollPane(getModel().getTrafCOD().getDisplayContainer());
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.add(scrollPane);
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount() - 1,
@@ -155,9 +156,6 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
 
         /** The TrafCOD controller. */
         private TrafCOD trafCOD;
-
-        /** TrafCOD controller display. */
-        private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
 
         /** The XML. */
         private final String xml;
@@ -185,74 +183,25 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
                 OTS ots = XmlNetworkLaneParser.parseXML(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
                 XmlNetworkLaneParser.build(ots, this.network, getSimulator(), false);
 
-                String controllerName = "TrafCOD_simple";
+                //String controllerName = "TrafCOD_simple";
                 List<CONTROL> trafficControllerList = ots.getCONTROL();
                 Throw.when(trafficControllerList.size() != 1, NetworkException.class,
                         "OTS contains wrong number of traffic controllers (should be 1, got %1)", trafficControllerList.size());
-                CONTROL controller = trafficControllerList.get(0);
-                List<TRAFCOD> trafCodList = controller.getTRAFCOD();
-                Throw.when(trafCodList.size() != 1, NetworkException.class, "Controller should contain one TRAFCOD (got %1)",
-                        trafCodList.size());
-                TRAFCOD trafCod = trafCodList.get(0);
-                String programString = trafCod.getPROGRAM().getValue();
-                List<String> program = null == programString ? TrafCOD.loadTextFromURL(new URL(trafCod.getPROGRAMFILE()))
-                        : Arrays.asList(programString.split("\n"));
-                TRAFCOD.CONSOLE.MAP mapData = trafCod.getCONSOLE().getMAP();
-                BufferedImage backgroundImage = null;
-                if (null != mapData)
+                for (InvisibleObjectInterface ioi : this.network.getInvisibleObjectMap().values())
                 {
-                    String graphicsType = mapData.getTYPE();
-                    String encoding = mapData.getENCODING();
-                    String encodedData = mapData.getValue();
-                    if (!"base64".contentEquals(encoding))
+                    if (ioi instanceof TrafCOD)
                     {
-                        throw new RuntimeException("Unexpected image encoding: " + encoding);
-                    }
-                    byte[] imageBytes = DatatypeConverter.parseBase64Binary(encodedData);
-                    switch (graphicsType)
-                    {
-                        case "PNG":
-                            backgroundImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
-                            // javax.imageio.ImageIO.write(backgroundImage, "png", new File("c:\\temp\\test.png"));
-                            break;
-
-                        default:
-                            throw new RuntimeException("Unexpected image type: " + graphicsType);
+                        if (null != this.trafCOD)
+                        {
+                            throw new NetworkException("More than one TrafCOD controller found in network");
+                        }
+                        this.trafCOD = (TrafCOD) ioi;
                     }
                 }
-                String objectLocationsString = trafCod.getCONSOLE().getCOORDINATES().getValue();
-                List<String> displayObjectLocations = null == objectLocationsString
-                        ? TrafCOD.loadTextFromURL(new URL(trafCod.getCONSOLE().getCOORDINATESFILE()))
-                        : Arrays.asList(objectLocationsString.split("\n"));
-                this.trafCOD = new TrafCOD(controllerName, program, getSimulator(), this.controllerDisplayPanel,
-                        backgroundImage, displayObjectLocations);
-
-                Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "XS")).getCrossSectionElement("FORWARD");
-                Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "XE")).getCrossSectionElement("FORWARD");
-                SimpleTrafficLight tl08 = new SimpleTrafficLight(String.format("%s.%02d", controllerName, 8), laneWX,
-                        new Length(296, LengthUnit.METER), getSimulator());
-                try
+                if (null == this.trafCOD)
                 {
-                    new TrafficLightAnimation(tl08, this.simulator);
+                    throw new NetworkException("No TrafCOD controller found in network");
                 }
-                catch (RemoteException | NamingException exception)
-                {
-                    throw new NetworkException(exception);
-                }
-
-                SimpleTrafficLight tl11 = new SimpleTrafficLight(String.format("%s.%02d", controllerName, 11), laneNX,
-                        new Length(296, LengthUnit.METER), getSimulator());
-                try
-                {
-                    new TrafficLightAnimation(tl11, this.simulator);
-                }
-                catch (RemoteException | NamingException exception)
-                {
-                    throw new NetworkException(exception);
-                }
-
-                this.trafCOD = new TrafCOD(controllerName, program, getSimulator(), this.controllerDisplayPanel,
-                        backgroundImage, displayObjectLocations);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
@@ -292,14 +241,6 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
         public final TrafCOD getTrafCOD()
         {
             return this.trafCOD;
-        }
-
-        /**
-         * @return controllerDisplayPanel
-         */
-        public final JPanel getControllerDisplayPanel()
-        {
-            return this.controllerDisplayPanel;
         }
 
         /** {@inheritDoc} */

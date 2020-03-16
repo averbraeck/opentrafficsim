@@ -1,5 +1,7 @@
 package org.opentrafficsim.trafficcontrol;
 
+import java.awt.Container;
+
 /**
  * <p>
  * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -19,5 +21,11 @@ public interface ActuatedTrafficController extends TrafficController
      * @param detectingGTU boolean;
      */
     void updateDetector(String detectorId, boolean detectingGTU);
+    
+    /**
+     * Retrieve the Swing (for now) container in which the controller displays its current state.
+     * @return Container; the display of the current state; may return null!
+     */
+    Container getDisplayContainer();
 
 }

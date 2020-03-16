@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.network.xml;
 
 import java.awt.Dimension;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -50,6 +51,7 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -169,7 +171,7 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
                 scheduleKpiEvent(30.0, this.simulator, query);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
-                    | JAXBException | URISyntaxException | XmlParserException exception)
+                    | JAXBException | URISyntaxException | XmlParserException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();
             }

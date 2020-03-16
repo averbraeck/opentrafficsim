@@ -1,5 +1,6 @@
 package org.opentrafficsim.trafficcontrol.ccol;
 
+import java.awt.Container;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -261,6 +262,13 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
     public Serializable getSourceId()
     {
         return "CCOL";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Container getDisplayContainer()
+    {
+        return null; // For now, CCOL does not have a display panel
     }
 
 }
