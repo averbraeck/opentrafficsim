@@ -176,7 +176,8 @@ public class Sim0MQControlledOTS
             try
             {
                 message = Sim0MQMessage.decode(request).createObjectArray();
-                System.out.println("Received " + Sim0MQMessage.print(message));
+                System.out.println("Received Sim0MQ message:");
+                System.out.println(Sim0MQMessage.print(message));
 
                 if (message.length >= 8 && message[5] instanceof String)
                 {
