@@ -450,14 +450,14 @@ public class FixedTimeController extends AbstractTrafficController
          * first transitions.
          * @param controllerOffset Duration;
          * @param cycleTime Duration;
-         * @param simulator OTSSimulatorInterface;
+         * @param theSimulator OTSSimulatorInterface;
          * @param network Network;
          * @throws SimRuntimeException when traffic light does not exist in the network
          */
-        public void startup(final Duration controllerOffset, final Duration cycleTime, final OTSSimulatorInterface simulator,
+        public void startup(final Duration controllerOffset, final Duration cycleTime, final OTSSimulatorInterface theSimulator,
                 final Network network) throws SimRuntimeException
         {
-            this.simulator = simulator;
+            this.simulator = theSimulator;
             double totalOffsetSI = this.offset.si + controllerOffset.si;
             while (totalOffsetSI < 0.0)
             {
@@ -595,7 +595,7 @@ public class FixedTimeController extends AbstractTrafficController
 
         /** {@inheritDoc} */
         @Override
-        public boolean equals(Object obj)
+        public boolean equals(final Object obj)
         {
             if (this == obj)
             {
@@ -706,17 +706,17 @@ public class FixedTimeController extends AbstractTrafficController
     class Flank implements Comparable<Flank>
     {
         /** When (in the cycle time is this transition. */
-        final double offset;
+        private final double offset;
 
         /** What is the color after this transition. */
-        final TrafficLightColor newColor;
+        private final TrafficLightColor newColor;
 
         /**
          * Construct a new Flank.
          * @param offset double; offset within the cycle time
          * @param newColor TrafficLightColor; color to show after this transition
          */
-        public Flank(final double offset, final TrafficLightColor newColor)
+        Flank(final double offset, final TrafficLightColor newColor)
         {
             this.offset = offset;
             this.newColor = newColor;
@@ -747,13 +747,13 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /** Cumulative rounding errors are less than this value and traffic light transitions are spaced further apart. */
-        static private final double compareMargin = 0.01;
+        private static final double COMPARE_MARGIN = 0.01;
 
         @Override
-        public int compareTo(Flank o)
+        public int compareTo(final Flank o)
         {
             double deltaOffset = this.offset - o.offset;
-            if (Math.abs(deltaOffset) < compareMargin)
+            if (Math.abs(deltaOffset) < COMPARE_MARGIN)
             {
                 deltaOffset = 0;
             }

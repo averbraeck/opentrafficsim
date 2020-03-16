@@ -508,7 +508,7 @@ public class TestFixedTimeController
     }
 
     /** Remember current state of all mocked traffic lights. */
-    Map<String, TrafficLightColor> currentTrafficLightColors = new LinkedHashMap<>();
+    private Map<String, TrafficLightColor> currentTrafficLightColors = new LinkedHashMap<>();
 
     /**
      * Mock a traffic light.
@@ -517,7 +517,7 @@ public class TestFixedTimeController
      * @param simulator TODO
      * @return TrafficLight
      */
-    public TrafficLight createTrafficLightMock(final String id, final String networkId, OTSSimulatorInterface simulator)
+    public TrafficLight createTrafficLightMock(final String id, final String networkId, final OTSSimulatorInterface simulator)
     {
         TrafficLight result = Mockito.mock(TrafficLight.class);
         Mockito.when(result.getId()).thenReturn(id);
@@ -525,7 +525,7 @@ public class TestFixedTimeController
         Mockito.when(result.getTrafficLightColor()).thenAnswer(new Answer<TrafficLightColor>()
         {
             @Override
-            public TrafficLightColor answer(InvocationOnMock invocation) throws Throwable
+            public TrafficLightColor answer(final InvocationOnMock invocation) throws Throwable
             {
                 return TestFixedTimeController.this.currentTrafficLightColors.get(result.getFullId());
             }

@@ -53,7 +53,7 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
     private Set<TrafCODObject> trafCODObjects = new LinkedHashSet<>();
 
     /** Store the tool tip delay so we can restore it when the mouse exits this TrafCODDisplay. */
-    final int defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+    private final int defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
 
     /**
      * Construct a new TrafCODDisplay.
@@ -85,6 +85,7 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void paintComponent(final Graphics g)
     {
@@ -107,14 +108,14 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
 
     /** {@inheritDoc} */
     @Override
-    public void mouseDragged(MouseEvent e)
+    public void mouseDragged(final MouseEvent e)
     {
         mouseMoved(e); // Do the same as in the mouse move event
     }
 
     /** {@inheritDoc} */
     @Override
-    public void mouseMoved(MouseEvent e)
+    public void mouseMoved(final MouseEvent e)
     {
         String toolTipText = null;
         for (TrafCODObject tco : this.trafCODObjects)
@@ -131,35 +132,35 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
 
     /** {@inheritDoc} */
     @Override
-    public void mouseClicked(MouseEvent e)
+    public void mouseClicked(final MouseEvent e)
     {
         // Ignore
     }
 
     /** {@inheritDoc} */
     @Override
-    public void mousePressed(MouseEvent e)
+    public void mousePressed(final MouseEvent e)
     {
         // Ignore
     }
 
     /** {@inheritDoc} */
     @Override
-    public void mouseReleased(MouseEvent e)
+    public void mouseReleased(final MouseEvent e)
     {
         // Ignore
     }
 
     /** {@inheritDoc} */
     @Override
-    public void mouseEntered(MouseEvent e)
+    public void mouseEntered(final MouseEvent e)
     {
         ToolTipManager.sharedInstance().setInitialDelay(0);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void mouseExited(MouseEvent e)
+    public void mouseExited(final MouseEvent e)
     {
         ToolTipManager.sharedInstance().setInitialDelay(this.defaultInitialDelay);
     }
@@ -173,7 +174,7 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
 interface TrafCODObject
 {
     /**
-     * Draw yourself at the indicated location/
+     * Draw yourself at the indicated location.
      * @param g2 Graphics2D; the graphics context
      */
     void draw(Graphics2D g2);
@@ -194,6 +195,9 @@ interface TrafCODObject
  */
 class DetectorImage implements TrafCODObject, EventListenerInterface
 {
+    /** ...  */
+    private static final long serialVersionUID = 20200313L;
+
     /** The TrafCOD display. */
     private final TrafCODDisplay display;
 
@@ -216,10 +220,10 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
     private static final int BOX_SIZE = 13;
 
     /** Correction to make the result match that of the C++Builder version. */
-    private static final int xOffset = 5;
+    private static final int X_OFFSET = 5;
 
     /** Correction to make the result match that of the C++Builder version. */
-    private static final int yOffset = 5;
+    private static final int Y_OFFSET = 5;
 
     /**
      * Construct a new DetectorImage.
@@ -228,7 +232,7 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
      * @param id String; id used to match this detector with the TrafCOD detector input
      * @param description String; name of the detector (displayed as tool tip text)
      */
-    public DetectorImage(final TrafCODDisplay display, Point2D center, String id, String description)
+    DetectorImage(final TrafCODDisplay display, final Point2D center, final String id, final String description)
     {
         this.display = display;
         this.x = (int) center.getX();
@@ -240,17 +244,17 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void draw(Graphics2D g2)
+    public void draw(final Graphics2D g2)
     {
         g2.setColor(this.fillColor);
-        g2.fillRect(xOffset + this.x - BOX_SIZE / 2, yOffset + this.y - BOX_SIZE / 2, BOX_SIZE, BOX_SIZE);
+        g2.fillRect(X_OFFSET + this.x - BOX_SIZE / 2, Y_OFFSET + this.y - BOX_SIZE / 2, BOX_SIZE, BOX_SIZE);
         g2.setColor(Color.BLACK);
-        g2.drawRect(xOffset + this.x - BOX_SIZE / 2, yOffset + this.y - BOX_SIZE / 2, BOX_SIZE, BOX_SIZE);
+        g2.drawRect(X_OFFSET + this.x - BOX_SIZE / 2, Y_OFFSET + this.y - BOX_SIZE / 2, BOX_SIZE, BOX_SIZE);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void notify(EventInterface event) throws RemoteException
+    public void notify(final EventInterface event) throws RemoteException
     {
         if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT))
         {
@@ -267,8 +271,8 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
     @Override
     public String toolTipHit(final int testX, final int testY)
     {
-        if (testX < xOffset + this.x - BOX_SIZE / 2 || testX >= xOffset + this.x + BOX_SIZE / 2
-                || testY < yOffset - BOX_SIZE / 2 + this.y || testY >= yOffset + this.y + BOX_SIZE / 2)
+        if (testX < X_OFFSET + this.x - BOX_SIZE / 2 || testX >= X_OFFSET + this.x + BOX_SIZE / 2
+                || testY < Y_OFFSET - BOX_SIZE / 2 + this.y || testY >= Y_OFFSET + this.y + BOX_SIZE / 2)
         {
             return null;
         }
@@ -292,6 +296,9 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
  */
 class TrafficLightImage implements TrafficLight, TrafCODObject
 {
+    /** ...  */
+    private static final long serialVersionUID = 20200313L;
+
     /** The TrafCOD display. */
     private final TrafCODDisplay display;
 
@@ -313,7 +320,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
      * @param center Point2D; coordinates in the image where this traffic light is centered on
      * @param description String; tool tip text for the new traffic light image
      */
-    public TrafficLightImage(final TrafCODDisplay display, final Point2D center, final String description)
+    TrafficLightImage(final TrafCODDisplay display, final Point2D center, final String description)
     {
         this.display = display;
         this.x = (int) center.getX();
@@ -324,7 +331,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public String toolTipHit(int testX, int testY)
+    public String toolTipHit(final int testX, final int testY)
     {
         if (testX < this.x - DISC_SIZE / 2 || testX >= this.x + DISC_SIZE / 2 || testY < this.y - DISC_SIZE / 2
                 || testY >= this.y + DISC_SIZE / 2)
@@ -405,7 +412,15 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(EventListenerInterface listener, EventType eventType, ReferenceType referenceType)
+    public boolean addListener(final EventListenerInterface listener, final EventType eventType,
+            final ReferenceType referenceType) throws RemoteException
+    {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final int position)
             throws RemoteException
     {
         return false;
@@ -413,15 +428,8 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(EventListenerInterface listener, EventType eventType, int position) throws RemoteException
-    {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addListener(EventListenerInterface listener, EventType eventType, int position, ReferenceType referenceType)
-            throws RemoteException
+    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final int position,
+            final ReferenceType referenceType) throws RemoteException
     {
         return false;
     }
@@ -429,7 +437,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(EventListenerInterface listener, EventType eventType) throws RemoteException
+    public boolean addListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
     {
         return false;
     }
@@ -443,7 +451,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public int numberOfListeners(EventType eventType) throws RemoteException
+    public int numberOfListeners(final EventType eventType) throws RemoteException
     {
         return 0;
     }
@@ -457,7 +465,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public boolean removeListener(EventListenerInterface listener, EventType eventType) throws RemoteException
+    public boolean removeListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
     {
         return false;
     }
@@ -471,7 +479,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public void setTrafficLightColor(TrafficLightColor trafficLightColor)
+    public void setTrafficLightColor(final TrafficLightColor trafficLightColor)
     {
         this.color = trafficLightColor;
         this.display.repaint();
@@ -482,7 +490,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public void draw(Graphics2D g2)
+    public void draw(final Graphics2D g2)
     {
         Color lightColor;
         switch (this.color)

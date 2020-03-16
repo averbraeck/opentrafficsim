@@ -18,6 +18,6 @@ public interface ActuatedTrafficController extends TrafficController
      * @param detectorId String; id of the detector
      * @param detectingGTU boolean;
      */
-    public void updateDetector(String detectorId, boolean detectingGTU);
+    void updateDetector(String detectorId, boolean detectingGTU);
 
 }

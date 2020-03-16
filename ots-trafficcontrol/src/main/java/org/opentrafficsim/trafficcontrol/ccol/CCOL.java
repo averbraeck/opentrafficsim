@@ -47,19 +47,19 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
     private static final long serialVersionUID = 20170126L;
 
     /** Name of this CCOL traffic controller. */
-    final String id;
+    private final String id;
 
     /** The simulator. */
-    final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator;
+    private final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator;
 
     /** TCP port for incoming connection. */
-    static int PORT = 4321;
+    private static int port = 4321;
 
     /** The evaluation interval of a CCOL controller. */
-    final static Duration EVALUATION_INTERVAL = new Duration(0.1, DurationUnit.SECOND);
+    static final Duration EVALUATION_INTERVAL = new Duration(0.1, DurationUnit.SECOND);
 
     /** Socket used to listen for the incoming connection from the CCOL controller. */
-    ServerSocket serverSocket;
+    private ServerSocket serverSocket;
 
     /** Socket for communication with the CCOL controller. */
     private Socket clientSocket = null;
@@ -71,7 +71,7 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
     private PrintWriter ccolWriter = null;
 
     /** Thread that blocks until accept returns. */
-    Thread acceptThread;
+    private Thread acceptThread;
 
     /**
      * Construct a new CCOL communication link.
@@ -94,7 +94,7 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
         try
         {
             // Set up a listening socket
-            this.serverSocket = new ServerSocket(PORT);
+            this.serverSocket = new ServerSocket(port);
             Runnable acceptTask = new Runnable()
             {
                 @Override
@@ -191,7 +191,7 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
 
     /** {@inheritDoc} */
     @Override
-    public void notify(EventInterface event) throws RemoteException
+    public void notify(final EventInterface event) throws RemoteException
     {
         EventType eventType = event.getType();
         if (eventType.equals(SimulatorInterface.END_REPLICATION_EVENT))
@@ -249,7 +249,8 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
 
     /** {@inheritDoc} */
     @Override
-    public InvisibleObjectInterface clone(OTSSimulatorInterface newSimulator, Network newNetwork) throws NetworkException
+    public InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
+            throws NetworkException
     {
         // FIXME: implement the clone() for CCOL
         return null;

@@ -25,25 +25,25 @@ public interface TrafficController
      * @return String; the id of the traffic light controller
      */
     @Override
-    public String getId();
+    String getId();
 
     /** Traffic controller is starting up. Particular traffic control programs may use additional states not listed here. */
-    final String STARTING_UP = "starting up";
+    String STARTING_UP = "starting up";
 
     /** Traffic controller is being cloned. Particular traffic control programs may use additional states not listed here. */
-    final String BEING_CLONED = "being cloned";
+    String BEING_CLONED = "being cloned";
 
     /** Traffic controller is running. */
-    final String RUNNING = "running";
+    String RUNNING = "running";
 
     /** Traffic controller is shutting down. */
-    final String SHUTTING_DOWN = "shutting down";
+    String SHUTTING_DOWN = "shutting down";
 
     /** Traffic controller is off. */
-    final String OFF = "off";
+    String OFF = "off";
 
     /** Constant to select variables that have no associated traffic stream. */
-    public final static int NO_STREAM = -1;
+    int NO_STREAM = -1;
 
     /**
      * The <b>timed</b> event type for pub/sub that a newly created traffic controller emits. <br>
@@ -75,7 +75,7 @@ public interface TrafficController
      * The <b>timed</b>event that is fired by a traffic control program when a traffic light must change state. <br>
      * Payload: Object[] { String trafficControllerId, Integer stream, TrafficLightColor newColor }
      */
-    public static final EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged");
+    EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the creation of a traffic control program variable. <br>

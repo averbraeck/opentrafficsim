@@ -21,7 +21,7 @@ public abstract class AbstractTrafficController extends EventProducer implements
     private static final long serialVersionUID = 20190221L;
 
     /** Id of this controller. */
-    final String id;
+    private final String id;
 
     /**
      * Constructor for traffic controller.

@@ -63,46 +63,46 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     private static final long serialVersionUID = 20161014L;
 
     /** Version of the supported TrafCOD files. */
-    final static int TRAFCOD_VERSION = 100;
+    static final int TRAFCOD_VERSION = 100;
 
     /** The evaluation interval of TrafCOD. */
-    final static Duration EVALUATION_INTERVAL = new Duration(0.1, DurationUnit.SECOND);
+    static final Duration EVALUATION_INTERVAL = new Duration(0.1, DurationUnit.SECOND);
 
     /** Text leading up to the TrafCOD version number. */
-    private final static String VERSION_PREFIX = "trafcod-version=";
+    private static final String VERSION_PREFIX = "trafcod-version=";
 
     /** Text on line before the sequence line. */
-    private final static String SEQUENCE_KEY = "Sequence";
+    private static final String SEQUENCE_KEY = "Sequence";
 
     /** Text leading up to the control program structure. */
-    private final static String STRUCTURE_PREFIX = "Structure:";
+    private static final String STRUCTURE_PREFIX = "Structure:";
 
     /** The tokenized rules. */
-    final List<Object[]> tokenisedRules = new ArrayList<>();
+    private final List<Object[]> tokenisedRules = new ArrayList<>();
 
     /** The TrafCOD variables. */
-    final Map<String, Variable> variables = new LinkedHashMap<>();
+    private final Map<String, Variable> variables = new LinkedHashMap<>();
 
     /** The TrafCOD variables in order of definition. */
-    final List<Variable> variablesInDefinitionOrder = new ArrayList<>();
+    private final List<Variable> variablesInDefinitionOrder = new ArrayList<>();
 
     /** The detectors. */
-    final Map<String, Variable> detectors = new LinkedHashMap<>();
+    private final Map<String, Variable> detectors = new LinkedHashMap<>();
 
     /** Comment starter in TrafCOD. */
-    final static String COMMENT_PREFIX = "#";
+    static final String COMMENT_PREFIX = "#";
 
     /** Prefix for initialization rules. */
-    private final static String INIT_PREFIX = "%init ";
+    private static final String INIT_PREFIX = "%init ";
 
     /** Prefix for time initializer rules. */
-    private final static String TIME_PREFIX = "%time ";
+    private static final String TIME_PREFIX = "%time ";
 
     /** Prefix for export rules. */
-    private final static String EXPORT_PREFIX = "%export ";
+    private static final String EXPORT_PREFIX = "%export ";
 
     /** Number of conflict groups in the control program. */
-    int numberOfConflictGroups = -1;
+    private int numberOfConflictGroups = -1;
 
     /** Sequence information; size of conflict group. */
     private int conflictGroupSize = -1;
@@ -125,7 +125,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     /** Rule that is currently being evaluated. */
     private Object[] currentRule;
 
-    /** The current time in units of 0.1 s */
+    /** The current time in units of 0.1 s. */
     private int currentTime10 = 0;
 
     /** The unparsed TrafCOD rules (needed for cloning). */
@@ -135,10 +135,10 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     private final Container displayContainer;
 
     /** Background image for state display. */
-    final BufferedImage displayBackground;
+    private final BufferedImage displayBackground;
 
     /** Objects to draw on top of display background. */
-    final List<String> displayObjectLocations;
+    private final List<String> displayObjectLocations;
 
     /** Animation of the current state of this TrafCOD controller. */
     private TrafCODDisplay stateDisplay = null;
@@ -162,8 +162,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      * @throws IOException when loading the TrafCOD rules from the URL fails
      */
-    public TrafCOD(String controllerName, final URL trafCodURL, final OTSSimulatorInterface simulator, Container display,
-            final BufferedImage displayBackground, final List<String> displayObjectLocations)
+    public TrafCOD(final String controllerName, final URL trafCodURL, final OTSSimulatorInterface simulator,
+            final Container display, final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException, IOException
     {
         this(controllerName, loadTextFromURL(trafCodURL), simulator, display, displayBackground, displayObjectLocations);
@@ -181,7 +181,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
-    public TrafCOD(String controllerName, final List<String> trafCODRules, final OTSSimulatorInterface simulator,
+    public TrafCOD(final String controllerName, final List<String> trafCODRules, final OTSSimulatorInterface simulator,
             final Container display, final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException
     {
@@ -412,7 +412,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     {
         for (Variable v : this.variablesInDefinitionOrder)
         {
-            if (0 == v.refCount && (!v.isOutput()) && (!v.getName().matches("^RA.")))
+            if (0 == v.getRefCount() && (!v.isOutput()) && (!v.getName().matches("^RA.")))
             {
                 // System.out.println("Warning: " + v.getName() + v.getStream() + " is never referenced");
                 fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
@@ -917,7 +917,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     private static final int BIND_MULTIPLY = 3;
 
     /** Binding strength of unary minus. */
-    private static int BIND_UNARY_MINUS = 4;
+    private static final int BIND_UNARY_MINUS = 4;
 
     /**
      * Evaluate an expression. <br>
@@ -1173,7 +1173,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @return String; a textual approximation of the original rule
      * @throws TrafficControlException when tokens does not match the expected grammar
      */
-    static String printRule(Object[] tokens, final boolean printValues) throws TrafficControlException
+    static String printRule(final Object[] tokens, final boolean printValues) throws TrafficControlException
     {
         EnumSet<PrintFlags> variableFlags = EnumSet.of(PrintFlags.ID);
         if (printValues)
@@ -1695,7 +1695,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @return Variable; the new (or already existing) variable
      * @throws TrafficControlException if the variable already exists and already has (one of) the specified flag(s)
      */
-    private Variable installVariable(String name, short stream, EnumSet<Flags> flags, String location)
+    private Variable installVariable(final String name, final short stream, final EnumSet<Flags> flags, final String location)
             throws TrafficControlException
     {
         EnumSet<Flags> forbidden = EnumSet.complementOf(EnumSet.of(Flags.HAS_START_RULE, Flags.HAS_END_RULE));
@@ -1749,7 +1749,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
 
     /** {@inheritDoc} */
     @Override
-    public void updateDetector(String detectorId, boolean detectingGTU)
+    public void updateDetector(final String detectorId, final boolean detectingGTU)
     {
         Variable detector = this.detectors.get(detectorId);
         detector.setValue(detectingGTU ? 1 : 0, this.currentTime10,
@@ -1810,7 +1810,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
 
     /** {@inheritDoc} */
     @Override
-    public void notify(EventInterface event) throws RemoteException
+    public void notify(final EventInterface event) throws RemoteException
     {
         System.out.println("TrafCOD: received an event");
         if (event.getType().equals(TrafficController.TRAFFICCONTROL_SET_TRACING))
@@ -1975,7 +1975,7 @@ class NameAndStream
      * @param locationDescription String; description of the location in the input file
      * @throws TrafficControlException when text is not a valid TrafCOD variable name
      */
-    public NameAndStream(final String text, final String locationDescription) throws TrafficControlException
+   NameAndStream(final String text, final String locationDescription) throws TrafficControlException
     {
         int pos = 0;
         while (pos < text.length() && Character.isWhitespace(text.charAt(pos)))
@@ -2097,45 +2097,57 @@ class NameAndStream
  */
 class Variable implements EventListenerInterface
 {
+    /** ... */
+    private static final long serialVersionUID = 20200313L;
+
     /** The TrafCOD engine. */
     private final TrafCOD trafCOD;
 
     /** Flags. */
-    EnumSet<Flags> flags = EnumSet.noneOf(Flags.class);
+    private EnumSet<Flags> flags = EnumSet.noneOf(Flags.class);
 
     /** The current value. */
-    int value;
+    private int value;
 
     /** Limit value (if this is a timer variable). */
-    int timerMax10;
+    private int timerMax10;
 
     /** Output color (if this is an export variable). */
-    TrafficLightColor color;
+    private TrafficLightColor color;
 
     /** Name of this variable (without the traffic stream). */
-    final String name;
+    private final String name;
 
-    /** Traffic stream number */
-    final short stream;
+    /** Traffic stream number. */
+    private final short stream;
 
     /** Number of rules that refer to this variable. */
-    int refCount;
+    private int refCount;
 
     /** Time of last update in tenth of second. */
-    int updateTime10;
+    private int updateTime10;
 
     /** Source of start rule. */
-    String startSource;
+    private String startSource;
 
     /** Source of end rule. */
-    String endSource;
+    private String endSource;
 
     /** The traffic light (only set if this Variable is an output(. */
     private Set<TrafficLight> trafficLights;
 
     /** Letters that are used to distinguish conflict groups in the MRx variables. */
-    private static String ROWLETTERS = "ABCDXYZUVW";
+    private static String rowLetters = "ABCDXYZUVW";
 
+    /**
+     * Retrieve the number of rules that refer to this variable.
+     * @return int; the number of rules that refer to this variable
+     */
+    public int getRefCount()
+    {
+        return this.refCount;
+    }
+    
     /**
      * @param newNetwork OTSNetwork; the OTS Network in which the clone will exist
      * @param newTrafCOD TrafCOD; the TrafCOD engine that will own the new Variable
@@ -2187,7 +2199,7 @@ class Variable implements EventListenerInterface
      * @param stream short; stream number to which the new Variable is associated
      * @param trafCOD TrafCOD; the TrafCOD engine
      */
-    public Variable(final String name, final short stream, TrafCOD trafCOD)
+    Variable(final String name, final short stream, final TrafCOD trafCOD)
     {
         this.name = name.toUpperCase(Locale.US);
         this.stream = stream;
@@ -2201,7 +2213,7 @@ class Variable implements EventListenerInterface
             this.flags.add(Flags.IS_DETECTOR);
         }
         if (TrafficController.NO_STREAM == stream && this.name.startsWith("MR") && this.name.length() == 3
-                && ROWLETTERS.indexOf(this.name.charAt(2)) >= 0)
+                && rowLetters.indexOf(this.name.charAt(2)) >= 0)
         {
             this.flags.add(Flags.CONFLICT_GROUP);
         }
@@ -2221,7 +2233,7 @@ class Variable implements EventListenerInterface
      * @param sensor TrafficLightSensor; the sensor
      * @throws TrafficControlException when this variable is not a detector
      */
-    public void subscribeToDetector(TrafficLightSensor sensor) throws TrafficControlException
+    public void subscribeToDetector(final TrafficLightSensor sensor) throws TrafficControlException
     {
         if (!isDetector())
         {
@@ -2324,7 +2336,7 @@ class Variable implements EventListenerInterface
         {
             throw new TrafficControlException("Variable " + this + " is not a conflict group identifier");
         }
-        return ROWLETTERS.indexOf(this.name.charAt(2));
+        return rowLetters.indexOf(this.name.charAt(2));
     }
 
     /**
@@ -2340,10 +2352,11 @@ class Variable implements EventListenerInterface
      * @param newValue int; the new value of this Variable
      * @param timeStamp10 int; the time stamp of this update
      * @param cause CausePrinter; rule, timer, or detector that caused the change
-     * @param trafCOD TrafCOD; the TrafCOD controller
+     * @param trafCODController TrafCOD; the TrafCOD controller
      * @return boolean; true if the value of this variable changed
      */
-    public boolean setValue(int newValue, int timeStamp10, CausePrinter cause, TrafCOD trafCOD)
+    public boolean setValue(final int newValue, final int timeStamp10, final CausePrinter cause,
+            final TrafCOD trafCODController)
     {
         boolean result = false;
         if (this.value != newValue)
@@ -2372,7 +2385,7 @@ class Variable implements EventListenerInterface
         {
             // System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
             // + " due to " + cause.toString());
-            trafCOD.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED, new Object[] {trafCOD.getId(),
+            trafCODController.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED, new Object[] {trafCODController.getId(),
                     toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value, newValue, cause.toString()});
         }
         this.value = newValue;
@@ -2497,7 +2510,7 @@ class Variable implements EventListenerInterface
      * @param colorValue int; the output value (as used in the TrafCOD file)
      * @throws TrafficControlException when the colorValue is invalid, or this method is called more than once for this variable
      */
-    public void setOutput(int colorValue) throws TrafficControlException
+    public void setOutput(final int colorValue) throws TrafficControlException
     {
         if (null != this.color)
         {
@@ -2546,7 +2559,7 @@ class Variable implements EventListenerInterface
      * @param value10 int; the maximum time in 0.1 s
      * @throws TrafficControlException when this Variable is not a timer
      */
-    public void setTimerMax(int value10) throws TrafficControlException
+    public void setTimerMax(final int value10) throws TrafficControlException
     {
         if (!this.flags.contains(Flags.IS_TIMER))
         {
@@ -2570,7 +2583,7 @@ class Variable implements EventListenerInterface
      * @param startSource String; description of the rule that starts this variable
      * @throws TrafficControlException when a start source has already been set
      */
-    public void setStartSource(String startSource) throws TrafficControlException
+    public void setStartSource(final String startSource) throws TrafficControlException
     {
         if (null != this.startSource)
         {
@@ -2594,7 +2607,7 @@ class Variable implements EventListenerInterface
      * @param endSource String; description of the rule that ends this variable
      * @throws TrafficControlException when an end source has already been set
      */
-    public void setEndSource(String endSource) throws TrafficControlException
+    public void setEndSource(final String endSource) throws TrafficControlException
     {
         if (null != this.endSource)
         {
@@ -2625,7 +2638,7 @@ class Variable implements EventListenerInterface
      * @param printFlags EnumSet&lt;PrintFlags&gt;; the set of fields to convert
      * @return String
      */
-    public String toString(EnumSet<PrintFlags> printFlags)
+    public String toString(final EnumSet<PrintFlags> printFlags)
     {
         StringBuilder result = new StringBuilder();
         if (printFlags.contains(PrintFlags.ID))
@@ -2734,7 +2747,7 @@ class Variable implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(EventInterface event) throws RemoteException
+    public void notify(final EventInterface event) throws RemoteException
     {
         if (event.getType().equals(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT))
         {
@@ -2755,13 +2768,13 @@ class Variable implements EventListenerInterface
 class CausePrinter
 {
     /** Object that describes the cause of the variable change. */
-    final Object cause;
+    private final Object cause;
 
     /**
      * Construct a new CausePrinter object.
      * @param cause Object; this should be either a String, or a Object[] that contains a tokenized TrafCOD rule.
      */
-    public CausePrinter(final Object cause)
+    CausePrinter(final Object cause)
     {
         this.cause = cause;
     }

@@ -45,67 +45,67 @@ public class Diagram
 {
     /** Numbering of the lateral objects/positions from the median to the shoulder. */
     /** Central divider. */
-    final static int DIVIDER_1 = 0;
+    static final int DIVIDER_1 = 0;
 
     /** Left turn area on roundabout. */
-    final static int CAR_ROUNDABOUT_LEFT = 1;
+    static final int CAR_ROUNDABOUT_LEFT = 1;
 
     /** Public transit between divider and left turn lane. */
-    final static int PT_DIV_L = 3;
+    static final int PT_DIV_L = 3;
 
     /** Divider between center public transit and left turn lane. */
-    final static int DIVIDER_2 = 4;
+    static final int DIVIDER_2 = 4;
 
     /** Left turn lane(s). */
-    final static int CAR_LEFT = 5;
+    static final int CAR_LEFT = 5;
 
     /** No turn (center) lane(s). */
-    final static int CAR_CENTER = 7;
+    static final int CAR_CENTER = 7;
 
     /** Right turn lane(s). */
-    final static int CAR_RIGHT = 9;
+    static final int CAR_RIGHT = 9;
 
     /** Divider between right turn lane and bicycle lane. */
-    final static int DIVIDER_3 = 10;
+    static final int DIVIDER_3 = 10;
 
     /** Public transit between right turn lane and bicycle lane. */
-    final static int PT_RIGHT_BICYCLE = 11;
+    static final int PT_RIGHT_BICYCLE = 11;
 
     /** Divider. */
-    final static int DIVIDER_4 = 12;
+    static final int DIVIDER_4 = 12;
 
     /** Bicycle lane. */
-    final static int BICYCLE = 13;
+    static final int BICYCLE = 13;
 
     /** Divider. */
-    final static int DIVIDER_5 = 14;
+    static final int DIVIDER_5 = 14;
 
     /** Public transit between bicycle lane and right sidewalk. */
-    final static int PT_BICYCLE_SIDEWALK = 15;
+    static final int PT_BICYCLE_SIDEWALK = 15;
 
     /** Divider. */
-    final static int DIVIDER_6 = 16;
+    static final int DIVIDER_6 = 16;
 
     /** Sidewalk. */
-    final static int SIDEWALK = 17;
+    static final int SIDEWALK = 17;
 
     /** Divider. */
-    final static int DIVIDER_7 = 18;
+    static final int DIVIDER_7 = 18;
 
     /** Public transit right of right sidewalk. */
-    final static int PT_SIDEWALK_SHOULDER = 19;
+    static final int PT_SIDEWALK_SHOULDER = 19;
 
     /** Shoulder right of right sidewalk. */
-    final static int SHOULDER = 20;
+    static final int SHOULDER = 20;
 
     /** Boundary of schematic intersection. */
-    final static int BOUNDARY = 21;
+    static final int BOUNDARY = 21;
 
     /** The streams crossing the intersection. */
-    final List<Short> streams;
+    private final List<Short> streams;
 
     /** The routes through the intersection. */
-    final Map<Short, XYPair[]> routes = new LinkedHashMap<>();
+    private final Map<Short, XYPair[]> routes = new LinkedHashMap<>();
 
     /**
      * Construct a new diagram.
@@ -119,7 +119,7 @@ public class Diagram
         {
 
             @Override
-            public int compare(Short o1, Short o2)
+            public int compare(final Short o1, final Short o2)
             {
                 return o1 - o2;
             }
@@ -138,7 +138,7 @@ public class Diagram
             int quadrant = (stream - 1) / 3;
             this.routes.put(stream, rotateRoute(quadrant, assembleRoute(
                     new RouteStep(-BOUNDARY, CAR_RIGHT), 
-                    new RouteStep(-SHOULDER, CAR_RIGHT,Command.STOP_LINE_AND_ICON), 
+                    new RouteStep(-SHOULDER, CAR_RIGHT, Command.STOP_LINE_AND_ICON), 
                     new RouteStep(-CAR_CENTER, CAR_RIGHT), 
                     new RouteStep(-CAR_CENTER, BOUNDARY))));
             this.routes.put((short) (stream + 1), rotateRoute(quadrant, assembleRoute(
@@ -275,7 +275,7 @@ public class Diagram
      * @param i int; the number of the object
      * @return boolean; true if the object is inaccessible to all traffic
      */
-    public final static boolean isGrass(final int i)
+    public static final boolean isGrass(final int i)
     {
         return i == DIVIDER_1 || i == DIVIDER_2 || i == DIVIDER_3 || i == DIVIDER_4 || i == DIVIDER_5 || i == DIVIDER_6
                 || i == DIVIDER_7 || i == SHOULDER;
@@ -308,7 +308,7 @@ public class Diagram
     }
 
     /**
-     * Types of lanes
+     * Types of lanes.
      */
     enum LaneType
     {
@@ -340,6 +340,8 @@ public class Diagram
                 return -xyPair.getX();
             case 3:
                 return xyPair.getY();
+            default:
+                break; // cannot happen
         }
         return 0; // cannot happen
     }
@@ -362,6 +364,8 @@ public class Diagram
                 return -xyPair.getY();
             case 3:
                 return -xyPair.getX();
+            default:
+                break; // cannot happen
         }
         return 0; // cannot happen
     }
@@ -395,23 +399,23 @@ public class Diagram
     class RouteStep
     {
         /** X object. */
-        final private int x;
+        private final int x;
 
         /** Y object. */
-        final private int y;
+        private final int y;
 
         /** Command of this step. */
-        final private Command command;
+        private final Command command;
 
         /** Condition for IF and ELSE_IF commands. */
-        final private int streamCondition;
+        private final int streamCondition;
 
         /**
          * Construct a RouteStep that has a NO_OP command.
          * @param x int; the X object at the end of this route step
          * @param y int; the Y object at the end of this route step
          */
-        public RouteStep(final int x, final int y)
+        RouteStep(final int x, final int y)
         {
             this.x = x;
             this.y = y;
@@ -427,7 +431,7 @@ public class Diagram
          * @throws TrafficLightException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
          *             valid streamCOndition
          */
-        public RouteStep(final int x, final int y, final Command command) throws TrafficLightException
+        RouteStep(final int x, final int y, final Command command) throws TrafficLightException
         {
             Throw.when(
                     Command.STOP_LINE != command && Command.NO_OP != command && Command.ICON != command
@@ -448,7 +452,7 @@ public class Diagram
          * @throws TrafficLightException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
          *             valid streamCOndition
          */
-        public RouteStep(final Command command, final int streamCondition) throws TrafficLightException
+        RouteStep(final Command command, final int streamCondition) throws TrafficLightException
         {
             Throw.when(Command.IF != command && Command.ELSE_IF != command, TrafficLightException.class,
                     "RouteStep constructor with stream condition must use command IF or ELSE_IF");
@@ -465,7 +469,7 @@ public class Diagram
          * @param command Command; either <code>Command.ELSE</code> or <code>Command.END_IF</code>
          * @throws TrafficLightException when the Command is not ELSE or END_IF
          */
-        public RouteStep(final Command command) throws TrafficLightException
+        RouteStep(final Command command) throws TrafficLightException
         {
             Throw.when(Command.ELSE != command && Command.END_IF != command, TrafficLightException.class,
                     "RouteStep constructor with single command parameter requires ELSE or END_IF command");
@@ -537,7 +541,7 @@ public class Diagram
          * @param x int; the X value
          * @param y int; the Y value
          */
-        public XYPair(final int x, final int y)
+        XYPair(final int x, final int y)
         {
             this.x = x;
             this.y = y;
@@ -547,7 +551,7 @@ public class Diagram
          * Construct a new XY pair from a route step.
          * @param routeStep RouteStep; the route step
          */
-        public XYPair(final RouteStep routeStep)
+        XYPair(final RouteStep routeStep)
         {
             this.x = routeStep.getX();
             this.y = routeStep.getY();
@@ -558,7 +562,7 @@ public class Diagram
          * @param in XYPair; the initial version
          * @param quadrant int; the quadrant
          */
-        public XYPair(final XYPair in, final int quadrant)
+        XYPair(final XYPair in, final int quadrant)
         {
             this.x = rotatedX(in, quadrant);
             this.y = rotatedY(in, quadrant);
@@ -626,12 +630,12 @@ public class Diagram
     }
 
     /**
-     * Construct a route through the intersection
+     * Construct a route through the intersection.
      * @param steps RouteStep...; the steps of the route description
      * @return RouteStep[]; the route through the intersection
      * @throws TrafficLightException when something is very wrong
      */
-    private RouteStep[] assembleRoute(RouteStep... steps) throws TrafficLightException
+    private RouteStep[] assembleRoute(final RouteStep... steps) throws TrafficLightException
     {
         List<RouteStep> result = new ArrayList<>();
         RouteStep step;
@@ -860,7 +864,7 @@ public class Diagram
         {
 
             @Override
-            public void actionPerformed(ActionEvent e)
+            public void actionPerformed(final ActionEvent e)
             {
                 rebuildTestPanel();
             }
@@ -869,10 +873,10 @@ public class Diagram
     }
 
     /** JPanel used to render the intersection for testing. */
-    static JPanel testPanel = null;
+    private static JPanel testPanel = null;
 
     /** JPanel that holds all the check boxes. */
-    static JPanel checkBoxPanel = null;
+    private static JPanel checkBoxPanel = null;
 
     /**
      * Render the intersection.
