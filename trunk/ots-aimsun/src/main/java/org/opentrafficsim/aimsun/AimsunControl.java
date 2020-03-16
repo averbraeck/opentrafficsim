@@ -60,6 +60,7 @@ import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.pmw.tinylog.Level;
 import org.xml.sax.SAXException;
 
@@ -605,7 +606,8 @@ public class AimsunControl
                 // new GTUDumper(simulator, Time.ZERO, Duration.instantiateSI(60), network, "C:/Temp/aimsun");
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
-                    | SAXException | ParserConfigurationException | GTUException exception)
+                    | SAXException | ParserConfigurationException | GTUException | IOException
+                    | TrafficControlException exception)
             {
                 exception.printStackTrace();
                 // Abusing the SimRuntimeException to propagate the message to the main method (the problem could actually be a

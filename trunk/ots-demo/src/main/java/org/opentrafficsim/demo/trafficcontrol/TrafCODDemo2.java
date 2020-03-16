@@ -1,35 +1,31 @@
 package org.opentrafficsim.demo.trafficcontrol;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
-import javax.imageio.ImageIO;
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.xml.bind.DatatypeConverter;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventType;
-import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -38,11 +34,10 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
-import org.opentrafficsim.xml.generated.CONTROL;
-import org.opentrafficsim.xml.generated.CONTROL.TRAFCOD;
 import org.opentrafficsim.xml.generated.OTS;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 import nl.tudelft.simulation.language.DSOLException;
 
 /**
@@ -130,11 +125,27 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
     @Override
     protected final void addTabs()
     {
-        JScrollPane scrollPane = new JScrollPane(getModel().getControllerDisplayPanel());
-        JPanel wrapper = new JPanel(new BorderLayout());
-        wrapper.add(scrollPane);
-        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount() - 1,
-                getModel().getTrafCOD().getId(), wrapper);
+        OTSAnimationPanel animationPanel = getAnimationPanel();
+        if (null == animationPanel)
+        {
+            return;
+        }
+        ImmutableMap<String, InvisibleObjectInterface> invisibleObjectMap = getModel().getNetwork().getInvisibleObjectMap();
+        for (InvisibleObjectInterface ioi : invisibleObjectMap.values())
+        {
+            if (ioi instanceof TrafCOD)
+            {
+                TrafCOD trafCOD = (TrafCOD) ioi;
+                Container controllerDisplayPanel = trafCOD.getDisplayContainer();
+                if (null != controllerDisplayPanel)
+                {
+                    JPanel wrapper = new JPanel(new BorderLayout());
+                    wrapper.add(new JScrollPane(controllerDisplayPanel));
+                    TabbedContentPane tabbedPane = animationPanel.getTabbedPane();
+                    tabbedPane.addTab(tabbedPane.getTabCount() - 1, trafCOD.getId(), wrapper);
+                }
+            }
+        }
     }
 
     /**
@@ -147,12 +158,6 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
 
         /** The network. */
         private OTSRoadNetwork network;
-
-        /** The TrafCOD controller. */
-        private TrafCOD trafCOD;
-
-        /** TrafCOD controller display. */
-        private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
 
         /** The XML. */
         private final String xml;
@@ -179,68 +184,6 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                 this.network = new OTSRoadNetwork(getShortName(), true);
                 OTS ots = XmlNetworkLaneParser.parseXML(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
                 XmlNetworkLaneParser.build(ots, this.network, getSimulator(), false);
-
-                String controllerName = "TrafCOD_complex";
-                List<CONTROL> trafficControllerList = ots.getCONTROL();
-                Throw.when(trafficControllerList.size() != 1, NetworkException.class,
-                        "OTS contains wrong number of traffic controllers (should be 1, got %1)", trafficControllerList.size());
-                CONTROL controller = trafficControllerList.get(0);
-                List<TRAFCOD> trafCodList = controller.getTRAFCOD();
-                Throw.when(trafCodList.size() != 1, NetworkException.class, "Controller should contain one TRAFCOD (got %1)",
-                        trafCodList.size());
-                TRAFCOD trafCod = trafCodList.get(0);
-                String programString = trafCod.getPROGRAM().getValue();
-                List<String> program = null == programString ? TrafCOD.loadTextFromURL(new URL(trafCod.getPROGRAMFILE()))
-                        : Arrays.asList(programString.split("\n"));
-                // Obtain the background image for the TrafCOD controller state display
-                TRAFCOD.CONSOLE.MAP mapData = trafCod.getCONSOLE().getMAP();
-                BufferedImage backgroundImage = null;
-                if (null != mapData)
-                {
-                    String graphicsType = mapData.getTYPE();
-                    String encoding = mapData.getENCODING();
-                    String encodedData = mapData.getValue();
-                    if (!"base64".contentEquals(encoding))
-                    {
-                        throw new RuntimeException("Unexpected image encoding: " + encoding);
-                    }
-                    byte[] imageBytes = DatatypeConverter.parseBase64Binary(encodedData);
-                    switch (graphicsType)
-                    {
-                        case "PNG":
-                            backgroundImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
-                            // javax.imageio.ImageIO.write(backgroundImage, "png", new File("c:\\temp\\test.png"));
-                            break;
-
-                        default:
-                            throw new RuntimeException("Unexpected image type: " + graphicsType);
-                    }
-                }
-                String objectLocationsString = trafCod.getCONSOLE().getCOORDINATES().getValue();
-                List<String> displayObjectLocations = null == objectLocationsString
-                        ? TrafCOD.loadTextFromURL(new URL(trafCod.getCONSOLE().getCOORDINATESFILE()))
-                        : Arrays.asList(objectLocationsString.split("\n"));
-                this.trafCOD = new TrafCOD(controllerName, program, getSimulator(), this.controllerDisplayPanel,
-                        backgroundImage, displayObjectLocations);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_STATE_CHANGED);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
-                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
-                // Subscribe the TrafCOD machine to trace command events that we emit
-                addListener(this.trafCOD, TrafficController.TRAFFICCONTROL_SET_TRACING);
-                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TGX", 8, true});
-                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "XR1", 11, true});
-                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TD1", 11, true});
-                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TGX", 11, true});
-                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TL", 11, true});
-                // System.out.println("demo: emitting a SET TRACING event for all variables related to stream 11");
-                // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] { controllerName, "", 11, true });
-
-                // this.trafCOD.traceVariablesOfStream(TrafficController.NO_STREAM, true);
-                // this.trafCOD.traceVariablesOfStream(11, true);
-                // this.trafCOD.traceVariable("MRV", 11, true);
             }
             catch (Exception exception)
             {
@@ -253,22 +196,6 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
         public final OTSRoadNetwork getNetwork()
         {
             return this.network;
-        }
-
-        /**
-         * @return trafCOD
-         */
-        public final TrafCOD getTrafCOD()
-        {
-            return this.trafCOD;
-        }
-
-        /**
-         * @return controllerDisplayPanel
-         */
-        public final JPanel getControllerDisplayPanel()
-        {
-            return this.controllerDisplayPanel;
         }
 
         /** {@inheritDoc} */

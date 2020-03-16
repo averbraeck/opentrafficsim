@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.network.xml;
 
 import java.awt.Dimension;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -27,6 +28,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -133,7 +135,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
                 XmlNetworkLaneParser.build(url.getPath(), this.network, getSimulator(), true);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
-                    | URISyntaxException | XmlParserException | GTUException exception)
+                    | URISyntaxException | XmlParserException | GTUException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();
             }

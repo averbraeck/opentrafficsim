@@ -103,11 +103,15 @@
     <LINK ID="NX" NODESTART="N" NODEEND="XS" TYPE="STREET">
       <STRAIGHT />
       <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
+      <TRAFFICLIGHT LANE="FORWARD"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="11" POSITION="296m" />
     </LINK>
 
     <LINK ID="WX" NODESTART="W" NODEEND="XE" TYPE="STREET">
       <STRAIGHT />
       <DEFINEDLAYOUT>r1</DEFINEDLAYOUT>
+      <TRAFFICLIGHT LANE="FORWARD"
+        CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="08" POSITION="296m" />
     </LINK>
 
     <LINK ID="XS" NODESTART="XS" NODEEND="S" TYPE="STREET">
@@ -170,12 +174,12 @@
       <SIGNALGROUP ID="08">
         <TRAFFICLIGHT LINK="WX" LANE="FORWARD1" TRAFFICLIGHTID="08" />
       </SIGNALGROUP>
-      <SIGNALGROUP ID="qq">
+      <SIGNALGROUP ID="11">
         <TRAFFICLIGHT LINK="NX" LANE="FORWARD1" TRAFFICLIGHTID="11" />
       </SIGNALGROUP>
       <SENSOR ID="D081">
         <SINGLELANE>
-          <LINK>NX</LINK>
+          <LINK>WX</LINK>
           <LANE>FORWARD</LANE>
           <ENTRYPOSITION>END-8m</ENTRYPOSITION>
           <EXITPOSITION>END-6m</EXITPOSITION>
@@ -183,7 +187,7 @@
       </SENSOR>
       <SENSOR ID="D082">
         <SINGLELANE>
-          <LINK>NX</LINK>
+          <LINK>WX</LINK>
           <LANE>FORWARD</LANE>
           <ENTRYPOSITION>END-30m</ENTRYPOSITION>
           <EXITPOSITION>END-15m</EXITPOSITION>
@@ -191,7 +195,7 @@
       </SENSOR>
       <SENSOR ID="D111">
         <SINGLELANE>
-          <LINK>WX</LINK>
+          <LINK>NX</LINK>
           <LANE>FORWARD</LANE>
           <ENTRYPOSITION>END-8m</ENTRYPOSITION>
           <EXITPOSITION>END-6m</EXITPOSITION>
@@ -199,7 +203,7 @@
       </SENSOR>
       <SENSOR ID="D112">
         <SINGLELANE>
-          <LINK>WX</LINK>
+          <LINK>NX</LINK>
           <LANE>FORWARD</LANE>
           <ENTRYPOSITION>END-30m</ENTRYPOSITION>
           <EXITPOSITION>END-15m</EXITPOSITION>

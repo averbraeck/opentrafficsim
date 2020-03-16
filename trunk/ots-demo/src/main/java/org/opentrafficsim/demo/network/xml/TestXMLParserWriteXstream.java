@@ -32,6 +32,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -149,7 +150,7 @@ public class TestXMLParserWriteXstream extends OTSSimulationApplication<OTSModel
                 System.out.println("writing took : " + (System.currentTimeMillis() - millis) + " ms");
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
-                    | URISyntaxException | XmlParserException | IOException | GTUException exception)
+                    | URISyntaxException | XmlParserException | IOException | GTUException | TrafficControlException exception)
             {
                 exception.printStackTrace();
             }

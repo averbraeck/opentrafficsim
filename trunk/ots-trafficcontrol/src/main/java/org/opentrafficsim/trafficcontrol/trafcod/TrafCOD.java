@@ -18,6 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JPanel;
+
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -132,7 +134,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     private final List<String> trafCODRules;
 
     /** Container for controller state display. */
-    private final Container displayContainer;
+    private final Container displayContainer = new JPanel();
 
     /** Background image for state display. */
     private final BufferedImage displayBackground;
@@ -166,7 +168,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             final Container display, final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException, IOException
     {
-        this(controllerName, loadTextFromURL(trafCodURL), simulator, display, displayBackground, displayObjectLocations);
+        this(controllerName, loadTextFromURL(trafCodURL), simulator, displayBackground, displayObjectLocations);
     }
 
     /**
@@ -174,7 +176,6 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @param controllerName String; name of this TrafCOD traffic light controller
      * @param trafCODRules List&lt;String&gt;; the TrafCOD rules
      * @param simulator OTSSimulatorInterface; the simulation engine
-     * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
      * @param displayBackground BufferedImage; background for controller display image
      * @param displayObjectLocations List&lt;String&gt;; list of sensors and traffic lights and their locations on the
      *            <code>displayBackGround</code>
@@ -182,14 +183,13 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
     public TrafCOD(final String controllerName, final List<String> trafCODRules, final OTSSimulatorInterface simulator,
-            final Container display, final BufferedImage displayBackground, final List<String> displayObjectLocations)
+            final BufferedImage displayBackground, final List<String> displayObjectLocations)
             throws TrafficControlException, SimRuntimeException
     {
         super(controllerName, simulator);
         Throw.whenNull(controllerName, "controllerName may not be null");
         Throw.whenNull(simulator, "simulator may not be null");
         this.simulator = simulator;
-        this.displayContainer = display;
         this.displayBackground = displayBackground;
         this.displayObjectLocations = displayObjectLocations;
         Throw.whenNull(trafCODRules, "trafCodRules may not be null");
@@ -1889,6 +1889,13 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     {
         return getId();
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Container getDisplayContainer()
+    {
+        return this.displayContainer;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -1898,7 +1905,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         try
         {
             // TODO figure out how to provide a display for the clone
-            TrafCOD result = new TrafCOD(getId(), this.trafCODRules, newSimulator, null, this.displayBackground, null);
+            TrafCOD result = new TrafCOD(getId(), this.trafCODRules, newSimulator, this.displayBackground, null);
             result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED,
                     new Serializable[] {getId(), TrafficController.BEING_CLONED}, newSimulator.getSimulatorTime());
             // Clone the variables

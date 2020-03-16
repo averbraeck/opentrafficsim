@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.LinkedHashMap;
@@ -43,6 +45,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.xml.generated.ANIMATION;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.GTUTEMPLATE;
@@ -99,11 +102,14 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws SAXException on error creating SAX parser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GTUException when construction of the Strategical Planner failed
+     * @throws TrafficControlException when construction of a traffic controller fails
+     * @throws IOException when construction of a traffic controller fails
+     * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static OTSRoadNetwork build(final String filename, final OTSRoadNetwork otsNetwork,
             final OTSSimulatorInterface simulator, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
-            ParserConfigurationException, SimRuntimeException, GTUException
+            ParserConfigurationException, SimRuntimeException, GTUException, MalformedURLException, IOException, TrafficControlException
     {
         URL xmlURL = URLResource.getResource(filename);
         build(xmlURL, otsNetwork, simulator, buildConflicts);
@@ -126,11 +132,15 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws SAXException on error creating SAX parser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GTUException when construction of the Strategical Planner failed
+     * @throws TrafficControlException when construction of a traffic controller fails
+     * @throws IOException when construction of a traffic controller fails
+     * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final InputStream xmlStream,
             final OTSRoadNetwork otsNetwork, final OTSSimulatorInterface simulator, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
-            ParserConfigurationException, SimRuntimeException, GTUException
+            ParserConfigurationException, SimRuntimeException, GTUException, MalformedURLException, IOException,
+            TrafficControlException
     {
         return build(parseXML(xmlStream), otsNetwork, simulator, buildConflicts);
     }
@@ -191,11 +201,14 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws SAXException on error creating SAX parser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GTUException when construction of the Strategical Planner failed
+     * @throws TrafficControlException when construction of a traffic controller fails
+     * @throws IOException when construction of a traffic controller fails
+     * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator, final boolean buildConflicts)
-            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
-            ParserConfigurationException, SimRuntimeException, GTUException
+            final OTSSimulatorInterface simulator, final boolean buildConflicts) throws JAXBException, URISyntaxException,
+            NetworkException, OTSGeometryException, XmlParserException, SAXException, ParserConfigurationException,
+            SimRuntimeException, GTUException, MalformedURLException, IOException, TrafficControlException
     {
         return build(parseXML(xmlURL), otsNetwork, simulator, buildConflicts);
     }
@@ -216,11 +229,14 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws SAXException on error creating SAX parser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GTUException when construction of the Strategical Planner failed
+     * @throws TrafficControlException when construction of a traffic controller fails
+     * @throws IOException when construction of a traffic controller fails
+     * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final OTS ots, final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator, final boolean buildConflicts)
-            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
-            ParserConfigurationException, SimRuntimeException, GTUException
+            final OTSSimulatorInterface simulator, final boolean buildConflicts) throws JAXBException, URISyntaxException,
+            NetworkException, OTSGeometryException, XmlParserException, SAXException, ParserConfigurationException,
+            SimRuntimeException, GTUException, MalformedURLException, IOException, TrafficControlException
     {
         CategoryLogger.setLogCategories(Cat.PARSER);
         CategoryLogger.setAllLogLevel(Level.TRACE);
@@ -369,7 +385,6 @@ public final class XmlNetworkLaneParser implements Serializable
         ControlParser.parseControl(otsNetwork, simulator, controls);
 
         return experiment;
-
     }
 
     /**
