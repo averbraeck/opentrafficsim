@@ -426,7 +426,8 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                             default:
                                 output.println("Unhandled reply: " + command);
                                 output.println(HexDumper.hexDumper(bytes));
-                                output.println("Received " + Sim0MQMessage.print(message));
+                                output.println("Received:");
+                                output.println(Sim0MQMessage.print(message));
                                 break;
 
                         }
@@ -572,37 +573,68 @@ class TextAreaOutputStream extends OutputStream
         this.textArea = textArea;
     }
 
+    /**
+     * Write to the textArea. May only be called from within the AWT thread!
+     * @param bytes byte[]; bytes to write
+     * @param offset int; offset within bytes of the first byte to write
+     * @param length int; number of bytes to write
+     */
+    public void awtWrite(final byte[] bytes, final int offset, final int length)
+    {
+        synchronized (textArea)
+        {
+            for (int index = offset; index < offset + length; index++)
+            {
+                // redirects data to the text area
+                textArea.append(String.valueOf((char) (bytes[index])));
+            }
+            // scrolls the text area to the end of data
+            textArea.setCaretPosition(textArea.getDocument().getLength());
+        }
+    }
+
+    /**
+     * Write to the textArea. May only be called from within the AWT thread!
+     * @param b int; byte to write
+     */
+    public void awtWrite(final int b)
+    {
+        synchronized (textArea)
+        {
+            // redirects data to the text area
+            textArea.append(String.valueOf((char) b));
+            // scrolls the text area to the end of data
+            textArea.setCaretPosition(textArea.getDocument().getLength());
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
-    public void write(final byte[] bytes, final int offset, final int length) 
+    public void write(final byte[] bytes, final int offset, final int length)
     {
-        try
+        if (SwingUtilities.isEventDispatchThread())
         {
-            SwingUtilities.invokeAndWait(new Runnable()
+            awtWrite(bytes, offset, length);
+        }
+        else
+        {
+            try
             {
-
-                /** {@inheritDoc} */
-                @Override
-                public void run()
+                SwingUtilities.invokeAndWait(new Runnable()
                 {
-                    synchronized (textArea)
+                    /** {@inheritDoc} */
+                    @Override
+                    public void run()
                     {
-                        for (int index = offset; index < offset + length; index++)
-                        {
-                            // redirects data to the text area
-                            textArea.append(String.valueOf((char) (bytes[index])));
-                        }
-                        // scrolls the text area to the end of data
-                        textArea.setCaretPosition(textArea.getDocument().getLength());
+                        awtWrite(bytes, offset, length);
                     }
-                }
-            });
+                });
+            }
+            catch (InvocationTargetException | InterruptedException e)
+            {
+                e.printStackTrace();
+            }
         }
-        catch (InvocationTargetException | InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        
     }
 
     /** {@inheritDoc} */
@@ -620,18 +652,11 @@ class TextAreaOutputStream extends OutputStream
         {
             SwingUtilities.invokeAndWait(new Runnable()
             {
-
                 /** {@inheritDoc} */
                 @Override
                 public void run()
                 {
-                    synchronized (textArea)
-                    {
-                        // redirects data to the text area
-                        textArea.append(String.valueOf((char) b));
-                        // scrolls the text area to the end of data
-                        textArea.setCaretPosition(textArea.getDocument().getLength());
-                    }
+                    awtWrite(b);
                 }
             });
         }
