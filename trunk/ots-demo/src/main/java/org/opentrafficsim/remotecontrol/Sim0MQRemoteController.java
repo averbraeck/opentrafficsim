@@ -240,21 +240,21 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         this.toOTS.connect("inproc://fromAWT");
 
         // Send something
-        try
-        {
-            byte[] message = Sim0MQMessage.encodeUTF8(true, 0, "master", "slave", 0, 0, "HELLO");
-            output.println("Sending HELLO message:");
-            output.println(HexDumper.hexDumper(message));
-            this.toOTS.send(message, 0);
-        }
-        catch (Sim0MQException e)
-        {
-            e.printStackTrace();
-        }
-        catch (SerializationException e)
-        {
-            e.printStackTrace();
-        }
+        // try
+        // {
+        // byte[] message = Sim0MQMessage.encodeUTF8(true, 0, "master", "slave", 0, 0, "HELLO");
+        // output.println("Sending HELLO message:");
+        // output.println(HexDumper.hexDumper(message));
+        // this.toOTS.send(message, 0);
+        // }
+        // catch (Sim0MQException e)
+        // {
+        // e.printStackTrace();
+        // }
+        // catch (SerializationException e)
+        // {
+        // e.printStackTrace();
+        // }
     }
 
     /**
