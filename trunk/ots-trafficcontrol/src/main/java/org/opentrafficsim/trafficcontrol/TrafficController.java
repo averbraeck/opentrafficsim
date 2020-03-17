@@ -119,6 +119,6 @@ public interface TrafficController
      * Remark 4: Some traffic control systems may not operate in a conflict group by conflict group fashion and therefore not
      * emit these events.
      */
-    EventType TRAFFICCONTROL_CONFLICT_GROUP_CHANGED = new EventType("TRAFFIC_CONTROL.CONFLICT_GROUP_CHANGED");
+    EventType TRAFFICCONTROL_CONFLICT_GROUP_CHANGED = new EventType("TRAFFICCONTROL.CONFLICT_GROUP_CHANGED");
 
 }
