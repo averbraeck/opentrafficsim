@@ -22,6 +22,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.io.URLResource;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -144,6 +145,13 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                     TabbedContentPane tabbedPane = animationPanel.getTabbedPane();
                     tabbedPane.addTab(tabbedPane.getTabCount() - 1, trafCOD.getId(), wrapper);
                 }
+                // trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
+                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
+                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
+                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_STATE_CHANGED);
+                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
+                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
+
             }
         }
     }
@@ -211,26 +219,28 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
             }
             else if (TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED.equals(type))
             {
-                System.out.println("Conflict group changed from " + ((String) payload[1]) + " to " + ((String) payload[2]));
+                CategoryLogger.always().info("Conflict group changed from {} to {}", (String) payload[1], (String) payload[2]);
             }
             else if (TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED.equals(type))
             {
-                System.out.println(String.format("Variable changed %s <- %d   %s", payload[1], payload[4], payload[5]));
+                CategoryLogger.always().info("Variable changed %s <- %d   %s", payload[1], payload[4], payload[5]);
             }
             else if (TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING.equals(type))
             {
-                System.out.println("Warning " + payload[1]);
+                CategoryLogger.always().info("Warning " + payload[1]);
             }
             else
             {
-                System.out.print("TrafCODDemo received event of type " + event.getType() + ", payload [");
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("TrafCODDemo received event of type " + event.getType() + ", payload [");
                 String separator = "";
                 for (Object o : payload)
                 {
-                    System.out.print(separator + o);
+                    stringBuilder.append(separator + o);
                     separator = ",";
                 }
-                System.out.println("]");
+                stringBuilder.append("]");
+                CategoryLogger.always().info(stringBuilder.toString());
             }
         }
 
@@ -239,6 +249,13 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
         public Serializable getSourceId()
         {
             return "TrafCODModel";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "TrafCODModel [network=" + network.getId() + "]";
         }
 
     }

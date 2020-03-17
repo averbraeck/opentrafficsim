@@ -1957,6 +1957,13 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TrafCOD [ie=" + getId() + "]";
+    }
+
 }
 
 /**
@@ -2392,8 +2399,9 @@ class Variable implements EventListenerInterface
         {
             // System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
             // + " due to " + cause.toString());
-            trafCODController.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED, new Object[] {trafCODController.getId(),
-                    toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value, newValue, cause.toString()});
+            trafCODController.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED,
+                    new Object[] { trafCODController.getId(), toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value,
+                            newValue, cause.toString() });
         }
         this.value = newValue;
         return result;
