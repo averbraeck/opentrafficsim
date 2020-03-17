@@ -1,5 +1,7 @@
 package org.opentrafficsim.remotecontrol;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -14,6 +16,8 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -26,6 +30,8 @@ import org.djutils.cli.CliUtil;
 import org.djutils.decoderdumper.HexDumper;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventType;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.logger.LogCategory;
 import org.djutils.serialization.SerializationException;
@@ -33,7 +39,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSLoggingAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -42,6 +47,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -53,6 +59,8 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
+import org.opentrafficsim.trafficcontrol.TrafficController;
+import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 import org.pmw.tinylog.Level;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
@@ -66,9 +74,9 @@ import org.zeromq.ZMonitor.ZEvent;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.DSOLException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -84,8 +92,11 @@ import picocli.CommandLine.Option;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Sim0MQControlledOTS
+public class Sim0MQControlledOTS implements EventListenerInterface
 {
+    /** ... */
+    private static final long serialVersionUID = 20200317L;
+
     /** Currently active model. */
     private Sim0MQOTSModel model = null;
 
@@ -161,6 +172,85 @@ public class Sim0MQControlledOTS
     }
 
     /**
+     * Construct an OTS simulation experiment from an XML description.
+     * @param xml String; the XML encoded network
+     * @param simulationDuration Duration; total duration of the simulation
+     * @param warmupTime Duration; warm up time of the simulation
+     * @param seed Long; seed for the experiment
+     * @return String; null on success, description of the problem on error
+     */
+    private String loadNetwork(final String xml, final Duration simulationDuration, final Duration warmupTime, final Long seed)
+    {
+        if (null != this.model)
+        {
+            return "Cannot create another network (yet)";
+        }
+        else
+        {
+            try
+            {
+                OTSAnimator animator = new OTSAnimator("OTS Animator");
+                this.model = new Sim0MQOTSModel(animator, "OTS model", "Remotely controlled OTS model", xml);
+                Map<String, StreamInterface> map = new LinkedHashMap<>();
+                map.put("generation", new MersenneTwister(seed));
+                animator.initialize(Time.ZERO, simulationDuration, warmupTime, this.model, map);
+                OTSAnimationPanel animationPanel =
+                        new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000), animator,
+                                this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
+                DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), animator, new DefaultSwitchableGTUColorer());
+                new Sim0MQRemoteControlSwingApplication(this.model, animationPanel);
+                JFrame frame = (JFrame) animationPanel.getParent().getParent().getParent();
+                frame.setExtendedState(Frame.NORMAL);
+                frame.setSize(new Dimension(1100, 1000));
+                frame.setBounds(0, 25, 1100, 1000);
+                animator.setSpeedFactor(Double.MAX_VALUE, true);
+                animator.setSpeedFactor(1000.0, true);
+
+                ImmutableMap<String, InvisibleObjectInterface> invisibleObjectMap =
+                        this.model.getNetwork().getInvisibleObjectMap();
+                animator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
+                animator.addListener(this, SimulatorInterface.TIME_CHANGED_EVENT);
+                for (InvisibleObjectInterface ioi : invisibleObjectMap.values())
+                {
+                    if (ioi instanceof TrafCOD)
+                    {
+                        TrafCOD trafCOD = (TrafCOD) ioi;
+                        Container controllerDisplayPanel = trafCOD.getDisplayContainer();
+                        if (null != controllerDisplayPanel)
+                        {
+                            JPanel wrapper = new JPanel(new BorderLayout());
+                            wrapper.add(new JScrollPane(controllerDisplayPanel));
+                            TabbedContentPane tabbedPane = animationPanel.getTabbedPane();
+                            tabbedPane.addTab(tabbedPane.getTabCount() - 1, trafCOD.getId(), wrapper);
+                        }
+                        // trafCOD.addListener(this,
+                        // TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
+                        trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
+                        trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
+                        trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_STATE_CHANGED);
+                        trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
+                        trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
+                    }
+                }
+                try
+                {
+                    Thread.sleep(300);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                animationPanel.actionPerformed(new ActionEvent(this, 0, "ZoomAll"));
+            }
+            catch (Exception e)
+            {
+                return e.getMessage();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Read commands from the master, execute them and report the results.
      * @param master ZMQ.Socket; the communication path to the master
      */
@@ -170,15 +260,12 @@ public class Sim0MQControlledOTS
         {
             // Wait for next request from the client
             byte[] request = master.recv(0);
-            System.out.println("Received message:");
-            System.out.println(HexDumper.hexDumper(request));
             Object[] message;
             String result = "At your command";
             try
             {
                 message = Sim0MQMessage.decode(request).createObjectArray();
                 System.out.println("Received Sim0MQ message:");
-                System.out.println(Sim0MQMessage.print(message));
 
                 if (message.length >= 8 && message[5] instanceof String)
                 {
@@ -190,40 +277,11 @@ public class Sim0MQControlledOTS
                             if (message.length == 12 && message[8] instanceof String && message[9] instanceof Duration
                                     && message[10] instanceof Duration && message[11] instanceof Long)
                             {
-                                if (null != this.model)
+                                String loadResult = loadNetwork((String) message[8], (Duration) message[9],
+                                        (Duration) message[10], (Long) message[11]);
+                                if (null != loadResult)
                                 {
-                                    result = "Cannot create another network (yet)";
-                                }
-                                else
-                                {
-                                    OTSAnimator animator =
-                                            new OTSLoggingAnimator("C:/Temp/AimsunEventlog.txt", "AimsunControl");
-                                    this.model = new Sim0MQOTSModel(animator, "OTS model", "OTS model", (String) message[8]);
-                                    Map<String, StreamInterface> map = new LinkedHashMap<>();
-                                    map.put("generation", new MersenneTwister((Long) message[11]));
-                                    animator.initialize(Time.ZERO, (Duration) message[9], (Duration) message[10], this.model,
-                                            map);
-                                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(
-                                            this.model.getNetwork().getExtent(), new Dimension(1100, 1000), animator,
-                                            this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
-                                    DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), animator,
-                                            new DefaultSwitchableGTUColorer());
-                                    new Sim0MQRemoteControlSwingApplication(this.model, animationPanel);
-                                    JFrame frame = (JFrame) animationPanel.getParent().getParent().getParent();
-                                    frame.setExtendedState(Frame.NORMAL);
-                                    frame.setSize(new Dimension(1100, 1000));
-                                    frame.setBounds(0, 25, 1100, 1000);
-                                    animator.setSpeedFactor(Double.MAX_VALUE, true);
-                                    animator.setSpeedFactor(1000.0, true);
-                                    try
-                                    {
-                                        Thread.sleep(300);
-                                    }
-                                    catch (InterruptedException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                    animationPanel.actionPerformed(new ActionEvent(this, 0, "ZoomAll"));
+                                    result = loadResult;
                                 }
                             }
                             else
@@ -290,9 +348,17 @@ public class Sim0MQControlledOTS
                             break;
 
                         default:
+                            System.out.println("Don't know how to handle message:");
+                            System.out.println(Sim0MQMessage.print(message));
                             result = "Unimplemented command " + command;
                             break;
                     }
+                }
+                else
+                {
+                    System.out.println("Don't know how to handle message:");
+                    System.out.println(HexDumper.hexDumper(request));
+                    result = "Ignored message";
                 }
             }
             catch (Sim0MQException | SerializationException e)
@@ -300,10 +366,10 @@ public class Sim0MQControlledOTS
                 e.printStackTrace();
                 result = "Could not decode command: " + e.getMessage();
             }
-            catch (SimRuntimeException | NamingException | RemoteException | DSOLException | OTSDrawingException e)
+            catch (RemoteException e)
             {
                 e.printStackTrace();
-                result = "Could not initialize simulation: " + e.getMessage();
+                result = "Caught RemoteException: " + e.getMessage();
             }
             // Send reply to master
             try
@@ -314,6 +380,57 @@ public class Sim0MQControlledOTS
             {
                 e.printStackTrace();
                 break; // this is fatal
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        EventType type = event.getType();
+        switch (type.getName())
+        {
+            case "TRAFFICCONTROL.CONTROLLER_EVALUATING":
+            {
+                Object[] payload = (Object[]) event.getContent();
+                CategoryLogger.always().info("{}: Evaluating at time {}", payload[0], payload[1], payload[2]);
+                return;
+            }
+
+            case "TRAFFIC_CONTROL.CONFLICT_GROUP_CHANGED":
+            {
+                Object[] payload = (Object[]) event.getContent();
+                CategoryLogger.always().info("{}: Conflict group changed from {} to {}", payload[0], payload[1], payload[2]);
+                return;
+            }
+
+            case "TRAFFICCONTROL.VARIABLE_UPDATED":
+            {
+                Object[] payload = (Object[]) event.getContent();
+                CategoryLogger.always().info("{}: Variable changed %s <- %d   %s", payload[0], payload[1], payload[4],
+                        payload[5]);
+                return;
+            }
+
+            case "TRAFFICCONTROL.CONTROLLER_WARNING":
+            {
+                Object[] payload = (Object[]) event.getContent();
+                CategoryLogger.always().info("{}: Warning {}", payload[0], payload[1]);
+                return;
+            }
+
+            case "TIME_CHANGED_EVENT":
+            {
+                CategoryLogger.always().info("Time changed to {}", event.getContent());
+                return;
+            }
+
+            default:
+            {
+                CategoryLogger.always()
+                        .info("TrafCODDemo received event of type " + event.getType() + " with payload " + event.getContent());
+                return;
             }
         }
     }
@@ -438,15 +555,6 @@ public class Sim0MQControlledOTS
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            try
-            {
-                this.simulator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
-                this.simulator.addListener(this, SimulatorInterface.TIME_CHANGED_EVENT);
-            }
-            catch (RemoteException exception1)
-            {
-                exception1.printStackTrace();
-            }
             this.network = new OTSRoadNetwork(getShortName(), true);
             try
             {
@@ -457,7 +565,6 @@ public class Sim0MQControlledOTS
                 ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
                         getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList,
                         permittedList);
-                // new GTUDumper(simulator, Time.ZERO, Duration.instantiateSI(60), network, "C:/Temp/aimsun");
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GTUException | IOException
