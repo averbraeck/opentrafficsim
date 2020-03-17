@@ -121,7 +121,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
     }
 
     /**
-     * Add tab with trafCOD status.
+     * Add tabs with trafCOD status display.
      */
     @Override
     protected final void addTabs()
