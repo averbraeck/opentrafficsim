@@ -419,6 +419,23 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                                         Math.toDegrees((Double) message[13]), message[14]));
                                 break;
 
+                            case "TIME_CHANGED_EVENT":
+                                output.println(message[8]);
+                                break;
+
+                            case "TRAFFICCONTROL.CONTROLLER_WARNING":
+                                output.println(String.format("%s: warning %s", message[8], message[9]));
+                                break;
+
+                            case "TRAFFICCONTROL.CONTROLLER_EVALUATING":
+                                output.println(String.format("%s: evaluating %s", message[8], message[9]));
+                                break;
+
+                            case "TRAFFICCONTROL.CONFLICT_GROUP_CHANGED":
+                                output.println(String.format("%s: conflict group changed from %s to %s", message[8], message[9],
+                                        message[10]));
+                                break;
+
                             case "READY":
                                 output.println("Slave is ready for the next command");
                                 break;
