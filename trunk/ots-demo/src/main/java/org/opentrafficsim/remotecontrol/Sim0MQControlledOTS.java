@@ -100,6 +100,23 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     /** Currently active model. */
     private Sim0MQOTSModel model = null;
 
+    /** The ZContext of all the sockets. */
+    private final ZContext zContext;
+
+    /** The port number of the listening socket. */
+    private final int port;
+
+    /**
+     * Construct a new Sim0MQ controlled OTS.
+     * @param zContext ZContext; the ZMQ context of all the sockets.
+     * @param port int; the port number of the listening socket
+     */
+    public Sim0MQControlledOTS(final ZContext zContext, final int port)
+    {
+        this.zContext = zContext;
+        this.port = port;
+    }
+
     /**
      * The command line options.
      */
@@ -151,22 +168,14 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         Options options = new Options();
         CliUtil.execute(options, args); // register Unit converters, parse the command line, etc..
         int port = options.getPort();
-        System.out.println("Creating server socket for port " + port);
+        System.out.println("Creating OTS server listening on port " + port);
+
         ZContext context = new ZContext(1);
+        Sim0MQControlledOTS slave = new Sim0MQControlledOTS(context, port);
 
-        // Socket to talk to clients
-        ZMQ.Socket responder = context.createSocket(SocketType.DEALER);
-        ZMonitor zm = new ZMonitor(context, responder);
-        zm.add(ZMonitor.Event.ALL);
-        zm.verbose(true);
-        zm.start();
-        new Monitor(zm).start();
-
-        responder.bind("tcp://*:" + port);
-        Sim0MQControlledOTS slave = new Sim0MQControlledOTS();
-        slave.commandLoop(responder);
-        responder.close();
-        zm.close();
+        slave.commandLoop();
+        // Currently, there is no shutdown command; so the following code is never executed
+        slave.toMaster.close();
         context.destroy();
         context.close();
     }
@@ -252,186 +261,242 @@ public class Sim0MQControlledOTS implements EventListenerInterface
 
     /**
      * Read commands from the master, execute them and report the results.
-     * @param master ZMQ.Socket; the communication path to the master
      */
-    public void commandLoop(final ZMQ.Socket master)
+    public void commandLoop()
     {
+        // Socket to talk to clients
+        ZMQ.Socket remoteControllerSocket = this.zContext.createSocket(SocketType.DEALER);
+        ZMonitor zm = new ZMonitor(this.zContext, remoteControllerSocket);
+        zm.add(ZMonitor.Event.ALL);
+        zm.verbose(true);
+        zm.start();
+        new Monitor(zm).start();
+        remoteControllerSocket.bind("tcp://*:" + this.port);
+        ZMQ.Socket logMessages = this.zContext.createSocket(SocketType.PULL);
+        logMessages.bind("inproc://toMaster");
+
+        ZMQ.Poller items = this.zContext.createPoller(2);
+        items.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
+        items.register(logMessages, ZMQ.Poller.POLLIN);
         while (!Thread.currentThread().isInterrupted())
         {
-            // Wait for next request from the client
-            byte[] request = master.recv(0);
-            Object[] message;
-            String result = "At your command";
-            try
+            items.poll();
+            if (items.pollin(0))
             {
-                message = Sim0MQMessage.decode(request).createObjectArray();
-                System.out.println("Received Sim0MQ message:");
-
-                if (message.length >= 8 && message[5] instanceof String)
+                // Read the request from the client
+                byte[] request = remoteControllerSocket.recv(0);
+                Object[] message;
+                String result = "At your command";
+                try
                 {
-                    String command = (String) message[5];
-                    System.out.println("Command is " + command);
-                    switch (command)
+                    message = Sim0MQMessage.decode(request).createObjectArray();
+                    System.out.println("Received Sim0MQ message:");
+
+                    if (message.length >= 8 && message[5] instanceof String)
                     {
-                        case "LOADNETWORK":
-                            if (message.length == 12 && message[8] instanceof String && message[9] instanceof Duration
-                                    && message[10] instanceof Duration && message[11] instanceof Long)
-                            {
-                                String loadResult = loadNetwork((String) message[8], (Duration) message[9],
-                                        (Duration) message[10], (Long) message[11]);
-                                if (null != loadResult)
+                        String command = (String) message[5];
+                        System.out.println("Command is " + command);
+                        switch (command)
+                        {
+                            case "LOADNETWORK":
+                                if (message.length == 12 && message[8] instanceof String && message[9] instanceof Duration
+                                        && message[10] instanceof Duration && message[11] instanceof Long)
                                 {
-                                    result = loadResult;
-                                }
-                            }
-                            else
-                            {
-                                result = "no network, warmupTime and/or runTime provided with LOADNETWORK command";
-                            }
-                            break;
-
-                        case "SIMULATEUNTIL":
-                            if (null == this.model)
-                            {
-                                result = "No model loaded";
-                            }
-                            else if (message.length == 9 && message[8] instanceof Time)
-                            {
-                                OTSSimulatorInterface simulator = this.model.getSimulator();
-                                simulator.runUpTo((Time) message[8]);
-                                while (simulator.isRunning())
-                                {
-                                    try
+                                    String loadResult = loadNetwork((String) message[8], (Duration) message[9],
+                                            (Duration) message[10], (Long) message[11]);
+                                    if (null != loadResult)
                                     {
-                                        Thread.sleep(10);
-                                    }
-                                    catch (InterruptedException e)
-                                    {
-                                        e.printStackTrace();
+                                        result = loadResult;
                                     }
                                 }
-                            }
-                            else
-                            {
-                                result = "Bad or missing stop time";
-                            }
-                            break;
-
-                        case "SENDALLGTUPOSITIONS":
-                            if (null == this.model)
-                            {
-                                result = "No model loaded";
-                            }
-                            else if (message.length == 8)
-                            {
-                                for (GTU gtu : this.model.network.getGTUs())
+                                else
                                 {
-                                    // Send information about one GTU to master
-                                    try
-                                    {
-                                        DirectedPoint gtuPosition = gtu.getLocation();
-                                        Object[] gtuData = new Object[] { gtu.getId(), gtu.getGTUType().toString(),
-                                                gtuPosition.x, gtuPosition.y, gtuPosition.z, gtuPosition.getRotZ(),
-                                                gtu.getAcceleration() };
-                                        master.send(
-                                                Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", "GTUPOSITION", 0, gtuData),
-                                                0);
-                                    }
-                                    catch (Sim0MQException | SerializationException e)
-                                    {
-                                        e.printStackTrace();
-                                        break; // this is fatal
-                                    }
-
+                                    result = "no network, warmupTime and/or runTime provided with LOADNETWORK command";
                                 }
-                            }
-                            break;
+                                break;
 
-                        default:
-                            System.out.println("Don't know how to handle message:");
-                            System.out.println(Sim0MQMessage.print(message));
-                            result = "Unimplemented command " + command;
-                            break;
+                            case "SIMULATEUNTIL":
+                                if (null == this.model)
+                                {
+                                    result = "No model loaded";
+                                }
+                                else if (message.length == 9 && message[8] instanceof Time)
+                                {
+                                    OTSSimulatorInterface simulator = this.model.getSimulator();
+                                    simulator.runUpTo((Time) message[8]);
+                                    while (simulator.isRunning())
+                                    {
+                                        try
+                                        {
+                                            Thread.sleep(10);
+                                        }
+                                        catch (InterruptedException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    result = "Bad or missing stop time";
+                                }
+                                break;
+
+                            case "SENDALLGTUPOSITIONS":
+                                if (null == this.model)
+                                {
+                                    result = "No model loaded";
+                                }
+                                else if (message.length == 8)
+                                {
+                                    for (GTU gtu : this.model.network.getGTUs())
+                                    {
+                                        // Send information about one GTU to master
+                                        try
+                                        {
+                                            DirectedPoint gtuPosition = gtu.getLocation();
+                                            Object[] gtuData = new Object[] { gtu.getId(), gtu.getGTUType().toString(),
+                                                    gtuPosition.x, gtuPosition.y, gtuPosition.z, gtuPosition.getRotZ(),
+                                                    gtu.getAcceleration() };
+                                            remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master",
+                                                    "GTUPOSITION", 0, gtuData), 0);
+                                        }
+                                        catch (Sim0MQException | SerializationException e)
+                                        {
+                                            e.printStackTrace();
+                                            break; // this is fatal
+                                        }
+
+                                    }
+                                }
+                                break;
+
+                            default:
+                                System.out.println("Don't know how to handle message:");
+                                System.out.println(Sim0MQMessage.print(message));
+                                result = "Unimplemented command " + command;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        System.out.println("Don't know how to handle message:");
+                        System.out.println(HexDumper.hexDumper(request));
+                        result = "Ignored message";
                     }
                 }
-                else
+                catch (Sim0MQException | SerializationException e)
                 {
-                    System.out.println("Don't know how to handle message:");
-                    System.out.println(HexDumper.hexDumper(request));
-                    result = "Ignored message";
+                    e.printStackTrace();
+                    result = "Could not decode command: " + e.getMessage();
+                }
+                catch (RemoteException e)
+                {
+                    e.printStackTrace();
+                    result = "Caught RemoteException: " + e.getMessage();
+                }
+                // Send reply to master
+                try
+                {
+                    remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", "READY", 0, result), 0);
+                }
+                catch (Sim0MQException | SerializationException e)
+                {
+                    e.printStackTrace();
+                    break; // this is fatal
                 }
             }
-            catch (Sim0MQException | SerializationException e)
+            if (items.pollin(1))
             {
-                e.printStackTrace();
-                result = "Could not decode command: " + e.getMessage();
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-                result = "Caught RemoteException: " + e.getMessage();
-            }
-            // Send reply to master
-            try
-            {
-                master.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", "READY", 0, result), 0);
-            }
-            catch (Sim0MQException | SerializationException e)
-            {
-                e.printStackTrace();
-                break; // this is fatal
+                byte[] message = logMessages.recv(0);
+                remoteControllerSocket.send(message);
             }
         }
     }
+
+    /**
+     * Socket for sending notify messages to master.
+     */
+    private ZMQ.Socket toMaster = null;
 
     /** {@inheritDoc} */
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        EventType type = event.getType();
-        switch (type.getName())
+        /**
+         * Not sure if this method is always called from the same thread.
+         */
+        if (null == this.toMaster)
         {
-            case "TRAFFICCONTROL.CONTROLLER_EVALUATING":
+            this.toMaster = this.zContext.createSocket(SocketType.PUSH);
+            toMaster.connect("inproc://toMaster");
+        }
+        try
+        {
+            EventType type = event.getType();
+            String eventTypeName = type.getName();
+            switch (eventTypeName)
             {
-                Object[] payload = (Object[]) event.getContent();
-                CategoryLogger.always().info("{}: Evaluating at time {}", payload[0], payload[1], payload[2]);
-                return;
-            }
+                case "TRAFFICCONTROL.CONTROLLER_EVALUATING":
+                {
+                    Object[] payload = (Object[]) event.getContent();
+                    CategoryLogger.always().info("{}: Evaluating at time {}", payload[0], payload[1]);
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName,
+                            0, String.format("%s: Evaluating at time %s", payload[0], payload[1])), 0);
+                    break;
+                }
 
-            case "TRAFFIC_CONTROL.CONFLICT_GROUP_CHANGED":
-            {
-                Object[] payload = (Object[]) event.getContent();
-                CategoryLogger.always().info("{}: Conflict group changed from {} to {}", payload[0], payload[1], payload[2]);
-                return;
-            }
+                case "TRAFFICCONTROL.CONFLICT_GROUP_CHANGED":
+                {
+                    Object[] payload = (Object[]) event.getContent();
+                    CategoryLogger.always().info("{}: Conflict group changed from {} to {}", payload[0], payload[1],
+                            payload[2]);
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName,
+                            0, payload), 0);
+                    break;
+                }
 
-            case "TRAFFICCONTROL.VARIABLE_UPDATED":
-            {
-                Object[] payload = (Object[]) event.getContent();
-                CategoryLogger.always().info("{}: Variable changed %s <- %d   %s", payload[0], payload[1], payload[4],
-                        payload[5]);
-                return;
-            }
+                case "TRAFFICCONTROL.VARIABLE_UPDATED":
+                {
+                    Object[] payload = (Object[]) event.getContent();
+                    CategoryLogger.always().info("{}: Variable changed {} <- {}   {}", payload[0], payload[1], payload[4],
+                            payload[5]);
+                    toMaster.send(
+                            Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload),
+                            0);
+                    break;
+                }
 
-            case "TRAFFICCONTROL.CONTROLLER_WARNING":
-            {
-                Object[] payload = (Object[]) event.getContent();
-                CategoryLogger.always().info("{}: Warning {}", payload[0], payload[1]);
-                return;
-            }
+                case "TRAFFICCONTROL.CONTROLLER_WARNING":
+                {
+                    Object[] payload = (Object[]) event.getContent();
+                    CategoryLogger.always().info("{}: Warning {}", payload[0], payload[1]);
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0,
+                            payload), 0);
+                    break;
+                }
 
-            case "TIME_CHANGED_EVENT":
-            {
-                CategoryLogger.always().info("Time changed to {}", event.getContent());
-                return;
-            }
+                case "TIME_CHANGED_EVENT":
+                {
+                    CategoryLogger.always().info("Time changed to {}", event.getContent());
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0,
+                            String.format("Time changed to %s", event.getContent())), 0);
+                    break;
+                }
 
-            default:
-            {
-                CategoryLogger.always()
-                        .info("TrafCODDemo received event of type " + event.getType() + " with payload " + event.getContent());
-                return;
+                default:
+                {
+                    CategoryLogger.always().info("Event of unhandled type {} with payload {}", event.getType(),
+                            event.getContent());
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", "Event of unhandled type", 0, String
+                            .format("%s: Event of unhandled type %s with payload {}", event.getType(), event.getContent())), 0);
+                    break;
+                }
             }
+        }
+        catch (Sim0MQException | SerializationException e)
+        {
+            e.printStackTrace();
         }
     }
 
