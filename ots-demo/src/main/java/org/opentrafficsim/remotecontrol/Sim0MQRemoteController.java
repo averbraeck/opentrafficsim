@@ -435,6 +435,14 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                                 output.println(String.format("%s: conflict group changed from %s to %s", message[8], message[9],
                                         message[10]));
                                 break;
+                                
+                            case "NETWORK.GTU.ADD":
+                                output.println(String.format("GTU added %s", message[8]));
+                                break;
+
+                            case "NETWORK.GTU.REMOVE":
+                                output.println(String.format("GTU removed %s", message[8]));
+                                break;
 
                             case "READY":
                                 output.println("Slave is ready for the next command");
