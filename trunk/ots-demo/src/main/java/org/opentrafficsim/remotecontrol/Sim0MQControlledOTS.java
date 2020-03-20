@@ -45,6 +45,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
@@ -203,6 +204,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 Map<String, StreamInterface> map = new LinkedHashMap<>();
                 map.put("generation", new MersenneTwister(seed));
                 animator.initialize(Time.ZERO, simulationDuration, warmupTime, this.model, map);
+                this.model.getNetwork().addListener(this, Network.GTU_ADD_EVENT);
+                this.model.getNetwork().addListener(this, Network.GTU_REMOVE_EVENT);
                 OTSAnimationPanel animationPanel =
                         new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000), animator,
                                 this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
@@ -483,7 +486,21 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             String.format("Time changed to %s", event.getContent())), 0);
                     break;
                 }
+                
+                case "NETWORK.GTU.ADD":
+                {
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, event.getContent()),
+                            0);
+                    break;
+                }
 
+                case "NETWORK.GTU.REMOVE":
+                {
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, event.getContent()),
+                            0);
+                    break;
+                }
+                
                 default:
                 {
                     CategoryLogger.always().info("Event of unhandled type {} with payload {}", event.getType(),
