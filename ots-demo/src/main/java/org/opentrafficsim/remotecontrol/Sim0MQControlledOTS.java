@@ -358,9 +358,9 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                         try
                                         {
                                             DirectedPoint gtuPosition = gtu.getLocation();
-                                            Object[] gtuData = new Object[] { gtu.getId(), gtu.getGTUType().toString(),
+                                            Object[] gtuData = new Object[] { gtu.getId(), gtu.getGTUType().getId(),
                                                     gtuPosition.x, gtuPosition.y, gtuPosition.z, gtuPosition.getRotZ(),
-                                                    gtu.getAcceleration() };
+                                                    gtu.getSpeed(), gtu.getAcceleration() };
                                             remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master",
                                                     "GTUPOSITION", 0, gtuData), 0);
                                         }
