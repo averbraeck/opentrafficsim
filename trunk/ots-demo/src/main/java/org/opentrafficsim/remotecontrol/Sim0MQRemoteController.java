@@ -414,9 +414,9 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                         switch (command)
                         {
                             case "GTUPOSITION":
-                                output.println(String.format("%10.10s: %s x=%8.3f y=%8.3f z=%8.3f heading=%6.1f, a=%s",
+                                output.println(String.format("%10.10s: %s x=%8.3f y=%8.3f z=%8.3f heading=%6.1f, v=%s, a=%s",
                                         message[8], message[9], message[10], message[11], message[12],
-                                        Math.toDegrees((Double) message[13]), message[14]));
+                                        Math.toDegrees((Double) message[13]), message[14], message[15]));
                                 break;
 
                             case "TIME_CHANGED_EVENT":
