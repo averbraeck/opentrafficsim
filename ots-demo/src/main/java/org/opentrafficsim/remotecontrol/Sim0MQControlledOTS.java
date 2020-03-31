@@ -11,8 +11,10 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.NamingException;
 import javax.swing.JFrame;
@@ -262,6 +264,9 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         return null;
     }
 
+    /** Count transmitted messages. */
+    private AtomicInteger packetsSent = new AtomicInteger(0);
+
     /**
      * Read commands from the master, execute them and report the results.
      */
@@ -361,7 +366,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                             Object[] gtuData = new Object[] { gtu.getId(), gtu.getGTUType().getId(),
                                                     gtuPosition.x, gtuPosition.y, gtuPosition.z, gtuPosition.getRotZ(),
                                                     gtu.getSpeed(), gtu.getAcceleration() };
-                                            remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master",
+                                            remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0,
+                                                    String.format("slave_%05d", packetsSent.addAndGet(1)), "master",
                                                     "GTUPOSITION", 0, gtuData), 0);
                                         }
                                         catch (Sim0MQException | SerializationException e)
@@ -401,7 +407,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 // Send reply to master
                 try
                 {
-                    remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", "READY", 0, result), 0);
+                    remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0,
+                            String.format("slave_%05d", packetsSent.addAndGet(1)), "master", "READY", 0, result), 0);
                 }
                 catch (Sim0MQException | SerializationException e)
                 {
@@ -412,6 +419,19 @@ public class Sim0MQControlledOTS implements EventListenerInterface
             if (items.pollin(1))
             {
                 byte[] message = logMessages.recv(0);
+                try
+                {
+                    // Patch the sender field to include the packet counter value.
+                    Object[] messageFields = Sim0MQMessage.decode(message).createObjectArray();
+                    Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
+                    message = Sim0MQMessage.encodeUTF8(true, messageFields[2],
+                            String.format("slave_%05d", packetsSent.addAndGet(1)), messageFields[4], messageFields[5],
+                            messageFields[6], newMessageFields);
+                }
+                catch (Sim0MQException | SerializationException e)
+                {
+                    e.printStackTrace();
+                }
                 remoteControllerSocket.send(message);
             }
         }
@@ -444,8 +464,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 {
                     Object[] payload = (Object[]) event.getContent();
                     CategoryLogger.always().info("{}: Evaluating at time {}", payload[0], payload[1]);
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName,
-                            0, String.format("%s: Evaluating at time %s", payload[0], payload[1])), 0);
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0,
+                            String.format("%s: Evaluating at time %s", payload[0], payload[1])), 0);
                     break;
                 }
 
@@ -454,8 +474,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     Object[] payload = (Object[]) event.getContent();
                     CategoryLogger.always().info("{}: Conflict group changed from {} to {}", payload[0], payload[1],
                             payload[2]);
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName,
-                            0, payload), 0);
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload), 0);
                     break;
                 }
 
@@ -464,9 +483,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     Object[] payload = (Object[]) event.getContent();
                     CategoryLogger.always().info("{}: Variable changed {} <- {}   {}", payload[0], payload[1], payload[4],
                             payload[5]);
-                    toMaster.send(
-                            Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload),
-                            0);
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload), 0);
                     break;
                 }
 
@@ -474,8 +491,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 {
                     Object[] payload = (Object[]) event.getContent();
                     CategoryLogger.always().info("{}: Warning {}", payload[0], payload[1]);
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0,
-                            payload), 0);
+                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload), 0);
                     break;
                 }
 
@@ -486,7 +502,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             String.format("Time changed to %s", event.getContent())), 0);
                     break;
                 }
-                
+
                 case "NETWORK.GTU.ADD":
                 {
                     toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, event.getContent()),
@@ -500,7 +516,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             0);
                     break;
                 }
-                
+
                 default:
                 {
                     CategoryLogger.always().info("Event of unhandled type {} with payload {}", event.getType(),

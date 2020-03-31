@@ -189,6 +189,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         @Override
         public final void run()
         {
+            int nextExpectedPacket = 0;
             ZMQ.Socket slaveSocket = context.createSocket(SocketType.DEALER);
             ZMQ.Socket awtSocketIn = context.createSocket(SocketType.PULL);
             ZMQ.Socket awtSocketOut = context.createSocket(SocketType.PUSH);
@@ -205,6 +206,22 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                 if (items.pollin(0))
                 {
                     message = slaveSocket.recv(0);
+                    String expectedSenderField = String.format("slave_%05d", ++nextExpectedPacket);
+                    try
+                    {
+                        Object[] messageFields = Sim0MQMessage.decode(message).createObjectArray();
+                        String senderTag = (String) messageFields[3];
+                        if (!senderTag.equals(expectedSenderField))
+                        {
+                            System.err.println("Got message " + senderTag + " , expected " + expectedSenderField
+                                    + ", message is " + messageFields[5]);
+                        }
+                    }
+                    catch (Sim0MQException | SerializationException e)
+                    {
+                        e.printStackTrace();
+                    }
+
                     // System.out.println("poller has received a message on the fromOTS DEALER socket; transmitting to AWT");
                     awtSocketOut.send(message);
                 }
@@ -435,7 +452,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                                 output.println(String.format("%s: conflict group changed from %s to %s", message[8], message[9],
                                         message[10]));
                                 break;
-                                
+
                             case "NETWORK.GTU.ADD":
                                 output.println(String.format("GTU added %s", message[8]));
                                 break;
