@@ -284,12 +284,30 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         logMessages.bind("inproc://toMaster");
 
         ZMQ.Poller items = this.zContext.createPoller(2);
-        items.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
         items.register(logMessages, ZMQ.Poller.POLLIN);
+        items.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
         while (!Thread.currentThread().isInterrupted())
         {
             items.poll();
             if (items.pollin(0))
+            {
+                byte[] message = logMessages.recv(0);
+                try
+                {
+                    // Patch the sender field to include the packet counter value.
+                    Object[] messageFields = Sim0MQMessage.decode(message).createObjectArray();
+                    Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
+                    message = Sim0MQMessage.encodeUTF8(true, messageFields[2],
+                            String.format("slave_%05d", packetsSent.addAndGet(1)), messageFields[4], messageFields[5],
+                            messageFields[6], newMessageFields);
+                }
+                catch (Sim0MQException | SerializationException e)
+                {
+                    e.printStackTrace();
+                }
+                remoteControllerSocket.send(message);
+            }
+            else if (items.pollin(1)) // The "else" ensures that all log messages are handled before a new command is handled
             {
                 // Read the request from the client
                 byte[] request = remoteControllerSocket.recv(0);
@@ -415,24 +433,6 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     e.printStackTrace();
                     break; // this is fatal
                 }
-            }
-            if (items.pollin(1))
-            {
-                byte[] message = logMessages.recv(0);
-                try
-                {
-                    // Patch the sender field to include the packet counter value.
-                    Object[] messageFields = Sim0MQMessage.decode(message).createObjectArray();
-                    Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
-                    message = Sim0MQMessage.encodeUTF8(true, messageFields[2],
-                            String.format("slave_%05d", packetsSent.addAndGet(1)), messageFields[4], messageFields[5],
-                            messageFields[6], newMessageFields);
-                }
-                catch (Sim0MQException | SerializationException e)
-                {
-                    e.printStackTrace();
-                }
-                remoteControllerSocket.send(message);
             }
         }
     }
