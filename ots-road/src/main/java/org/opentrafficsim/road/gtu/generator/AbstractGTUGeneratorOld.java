@@ -157,7 +157,6 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
             final Generator<Route> routeGenerator, final OTSRoadNetwork network) throws SimRuntimeException
     {
-        super();
         this.name = name;
         this.gtuType = gtuType;
         this.gtuClass = gtuClass;

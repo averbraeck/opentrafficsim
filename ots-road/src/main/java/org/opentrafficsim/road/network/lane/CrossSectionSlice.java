@@ -37,7 +37,6 @@ public class CrossSectionSlice implements Serializable
      */
     public CrossSectionSlice(final Length relativeLength, final Length designLineOffset, final Length width)
     {
-        super();
         this.relativeLength = relativeLength;
         this.designLineOffset = designLineOffset;
         this.width = width;

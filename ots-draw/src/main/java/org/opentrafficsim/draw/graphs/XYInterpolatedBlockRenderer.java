@@ -60,7 +60,6 @@ public class XYInterpolatedBlockRenderer extends XYBlockRenderer
      */
     public XYInterpolatedBlockRenderer(final XYInterpolatedDataset xyInterpolatedDataset)
     {
-        super(); // offsets and initial paint scale
         this.xyInterpolatedDataset = xyInterpolatedDataset;
     }
 

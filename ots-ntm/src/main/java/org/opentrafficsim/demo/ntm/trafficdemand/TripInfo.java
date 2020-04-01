@@ -24,7 +24,6 @@ public class TripInfo
 
     public TripInfo(final double numberOfTrips)
     {
-        super();
         this.numberOfTrips = numberOfTrips;
     }
 

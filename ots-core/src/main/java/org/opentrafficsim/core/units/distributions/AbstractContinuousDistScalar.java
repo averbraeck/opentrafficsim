@@ -39,7 +39,6 @@ public abstract class AbstractContinuousDistScalar implements Serializable
      */
     protected AbstractContinuousDistScalar(final DistContinuous distribution, final Unit<?> displayUnit)
     {
-        super();
         this.distribution = distribution;
         this.displayUnit = displayUnit;
     }

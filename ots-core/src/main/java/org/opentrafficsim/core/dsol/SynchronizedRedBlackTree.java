@@ -36,7 +36,6 @@ public class SynchronizedRedBlackTree<T extends SimTime<?, ?, T>> implements Eve
      */
     public SynchronizedRedBlackTree()
     {
-        super();
     }
 
     /** {@inheritDoc} */

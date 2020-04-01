@@ -28,7 +28,6 @@ public class MockGTU
      */
     public MockGTU(final String name)
     {
-        super();
         this.name = name;
         this.mockGTU = Mockito.mock(GTU.class);
         Mockito.when(this.mockGTU.getSimulator()).thenReturn(this.simulator);

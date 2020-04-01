@@ -139,7 +139,6 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
          */
         public ElevatedNode(final Node node)
         {
-            super();
             this.node = node;
             try
             {

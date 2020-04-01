@@ -36,7 +36,6 @@ public class LinkEdge<LINK extends Link> extends DefaultWeightedEdge
      */
     public LinkEdge(final LINK link)
     {
-        super();
         this.link = link;
     }
 

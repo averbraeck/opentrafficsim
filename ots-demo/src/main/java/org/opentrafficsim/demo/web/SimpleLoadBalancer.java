@@ -59,7 +59,6 @@ public class SimpleLoadBalancer
 //    public SimpleLoadBalancer(final int lbPort, final Set<FederateStarterNode> federateStarterNodes)
 //            throws Sim0MQException, SerializationException
 //    {
-//        super();
 //        this.lbPort = lbPort;
 //        this.federateStarterNodes = federateStarterNodes;
 //
@@ -564,7 +563,6 @@ public class SimpleLoadBalancer
 //         */
 //        FederateStarterNode(final String fsNodeName, final int port, final int maxLoad, final int priority)
 //        {
-//            super();
 //            this.fsNodeName = fsNodeName;
 //            this.port = port;
 //            this.maxLoad = maxLoad;

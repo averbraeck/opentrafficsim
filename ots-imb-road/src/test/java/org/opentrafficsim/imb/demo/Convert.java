@@ -318,9 +318,8 @@ public class Convert
          * @param x double; x
          * @param y double; y
          */
-        public Coordinate(double x, double y)
+        Coordinate(final double x, final double y)
         {
-            super();
             this.x = x;
             this.y = y;
         }

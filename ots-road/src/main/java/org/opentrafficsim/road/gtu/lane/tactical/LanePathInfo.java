@@ -65,7 +65,6 @@ public class LanePathInfo implements Serializable
      */
     public LanePathInfo(final OTSLine3D path, final List<LaneDirection> laneDirectionList, final Length referencePosition)
     {
-        super();
         this.path = path;
         this.laneDirectionList = laneDirectionList;
         this.referencePosition = referencePosition;

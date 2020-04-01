@@ -34,7 +34,6 @@ public class IMBTransformResult implements Serializable
      */
     public IMBTransformResult(final Serializable eventContent, final EventListenerInterface eventListener)
     {
-        super();
         this.eventContent = eventContent;
         this.eventListener = eventListener;
     }

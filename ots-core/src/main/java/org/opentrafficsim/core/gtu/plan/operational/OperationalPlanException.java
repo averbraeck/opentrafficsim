@@ -21,7 +21,6 @@ public class OperationalPlanException extends Exception
      */
     public OperationalPlanException()
     {
-        super();
     }
 
     /**

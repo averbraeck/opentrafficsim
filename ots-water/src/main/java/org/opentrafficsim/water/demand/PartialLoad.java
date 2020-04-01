@@ -58,7 +58,6 @@ public class PartialLoad implements Serializable
     public PartialLoad(final Terminal terminalFrom, final Terminal terminalTo, final int number, final boolean twentyFt,
             final boolean empty, final Company owner)
     {
-        super();
         this.terminalFrom = terminalFrom;
         this.terminalTo = terminalTo;
         this.number = number;

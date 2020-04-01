@@ -191,7 +191,6 @@ public class SuperDemo extends JFrame
         Demo(final String name, final Class<? extends OTSSwingApplication<? extends OTSModelInterface>> clazz,
                 final String description)
         {
-            super();
             this.name = name;
             this.button = new JButton(name);
             this.button.addActionListener(this);

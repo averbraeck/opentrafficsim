@@ -44,7 +44,6 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
      */
     public NetworkAnimation(final Network network) throws RemoteException
     {
-        super();
         this.network = network;
         this.network.addListener(this, Network.ANIMATION_GTU_ADD_EVENT);
         this.network.addListener(this, Network.ANIMATION_GTU_REMOVE_EVENT);

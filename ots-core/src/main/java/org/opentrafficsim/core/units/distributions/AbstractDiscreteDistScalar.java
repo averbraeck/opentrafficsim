@@ -39,7 +39,6 @@ public abstract class AbstractDiscreteDistScalar implements Serializable
      */
     protected AbstractDiscreteDistScalar(final DistDiscrete distribution, final Unit<?> unit)
     {
-        super();
         this.distribution = distribution;
         this.unit = unit;
     }

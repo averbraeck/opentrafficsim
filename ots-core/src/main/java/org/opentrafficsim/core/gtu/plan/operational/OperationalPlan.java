@@ -747,7 +747,6 @@ public class OperationalPlan implements Serializable
          */
         public Segment(final Duration duration)
         {
-            super();
             this.duration = duration;
         }
 

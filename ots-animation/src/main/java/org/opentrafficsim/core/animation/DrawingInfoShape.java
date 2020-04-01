@@ -34,7 +34,6 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoShape()
     {
-        super();
     }
 
     /**
@@ -45,7 +44,6 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoShape(final Color lineColor, final float lineWidth)
     {
-        super();
         setLineColor(lineColor);
         this.lineWidth = lineWidth;
         this.filled = false;
@@ -61,7 +59,6 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoShape(final Color lineColor, final float lineWidth, final Color fillColor)
     {
-        super();
         setLineColor(lineColor);
         this.lineWidth = lineWidth;
         setFillColor(fillColor);
@@ -75,7 +72,6 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoShape(final Color fillColor)
     {
-        super();
         setFillColor(fillColor);
         this.filled = true;
         this.stroked = false;
@@ -89,7 +85,6 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoShape(final Colorer<D> lineColorer, final float lineWidth)
     {
-        super();
         setLineColorer(lineColorer);
         this.lineWidth = lineWidth;
         this.filled = false;
@@ -105,7 +100,6 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoShape(final Colorer<D> lineColorer, final float lineWidth, final Colorer<D> fillColorer)
     {
-        super();
         setLineColorer(lineColorer);
         this.lineWidth = lineWidth;
         setFillColorer(fillColorer);
@@ -119,7 +113,6 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoShape(final Colorer<D> fillColorer)
     {
-        super();
         setFillColorer(fillColorer);
         this.filled = true;
         this.stroked = false;

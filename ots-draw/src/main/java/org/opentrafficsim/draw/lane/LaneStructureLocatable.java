@@ -37,7 +37,6 @@ public class LaneStructureLocatable implements Locatable
      */
     public LaneStructureLocatable(final RollingLaneStructure rollingLaneStructure, final GTU gtu)
     {
-        super();
         this.rollingLaneStructure = rollingLaneStructure;
         this.gtu = gtu;
     }

@@ -57,7 +57,6 @@ public class ReceiverThread extends Thread
     public ReceiverThread(OTSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
             final OTSRoadNetwork network) throws SocketException
     {
-        super();
         this.Socket = new DatagramSocket(8090);
         this.receiveData = new byte[1000000];
         this.simulator = simulator;

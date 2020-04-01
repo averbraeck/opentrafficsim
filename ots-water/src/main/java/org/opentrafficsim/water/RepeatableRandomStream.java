@@ -27,7 +27,6 @@ public final class RepeatableRandomStream extends Java2Random
      */
     private RepeatableRandomStream()
     {
-        super();
     }
 
     /**

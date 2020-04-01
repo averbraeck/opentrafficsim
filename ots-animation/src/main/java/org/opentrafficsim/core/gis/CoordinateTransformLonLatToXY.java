@@ -51,7 +51,6 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
      */
     public CoordinateTransformLonLatToXY(final double lonCenter, final double latCenter)
     {
-        super();
         this.latCenter = latCenter;
         this.lonCenter = lonCenter;
         double lr = Math.toRadians(latCenter);

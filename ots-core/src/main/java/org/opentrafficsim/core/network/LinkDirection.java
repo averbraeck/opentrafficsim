@@ -33,7 +33,6 @@ public class LinkDirection implements Serializable
      */
     public LinkDirection(final Link link, final GTUDirectionality direction)
     {
-        super();
         this.link = link;
         this.direction = direction;
     }

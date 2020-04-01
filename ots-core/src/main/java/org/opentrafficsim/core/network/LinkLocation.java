@@ -34,7 +34,6 @@ public class LinkLocation implements Serializable
      */
     public LinkLocation(final Link link, final double fractionalLongitudinalPosition)
     {
-        super();
         this.link = link;
         this.fractionalLongitudinalPosition = fractionalLongitudinalPosition;
     }
@@ -45,7 +44,6 @@ public class LinkLocation implements Serializable
      */
     public LinkLocation(final Link link, final Length position)
     {
-        super();
         this.link = link;
         this.fractionalLongitudinalPosition = position.divide(this.link.getLength()).doubleValue();
     }

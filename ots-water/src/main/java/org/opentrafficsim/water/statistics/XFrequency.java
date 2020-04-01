@@ -30,30 +30,29 @@ public class XFrequency implements Serializable
     @XStreamOmitField
     private static final long serialVersionUID = 1L;
 
-    /** count represents the values of the counters */
+    /** count represents the values of the counters. */
     protected SortedMap<String, Long> frequency = new TreeMap<String, Long>();
 
-    /** n represents the number of measurements */
+    /** n represents the number of measurements. */
     protected long n = Long.MIN_VALUE;
 
-    /** description refers to the title of this counter */
+    /** description refers to the title of this counter. */
     protected String description;
 
-    /** the semaphore */
+    /** the semaphore. */
     @XStreamOmitField
     private Object semaphore = new Object();
 
     /**
      * @param description String; the description of the statistic
      */
-    public XFrequency(String description)
+    public XFrequency(final String description)
     {
-        super();
         this.description = description;
     }
 
     /**
-     * Returns the current counter value for a key
+     * Returns the current counter value for a key.
      * @param key String; the string key for the counter
      * @return long the counter value
      */

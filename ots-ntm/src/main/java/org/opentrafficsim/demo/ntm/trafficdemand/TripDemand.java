@@ -39,7 +39,6 @@ public class TripDemand<TripInformation>
      */
     public TripDemand()
     {
-        super();
     }
 
     /**
@@ -47,7 +46,6 @@ public class TripDemand<TripInformation>
      */
     public TripDemand(final Map<String, Map<String, TripInformation>> tripInfo)
     {
-        super();
         this.tripInfo = tripInfo;
     }
 
@@ -56,7 +54,7 @@ public class TripDemand<TripInformation>
      * @param tripDemand TripDemand&lt;TripInfoTimeDynamic&gt;; comprising the original demand
      * @param centroids Map&lt;String,NTMNode&gt;; the detailed areas
      * @param mapSmallAreaToBigArea LinkedHashMap&lt;NTMNode,NTMNode&gt;; provides the key from small to big areas (type Node!!)
-     * @return
+     * @return TripDemand&lt;TripInfoTimeDynamic&gt;; the compressed trip demand
      */
     public static TripDemand<TripInfoTimeDynamic> compressTripDemand(TripDemand<TripInfoTimeDynamic> tripDemand,
             Map<String, NTMNode> centroids, LinkedHashMap<NTMNode, NTMNode> mapSmallAreaToBigArea)

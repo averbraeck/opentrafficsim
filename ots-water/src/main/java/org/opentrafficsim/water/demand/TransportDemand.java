@@ -230,7 +230,6 @@ public class TransportDemand implements Serializable
         public DemandCell(final Terminal terminalFrom, final Terminal terminalTo, final int numberAnnual,
                 final double fraction20ft, final double fractionEmpty, final Map<Company, Double> fractionOwners)
         {
-            super();
             this.terminalFrom = terminalFrom;
             this.terminalTo = terminalTo;
             this.numberAnnual = numberAnnual;

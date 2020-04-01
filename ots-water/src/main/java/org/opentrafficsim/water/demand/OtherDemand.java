@@ -44,7 +44,6 @@ public class OtherDemand implements Dynamic, Serializable
      */
     public OtherDemand(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
-        super();
         this.simulator = simulator;
     }
 

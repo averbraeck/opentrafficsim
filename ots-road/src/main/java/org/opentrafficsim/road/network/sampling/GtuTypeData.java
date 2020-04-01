@@ -25,7 +25,6 @@ public class GtuTypeData implements GtuTypeDataInterface
      */
     public GtuTypeData(final GTUType gtuType)
     {
-        super();
         this.gtuType = gtuType;
     }
 

@@ -152,7 +152,6 @@ public class OTSDemoServer implements Checkable
      */
     public OTSDemoServer()
     {
-        super();
     }
 
     /** Handle the kills of models that ran maxTime minutes. */

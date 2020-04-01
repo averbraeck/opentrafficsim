@@ -46,7 +46,6 @@ public class Acceleration3D implements Serializable
      */
     public Acceleration3D(final AccelerationVector acceleration) throws ValueRuntimeException
     {
-        super();
         if (acceleration.size() != 3)
         {
             throw new ValueRuntimeException("Size of an RPY-acceleration vector should be exactly 3. Got: " + acceleration);
@@ -63,7 +62,6 @@ public class Acceleration3D implements Serializable
      */
     public Acceleration3D(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueRuntimeException
     {
-        super();
         this.acceleration = DoubleVector.instantiate(new Acceleration[] {x, y, z}, AccelerationUnit.SI, StorageType.DENSE);
     }
 
@@ -78,7 +76,6 @@ public class Acceleration3D implements Serializable
     public Acceleration3D(final double x, final double y, final double z, final AccelerationUnit unit)
             throws ValueRuntimeException
     {
-        super();
         this.acceleration = DoubleVector.instantiate(new double[] {x, y, z}, unit, StorageType.DENSE);
     }
 
@@ -92,7 +89,6 @@ public class Acceleration3D implements Serializable
     public Acceleration3D(final Acceleration acceleration, final Direction theta, final Direction phi)
             throws ValueRuntimeException
     {
-        super();
         double[] xyz = Scalar3D.polarToCartesian(acceleration.getInUnit(), theta.si, phi.si);
         this.acceleration = DoubleVector.instantiate(xyz, acceleration.getDisplayUnit(), StorageType.DENSE);
     }

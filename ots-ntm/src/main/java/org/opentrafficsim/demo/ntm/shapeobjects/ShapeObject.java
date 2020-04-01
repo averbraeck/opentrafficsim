@@ -42,7 +42,6 @@ public class ShapeObject implements Locatable
      */
     public ShapeObject(Geometry geometry, ArrayList<String> values)
     {
-        super();
         this.geometry = geometry;
         this.values = values;
     }

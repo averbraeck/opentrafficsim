@@ -25,7 +25,6 @@ public class DrawingInfoLine<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoLine()
     {
-        super();
     }
 
     /**
@@ -36,7 +35,6 @@ public class DrawingInfoLine<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoLine(final Color lineColor, final float lineWidth)
     {
-        super();
         setLineColor(lineColor);
         this.lineWidth = lineWidth;
     }
@@ -49,7 +47,6 @@ public class DrawingInfoLine<D extends Drawable> implements DrawingInfo
      */
     public DrawingInfoLine(final Colorer<D> lineColorer, final float lineWidth)
     {
-        super();
         setLineColorer(lineColorer);
         this.lineWidth = lineWidth;
     }

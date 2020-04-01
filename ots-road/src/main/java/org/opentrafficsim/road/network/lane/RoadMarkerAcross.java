@@ -32,7 +32,6 @@ public abstract class RoadMarkerAcross implements Serializable
      */
     public RoadMarkerAcross(final CrossSectionElement crossSectionElement, final Length longitudinalPosition)
     {
-        super();
         this.crossSectionElement = crossSectionElement;
         this.longitudinalPosition = longitudinalPosition;
     }
