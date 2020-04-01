@@ -221,7 +221,6 @@ public class InputNTM
      */
     public InputNTM()
     {
-        super();
     }
 
     /**

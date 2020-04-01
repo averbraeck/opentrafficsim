@@ -46,7 +46,6 @@ public class GeoObject
      */
     public GeoObject(final Geometry geometry)
     {
-        super();
         this.geometry = geometry;
 
     }

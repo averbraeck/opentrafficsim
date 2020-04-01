@@ -20,7 +20,6 @@ public class OTSGeometryException extends Exception
      */
     public OTSGeometryException()
     {
-        super();
     }
 
     /**

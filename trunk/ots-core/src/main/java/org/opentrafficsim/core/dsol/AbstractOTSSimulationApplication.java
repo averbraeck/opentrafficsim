@@ -25,7 +25,6 @@ public abstract class AbstractOTSSimulationApplication implements Serializable
      */
     public AbstractOTSSimulationApplication(final OTSModelInterface model)
     {
-        super();
         this.model = model;
     }
 

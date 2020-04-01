@@ -36,10 +36,9 @@ public abstract class AbstractNWBRoadElement
      * @param beginDistance Double;
      * @param endDistance Double;
      */
-    public AbstractNWBRoadElement(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
-            Double endDistance)
+    public AbstractNWBRoadElement(final Geometry myGeom, final OTSNode startNode, final OTSNode endNode, final String roadId,
+            final Double beginDistance, final Double endDistance)
     {
-        super();
         this.myGeom = myGeom;
         this.startNode = startNode;
         this.endNode = endNode;

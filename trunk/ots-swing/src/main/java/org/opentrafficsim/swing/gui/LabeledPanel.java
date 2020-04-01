@@ -24,7 +24,6 @@ public class LabeledPanel extends JPanel
      */
     public LabeledPanel(final String caption)
     {
-        super();
         setBorder(new TitledBorder(null, caption, TitledBorder.LEADING, TitledBorder.TOP, null, null));
     }
 

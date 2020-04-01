@@ -25,7 +25,6 @@ public class CellBehaviour
      */
     public CellBehaviour()
     {
-        super();
         this.tripInfoByDestinationMap = new LinkedHashMap<NTMNode, TripInfoByDestination>();
     }
 

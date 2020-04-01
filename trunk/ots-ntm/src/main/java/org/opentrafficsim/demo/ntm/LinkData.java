@@ -35,7 +35,6 @@ public class LinkData
      */
     public LinkData(String name, String linkTag, String wegtype, String typeWegVak, String typeWeg)
     {
-        super();
         this.name = name;
         this.linkTag = linkTag;
         this.wegtype = wegtype;

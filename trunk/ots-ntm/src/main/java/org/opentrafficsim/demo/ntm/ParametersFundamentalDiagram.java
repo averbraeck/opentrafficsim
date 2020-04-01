@@ -51,7 +51,6 @@ public class ParametersFundamentalDiagram
      */
     public ParametersFundamentalDiagram(final Speed freeSpeed, final Frequency capacity, final int numberOfLanes)
     {
-        super();
         this.accCritical = new ArrayList<Double>();
         this.accCritical.add((capacity.getInUnit(FrequencyUnit.PER_HOUR) / freeSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)));
         // * cellLength.getInUnit(LengthUnit.KILOMETER));

@@ -21,7 +21,6 @@ public class IMBException extends Exception
      */
     public IMBException()
     {
-        super();
     }
 
     /**

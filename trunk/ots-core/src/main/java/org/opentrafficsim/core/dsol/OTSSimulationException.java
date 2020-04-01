@@ -21,7 +21,6 @@ public class OTSSimulationException extends Exception
      */
     public OTSSimulationException()
     {
-        super();
     }
 
     /**

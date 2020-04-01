@@ -44,7 +44,6 @@ public class LaneDirection implements Serializable
      */
     public LaneDirection(final Lane lane, final GTUDirectionality direction)
     {
-        super();
         this.lane = lane;
         this.direction = direction;
     }

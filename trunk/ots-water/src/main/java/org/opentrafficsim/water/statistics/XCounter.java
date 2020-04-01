@@ -47,7 +47,6 @@ public class XCounter implements Serializable
      */
     public XCounter(final String description)
     {
-        super();
         this.description = description;
     }
 

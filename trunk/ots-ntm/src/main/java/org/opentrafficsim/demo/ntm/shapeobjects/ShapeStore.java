@@ -71,7 +71,6 @@ public class ShapeStore
     public ShapeStore(ArrayList<ShapeObject> geoObjects, ArrayList<String> variableNames,
             LinkedHashMap<String, String> variableTypeMap, LinkedHashMap<String, Class<? extends Object>> attributeClassTypes)
     {
-        super();
         this.geoObjects = geoObjects;
         this.variableNames = variableNames;
         this.variableTypeMap = variableTypeMap;

@@ -79,7 +79,6 @@ public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
      */
     public OTSSwingApplication(final T model, final JPanel panel)
     {
-        super();
         this.model = model;
         setTitle("OTS | The Open Traffic Simulator | " + model.getDescription());
         setContentPane(panel);

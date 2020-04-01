@@ -57,7 +57,6 @@ public class TripInfoByDestination
             LinkedHashMap<BoundedNode, Double> accumulatedCarsToNeighbour, LinkedHashMap<BoundedNode, Double> demandToNeighbour,
             NTMNode destination)
     {
-        super();
         this.routeFractionToNeighbours = routeFractionToNeighbours;
         this.accumulatedCarsToNeighbour = accumulatedCarsToNeighbour;
         this.demandToNeighbour = demandToNeighbour;

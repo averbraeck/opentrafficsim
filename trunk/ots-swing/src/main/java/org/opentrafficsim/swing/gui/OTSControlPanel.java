@@ -327,7 +327,6 @@ public class OTSControlPanel extends JPanel
          */
         public DisposeOnCloseThread(final OTSControlPanel panel)
         {
-            super();
             this.panel = panel;
         }
 

@@ -32,7 +32,7 @@ class PolyLineTag implements Serializable
     /**
      * @param polyLineTag PolyLineTag; the parser with the lists of information
      */
-    public PolyLineTag(PolyLineTag polyLineTag)
+    PolyLineTag(final PolyLineTag polyLineTag)
     {
         if (polyLineTag != null)
         {
@@ -45,19 +45,17 @@ class PolyLineTag implements Serializable
      * @param length Length; length of the line
      * @param vertices OTSPoint3D[]; the points of the line
      */
-    public PolyLineTag(Length length, OTSPoint3D[] vertices)
+    PolyLineTag(final Length length, final OTSPoint3D[] vertices)
     {
-        super();
         this.length = length;
         this.vertices = vertices;
     }
 
     /**
-     *
+     * Construct a PolyLineTag.
      */
-    public PolyLineTag()
+    PolyLineTag()
     {
-        // TODO Auto-generated constructor stub
     }
 
     /**

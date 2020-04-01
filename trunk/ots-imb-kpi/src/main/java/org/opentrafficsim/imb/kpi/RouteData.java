@@ -28,9 +28,8 @@ public class RouteData implements RouteDataInterface
      * @param startNode NodeData; data of the start node of the route
      * @param endNode NodeData; data of the end node of the route
      */
-    public RouteData(String routeName, NodeData startNode, NodeData endNode)
+    public RouteData(final String routeName, final NodeData startNode, final NodeData endNode)
     {
-        super();
         this.routeName = routeName;
         this.startNode = startNode;
         this.endNode = endNode;

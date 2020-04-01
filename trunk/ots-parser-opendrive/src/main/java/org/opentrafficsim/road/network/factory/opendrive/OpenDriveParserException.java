@@ -23,7 +23,6 @@ public class OpenDriveParserException extends Exception
      */
     public OpenDriveParserException()
     {
-        super();
     }
 
     /**

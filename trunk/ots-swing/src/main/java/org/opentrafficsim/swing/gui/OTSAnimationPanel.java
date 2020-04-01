@@ -675,7 +675,6 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          */
         public DisposeOnCloseThread(final OTSAnimationPanel panel)
         {
-            super();
             this.panel = panel;
         }
 

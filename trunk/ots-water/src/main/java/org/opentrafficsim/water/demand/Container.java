@@ -87,7 +87,6 @@ public class Container implements Serializable
     public Container(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Terminal terminalFrom,
             final Terminal terminalTo, final boolean empty, final ShippingLine shippingLine)
     {
-        super();
         this.simulator = simulator;
         this.terminalFrom = terminalFrom;
         this.terminalLastStacked = terminalFrom;

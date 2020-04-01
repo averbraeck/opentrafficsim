@@ -37,7 +37,6 @@ public class SailingTimeState
      */
     public SailingTimeState(final Duration sailingTime, final boolean fits, final String reason)
     {
-        super();
         this.sailingTime = sailingTime;
         this.fits = fits;
         this.reason = reason;

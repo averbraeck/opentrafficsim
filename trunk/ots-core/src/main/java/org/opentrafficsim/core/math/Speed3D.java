@@ -45,7 +45,6 @@ public class Speed3D implements Serializable
      */
     public Speed3D(final SpeedVector speed) throws ValueRuntimeException
     {
-        super();
         if (speed.size() != 3)
         {
             throw new ValueRuntimeException("Size of an RPY-speed vector should be exactly 3. Got: " + speed);
@@ -62,7 +61,6 @@ public class Speed3D implements Serializable
      */
     public Speed3D(final Speed x, final Speed y, final Speed z) throws ValueRuntimeException
     {
-        super();
         this.speed = DoubleVector.instantiate(new Speed[] {x, y, z}, x.getDisplayUnit(), StorageType.DENSE);
     }
 
@@ -76,7 +74,6 @@ public class Speed3D implements Serializable
      */
     public Speed3D(final double x, final double y, final double z, final SpeedUnit unit) throws ValueRuntimeException
     {
-        super();
         this.speed = DoubleVector.instantiate(new double[] {x, y, z}, unit, StorageType.DENSE);
     }
 
@@ -89,7 +86,6 @@ public class Speed3D implements Serializable
      */
     public Speed3D(final Speed speed, final Direction theta, final Direction phi) throws ValueRuntimeException
     {
-        super();
         double[] xyz = Scalar3D.polarToCartesian(speed.getInUnit(), theta.si, phi.si);
         this.speed = DoubleVector.instantiate(xyz, speed.getDisplayUnit(), StorageType.DENSE);
     }

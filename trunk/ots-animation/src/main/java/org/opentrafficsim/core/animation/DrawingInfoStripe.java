@@ -22,7 +22,6 @@ public class DrawingInfoStripe<D extends Drawable> extends DrawingInfoLine<D>
      */
     public DrawingInfoStripe(final StripeType stripeType)
     {
-        super();
         this.stripeType = stripeType;
     }
 

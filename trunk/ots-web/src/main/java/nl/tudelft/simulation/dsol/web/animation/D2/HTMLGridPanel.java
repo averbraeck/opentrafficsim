@@ -124,7 +124,6 @@ public class HTMLGridPanel implements ImageObserver
      */
     public HTMLGridPanel(final Rectangle2D extent, final Dimension size)
     {
-        super();
         this.htmlGraphics2D = new HTMLGraphics2D();
         this.extent = extent;
         this.homeExtent = (Rectangle2D) extent.clone();

@@ -78,7 +78,6 @@ public class XTally implements Serializable
      */
     public XTally(final String description)
     {
-        super();
         this.description = description;
     }
 

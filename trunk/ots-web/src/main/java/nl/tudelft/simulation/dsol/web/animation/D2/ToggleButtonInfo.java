@@ -24,7 +24,6 @@ public class ToggleButtonInfo
      */
     protected ToggleButtonInfo(String name, boolean visible)
     {
-        super();
         this.name = name;
         this.visible = visible;
     }

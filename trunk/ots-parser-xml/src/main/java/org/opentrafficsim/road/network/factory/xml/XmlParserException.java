@@ -23,7 +23,6 @@ public class XmlParserException extends Exception
      */
     public XmlParserException()
     {
-        super();
     }
 
     /**

@@ -69,7 +69,6 @@ public class RelativePosition implements Serializable
      */
     public RelativePosition(final Length dx, final Length dy, final Length dz, final TYPE type)
     {
-        super();
         this.dx = dx;
         this.dy = dy;
         this.dz = dz;
@@ -83,7 +82,6 @@ public class RelativePosition implements Serializable
      */
     public RelativePosition(final RelativePosition p)
     {
-        super();
         this.dx = p.getDx();
         this.dy = p.getDy();
         this.dz = p.getDz();
@@ -225,7 +223,6 @@ public class RelativePosition implements Serializable
          */
         public TYPE(final String name)
         {
-            super();
             this.name = name;
             this.hash = 31 + ((this.name == null) ? 0 : this.name.hashCode());
         }

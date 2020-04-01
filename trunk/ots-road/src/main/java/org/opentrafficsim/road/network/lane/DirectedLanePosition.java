@@ -50,7 +50,6 @@ public class DirectedLanePosition implements Serializable
     public DirectedLanePosition(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
             throws GTUException
     {
-        super();
         Throw.when(lane == null, GTUException.class, "lane is null");
         Throw.when(position == null, GTUException.class, "position is null");
         Throw.when(gtuDirection == null, GTUException.class, "gtuDirection is null");
