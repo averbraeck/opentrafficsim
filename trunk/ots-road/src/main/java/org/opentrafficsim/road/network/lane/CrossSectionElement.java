@@ -186,7 +186,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
-     * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
+     * @param id String; The id of the CrossSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
      * @param lateralOffsetAtBegin Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
      *            design line of the parent Link at the start of the parent Link
