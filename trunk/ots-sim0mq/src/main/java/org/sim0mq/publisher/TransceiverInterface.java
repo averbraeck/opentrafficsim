@@ -74,7 +74,7 @@ public interface TransceiverInterface extends Identifiable
     /**
      * Retrieve the data.
      * @param address Object[]; the address of the data to retrieve
-     * @return Object[]; the retrieved data
+     * @return Object[]; the retrieved data, or null when no object with the address could be found
      * @throws RemoteException when communication needed to retrieve the data failed
      */
     Object[] get(Object[] address) throws RemoteException;
