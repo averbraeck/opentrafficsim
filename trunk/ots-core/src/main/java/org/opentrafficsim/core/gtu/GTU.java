@@ -11,6 +11,8 @@ import org.djutils.event.EventProducerInterface;
 import org.djutils.event.EventType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.animation.Drawable;
@@ -21,6 +23,7 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Generalized Travel Unit. <br>
@@ -213,18 +216,32 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * The event type for pub/sub indicating the initialization of a new GTU. <br>
      * Payload: [String id, DirectedPoint initialPosition, Length length, Length width]
      */
-    EventType INIT_EVENT = new EventType("GTU.INIT");
+    EventType INIT_EVENT = new EventType("GTU.INIT",
+            new MetaData("GTU init", "GTU id, initial position and size",
+                    new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
+                            new ObjectDescriptor("initial position", "initial position", DirectedPoint.class),
+                            new ObjectDescriptor("Length", "Length", Length.class),
+                            new ObjectDescriptor("Width", "Width", Length.class) }));
 
     /**
      * The event type for pub/sub indicating a move. <br>
      * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, Length odometer]
      */
-    EventType MOVE_EVENT = new EventType("GTU.MOVE");
+    EventType MOVE_EVENT = new EventType("GTU.MOVE",
+            new MetaData("GTU move", "GTU id, position, speed, acceleration, odometer",
+                    new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
+                            new ObjectDescriptor("position", "position", DirectedPoint.class),
+                            new ObjectDescriptor("acceleration", "acceleration", Acceleration.class),
+                            new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class) }));
 
     /**
      * The event type for pub/sub indicating destruction of the GTU. <br>
      * Payload: [String id, DirectedPoint lastPosition, Length odometer]
      */
-    EventType DESTROY_EVENT = new EventType("GTU.DESTROY");
+    EventType DESTROY_EVENT = new EventType("GTU.DESTROY",
+            new MetaData("GTU destroy", "GTU id, final position, final odometer",
+                    new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
+                            new ObjectDescriptor("final position", "final position", DirectedPoint.class),
+                            new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class) }));
 
 }
