@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URISyntaxException;
@@ -48,6 +49,7 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -213,7 +215,8 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
-                    | ValueRuntimeException | JAXBException | URISyntaxException | XmlParserException exception)
+                    | ValueRuntimeException | JAXBException | URISyntaxException | XmlParserException | IOException
+                    | TrafficControlException exception)
             {
                 exception.printStackTrace();
             }
