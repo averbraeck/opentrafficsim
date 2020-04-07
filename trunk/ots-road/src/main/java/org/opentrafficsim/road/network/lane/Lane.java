@@ -439,12 +439,12 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Obtains the history manager from the parent link.
-     * @param parLink CrossSectionLink; parent link
+     * @param parentLink CrossSectionLink; parent link
      * @return HistoryManager; history manager
      */
-    private HistoryManager getManager(final CrossSectionLink parLink)
+    private HistoryManager getManager(final CrossSectionLink parentLink)
     {
-        return parLink.getSimulator().getReplication().getHistoryManager(parLink.getSimulator());
+        return parentLink.getSimulator().getReplication().getHistoryManager(parentLink.getSimulator());
     }
 
     // TODO constructor calls with this(...)
