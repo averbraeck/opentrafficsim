@@ -432,7 +432,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * Payload: StaticObject object (not an array, just an Object)
      */
     EventType ANIMATION_OBJECT_ADD_EVENT = new EventType("ANIMATION.NETWORK.OBJECT.ADD", new MetaData("Object animation added",
-            "Object animation", new ObjectDescriptor("StaticObject", "Visible, stationary object", StaticObject.class)));
+            "Object animation", new ObjectDescriptor("StaticObject", "Visible, stationary object", ObjectInterface.class)));
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of an ObjectInterface implementing object. <br>
