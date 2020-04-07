@@ -231,6 +231,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
             new MetaData("GTU move", "GTU id, position, speed, acceleration, odometer",
                     new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", DirectedPoint.class),
+                            new ObjectDescriptor("speed", "speed", Speed.class),
                             new ObjectDescriptor("acceleration", "acceleration", Acceleration.class),
                             new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class) }));
 
