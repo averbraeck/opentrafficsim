@@ -570,7 +570,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      */
     EventType INVISIBLE_OBJECT_ADD_EVENT = new EventType("NETWORK.INVISIBLE_OBJECT.ADD", new MetaData("Invisible object added",
             "Invisible, stationary object added",
-            new ObjectDescriptor("InvisibleObjectInterface", "Invisible, stationary object", InvisibleObjectInterface.class)));
+            new ObjectDescriptor("InvisibleObjectInterface", "Id of invisible, stationary object", String.class)));
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing
@@ -579,7 +579,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      */
     EventType INVISIBLE_OBJECT_REMOVE_EVENT = new EventType("NETWORK.INVISIBLE_OBJECT.REMOVE", new MetaData(
             "Invisible object removed", "Invisible, stationary object removed",
-            new ObjectDescriptor("InvisibleObjectInterface", "Invisible, stationary object", InvisibleObjectInterface.class)));
+            new ObjectDescriptor("InvisibleObjectInterface", "Id of invisible, stationary object", String.class)));
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>
