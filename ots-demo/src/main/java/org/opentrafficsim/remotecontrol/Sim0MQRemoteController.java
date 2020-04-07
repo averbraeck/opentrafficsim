@@ -298,6 +298,9 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         // output.println(HexDumper.hexDumper(bytes));
     }
 
+    /** Step to button. */
+    private JButton stepTo;
+    
     /**
      * Construct the GUI.
      */
@@ -324,10 +327,14 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         sendNetwork.setActionCommand("SendNetwork");
         sendNetwork.addActionListener(this);
         controls.add(sendNetwork);
-        JButton stepTo = new JButton("Step to 10 s");
-        stepTo.setActionCommand("StepTo");
-        stepTo.addActionListener(this);
-        controls.add(stepTo);
+        this.stepTo = new JButton("Step to 10 s");
+        this.stepTo.setActionCommand("StepTo");
+        this.stepTo.addActionListener(this);
+        controls.add(this.stepTo);
+        JButton step100TimesTo = new JButton("Step 100 times 10 s");
+        step100TimesTo.setActionCommand("Step100To");
+        step100TimesTo.addActionListener(this);
+        controls.add(step100TimesTo);
         JButton getGTUPositions = new JButton("Get all GTU positions");
         getGTUPositions.setActionCommand("GetAllGTUPositions");
         getGTUPositions.addActionListener(this);
@@ -573,6 +580,15 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                 catch (IOException | Sim0MQException | SerializationException e1)
                 {
                     e1.printStackTrace();
+                }
+                break;
+            }
+            
+            case "Step100To":
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    actionPerformed(new ActionEvent(this.stepTo, 0, "StepTo"));
                 }
                 break;
             }

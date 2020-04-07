@@ -349,9 +349,11 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                 else if (message.length == 9 && message[8] instanceof Time)
                                 {
                                     OTSSimulatorInterface simulator = this.model.getSimulator();
+                                    System.out.println("Simulating up to " + message[8]);
                                     simulator.runUpTo((Time) message[8]);
                                     while (simulator.isRunning())
                                     {
+                                        System.out.print(".");
                                         try
                                         {
                                             Thread.sleep(10);
@@ -361,6 +363,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                             e.printStackTrace();
                                         }
                                     }
+                                    System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
                                 }
                                 else
                                 {
@@ -458,6 +461,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         {
             EventType type = event.getType();
             String eventTypeName = type.getName();
+            System.out.println("notify: start processing event " + eventTypeName);
             switch (eventTypeName)
             {
                 case "TRAFFICCONTROL.CONTROLLER_EVALUATING":
@@ -526,6 +530,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     break;
                 }
             }
+            System.out.println("notify: finished processing event " + eventTypeName);
         }
         catch (Sim0MQException | SerializationException e)
         {
