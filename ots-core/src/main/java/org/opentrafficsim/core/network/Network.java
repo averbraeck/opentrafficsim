@@ -17,7 +17,6 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
-import org.opentrafficsim.core.object.StaticObject;
 
 /**
  * Interface that defines what information a network should be able to provide about Nodes, Links and Routes.
