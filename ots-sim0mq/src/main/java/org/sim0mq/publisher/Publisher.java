@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.Throw;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
@@ -22,24 +24,25 @@ public class Publisher extends AbstractTransceiver
     private final Map<String, TransceiverInterface> transceiverMap = new LinkedHashMap<>();
 
     /** Embedded transceiver that can produce the names of all the transceivers for the objects in the OTS network. */
-    private final TransceiverInterface idTransceiver =
-            new AbstractTransceiver("Names of available transceivers", new FieldDescriptor[0],
-                    new FieldDescriptor[] { new FieldDescriptor("Name of available transceiver", String.class) })
+    private final TransceiverInterface idTransceiver = new AbstractTransceiver("Ids of available transceivers",
+            new MetaData("Transceiver", "id of transceiver", new ObjectDescriptor[0]),
+            new MetaData("Id of transceiver", "Id of transceiver", new ObjectDescriptor[] {
+                    new ObjectDescriptor("Name of available transceiver", "Name of available transceiver", String.class) }))
+    {
+        /** {@inheritDoc} */
+        @Override
+        public Object[] get(final Object[] address)
+        {
+            getAddressFields().verifyComposition(address);
+            Object[] result = new Object[transceiverMap.size()];
+            int index = 0;
+            for (String key : transceiverMap.keySet())
             {
-                /** {@inheritDoc} */
-                @Override
-                public Object[] get(final Object[] address)
-                {
-                    verifyAddressComponents(address);
-                    Object[] result = new Object[transceiverMap.size()];
-                    int index = 0;
-                    for (String key : transceiverMap.keySet())
-                    {
-                        result[index++] = key;
-                    }
-                    return result;
-                };
-            };
+                result[index++] = key;
+            }
+            return result;
+        };
+    };
 
     /**
      * Construct a Publisher for an OTS network.
@@ -48,11 +51,19 @@ public class Publisher extends AbstractTransceiver
     public Publisher(final OTSNetwork network)
     {
         super("Publisher for " + Throw.whenNull(network, "Network may not be null").getId(),
-                new FieldDescriptor[] { new FieldDescriptor("Transceiver name", String.class) },
-                new FieldDescriptor[] { new FieldDescriptor("TransceiverInterface", TransceiverInterface.class) });
+                new MetaData("", "",
+                        new ObjectDescriptor[] { new ObjectDescriptor("Transceiver name", "Transceiver name", String.class) }),
+                new MetaData("", "", new ObjectDescriptor[] {
+                        new ObjectDescriptor("TransceiverInterface", "Transceiver", ObjectDescriptor.class) }));
         GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
         addTransceiver(gtuIdTransceiver);
         addTransceiver(new GTUTransceiver(network, gtuIdTransceiver));
+        LinkIdTransceiver linkIdTransceiver = new LinkIdTransceiver(network);
+        addTransceiver(linkIdTransceiver);
+        addTransceiver(new LinkTransceiver(network, linkIdTransceiver));
+        addTransceiver(new CrossSectionElementTransceiver(network));
+        addTransceiver(new LinkGTUIdTransceiver(network));
+        addTransceiver(new LaneGTUIdTransceiver(network));
     }
 
     /**
@@ -68,7 +79,7 @@ public class Publisher extends AbstractTransceiver
     @Override
     public Object[] get(final Object[] address)
     {
-        verifyAddressComponents(address);
+        getAddressFields().verifyComposition(address);
         TransceiverInterface result = this.transceiverMap.get(address[0]);
         if (null != result)
         {

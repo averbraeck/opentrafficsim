@@ -1,15 +1,12 @@
 package org.sim0mq.publisher;
 
-import java.util.Set;
-
-import org.djunits.Throw;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
- * Transceiver for GTU ids.
+ * Transceiver for Link ids.
  * <p>
  * Copyright (c) 2020-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -18,21 +15,20 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUIdTransceiver extends AbstractTransceiver
+public class LinkIdTransceiver extends AbstractTransceiver
 {
     /** The network. */
     private final OTSNetwork network;
 
     /**
-     * Construct a GTUIdTransceiver.
+     * Construct a new LinkIdTransceiver.
      * @param network OTSNetwork; the OTS network
      */
-    public GTUIdTransceiver(final OTSNetwork network)
+    public LinkIdTransceiver(final OTSNetwork network)
     {
-        super("GTU id transceiver", new MetaData("No address", "empty address", new ObjectDescriptor[0]),
+        super("Link id transceiver", new MetaData("No address", "empty address", new ObjectDescriptor[0]),
                 new MetaData("", "", new ObjectDescriptor[] { new ObjectDescriptor("String array",
-                        "String array filled with all currently valid GTU ids", String[].class) }));
-        Throw.whenNull(network, "Network may not be null");
+                        "String array filled with all currently valid Link ids", String[].class) }));
         this.network = network;
     }
 
@@ -41,12 +37,12 @@ public class GTUIdTransceiver extends AbstractTransceiver
     public final Object[] get(final Object[] address)
     {
         getAddressFields().verifyComposition(address);
-        Set<GTU> gtus = this.network.getGTUs();
-        Object[] result = new Object[gtus.size()];
+        ImmutableSet<String> links = this.network.getLinkMap().keySet();
+        Object[] result = new Object[links.size()];
         int nextIndex = 0;
-        for (GTU gtu : gtus)
+        for (String linkId : links)
         {
-            result[nextIndex++] = gtu.getId();
+            result[nextIndex++] = linkId;
         }
         return result;
     }
@@ -55,7 +51,7 @@ public class GTUIdTransceiver extends AbstractTransceiver
     @Override
     public String toString()
     {
-        return "GTUIdTransceiver [network=" + network + ", super=" + super.toString() + "]";
+        return "LinkIdTransceiver [network=" + network + ", super=" + super.toString() + "]";
     }
 
 }

@@ -3,8 +3,8 @@ package org.sim0mq.publisher;
 import java.rmi.RemoteException;
 
 import org.djunits.Throw;
-import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -20,7 +20,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUTransceiver extends AbstractTransceiver
+public class GTUTransceiver extends AbstractEventTransceiver
 {
     /** The network. */
     private final OTSNetwork network;
@@ -31,16 +31,21 @@ public class GTUTransceiver extends AbstractTransceiver
     /**
      * Construct a GTUTransceiver.
      * @param network Network; the Network
-     * @param gtuIdSource TransceiverInterface; the transceiver that can produce all active GTU ids in the Network
+     * @param gtuIdSource GTUIdTransceiver; the transceiver that can produce all active GTU ids in the Network
      */
-    public GTUTransceiver(final OTSNetwork network, final TransceiverInterface gtuIdSource)
+    public GTUTransceiver(final OTSNetwork network, final GTUIdTransceiver gtuIdSource)
     {
-        super("GTU transceiver", new FieldDescriptor[] { new FieldDescriptor("GTU id", "".getClass()) },
-                new FieldDescriptor[] { new FieldDescriptor("GTU id", "".getClass()),
-                        new FieldDescriptor("GTUType id", "".getClass()), new FieldDescriptor("x", double.class),
-                        new FieldDescriptor("y", double.class), new FieldDescriptor("z", double.class),
-                        new FieldDescriptor("heading", double.class), new FieldDescriptor("Speed", Speed.class),
-                        new FieldDescriptor("Acceleration", Acceleration.class) });
+        super("GTU transceiver",
+                new MetaData("GTU id", "GTU id",
+                        new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", "".getClass()) }),
+                GTU.MOVE_EVENT);
+//                new MetaData("GTU data", "GTU id, position, speed, acceleration",
+//                        new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "", "".getClass()),
+//                                new ObjectDescriptor("GTUType id", "", "".getClass()),
+//                                new ObjectDescriptor("x", "", double.class), new ObjectDescriptor("y", "", double.class),
+//                                new ObjectDescriptor("z", "", double.class), new ObjectDescriptor("heading", "", double.class),
+//                                new ObjectDescriptor("Speed", "", Speed.class),
+//                                new ObjectDescriptor("Acceleration", "", Acceleration.class) }));
         this.network = network;
         this.gtuIdSource = gtuIdSource;
     }
@@ -57,7 +62,7 @@ public class GTUTransceiver extends AbstractTransceiver
     @Override
     public final Object[] get(final Object[] address) throws RemoteException
     {
-        verifyAddressComponents(address);
+        getAddressFields().verifyComposition(address);
         GTU gtu = this.network.getGTU((String) address[0]);
         if (null == gtu)
         {
@@ -66,6 +71,13 @@ public class GTUTransceiver extends AbstractTransceiver
         DirectedPoint gtuPosition = gtu.getLocation();
         return new Object[] { gtu.getId(), gtu.getGTUType().getId(), gtuPosition.x, gtuPosition.y, gtuPosition.z,
                 gtuPosition.getRotZ(), gtu.getSpeed(), gtu.getAcceleration() };
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "GTUTransceiver [network=" + network + ", super=" + super.toString() + "]";
     }
 
 }

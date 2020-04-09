@@ -52,14 +52,15 @@ public class TransceiverTest
         OTSNetwork network = new OTSNetwork("test network for TransceiverTest", true);
         GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
         assertEquals("getId returns correct id", "GTU id transceiver", gtuIdTransceiver.getId());
-        assertEquals("address has 0 entries", 0, gtuIdTransceiver.addressFieldLevels());
-        assertEquals("result has one field", 1, gtuIdTransceiver.getResultFieldCount());
-        assertEquals("type of the result field is String", String[].class, gtuIdTransceiver.getResultFieldClass(0));
+        assertEquals("address has 0 entries", 0, gtuIdTransceiver.getAddressFields().size());
+        assertEquals("result has one field", 1, gtuIdTransceiver.getResultFields().size());
+        assertEquals("type of the result field is String", String[].class,
+                gtuIdTransceiver.getResultFields().getObjectClass(0));
         assertEquals("description of the result field", "String array filled with all currently valid GTU ids",
-                gtuIdTransceiver.getResultFieldDescription(0));
+                gtuIdTransceiver.getResultFields().getObjectDescription(0));
         try
         {
-            gtuIdTransceiver.getResultFieldClass(1);
+            gtuIdTransceiver.getResultFields().getObjectClass(1);
             fail("Bad index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -69,7 +70,7 @@ public class TransceiverTest
 
         try
         {
-            gtuIdTransceiver.getResultFieldClass(-1);
+            gtuIdTransceiver.getResultFields().getObjectClass(-1);
             fail("Bad index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -79,7 +80,7 @@ public class TransceiverTest
 
         try
         {
-            gtuIdTransceiver.getResultFieldDescription(1);
+            gtuIdTransceiver.getResultFields().getObjectDescription(1);
             fail("Bad index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -89,7 +90,7 @@ public class TransceiverTest
 
         try
         {
-            gtuIdTransceiver.getResultFieldDescription(-1);
+            gtuIdTransceiver.getResultFields().getObjectDescription(-1);
             fail("Bad index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -165,10 +166,10 @@ public class TransceiverTest
             // Ignore expected exception
         }
         
-        assertEquals("address field 0", "GTU id", gtuTransceiver.getAddressFieldDescription(0));
+        assertEquals("address field 0", "GTU id", gtuTransceiver.getAddressFields().getObjectDescription(0));
         try
         {
-            gtuTransceiver.getAddressFieldDescription(1);
+            gtuTransceiver.getAddressFields().getObjectDescription(1);
             fail("Invalid index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -178,7 +179,7 @@ public class TransceiverTest
         
         try
         {
-            gtuTransceiver.getAddressFieldDescription(-1);
+            gtuTransceiver.getAddressFields().getObjectDescription(-1);
             fail("Invalid index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -186,10 +187,10 @@ public class TransceiverTest
             // Ignore expected exception
         }
         
-        assertEquals("address field class", String.class, gtuTransceiver.getAddressFieldClass(0));
+        assertEquals("address field class", String.class, gtuTransceiver.getAddressFields().getObjectClass(0));
         try
         {
-            gtuTransceiver.getAddressFieldClass(1);
+            gtuTransceiver.getAddressFields().getObjectClass(1);
             fail("Invalid index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -199,7 +200,7 @@ public class TransceiverTest
         
         try
         {
-            gtuTransceiver.getAddressFieldClass(-1);
+            gtuTransceiver.getAddressFields().getObjectClass(-1);
             fail("Invalid index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)

@@ -1,8 +1,7 @@
 package org.sim0mq.publisher;
 
-import java.util.Arrays;
-
 import org.djunits.Throw;
+import org.djutils.metadata.MetaData;
 
 /**
  * Common code for most implementations of TranceiverInterface.
@@ -17,10 +16,10 @@ import org.djunits.Throw;
 public abstract class AbstractTransceiver implements TransceiverInterface
 {
     /** The address field descriptors. */
-    private final FieldDescriptor[] addressFieldDescriptors;
+    private final MetaData addressFields;
 
     /** The result field descriptors. */
-    private final FieldDescriptor[] resultFieldDescriptors;
+    private final MetaData resultFields;
 
     /** The id of the AbstractTransceiver. */
     private final String id;
@@ -28,19 +27,18 @@ public abstract class AbstractTransceiver implements TransceiverInterface
     /**
      * Construct a new AbstractTransceiver.
      * @param id String; the id of the new AbstractTransceiver
-     * @param addressFieldDescriptors FieldDescriptor[]; description of the elements of an address that the <code>get</code>
-     *            method of this AbstractTransceiver can handle
-     * @param resultFieldDescriptors FieldDescriptor[]; description of the result of the <code>get</code> method
+     * @param addressFields MetaData; description of the elements of an address that the <code>get</code> method of this
+     *            AbstractTransceiver can handle
+     * @param resultFields MetaData; description of the result of the <code>get</code> method
      */
-    public AbstractTransceiver(final String id, final FieldDescriptor[] addressFieldDescriptors,
-            final FieldDescriptor[] resultFieldDescriptors)
+    public AbstractTransceiver(final String id, final MetaData addressFields, final MetaData resultFields)
     {
         Throw.whenNull(id, "id may not be null");
-        Throw.whenNull(addressFieldDescriptors, "addressFieldDescriptors may not be null");
-        Throw.whenNull(resultFieldDescriptors, "resultFieldDescriptors may not be null");
+        Throw.whenNull(addressFields, "addressFieldDescriptors may not be null");
+        Throw.whenNull(resultFields, "resultFieldDescriptors may not be null");
         this.id = id;
-        this.addressFieldDescriptors = addressFieldDescriptors;
-        this.resultFieldDescriptors = resultFieldDescriptors;
+        this.addressFields = addressFields;
+        this.resultFields = resultFields;
     }
 
     /** {@inheritDoc} */
@@ -52,52 +50,23 @@ public abstract class AbstractTransceiver implements TransceiverInterface
 
     /** {@inheritDoc} */
     @Override
-    public final int addressFieldLevels()
+    public final MetaData getAddressFields()
     {
-        return this.addressFieldDescriptors.length;
+        return this.addressFields;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Class<?> getAddressFieldClass(final int addressLevel)
+    public final MetaData getResultFields()
     {
-        return this.addressFieldDescriptors[addressLevel].getFieldClass();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getAddressFieldDescription(final int addressLevel)
-    {
-        return this.addressFieldDescriptors[addressLevel].getFieldDescription();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final int getResultFieldCount()
-    {
-        return this.resultFieldDescriptors.length;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Class<?> getResultFieldClass(final int index)
-    {
-        return this.resultFieldDescriptors[index].getFieldClass();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getResultFieldDescription(final int index)
-    {
-        return this.resultFieldDescriptors[index].getFieldDescription();
+        return this.resultFields;
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString()
     {
-        return "AbstractTransceiver [id=" + id + ", addressFieldDescriptors=" + Arrays.toString(addressFieldDescriptors)
-                + ", resultFieldDescriptors=" + Arrays.toString(resultFieldDescriptors) + "]";
+        return "AbstractTransceiver [id=" + id + ", addressFields=" + addressFields + ", resultFields=" + resultFields + "]";
     }
 
 }
