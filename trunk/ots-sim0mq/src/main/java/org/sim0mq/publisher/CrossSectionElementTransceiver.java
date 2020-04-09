@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -30,11 +32,18 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
      */
     public CrossSectionElementTransceiver(final OTSNetwork network)
     {
-        super("CrossSectionElement transceiver",
-                new FieldDescriptor[] { new FieldDescriptor("Link id", String.class),
-                        new FieldDescriptor("CrossSectionElement rank", Integer.class) },
-                new FieldDescriptor[] { new FieldDescriptor("Sub type", String.class),
-                        new FieldDescriptor("Length along center line", Length.class) });
+        super("CrossSectionElement transceiver", new MetaData("", "",
+                new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Link id", String.class),
+                        new ObjectDescriptor("CrossSectionElement rank", "Rank of cross section element", Integer.class) }),
+                new MetaData("", "", new ObjectDescriptor[] {
+                        new ObjectDescriptor("CrossSectionElement id", "CrossSectionElement id", String.class),
+                        new ObjectDescriptor("Sub type", "cross section element sub type", String.class),
+                        new ObjectDescriptor("Length along center line", "Length of cross section element along center line",
+                                Length.class),
+                        new ObjectDescriptor("Begin offset", "Lateral offset at begin", Length.class),
+                        new ObjectDescriptor("Begin width", "Width at begin", Length.class),
+                        new ObjectDescriptor("End offset", "Lateral offset at end", Length.class),
+                        new ObjectDescriptor("End width", "Width at end", Length.class) }));
         this.network = network;
     }
 
@@ -42,7 +51,7 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
     @Override
     public Object[] get(final Object[] address) throws RemoteException
     {
-        verifyAddressComponents(address);
+        getAddressFields().verifyComposition(address);
         Link link = network.getLink((String) (address[0]));
         if (link == null)
         {
@@ -60,7 +69,15 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
             return null;
         }
         CrossSectionElement cse = cseList.get(rank);
-        return new Object[] { cse.getClass().getName(), cse.getLength() };
+        return new Object[] { cse.getId(), cse.getClass().getName(), cse.getLength(), cse.getWidth(0),
+                cse.getDesignLineOffsetAtBegin(), cse.getWidth(1.0), cse.getDesignLineOffsetAtEnd() };
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "CrossSectionElementTransceiver [network=" + network + ", super=" + super.toString() + "]";
     }
 
 }

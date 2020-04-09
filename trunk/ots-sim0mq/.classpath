@@ -36,5 +36,8 @@
 	</classpathentry>
 	<classpathentry kind="src" path="/ots-core"/>
 	<classpathentry kind="src" path="/ots-road"/>
+	<classpathentry kind="src" path="/ots-parser-xml"/>
+	<classpathentry kind="src" path="/ots-trafficcontrol"/>
+	<classpathentry kind="src" path="/ots-xsd"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
