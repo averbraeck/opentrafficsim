@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.event.EventProducerInterface;
 import org.djutils.event.EventType;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -23,7 +25,6 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Generalized Travel Unit. <br>
@@ -219,7 +220,8 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     EventType INIT_EVENT = new EventType("GTU.INIT",
             new MetaData("GTU init", "GTU id, initial position and size",
                     new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
-                            new ObjectDescriptor("initial position", "initial position", DirectedPoint.class),
+                            new ObjectDescriptor("initial position", "initial position", PositionVector.class),
+                            new ObjectDescriptor("initial direction", "initial direction", Direction.class),
                             new ObjectDescriptor("Length", "Length", Length.class),
                             new ObjectDescriptor("Width", "Width", Length.class) }));
 
@@ -230,7 +232,8 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     EventType MOVE_EVENT = new EventType("GTU.MOVE",
             new MetaData("GTU move", "GTU id, position, speed, acceleration, odometer",
                     new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
-                            new ObjectDescriptor("position", "position", DirectedPoint.class),
+                            new ObjectDescriptor("position", "position", PositionVector.class),
+                            new ObjectDescriptor("direction", "direction", Direction.class),
                             new ObjectDescriptor("speed", "speed", Speed.class),
                             new ObjectDescriptor("acceleration", "acceleration", Acceleration.class),
                             new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class) }));
@@ -242,7 +245,8 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     EventType DESTROY_EVENT = new EventType("GTU.DESTROY",
             new MetaData("GTU destroy", "GTU id, final position, final odometer",
                     new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
-                            new ObjectDescriptor("final position", "final position", DirectedPoint.class),
+                            new ObjectDescriptor("position", "position", PositionVector.class),
+                            new ObjectDescriptor("direction", "direction", Direction.class),
                             new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class) }));
 
 }
