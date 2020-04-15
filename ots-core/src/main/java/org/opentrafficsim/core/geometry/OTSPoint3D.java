@@ -9,9 +9,15 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.Unit;
+import org.djunits.value.storage.StorageType;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.base.DoubleScalarInterface;
+import org.djunits.value.vdouble.vector.base.DoubleVector;
+import org.djunits.value.vdouble.vector.base.DoubleVectorInterface;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 
@@ -391,9 +397,9 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * Return the possible center points of a circle (sphere), given two points and a radius. Only points with Z-coordinate equal
-     * to the mean of the given points are returned. (Without this restriction on the Z-coordinate, the result set would be either
-     * empty, a single point, or all points on a circle.)
+     * Return the possible center points of a circle (sphere), given two points and a radius. Only points with Z-coordinate
+     * equal to the mean of the given points are returned. (Without this restriction on the Z-coordinate, the result set would
+     * be either empty, a single point, or all points on a circle.)
      * @param point1 OTSPoint3D; the first point
      * @param point2 OTSPoint3D; the second point
      * @param radius double; the radius
@@ -553,6 +559,33 @@ public class OTSPoint3D implements Locatable, Serializable
     public final Bounds getBounds()
     {
         return new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 0.5);
+    }
+
+    /**
+     * Create a DENSE DoubleVector with the x, y and z values of this OTSPoint3D.
+     * @param unit U; unit of the values in this OTSPoint3D (and also the display unit of the returned DoubleVector)
+     * @return DoubleVector; the constructed DoubleVector, size is 3; first value is x, second is y, third is z
+     * @param <U> the unit type
+     * @param <S> the corresponding scalar type
+     * @param <V> the corresponding vector type
+     */
+    public <U extends Unit<U>, S extends DoubleScalarInterface<U, S>,
+            V extends DoubleVectorInterface<U, S, V>> V doubleVector(final U unit)
+    {
+        return DoubleVector.instantiate(new double[] { this.x, this.y, this.z }, unit, StorageType.DENSE);
+    }
+    
+    /**
+     * Construct a Direction from the rotZ component of a DirectedPoint.
+     * @param directedPoint DirectedPoint; the DirectedPoint
+     * @param directionUnit DirectionUnit; the unit in which the rotZ of <code>directedPoint</code> is expressed and which is
+     *            also the display unit of the returned Direction
+     * @return Direction; the horizontal direction (rotZ) of the <code>directedPoint</code> with display unit
+     *         <code>directionUnit</code>
+     */
+    public static Direction direction(final DirectedPoint directedPoint, final DirectionUnit directionUnit)
+    {
+        return new Direction(directedPoint.getRotZ(), directionUnit);
     }
 
     /** {@inheritDoc} */

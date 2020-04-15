@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -17,6 +20,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -198,7 +202,9 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.tacticalPlanner.set(strategicalPlanner.getTacticalPlanner());
         Time now = this.simulator.getSimulatorTime();
 
-        fireTimedEvent(GTU.INIT_EVENT, new Object[] {getId(), initialLocation, getLength(), getWidth()}, now);
+        DirectedPoint location = getLocation();
+        fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getLength(), getWidth() }, now);
 
         try
         {
@@ -229,7 +235,10 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
-        fireTimedEvent(GTU.DESTROY_EVENT, new Object[] {getId(), getLocation(), getOdometer()},
+        DirectedPoint location = getLocation();
+        fireTimedEvent(GTU.DESTROY_EVENT,
+                new Object[] { getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                        new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getOdometer() },
                 this.simulator.getSimulatorTime());
 
         // cancel the next move
@@ -314,8 +323,10 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                         this, this, "move", new Object[] {newOperationalPlan.getEndLocation()});
             }
             this.simulator.scheduleEvent(this.nextMoveEvent);
-
-            fireTimedEvent(GTU.MOVE_EVENT, new Object[] {getId(), fromLocation, getSpeed(), getAcceleration(), getOdometer()},
+            fireTimedEvent(GTU.MOVE_EVENT,
+                    new Object[] { getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                            new Direction(fromLocation.getZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
+                            getOdometer() },
                     this.simulator.getSimulatorTime());
 
             return false;
