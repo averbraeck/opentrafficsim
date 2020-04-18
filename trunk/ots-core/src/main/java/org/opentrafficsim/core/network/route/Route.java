@@ -212,6 +212,54 @@ public class Route implements Serializable, Identifiable
 
     /** {@inheritDoc} */
     @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((nodeSet == null) ? 0 : nodeSet.hashCode());
+        result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Route other = (Route) obj;
+        if (id == null)
+        {
+            if (other.id != null)
+                return false;
+        }
+        else if (!id.equals(other.id))
+            return false;
+        if (nodeSet == null)
+        {
+            if (other.nodeSet != null)
+                return false;
+        }
+        else if (!nodeSet.equals(other.nodeSet))
+            return false;
+        if (nodes == null)
+        {
+            if (other.nodes != null)
+                return false;
+        }
+        else if (!nodes.equals(other.nodes))
+            return false;
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
