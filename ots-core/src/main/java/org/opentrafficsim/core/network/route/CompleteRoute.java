@@ -38,6 +38,7 @@ public class CompleteRoute extends Route
     {
         super(id);
         this.gtuType = gtuType;
+        System.out.println("Created " + toString());
     }
 
     /**
@@ -123,7 +124,7 @@ public class CompleteRoute extends Route
     public int hashCode()
     {
         final int prime = 31;
-        int result = 1;
+        int result = super.hashCode(); // BE WARE
         result = prime * result + ((gtuType == null) ? 0 : gtuType.hashCode());
         return result;
     }
@@ -147,7 +148,7 @@ public class CompleteRoute extends Route
         }
         else if (!gtuType.equals(other.gtuType))
             return false;
-        return true;
+        return super.equals(other); // BE WARE
     }
 
 }

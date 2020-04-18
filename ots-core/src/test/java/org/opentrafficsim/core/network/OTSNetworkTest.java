@@ -723,9 +723,11 @@ public class OTSNetworkTest implements EventListenerInterface
                         {
                             assertEquals("node i should match", expectedPath.get(i), route.getNode(i));
                         }
+                        route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+                                fromNode, toNode, viaNodes);
                         CompleteRoute routeWithExplicitLengthAsWeight = network.getShortestRouteBetween(
                                 network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode, viaNodes, LinkWeight.LENGTH);
-                        assertEquals("route with explicit weight should be same ase route", route,
+                        assertEquals("route with explicit weight should be same as route", route,
                                 routeWithExplicitLengthAsWeight);
                     }
                 }
