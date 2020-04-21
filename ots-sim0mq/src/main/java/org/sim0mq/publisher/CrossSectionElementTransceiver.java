@@ -32,10 +32,10 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
      */
     public CrossSectionElementTransceiver(final OTSNetwork network)
     {
-        super("CrossSectionElement transceiver", new MetaData("", "",
+        super("CrossSectionElement transceiver", new MetaData("Cross section element", "Cross section element",
                 new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Link id", String.class),
                         new ObjectDescriptor("CrossSectionElement rank", "Rank of cross section element", Integer.class) }),
-                new MetaData("", "", new ObjectDescriptor[] {
+                new MetaData("Cross section element data", "Cross section element data", new ObjectDescriptor[] {
                         new ObjectDescriptor("CrossSectionElement id", "CrossSectionElement id", String.class),
                         new ObjectDescriptor("Sub type", "cross section element sub type", String.class),
                         new ObjectDescriptor("Length along center line", "Length of cross section element along center line",

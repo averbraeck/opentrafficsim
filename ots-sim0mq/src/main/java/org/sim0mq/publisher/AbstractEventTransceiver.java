@@ -1,6 +1,5 @@
 package org.sim0mq.publisher;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,24 +47,20 @@ public abstract class AbstractEventTransceiver extends AbstractTransceiver
             {
                 case "java.lang.String":
                 case "org.djunits.value.vdouble.scalar.Acceleration":
+                case "org.djunits.value.vdouble.scalar.Direction":
                 case "org.djunits.value.vdouble.scalar.Length":
                 case "org.djunits.value.vdouble.scalar.Speed":
+                case "org.djunits.value.vdouble.vector.PositionVector":
                     resultList.add(od);
                     break;
 
-                case "nl.tudelft.simulation.language.d3.DirectedPoint":
-                    resultList.add(new ObjectDescriptor("X", "X coordinate", Double.class));
-                    resultList.add(new ObjectDescriptor("Y", "Y coordinate", Double.class));
-                    resultList.add(new ObjectDescriptor("Z", "Z coordinate", Double.class));
-                    resultList.add(new ObjectDescriptor("heading", "heading (radians)", Double.class));
-                    break;
-                    
                 default:
                     throw new ClassCastException("No conversion for class " + od.getObjectClass().getName());
             }
         }
 
-        return new MetaData("", "", resultList.toArray(new ObjectDescriptor[0]));
+        return new MetaData(eventType.getMetaData().getName(), eventType.getMetaData().getDescription(),
+                resultList.toArray(new ObjectDescriptor[0]));
     }
 
 }

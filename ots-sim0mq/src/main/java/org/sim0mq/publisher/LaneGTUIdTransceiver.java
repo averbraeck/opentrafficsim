@@ -37,8 +37,9 @@ public class LaneGTUIdTransceiver extends AbstractTransceiver
                 new MetaData("Link id, lane id", "Link id, lane id",
                         new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Link id", String.class),
                                 new ObjectDescriptor("Lane id", "Lane id", String.class) }),
-                new MetaData("", "", new ObjectDescriptor[] { new ObjectDescriptor("String array",
-                        "String array filled with all currently valid GTU ids", String[].class) }));
+                new MetaData("String array", "String array filled with all currently valid GTU ids on the lane",
+                        new ObjectDescriptor[] { new ObjectDescriptor("String array",
+                                "String array filled with all currently valid GTU ids on the lane", String[].class) }));
         Throw.whenNull(network, "Network may not be null");
         this.network = network;
     }
@@ -51,13 +52,13 @@ public class LaneGTUIdTransceiver extends AbstractTransceiver
         Link link = this.network.getLink((String) address[0]);
         if (null == link || (!(link instanceof CrossSectionLink)))
         {
-            return new Object[0];
+            return null;
         }
         CrossSectionLink csl = (CrossSectionLink) link;
         CrossSectionElement cse = csl.getCrossSectionElement((String) address[1]);
         if (!(cse instanceof Lane))
         {
-            return new Object[0];
+            return null;
 
         }
         Lane lane = (Lane) cse;
@@ -75,7 +76,7 @@ public class LaneGTUIdTransceiver extends AbstractTransceiver
     @Override
     public String toString()
     {
-        return "LandGTUIdTransceiver [network=" + network + ", super=" + super.toString() + "]";
+        return "LaneGTUIdTransceiver [network=" + network + ", super=" + super.toString() + "]";
     }
 
 }

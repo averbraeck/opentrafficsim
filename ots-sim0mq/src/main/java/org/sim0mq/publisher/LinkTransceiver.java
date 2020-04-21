@@ -60,16 +60,15 @@ public class LinkTransceiver extends AbstractTransceiver
     {
         getAddressFields().verifyComposition(address);
         Link link = this.network.getLink((String) address[0]);
-        if (link != null)
+        if (null == link)
         {
-            return new Object[] { link.getId(), link.getLinkType().getId(), link.getStartNode().getId(),
-                    link.getEndNode().getId(), link instanceof OTSLink ? ((OTSLink) link).getDesignLine().size() : 0,
-                    link.getGTUCount(),
-                    link instanceof CrossSectionLink ? ((CrossSectionLink) link).getCrossSectionElementList().size() : 0 };
+            return null;
         }
-        return null;
+        return new Object[] { link.getId(), link.getLinkType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
+                link instanceof OTSLink ? ((OTSLink) link).getDesignLine().size() : 0, link.getGTUCount(),
+                link instanceof CrossSectionLink ? ((CrossSectionLink) link).getCrossSectionElementList().size() : 0 };
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public TransceiverInterface getIdSource(final int addressLevel)

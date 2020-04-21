@@ -1,0 +1,82 @@
+package org.sim0mq.publisher;
+
+import java.rmi.RemoteException;
+
+import org.djunits.Throw;
+import org.djunits.unit.DirectionUnit;
+import org.djunits.unit.PositionUnit;
+import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.vector.PositionVector;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
+
+/**
+ * Transceiver for Node data.
+ * <p>
+ * Copyright (c) 2020-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ */
+public class NodeTransceiver extends AbstractTransceiver
+{
+    /** The OTS network. */
+    private final OTSNetwork network;
+
+    /** Transceiver for the Node ids. */
+    private final TransceiverInterface nodeIdSource;
+
+    /**
+     * Construct a new NodeTransceiver.
+     * @param network OTSNetwork; the network
+     * @param nodeIdSource NodeIdTransceiver; the transceiver that can produce all Node ids in the Network
+     */
+    public NodeTransceiver(final OTSNetwork network, final NodeIdTransceiver nodeIdSource)
+    {
+        super("Node transceiver",
+                new MetaData("Node id", "Node id",
+                        new ObjectDescriptor[] { new ObjectDescriptor("Node id", "Node id", String.class) }),
+                new MetaData("Node data", "Node id, position, direction, number of Links",
+                        new ObjectDescriptor[] { new ObjectDescriptor("Node id", "Node id", String.class),
+                                new ObjectDescriptor("Position", "Position", PositionVector.class),
+                                new ObjectDescriptor("Direction", "Direction", Direction.class),
+                                new ObjectDescriptor("Number of links", "Number of links", Integer.class) }));
+        this.network = network;
+        this.nodeIdSource = nodeIdSource;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Object[] get(final Object[] address) throws RemoteException
+    {
+        getAddressFields().verifyComposition(address);
+        Node node = this.network.getNode((String) address[0]);
+        if (null == node)
+        {
+            return null;
+        }
+        return new Object[] { node.getId(), node.getPoint().doubleVector(PositionUnit.METER),
+                OTSPoint3D.direction(node.getLocation(), DirectionUnit.EAST_RADIAN), node.getLinks().size() };
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TransceiverInterface getIdSource(final int addressLevel)
+    {
+        Throw.when(addressLevel != 0, IndexOutOfBoundsException.class, "Only addressLevel 0 is valid");
+        return this.nodeIdSource;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "NodeTransceiver [network=" + network + ", super=" + super.toString() + "]";
+    }
+
+}

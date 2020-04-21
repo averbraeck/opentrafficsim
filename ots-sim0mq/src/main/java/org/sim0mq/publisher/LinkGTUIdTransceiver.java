@@ -33,8 +33,9 @@ public class LinkGTUIdTransceiver extends AbstractTransceiver
         super("Link GTU id transceiver",
                 new MetaData("Link id", "Link id",
                         new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Link id", String.class) }),
-                new MetaData("", "", new ObjectDescriptor[] { new ObjectDescriptor("String array",
-                        "String array filled with all currently valid GTU ids", String[].class) }));
+                new MetaData("String array with all Link ids", "String array with all Link ids",
+                        new ObjectDescriptor[] { new ObjectDescriptor("String array",
+                                "String array filled with all currently valid Link ids", String[].class) }));
         Throw.whenNull(network, "Network may not be null");
         this.network = network;
     }
@@ -45,6 +46,10 @@ public class LinkGTUIdTransceiver extends AbstractTransceiver
     {
         getAddressFields().verifyComposition(address);
         Link link = this.network.getLink((String) address[0]);
+        if (null == link)
+        {
+            return null;
+        }
         Set<GTU> gtus = link.getGTUs();
         Object[] result = new Object[gtus.size()];
         int nextIndex = 0;
