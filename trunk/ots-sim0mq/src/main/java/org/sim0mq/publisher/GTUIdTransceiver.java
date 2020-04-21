@@ -1,10 +1,8 @@
 package org.sim0mq.publisher;
 
-import java.util.Set;
-
-import org.djunits.Throw;
-import org.djutils.metadata.MetaData;
-import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.immutablecollections.Immutable;
+import org.djutils.immutablecollections.ImmutableLinkedHashSet;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -18,44 +16,29 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUIdTransceiver extends AbstractTransceiver
+public class GTUIdTransceiver extends AbstractIdTransceiver
 {
-    /** The network. */
-    private final OTSNetwork network;
-
     /**
      * Construct a GTUIdTransceiver.
      * @param network OTSNetwork; the OTS network
      */
     public GTUIdTransceiver(final OTSNetwork network)
     {
-        super("GTU id transceiver", new MetaData("No address", "empty address", new ObjectDescriptor[0]),
-                new MetaData("", "", new ObjectDescriptor[] { new ObjectDescriptor("String array",
-                        "String array filled with all currently valid GTU ids", String[].class) }));
-        Throw.whenNull(network, "Network may not be null");
-        this.network = network;
+        super(network, "GTU id transceiver");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Object[] get(final Object[] address)
+    ImmutableSet<GTU> getSet()
     {
-        getAddressFields().verifyComposition(address);
-        Set<GTU> gtus = this.network.getGTUs();
-        Object[] result = new Object[gtus.size()];
-        int nextIndex = 0;
-        for (GTU gtu : gtus)
-        {
-            result[nextIndex++] = gtu.getId();
-        }
-        return result;
+        return new ImmutableLinkedHashSet<GTU>(getNetwork().getGTUs(), Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString()
     {
-        return "GTUIdTransceiver [network=" + network + ", super=" + super.toString() + "]";
+        return "GTUIdTransceiver [network=" + getNetwork() + ", super=" + super.toString() + "]";
     }
 
 }

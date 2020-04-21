@@ -3,8 +3,12 @@ package org.sim0mq.publisher;
 import java.rmi.RemoteException;
 
 import org.djunits.Throw;
+import org.djunits.unit.DirectionUnit;
+import org.djunits.unit.PositionUnit;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -35,17 +39,15 @@ public class GTUTransceiver extends AbstractEventTransceiver
      */
     public GTUTransceiver(final OTSNetwork network, final GTUIdTransceiver gtuIdSource)
     {
-        super("GTU transceiver",
-                new MetaData("GTU id", "GTU id",
-                        new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", "".getClass()) }),
-                GTU.MOVE_EVENT);
-//                new MetaData("GTU data", "GTU id, position, speed, acceleration",
-//                        new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "", "".getClass()),
-//                                new ObjectDescriptor("GTUType id", "", "".getClass()),
-//                                new ObjectDescriptor("x", "", double.class), new ObjectDescriptor("y", "", double.class),
-//                                new ObjectDescriptor("z", "", double.class), new ObjectDescriptor("heading", "", double.class),
-//                                new ObjectDescriptor("Speed", "", Speed.class),
-//                                new ObjectDescriptor("Acceleration", "", Acceleration.class) }));
+        super("GTU transceiver", new MetaData("GTU id", "GTU id",
+                new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class) }), GTU.MOVE_EVENT);
+        // new MetaData("GTU data", "GTU id, position, speed, acceleration",
+        // new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "", "".getClass()),
+        // new ObjectDescriptor("GTUType id", "", "".getClass()),
+        // new ObjectDescriptor("x", "", double.class), new ObjectDescriptor("y", "", double.class),
+        // new ObjectDescriptor("z", "", double.class), new ObjectDescriptor("heading", "", double.class),
+        // new ObjectDescriptor("Speed", "", Speed.class),
+        // new ObjectDescriptor("Acceleration", "", Acceleration.class) }));
         this.network = network;
         this.gtuIdSource = gtuIdSource;
     }
@@ -69,8 +71,9 @@ public class GTUTransceiver extends AbstractEventTransceiver
             return null;
         }
         DirectedPoint gtuPosition = gtu.getLocation();
-        return new Object[] { gtu.getId(), gtu.getGTUType().getId(), gtuPosition.x, gtuPosition.y, gtuPosition.z,
-                gtuPosition.getRotZ(), gtu.getSpeed(), gtu.getAcceleration() };
+        return new Object[] { gtu.getId(), gtu.getGTUType().getId(),
+                new OTSPoint3D(gtuPosition).doubleVector(PositionUnit.METER),
+                new Direction(gtuPosition.getZ(), DirectionUnit.EAST_RADIAN), gtu.getSpeed(), gtu.getAcceleration() };
     }
 
     /** {@inheritDoc} */

@@ -12,6 +12,9 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.event.EventType;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -113,17 +116,15 @@ public class TransceiverTest
         Object[] result = gtuIdTransceiver.get(null);
         assertNotNull("result should not be null", result);
         assertEquals("length of result should be 0", 0, result.length);
-        MyMockGTU gtu1 =
-                new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
-                        new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2));
+        MyMockGTU gtu1 = new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
+                new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2));
         network.addGTU(gtu1.getMock());
         result = gtuIdTransceiver.get(null);
         assertEquals("length of result is now 1", 1, result.length);
         assertTrue("result contains a string", result[0] instanceof String);
         assertEquals("result[0] is name of our mocked GTU", "gtu 1", (String) (result[0]));
-        MyMockGTU gtu2 =
-                new MyMockGTU("gtu 2", new GTUType("gtuType 2", network), new DirectedPoint(2, 20, 200, 2, 2, 2),
-                        new Speed(2, SpeedUnit.KM_PER_HOUR), new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2));
+        MyMockGTU gtu2 = new MyMockGTU("gtu 2", new GTUType("gtuType 2", network), new DirectedPoint(2, 20, 200, 2, 2, 2),
+                new Speed(2, SpeedUnit.KM_PER_HOUR), new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2));
         network.addGTU(gtu2.getMock());
         result = gtuIdTransceiver.get(new Object[0]);
         assertEquals("length of result is now 2", 2, result.length);
@@ -155,7 +156,7 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             gtuTransceiver.getIdSource(-1);
@@ -165,7 +166,7 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        
+
         assertEquals("address field 0", "GTU id", gtuTransceiver.getAddressFields().getObjectDescription(0));
         try
         {
@@ -176,7 +177,7 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             gtuTransceiver.getAddressFields().getObjectDescription(-1);
@@ -186,7 +187,7 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        
+
         assertEquals("address field class", String.class, gtuTransceiver.getAddressFields().getObjectClass(0));
         try
         {
@@ -197,7 +198,7 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             gtuTransceiver.getAddressFields().getObjectClass(-1);
@@ -207,19 +208,19 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        
+
         for (int i = 0; i < 2; i++)
         {
             Object[] gtuResult = gtuTransceiver.get(new Object[] { result[i] });
             assertNotNull("result is not null", gtuResult);
-            assertEquals("result has 8 fields", 8, gtuResult.length);
+            assertEquals("result has 6 fields", 6, gtuResult.length);
             assertEquals("first field is a String", String.class, gtuResult[0].getClass());
             assertEquals("gtuResult is gtu with expected id", result[i], gtuResult[0]);
         }
-        assertNull("gtuTransceiver returns null for non-existend ID", gtuTransceiver.get(new Object[] {"NONEXISTENTGTU"}));
+        assertNull("gtuTransceiver returns null for non-existend ID", gtuTransceiver.get(new Object[] { "NONEXISTENTGTU" }));
         try
         {
-            gtuTransceiver.get(new Object[] {123});
+            gtuTransceiver.get(new Object[] { 123 });
             fail("wrong type in Object[] should have thrown a ClassCastException");
         }
         catch (ClassCastException cce)
@@ -227,8 +228,30 @@ public class TransceiverTest
             // Ignore expected exception
         }
         assertTrue("toString returns something descriptive", gtuTransceiver.toString().contains("Transceiver"));
-    }
 
+    }
+    
+    /**
+     * Test the constructResultFields method for a class that it cannot handle.
+     */
+    @Test
+    public void testNoTransceiver()
+    {
+        EventType noTranceiver = new EventType("NoTransceiverEventType",
+                new MetaData("NoTransceiverEventType", "Event type for which the AbstractEventTransceiver will fail",
+                        new ObjectDescriptor[] { new ObjectDescriptor("NoTransceiverEventType",
+                                "Event type for which the AbstractEventTransceiver will fail", NoTransceiver.class) }));
+        try
+        {
+            AbstractEventTransceiver.constructResultFields(noTranceiver);
+            fail("Should have caught a ClassCastException");
+        }
+        catch (ClassCastException cce)
+        {
+            // Ignore expected exception
+        }
+    }
+    
 }
 
 /** ... */
@@ -238,7 +261,7 @@ class MyMockGTU
     private GTU mockGTU;
 
     /** name. */
-    private final String name;
+    private final java.lang.String name;
 
     /** gtu type. */
     private final GTUType gtuType;
@@ -274,10 +297,10 @@ class MyMockGTU
         this.mockGTU = Mockito.mock(GTU.class);
         Mockito.when(this.mockGTU.getSimulator()).thenReturn(this.simulator);
         Mockito.when(this.mockGTU.getGTUType()).thenReturn(this.gtuType);
-        Mockito.when(this.mockGTU.getId()).thenReturn(this.name);
         Mockito.when(this.mockGTU.getLocation()).thenReturn(this.location);
         Mockito.when(this.mockGTU.getSpeed()).thenReturn(this.speed);
         Mockito.when(this.mockGTU.getAcceleration()).thenReturn(this.acceleration);
+        Mockito.when(this.mockGTU.getId()).thenReturn(this.name);
     }
 
     /**
@@ -288,4 +311,29 @@ class MyMockGTU
         return this.mockGTU;
     }
 
+}
+
+/** Class for testing the TransceiverInterface. */
+class NoTransceiver
+{
+    /** The payload. */
+    private final String payload;
+
+    /**
+     * Construct a NoTransceiver object.
+     * @param payload String; the payload
+     */
+    NoTransceiver(final String payload)
+    {
+        this.payload = payload;
+    }
+
+    /**
+     * Retrieve the payload.
+     * @return String; the payload
+     */
+    public String getPayload()
+    {
+        return this.payload;
+    }
 }

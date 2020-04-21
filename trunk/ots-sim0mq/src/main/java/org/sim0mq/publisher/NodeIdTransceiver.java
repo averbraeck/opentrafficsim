@@ -1,11 +1,11 @@
 package org.sim0mq.publisher;
 
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
- * Transceiver for Link ids.
+ * Transceiver for Node ids.
  * <p>
  * Copyright (c) 2020-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -14,29 +14,30 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class LinkIdTransceiver extends AbstractIdTransceiver
+
+public class NodeIdTransceiver extends AbstractIdTransceiver
 {
     /**
      * Construct a new LinkIdTransceiver.
      * @param network OTSNetwork; the OTS network
      */
-    public LinkIdTransceiver(final OTSNetwork network)
+    public NodeIdTransceiver(final OTSNetwork network)
     {
-        super(network, "Link id transceiver");
+        super(network, "Node id transceiver");
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString()
     {
-        return "LinkIdTransceiver [super=" + super.toString() + "]";
+        return "NodeIdTransceiver [network=" + ", super=" + super.toString() + "]";
     }
 
     /** {@inheritDoc} */
     @Override
-    ImmutableSet<Link> getSet()
+    ImmutableSet<Node> getSet()
     {
-        return (ImmutableSet<Link>) getNetwork().getLinkMap().values();
+        return (ImmutableSet<Node>) getNetwork().getNodeMap().values();
     }
 
 }

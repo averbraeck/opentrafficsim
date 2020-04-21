@@ -20,13 +20,13 @@ import org.opentrafficsim.base.Identifiable;
 public interface TransceiverInterface extends Identifiable
 {
     /**
-     * Specification of arguments needed in a subscription request.
-     * @return MetaData; the specification of arguments needed in a subscription request
+     * Specification of arguments needed in a request.
+     * @return MetaData; the specification of arguments needed in a request
      */
     MetaData getAddressFields();
 
     /**
-     * Retrieve the TransceiverInterface that can be used to get valid values for one argument in a subscription request.
+     * Retrieve the TransceiverInterface that can be used to get valid values for one argument in a request.
      * @param addressLevel int; index of the argument in the address fields
      * @return TransceiverInterface; to be used to get valid values for argument <code>addressLevel</code>, or null if valid
      *         values for the argument at index <code>addressLevel</code> can not be obtained through a TransceiverInterface

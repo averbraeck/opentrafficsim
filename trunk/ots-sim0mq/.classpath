@@ -39,5 +39,18 @@
 	<classpathentry kind="src" path="/ots-parser-xml"/>
 	<classpathentry kind="src" path="/ots-trafficcontrol"/>
 	<classpathentry kind="src" path="/ots-xsd"/>
+	<classpathentry kind="src" path="/ots-swing"/>
+	<classpathentry kind="src" path="/ots-animation"/>
+	<classpathentry kind="src" path="/ots-draw"/>
+	<classpathentry kind="lib" path="C:/Users/pknoppers/.m2/repository/dsol/dsol-swing/3.04.02/dsol-swing-3.04.02.jar" sourcepath="C:/Users/pknoppers/.m2/repository/dsol/dsol-swing/3.04.02/dsol-swing-3.04.02-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/pknoppers/.m2/repository/dsol/dsol-swing/3.04.02/dsol-swing-3.04.02-javadoc.jar!/"/>
+			<attribute name="maven.groupId" value="dsol"/>
+			<attribute name="maven.artifactId" value="dsol-swing"/>
+			<attribute name="maven.version" value="3.04.02"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
