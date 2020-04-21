@@ -38,7 +38,6 @@ public class CompleteRoute extends Route
     {
         super(id);
         this.gtuType = gtuType;
-        System.out.println("Created " + toString());
     }
 
     /**
