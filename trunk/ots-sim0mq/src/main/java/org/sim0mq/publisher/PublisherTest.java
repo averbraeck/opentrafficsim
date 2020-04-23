@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.metadata.MetaData;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -53,6 +55,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.sim0mq.publisher.SubscriptionHandler.Command;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -64,8 +67,16 @@ import nl.tudelft.simulation.language.DSOLException;
 /**
  * Test code to see if the Publisher works.
  */
-public class PublisherTest
+public final class PublisherTest
 {
+    /**
+     * Do not instantiate.
+     */
+    private PublisherTest()
+    {
+        // Do not instantiate
+    }
+
     /**
      * Test code.
      * @param args String[]; the command line arguments (not used)
@@ -84,11 +95,12 @@ public class PublisherTest
         String xml = new String(Files
                 .readAllBytes(Paths.get("C:/Users/pknoppers/Java/ots-demo/src/main/resources/TrafCODDemo2/TrafCODDemo2.xml")));
         OTSAnimator animator = new OTSAnimator("OTS Animator");
-        Sim0MQOTSModel model = new Sim0MQOTSModel(animator, "OTS model", "Remotely controlled OTS model", xml);
+        Sim0MQOTSModel model =
+                new Sim0MQOTSModel(animator, "OTS model for Publisher test", "Remotely controlled OTS model", xml);
         Map<String, StreamInterface> map = new LinkedHashMap<>();
         map.put("generation", new MersenneTwister(seed));
         animator.initialize(Time.ZERO, warmupDuration, runDuration, model, map);
-        OTSAnimationPanel animationPanel = new OTSAnimationPanel(model.getNetwork().getExtent(), new Dimension(1100, 1000),
+        OTSAnimationPanel animationPanel = new OTSAnimationPanel(model.getNetwork().getExtent(), new Dimension(1200, 1000),
                 animator, model, OTSSwingApplication.DEFAULT_COLORER, model.getNetwork());
         DefaultAnimationFactory.animateXmlNetwork(model.getNetwork(), animator, new DefaultSwitchableGTUColorer());
         new OTSSimulationApplication<OTSModelInterface>(model, animationPanel);
@@ -124,6 +136,28 @@ public class PublisherTest
             e.printStackTrace();
         }
         Publisher publisher = new Publisher(model.getNetwork());
+        TransceiverInterface ti = publisher.getIdSource(0);
+        Object[] services = ti.get(null);
+        for (int index = 0; index < services.length; index++)
+        {
+            System.out.println("Service " + index + ": " + services[index]);
+            Object[] serviceObject = publisher.get(new Object[] { services[index] });
+            System.out.println("class is " + serviceObject[0].getClass().getName());
+            SubscriptionHandler sh = (SubscriptionHandler) serviceObject[0];
+            System.out.println(sh.toString());
+            EnumSet<Command> subscriptionOptions = sh.subscriptionOptions();
+            System.out.println(sh.getId() + ":" + subscriptionOptions);
+            if (subscriptionOptions.contains(Command.GET_ADDRESS_META_DATA))
+            {
+                System.out.println("address meta data:");
+                sh.executeCommand(Command.GET_ADDRESS_META_DATA, null);
+            }
+            if (subscriptionOptions.contains(Command.GET_RESULT_META_DATA))
+            {
+                System.out.println("result meta data:");
+                sh.executeCommand(Command.GET_RESULT_META_DATA, null);
+            }
+        }
         publisher.executeCommand("GTUs in network", SubscriptionHandler.Command.SUBSCRIBE_TO_ADD, null);
         System.out.println("Simulating up to 10 s");
         animator.runUpTo(new Time(30, TimeUnit.BASE_SECOND));
@@ -139,7 +173,19 @@ public class PublisherTest
             }
         }
         System.out.println("Simulator has stopped at time " + animator.getSimulatorTime());
-        publisher.executeCommand("GTUs in network", SubscriptionHandler.Command.GET_CURRENT_POPULATION, null);
+        publisher.executeCommand("GTUs in network", SubscriptionHandler.Command.GET_CURRENT, null);
+        // animator.endReplication();
+
+        // Find the JFrame.
+        for (Container container = animationPanel; container != null; container = container.getParent())
+        {
+            System.out.println("container is " + container);
+            if (container instanceof JFrame)
+            {
+                JFrame jFrame = (JFrame) container;
+                jFrame.dispose();
+            }
+        }
     }
 
 }
@@ -213,6 +259,7 @@ class Sim0MQOTSModel extends AbstractOTSModel implements EventListenerInterface
     @Override
     public Serializable getSourceId()
     {
-        return "Sim0MQOTSModel";
+        return "PublisherTestModel";
     }
+
 }
