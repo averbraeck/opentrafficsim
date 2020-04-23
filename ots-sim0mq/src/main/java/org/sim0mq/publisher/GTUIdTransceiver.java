@@ -38,7 +38,7 @@ public class GTUIdTransceiver extends AbstractIdTransceiver
     @Override
     public String toString()
     {
-        return "GTUIdTransceiver [network=" + getNetwork() + ", super=" + super.toString() + "]";
+        return "GTUIdTransceiver [network=" + getNetwork().getId() + ", super=" + super.toString() + "]";
     }
 
 }

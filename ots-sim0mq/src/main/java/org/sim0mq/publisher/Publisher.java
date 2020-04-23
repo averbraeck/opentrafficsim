@@ -90,6 +90,12 @@ public class Publisher extends AbstractTransceiver
             {
                 return network;
             }
+            
+            @Override
+            public String toString()
+            {
+                return "Subscription handler for GTUs in network";
+            }
         }, Network.GTU_ADD_EVENT, Network.GTU_REMOVE_EVENT, null, gtuSubscriptionHandler));
         // LinkIdTransceiver linkIdTransceiver = new LinkIdTransceiver(network);
         // addTransceiver(linkIdTransceiver);
@@ -142,6 +148,7 @@ public class Publisher extends AbstractTransceiver
     public void executeCommand(final String subscriptionHandlerName, final SubscriptionHandler.Command command,
             final Object[] address) throws RemoteException
     {
+        
         SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(subscriptionHandlerName);
         if (null == subscriptionHandler)
         {

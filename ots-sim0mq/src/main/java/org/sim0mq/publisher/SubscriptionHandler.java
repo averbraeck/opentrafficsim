@@ -1,6 +1,7 @@
 package org.sim0mq.publisher;
 
 import java.rmi.RemoteException;
+import java.util.EnumSet;
 
 import org.djunits.Throw;
 import org.djutils.event.EventInterface;
@@ -99,8 +100,38 @@ public class SubscriptionHandler implements EventListenerInterface
      */
     public void get(final Object[] address) throws RemoteException
     {
-        Object[] dataCollection = this.listTransceiver.get(address);
-        // TODO transmit result to Sim0MQ master
+        sendResult(this.listTransceiver.get(address));
+    }
+
+    /**
+     * Return the set of supported commands.
+     * @return EnumSet<Command>; the set of supported commands.
+     */
+    public final EnumSet<Command> subscriptionOptions()
+    {
+        EnumSet<Command> result = EnumSet.noneOf(Command.class);
+        if (null != this.addedEventType)
+        {
+            result.add(Command.SUBSCRIBE_TO_ADD);
+            result.add(Command.UNSUBSCRIBE_FROM_ADD);
+        }
+        if (null != this.removedEventType)
+        {
+            result.add(Command.SUBSCRIBE_TO_REMOVE);
+            result.add(Command.UNSUBSCRIBE_FROM_REMOVE);
+        }
+        if (null != this.changeEventType)
+        {
+            result.add(Command.SUBSCRIBE_TO_CHANGE);
+            result.add(Command.UNSUBSCRIBE_FROM_CHANGE);
+        }
+        if (null != this.listTransceiver)
+        {
+            result.add(Command.GET_CURRENT);
+            result.add(Command.GET_ADDRESS_META_DATA);
+            result.add(Command.GET_RESULT_META_DATA);
+        }
+        return result;
     }
 
     /**
@@ -182,13 +213,17 @@ public class SubscriptionHandler implements EventListenerInterface
         /** Subscribe to change events. */
         SUBSCRIBE_TO_CHANGE,
         /** Unsubscribe to add events. */
-        UNSUBSCRIBE_TO_ADD,
+        UNSUBSCRIBE_FROM_ADD,
         /** Unsubscribe to remove events. */
-        UNSUBSCRIBE_TO_REMOVE,
+        UNSUBSCRIBE_FROM_REMOVE,
         /** Unsubscribe to change events. */
-        UNSUBSCRIBE_TO_CHANGE,
-        /** Get current set. */
-        GET_CURRENT_POPULATION;
+        UNSUBSCRIBE_FROM_CHANGE,
+        /** Get current set (if a collection), c.q. state (if properties of one object). */
+        GET_CURRENT,
+        /** Get the address meta data. */
+        GET_ADDRESS_META_DATA,
+        /** Get the result meta data. */
+        GET_RESULT_META_DATA;
     }
 
     /**
@@ -205,10 +240,6 @@ public class SubscriptionHandler implements EventListenerInterface
                 subscribeTo(address, this.addedEventType);
                 break;
 
-            case GET_CURRENT_POPULATION:
-                sendResult(this.listTransceiver.get(address));
-                break;
-
             case SUBSCRIBE_TO_CHANGE:
                 subscribeTo(address, this.changeEventType);
                 break;
@@ -217,16 +248,28 @@ public class SubscriptionHandler implements EventListenerInterface
                 subscribeTo(address, this.removedEventType);
                 break;
 
-            case UNSUBSCRIBE_TO_ADD:
+            case UNSUBSCRIBE_FROM_ADD:
                 unsubscribeFrom(address, this.addedEventType);
                 break;
 
-            case UNSUBSCRIBE_TO_CHANGE:
+            case UNSUBSCRIBE_FROM_CHANGE:
                 unsubscribeFrom(address, this.changeEventType);
                 break;
 
-            case UNSUBSCRIBE_TO_REMOVE:
+            case UNSUBSCRIBE_FROM_REMOVE:
                 unsubscribeFrom(address, this.removedEventType);
+                break;
+
+            case GET_CURRENT:
+                sendResult(this.listTransceiver.get(address));
+                break;
+
+            case GET_ADDRESS_META_DATA:
+                sendResult(this.listTransceiver.getAddressFields().getObjectDescriptors());
+                break;
+
+            case GET_RESULT_META_DATA:
+                sendResult(this.listTransceiver.getResultFields().getObjectDescriptors());
                 break;
 
             default:
@@ -251,6 +294,16 @@ public class SubscriptionHandler implements EventListenerInterface
         {
             System.out.println(index + "\t" + data[index]);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "SubscriptionHandler [id=" + id + ", listTransceiver=" + listTransceiver + ", eventProducerForAddRemoveOrChange="
+                + eventProducerForAddRemoveOrChange + ", addedEventType=" + addedEventType + ", removedEventType="
+                + removedEventType + ", changeEventType=" + changeEventType + ", elementSubscriptionHandler="
+                + elementSubscriptionHandler + "]";
     }
 
 }
