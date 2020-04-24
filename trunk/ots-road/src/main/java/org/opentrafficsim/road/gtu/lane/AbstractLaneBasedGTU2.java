@@ -1148,7 +1148,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             }
             catch (Exception e)
             {
-                System.err.println(toString());
+                // System.err.println(toString() + ": " + e.getMessage());
                 throw new GTUException(e);
             }
 
