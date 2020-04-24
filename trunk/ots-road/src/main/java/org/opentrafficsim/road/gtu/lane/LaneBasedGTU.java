@@ -3,10 +3,14 @@ package org.opentrafficsim.road.gtu.lane;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.event.EventType;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -105,13 +109,13 @@ public interface LaneBasedGTU extends GTU
      * @param instantaneous boolean; whether the GTU perform lane changes instantaneously or not
      */
     void setInstantaneousLaneChange(boolean instantaneous);
-    
+
     /**
      * Returns whether the GTU perform lane changes instantaneously or not.
      * @return boolean; whether the GTU perform lane changes instantaneously or not
      */
     boolean isInstantaneousLaneChange();
-    
+
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered. <br>
@@ -315,57 +319,92 @@ public interface LaneBasedGTU extends GTU
 
     /**
      * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
-     * Payload: [String gtuId, DirectedPoint initialPosition, Length length, Length width, Lane referenceLane, Length
-     * positionOnReferenceLane, GTUDirectionality direction, GTUType gtuType]
+     * Payload: [String gtuId, PositionVector initialPosition, Direction initialDirection, Length length, Length width, String
+     * linkId, String laneId, Length positionOnReferenceLane, GTUDirectionality direction, GTUType gtuType]
      */
-    EventType LANEBASED_INIT_EVENT = new EventType("LANEBASEDGTU.INIT");
+    EventType LANEBASED_INIT_EVENT = new EventType("LANEBASEDGTU.INIT",
+            new MetaData("Lane based GTU created", "Lane based GTU created",
+                    new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
+                            new ObjectDescriptor("initial position", "initial position", PositionVector.class),
+                            new ObjectDescriptor("initial direction", "initial direction", Direction.class),
+                            new ObjectDescriptor("Length", "Length", Length.class),
+                            new ObjectDescriptor("Width", "Width", Length.class),
+                            new ObjectDescriptor("Link id", "Link id", String.class),
+                            new ObjectDescriptor("Lane id", "Lane id", String.class),
+                            new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane",
+                                    Length.class),
+                            new ObjectDescriptor("Driving direction", "Driving direction", String.class),
+                            new ObjectDescriptor("GTU type name", "GTU type name", String.class) }));
 
     /**
      * The lane-based event type for pub/sub indicating a move. <br>
-     * Payload: [String gtuId, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
-     * turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
+     * Payload: [String gtuId, PositionVector currentPosition, Direction currentDirection, Speed speed, Acceleration
+     * acceleration, TurnIndicatorStatus turnIndicatorStatus, Length odometer, Link id of referenceLane, Lane id of
+     * referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
      */
-    EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE");
+    EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE", new MetaData("Lane based GTU moved",
+            "Lane based GTU moved",
+            new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
+                    new ObjectDescriptor("Position", "Position", PositionVector.class),
+                    new ObjectDescriptor("Direction", "Direction", Direction.class),
+                    new ObjectDescriptor("Speed", "Speed", Speed.class),
+                    new ObjectDescriptor("Acceleration", "Acceleration", Acceleration.class),
+                    new ObjectDescriptor("TurnIndicatorStatus", "Turn indicator status", String.class),
+                    new ObjectDescriptor("Odometer", "Odometer value", Length.class),
+                    new ObjectDescriptor("Link id", "Link id", String.class),
+                    new ObjectDescriptor("Lane id", "Lane id", String.class),
+                    new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane", Length.class),
+                    new ObjectDescriptor("Driving direction", "Driving direction", String.class) }));
 
     /**
      * The lane-based event type for pub/sub indicating destruction of the GTU. <br>
-     * Payload: [String gtuId, DirectedPoint lastPosition, Length odometer, Lane referenceLane, Length positionOnReferenceLane,
-     * GTUDirectionality direction]
+     * Payload: [String gtuId, PositionVector finalPosition, Direction finalDirection, Length finalOdometer, Link referenceLink,
+     * Lane referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
      */
-    EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY");
+    EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY", new MetaData("Lane based GTU destroyed",
+            "Lane based GTU destroyed",
+            new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
+                    new ObjectDescriptor("Position", "Position", PositionVector.class),
+                    new ObjectDescriptor("Direction", "Direction", Direction.class),
+                    new ObjectDescriptor("Odometer", "Odometer value", Length.class),
+                    new ObjectDescriptor("Link id", "Link id", String.class),
+                    new ObjectDescriptor("Lane id", "Lane id", String.class),
+                    new ObjectDescriptor("Longitudinal position on lane", "Longitudinal position on lane", Length.class),
+                    new ObjectDescriptor("Driving direction", "Driving direction", String.class) }));
 
-    /**
-     * The event type for pub/sub indicating that the GTU entered a new link (with the FRONT position if driving forward; REAR
-     * if driving backward). <br>
-     * Payload: [String gtuId, Link link]
-     */
-    EventType LINK_ENTER_EVENT = new EventType("LINK.ENTER");
-
-    /**
-     * The event type for pub/sub indicating that the GTU exited a link (with the REAR position if driving forward; FRONT if
-     * driving backward). <br>
-     * Payload: [String gtuId, Link link]
-     */
-    EventType LINK_EXIT_EVENT = new EventType("LINK.EXIT");
-
+    // TODO: the next 2 events are never fired...
     /**
      * The event type for pub/sub indicating that the GTU entered a new lane (with the FRONT position if driving forward; REAR
      * if driving backward). <br>
-     * Payload: [String gtuId, Lane lane]
+     * Payload: [String gtuId, String link id, String lane id]
      */
-    EventType LANE_ENTER_EVENT = new EventType("LANE.ENTER");
+    EventType LANE_ENTER_EVENT = new EventType("LANE.ENTER",
+            new MetaData("Lane based GTU entered lane", "Front of lane based GTU entered lane",
+                    new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
+                            new ObjectDescriptor("Link id", "Link id", String.class),
+                            new ObjectDescriptor("Lane id", "Lane id", String.class) }));
 
     /**
      * The event type for pub/sub indicating that the GTU exited a lane (with the REAR position if driving forward; FRONT if
      * driving backward). <br>
-     * Payload: [String gtuId, Lane lane]
+     * Payload: [String gtuId, String link id, String lane id]
      */
-    EventType LANE_EXIT_EVENT = new EventType("LANE.EXIT");
+    EventType LANE_EXIT_EVENT = new EventType("LANE.EXIT",
+            new MetaData("Lane based GTU exited lane", "Rear of lane based GTU exited lane",
+                    new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
+                            new ObjectDescriptor("Link id", "Link id", String.class),
+                            new ObjectDescriptor("Lane id", "Lane id", String.class) }));
 
     /**
      * The event type for pub/sub indicating that the GTU change lane. <br>
      * Payload: [String gtuId, LateralDirectionality direction, DirectedLanePosition from]
      */
-    EventType LANE_CHANGE_EVENT = new EventType("LANE.CHANGE");
+    EventType LANE_CHANGE_EVENT = new EventType("LANE.CHANGE", new MetaData("Lane based GTU changes lane",
+            "Lane based GTU changes lane",
+            new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
+                    new ObjectDescriptor("Lateral direction of lane change", "Lateral direction of lane change", String.class),
+                    new ObjectDescriptor("Link id", "Link id", String.class),
+                    new ObjectDescriptor("Lane id of vacated lane", "Lane id of vacated lane", String.class),
+                    new ObjectDescriptor("Position along vacated lane", "Position along vacated lane", Length.class) }));
 
 }
