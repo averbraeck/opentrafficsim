@@ -7,6 +7,8 @@ import java.util.List;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -60,17 +62,27 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Lane to a CrossSectionLink. <br>
-     * Payload: Object[] { String networkId, String linkId, String LaneId, Lane lane, int laneNumber } <br>
+     * Payload: Object[] { String networkId, String linkId, String LaneId, int laneNumber } <br>
      * TODO work in a different way with lane numbers to align to standard lane numbering.
      */
-    public static final EventType LANE_ADD_EVENT = new EventType("LINK.LANE.ADD");
+    public static final EventType LANE_ADD_EVENT = new EventType("LINK.LANE.ADD",
+            new MetaData("Lane data", "Lane data",
+                    new ObjectDescriptor[] { new ObjectDescriptor("Network id", "Network id", String.class),
+                            new ObjectDescriptor("Link id", "Link id", String.class),
+                            new ObjectDescriptor("Lane id", "Lane id", String.class),
+                            new ObjectDescriptor("Lane number", "Lane number", Integer.class) }));
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a Lane from a CrossSectionLink. <br>
      * Payload: Object[] { String networkId, String linkId, String LaneId } <br>
      * TODO allow for the removal of a Lane; currently this is not possible.
      */
-    public static final EventType LANE_REMOVE_EVENT = new EventType("LINK.LANE.REMOVE");
+    public static final EventType LANE_REMOVE_EVENT = new EventType("LINK.LANE.REMOVE",
+            new MetaData("Lane data", "Lane data",
+                    new ObjectDescriptor[] { new ObjectDescriptor("Network id", "Network id", String.class),
+                            new ObjectDescriptor("Link id", "Link id", String.class),
+                            new ObjectDescriptor("Lane id", "Lane id", String.class),
+                            new ObjectDescriptor("Lane number", "Lane number", Integer.class) }));
 
     /**
      * Construction of a cross section link.
@@ -132,8 +144,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         if (cse instanceof Lane)
         {
             this.lanes.add((Lane) cse);
-            fireEvent(LANE_ADD_EVENT,
-                    new Object[] { getNetwork().getId(), getId(), cse.getId(), (Lane) cse, this.lanes.indexOf(cse) });
+            fireEvent(LANE_ADD_EVENT, new Object[] { getNetwork().getId(), getId(), cse.getId(), this.lanes.indexOf(cse) });
         }
     }
 
