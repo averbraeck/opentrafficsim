@@ -14,8 +14,10 @@ import java.util.SortedMap;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -261,8 +263,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         // init event
         DirectedLanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] {getId(), initialLocation, getLength(), getWidth(), referencePosition.getLane(),
-                        referencePosition.getPosition(), referencePosition.getGtuDirection(), getGTUType()},
+                new Object[] { getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
+                        OTSPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
+                        referencePosition.getLane().getParentLink().getId(), referencePosition.getLane().getId(),
+                        referencePosition.getPosition(), referencePosition.getGtuDirection().name(), getGTUType().getId() },
                 getSimulator().getSimulatorTime());
 
         // register the GTU on the lanes
@@ -343,7 +347,9 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         this.cachedPositions.clear();
 
         // fire event
-        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
+        this.fireTimedEvent(
+                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection.name(),
+                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition() },
                 getSimulator().getSimulatorTime());
 
     }
@@ -602,8 +608,11 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             }
 
             fireTimedEvent(
-                    LaneBasedGTU.LANEBASED_MOVE_EVENT, new Object[] {getId(), fromLocation, getSpeed(), getAcceleration(),
-                            getTurnIndicatorStatus(), getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection()},
+                    LaneBasedGTU.LANEBASED_MOVE_EVENT,
+                    new Object[] { getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                            OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
+                            getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getParentLink().getId(),
+                            dlp.getLane().getId(), dlp.getPosition(), dlp.getGtuDirection().name() },
                     getSimulator().getSimulatorTime());
 
             return false;
@@ -1285,7 +1294,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), location, getOdometer(), referenceLane, dlp.getPosition(), dlp.getGtuDirection()},
+                    new Object[] { getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                            OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
+                            referenceLane.getParentLink().getId(), referenceLane.getId(), dlp.getPosition(),
+                            dlp.getGtuDirection().name() },
                     getSimulator().getSimulatorTime());
         }
         else

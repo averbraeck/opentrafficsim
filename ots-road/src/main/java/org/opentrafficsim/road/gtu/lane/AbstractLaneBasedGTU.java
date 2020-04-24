@@ -12,8 +12,10 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -806,8 +808,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         DirectedLanePosition dlp = getReferencePosition();
         fireTimedEvent(
-                LaneBasedGTU.LANEBASED_MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(),
-                        getTurnIndicatorStatus(), getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection() },
+                LaneBasedGTU.LANEBASED_MOVE_EVENT,
+                new Object[] { getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                        OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
+                        getTurnIndicatorStatus(), getOdometer(), dlp.getLane().getParentLink().getId(), dlp.getLane().getId(),
+                        dlp.getPosition(), dlp.getGtuDirection().name() },
                 getSimulator().getSimulatorTime());
 
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
