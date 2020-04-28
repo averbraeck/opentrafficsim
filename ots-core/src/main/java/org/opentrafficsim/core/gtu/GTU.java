@@ -215,7 +215,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
 
     /**
      * The event type for pub/sub indicating the initialization of a new GTU. <br>
-     * Payload: [String id, DirectedPoint initialPosition, Length length, Length width]
+     * Payload: [String id, PositionVector initialPosition, Direction initialDirection, Length length, Length width]
      */
     EventType INIT_EVENT = new EventType("GTU.INIT",
             new MetaData("GTU init", "GTU id, initial position and size",
