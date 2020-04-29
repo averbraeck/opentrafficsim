@@ -178,7 +178,6 @@ public class Sim0MQControlledOTS implements EventListenerInterface
 
         slave.commandLoop();
         // Currently, there is no shutdown command; so the following code is never executed
-        slave.toMaster.close();
         context.destroy();
         context.close();
     }
@@ -440,11 +439,6 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         }
     }
 
-    /**
-     * Socket for sending notify messages to master.
-     */
-    private ZMQ.Socket toMaster = null;
-
     /** {@inheritDoc} */
     @Override
     public void notify(final EventInterface event) throws RemoteException
@@ -452,11 +446,9 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         /**
          * Not sure if this method is always called from the same thread.
          */
-        if (null == this.toMaster)
-        {
-            this.toMaster = this.zContext.createSocket(SocketType.PUSH);
-            toMaster.connect("inproc://toMaster");
-        }
+        ZMQ.Socket toMaster = this.zContext.createSocket(SocketType.PUSH);
+        toMaster.setSendTimeOut(-1); // Blocking send mode
+        toMaster.connect("inproc://toMaster");
         try
         {
             EventType type = event.getType();
@@ -536,6 +528,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         {
             e.printStackTrace();
         }
+        toMaster.close();
     }
 
     /** Monitor thread. */
