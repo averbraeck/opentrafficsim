@@ -41,13 +41,6 @@ public class GTUTransceiver extends AbstractEventTransceiver
     {
         super("GTU transceiver", new MetaData("GTU id", "GTU id",
                 new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class) }), GTU.MOVE_EVENT);
-        // new MetaData("GTU data", "GTU id, position, speed, acceleration",
-        // new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "", "".getClass()),
-        // new ObjectDescriptor("GTUType id", "", "".getClass()),
-        // new ObjectDescriptor("x", "", double.class), new ObjectDescriptor("y", "", double.class),
-        // new ObjectDescriptor("z", "", double.class), new ObjectDescriptor("heading", "", double.class),
-        // new ObjectDescriptor("Speed", "", Speed.class),
-        // new ObjectDescriptor("Acceleration", "", Acceleration.class) }));
         this.network = network;
         this.gtuIdSource = gtuIdSource;
     }

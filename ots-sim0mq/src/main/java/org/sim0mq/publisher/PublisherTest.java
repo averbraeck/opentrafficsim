@@ -31,7 +31,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.metadata.MetaData;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -55,6 +55,7 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
+import org.sim0mq.Sim0MQException;
 import org.sim0mq.publisher.SubscriptionHandler.Command;
 import org.xml.sax.SAXException;
 
@@ -85,20 +86,49 @@ public final class PublisherTest
      * @throws SimRuntimeException ...
      * @throws DSOLException ...
      * @throws OTSDrawingException ...
+     * @throws SerializationException ...
+     * @throws Sim0MQException ...
      */
     public static void main(final String[] args)
-            throws IOException, SimRuntimeException, NamingException, DSOLException, OTSDrawingException
+            throws IOException, SimRuntimeException, NamingException, DSOLException, OTSDrawingException, Sim0MQException, SerializationException
     {
-        Duration warmupDuration = Duration.ZERO;
-        Duration runDuration = new Duration(3600, DurationUnit.SECOND);
-        Long seed = 123456L;
+        ReturnWrapper returnWrapper = new ReturnWrapper(
+                new Object[] { "SIM01", true, "federationId", "senderId", "receiverId", "messageTypeId", 0, 0 });
+        OTSRoadNetwork network = new OTSRoadNetwork("OTS model for Publisher test", true);
+        Publisher publisher = new Publisher(network);
+        TransceiverInterface ti = publisher.getIdSource(0);
+        Object[] services = ti.get(null);
+        for (int index = 0; index < services.length; index++)
+        {
+            System.out.println("Service " + index + ": " + services[index]);
+            Object[] serviceObject = publisher.get(new Object[] { services[index] });
+            SubscriptionHandler sh = (SubscriptionHandler) serviceObject[0];
+            System.out.println(sh.toString());
+            EnumSet<Command> subscriptionOptions = sh.subscriptionOptions();
+            System.out.println(sh.getId() + ":" + subscriptionOptions);
+            if (subscriptionOptions.contains(Command.GET_ADDRESS_META_DATA))
+            {
+                System.out.println("address meta data:");
+                sh.executeCommand(Command.GET_ADDRESS_META_DATA, null, returnWrapper);
+            }
+            if (subscriptionOptions.contains(Command.GET_RESULT_META_DATA))
+            {
+                System.out.println("result meta data:");
+                sh.executeCommand(Command.GET_RESULT_META_DATA, null, returnWrapper);
+            }
+        }
+        publisher.executeCommand("GTUs in network", SubscriptionHandler.Command.SUBSCRIBE_TO_ADD, null, returnWrapper);
+        publisher.executeCommand("Links in network", Command.SUBSCRIBE_TO_ADD, null, returnWrapper);
+
+        OTSAnimator animator = new OTSAnimator("OTS Animator");
         String xml = new String(Files
                 .readAllBytes(Paths.get("C:/Users/pknoppers/Java/ots-demo/src/main/resources/TrafCODDemo2/TrafCODDemo2.xml")));
-        OTSAnimator animator = new OTSAnimator("OTS Animator");
-        Sim0MQOTSModel model =
-                new Sim0MQOTSModel(animator, "OTS model for Publisher test", "Remotely controlled OTS model", xml);
+        Sim0MQOTSModel model = new Sim0MQOTSModel(animator, "Remotely controlled OTS model", network, xml);
         Map<String, StreamInterface> map = new LinkedHashMap<>();
+        Long seed = 123456L;
         map.put("generation", new MersenneTwister(seed));
+        Duration warmupDuration = Duration.ZERO;
+        Duration runDuration = new Duration(3600, DurationUnit.SECOND);
         animator.initialize(Time.ZERO, warmupDuration, runDuration, model, map);
         OTSAnimationPanel animationPanel = new OTSAnimationPanel(model.getNetwork().getExtent(), new Dimension(1200, 1000),
                 animator, model, OTSSwingApplication.DEFAULT_COLORER, model.getNetwork());
@@ -135,32 +165,9 @@ public final class PublisherTest
         {
             e.printStackTrace();
         }
-        Publisher publisher = new Publisher(model.getNetwork());
-        TransceiverInterface ti = publisher.getIdSource(0);
-        Object[] services = ti.get(null);
-        for (int index = 0; index < services.length; index++)
-        {
-            System.out.println("Service " + index + ": " + services[index]);
-            Object[] serviceObject = publisher.get(new Object[] { services[index] });
-            System.out.println("class is " + serviceObject[0].getClass().getName());
-            SubscriptionHandler sh = (SubscriptionHandler) serviceObject[0];
-            System.out.println(sh.toString());
-            EnumSet<Command> subscriptionOptions = sh.subscriptionOptions();
-            System.out.println(sh.getId() + ":" + subscriptionOptions);
-            if (subscriptionOptions.contains(Command.GET_ADDRESS_META_DATA))
-            {
-                System.out.println("address meta data:");
-                sh.executeCommand(Command.GET_ADDRESS_META_DATA, null);
-            }
-            if (subscriptionOptions.contains(Command.GET_RESULT_META_DATA))
-            {
-                System.out.println("result meta data:");
-                sh.executeCommand(Command.GET_RESULT_META_DATA, null);
-            }
-        }
-        publisher.executeCommand("GTUs in network", SubscriptionHandler.Command.SUBSCRIBE_TO_ADD, null);
-        System.out.println("Simulating up to 10 s");
-        animator.runUpTo(new Time(30, TimeUnit.BASE_SECOND));
+        Time endTime = new Time(10, TimeUnit.BASE_SECOND);
+        System.out.println("Simulating up to " + endTime);
+        animator.runUpTo(endTime);
         while (animator.isRunning())
         {
             try
@@ -173,13 +180,30 @@ public final class PublisherTest
             }
         }
         System.out.println("Simulator has stopped at time " + animator.getSimulatorTime());
-        publisher.executeCommand("GTUs in network", SubscriptionHandler.Command.GET_CURRENT, null);
+        // Subscribe to move events of GTU 3 (this GTU drives out of the simulation within the first 60 seconds)
+        publisher.executeCommand("GTU move", Command.SUBSCRIBE_TO_CHANGE, new Object[] {"3"}, returnWrapper);
+        endTime = new Time(60, TimeUnit.BASE_SECOND);
+        System.out.println("Simulating up to " + endTime);
+        animator.runUpTo(endTime);
+        while (animator.isRunning())
+        {
+            try
+            {
+                Thread.sleep(10);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Simulator has stopped at time " + animator.getSimulatorTime());
+        publisher.executeCommand("GTUs in network", SubscriptionHandler.Command.GET_CURRENT, null, returnWrapper);
         // animator.endReplication();
 
         // Find the JFrame.
         for (Container container = animationPanel; container != null; container = container.getParent())
         {
-            System.out.println("container is " + container);
+            // System.out.println("container is " + container);
             if (container instanceof JFrame)
             {
                 JFrame jFrame = (JFrame) container;
@@ -199,20 +223,22 @@ class Sim0MQOTSModel extends AbstractOTSModel implements EventListenerInterface
     private static final long serialVersionUID = 20170419L;
 
     /** The network. */
-    private OTSRoadNetwork network;
+    private final OTSRoadNetwork network;
 
     /** The XML. */
     private final String xml;
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator
-     * @param shortName String; the model name
      * @param description String; the model description
+     * @param network TODO
      * @param xml String; the XML description of the simulation model
      */
-    Sim0MQOTSModel(final OTSSimulatorInterface simulator, final String shortName, final String description, final String xml)
+    Sim0MQOTSModel(final OTSSimulatorInterface simulator, final String description, final OTSRoadNetwork network,
+            final String xml)
     {
-        super(simulator, shortName, description);
+        super(simulator, network.getId(), description);
+        this.network = network;
         this.xml = xml;
     }
 
@@ -227,7 +253,6 @@ class Sim0MQOTSModel extends AbstractOTSModel implements EventListenerInterface
     @Override
     public void constructModel() throws SimRuntimeException
     {
-        this.network = new OTSRoadNetwork(getShortName(), true);
         try
         {
             XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

@@ -8,9 +8,17 @@ import org.djunits.Throw;
 import org.djutils.event.EventProducerInterface;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.EndianUtil;
+import org.djutils.serialization.SerializationException;
+import org.djutils.serialization.SerializationRuntimeException;
+import org.djutils.serialization.util.SerialDataDumper;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.sim0mq.Sim0MQException;
+import org.sim0mq.message.Sim0MQMessage;
 
 /**
  * Publish all available transceivers for an OTS network to a Sim0MQ master and handle its requests. <br>
@@ -66,6 +74,9 @@ public class Publisher extends AbstractTransceiver
         };
     };
 
+    /** The OTS network. */
+    private final OTSNetwork network;
+
     /**
      * Construct a Publisher for an OTS network.
      * @param network OTSNetwork; the OTS network
@@ -77,36 +88,125 @@ public class Publisher extends AbstractTransceiver
                         new ObjectDescriptor[] { new ObjectDescriptor("Transceiver name", "Transceiver name", String.class) }),
                 new MetaData("Subscription handlers", "Subscription handlers", new ObjectDescriptor[] {
                         new ObjectDescriptor("Subscription handler", "Subscription handler", SubscriptionHandler.class) }));
+        this.network = network;
 
         GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
         GTUTransceiver gtuTransceiver = new GTUTransceiver(network, gtuIdTransceiver);
         SubscriptionHandler gtuSubscriptionHandler =
-                new SubscriptionHandler("GTU move", gtuTransceiver, null, null, null, GTU.MOVE_EVENT, null);
+                new SubscriptionHandler("GTU move", gtuTransceiver, new LookupEventProducerInterface()
+                {
+
+                    @Override
+                    public EventProducerInterface lookup(final Object[] address) throws IndexOutOfBoundsException
+                    {
+                        Throw.when(address == null || address.length != 1 || (!(address[0] instanceof String)),
+                                IllegalArgumentException.class, "Bad address; expected id of a GTU");
+                        return network.getGTU((String) address[0]);
+                        // TODO should we complain about a non-existing GTU?
+                    }
+                }, null, null, GTU.MOVE_EVENT, null);
         addSubscriptionHandler(gtuSubscriptionHandler);
         addSubscriptionHandler(new SubscriptionHandler("GTUs in network", gtuIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
             public EventProducerInterface lookup(final Object[] address)
             {
+                Throw.when(address != null && address.length != 0, IllegalArgumentException.class, "Bad address");
                 return network;
             }
-            
+
             @Override
             public String toString()
             {
                 return "Subscription handler for GTUs in network";
             }
         }, Network.GTU_ADD_EVENT, Network.GTU_REMOVE_EVENT, null, gtuSubscriptionHandler));
-        // LinkIdTransceiver linkIdTransceiver = new LinkIdTransceiver(network);
-        // addTransceiver(linkIdTransceiver);
-        // addTransceiver(new LinkTransceiver(network, linkIdTransceiver));
-        // addTransceiver(new CrossSectionElementTransceiver(network));
-        // addTransceiver(new LinkGTUIdTransceiver(network));
-        // addTransceiver(new LaneGTUIdTransceiver(network));
-        // NodeIdTransceiver nodeIdTransceiver = new NodeIdTransceiver(network);
+        LinkIdTransceiver linkIdTransceiver = new LinkIdTransceiver(network);
+        LinkTransceiver linkTransceiver = new LinkTransceiver(network, linkIdTransceiver);
+        SubscriptionHandler linkSubscriptionHandler = new SubscriptionHandler("Link change", linkTransceiver, lookupLink,
+                Link.GTU_ADD_EVENT, Link.GTU_REMOVE_EVENT, null, null);
+        addSubscriptionHandler(linkSubscriptionHandler);
+        addSubscriptionHandler(new SubscriptionHandler("Links in network", linkIdTransceiver, new LookupEventProducerInterface()
+        {
+            @Override
+            public EventProducerInterface lookup(final Object[] address)
+            {
+                Throw.when(address != null && address.length != 0, IllegalArgumentException.class, "Bad address");
+                return network;
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Subscription handler for Links in network";
+            }
+        }, Network.LINK_ADD_EVENT, Network.LINK_REMOVE_EVENT, null, linkSubscriptionHandler));
+        NodeIdTransceiver nodeIdTransceiver = new NodeIdTransceiver(network);
+        NodeTransceiver nodeTransceiver = new NodeTransceiver(network, nodeIdTransceiver);
         // addTransceiver(nodeIdTransceiver);
         // addTransceiver(new NodeTransceiver(network, nodeIdTransceiver));
+        SubscriptionHandler nodeSubscriptionHandler =
+                new SubscriptionHandler("Node change", nodeTransceiver, new LookupEventProducerInterface()
+                {
+                    @Override
+                    public EventProducerInterface lookup(final Object[] address)
+                    {
+                        return null; // Nodes do not emit events
+                    }
+                }, null, null, null, null);
+        addSubscriptionHandler(nodeSubscriptionHandler);
+        addSubscriptionHandler(new SubscriptionHandler("Nodes in network", nodeIdTransceiver, new LookupEventProducerInterface()
+        {
+            @Override
+            public EventProducerInterface lookup(final Object[] address)
+            {
+                Throw.when(address != null && address.length != 0, IllegalArgumentException.class, "Bad address");
+                return network;
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Subscription handler for Nodes in network";
+            }
+        }, Network.NODE_ADD_EVENT, Network.NODE_REMOVE_EVENT, null, nodeSubscriptionHandler));
+        SubscriptionHandler linkGTUIdSubscriptionHandler = new SubscriptionHandler("GTUs on Link",
+                new LinkGTUIdTransceiver(network), lookupLink, Link.GTU_ADD_EVENT, Link.GTU_REMOVE_EVENT, null, null);
+        addSubscriptionHandler(linkGTUIdSubscriptionHandler);
+        addSubscriptionHandler(new SubscriptionHandler("Cross section elements on Link",
+                new CrossSectionElementTransceiver(network), lookupLink, CrossSectionLink.LANE_ADD_EVENT,
+                CrossSectionLink.LANE_REMOVE_EVENT, null, linkGTUIdSubscriptionHandler));
+        // addTransceiver(new LaneGTUIdTransceiver(network));
     }
+
+    /** Lookup a CrossSectionLink in the network. */
+    private LookupEventProducerInterface lookupLink = new LookupEventProducerInterface()
+    {
+        @Override
+        public EventProducerInterface lookup(final Object[] address) throws IndexOutOfBoundsException
+        {
+            Throw.whenNull(address, "LookupLink requires the name of a link");
+            Throw.when(address.length != 1 || !(address[1] instanceof String), IllegalArgumentException.class, "Bad address");
+            Link link = network.getLink((String) address[0]);
+            if (null == link)
+            {
+                // TODO report that there is no link with this id
+                return null;
+            }
+            if (!(link instanceof EventProducerInterface))
+            {
+                // TODO report that (and why) this link is not capable of handling a subscription request
+                return null;
+            }
+            return (CrossSectionLink) link;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "LookupProducerInterface that looks up a Link in the network";
+        }
+    };
 
     /**
      * Add a SubscriptionHandler to the map.
@@ -143,19 +243,160 @@ public class Publisher extends AbstractTransceiver
      * @param subscriptionHandlerName String; name of the SubscriptionHandler for which the command is destined
      * @param command Command; the operation to perform
      * @param address Object[]; the address on which to perform the operation
+     * @param returnWrapper ReturnWrapper; to transmit the result
      * @throws RemoteException ...
+     * @throws SerializationException
+     * @throws Sim0MQException
      */
     public void executeCommand(final String subscriptionHandlerName, final SubscriptionHandler.Command command,
-            final Object[] address) throws RemoteException
+            final Object[] address, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
-        
+
         SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(subscriptionHandlerName);
         if (null == subscriptionHandler)
         {
             System.err.println("No subscription handler for \"" + subscriptionHandlerName + "\"");
             return;
         }
-        subscriptionHandler.executeCommand(command, address);
+        subscriptionHandler.executeCommand(command, address, returnWrapper);
+    }
+
+}
+
+/**
+ * Container for all data needed to reply (once, or multiple times) to a Sim0MQ request.
+ */
+class ReturnWrapper
+{
+    /** Federation id. */
+    private final Object federationId;
+
+    /** Sender id (to be used as return address). */
+    private final Object returnAddress;
+
+    /** Our id (to be used as sender address in replies). */
+    private final Object ourAddress;
+
+    /** Message type id used by the sender; re-used in the reply. */
+    private final Object messageTypeId;
+
+    /** Message id used by the sender; re-used in the reply; post-incremented by one if it is an Integer. */
+    private final Object messageId;
+
+    /** Number of replies sent. SHOULD NOT BE USED IN equals or hashCode! */
+    private int replyCount = 0;
+
+    /**
+     * Construct a new ReturnWrapper.
+     * @param receivedMessage byte[]; the received message from which the reply envelope will be derived
+     * @throws SerializationException when the received message has an incorrect envelope
+     * @throws Sim0MQException when the received message cannot be decoded
+     */
+    ReturnWrapper(final byte[] receivedMessage) throws Sim0MQException, SerializationException
+    {
+        this(Sim0MQMessage.decode(receivedMessage).createObjectArray());
+    }
+
+    /**
+     * Construct a new ReturnWrapper.
+     * @param decodedReceivedMessage Object[]; decoded Sim0MQ message
+     */
+    ReturnWrapper(final Object[] decodedReceivedMessage)
+    {
+        Throw.when(decodedReceivedMessage.length < 8, SerializationRuntimeException.class,
+                "Received message is too short (minumum number of elements is 8; got %d", decodedReceivedMessage.length);
+        this.federationId = decodedReceivedMessage[2];
+        this.returnAddress = decodedReceivedMessage[3];
+        this.ourAddress = decodedReceivedMessage[4];
+        this.messageTypeId = decodedReceivedMessage[5];
+        this.messageId = decodedReceivedMessage[6];
+    }
+
+    /**
+     * Encode a reply and transmit it. If the message id field is an Integer then it is incremented <b>after</b> encoding the
+     * reply. <br>
+     * TODO: transmit the result (not just dump it to the console); but that requires a thread safe poller and socket.
+     * @param payload Object[]; payload of the reply message
+     * @throws Sim0MQException not sure if that can happen
+     * @throws SerializationException when an object in payload cannot be serialized
+     */
+    public void encodeReplyAndTransmit(final Object[] payload) throws Sim0MQException, SerializationException
+    {
+        Throw.whenNull(payload, "payload may not be null (but it can be an emty Object array");
+        Object messageIdValue = this.messageId;
+        if (messageIdValue instanceof Integer)
+        {
+            messageIdValue = ((Integer) messageIdValue) + this.replyCount;
+        }
+        this.replyCount++; // Always increment; even when it is not in the reply
+        byte[] result = Sim0MQMessage.encodeUTF8(true, this.federationId, this.ourAddress, this.returnAddress,
+                this.messageTypeId, messageIdValue, payload);
+        System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((federationId == null) ? 0 : federationId.hashCode());
+        result = prime * result + ((messageId == null) ? 0 : messageId.hashCode());
+        result = prime * result + ((messageTypeId == null) ? 0 : messageTypeId.hashCode());
+        result = prime * result + ((ourAddress == null) ? 0 : ourAddress.hashCode());
+        result = prime * result + ((returnAddress == null) ? 0 : returnAddress.hashCode());
+        return result; // replyCount is NOT used!
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:needbraces")
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ReturnWrapper other = (ReturnWrapper) obj;
+        if (federationId == null)
+        {
+            if (other.federationId != null)
+                return false;
+        }
+        else if (!federationId.equals(other.federationId))
+            return false;
+        if (messageId == null)
+        {
+            if (other.messageId != null)
+                return false;
+        }
+        else if (!messageId.equals(other.messageId))
+            return false;
+        if (messageTypeId == null)
+        {
+            if (other.messageTypeId != null)
+                return false;
+        }
+        else if (!messageTypeId.equals(other.messageTypeId))
+            return false;
+        if (ourAddress == null)
+        {
+            if (other.ourAddress != null)
+                return false;
+        }
+        else if (!ourAddress.equals(other.ourAddress))
+            return false;
+        if (returnAddress == null)
+        {
+            if (other.returnAddress != null)
+                return false;
+        }
+        else if (!returnAddress.equals(other.returnAddress))
+            return false;
+        return true; // replyCount is NOT used
     }
 
 }
