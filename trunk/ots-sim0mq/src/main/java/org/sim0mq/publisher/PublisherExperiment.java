@@ -68,12 +68,12 @@ import nl.tudelft.simulation.language.DSOLException;
 /**
  * Test code to see if the Publisher works.
  */
-public final class PublisherTest
+public final class PublisherExperiment
 {
     /**
      * Do not instantiate.
      */
-    private PublisherTest()
+    private PublisherExperiment()
     {
         // Do not instantiate
     }
