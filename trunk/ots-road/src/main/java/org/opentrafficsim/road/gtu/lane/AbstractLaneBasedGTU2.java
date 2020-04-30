@@ -263,10 +263,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         // init event
         DirectedLanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] { getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
+                new Object[] {getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
                         OTSPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
                         referencePosition.getLane().getParentLink().getId(), referencePosition.getLane().getId(),
-                        referencePosition.getPosition(), referencePosition.getGtuDirection().name(), getGTUType().getId() },
+                        referencePosition.getPosition(), referencePosition.getGtuDirection().name(), getGTUType().getId()},
                 getSimulator().getSimulatorTime());
 
         // register the GTU on the lanes
@@ -348,8 +348,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 
         // fire event
         this.fireTimedEvent(
-                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection.name(),
-                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition() },
+                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
+                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
                 getSimulator().getSimulatorTime());
 
     }
@@ -538,8 +538,14 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             throw new RuntimeException(exception);
         }
-        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
+        
+        // XXX: WRONG: this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
+        // XXX: WRONG: getSimulator().getSimulatorTime());
+        this.fireTimedEvent(
+                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
+                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
                 getSimulator().getSimulatorTime());
+
         this.finalizeLaneChangeEvent = null;
     }
 
@@ -607,12 +613,11 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 }
             }
 
-            fireTimedEvent(
-                    LaneBasedGTU.LANEBASED_MOVE_EVENT,
-                    new Object[] { getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+            fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
+                    new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getParentLink().getId(),
-                            dlp.getLane().getId(), dlp.getPosition(), dlp.getGtuDirection().name() },
+                            dlp.getLane().getId(), dlp.getPosition(), dlp.getGtuDirection().name()},
                     getSimulator().getSimulatorTime());
 
             return false;
@@ -1294,10 +1299,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                    new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
                             referenceLane.getParentLink().getId(), referenceLane.getId(), dlp.getPosition(),
-                            dlp.getGtuDirection().name() },
+                            dlp.getGtuDirection().name()},
                     getSimulator().getSimulatorTime());
         }
         else
