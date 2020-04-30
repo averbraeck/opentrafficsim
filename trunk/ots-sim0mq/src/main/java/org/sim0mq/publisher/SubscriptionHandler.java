@@ -2,6 +2,8 @@ package org.sim0mq.publisher;
 
 import java.rmi.RemoteException;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.djunits.Throw;
 import org.djutils.event.EventInterface;
@@ -9,6 +11,9 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventProducerInterface;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
+import org.sim0mq.Sim0MQException;
 
 /**
  * Data collection that can be listed and has subscription to change events.
@@ -20,11 +25,8 @@ import org.djutils.metadata.MetaData;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SubscriptionHandler implements EventListenerInterface
+public class SubscriptionHandler
 {
-    /** ... */
-    private static final long serialVersionUID = 20200417L;
-
     /** Id of this SubscriptionHandler. */
     private final String id;
 
@@ -46,6 +48,9 @@ public class SubscriptionHandler implements EventListenerInterface
     /** SubscriptionHandler that handles subscriptions to individual objects; e.g. GTU.MOVE_EVENT. */
     private final SubscriptionHandler elementSubscriptionHandler;
 
+    /** The currently active subsciptions. */
+    private final Map<ReturnWrapper, Subscription> subscriptions = new LinkedHashMap<>();
+
     /**
      * Create a new SubscriptionHandler.
      * @param id String; id of the new SubscriptionHandler
@@ -65,6 +70,12 @@ public class SubscriptionHandler implements EventListenerInterface
             final EventType removedEventType, final EventType changeEventType,
             final SubscriptionHandler elementSubscriptionHandler)
     {
+        Throw.whenNull(id, "Id may not be null");
+        Throw.when(
+                null == eventProducerForAddRemoveOrChange
+                        && (addedEventType != null || removedEventType != null || changeEventType != null),
+                NullPointerException.class,
+                "eventProducerForAddRemoveOrChange may not be null when any of those events is non-null");
         this.id = id;
         this.listTransceiver = listTransceiver;
         this.eventProducerForAddRemoveOrChange = eventProducerForAddRemoveOrChange;
@@ -96,11 +107,15 @@ public class SubscriptionHandler implements EventListenerInterface
     /**
      * Retrieve a data collection.
      * @param address Object[]; address of the requested data collection
+     * @param returnWrapper ReturnWrapper; to send back the result
      * @throws RemoteException when communication fails
+     * @throws SerializationException
+     * @throws Sim0MQException
      */
-    public void get(final Object[] address) throws RemoteException
+    public void get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
-        sendResult(this.listTransceiver.get(address));
+        sendResult(this.listTransceiver.get(address), returnWrapper);
     }
 
     /**
@@ -138,15 +153,23 @@ public class SubscriptionHandler implements EventListenerInterface
      * Create a new subscription to ADD events.
      * @param address Object[]; the data that is required to find the correct EventProducer
      * @param eventType EventType; one of the event types that the addressed EventProducer can fire
+     * @param returnWrapper ReturnWrapper; generates envelopes for the returned events
      * @throws RemoteException when communication fails
      */
-    private void subscribeTo(final Object[] address, final EventType eventType) throws RemoteException
+    private void subscribeTo(final Object[] address, final EventType eventType, final ReturnWrapper returnWrapper)
+            throws RemoteException
     {
         Throw.whenNull(eventType, "eventType may not be null");
         EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address);
         if (null != epi)
         {
-            epi.addListener(this, eventType); // TODO complain if there was already a subscription?
+            Subscription subscription = this.subscriptions.get(returnWrapper);
+            if (null == subscription)
+            {
+                subscription = new Subscription(returnWrapper);
+            }
+            epi.addListener(subscription, eventType); // TODO complain if there was already a subscription?
+            this.subscriptions.put(returnWrapper, subscription);
         }
         // else: Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
         // TODO inform the master
@@ -156,15 +179,19 @@ public class SubscriptionHandler implements EventListenerInterface
      * Cancel a subscription to ADD events.
      * @param address Object[]; the data that is required to find the correct EventProducer
      * @param eventType EventType; one of the event types that the addressed EventProducer can fire
+     * @param returnWrapper ReturnWrapper; the ReturnWapper that sent the results until now
      * @throws RemoteException when communication fails
      */
-    private void unsubscribeFrom(final Object[] address, final EventType eventType) throws RemoteException
+    private void unsubscribeFrom(final Object[] address, final EventType eventType, final ReturnWrapper returnWrapper)
+            throws RemoteException
     {
         Throw.whenNull(eventType, "eventType may not be null");
         EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address);
         if (null != epi)
         {
-            epi.removeListener(this, eventType); // TODO complain if there was no subscription?
+            Subscription subscription = this.subscriptions.get(returnWrapper);
+            Throw.whenNull(subscription, "No subscription found that can be unsubscribed");
+            epi.removeListener(subscription, eventType); // TODO complain if there was no subscription?
         }
         // else: Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
         // TODO inform the master
@@ -177,28 +204,6 @@ public class SubscriptionHandler implements EventListenerInterface
     public final String getId()
     {
         return this.id;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void notify(final EventInterface event) throws RemoteException
-    {
-        MetaData metaData = event.getType().getMetaData();
-        Object[] result = new Object[1 + metaData.size()];
-        result[0] = event.getType().getName();
-        Object payload = event.getContent();
-        if (payload instanceof Object[])
-        {
-            for (int index = 0; index < event.getType().getMetaData().size(); index++)
-            {
-                result[1 + index] = ((Object[]) payload)[index];
-            }
-        }
-        else
-        {
-            result[1] = payload;
-        }
-        sendResult(result);
     }
 
     /**
@@ -230,46 +235,54 @@ public class SubscriptionHandler implements EventListenerInterface
      * Execute one command.
      * @param command Command; the command
      * @param address Object[] the address of the object on which the command must be applied
+     * @param returnWrapper ReturnWrapper; envelope generator for replies
      * @throws RemoteException on communication failure
+     * @throws SerializationException
+     * @throws Sim0MQException
      */
-    public void executeCommand(final Command command, final Object[] address) throws RemoteException
+    public void executeCommand(final Command command, final Object[] address, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
+        Throw.whenNull(command, "Command may not be null");
+        Throw.whenNull(returnWrapper, "ReturnWrapper may not be null");
         switch (command)
         {
             case SUBSCRIBE_TO_ADD:
-                subscribeTo(address, this.addedEventType);
+                subscribeTo(address, this.addedEventType, returnWrapper);
                 break;
 
             case SUBSCRIBE_TO_CHANGE:
-                subscribeTo(address, this.changeEventType);
+                subscribeTo(address, this.changeEventType, returnWrapper);
                 break;
 
             case SUBSCRIBE_TO_REMOVE:
-                subscribeTo(address, this.removedEventType);
+                subscribeTo(address, this.removedEventType, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_ADD:
-                unsubscribeFrom(address, this.addedEventType);
+                unsubscribeFrom(address, this.addedEventType, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_CHANGE:
-                unsubscribeFrom(address, this.changeEventType);
+                unsubscribeFrom(address, this.changeEventType, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_REMOVE:
-                unsubscribeFrom(address, this.removedEventType);
+                unsubscribeFrom(address, this.removedEventType, returnWrapper);
                 break;
 
             case GET_CURRENT:
-                sendResult(this.listTransceiver.get(address));
+                sendResult(this.listTransceiver.get(address), returnWrapper);
                 break;
 
             case GET_ADDRESS_META_DATA:
-                sendResult(this.listTransceiver.getAddressFields().getObjectDescriptors());
+                sendResult(extractObjectDescriptorClassNames(this.listTransceiver.getAddressFields().getObjectDescriptors()),
+                        returnWrapper);
                 break;
 
             case GET_RESULT_META_DATA:
-                sendResult(this.listTransceiver.getResultFields().getObjectDescriptors());
+                sendResult(extractObjectDescriptorClassNames(this.listTransceiver.getResultFields().getObjectDescriptors()),
+                        returnWrapper);
                 break;
 
             default:
@@ -280,20 +293,40 @@ public class SubscriptionHandler implements EventListenerInterface
     }
 
     /**
+     * Extract the class names from an array of ObjectDescriptor.
+     * @param objectDescriptors ObjectDescriptor[]; the array of ObjectDescriptor
+     * @return Object[]; the class names
+     */
+    private Object[] extractObjectDescriptorClassNames(final ObjectDescriptor[] objectDescriptors)
+    {
+        Object[] result = new Object[objectDescriptors.length];
+        for (int index = 0; index < objectDescriptors.length; index++)
+        {
+            result[index] = objectDescriptors[index].getObjectClass().getName();
+        }
+        return result;
+    }
+
+    /**
      * Stub. Should send data over Sim0MQ to master
      * @param data Object[]; the data to transmit
+     * @param returnWrapper ReturnWrapper; envelope constructor for returned results
+     * @throws SerializationException
+     * @throws Sim0MQException
      */
-    private void sendResult(final Object[] data)
+    private void sendResult(final Object[] data, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        if (null == data)
-        {
-            System.out.println("NULL");
-            return;
-        }
-        for (int index = 0; index < data.length; index++)
-        {
-            System.out.println(index + "\t" + data[index]);
-        }
+        returnWrapper.encodeReplyAndTransmit(data);
+        // if (null == data)
+        // {
+        // System.out.println("NULL");
+        // return;
+        // }
+        // for (int index = 0; index < data.length; index++)
+        // {
+        // System.out.println(index + "\t" + data[index]);
+        // }
     }
 
     /** {@inheritDoc} */
@@ -320,4 +353,56 @@ interface LookupEventProducerInterface
      * @throws IndexOutOfBoundsException when the address has an invalid format
      */
     EventProducerInterface lookup(Object[] address) throws IndexOutOfBoundsException;
+}
+
+/**
+ * Handles one subscription.
+ */
+class Subscription implements EventListenerInterface
+{
+    /** ... */
+    private static final long serialVersionUID = 20200428L;
+
+    /** Generates envelopes for the messages sent over Sim0MQ. */
+    private final ReturnWrapper returnWrapper;
+
+    /**
+     * Construct a new Subscription.
+     * @param returnWrapper ReturnWrapper; envelope generator for the messages
+     */
+    Subscription(final ReturnWrapper returnWrapper)
+    {
+        this.returnWrapper = returnWrapper;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        // TODO: figure out how to include the time stamp if event is a TimedEvent.
+        MetaData metaData = event.getType().getMetaData();
+        Object[] result = new Object[1 + metaData.size()];
+        result[0] = event.getType().getName();
+        Object payload = event.getContent();
+        if (payload instanceof Object[])
+        {
+            for (int index = 0; index < event.getType().getMetaData().size(); index++)
+            {
+                result[1 + index] = ((Object[]) payload)[index];
+            }
+        }
+        else
+        {
+            result[1] = payload;
+        }
+        try
+        {
+            this.returnWrapper.encodeReplyAndTransmit(result);
+        }
+        catch (Sim0MQException | SerializationException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }
