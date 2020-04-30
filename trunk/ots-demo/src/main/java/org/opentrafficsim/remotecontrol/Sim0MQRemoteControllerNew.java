@@ -56,7 +56,7 @@ import picocli.CommandLine.Option;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Sim0MQRemoteController extends JFrame implements WindowListener, ActionListener
+public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener, ActionListener
 {
     /** ... */
     private static final long serialVersionUID = 20200304L;
@@ -106,7 +106,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
 
     /** The instance of the RemoteControl. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    static Sim0MQRemoteController gui = null;
+    static Sim0MQRemoteControllerNew gui = null;
 
     /** Socket for sending messages that should be relayed to OTS. */
     private ZMQ.Socket toOTS;
@@ -130,7 +130,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                 {
                     try
                     {
-                        gui = new Sim0MQRemoteController();
+                        gui = new Sim0MQRemoteControllerNew();
                         gui.setVisible(true);
                     }
                     catch (Exception e)
@@ -189,22 +189,26 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         public final void run()
         {
             int nextExpectedPacket = 0;
-            ZMQ.Socket slaveSocket = this.context.createSocket(SocketType.DEALER);
+            ZMQ.Socket slaveSocket = this.context.createSocket(SocketType.PAIR); // changed to PAIR
+            slaveSocket.setHWM(100000);
             ZMQ.Socket awtSocketIn = this.context.createSocket(SocketType.PULL);
+            awtSocketIn.setHWM(100000);
             ZMQ.Socket awtSocketOut = this.context.createSocket(SocketType.PUSH);
+            awtSocketOut.setHWM(100000);
             slaveSocket.connect("tcp://" + this.slaveHost + ":" + this.slavePort);
             awtSocketIn.bind("inproc://fromAWT");
             awtSocketOut.bind("inproc://toAWT");
-            ZMQ.Poller items = this.context.createPoller(2);
-            items.register(slaveSocket, ZMQ.Poller.POLLIN);
-            items.register(awtSocketIn, ZMQ.Poller.POLLIN);
+            // XXX tool the POLLER out
+            // ZMQ.Poller items = this.context.createPoller(2);
+            // items.register(slaveSocket, ZMQ.Poller.POLLIN);
+            // items.register(awtSocketIn, ZMQ.Poller.POLLIN);
             while (!Thread.currentThread().isInterrupted())
             {
-                byte[] message;
-                items.poll();
-                if (items.pollin(0))
+                byte[] message = slaveSocket.recv(ZMQ.DONTWAIT); // non-blocking
+                // items.poll();
+                // if (items.pollin(0))
+                if (message != null)
                 {
-                    message = slaveSocket.recv(0);
                     String expectedSenderField = String.format("slave_%05d", ++nextExpectedPacket);
                     try
                     {
@@ -224,11 +228,25 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                     // System.out.println("poller has received a message on the fromOTS DEALER socket; transmitting to AWT");
                     awtSocketOut.send(message);
                 }
-                if (items.pollin(1))
+                else // look at awt
                 {
-                    message = awtSocketIn.recv(0);
+                    message = awtSocketIn.recv(ZMQ.DONTWAIT); // non-blocking
                     // System.out.println("poller has received a message on the fromAWT PULL socket; transmitting to OTS");
-                    slaveSocket.send(message);
+                    if (message != null)
+                    {
+                        slaveSocket.send(message);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Thread.sleep(1); // 1000 Hz
+                        }
+                        catch (Exception exception)
+                        {
+                            // ignore
+                        }
+                    }
                 }
             }
 
@@ -250,27 +268,11 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         this.pollerThread.start();
 
         this.toOTS = this.zContext.createSocket(SocketType.PUSH);
+        this.toOTS.setHWM(100000);
 
         new OTS2AWT(this.zContext).start();
 
         this.toOTS.connect("inproc://fromAWT");
-
-        // Send something
-        // try
-        // {
-        // byte[] message = Sim0MQMessage.encodeUTF8(true, 0, "master", "slave", 0, 0, "HELLO");
-        // output.println("Sending HELLO message:");
-        // output.println(HexDumper.hexDumper(message));
-        // this.toOTS.send(message, 0);
-        // }
-        // catch (Sim0MQException e)
-        // {
-        // e.printStackTrace();
-        // }
-        // catch (SerializationException e)
-        // {
-        // e.printStackTrace();
-        // }
     }
 
     /**
@@ -303,7 +305,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
     /**
      * Construct the GUI.
      */
-    Sim0MQRemoteController()
+    Sim0MQRemoteControllerNew()
     {
         // Construct the GUI
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -417,6 +419,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         OTS2AWT(final ZContext zContext)
         {
             this.fromOTS = zContext.createSocket(SocketType.PULL);
+            this.fromOTS.setHWM(100000);
             this.fromOTS.connect("inproc://toAWT");
         }
 
@@ -429,7 +432,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                 try
                 {
                     // Read from remotely controlled OTS
-                    byte[] bytes = this.fromOTS.recv(0);
+                    byte[] bytes = this.fromOTS.recv(0); /// XXX: this one is okay to block
                     // System.out.println("remote controller has received a message on the fromOTS PULL socket");
                     Object[] message = Sim0MQMessage.decode(bytes).createObjectArray();
                     if (message.length > 8 && message[5] instanceof String)
@@ -438,55 +441,55 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                         switch (command)
                         {
                             case "GTUPOSITION":
-                                Sim0MQRemoteController.this.output
+                                Sim0MQRemoteControllerNew.this.output
                                         .println(String.format("%10.10s: %s x=%8.3f y=%8.3f z=%8.3f heading=%6.1f, v=%s, a=%s",
                                                 message[8], message[9], message[10], message[11], message[12],
                                                 Math.toDegrees((Double) message[13]), message[14], message[15]));
                                 break;
 
                             case "TIME_CHANGED_EVENT":
-                                Sim0MQRemoteController.this.output.println(message[8]);
+                                Sim0MQRemoteControllerNew.this.output.println(message[8]);
                                 break;
 
                             case "TRAFFICCONTROL.CONTROLLER_WARNING":
-                                Sim0MQRemoteController.this.output
+                                Sim0MQRemoteControllerNew.this.output
                                         .println(String.format("%s: warning %s", message[8], message[9]));
                                 break;
 
                             case "TRAFFICCONTROL.CONTROLLER_EVALUATING":
-                                Sim0MQRemoteController.this.output
+                                Sim0MQRemoteControllerNew.this.output
                                         .println(String.format("%s: evaluating %s", message[8], message[9]));
                                 break;
 
                             case "TRAFFICCONTROL.CONFLICT_GROUP_CHANGED":
-                                Sim0MQRemoteController.this.output.println(String.format(
+                                Sim0MQRemoteControllerNew.this.output.println(String.format(
                                         "%s: conflict group changed from %s to %s", message[8], message[9], message[10]));
                                 break;
 
                             case "NETWORK.GTU.ADD":
-                                Sim0MQRemoteController.this.output.println(String.format("GTU added %s", message[8]));
+                                Sim0MQRemoteControllerNew.this.output.println(String.format("GTU added %s", message[8]));
                                 break;
 
                             case "NETWORK.GTU.REMOVE":
-                                Sim0MQRemoteController.this.output.println(String.format("GTU removed %s", message[8]));
+                                Sim0MQRemoteControllerNew.this.output.println(String.format("GTU removed %s", message[8]));
                                 break;
 
                             case "READY":
-                                Sim0MQRemoteController.this.output.println("Slave is ready for the next command");
+                                Sim0MQRemoteControllerNew.this.output.println("Slave is ready for the next command");
                                 break;
 
                             default:
-                                Sim0MQRemoteController.this.output.println("Unhandled reply: " + command);
-                                Sim0MQRemoteController.this.output.println(HexDumper.hexDumper(bytes));
-                                Sim0MQRemoteController.this.output.println("Received:");
-                                Sim0MQRemoteController.this.output.println(Sim0MQMessage.print(message));
+                                Sim0MQRemoteControllerNew.this.output.println("Unhandled reply: " + command);
+                                Sim0MQRemoteControllerNew.this.output.println(HexDumper.hexDumper(bytes));
+                                Sim0MQRemoteControllerNew.this.output.println("Received:");
+                                Sim0MQRemoteControllerNew.this.output.println(Sim0MQMessage.print(message));
                                 break;
 
                         }
                     }
                     else
                     {
-                        Sim0MQRemoteController.this.output.println(HexDumper.hexDumper(bytes));
+                        Sim0MQRemoteControllerNew.this.output.println(HexDumper.hexDumper(bytes));
                     }
                 }
                 catch (ZMQException | Sim0MQException | SerializationException e)
@@ -533,6 +536,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                 try
                 {
                     String xml = readStringFromURL(url);
+                    System.out.println("xml length = " + xml.length());
                     try
                     {
                         write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "LOADNETWORK", 0, xml, warmupDuration,

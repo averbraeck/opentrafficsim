@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,6 +76,8 @@ import org.zeromq.ZMonitor;
 import org.zeromq.ZMonitor.ZEvent;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
@@ -95,7 +98,7 @@ import picocli.CommandLine.Option;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Sim0MQControlledOTS implements EventListenerInterface
+public class Sim0MQControlledOTSNew implements EventListenerInterface
 {
     /** ... */
     private static final long serialVersionUID = 20200317L;
@@ -114,7 +117,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
      * @param zContext ZContext; the ZMQ context of all the sockets.
      * @param port int; the port number of the listening socket
      */
-    public Sim0MQControlledOTS(final ZContext zContext, final int port)
+    public Sim0MQControlledOTSNew(final ZContext zContext, final int port)
     {
         this.zContext = zContext;
         this.port = port;
@@ -174,7 +177,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         System.out.println("Creating OTS server listening on port " + port);
 
         ZContext context = new ZContext(1);
-        Sim0MQControlledOTS slave = new Sim0MQControlledOTS(context, port);
+        Sim0MQControlledOTSNew slave = new Sim0MQControlledOTSNew(context, port);
 
         slave.commandLoop();
         // Currently, there is no shutdown command; so the following code is never executed
@@ -272,32 +275,37 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     @SuppressWarnings("checkstyle:methodlength")
     public void commandLoop()
     {
-        // Socket to talk to clients
-        ZMQ.Socket remoteControllerSocket = this.zContext.createSocket(SocketType.DEALER);
-        ZMonitor zm = new ZMonitor(this.zContext, remoteControllerSocket);
-        zm.add(ZMonitor.Event.ALL);
-        zm.verbose(true);
-        zm.start();
-        new Monitor(zm).start();
+        // Socket to talk to clients. XXX: PAIR socket
+        ZMQ.Socket remoteControllerSocket = this.zContext.createSocket(SocketType.PAIR);
+        remoteControllerSocket.setHWM(100000);
+        // XXX: temporary without Monitor
+        // ZMonitor zm = new ZMonitor(this.zContext, remoteControllerSocket);
+        // zm.add(ZMonitor.Event.ALL);
+        // zm.verbose(true);
+        // zm.start();
+        // new Monitor(zm).start();
         remoteControllerSocket.bind("tcp://*:" + this.port);
         ZMQ.Socket logMessages = this.zContext.createSocket(SocketType.PULL);
+        logMessages.setHWM(100000);
         logMessages.bind("inproc://toMaster");
 
-        ZMQ.Poller items = this.zContext.createPoller(2);
-        items.register(logMessages, ZMQ.Poller.POLLIN);
-        items.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
+        // XXX: No POLLER
+        // ZMQ.Poller items = this.zContext.createPoller(2);
+        // items.register(logMessages, ZMQ.Poller.POLLIN);
+        // items.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
         while (!Thread.currentThread().isInterrupted())
         {
-            items.poll();
-            if (items.pollin(0))
+            // items.poll();
+            // if (items.pollin(0))
+            byte[] logMessage = logMessages.recv(ZMQ.DONTWAIT);
+            if (logMessage != null)
             {
-                byte[] message = logMessages.recv(0);
                 try
                 {
                     // Patch the sender field to include the packet counter value.
-                    Object[] messageFields = Sim0MQMessage.decode(message).createObjectArray();
+                    Object[] messageFields = Sim0MQMessage.decode(logMessage).createObjectArray();
                     Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
-                    message = Sim0MQMessage.encodeUTF8(true, messageFields[2],
+                    logMessage = Sim0MQMessage.encodeUTF8(true, messageFields[2],
                             String.format("slave_%05d", this.packetsSent.addAndGet(1)), messageFields[4], messageFields[5],
                             messageFields[6], newMessageFields);
                 }
@@ -305,12 +313,24 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 {
                     e.printStackTrace();
                 }
-                remoteControllerSocket.send(message);
+                remoteControllerSocket.send(logMessage);
             }
-            else if (items.pollin(1)) // The "else" ensures that all log messages are handled before a new command is handled
+            else // The "else" ensures that all log messages are handled before a new command is handled
             {
                 // Read the request from the client
-                byte[] request = remoteControllerSocket.recv(0);
+                byte[] request = remoteControllerSocket.recv(ZMQ.DONTWAIT);
+                if (request == null)
+                {
+                    try
+                    {
+                        Thread.sleep(1); // 1000 Hz
+                        continue;
+                    }
+                    catch (InterruptedException e)
+                    {
+                        // ignore;
+                    }
+                }
                 Object[] message;
                 String result = "At your command";
                 try
@@ -328,6 +348,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                 if (message.length == 12 && message[8] instanceof String && message[9] instanceof Duration
                                         && message[10] instanceof Duration && message[11] instanceof Long)
                                 {
+                                    System.out.println("xml length = " + ((String) message[8]).length());
                                     String loadResult = loadNetwork((String) message[8], (Duration) message[9],
                                             (Duration) message[10], (Long) message[11]);
                                     if (null != loadResult)
@@ -341,7 +362,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                 }
                                 break;
 
-                            case "SIMULATEUNTIL":
+                            case "SIMULATEUNTIL": // XXX: the SimulateUntil is blocking this loop. Do we want that?
                                 if (null == this.model)
                                 {
                                     result = "No model loaded";
@@ -351,9 +372,22 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                     OTSSimulatorInterface simulator = this.model.getSimulator();
                                     System.out.println("Simulating up to " + message[8]);
                                     simulator.runUpTo((Time) message[8]);
+                                    int count = 0;
                                     while (simulator.isRunning())
                                     {
                                         System.out.print(".");
+                                        count++;
+                                        if (count > 1000) // 10 seconds
+                                        {
+                                            System.out
+                                                    .println("SIMULATOR DOES NOT STOP. TIME = " + simulator.getSimulatorTime());
+                                            Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt = simulator.getEventList().iterator();
+                                            while (elIt.hasNext())
+                                            {
+                                                System.out.println("EVENTLIST: " + elIt.next());
+                                            }
+                                            simulator.stop();
+                                        }
                                         try
                                         {
                                             Thread.sleep(10);
@@ -364,6 +398,14 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                         }
                                     }
                                     System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
+                                    try
+                                    {
+                                        Thread.sleep(100); // EXTRA STOP FOR SYNC REASONS - BUG IN DSOL!
+                                    }
+                                    catch (InterruptedException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
                                 }
                                 else
                                 {
@@ -444,10 +486,12 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        // Not sure if this method is always called from the same thread.
-        // XXX: Do not understand why this socket is created ON EVERY NOTIFY. A socket should only be created once and reused.
+        /**
+         * Not sure if this method is always called from the same thread.
+         */
         ZMQ.Socket toMaster = this.zContext.createSocket(SocketType.PUSH);
-        toMaster.setSendTimeOut(-1); // Blocking send mode
+        toMaster.setHWM(100000);
+        // XXX toMaster.setSendTimeOut(-1); // Blocking send mode
         toMaster.connect("inproc://toMaster");
         try
         {
