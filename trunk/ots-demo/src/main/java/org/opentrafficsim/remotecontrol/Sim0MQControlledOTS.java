@@ -506,7 +506,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         {
             System.out.println("Creating new internal socket for thread " + threadId);
             socket = this.zContext.createSocket(SocketType.PUSH);
-            socket.setHWM(1);
+            socket.setHWM(100000);
             socket.connect("inproc://results");
             this.socketMap.put(threadId, socket);
         }
