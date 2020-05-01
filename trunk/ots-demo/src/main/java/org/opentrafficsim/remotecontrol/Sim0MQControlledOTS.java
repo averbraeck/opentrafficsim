@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -71,10 +72,10 @@ import org.xml.sax.SAXException;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
-import org.zeromq.ZMonitor;
-import org.zeromq.ZMonitor.ZEvent;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
@@ -108,16 +109,61 @@ public class Sim0MQControlledOTS implements EventListenerInterface
 
     /** The port number of the listening socket. */
     private final int port;
+    
+    /** Communication channel to the master. */
+    private final MasterCommunication masterCommunication = new MasterCommunication();
 
     /**
      * Construct a new Sim0MQ controlled OTS.
-     * @param zContext ZContext; the ZMQ context of all the sockets.
+     * @param zContext ZContext; the context of ZMQ
      * @param port int; the port number of the listening socket
      */
     public Sim0MQControlledOTS(final ZContext zContext, final int port)
     {
         this.zContext = zContext;
         this.port = port;
+        this.masterCommunication.start();
+    }
+    
+    /**
+     * Thread that handles ALL reads and writes on the socket to the master. 
+     */
+    class MasterCommunication extends Thread
+    {
+        @Override
+        public void run()
+        {
+            System.err.println("MasterCommunication thread id is " + Thread.currentThread().getId());
+            ZMQ.Socket remoteControllerSocket = zContext.createSocket(SocketType.PAIR);
+            remoteControllerSocket.setHWM(100000);
+            remoteControllerSocket.bind("tcp://*:" + port);
+            ZMQ.Socket resultQueue = zContext.createSocket(SocketType.PULL);
+            resultQueue.bind("inproc://results");
+            ZMQ.Socket toCommandLoop = zContext.createSocket(SocketType.PUSH);
+            toCommandLoop.setHWM(1000);
+            toCommandLoop.connect("inproc://commands");
+            ZMQ.Poller poller = zContext.createPoller(2);
+            poller.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
+            poller.register(resultQueue, ZMQ.Poller.POLLIN);
+            while (!Thread.currentThread().isInterrupted())
+            {
+                poller.poll();
+                if (poller.pollin(0))
+                {
+                    System.err.println("Got incoming command");
+                    byte[] data = remoteControllerSocket.recv();
+                    toCommandLoop.send(data, 0);
+                    System.err.println("Incoming command handed over to toCommandLoop socket");
+                }
+                else if (poller.pollin(1))
+                {
+                    System.err.println("Got outgoing result");
+                    byte[] data = resultQueue.recv();
+                    remoteControllerSocket.send(data, 0);
+                    System.err.println("Outgoing result handed over to remoteControllerSocket");
+                }
+            }
+        }
     }
 
     /**
@@ -128,7 +174,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     public static class Options implements Checkable
     {
         /** The IP port. */
-        @Option(names = {"-p", "--port"}, description = "Internet port to use", defaultValue = "8888")
+        @Option(names = { "-p", "--port" }, description = "Internet port to use", defaultValue = "8888")
         private int port;
 
         /**
@@ -172,8 +218,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         CliUtil.execute(options, args); // register Unit converters, parse the command line, etc..
         int port = options.getPort();
         System.out.println("Creating OTS server listening on port " + port);
-
-        ZContext context = new ZContext(1);
+        ZContext context = new ZContext(10);
         Sim0MQControlledOTS slave = new Sim0MQControlledOTS(context, port);
 
         slave.commandLoop();
@@ -272,183 +317,206 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     @SuppressWarnings("checkstyle:methodlength")
     public void commandLoop()
     {
-        // Socket to talk to clients
-        ZMQ.Socket remoteControllerSocket = this.zContext.createSocket(SocketType.DEALER);
-        ZMonitor zm = new ZMonitor(this.zContext, remoteControllerSocket);
-        zm.add(ZMonitor.Event.ALL);
-        zm.verbose(true);
-        zm.start();
-        new Monitor(zm).start();
-        remoteControllerSocket.bind("tcp://*:" + this.port);
-        ZMQ.Socket logMessages = this.zContext.createSocket(SocketType.PULL);
-        logMessages.bind("inproc://toMaster");
-
-        ZMQ.Poller items = this.zContext.createPoller(2);
-        items.register(logMessages, ZMQ.Poller.POLLIN);
-        items.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
+        System.err.println("CommandLoop thread id is " + Thread.currentThread().getId());
+        ZMQ.Socket incomingCommands = this.zContext.createSocket(SocketType.PULL);
+        incomingCommands.bind("inproc://commands");
         while (!Thread.currentThread().isInterrupted())
         {
-            items.poll();
-            if (items.pollin(0))
+            // Read the request from the client
+            System.err.println("CommandLoop ready to read a command");
+            byte[] request = incomingCommands.recv(0);
+            System.err.println("CommandLoop processing a command of " + request.length + " bytes");
+            Object[] message;
+            String result = "At your command";
+            try
             {
-                byte[] message = logMessages.recv(0);
-                try
+                message = Sim0MQMessage.decode(request).createObjectArray();
+                System.out.println("Received Sim0MQ message:");
+
+                if (message.length >= 8 && message[5] instanceof String)
                 {
-                    // Patch the sender field to include the packet counter value.
-                    Object[] messageFields = Sim0MQMessage.decode(message).createObjectArray();
-                    Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
-                    message = Sim0MQMessage.encodeUTF8(true, messageFields[2],
-                            String.format("slave_%05d", this.packetsSent.addAndGet(1)), messageFields[4], messageFields[5],
-                            messageFields[6], newMessageFields);
+                    String command = (String) message[5];
+                    System.out.println("Command is " + command);
+                    switch (command)
+                    {
+                        case "LOADNETWORK":
+                            if (message.length == 12 && message[8] instanceof String && message[9] instanceof Duration
+                                    && message[10] instanceof Duration && message[11] instanceof Long)
+                            {
+                                System.out.println("xml length = " + ((String) message[8]).length());
+                                String loadResult = loadNetwork((String) message[8], (Duration) message[9],
+                                        (Duration) message[10], (Long) message[11]);
+                                if (null != loadResult)
+                                {
+                                    result = loadResult;
+                                }
+                            }
+                            else
+                            {
+                                result = "no network, warmupTime and/or runTime provided with LOADNETWORK command";
+                            }
+                            break;
+
+                        case "SIMULATEUNTIL": // XXX: the SimulateUntil is blocking this loop. Do we want that?
+                            if (null == this.model)
+                            {
+                                result = "No model loaded";
+                            }
+                            else if (message.length == 9 && message[8] instanceof Time)
+                            {
+                                OTSSimulatorInterface simulator = this.model.getSimulator();
+                                System.out.println("Simulating up to " + message[8]);
+                                simulator.runUpTo((Time) message[8]);
+                                int count = 0;
+                                while (simulator.isRunning())
+                                {
+                                    System.out.print(".");
+                                    count++;
+                                    if (count > 1000) // 10 seconds
+                                    {
+                                        System.out.println("SIMULATOR DOES NOT STOP. TIME = " + simulator.getSimulatorTime());
+                                        Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt =
+                                                simulator.getEventList().iterator();
+                                        while (elIt.hasNext())
+                                        {
+                                            System.out.println("EVENTLIST: " + elIt.next());
+                                        }
+                                        simulator.stop();
+                                    }
+                                    try
+                                    {
+                                        Thread.sleep(10);
+                                    }
+                                    catch (InterruptedException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
+                                try
+                                {
+                                    Thread.sleep(100); // EXTRA STOP FOR SYNC REASONS - BUG IN DSOL!
+                                }
+                                catch (InterruptedException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else
+                            {
+                                result = "Bad or missing stop time";
+                            }
+                            break;
+
+                        case "SENDALLGTUPOSITIONS":
+                            if (null == this.model)
+                            {
+                                result = "No model loaded";
+                            }
+                            else if (message.length == 8)
+                            {
+                                for (GTU gtu : this.model.network.getGTUs())
+                                {
+                                    // Send information about one GTU to master
+                                    try
+                                    {
+                                        DirectedPoint gtuPosition = gtu.getLocation();
+                                        Object[] gtuData = new Object[] { gtu.getId(), gtu.getGTUType().getId(), gtuPosition.x,
+                                                gtuPosition.y, gtuPosition.z, gtuPosition.getRotZ(), gtu.getSpeed(),
+                                                gtu.getAcceleration() };
+                                        sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave_XXXXX", "master", "GTUPOSITION",
+                                                0, gtuData));
+                                    }
+                                    catch (Sim0MQException | SerializationException e)
+                                    {
+                                        e.printStackTrace();
+                                        break; // this is fatal
+                                    }
+
+                                }
+                            }
+                            break;
+
+                        default:
+                            System.out.println("Don't know how to handle message:");
+                            System.out.println(Sim0MQMessage.print(message));
+                            result = "Unimplemented command " + command;
+                            break;
+                    }
                 }
-                catch (Sim0MQException | SerializationException e)
+                else
                 {
-                    e.printStackTrace();
+                    System.out.println("Don't know how to handle message:");
+                    System.out.println(HexDumper.hexDumper(request));
+                    result = "Ignored message";
                 }
-                remoteControllerSocket.send(message);
             }
-            else if (items.pollin(1)) // The "else" ensures that all log messages are handled before a new command is handled
+            catch (Sim0MQException | SerializationException e)
             {
-                // Read the request from the client
-                byte[] request = remoteControllerSocket.recv(0);
-                Object[] message;
-                String result = "At your command";
-                try
-                {
-                    message = Sim0MQMessage.decode(request).createObjectArray();
-                    System.out.println("Received Sim0MQ message:");
-
-                    if (message.length >= 8 && message[5] instanceof String)
-                    {
-                        String command = (String) message[5];
-                        System.out.println("Command is " + command);
-                        switch (command)
-                        {
-                            case "LOADNETWORK":
-                                if (message.length == 12 && message[8] instanceof String && message[9] instanceof Duration
-                                        && message[10] instanceof Duration && message[11] instanceof Long)
-                                {
-                                    String loadResult = loadNetwork((String) message[8], (Duration) message[9],
-                                            (Duration) message[10], (Long) message[11]);
-                                    if (null != loadResult)
-                                    {
-                                        result = loadResult;
-                                    }
-                                }
-                                else
-                                {
-                                    result = "no network, warmupTime and/or runTime provided with LOADNETWORK command";
-                                }
-                                break;
-
-                            case "SIMULATEUNTIL":
-                                if (null == this.model)
-                                {
-                                    result = "No model loaded";
-                                }
-                                else if (message.length == 9 && message[8] instanceof Time)
-                                {
-                                    OTSSimulatorInterface simulator = this.model.getSimulator();
-                                    System.out.println("Simulating up to " + message[8]);
-                                    simulator.runUpTo((Time) message[8]);
-                                    while (simulator.isRunning())
-                                    {
-                                        System.out.print(".");
-                                        try
-                                        {
-                                            Thread.sleep(10);
-                                        }
-                                        catch (InterruptedException e)
-                                        {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
-                                }
-                                else
-                                {
-                                    result = "Bad or missing stop time";
-                                }
-                                break;
-
-                            case "SENDALLGTUPOSITIONS":
-                                if (null == this.model)
-                                {
-                                    result = "No model loaded";
-                                }
-                                else if (message.length == 8)
-                                {
-                                    for (GTU gtu : this.model.network.getGTUs())
-                                    {
-                                        // Send information about one GTU to master
-                                        try
-                                        {
-                                            DirectedPoint gtuPosition = gtu.getLocation();
-                                            Object[] gtuData = new Object[] {gtu.getId(), gtu.getGTUType().getId(),
-                                                    gtuPosition.x, gtuPosition.y, gtuPosition.z, gtuPosition.getRotZ(),
-                                                    gtu.getSpeed(), gtu.getAcceleration()};
-                                            remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0,
-                                                    String.format("slave_%05d", this.packetsSent.addAndGet(1)), "master",
-                                                    "GTUPOSITION", 0, gtuData), 0);
-                                        }
-                                        catch (Sim0MQException | SerializationException e)
-                                        {
-                                            e.printStackTrace();
-                                            break; // this is fatal
-                                        }
-
-                                    }
-                                }
-                                break;
-
-                            default:
-                                System.out.println("Don't know how to handle message:");
-                                System.out.println(Sim0MQMessage.print(message));
-                                result = "Unimplemented command " + command;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        System.out.println("Don't know how to handle message:");
-                        System.out.println(HexDumper.hexDumper(request));
-                        result = "Ignored message";
-                    }
-                }
-                catch (Sim0MQException | SerializationException e)
-                {
-                    e.printStackTrace();
-                    result = "Could not decode command: " + e.getMessage();
-                }
-                catch (RemoteException e)
-                {
-                    e.printStackTrace();
-                    result = "Caught RemoteException: " + e.getMessage();
-                }
-                // Send reply to master
-                try
-                {
-                    remoteControllerSocket.send(Sim0MQMessage.encodeUTF8(true, 0,
-                            String.format("slave_%05d", this.packetsSent.addAndGet(1)), "master", "READY", 0, result), 0);
-                }
-                catch (Sim0MQException | SerializationException e)
-                {
-                    e.printStackTrace();
-                    break; // this is fatal
-                }
+                e.printStackTrace();
+                result = "Could not decode command: " + e.getMessage();
+            }
+            catch (RemoteException e)
+            {
+                e.printStackTrace();
+                result = "Caught RemoteException: " + e.getMessage();
+            }
+            // Send reply to master
+            try
+            {
+                sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave_XXXXX", "master", "READY", 0, result));
+            }
+            catch (Sim0MQException | SerializationException e)
+            {
+                e.printStackTrace();
+                break; // this is fatal
             }
         }
+    }
+
+    /** In memory sockets to talk to the multiplexer. */
+    private Map<Long, ZMQ.Socket> socketMap = new LinkedHashMap<>();
+    
+    /**
+     * Safe - synchronized - portal to send a message to the remote controller.
+     * @param data byte[]; the data to send
+     */
+    public synchronized void sendToMaster(final byte[] data)
+    {
+        byte[] fixedData = data;
+        int number = -1;
+        try
+        {
+            // Patch the sender field to include the packet counter value.
+            Object[] messageFields = Sim0MQMessage.decode(data).createObjectArray();
+            Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
+            number = this.packetsSent.addAndGet(1);
+            fixedData =
+                    Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number),
+                            messageFields[4], messageFields[5], messageFields[6], newMessageFields);
+            System.err.println("Prepared message " + number + ", type is " + messageFields[5]);
+        }
+        catch (Sim0MQException | SerializationException e)
+        {
+            e.printStackTrace();
+        }
+        Long threadId = Thread.currentThread().getId();
+        ZMQ.Socket socket = this.socketMap.get(threadId);
+        if (null == socket)
+        {
+            System.out.println("Creating new internal socket for thread " + threadId);
+            socket = this.zContext.createSocket(SocketType.PUSH);
+            socket.setHWM(1);
+            socket.connect("inproc://results");
+            this.socketMap.put(threadId, socket);
+        }
+        socket.send(fixedData, 0);
     }
 
     /** {@inheritDoc} */
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        // Not sure if this method is always called from the same thread.
-        // XXX: Do not understand why this socket is created ON EVERY NOTIFY. A socket should only be created once and reused.
-        ZMQ.Socket toMaster = this.zContext.createSocket(SocketType.PUSH);
-        toMaster.setSendTimeOut(-1); // Blocking send mode
-        toMaster.connect("inproc://toMaster");
         try
         {
             EventType type = event.getType();
@@ -460,8 +528,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 {
                     Object[] payload = (Object[]) event.getContent();
                     CategoryLogger.always().info("{}: Evaluating at time {}", payload[0], payload[1]);
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0,
-                            String.format("%s: Evaluating at time %s", payload[0], payload[1])), 0);
+                    sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0,
+                            String.format("%s: Evaluating at time %s", payload[0], payload[1])));
                     break;
                 }
 
@@ -470,7 +538,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     Object[] payload = (Object[]) event.getContent();
                     CategoryLogger.always().info("{}: Conflict group changed from {} to {}", payload[0], payload[1],
                             payload[2]);
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload), 0);
+                    sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload));
                     break;
                 }
 
@@ -479,7 +547,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     Object[] payload = (Object[]) event.getContent();
                     CategoryLogger.always().info("{}: Variable changed {} <- {}   {}", payload[0], payload[1], payload[4],
                             payload[5]);
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload), 0);
+                    sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload));
                     break;
                 }
 
@@ -487,29 +555,27 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 {
                     Object[] payload = (Object[]) event.getContent();
                     CategoryLogger.always().info("{}: Warning {}", payload[0], payload[1]);
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload), 0);
+                    sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, payload));
                     break;
                 }
 
                 case "TIME_CHANGED_EVENT":
                 {
                     CategoryLogger.always().info("Time changed to {}", event.getContent());
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0,
-                            String.format("Time changed to %s", event.getContent())), 0);
+                    sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0,
+                            String.format("Time changed to %s", event.getContent())));
                     break;
                 }
 
                 case "NETWORK.GTU.ADD":
                 {
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, event.getContent()),
-                            0);
+                    sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, event.getContent()));
                     break;
                 }
 
                 case "NETWORK.GTU.REMOVE":
                 {
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, event.getContent()),
-                            0);
+                    sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", eventTypeName, 0, event.getContent()));
                     break;
                 }
 
@@ -517,8 +583,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 {
                     CategoryLogger.always().info("Event of unhandled type {} with payload {}", event.getType(),
                             event.getContent());
-                    toMaster.send(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", "Event of unhandled type", 0, String
-                            .format("%s: Event of unhandled type %s with payload {}", event.getType(), event.getContent())), 0);
+                    sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave", "master", "Event of unhandled type", 0, String
+                            .format("%s: Event of unhandled type %s with payload {}", event.getType(), event.getContent())));
                     break;
                 }
             }
@@ -528,69 +594,6 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         {
             e.printStackTrace();
         }
-        toMaster.close();
-    }
-
-    /** Monitor thread. */
-    static class Monitor extends Thread
-    {
-        /** The ZMonitor that does the work. */
-        private final ZMonitor monitor;
-
-        /**
-         * Construct a new Monitor.
-         * @param monitor ZMonitor; the ZMonitor that collects events from the ZMQ socket that must be monitored
-         */
-        Monitor(final ZMonitor monitor)
-        {
-            this.monitor = monitor;
-        }
-
-        @Override
-        public void run()
-        {
-            while (true)
-            {
-                ZEvent event = this.monitor.nextEvent();
-                System.out.println("event is " + event);
-                switch (event.type)
-                {
-                    case ACCEPTED:
-                        System.out.println("Accepted");
-                        break;
-                    case ACCEPT_FAILED:
-                        break;
-                    case ALL:
-                        break;
-                    case BIND_FAILED:
-                        break;
-                    case CLOSED:
-                        break;
-                    case CLOSE_FAILED:
-                        break;
-                    case CONNECTED:
-                        break;
-                    case CONNECT_DELAYED:
-                        break;
-                    case CONNECT_RETRIED:
-                        break;
-                    case DISCONNECTED:
-                        System.out.println("Disconnected");
-                        break;
-                    case HANDSHAKE_PROTOCOL:
-                        break;
-                    case LISTENING:
-                        break;
-                    case MONITOR_STOPPED:
-                        break;
-                    default:
-                        System.out.println("Unknown event");
-                        break;
-
-                }
-            }
-        }
-
     }
 
     /**

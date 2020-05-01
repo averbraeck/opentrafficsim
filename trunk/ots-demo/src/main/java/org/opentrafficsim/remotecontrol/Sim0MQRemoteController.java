@@ -189,9 +189,12 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         public final void run()
         {
             int nextExpectedPacket = 0;
-            ZMQ.Socket slaveSocket = this.context.createSocket(SocketType.DEALER);
+            ZMQ.Socket slaveSocket = this.context.createSocket(SocketType.PAIR); // changed to PAIR
+            slaveSocket.setHWM(100000);
             ZMQ.Socket awtSocketIn = this.context.createSocket(SocketType.PULL);
+            awtSocketIn.setHWM(100000);
             ZMQ.Socket awtSocketOut = this.context.createSocket(SocketType.PUSH);
+            awtSocketOut.setHWM(100000);
             slaveSocket.connect("tcp://" + this.slaveHost + ":" + this.slavePort);
             awtSocketIn.bind("inproc://fromAWT");
             awtSocketOut.bind("inproc://toAWT");
@@ -250,27 +253,11 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         this.pollerThread.start();
 
         this.toOTS = this.zContext.createSocket(SocketType.PUSH);
+        this.toOTS.setHWM(100000);
 
         new OTS2AWT(this.zContext).start();
 
         this.toOTS.connect("inproc://fromAWT");
-
-        // Send something
-        // try
-        // {
-        // byte[] message = Sim0MQMessage.encodeUTF8(true, 0, "master", "slave", 0, 0, "HELLO");
-        // output.println("Sending HELLO message:");
-        // output.println(HexDumper.hexDumper(message));
-        // this.toOTS.send(message, 0);
-        // }
-        // catch (Sim0MQException e)
-        // {
-        // e.printStackTrace();
-        // }
-        // catch (SerializationException e)
-        // {
-        // e.printStackTrace();
-        // }
     }
 
     /**
@@ -417,6 +404,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
         OTS2AWT(final ZContext zContext)
         {
             this.fromOTS = zContext.createSocket(SocketType.PULL);
+            this.fromOTS.setHWM(100000);
             this.fromOTS.connect("inproc://toAWT");
         }
 
@@ -429,7 +417,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                 try
                 {
                     // Read from remotely controlled OTS
-                    byte[] bytes = this.fromOTS.recv(0);
+                    byte[] bytes = this.fromOTS.recv(0); /// XXX: this one is okay to block
                     // System.out.println("remote controller has received a message on the fromOTS PULL socket");
                     Object[] message = Sim0MQMessage.decode(bytes).createObjectArray();
                     if (message.length > 8 && message[5] instanceof String)
@@ -533,6 +521,7 @@ public class Sim0MQRemoteController extends JFrame implements WindowListener, Ac
                 try
                 {
                     String xml = readStringFromURL(url);
+                    System.out.println("xml length = " + xml.length());
                     try
                     {
                         write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "LOADNETWORK", 0, xml, warmupDuration,
