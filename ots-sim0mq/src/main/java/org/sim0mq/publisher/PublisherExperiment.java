@@ -89,8 +89,8 @@ public final class PublisherExperiment
      * @throws SerializationException ...
      * @throws Sim0MQException ...
      */
-    public static void main(final String[] args)
-            throws IOException, SimRuntimeException, NamingException, DSOLException, OTSDrawingException, Sim0MQException, SerializationException
+    public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException, DSOLException,
+            OTSDrawingException, Sim0MQException, SerializationException
     {
         ReturnWrapper returnWrapper = new ReturnWrapper(
                 new Object[] { "SIM01", true, "federationId", "senderId", "receiverId", "messageTypeId", 0, 0 });
@@ -181,7 +181,7 @@ public final class PublisherExperiment
         }
         System.out.println("Simulator has stopped at time " + animator.getSimulatorTime());
         // Subscribe to move events of GTU 3 (this GTU drives out of the simulation within the first 60 seconds)
-        publisher.executeCommand("GTU move", Command.SUBSCRIBE_TO_CHANGE, new Object[] {"3"}, returnWrapper);
+        publisher.executeCommand("GTU move", Command.SUBSCRIBE_TO_CHANGE, new Object[] { "3" }, returnWrapper);
         endTime = new Time(60, TimeUnit.BASE_SECOND);
         System.out.println("Simulating up to " + endTime);
         animator.runUpTo(endTime);
