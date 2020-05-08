@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
@@ -161,7 +161,7 @@ public class NodeTransceiver extends AbstractTransceiver
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        EventType type = event.getType();
+        EventTypeInterface type = event.getType();
         if (type.equals(Network.NODE_ADD_EVENT))
         {
             Node node = this.network.getNode((String) event.getContent());

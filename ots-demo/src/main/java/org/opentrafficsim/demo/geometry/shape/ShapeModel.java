@@ -35,7 +35,7 @@ public class ShapeModel extends AbstractOTSModel
     private Map<String, Link> shpLinks;
 
     /** the network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("shape model network", true);
+    private OTSRoadNetwork network = new OTSRoadNetwork("shape model network", true, getSimulator());
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator

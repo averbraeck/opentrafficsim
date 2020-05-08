@@ -1,8 +1,8 @@
 package org.opentrafficsim.imb.transceiver;
 
-import org.djutils.event.Event;
 import org.djutils.event.EventInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEvent;
+import org.djutils.event.TimedEventType;
 import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TByteBuffer;
@@ -31,8 +31,8 @@ public class PubSubIMBMessageHandler implements IMBMessageHandler
     /** The IMB event name (String). */
     private final String imbEventName;
 
-    /** The corresponding EventType for OTS. */
-    private final EventType eventType;
+    /** The corresponding TimedEventType for OTS. */
+    private final TimedEventType eventType;
 
     /** The Transformer to use for the given IMB message type. */
     private final IMBToOTSTransformer imbToOTSTransformer;
@@ -41,13 +41,13 @@ public class PubSubIMBMessageHandler implements IMBMessageHandler
      * Construct a new PubSubIMBMessageHandler. The PubSubIMBMessageHandler handles the IMB message by transforming it into a
      * DSOL Event and sending it to the EventListener at the current simulation time through a simulation event.
      * @param imbEventName String; the name of the IMB event
-     * @param eventType EventType; the event type that the listener subscribes to
+     * @param eventType TimedEventType; the event type that the listener subscribes to
      * @param imbToOTSTransformer IMBToOTSTransformer; the transformer that creates the event content and identifies the exact
      *            listener on the basis of the IBM event payload, e.g., on the basis of an id within the payload
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; The simulator to schedule the incoming notifications on
      * @throws IMBException in case the construction fails
      */
-    public PubSubIMBMessageHandler(final String imbEventName, final EventType eventType,
+    public PubSubIMBMessageHandler(final String imbEventName, final TimedEventType eventType,
             final IMBToOTSTransformer imbToOTSTransformer, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws IMBException
     {
@@ -68,7 +68,8 @@ public class PubSubIMBMessageHandler implements IMBMessageHandler
     public void handle(final TByteBuffer imbPayload) throws IMBException
     {
         IMBTransformResult imbTransformResult = this.imbToOTSTransformer.transform(imbPayload);
-        EventInterface event = new Event(this.eventType, this, imbTransformResult.getEventContent());
+        EventInterface event =
+                new TimedEvent(this.eventType, this, imbTransformResult.getEventContent(), simulator.getSimulatorTime());
         try
         {
             this.simulator.scheduleEventNow(this, imbTransformResult.getEventListener(), "notify", new Object[] {event});

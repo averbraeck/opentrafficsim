@@ -129,7 +129,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
         public final void constructModel() throws SimRuntimeException
         {
             URL url = URLResource.getResource("/xml/AimsunOtsNetwork.xml");
-            this.network = new OTSRoadNetwork("Aimsun network", true);
+            this.network = new OTSRoadNetwork("Aimsun network", true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(url.getPath(), this.network, getSimulator(), true);

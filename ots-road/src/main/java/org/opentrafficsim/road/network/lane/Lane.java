@@ -19,7 +19,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
@@ -184,37 +184,37 @@ public class Lane extends CrossSectionElement implements Serializable
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
      */
-    public static final EventType GTU_ADD_EVENT = new EventType("LANE.GTU.ADD");
+    public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, Length position}
      */
-    public static final EventType GTU_REMOVE_EVENT = new EventType("LANE.GTU.REMOVE");
+    public static final TimedEventType GTU_REMOVE_EVENT = new TimedEventType("LANE.GTU.REMOVE");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a Sensor to the lane. <br>
      * Payload: Object[] {String sensorId, Sensor sensor}
      */
-    public static final EventType SENSOR_ADD_EVENT = new EventType("LANE.SENSOR.ADD");
+    public static final TimedEventType SENSOR_ADD_EVENT = new TimedEventType("LANE.SENSOR.ADD");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a Sensor from the lane. <br>
      * Payload: Object[] {String sensorId, Sensor sensor}
      */
-    public static final EventType SENSOR_REMOVE_EVENT = new EventType("LANE.SENSOR.REMOVE");
+    public static final TimedEventType SENSOR_REMOVE_EVENT = new TimedEventType("LANE.SENSOR.REMOVE");
 
     /**
      * The event type for pub/sub indicating the addition of a LaneBasedObject to the lane. <br>
      * Payload: Object[] {LaneBasedObject laneBasedObject}
      */
-    public static final EventType OBJECT_ADD_EVENT = new EventType("LANE.OBJECT.ADD");
+    public static final TimedEventType OBJECT_ADD_EVENT = new TimedEventType("LANE.OBJECT.ADD");
 
     /**
      * The event type for pub/sub indicating the removal of a LaneBasedObject from the lane. <br>
      * Payload: Object[] {LaneBasedObject laneBasedObject}
      */
-    public static final EventType OBJECT_REMOVE_EVENT = new EventType("LANE.OBJECT.REMOVE");
+    public static final TimedEventType OBJECT_REMOVE_EVENT = new TimedEventType("LANE.OBJECT.REMOVE");
 
     /**
      * Construct a new Lane.
@@ -860,7 +860,8 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         laneBasedObjectList.add(laneBasedObject);
         this.parentLink.getNetwork().addObject(laneBasedObject);
-        fireEvent(Lane.OBJECT_ADD_EVENT, new Object[] {laneBasedObject});
+        fireTimedEvent(Lane.OBJECT_ADD_EVENT, new Object[] { laneBasedObject },
+                getParentLink().getSimulator().getSimulatorTime());
     }
 
     /**
@@ -870,7 +871,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
-        fireEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject});
+        fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] { laneBasedObject },
+                getParentLink().getSimulator().getSimulatorTime());
         List<LaneBasedObject> laneBasedObjectList =
                 this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
         if (null == laneBasedObjectList)

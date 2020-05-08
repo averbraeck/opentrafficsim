@@ -66,8 +66,9 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     protected void init() throws NetworkException
     {
         // notify the potential animation of the existence of a StaticObject
-        fireEvent(Network.OBJECT_ADD_EVENT, this.id);
-        fireEvent(Network.ANIMATION_OBJECT_ADD_EVENT, this);
+        // These next events are fired by the OTSNetwork when the object is registered in the Network.
+        // fireTimedEvent(Network.OBJECT_ADD_EVENT, this.id);
+        // fireTimedEvent(Network.ANIMATION_OBJECT_ADD_EVENT, this);
     }
 
     /**

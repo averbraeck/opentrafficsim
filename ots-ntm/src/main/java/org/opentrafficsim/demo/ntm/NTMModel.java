@@ -132,7 +132,7 @@ public class NTMModel extends AbstractOTSModel
     private LinkedHashMap<String, NTMLink> debugLinkList;
 
     /** TODO: make sure network is used... It's empty now... */
-    private OTSNetwork network = new OTSNetwork("ntm", true);
+    private OTSNetwork network;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -142,6 +142,7 @@ public class NTMModel extends AbstractOTSModel
     public NTMModel(final OTSSimulatorInterface simulator)
     {
         super(simulator);
+        this.network = new OTSNetwork("ntm", true, simulator);
         LinkEdge<NTMLink> l = new LinkEdge<NTMLink>(null);
         this.linkGraph =
                 new SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>>((Class<? extends LinkEdge<NTMLink>>) l.getClass());

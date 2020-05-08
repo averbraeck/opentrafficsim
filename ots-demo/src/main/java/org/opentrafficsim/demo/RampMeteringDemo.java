@@ -245,7 +245,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("RampMetering", true);
+        OTSRoadNetwork network = new OTSRoadNetwork("RampMetering", true, sim);
         if (this.output)
         {
             network.addListener(this, Network.GTU_ADD_EVENT);

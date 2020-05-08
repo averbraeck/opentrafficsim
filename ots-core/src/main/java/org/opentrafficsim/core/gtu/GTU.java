@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.event.EventProducerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
@@ -217,7 +217,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * The event type for pub/sub indicating the initialization of a new GTU. <br>
      * Payload: [String id, PositionVector initialPosition, Direction initialDirection, Length length, Length width]
      */
-    EventType INIT_EVENT = new EventType("GTU.INIT",
+    TimedEventType INIT_EVENT = new TimedEventType("GTU.INIT",
             new MetaData("GTU init", "GTU id, initial position and size",
                     new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("initial position", "initial position", PositionVector.class),
@@ -229,7 +229,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * The event type for pub/sub indicating a move. <br>
      * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, Length odometer]
      */
-    EventType MOVE_EVENT = new EventType("GTU.MOVE",
+    TimedEventType MOVE_EVENT = new TimedEventType("GTU.MOVE",
             new MetaData("GTU move", "GTU id, position, speed, acceleration, odometer",
                     new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", PositionVector.class),
@@ -242,7 +242,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * The event type for pub/sub indicating destruction of the GTU. <br>
      * Payload: [String id, DirectedPoint lastPosition, Length odometer]
      */
-    EventType DESTROY_EVENT = new EventType("GTU.DESTROY",
+    TimedEventType DESTROY_EVENT = new TimedEventType("GTU.DESTROY",
             new MetaData("GTU destroy", "GTU id, final position, final odometer",
                     new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", PositionVector.class),

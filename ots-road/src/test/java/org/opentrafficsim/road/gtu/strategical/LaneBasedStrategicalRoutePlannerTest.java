@@ -40,13 +40,14 @@ public class LaneBasedStrategicalRoutePlannerTest
     @Test
     public final void nextLinkDirectionTest() throws GTUException, NetworkException, OTSGeometryException
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("next link direction test", true);
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
+        OTSRoadNetwork network = new OTSRoadNetwork("next link direction test", true, simulator);
         // Build a really simple network
         OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));
         OTSNode toNode = new OTSNode(network, "to", new OTSPoint3D(100, 0, 0));
         OTSLine3D designLine = new OTSLine3D(fromNode.getPoint(), toNode.getPoint());
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
-        OTSLink link = new OTSLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine, simulator);
+        OTSLink link = new OTSLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine,
+                simulator);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
         Parameters params = DefaultTestParameters.create();

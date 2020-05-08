@@ -85,7 +85,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
     private static Lane[] buildNetwork(final double[] lengths, final OTSSimulatorInterface simulator)
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+        OTSRoadNetwork network = new OTSRoadNetwork("network", true, simulator);
         OTSRoadNode prevNode = null;
         Lane[] result = new Lane[lengths.length];
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);

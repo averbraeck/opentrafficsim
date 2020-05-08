@@ -60,9 +60,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
     /** The random stream. */
     private StreamInterface stream = new MersenneTwister();
 
-    /** The network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true);
-
     /**
      * Test construction of a TemplateGTUType and prove that each one uses private fields.
      * @throws Exception when something goes wrong (should not happen)
@@ -70,14 +67,15 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
     @Test
     public final void constructorTest() throws Exception
     {
-        GTUType pcType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGTUTypeTest");
+        OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true, simulator);
+        GTUType pcType = network.getGtuType(GTUType.DEFAULTS.CAR);
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcWidth =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
-        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGTUTypeTest");
         OTSModelInterface model = new DummyModelForTemplateGTUTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         LaneBasedTemplateGTUType passengerCar = new LaneBasedTemplateGTUType(pcType, new Generator<Length>()
@@ -103,7 +101,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
             }
         }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null));
         verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed);
-        GTUType truckType = this.network.getGtuType(GTUType.DEFAULTS.TRUCK);
+        GTUType truckType = network.getGtuType(GTUType.DEFAULTS.TRUCK);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 18), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckWidth =
@@ -174,8 +172,10 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
     @Test
     public final void compatibleLaneTypeTest() throws Exception
     {
+        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGTUTypeTest");
+        OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true, simulator);
         // Create some TemplateGTUTypes
-        GTUType pc = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        GTUType pc = network.getGtuType(GTUType.DEFAULTS.CAR);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcWidth =
@@ -204,7 +204,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 return pcMaximumSpeed.draw();
             }
         });
-        GTUType truckType = this.network.getGtuType(GTUType.DEFAULTS.TRUCK);
+        GTUType truckType = network.getGtuType(GTUType.DEFAULTS.TRUCK);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 18), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckWidth =
@@ -238,22 +238,22 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         GTUCompatibility<LaneType> noTrucks = new GTUCompatibility<>((LaneType) null);
         noTrucks.addAllowedGTUType(passengerCar.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         LaneType trucksForbidden =
-                new LaneType("No Trucks", this.network.getLaneType(LaneType.DEFAULTS.FREEWAY), noTrucks, this.network);
+                new LaneType("No Trucks", network.getLaneType(LaneType.DEFAULTS.FREEWAY), noTrucks, network);
 
         GTUCompatibility<LaneType> truckOnly = new GTUCompatibility<>((LaneType) null);
         truckOnly.addAllowedGTUType(truck.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         LaneType trucksOnly =
-                new LaneType("Trucks Only", this.network.getLaneType(LaneType.DEFAULTS.FREEWAY), truckOnly, this.network);
+                new LaneType("Trucks Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), truckOnly, network);
 
         GTUCompatibility<LaneType> bicyclesOnly = new GTUCompatibility<>((LaneType) null);
         LaneType bicycleLane =
-                new LaneType("Bicycles Only", this.network.getLaneType(LaneType.DEFAULTS.FREEWAY), bicyclesOnly, this.network);
+                new LaneType("Bicycles Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), bicyclesOnly, network);
 
         GTUCompatibility<LaneType> urban = new GTUCompatibility<>((LaneType) null);
         urban.addAllowedGTUType(passengerCar.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         urban.addAllowedGTUType(truck.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         LaneType urbanRoad = new LaneType("Urban road - open to all traffic",
-                this.network.getLaneType(LaneType.DEFAULTS.FREEWAY), urban, this.network);
+                network.getLaneType(LaneType.DEFAULTS.FREEWAY), urban, network);
 
         // Now we test all combinations
         // TODO assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));
@@ -308,7 +308,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         /**
          * @param simulator the simulator to use
          */
-        public DummyModelForTemplateGTUTest(final OTSSimulatorInterface simulator)
+        DummyModelForTemplateGTUTest(final OTSSimulatorInterface simulator)
         {
             super(simulator);
         }

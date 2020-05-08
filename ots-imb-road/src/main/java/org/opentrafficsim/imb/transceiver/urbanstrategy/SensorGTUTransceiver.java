@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.Event;
 import org.djutils.event.EventInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
@@ -255,7 +254,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        EventType type = event.getType();
+        EventTypeInterface type = event.getType();
         if (type.equals(Network.LINK_ADD_EVENT))
         {
             Link link = this.network.getLink((String) event.getContent());
@@ -274,8 +273,10 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new Event(CrossSectionLink.LANE_ADD_EVENT, csl, new Object[] {link.getNetwork().getId(),
-                            link.getId(), lane.getId(), lane, csl.getLanes().indexOf(lane)}));
+                    this.notify(new TimedEvent(
+                            CrossSectionLink.LANE_ADD_EVENT, csl, new Object[] { link.getNetwork().getId(), link.getId(),
+                                    lane.getId(), lane, csl.getLanes().indexOf(lane) },
+                            this.network.getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
                 {
@@ -358,8 +359,9 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new Event(CrossSectionLink.LANE_REMOVE_EVENT, csl,
-                            new Object[] {link.getNetwork().getId(), link.getId(), lane.getId()}));
+                    this.notify(new TimedEvent(CrossSectionLink.LANE_REMOVE_EVENT, csl,
+                            new Object[] { link.getNetwork().getId(), link.getId(), lane.getId() },
+                            getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
                 {

@@ -166,7 +166,7 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
         public final void constructModel() throws SimRuntimeException
         {
             URL xmlURL = URLResource.getResource("/xml/Amsterdam.xml");
-            this.network = new OTSRoadNetwork("Amsterdam network", true);
+            this.network = new OTSRoadNetwork("Amsterdam network", true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);

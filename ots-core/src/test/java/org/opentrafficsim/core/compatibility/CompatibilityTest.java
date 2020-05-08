@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
@@ -31,7 +32,8 @@ public class CompatibilityTest
     @Test
     public void testInteface()
     {
-        OTSNetwork network = new OTSNetwork("CompatibilityTestNetwork", true);
+        OTSNetwork network =
+                new OTSNetwork("CompatibilityTestNetwork", true, new OTSSimulator("Simulator for CompatibilityTest"));
         assertTrue("EVERYTHING returns true for any GTU type",
                 Compatible.EVERYTHING.isCompatible(network.getGtuType(GTUType.DEFAULTS.CAR), GTUDirectionality.DIR_PLUS));
         assertTrue("EVERYTHING returns true for any GTU type",
@@ -65,7 +67,8 @@ public class CompatibilityTest
     @Test
     public void testClass()
     {
-        OTSNetwork network = new OTSNetwork("CompatibilityTestNetwork", true);
+        OTSNetwork network =
+                new OTSNetwork("CompatibilityTestNetwork", true, new OTSSimulator("Simulator for CompatibilityTest"));
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>(linkType);
         assertNull("Freshly initialized compatibility does not know about any GTUType",

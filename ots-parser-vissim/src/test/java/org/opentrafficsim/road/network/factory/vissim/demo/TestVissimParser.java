@@ -108,7 +108,7 @@ public class TestVissimParser extends OTSSimulationApplication<OTSModelInterface
         private static final long serialVersionUID = 20141121L;
 
         /** The network. */
-        private OTSRoadNetwork network = new OTSRoadNetwork("test Vissim network", true);
+        private OTSRoadNetwork network = new OTSRoadNetwork("test Vissim network", true, getSimulator());
 
         /**
          * @param simulator the simulator

@@ -39,11 +39,11 @@ public class LinkLocationTest implements UNITS
     public final void linkLocationTest() throws OTSGeometryException, NetworkException
     {
         // Preparations
-        OTSRoadNetwork network = new OTSRoadNetwork("link location test network", true);
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
+        OTSRoadNetwork network = new OTSRoadNetwork("link location test network", true, simulator);
         OTSRoadNode nodeFrom = new OTSRoadNode(network, "From", new OTSPoint3D(0, 0, 0), Direction.ZERO);
         OTSRoadNode nodeTo = new OTSRoadNode(network, "To", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
         CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo,
                 network.getLinkType(LinkType.DEFAULTS.ROAD), line, simulator, LaneKeepingPolicy.KEEPRIGHT);
         Length linkLength = line.getLength();

@@ -31,7 +31,8 @@ public class DirectedLinkPositionTest
     @Test
     public void directedLinkPositionTest() throws NetworkException, OTSGeometryException
     {
-        Network network = new OTSNetwork("test network for DirectedLinkPosition test", true);
+        Network network = new OTSNetwork("test network for DirectedLinkPosition test", true,
+                new OTSSimulator("Simulator for DirectedLinkPositionTest"));
         Node nodeA = new OTSNode(network, "A", new OTSPoint3D(10, 10, 10));
         Node nodeB = new OTSNode(network, "B", new OTSPoint3D(110, 10, 10));
         Link link = new OTSLink(network, "A to B", nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.ROAD),

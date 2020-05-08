@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.djutils.exceptions.Try;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType.DEFAULTS;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -31,7 +33,7 @@ public class GTUTypeTest
     @Test
     public final void constructorTest()
     {
-        OTSNetwork network = new OTSNetwork("network", true);
+        OTSNetwork network = new OTSNetwork("network", true, new OTSSimulator("Simulator for GTUTypeTest"));
         GTUType t = new GTUType("abc", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
         GTUType t2 = new GTUType("pqr", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
@@ -47,7 +49,7 @@ public class GTUTypeTest
     @Test
     public final void defaultsTest()
     {
-        OTSNetwork network = new OTSNetwork("network", true);
+        OTSNetwork network = new OTSNetwork("network", true, new OTSSimulator("Simulator for GTUTypeTest"));
         StreamInterface randomStream = new MersenneTwister();
         GTUType car = network.getGtuType(DEFAULTS.CAR);
         String message = "Exception while deriving default GTU characteristics";

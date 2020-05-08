@@ -22,7 +22,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -104,7 +104,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
     /** Strategical planner generator for cars. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryCars = null;
@@ -490,7 +490,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        EventType eventType = event.getType();
+        EventTypeInterface eventType = event.getType();
         if (Network.GTU_ADD_EVENT.equals(eventType))
         {
             System.out.println("A GTU was created (id " + (String) event.getContent() + ")");

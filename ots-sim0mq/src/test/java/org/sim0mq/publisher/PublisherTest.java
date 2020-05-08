@@ -42,7 +42,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.mock.MockDEVSSimulator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -56,9 +55,6 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Experiment;
-import nl.tudelft.simulation.dsol.experiment.Experiment.TimeDoubleUnit;
-import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
@@ -77,6 +73,9 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class PublisherTest implements OTSModelInterface
 {
 
+    /** ... */
+    private static final long serialVersionUID = 20200505L;
+
     /**
      * Test the Publisher class.
      * @throws RemoteException when that happens this test has failed
@@ -89,7 +88,8 @@ public class PublisherTest implements OTSModelInterface
     public void testPublisher()
             throws RemoteException, NetworkException, OTSGeometryException, SimRuntimeException, NamingException
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("test network for PublisherTest", true);
+        OTSSimulatorInterface simulator = new OTSSimulator("test simulator for PublisherTest");
+        OTSRoadNetwork network = new OTSRoadNetwork("test network for PublisherTest", true, simulator);
         Publisher publisher = new Publisher(network);
         assertTrue("id of publisher contains id of network", publisher.getId().contains(network.getId()));
         Object[] transceiverNames = publisher.getIdSource(0).get(null);
@@ -151,7 +151,6 @@ public class PublisherTest implements OTSModelInterface
         result = lit.get(new Object[0]);
         assertEquals("there are 0 links", 0, result.length);
 
-        OTSSimulatorInterface simulator = new OTSSimulator("test simulator for PublisherTest");
         simulator.initialize(
                 OTSReplication.create("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, DurationUnit.SECOND), this),
                 ReplicationMode.TERMINATING);
@@ -300,7 +299,7 @@ public class PublisherTest implements OTSModelInterface
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OTSRoadNetwork(getShortName(), true);
+            this.network = new OTSRoadNetwork(getShortName(), true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

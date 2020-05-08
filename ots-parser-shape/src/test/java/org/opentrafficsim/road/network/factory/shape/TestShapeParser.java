@@ -52,7 +52,6 @@ import org.pmw.tinylog.Level;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
@@ -127,15 +126,16 @@ public class TestShapeParser extends DSOLApplication
         private static final long serialVersionUID = 20141121L;
 
         /** The network. */
-        private final OTSRoadNetwork network = new OTSRoadNetwork("test network", true);
+        private final OTSRoadNetwork network;
 
         /**
          * Create the test model.
          * @param simulator the simulator
          */
-        public GisNDWImport(final OTSSimulatorInterface simulator)
+        GisNDWImport(final OTSSimulatorInterface simulator)
         {
             super(simulator);
+            this.network  = new OTSRoadNetwork("test network", true, simulator);
         }
 
         /** {@inheritDoc} */

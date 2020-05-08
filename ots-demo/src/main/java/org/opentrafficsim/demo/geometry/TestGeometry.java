@@ -9,7 +9,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.Event;
+import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -79,7 +79,8 @@ public class TestGeometry extends DSOLApplication implements UNITS
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
 
         // tell the animation panel to update its statistics
-        animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
+        animationPanel.notify(
+                new TimedEvent(SimulatorInterface.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
 
         new TestGeometry("TestGeometry", panel);
     }

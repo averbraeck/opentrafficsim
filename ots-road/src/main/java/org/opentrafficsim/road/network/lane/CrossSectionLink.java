@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
@@ -65,7 +65,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Payload: Object[] { String networkId, String linkId, String LaneId, int laneNumber } <br>
      * TODO work in a different way with lane numbers to align to standard lane numbering.
      */
-    public static final EventType LANE_ADD_EVENT = new EventType("LINK.LANE.ADD",
+    public static final TimedEventType LANE_ADD_EVENT = new TimedEventType("LINK.LANE.ADD",
             new MetaData("Lane data", "Lane data",
                     new ObjectDescriptor[] { new ObjectDescriptor("Network id", "Network id", String.class),
                             new ObjectDescriptor("Link id", "Link id", String.class),
@@ -77,7 +77,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Payload: Object[] { String networkId, String linkId, String LaneId } <br>
      * TODO allow for the removal of a Lane; currently this is not possible.
      */
-    public static final EventType LANE_REMOVE_EVENT = new EventType("LINK.LANE.REMOVE",
+    public static final TimedEventType LANE_REMOVE_EVENT = new TimedEventType("LINK.LANE.REMOVE",
             new MetaData("Lane data", "Lane data",
                     new ObjectDescriptor[] { new ObjectDescriptor("Network id", "Network id", String.class),
                             new ObjectDescriptor("Link id", "Link id", String.class),
@@ -144,7 +144,8 @@ public class CrossSectionLink extends OTSLink implements Serializable
         if (cse instanceof Lane)
         {
             this.lanes.add((Lane) cse);
-            fireEvent(LANE_ADD_EVENT, new Object[] { getNetwork().getId(), getId(), cse.getId(), this.lanes.indexOf(cse) });
+            fireTimedEvent(LANE_ADD_EVENT, new Object[] { getNetwork().getId(), getId(), cse.getId(), this.lanes.indexOf(cse) },
+                    getSimulator().getSimulatorTime());
         }
     }
 

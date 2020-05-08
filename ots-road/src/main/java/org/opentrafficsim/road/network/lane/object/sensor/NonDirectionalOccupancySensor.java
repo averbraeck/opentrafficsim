@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.gtu.RelativePosition;
 
@@ -53,15 +53,16 @@ public interface NonDirectionalOccupancySensor extends Serializable, Identifiabl
      * Payload: Object[] {String sensorId, NonDirectionalOccupancySensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE
      * relativePosition}
      */
-    EventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT =
-            new EventType("NONDIRECTIONALOCCUPANCYSENSOR.TRIGGER.ENTRY");
+    TimedEventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT =
+            new TimedEventType("NONDIRECTIONALOCCUPANCYSENSOR.TRIGGER.ENTRY");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the exit of an NonDirectionalOccupancySensor. <br>
      * Payload: Object[] {String sensorId, NonDirectionalOccupancySensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE
      * relativePosition}
      */
-    EventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT = new EventType("NONDIRECTIONALOCCUPANCYSENSOR.TRIGGER.EXIT");
+    TimedEventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT =
+            new TimedEventType("NONDIRECTIONALOCCUPANCYSENSOR.TRIGGER.EXIT");
 
     // TODO enforce clone method
 

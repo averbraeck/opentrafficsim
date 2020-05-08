@@ -162,7 +162,7 @@ public class ODApplierTest
      */
     private void makeNetwork() throws NetworkException, OTSGeometryException
     {
-        this.network = new OTSRoadNetwork("ODApplierExample", true);
+        this.network = new OTSRoadNetwork("ODApplierExample", true, simulator);
         OTSPoint3D pointA = new OTSPoint3D(0, 0, 0);
         OTSPoint3D pointB = new OTSPoint3D(1000, 0, 0);
         OTSRoadNode nodeA = new OTSRoadNode(this.network, "A", pointA, Direction.ZERO);

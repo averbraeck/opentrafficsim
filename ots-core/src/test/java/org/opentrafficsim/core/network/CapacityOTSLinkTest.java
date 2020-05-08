@@ -8,6 +8,7 @@ import java.util.Map;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -38,7 +39,8 @@ public class CapacityOTSLinkTest
     {
         OTSPoint3D fromPoint = new OTSPoint3D(100, 200, 300);
         OTSPoint3D toPoint = new OTSPoint3D(1000, 2000, 330);
-        Network network = new OTSNetwork("testNetworkForCapacityOTSLink", true);
+        Network network =
+                new OTSNetwork("testNetworkForCapacityOTSLink", true, new OTSSimulator("Simulator for CapacityOTSLinkTest"));
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
@@ -58,7 +60,8 @@ public class CapacityOTSLinkTest
         link.setCapacity(finalCapacity);
         assertTrue("capacity mathes", finalCapacity.equals(link.getCapacity()));
 
-        Network newNetwork = new OTSNetwork("clonedNetworkForCapacityOTSLink", true);
+        Network newNetwork =
+                new OTSNetwork("clonedNetworkForCapacityOTSLink", true, new OTSSimulator("Simulator for CapacityOTSLinkTest"));
         // Create nodes with matching IDs in the new network
         new OTSNode(newNetwork, fromNode.getId(), fromPoint);
         new OTSNode(newNetwork, toNode.getId(), toPoint);

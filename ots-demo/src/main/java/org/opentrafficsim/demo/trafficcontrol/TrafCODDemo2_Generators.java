@@ -17,7 +17,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -166,7 +166,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
         {
             try
             {
-                this.network = new OTSRoadNetwork(getShortName(), true);
+                this.network = new OTSRoadNetwork(getShortName(), true, getSimulator());
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                         getSimulator(), false);
 
@@ -226,7 +226,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
         @Override
         public void notify(final EventInterface event) throws RemoteException
         {
-            EventType type = event.getType();
+            EventTypeInterface type = event.getType();
             Object[] payload = (Object[]) event.getContent();
             if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {

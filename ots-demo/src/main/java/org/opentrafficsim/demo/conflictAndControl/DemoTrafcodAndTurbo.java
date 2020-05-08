@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
@@ -155,7 +155,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
             try
             {
                 URL xmlURL = URLResource.getResource("/conflictAndControl/TurboRoundaboutAndSignal.xml");
-                this.network = new OTSRoadNetwork("TurboRoundaboutAndSignal", true);
+                this.network = new OTSRoadNetwork("TurboRoundaboutAndSignal", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
 
                 // add conflicts
@@ -312,7 +312,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
         @Override
         public void notify(final EventInterface event) throws RemoteException
         {
-            EventType type = event.getType();
+            EventTypeInterface type = event.getType();
             Object[] payload = (Object[]) event.getContent();
             if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {

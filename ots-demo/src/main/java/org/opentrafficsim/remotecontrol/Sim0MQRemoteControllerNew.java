@@ -198,7 +198,7 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
             slaveSocket.connect("tcp://" + this.slaveHost + ":" + this.slavePort);
             awtSocketIn.bind("inproc://fromAWT");
             awtSocketOut.bind("inproc://toAWT");
-            // XXX tool the POLLER out
+            // XXX took the POLLER out
             // ZMQ.Poller items = this.context.createPoller(2);
             // items.register(slaveSocket, ZMQ.Poller.POLLIN);
             // items.register(awtSocketIn, ZMQ.Poller.POLLIN);

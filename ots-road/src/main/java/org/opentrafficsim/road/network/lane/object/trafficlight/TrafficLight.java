@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -31,6 +31,6 @@ public interface TrafficLight extends Locatable, LaneBasedObject
      * The <b>timed</b> event type for pub/sub indicating the change of color of a traffic light. <br>
      * Payload: Object[] {String trafficLightId, TrafficLight trafficLight, TrafficLightColor newColor}
      */
-    EventType TRAFFICLIGHT_CHANGE_EVENT = new EventType("TRAFFICLIGHT.CHANGE");
+    TimedEventType TRAFFICLIGHT_CHANGE_EVENT = new TimedEventType("TRAFFICLIGHT.CHANGE");
 
 }

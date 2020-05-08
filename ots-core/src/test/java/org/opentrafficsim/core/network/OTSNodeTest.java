@@ -13,6 +13,7 @@ import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -44,7 +45,7 @@ public class OTSNodeTest
     @Test
     public final void testOTSNode() throws NetworkException, OTSGeometryException
     {
-        Network network = new OTSNetwork("Node test network", true);
+        Network network = new OTSNetwork("Node test network", true, new OTSSimulator("Simulator for OTSNodeTest"));
         OTSPoint3D point1 = new OTSPoint3D(20, 40, 60);
         double heading = Math.toRadians(123);
         OTSNode node1 = new OTSNode(network, "node 1", point1, heading);
@@ -64,13 +65,12 @@ public class OTSNodeTest
         assertFalse("Node 1 does not match node 2", node1.equals(node2));
         assertTrue("Node 2 has heading NaN", Double.isNaN(node2.getHeading()));
         // Create another node with name node 1 in another network
-        Network otherNetwork = new OTSNetwork("Node test network 2", true);
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
+        Network otherNetwork = new OTSNetwork("Node test network 2", true, simulator);
         OTSNode node3 = new OTSNode(otherNetwork, "node 1", point1);
         assertTrue("Node 1 does match node 3 in other network", node1.equals(node3));
 
         assertEquals("node 1 has no links", 0, node1.getLinks().size());
-
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
 
         // Create a couple of links
         Link link1 = new OTSLink(network, "link 1", node1, node2, network.getLinkType(LinkType.DEFAULTS.ROAD),
@@ -138,8 +138,8 @@ public class OTSNodeTest
     @Test
     public final void connectionTest() throws NetworkException, OTSGeometryException
     {
-        Network network = new OTSNetwork("connection test network", true);
         OTSSimulatorInterface simulator = MockSimulator.createMock();
+        Network network = new OTSNetwork("connection test network", true, simulator);
         OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
@@ -289,8 +289,8 @@ public class OTSNodeTest
     @Test
     public final void connectionSetTest() throws NetworkException, OTSGeometryException
     {
-        Network network = new OTSNetwork("connectionSets test network", true);
         OTSSimulatorInterface simulator = MockSimulator.createMock();
+        Network network = new OTSNetwork("connectionSets test network", true, simulator);
         OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)

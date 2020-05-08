@@ -581,7 +581,7 @@ public class AimsunControl
             {
                 exception1.printStackTrace();
             }
-            this.network = new OTSRoadNetwork(getShortName(), true);
+            this.network = new OTSRoadNetwork(getShortName(), true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

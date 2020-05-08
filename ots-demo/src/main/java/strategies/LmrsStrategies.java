@@ -545,7 +545,7 @@ public class LmrsStrategies implements EventListenerInterface
         public void constructModel()
         {
             LmrsStrategies.this.simulator = getSimulator();
-            OTSRoadNetwork net = new OTSRoadNetwork("LMRS strategies", true);
+            OTSRoadNetwork net = new OTSRoadNetwork("LMRS strategies", true, getSimulator());
             try
             {
                 LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, SimulatorInterface.END_REPLICATION_EVENT);

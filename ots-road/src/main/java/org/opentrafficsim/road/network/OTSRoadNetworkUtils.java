@@ -48,7 +48,7 @@ public final class OTSRoadNetworkUtils
             final SimulatorInterface.TimeDoubleUnit oldSimulator, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
-        OTSRoadNetwork newNetwork = new OTSRoadNetwork(newId, false);
+        OTSRoadNetwork newNetwork = new OTSRoadNetwork(newId, false, newSimulator);
 
         // clone the nodes
         for (Node node : network.getNodeMap().values())

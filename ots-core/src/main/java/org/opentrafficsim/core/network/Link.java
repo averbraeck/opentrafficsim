@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
@@ -98,7 +98,7 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the link. <br>
      * Payload: Object[] {String gtuId, int count_after_addition}
      */
-    EventType GTU_ADD_EVENT = new EventType("LINK.GTU.ADD",
+    TimedEventType GTU_ADD_EVENT = new TimedEventType("LINK.GTU.ADD",
             new MetaData("GTU entered link", "GTU added to link", new ObjectDescriptor[] {
                     new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Number of GTUs in link", "Resulting number of GTUs in link", Integer.class) }));
@@ -107,7 +107,7 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the link. <br>
      * Payload: Object[] {String gtuId, int count_after_removal}
      */
-    EventType GTU_REMOVE_EVENT = new EventType("LINK.GTU.REMOVE",
+    TimedEventType GTU_REMOVE_EVENT = new TimedEventType("LINK.GTU.REMOVE",
             new MetaData("GTU exited link", "GTU removed from link", new ObjectDescriptor[] {
                     new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Number of GTUs in link", "Resulting number of GTUs in link", Integer.class) }));

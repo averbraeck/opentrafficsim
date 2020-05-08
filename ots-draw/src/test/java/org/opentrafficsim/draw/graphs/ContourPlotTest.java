@@ -192,7 +192,8 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void densityContourTest() throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("density contour test network", true);
+        OTSRoadNetwork network =
+                new OTSRoadNetwork("density contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
         OTSSimulatorInterface simulator = new OTSSimulator("densityContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(simulator);
@@ -211,7 +212,8 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void flowContourTest() throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true);
+        OTSRoadNetwork network =
+                new OTSRoadNetwork("flow contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
         OTSSimulatorInterface simulator = new OTSSimulator("flowContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(simulator);
@@ -230,7 +232,8 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void speedContourTest() throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true);
+        OTSRoadNetwork network =
+                new OTSRoadNetwork("flow contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
         OTSSimulatorInterface simulator = new OTSSimulator("speedContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(simulator);

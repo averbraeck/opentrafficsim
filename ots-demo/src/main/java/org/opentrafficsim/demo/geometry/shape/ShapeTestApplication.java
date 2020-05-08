@@ -9,7 +9,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.Event;
+import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -80,7 +80,8 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
 
         // tell the animation panel to update its statistics
         // TODO should be done automatically in DSOL!
-        animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
+        animationPanel.notify(
+                new TimedEvent(SimulatorInterface.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
 
         new ShapeTestApplication("Network Transmission Model", panel);
     }

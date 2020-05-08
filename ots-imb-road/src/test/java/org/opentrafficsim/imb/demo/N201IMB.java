@@ -165,7 +165,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
         private static final long serialVersionUID = 20141121L;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
-        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;
