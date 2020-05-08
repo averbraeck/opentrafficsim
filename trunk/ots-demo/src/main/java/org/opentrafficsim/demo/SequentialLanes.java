@@ -209,7 +209,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
         private static final long serialVersionUID = 20150130L;
 
         /** The network. */
-        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
         /** The nodes of our network in the order that all GTUs will visit them. */
         private List<OTSRoadNode> nodes = new ArrayList<>();

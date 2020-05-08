@@ -59,11 +59,11 @@ public class CurveTest
             throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
     {
         final int laneCount = 1;
-        OTSRoadNetwork network = new OTSRoadNetwork("curve test network", true);
+        OTSSimulatorInterface simulator = CarTest.makeSimulator();
+        OTSRoadNetwork network = new OTSRoadNetwork("curve test network", true, simulator);
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        OTSSimulatorInterface simulator = CarTest.makeSimulator();
         OTSRoadNode origin = new OTSRoadNode(network, "origin", new OTSPoint3D(10, 10, 0), Direction.ZERO);
         OTSRoadNode curveStart = new OTSRoadNode(network, "curveStart", new OTSPoint3D(100, 10, 0), Direction.ZERO);
         OTSRoadNode curveEnd = new OTSRoadNode(network, "curveEnd", new OTSPoint3D(150, 60, 0), 

@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.GTUStatus;
@@ -35,7 +36,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 public class HeadwayGTUTest
 {
     /** The network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("test network", true);
+    private OTSRoadNetwork network = new OTSRoadNetwork("test network", true, new OTSSimulator("Simulator for HeadwayGTUTest"));
 
     /**
      * Test the constructor and the getters.

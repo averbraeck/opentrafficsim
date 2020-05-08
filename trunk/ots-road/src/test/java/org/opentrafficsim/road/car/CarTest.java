@@ -75,10 +75,10 @@ public class CarTest implements UNITS
             throws NetworkException, SimRuntimeException, NamingException, GTUException, OTSGeometryException
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
-        OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+        OTSSimulatorInterface simulator = makeSimulator();
+        OTSRoadNetwork network = new OTSRoadNetwork("network", true, simulator);
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-        OTSSimulatorInterface simulator = makeSimulator();
         Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);

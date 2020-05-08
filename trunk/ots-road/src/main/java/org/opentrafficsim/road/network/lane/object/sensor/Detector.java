@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
@@ -55,12 +55,13 @@ public class Detector extends AbstractSensor
     private static final long serialVersionUID = 20180312L;
 
     /** Trigger event. Payload: [Id of LaneBasedGTU]. */
-    public static final EventType DETECTOR_TRIGGERED = new EventType("DUAL_LOOP_DETECTOR.TRIGGER",
+    public static final TimedEventType DETECTOR_TRIGGERED = new TimedEventType("DUAL_LOOP_DETECTOR.TRIGGER",
             new MetaData("Dual loop detector triggered", "Dual loop detector triggered",
                     new ObjectDescriptor[] { new ObjectDescriptor("Id of GTU", "Id of GTU", String.class) }));
 
     /** Aggregation event. Payload: [Frequency, measurement, ...]/ */
-    public static final EventType DETECTOR_AGGREGATE = new EventType("DUAL_LOOP_DETECTOR.AGGREGATE", MetaData.NO_META_DATA);
+    public static final TimedEventType DETECTOR_AGGREGATE =
+            new TimedEventType("DUAL_LOOP_DETECTOR.AGGREGATE", MetaData.NO_META_DATA);
 
     /** Vehicles only compatibility. */
     private static Compatible compatible = new Compatible()
@@ -233,21 +234,57 @@ public class Detector extends AbstractSensor
     public static final DetectorMeasurement<List<Double>, List<Double>> PASSAGES =
             new DetectorMeasurement<List<Double>, List<Double>>()
             {
-                @Override public List<Double>identity(){return new ArrayList<>();}
+                @Override
+                public List<Double> identity()
+                {
+                    return new ArrayList<>();
+                }
 
-    @Override public List<Double>accumulateEntry(final List<Double>cumulative,final LaneBasedGTU gtu,final Detector loopDetector){cumulative.add(gtu.getSimulator().getSimulatorTime().si);return cumulative;}
+                @Override
+                public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu,
+                        final Detector loopDetector)
+                {
+                    cumulative.add(gtu.getSimulator().getSimulatorTime().si);
+                    return cumulative;
+                }
 
-    @Override public List<Double>accumulateExit(final List<Double>cumulative,final LaneBasedGTU gtu,final Detector loopDetector){return cumulative;}
+                @Override
+                public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu,
+                        final Detector loopDetector)
+                {
+                    return cumulative;
+                }
 
-    @Override public boolean isPeriodic(){return false;}
+                @Override
+                public boolean isPeriodic()
+                {
+                    return false;
+                }
 
-    @Override public List<Double>aggregate(final List<Double>cumulative,final int count,final Duration aggregation){return cumulative;}
+                @Override
+                public List<Double> aggregate(final List<Double> cumulative, final int count, final Duration aggregation)
+                {
+                    return cumulative;
+                }
 
-    @Override public String getName(){return"passage times";}
+                @Override
+                public String getName()
+                {
+                    return "passage times";
+                }
 
-    @Override public String stringValue(final List<Double>aggregate,final String format){return printListDouble(aggregate,format);}
+                @Override
+                public String stringValue(final List<Double> aggregate, final String format)
+                {
+                    return printListDouble(aggregate, format);
+                }
 
-    @Override public String toString(){return getName();}};
+                @Override
+                public String toString()
+                {
+                    return getName();
+                }
+            };
 
     /** Aggregation time. */
     private final Duration aggregation;

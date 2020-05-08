@@ -159,7 +159,8 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
          * is not in the wegvakken shape files.
          */
 
-        OTSRoadNetwork network = new OTSRoadNetwork("NWB import", true);
+        OTSAnimator simulator = new OTSAnimator("Importer");
+        OTSRoadNetwork network = new OTSRoadNetwork("NWB import", true, simulator);
 
         int nextNodeNumber = 0;
 
@@ -167,8 +168,6 @@ public class Importer extends OTSSimulationApplication<OTSModelInterface>
 
         LinkType freeWayLinkType = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LinkType roadLinkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
-
-        OTSAnimator simulator = new OTSAnimator("Importer");
 
         NWBModel nwbModel = new NWBModel(simulator, network, "NWB network", "NWB network");
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), nwbModel);

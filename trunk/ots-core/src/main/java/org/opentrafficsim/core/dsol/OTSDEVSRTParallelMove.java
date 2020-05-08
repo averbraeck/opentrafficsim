@@ -206,7 +206,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
             }
 
             this.simulatorTime = event.getAbsoluteExecutionTime();
-            this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime.get());
+            this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, this.simulatorTime.get());
 
             if (this.moveThreads <= 1)
             {

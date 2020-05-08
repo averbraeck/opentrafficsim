@@ -49,7 +49,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     public final void templateGTUTypeTest()
             throws SimRuntimeException, NamingException, GTUException, ProbabilityException, ParameterException
     {
-        OTSNetwork network = new OTSNetwork("network", true);
+        OTSNetwork network = new OTSNetwork("network", true, simulator);
         GTUType gtuTypeA = new GTUType("type name A", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         GTUType gtuTypeB = new GTUType("type name B", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         Generator<Length> lengthGeneratorA = new Generator<Length>()

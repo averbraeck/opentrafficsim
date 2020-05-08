@@ -136,7 +136,7 @@ public class SteeringSimulation extends AbstractSimulationScript
     @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("Steering network", true);
+        OTSRoadNetwork network = new OTSRoadNetwork("Steering network", true, getSimulator());
         Length laneWidth = Length.instantiateSI(3.5);
         Length stripeWidth = Length.instantiateSI(0.2);
 

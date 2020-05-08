@@ -74,8 +74,8 @@ public class GTUTest
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
-        OTSNetwork perceivableContext = new OTSNetwork("network", true);
         OTSSimulatorInterface simulator = new OTSSimulator("testAbstractGTU");
+        OTSNetwork perceivableContext = new OTSNetwork("network", true, simulator);
         GTUModel model = new GTUModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()

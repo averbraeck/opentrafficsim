@@ -7,6 +7,7 @@ import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -32,10 +33,11 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
      * Construction of an empty network.
      * @param id String; the network id.
      * @param addDefaultTypes add the default GTUTypes, LinkTypesand LaneTypes, or not
+     * @param simulator OTSSimulatorInterface; the DSOL simulator engine
      */
-    public OTSRoadNetwork(final String id, final boolean addDefaultTypes)
+    public OTSRoadNetwork(final String id, final boolean addDefaultTypes, final OTSSimulatorInterface simulator)
     {
-        super(id, addDefaultTypes);
+        super(id, addDefaultTypes, simulator);
         if (addDefaultTypes)
         {
             addDefaultLaneTypes();

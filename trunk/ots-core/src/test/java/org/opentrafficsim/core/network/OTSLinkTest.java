@@ -11,9 +11,10 @@ import javax.media.j3d.Bounds;
 
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -58,7 +59,7 @@ public class OTSLinkTest implements EventListenerInterface
     @Test
     public final void testOTSLink() throws NetworkException, OTSGeometryException
     {
-        Network network = new OTSNetwork("OTSLinkTestNetwork", true);
+        Network network = new OTSNetwork("OTSLinkTestNetwork", true, new OTSSimulator("Simulator for OTSLinkTest"));
         Node startNode = new OTSNode(network, "start", new OTSPoint3D(10, 20, 0));
         Node endNode = new OTSNode(network, "end", new OTSPoint3D(1000, 2000, 10));
         GTUCompatibility<LinkType> compatibility = new GTUCompatibility<LinkType>((LinkType) null)
@@ -157,7 +158,7 @@ public class OTSLinkTest implements EventListenerInterface
         OTSLink otherLink = new OTSLink(network, "link5", startNode, endNode, linkType, designLine, simulator);
         assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
         // make a link with the same name in another network
-        Network otherNetwork = new OTSNetwork("other", true);
+        Network otherNetwork = new OTSNetwork("other", true, new OTSSimulator("Simulator for OTSLinkTest"));
         linkType = new LinkType("myLinkType4", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         otherLink = new OTSLink(otherNetwork, "link4", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
                 new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator);
@@ -172,7 +173,7 @@ public class OTSLinkTest implements EventListenerInterface
     @Override
     public final void notify(final EventInterface event) throws RemoteException
     {
-        EventType eventType = event.getType();
+        EventTypeInterface eventType = event.getType();
         if (eventType.equals(Link.GTU_ADD_EVENT))
         {
             this.gtuAddedCount++;

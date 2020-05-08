@@ -35,9 +35,9 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
-import org.djutils.event.Event;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
+import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -218,7 +218,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         setGtuCountText();
 
         // Tell the animation to build the list of animation objects.
-        this.animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator.getSourceId(), null));
+        this.animationPanel.notify(new TimedEvent(SimulatorInterface.START_REPLICATION_EVENT, simulator.getSourceId(), null,
+                getSimulator().getSimulatorTime()));
 
         // switch off the X and Y coordinates in a tooltip.
         this.animationPanel.setShowToolTip(false);

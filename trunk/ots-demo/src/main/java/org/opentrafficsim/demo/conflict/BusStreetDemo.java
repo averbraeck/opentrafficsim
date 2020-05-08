@@ -176,7 +176,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             try
             {
                 URL xmlURL = URLResource.getResource("/conflict/BusStreet.xml");
-                this.network = new OTSRoadNetwork("BusStreet", true);
+                this.network = new OTSRoadNetwork("BusStreet", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);
 
                 // Add bus stops

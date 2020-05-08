@@ -94,7 +94,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     private Parameters parametersTruck;
 
     /** The OTSRoadNetwork. */
-    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+    private final OTSRoadNetwork network;
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -102,6 +102,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     public CircularRoadModel(final OTSSimulatorInterface simulator)
     {
         super(simulator);
+        this.network  = new OTSRoadNetwork("network", true, simulator);
         makeInputParameterMap();
     }
 

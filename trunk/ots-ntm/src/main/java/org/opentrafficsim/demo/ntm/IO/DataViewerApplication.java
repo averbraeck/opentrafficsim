@@ -12,7 +12,7 @@ import javax.swing.JScrollPane;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.event.Event;
+import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.demo.ntm.NTMModel;
 
@@ -74,7 +74,8 @@ public class DataViewerApplication extends DSOLApplication
 
         // tell the animation panel to update its statistics
         // TODO should be done automatically in DSOL!
-        animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
+        animationPanel.notify(
+                new TimedEvent(SimulatorInterface.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
 
         new DataViewerApplication("Network Transmission Model", panel);
     }

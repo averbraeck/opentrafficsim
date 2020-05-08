@@ -13,9 +13,10 @@ import java.util.List;
 
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -72,8 +73,8 @@ public class OTSNetworkTest implements EventListenerInterface
     public final void testOTSNetwork() throws NetworkException, OTSGeometryException
     {
         String networkId = "testOTSNetwork";
-        OTSNetwork network = new OTSNetwork(networkId, true);
         OTSSimulatorInterface simulator = MockSimulator.createMock();
+        OTSNetwork network = new OTSNetwork(networkId, true, simulator);
         assertTrue("Id must match", networkId.equals(network.getId()));
         network.addListener(this, Network.LINK_ADD_EVENT);
         network.addListener(this, Network.LINK_REMOVE_EVENT);
@@ -104,7 +105,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("Node can be retrieved by id", node1, network.getNode(node1.getId()));
         assertTrue("network contains a node with id node1", network.containsNode("node1"));
         // Create a node that is NOT in this network; to do that we must create another network
-        OTSNetwork otherNetwork = new OTSNetwork("other network", true);
+        OTSNetwork otherNetwork = new OTSNetwork("other network", true, simulator);
         Node node2 = new OTSNode(otherNetwork, "node2", new OTSPoint3D(11, 12, 13));
         assertFalse("node2 is NOT in network", network.containsNode(node2));
         assertEquals("link add event count is 0", 0, this.linkAddedCount);
@@ -339,7 +340,7 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testExtent() throws NetworkException
     {
-        OTSNetwork network = new OTSNetwork("test", false);
+        OTSNetwork network = new OTSNetwork("test", false, new OTSSimulator("Simulator for OTSNetworkTest"));
         Rectangle2D extent = network.getExtent();
         assertEquals("extend left", -500, extent.getMinX(), 0);
         assertEquals("extend bottom", -500, extent.getMinY(), 0);
@@ -384,7 +385,7 @@ public class OTSNetworkTest implements EventListenerInterface
     @Override
     public final void notify(final EventInterface event) throws RemoteException
     {
-        EventType type = event.getType();
+        EventTypeInterface type = event.getType();
         if (type.equals(Network.NODE_ADD_EVENT))
         {
             this.nodeAddedCount++;
@@ -422,7 +423,7 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testRouteMap() throws NetworkException
     {
-        OTSNetwork network = new OTSNetwork("Route map test network", true);
+        OTSNetwork network = new OTSNetwork("Route map test network", true, new OTSSimulator("Simulator for OTSNetworkTest"));
         Node node1 = new OTSNode(network, "node1", new OTSPoint3D(10, 20, 30));
         Node node2 = new OTSNode(network, "node2", new OTSPoint3D(110, 20, 30));
         List<Node> nodeList = new ArrayList<>();
@@ -458,7 +459,8 @@ public class OTSNetworkTest implements EventListenerInterface
         {
             // Ignore expected exception
         }
-        Network otherNetwork = new OTSNetwork("other Route map test network", true);
+        Network otherNetwork =
+                new OTSNetwork("other Route map test network", true, new OTSSimulator("Simulator for OTSNetworkTest"));
         Node badNode = new OTSNode(otherNetwork, "nodeInOtherNetwork", new OTSPoint3D(100, 200, 0));
         List<Node> badNodeList = new ArrayList<>();
         badNodeList.add(node1);
@@ -518,7 +520,8 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testShortestPathBiDirectional() throws NetworkException, OTSGeometryException
     {
-        OTSNetwork network = new OTSNetwork("shortest path test network", true);
+        OTSNetwork network =
+                new OTSNetwork("shortest path test network", true, new OTSSimulator("Simulator for OTSNetworkTest"));
         List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_BOTH);
         int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode / 2; skip++)
@@ -565,7 +568,8 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testShortestPathClockWise() throws NetworkException, OTSGeometryException
     {
-        OTSNetwork network = new OTSNetwork("shortest path test network", true);
+        OTSNetwork network =
+                new OTSNetwork("shortest path test network", true, new OTSSimulator("Simulator for OTSNetworkTest"));
         List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_PLUS);
         int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode; skip++)
@@ -604,7 +608,8 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testShortestPathAntiClockWise() throws NetworkException, OTSGeometryException
     {
-        OTSNetwork network = new OTSNetwork("shortest path test network", true);
+        OTSNetwork network =
+                new OTSNetwork("shortest path test network", true, new OTSSimulator("Simulator for OTSNetworkTest"));
         List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_MINUS);
         int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode; skip++)
@@ -643,7 +648,8 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testShortestPathWithIntermediateNodes() throws NetworkException, OTSGeometryException
     {
-        OTSNetwork network = new OTSNetwork("shortest path test network", true);
+        OTSNetwork network =
+                new OTSNetwork("shortest path test network", true, new OTSSimulator("Simulator for OTSNetworkTest"));
         List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_BOTH, 5);
         int maxNode = nodes.size();
         for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)

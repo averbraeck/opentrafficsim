@@ -493,7 +493,7 @@ public class StrategiesDemo extends AbstractSimulationScript
     @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("Strategies demo", true);
+        OTSRoadNetwork network = new OTSRoadNetwork("Strategies demo", true, getSimulator());
 
         GTUCharacteristics truck =
                 GTUType.defaultCharacteristics(network.getGtuType(GTUType.DEFAULTS.TRUCK), network, this.stream);

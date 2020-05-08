@@ -12,7 +12,7 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.junit.Test;
@@ -52,7 +52,8 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
-        OTSNetwork network = new OTSNetwork("test network for TransceiverTest", true);
+        OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
+        OTSNetwork network = new OTSNetwork("test network for TransceiverTest", true, simulator);
         GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
         assertEquals("getId returns correct id", "GTU id transceiver", gtuIdTransceiver.getId());
         assertEquals("address has 0 entries", 0, gtuIdTransceiver.getAddressFields().size());
@@ -117,14 +118,14 @@ public class TransceiverTest
         assertNotNull("result should not be null", result);
         assertEquals("length of result should be 0", 0, result.length);
         MyMockGTU gtu1 = new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
-                new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2));
+                new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator);
         network.addGTU(gtu1.getMock());
         result = gtuIdTransceiver.get(null);
         assertEquals("length of result is now 1", 1, result.length);
         assertTrue("result contains a string", result[0] instanceof String);
         assertEquals("result[0] is name of our mocked GTU", "gtu 1", (String) (result[0]));
         MyMockGTU gtu2 = new MyMockGTU("gtu 2", new GTUType("gtuType 2", network), new DirectedPoint(2, 20, 200, 2, 2, 2),
-                new Speed(2, SpeedUnit.KM_PER_HOUR), new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2));
+                new Speed(2, SpeedUnit.KM_PER_HOUR), new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator);
         network.addGTU(gtu2.getMock());
         result = gtuIdTransceiver.get(new Object[0]);
         assertEquals("length of result is now 2", 2, result.length);
@@ -237,7 +238,7 @@ public class TransceiverTest
     @Test
     public void testNoTransceiver()
     {
-        EventType noTranceiver = new EventType("NoTransceiverEventType",
+        TimedEventType noTranceiver = new TimedEventType("NoTransceiverEventType",
                 new MetaData("NoTransceiverEventType", "Event type for which the AbstractEventTransceiver will fail",
                         new ObjectDescriptor[] { new ObjectDescriptor("NoTransceiverEventType",
                                 "Event type for which the AbstractEventTransceiver will fail", NoTransceiver.class) }));
@@ -276,7 +277,7 @@ class MyMockGTU
     private final Acceleration acceleration;
 
     /** mocked simulator. */
-    private final OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
+    private final OTSSimulatorInterface simulator;
 
     /**
      * @param name String; the name of the mocked GTU
@@ -284,16 +285,18 @@ class MyMockGTU
      * @param location DirectedPoint; the location of the mocked GTU
      * @param speed Speed; the speed of the mocked GTU
      * @param acceleration Acceleration; the acceleration of the mocked GTU
+     * @param simulator OTSSimulatorInterface; (mocked) simulator
      * @throws RemoteException cannot happen ...
      */
     MyMockGTU(final String name, final GTUType gtuType, final DirectedPoint location, final Speed speed,
-            final Acceleration acceleration) throws RemoteException
+            final Acceleration acceleration, final OTSSimulatorInterface simulator) throws RemoteException
     {
         this.name = name;
         this.gtuType = gtuType;
         this.location = location;
         this.speed = speed;
         this.acceleration = acceleration;
+        this.simulator = simulator;
         this.mockGTU = Mockito.mock(GTU.class);
         Mockito.when(this.mockGTU.getSimulator()).thenReturn(this.simulator);
         Mockito.when(this.mockGTU.getGTUType()).thenReturn(this.gtuType);

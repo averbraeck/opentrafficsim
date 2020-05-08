@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -243,7 +243,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        EventType type = event.getType();
+        EventTypeInterface type = event.getType();
         if (type.equals(Network.LINK_ADD_EVENT))
         {
             Link link = this.network.getLink((String) event.getContent());

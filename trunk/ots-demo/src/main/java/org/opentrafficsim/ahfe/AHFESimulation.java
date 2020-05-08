@@ -476,7 +476,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
             try
             {
                 URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
-                this.network = new OTSRoadNetwork("AHFE", true);
+                this.network = new OTSRoadNetwork("AHFE", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
 
                 // Space-time regions for sampler

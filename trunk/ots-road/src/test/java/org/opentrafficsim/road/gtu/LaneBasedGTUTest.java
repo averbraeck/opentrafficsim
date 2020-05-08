@@ -68,9 +68,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class LaneBasedGTUTest implements UNITS
 {
-    /** The network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("leader follower parallel gtu test network", true);
-
     /** Id generator. */
     private IdGenerator idGenerator = new IdGenerator("id");
 
@@ -96,17 +93,19 @@ public class LaneBasedGTUTest implements UNITS
             fail("truckUpToLane must be >= truckFromLane");
         }
         OTSSimulatorInterface simulator = new OTSSimulator("leaderFollowerParallel");
+        OTSRoadNetwork network = new OTSRoadNetwork("leader follower parallel gtu test network", true, simulator);
+
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        GTUType carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
-        GTUType truckType = this.network.getGtuType(GTUType.DEFAULTS.TRUCK);
-        LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+        GTUType carType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GTUType truckType = network.getGtuType(GTUType.DEFAULTS.TRUCK);
+        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // Create a series of Nodes (some closely bunched together)
         List<OTSRoadNode> nodes = new ArrayList<>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new OTSRoadNode(this.network, "Node at " + xPos, new OTSPoint3D(xPos, 20, 0), Direction.ZERO));
+            nodes.add(new OTSRoadNode(network, "Node at " + xPos, new OTSPoint3D(xPos, 20, 0), Direction.ZERO));
         }
         // Now we can build a series of Links with Lanes on them
         ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
@@ -116,7 +115,7 @@ public class LaneBasedGTUTest implements UNITS
             OTSRoadNode fromNode = nodes.get(i - 1);
             OTSRoadNode toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
-            Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, null, laneCount, laneType,
+            Lane[] lanes = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, laneCount, laneType,
                     new Speed(100, KM_PER_HOUR), simulator);
             links.add(lanes[0].getParentLink());
         }
@@ -134,7 +133,7 @@ public class LaneBasedGTUTest implements UNITS
         Parameters parameters = DefaultTestParameters.create();
 
         LaneBasedIndividualGTU truck = new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed,
-                truckLength.times(0.5), simulator, this.network);
+                truckLength.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.setParameters(parameters);
@@ -211,7 +210,7 @@ public class LaneBasedGTUTest implements UNITS
                 parameters = DefaultTestParameters.create();
 
                 LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed,
-                        carLength.times(0.5), simulator, this.network);
+                        carLength.times(0.5), simulator, network);
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
                 car.setParameters(parameters);
@@ -369,9 +368,9 @@ public class LaneBasedGTUTest implements UNITS
     {
         for (int a = 1; a >= -1; a--)
         {
-            this.network = new OTSRoadNetwork("test", true); // new network every time, otherwise nodes cannot be added again
-            // Create a car with constant acceleration
             OTSSimulatorInterface simulator = new OTSSimulator("timeAtDistanceTest");
+            OTSRoadNetwork network = new OTSRoadNetwork("test", true, simulator);
+            // Create a car with constant acceleration
             Model model = new Model(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
             // Run the simulator clock to some non-zero value
@@ -387,12 +386,12 @@ public class LaneBasedGTUTest implements UNITS
                     ie = null; // ignore
                 }
             }
-            GTUType carType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
-            LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-            OTSRoadNode fromNode = new OTSRoadNode(this.network, "Node A", new OTSPoint3D(0, 0, 0), Direction.ZERO);
-            OTSRoadNode toNode = new OTSRoadNode(this.network, "Node B", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
+            GTUType carType = network.getGtuType(GTUType.DEFAULTS.CAR);
+            LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
+            OTSRoadNode fromNode = new OTSRoadNode(network, "Node A", new OTSPoint3D(0, 0, 0), Direction.ZERO);
+            OTSRoadNode toNode = new OTSRoadNode(network, "Node B", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
             String linkName = "AB";
-            Lane lane = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, null, 1, laneType,
+            Lane lane = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, 1, laneType,
                     new Speed(200, KM_PER_HOUR), simulator)[0];
             Length carPosition = new Length(100, METER);
             Set<DirectedLanePosition> carPositions = new LinkedHashSet<>(1);
@@ -405,7 +404,7 @@ public class LaneBasedGTUTest implements UNITS
             Parameters parameters = DefaultTestParameters.create();
 
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType,
-                    new Length(4, METER), new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), simulator, this.network);
+                    new Length(4, METER), new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), simulator, network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
             car.setParameters(parameters);

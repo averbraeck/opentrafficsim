@@ -42,7 +42,7 @@ public final class OTSNetworkUtils
             final SimulatorInterface.TimeDoubleUnit oldSimulator, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
-        OTSNetwork newNetwork = new OTSNetwork(newId, false);
+        OTSNetwork newNetwork = new OTSNetwork(newId, false, newSimulator);
 
         // clone the nodes
         for (Node node : network.getNodeMap().values())

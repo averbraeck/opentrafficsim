@@ -199,7 +199,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         private static final long serialVersionUID = 20140820L;
 
         /** The network. */
-        private OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+        private OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
         /** The headway (inter-vehicle time). */
         private Duration headway;

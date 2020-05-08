@@ -25,7 +25,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.event.ref.ReferenceType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
@@ -91,7 +91,7 @@ public class GTUDumperTest implements OTSModelInterface
         // System.out.println("testdir is " + this.testDir.getRoot());
         this.containerDir = this.testDir.newFolder("subfolder");
         // System.out.println("containerDir is " + this.containerDir);
-        this.network = new OTSNetwork("Network for testing GTUDumper class", true);
+        this.network = new OTSNetwork("Network for testing GTUDumper class", true, simulator);
         this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         simulator.scheduleEventAbs(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
@@ -152,34 +152,35 @@ public class GTUDumperTest implements OTSModelInterface
             }
 
             @Override
-            public boolean addListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
-            {
-                return false;
-            }
-
-            @Override
-            public boolean addListener(final EventListenerInterface listener, final EventType eventType,
-                    final ReferenceType referenceType) throws RemoteException
-            {
-                return false;
-            }
-
-            @Override
-            public boolean addListener(final EventListenerInterface listener, final EventType eventType, final int position)
+            public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType)
                     throws RemoteException
             {
                 return false;
             }
 
             @Override
-            public boolean addListener(final EventListenerInterface listener, final EventType eventType, final int position,
+            public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType,
                     final ReferenceType referenceType) throws RemoteException
             {
                 return false;
             }
 
             @Override
-            public boolean removeListener(final EventListenerInterface listener, final EventType eventType)
+            public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType,
+                    final int position) throws RemoteException
+            {
+                return false;
+            }
+
+            @Override
+            public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType,
+                    final int position, final ReferenceType referenceType) throws RemoteException
+            {
+                return false;
+            }
+
+            @Override
+            public boolean removeListener(final EventListenerInterface listener, final EventTypeInterface eventType)
                     throws RemoteException
             {
                 return false;
@@ -192,13 +193,13 @@ public class GTUDumperTest implements OTSModelInterface
             }
 
             @Override
-            public int numberOfListeners(final EventType eventType) throws RemoteException
+            public int numberOfListeners(final EventTypeInterface eventType) throws RemoteException
             {
                 return 0;
             }
 
             @Override
-            public Set<EventType> getEventTypesWithListeners() throws RemoteException
+            public Set<EventTypeInterface> getEventTypesWithListeners() throws RemoteException
             {
                 return null;
             }
@@ -497,7 +498,7 @@ public class GTUDumperTest implements OTSModelInterface
     public void testArgumentChecks() throws SimRuntimeException, IOException, NamingException
     {
         this.containerDir = this.testDir.newFolder("subfolder");
-        this.network = new OTSNetwork("Network for testing GTUDumper class", true);
+        this.network = new OTSNetwork("Network for testing GTUDumper class", true, simulator);
         this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         try

@@ -76,7 +76,7 @@ public class StraightModel extends AbstractOTSModel implements UNITS
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
     /** The headway (inter-vehicle time). */
     private Duration headway;

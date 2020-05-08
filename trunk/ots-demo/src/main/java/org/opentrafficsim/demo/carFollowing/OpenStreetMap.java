@@ -178,7 +178,7 @@ class OSMModel extends AbstractOTSModel
     private List<Lane> lanes = new ArrayList<>();
 
     /** The OTS network. */
-    private OTSRoadNetwork otsNetwork = new OTSRoadNetwork("network", true);
+    private OTSRoadNetwork otsNetwork = new OTSRoadNetwork("network", true, getSimulator());
 
     /** The ProgressListener. */
     private ProgressListener progressListener;
@@ -245,7 +245,7 @@ class OSMModel extends AbstractOTSModel
             OSMNetwork net = osmf.getNetwork();
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
             this.osmNetwork = net; // new OSMNetwork(net); // Why would you make a copy?
-            this.otsNetwork = new OTSRoadNetwork(this.osmNetwork.getName(), true);
+            this.otsNetwork = new OTSRoadNetwork(this.osmNetwork.getName(), true, getSimulator());
             for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
                 try
@@ -287,7 +287,7 @@ class OSMModel extends AbstractOTSModel
         }
         this.rectangle = area;
 
-        this.otsNetwork = new OTSRoadNetwork(this.osmNetwork.getName(), true);
+        this.otsNetwork = new OTSRoadNetwork(this.osmNetwork.getName(), true, getSimulator());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
             try

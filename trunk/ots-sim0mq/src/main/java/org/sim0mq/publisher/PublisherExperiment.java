@@ -94,7 +94,8 @@ public final class PublisherExperiment
     {
         ReturnWrapper returnWrapper = new ReturnWrapper(
                 new Object[] { "SIM01", true, "federationId", "senderId", "receiverId", "messageTypeId", 0, 0 });
-        OTSRoadNetwork network = new OTSRoadNetwork("OTS model for Publisher test", true);
+        OTSAnimator animator = new OTSAnimator("OTS Animator");
+        OTSRoadNetwork network = new OTSRoadNetwork("OTS model for Publisher test", true, animator);
         Publisher publisher = new Publisher(network);
         TransceiverInterface ti = publisher.getIdSource(0);
         Object[] services = ti.get(null);
@@ -120,7 +121,6 @@ public final class PublisherExperiment
         publisher.executeCommand("GTUs in network", SubscriptionHandler.Command.SUBSCRIBE_TO_ADD, null, returnWrapper);
         publisher.executeCommand("Links in network", Command.SUBSCRIBE_TO_ADD, null, returnWrapper);
 
-        OTSAnimator animator = new OTSAnimator("OTS Animator");
         String xml = new String(Files
                 .readAllBytes(Paths.get("C:/Users/pknoppers/Java/ots-demo/src/main/resources/TrafCODDemo2/TrafCODDemo2.xml")));
         Sim0MQOTSModel model = new Sim0MQOTSModel(animator, "Remotely controlled OTS model", network, xml);

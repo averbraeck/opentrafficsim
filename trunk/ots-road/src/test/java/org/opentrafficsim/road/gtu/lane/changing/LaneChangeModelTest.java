@@ -75,13 +75,14 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     private static final long serialVersionUID = 20150313;
 
     /** The network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("lane change model test network", true);
+    private OTSRoadNetwork network;
 
     /**
      */
     public LaneChangeModelTest()
     {
         super(new OTSSimulator("LaneChangeModelTest"));
+        this.network  = new OTSRoadNetwork("lane change model test network", true, getSimulator());
     }
 
     /**

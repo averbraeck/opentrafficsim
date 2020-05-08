@@ -184,8 +184,8 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
 
         // notify the potential animation of the existence of a GTUGenerator
-        fireEvent(Network.GENERATOR_ADD_EVENT, name);
-        fireEvent(Network.ANIMATION_GENERATOR_ADD_EVENT, this);
+        fireTimedEvent(Network.GENERATOR_ADD_EVENT, name, simulator.getSimulatorTime());
+        fireTimedEvent(Network.ANIMATION_GENERATOR_ADD_EVENT, this, simulator.getSimulatorTime());
     }
 
     /**

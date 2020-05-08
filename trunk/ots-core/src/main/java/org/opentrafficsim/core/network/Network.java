@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.djutils.event.EventProducerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -402,115 +402,114 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * The timed event type for pub/sub indicating the addition of a Node. <br>
      * Payload: Node node (not an array, just an Object)
      */
-    EventType ANIMATION_NODE_ADD_EVENT = new EventType("ANIMATION.NETWORK.NODE.ADD",
+    TimedEventType ANIMATION_NODE_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.NODE.ADD",
             new MetaData("Node animation added", "Node animation", new ObjectDescriptor("Node", "Node", Node.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of a Node. <br>
+     * The timed event type for pub/sub indicating the removal of a Node. <br>
      * Payload: Node node (not an array, just an Object)
      */
-    EventType ANIMATION_NODE_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.NODE.REMOVE",
+    TimedEventType ANIMATION_NODE_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.NODE.REMOVE",
             new MetaData("Node animation removed", "Node animation", new ObjectDescriptor("Node", "Node", Node.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of a Link. <br>
+     * The timed event type for pub/sub indicating the addition of a Link. <br>
      * Payload: Link link (not an array, just an Object)
      */
-    EventType ANIMATION_LINK_ADD_EVENT = new EventType("ANIMATION.NETWORK.LINK.ADD",
+    TimedEventType ANIMATION_LINK_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.LINK.ADD",
             new MetaData("Link animation added", "Link animation", new ObjectDescriptor("Link", "Link", Link.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of a Link. <br>
+     * The timed event type for pub/sub indicating the removal of a Link. <br>
      * Payload: Link link (not an array, just an Object)
      */
-    EventType ANIMATION_LINK_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.LINK.REMOVE",
+    TimedEventType ANIMATION_LINK_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.LINK.REMOVE",
             new MetaData("Link animation removed", "Link animation", new ObjectDescriptor("Link", "Link", Link.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of an ObjectInterface implementing object. <br>
+     * The timed event type for pub/sub indicating the addition of an ObjectInterface implementing object. <br>
      * Payload: StaticObject object (not an array, just an Object)
      */
-    EventType ANIMATION_OBJECT_ADD_EVENT = new EventType("ANIMATION.NETWORK.OBJECT.ADD", new MetaData("Object animation added",
-            "Object animation", new ObjectDescriptor("StaticObject", "Visible, stationary object", ObjectInterface.class)));
+    TimedEventType ANIMATION_OBJECT_ADD_EVENT =
+            new TimedEventType("ANIMATION.NETWORK.OBJECT.ADD", new MetaData("Object animation added", "Object animation",
+                    new ObjectDescriptor("StaticObject", "Visible, stationary object", ObjectInterface.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of an ObjectInterface implementing object. <br>
+     * The timed event type for pub/sub indicating the removal of an ObjectInterface implementing object. <br>
      * Payload: StaticObject object (not an array, just an Object)
      */
-    EventType ANIMATION_OBJECT_REMOVE_EVENT =
-            new EventType("ANIMATION.NETWORK.OBJECT.REMOVE", new MetaData("Object animation removed", "Object animation",
+    TimedEventType ANIMATION_OBJECT_REMOVE_EVENT =
+            new TimedEventType("ANIMATION.NETWORK.OBJECT.REMOVE", new MetaData("Object animation removed", "Object animation",
                     new ObjectDescriptor("ObjectInterface", "Visible, stationary object", ObjectInterface.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of an InvisibleObjectInterface implementing
-     * object. <br>
+     * The timed event type for pub/sub indicating the addition of an InvisibleObjectInterface implementing object. <br>
      * TODO: explain why invisible objects have associated animation events (or remove them from the Network interface) <br>
      * Payload: InvisibleObject object (not an array, just an Object)
      */
-    EventType ANIMATION_INVISIBLE_OBJECT_ADD_EVENT = new EventType("ANIMATION.NETWORK.INVISIBLE_OBJECT.ADD",
+    TimedEventType ANIMATION_INVISIBLE_OBJECT_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.INVISIBLE_OBJECT.ADD",
             new MetaData("Invisible object animation added", "Invisible object animation",
                     new ObjectDescriptor("InvisibleObjectInterface",
                             "Object that lives in a Network, but cannot be drawn and which does not have a specific location",
                             InvisibleObjectInterface.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing
-     * object. <br>
+     * The timed event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing object. <br>
      * Payload: InvisibleObject object (not an array, just an Object)
      */
-    EventType ANIMATION_INVISIBLE_OBJECT_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.INVISIBLE_OBJECT.REMOVE",
+    TimedEventType ANIMATION_INVISIBLE_OBJECT_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.INVISIBLE_OBJECT.REMOVE",
             new MetaData("Invisible object animation removed", "Invisible object animation",
                     new ObjectDescriptor("InvisibleObjectInterface",
                             "Object that lives in a Network, but cannot be drawn and which does not have a specific location",
                             InvisibleObjectInterface.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>
+     * The timed event type for pub/sub indicating the addition of a Route for a gtuType. <br>
      * Payload: [GTUType gtuType, Route route]
      */
-    EventType ANIMATION_ROUTE_ADD_EVENT = new EventType("ANIMATION.NETWORK.ROUTE.ADD",
+    TimedEventType ANIMATION_ROUTE_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.ROUTE.ADD",
             new MetaData("Route animation added", "Route animation",
                     new ObjectDescriptor[] { new ObjectDescriptor("GTU type", "GTU type", GTUType.class),
                             new ObjectDescriptor("Route animation", "Route animation", Route.class) }));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of a Route for a gtuType. <br>
+     * The timed event type for pub/sub indicating the removal of a Route for a gtuType. <br>
      * Payload: [GTUType gtuType, Route route]
      */
-    EventType ANIMATION_ROUTE_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.ROUTE.REMOVE",
+    TimedEventType ANIMATION_ROUTE_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.ROUTE.REMOVE",
             new MetaData("Route animation removed", "Route animation",
                     new ObjectDescriptor[] { new ObjectDescriptor("GTU type", "GTU type", GTUType.class),
                             new ObjectDescriptor("Route animation", "Route animation", Route.class) }));
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the network. <br>
+     * The timed> event type for pub/sub indicating the addition of a GTU to the network. <br>
      * Payload: GTU gtu (not an array, just an Object)
      */
-    EventType ANIMATION_GTU_ADD_EVENT = new EventType("ANIMATION.NETWORK.GTU.ADD",
+    TimedEventType ANIMATION_GTU_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.GTU.ADD",
             new MetaData("GTU animation added", "GTU animation", new ObjectDescriptor("GTU", "GTU", GTU.class)));
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the network. <br>
+     * The timed> event type for pub/sub indicating the removal of a GTU from the network. <br>
      * Payload: GTU gtu (not an array, just an Object)
      */
-    EventType ANIMATION_GTU_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.GTU.REMOVE",
+    TimedEventType ANIMATION_GTU_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.GTU.REMOVE",
             new MetaData("GTU animation removed", "GTU animation", new ObjectDescriptor("GTU", "GTU", GTU.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of an GTUGenerator implementing object. <br>
+     * The timed event type for pub/sub indicating the addition of an GTUGenerator implementing object. <br>
      * Payload: AbstractGTUGenerator object (not an array, just an Object) <br>
      * TODO: there seems to be no specific class or interface for these that can be specified in the ObjectDescriptor
      */
-    EventType ANIMATION_GENERATOR_ADD_EVENT = new EventType("ANIMATION.NETWORK.GENERATOR.ADD",
+    TimedEventType ANIMATION_GENERATOR_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.GENERATOR.ADD",
             new MetaData("GTU generator animation added", "GTU generator animation",
                     new ObjectDescriptor("GTU generator animation", "Abstract GTU generator", Serializable.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of an GTUGenerator implementing object. <br>
+     * The timed event type for pub/sub indicating the removal of an GTUGenerator implementing object. <br>
      * Payload: AbstractGTUGenerator object (not an array, just an Object) <br>
      * TODO: there seems to be no specific class or interface for these that can be specified in the ObjectDescriptor
      */
-    EventType ANIMATION_GENERATOR_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.GENERATOR.REMOVE",
+    TimedEventType ANIMATION_GENERATOR_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.GENERATOR.REMOVE",
             new MetaData("GTU generator animation removed", "GTU generator animation",
                     new ObjectDescriptor("GTU generator animation", "Abstract GTU generator", Serializable.class)));
 
@@ -519,111 +518,109 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
     /***************************************************************************************/
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of a Node. <br>
+     * The timed event type for pub/sub indicating the addition of a Node. <br>
      * Payload: String nodeId (not an array, just a String)
      */
-    EventType NODE_ADD_EVENT = new EventType("NETWORK.NODE.ADD",
+    TimedEventType NODE_ADD_EVENT = new TimedEventType("NETWORK.NODE.ADD",
             new MetaData("Node added", "Node added", new ObjectDescriptor("Node", "Name of node", String.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of a Node. <br>
+     * The timed event type for pub/sub indicating the removal of a Node. <br>
      * Payload: String nodeId (not an array, just a String)
      */
-    EventType NODE_REMOVE_EVENT = new EventType("NETWORK.NODE.REMOVE",
+    TimedEventType NODE_REMOVE_EVENT = new TimedEventType("NETWORK.NODE.REMOVE",
             new MetaData("Node removed", "Node removed", new ObjectDescriptor("Node", "Name of node", String.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of a Link. <br>
+     * The timed event type for pub/sub indicating the addition of a Link. <br>
      * Payload: String linkId (not an array, just a String)
      */
-    EventType LINK_ADD_EVENT = new EventType("NETWORK.LINK.ADD",
+    TimedEventType LINK_ADD_EVENT = new TimedEventType("NETWORK.LINK.ADD",
             new MetaData("Link added", "Link added", new ObjectDescriptor("Link", "Name of link", String.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of a Link. <br>
+     * The timed event type for pub/sub indicating the removal of a Link. <br>
      * Payload: String linkId (not an array, just a String)
      */
-    EventType LINK_REMOVE_EVENT = new EventType("NETWORK.LINK.REMOVE",
+    TimedEventType LINK_REMOVE_EVENT = new TimedEventType("NETWORK.LINK.REMOVE",
             new MetaData("Link removed", "Link removed", new ObjectDescriptor("Link", "Name of link", String.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of an ObjectInterface implementing object. <br>
+     * The timed event type for pub/sub indicating the addition of an ObjectInterface implementing object. <br>
      * Payload: String ObjectId (not an array, just a String)
      */
-    EventType OBJECT_ADD_EVENT =
-            new EventType("NETWORK.OBJECT.ADD", new MetaData("Object added", "Visible, stationary object added",
+    TimedEventType OBJECT_ADD_EVENT =
+            new TimedEventType("NETWORK.OBJECT.ADD", new MetaData("Object added", "Visible, stationary object added",
                     new ObjectDescriptor("id of Static object", "id of Visible, stationary object", String.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of an ObjectInterface implementing object. <br>
+     * The timed event type for pub/sub indicating the removal of an ObjectInterface implementing object. <br>
      * Payload: String objectId (not an array, just a String)
      */
-    EventType OBJECT_REMOVE_EVENT =
-            new EventType("NETWORK.OBJECT.REMOVE", new MetaData("Object removed", "Visible, stationary object removed",
+    TimedEventType OBJECT_REMOVE_EVENT =
+            new TimedEventType("NETWORK.OBJECT.REMOVE", new MetaData("Object removed", "Visible, stationary object removed",
                     new ObjectDescriptor("id of Static object", "id of Visible, stationary object", String.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of an InvisibleObjectInterface implementing
-     * object. <br>
+     * The timed event type for pub/sub indicating the addition of an InvisibleObjectInterface implementing object. <br>
      * Payload: String ObjectId (not an array, just a String)
      */
-    EventType INVISIBLE_OBJECT_ADD_EVENT = new EventType("NETWORK.INVISIBLE_OBJECT.ADD", new MetaData("Invisible object added",
-            "Invisible, stationary object added",
-            new ObjectDescriptor("InvisibleObjectInterface", "Id of invisible, stationary object", String.class)));
+    TimedEventType INVISIBLE_OBJECT_ADD_EVENT = new TimedEventType("NETWORK.INVISIBLE_OBJECT.ADD",
+            new MetaData("Invisible object added", "Invisible, stationary object added",
+                    new ObjectDescriptor("InvisibleObjectInterface", "Id of invisible, stationary object", String.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing
-     * object. <br>
+     * The timed event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing object. <br>
      * Payload: String objectId (not an array, just a String)
      */
-    EventType INVISIBLE_OBJECT_REMOVE_EVENT = new EventType("NETWORK.INVISIBLE_OBJECT.REMOVE", new MetaData(
-            "Invisible object removed", "Invisible, stationary object removed",
-            new ObjectDescriptor("InvisibleObjectInterface", "Id of invisible, stationary object", String.class)));
+    TimedEventType INVISIBLE_OBJECT_REMOVE_EVENT = new TimedEventType("NETWORK.INVISIBLE_OBJECT.REMOVE",
+            new MetaData("Invisible object removed", "Invisible, stationary object removed",
+                    new ObjectDescriptor("InvisibleObjectInterface", "Id of invisible, stationary object", String.class)));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>
+     * The timed event type for pub/sub indicating the addition of a Route for a gtuType. <br>
      * Payload: [String gtuTypeId, String routeId]
      */
-    EventType ROUTE_ADD_EVENT = new EventType("NETWORK.ROUTE.ADD",
+    TimedEventType ROUTE_ADD_EVENT = new TimedEventType("NETWORK.ROUTE.ADD",
             new MetaData("Route added", "Route added",
                     new ObjectDescriptor[] { new ObjectDescriptor("GTU Type id", "GTU Type id", String.class),
                             new ObjectDescriptor("Route id", "Route id", String.class) }));
 
     /**
-     * The (regular, not timed) event type for pub/sub indicating the removal of a Route for a gtuType. <br>
+     * The timed event type for pub/sub indicating the removal of a Route for a gtuType. <br>
      * Payload: [String gtuTypeId, String routeId]
      */
-    EventType ROUTE_REMOVE_EVENT = new EventType("NETWORK.ROUTE.REMOVE",
+    TimedEventType ROUTE_REMOVE_EVENT = new TimedEventType("NETWORK.ROUTE.REMOVE",
             new MetaData("Route removed", "Route removed",
                     new ObjectDescriptor[] { new ObjectDescriptor("GTU Type id", "GTU Type id", String.class),
                             new ObjectDescriptor("Route id", "Route id", String.class) }));
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the network. <br>
+     * The timed event type for pub/sub indicating the addition of a GTU to the network. <br>
      * Payload: String gtuId (not an array, just a String)
      */
-    EventType GTU_ADD_EVENT = new EventType("NETWORK.GTU.ADD",
+    TimedEventType GTU_ADD_EVENT = new TimedEventType("NETWORK.GTU.ADD",
             new MetaData("GTU added", "GTU added", new ObjectDescriptor("GTU id", "GTU id", String.class)));
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the network. <br>
+     * The timed event type for pub/sub indicating the removal of a GTU from the network. <br>
      * Payload: String gtuId (not an array, just a String)
      */
-    EventType GTU_REMOVE_EVENT = new EventType("NETWORK.GTU.REMOVE",
+    TimedEventType GTU_REMOVE_EVENT = new TimedEventType("NETWORK.GTU.REMOVE",
             new MetaData("GTU removed", "GTU removed", new ObjectDescriptor("GTU id", "GTU id", String.class)));
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the addition of a GTUGenerator to the network. <br>
+     * The timed event type for pub/sub indicating the addition of a GTUGenerator to the network. <br>
      * Payload: String generatorName (not an array, just a String)
      */
-    EventType GENERATOR_ADD_EVENT = new EventType("NETWORK.GENERATOR.ADD", new MetaData("GTU generator added",
+    TimedEventType GENERATOR_ADD_EVENT = new TimedEventType("NETWORK.GENERATOR.ADD", new MetaData("GTU generator added",
             "GTU generator added", new ObjectDescriptor("GTU generator name", "GTU generator name", String.class)));
 
     /**
-     * The <b>timed</b> event type for pub/sub indicating the removal of a GTUGenerator from the network. <br>
+     * The timed event type for pub/sub indicating the removal of a GTUGenerator from the network. <br>
      * Payload: String generatorName (not an array, just a String)
      */
-    EventType GENERATOR_REMOVE_EVENT = new EventType("NETWORK.GENERATOR.REMOVE", new MetaData("GTU generator removed",
+    TimedEventType GENERATOR_REMOVE_EVENT = new TimedEventType("NETWORK.GENERATOR.REMOVE", new MetaData("GTU generator removed",
             "GTU generator re moved", new ObjectDescriptor("GTU generator name", "GTU generator name", String.class)));
     
 }

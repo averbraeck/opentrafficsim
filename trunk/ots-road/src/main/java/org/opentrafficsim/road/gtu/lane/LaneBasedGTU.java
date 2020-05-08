@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.gtu.GTU;
@@ -322,7 +323,7 @@ public interface LaneBasedGTU extends GTU
      * Payload: [String gtuId, PositionVector initialPosition, Direction initialDirection, Length length, Length width, String
      * linkId, String laneId, Length positionOnReferenceLane, GTUDirectionality direction, GTUType gtuType]
      */
-    EventType LANEBASED_INIT_EVENT = new EventType("LANEBASEDGTU.INIT",
+    TimedEventType LANEBASED_INIT_EVENT = new TimedEventType("LANEBASEDGTU.INIT",
             new MetaData("Lane based GTU created", "Lane based GTU created",
                     new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
                             new ObjectDescriptor("initial position", "initial position", PositionVector.class),
@@ -342,7 +343,7 @@ public interface LaneBasedGTU extends GTU
      * acceleration, TurnIndicatorStatus turnIndicatorStatus, Length odometer, Link id of referenceLane, Lane id of
      * referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
      */
-    EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE", new MetaData("Lane based GTU moved",
+    TimedEventType LANEBASED_MOVE_EVENT = new TimedEventType("LANEBASEDGTU.MOVE", new MetaData("Lane based GTU moved",
             "Lane based GTU moved",
             new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Position", "Position", PositionVector.class),
@@ -361,7 +362,7 @@ public interface LaneBasedGTU extends GTU
      * Payload: [String gtuId, PositionVector finalPosition, Direction finalDirection, Length finalOdometer, Link referenceLink,
      * Lane referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
      */
-    EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY", new MetaData("Lane based GTU destroyed",
+    TimedEventType LANEBASED_DESTROY_EVENT = new TimedEventType("LANEBASEDGTU.DESTROY", new MetaData("Lane based GTU destroyed",
             "Lane based GTU destroyed",
             new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Position", "Position", PositionVector.class),
@@ -399,7 +400,7 @@ public interface LaneBasedGTU extends GTU
      * The event type for pub/sub indicating that the GTU change lane. <br>
      * Payload: [String gtuId, LateralDirectionality direction, DirectedLanePosition from]
      */
-    EventType LANE_CHANGE_EVENT = new EventType("LANE.CHANGE", new MetaData("Lane based GTU changes lane",
+    TimedEventType LANE_CHANGE_EVENT = new TimedEventType("LANE.CHANGE", new MetaData("Lane based GTU changes lane",
             "Lane based GTU changes lane",
             new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Lateral direction of lane change", "Lateral direction of lane change", String.class),

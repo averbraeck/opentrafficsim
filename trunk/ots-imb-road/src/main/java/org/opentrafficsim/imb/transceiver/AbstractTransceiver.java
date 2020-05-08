@@ -7,7 +7,8 @@ import java.util.Map;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventProducerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
+import org.djutils.event.TimedEventType;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
@@ -43,11 +44,11 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
     /** The map to indicate which IMB message handler to use for a given IMB message type. */
     private Map<String, IMBMessageHandler> imbMessageHandlerMap = new LinkedHashMap<>();
 
-    /** The map to indicate which OTS EventType is mapped to which IMB event name (String). */
-    private Map<EventType, String> otsToIMBMap = new LinkedHashMap<>();
+    /** The map to indicate which OTS TimedEventType is mapped to which IMB event name (String). */
+    private Map<EventTypeInterface, String> otsToIMBMap = new LinkedHashMap<>();
 
-    /** The map to indicate which Transformer to use for a given OTS EventType. */
-    private Map<EventType, OTSToIMBTransformer> otsTransformerMap = new LinkedHashMap<>();
+    /** The map to indicate which Transformer to use for a given OTS TimedEventType. */
+    private Map<EventTypeInterface, OTSToIMBTransformer> otsTransformerMap = new LinkedHashMap<>();
 
     /**
      * Construct a new AbstractTranceiver.
@@ -72,18 +73,18 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
      * Store the transformer to use to create the CHANGE IMB messages. The Transceiver subscribes to the relevant information of
      * the OTS EventProducer so it can send CHANGE messages from now on.
      * @param producer EventProducerInterface; the OTS event producer that notifies this Transceiver about state changes
-     * @param eventType EventType; the event type that corresponds to the state change for this channel
+     * @param eventType TimedEventType; the event type that corresponds to the state change for this channel
      * @param imbEventName String; the IMB event name for the message to send
      * @param imbNewPayload Object[]; the information to send to IMB with the IMB NEW message
      * @param transformer OTSToIMBTransformer; the transformer to use for create the IMB CHANGE events from an OTS Event content
      * @throws NullPointerException in case one of the arguments is null.
-     * @throws IMBException in case the mapping from an EventType to an IMB event name is different from a previous time when a
-     *             mapping was registered for the same EventType (but for a different OTS EventProducer instance), when the
-     *             transformer for an EventType was changed a previous time when a mapping was registered, or when the
-     *             subscription to the OTS EventProducer fails.
+     * @throws IMBException in case the mapping from a TimedEventType to an IMB event name is different from a previous time
+     *             when a mapping was registered for the same TimedEventType (but for a different OTS EventProducer instance),
+     *             when the transformer for a TimedEventType was changed a previous time when a mapping was registered, or when
+     *             the subscription to the OTS EventProducer fails.
      */
-    public final void addOTSToIMBChannel(final EventProducerInterface producer, final EventType eventType,
-            final String imbEventName, Object[] imbNewPayload, final OTSToIMBTransformer transformer) throws IMBException
+    public final void addOTSToIMBChannel(final EventProducerInterface producer, final EventTypeInterface eventType,
+            final String imbEventName, final Object[] imbNewPayload, final OTSToIMBTransformer transformer) throws IMBException
     {
         Throw.whenNull(producer, "producer cannot be null");
         Throw.whenNull(eventType, "eventType cannot be null");
@@ -91,9 +92,9 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
         Throw.whenNull(imbNewPayload, "imbNewPayload cannot be null");
         Throw.whenNull(transformer, "transformer cannot be null");
         Throw.when(this.otsToIMBMap.containsKey(eventType) && !this.otsToIMBMap.get(eventType).equals(imbEventName),
-                IMBException.class, "mapping of EventType to IMB name cannot be changed");
+                IMBException.class, "mapping of TimedEventType to IMB name cannot be changed");
         Throw.when(this.otsTransformerMap.containsKey(eventType) && !this.otsTransformerMap.get(eventType).equals(transformer),
-                IMBException.class, "mapping of EventType to Transformer cannot be changed");
+                IMBException.class, "mapping of TimedEventType to Transformer cannot be changed");
 
         try
         {
@@ -111,18 +112,18 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
     /**
      * Remove a connection from OTS to IMB, and and send a DELETE message to IMB for the imbEventName with a corresponding
      * payload. The Transceiver subscription to the relevant information of the OTS EventProducer instance is removed. <br>
-     * Note that the mappings of EventType to IMB Event name and of the EventType to the transformer are not removed. There can
-     * be more instances of OTS EventProducer that use this channel. E.g., when all GTUs communicate through one channel using
-     * the same Transformer, the mappings should not be removed when one GTU leaves the model.
+     * Note that the mappings of TimedEventType to IMB Event name and of the TimedEventType to the transformer are not removed.
+     * There can be more instances of OTS EventProducer that use this channel. E.g., when all GTUs communicate through one
+     * channel using the same Transformer, the mappings should not be removed when one GTU leaves the model.
      * @param producer EventProducerInterface; the OTS event producer to which we should stop listening
-     * @param eventType EventType; the event type that corresponds for this channel
+     * @param eventType TimedEventType; the event type that corresponds for this channel
      * @param imbDeletePayload Object[]; the information to send to IMB with the IMB DELETE message
      * @throws NullPointerException in case one of the arguments is null.
-     * @throws IMBException when the cancellation of the subscription to the OTS EventProducer fails, or when the EventType for
-     *             the channel was not registered with an addOTSToIMBChannel call.
+     * @throws IMBException when the cancellation of the subscription to the OTS EventProducer fails, or when the TimedEventType
+     *             for the channel was not registered with an addOTSToIMBChannel call.
      */
-    public final void removeOTSToIMBChannel(final EventProducerInterface producer, final EventType eventType,
-            Object[] imbDeletePayload) throws IMBException
+    public final void removeOTSToIMBChannel(final EventProducerInterface producer, final TimedEventType eventType,
+            final Object[] imbDeletePayload) throws IMBException
     {
         Throw.whenNull(producer, "producer cannot be null");
         Throw.whenNull(eventType, "eventType cannot be null");
@@ -134,7 +135,7 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
         {
             producer.removeListener(this, eventType);
             this.connector.postIMBMessage(this.otsToIMBMap.get(eventType), Connector.IMBEventType.DELETE, imbDeletePayload);
-            // Do not implement this.otsToIMBMap.remove(eventType), as there may be more listeners for the same EventType.
+            // Do not implement this.otsToIMBMap.remove(eventType), as there may be more listeners for the same TimedEventType.
         }
         catch (Exception exception)
         {
@@ -170,12 +171,12 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
      * directly as an EventListener with the addListener method. Instead, we directly call the notify(event) method on the
      * listeners.
      * @param imbEventName String; the name of the IMB event
-     * @param eventType EventType; the event type that the listener subscribes to
+     * @param eventType TimedEventType; the event type that the listener subscribes to
      * @param imbToOTSTransformer IMBToOTSTransformer; the transformer that creates the event content and identifies the exact
      *            listener on the basis of the IBM event payload, e.g., on the basis of an id within the payload
      * @throws IMBException in case the registration fails
      */
-    public void addIMBtoOTSChannel(final String imbEventName, final EventType eventType,
+    public void addIMBtoOTSChannel(final String imbEventName, final TimedEventType eventType,
             final IMBToOTSTransformer imbToOTSTransformer) throws IMBException
     {
         Throw.whenNull(imbEventName, "imbEventName cannot be null");

@@ -111,7 +111,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     private static LaneChangeGraph lcs;
 
     /** The network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+    private OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
     /**
      * Create a Lane Change Graph.

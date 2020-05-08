@@ -33,7 +33,7 @@ import org.djutils.cli.CliUtil;
 import org.djutils.decoderdumper.HexDumper;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.logger.LogCategory;
@@ -142,6 +142,34 @@ public class Sim0MQControlledOTS implements EventListenerInterface
             ZMQ.Socket toCommandLoop = zContext.createSocket(SocketType.PUSH);
             toCommandLoop.setHWM(1000);
             toCommandLoop.connect("inproc://commands");
+            while(!Thread.interrupted())
+            {
+                byte[] data;
+                data = remoteControllerSocket.recv(ZMQ.DONTWAIT);
+                if (null != data)
+                {
+                    System.err.println("Got incoming command");
+                    toCommandLoop.send(data, 0);
+                    System.err.println("Incoming command handed over to toCommandLoop socket");
+                    continue;
+                }
+                data = resultQueue.recv(ZMQ.DONTWAIT);
+                if (null != data)
+                {
+                    System.err.println("Got outgoing result");
+                    remoteControllerSocket.send(data, 0);
+                    System.err.println("Outgoing result handed over to remoteControllerSocket");
+                }
+                try
+                {
+                    Thread.sleep(1);
+                }
+                catch (InterruptedException e)
+                {
+                    //e.printStackTrace();
+                }
+            }
+            /*-
             ZMQ.Poller poller = zContext.createPoller(2);
             poller.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
             poller.register(resultQueue, ZMQ.Poller.POLLIN);
@@ -163,6 +191,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     System.err.println("Outgoing result handed over to remoteControllerSocket");
                 }
             }
+            */
         }
     }
 
@@ -500,17 +529,40 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         {
             e.printStackTrace();
         }
-        Long threadId = Thread.currentThread().getId();
-        ZMQ.Socket socket = this.socketMap.get(threadId);
-        if (null == socket)
-        {
-            System.out.println("Creating new internal socket for thread " + threadId);
-            socket = this.zContext.createSocket(SocketType.PUSH);
-            socket.setHWM(100000);
-            socket.connect("inproc://results");
-            this.socketMap.put(threadId, socket);
-        }
+//        Long threadId = Thread.currentThread().getId();
+//        ZMQ.Socket socket = this.socketMap.get(threadId);
+//        while (null == socket)
+//        {
+//            System.out.println("Creating new internal socket for thread " + threadId);
+//            try
+//            {
+//                socket = this.zContext.createSocket(SocketType.PUSH);
+//                socket.setHWM(100000);
+//                socket.connect("inproc://results");
+//                this.socketMap.put(threadId, socket);
+//                System.out.println("Socket created");
+//            }
+//            catch (Exception cbie)
+//            {
+//                System.err.println("Caught funny exception - probably related to DSOL animator start/stop code ... retrying");
+//                try
+//                {
+//                    Thread.sleep(100);
+//                }
+//                catch (InterruptedException e)
+//                {
+//                    System.err.println("Sleep interrupted!");
+//                }
+//            }
+//        }
+        //System.out.println("pre send");
+        
+        ZMQ.Socket socket = this.zContext.createSocket(SocketType.PUSH);
+        socket.setHWM(100000);
+        socket.connect("inproc://results");
         socket.send(fixedData, 0);
+        socket.close();
+        //System.out.println("post send");
     }
 
     /** {@inheritDoc} */
@@ -519,7 +571,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     {
         try
         {
-            EventType type = event.getType();
+            EventTypeInterface type = event.getType();
             String eventTypeName = type.getName();
             System.out.println("notify: start processing event " + eventTypeName);
             switch (eventTypeName)
@@ -655,7 +707,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OTSRoadNetwork(getShortName(), true);
+            this.network = new OTSRoadNetwork(getShortName(), true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

@@ -3,7 +3,7 @@ package org.sim0mq.publisher;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 
@@ -23,9 +23,9 @@ public abstract class AbstractEventTransceiver extends AbstractTransceiver
      * Construct a new AbstractEventTransceiver.
      * @param id String; name of the new AbstractEventTransceiver
      * @param addressFields MetaData; address format accepted by the new AbstractEventTransceiver
-     * @param eventType EventType; type of the event that the AbstractEventTransceiver can subscribe to in the network
+     * @param eventType TimedEventType; type of the event that the AbstractEventTransceiver can subscribe to in the network
      */
-    public AbstractEventTransceiver(final String id, final MetaData addressFields, final EventType eventType)
+    public AbstractEventTransceiver(final String id, final MetaData addressFields, final TimedEventType eventType)
     {
         super(id, addressFields, constructResultFields(eventType));
     }
@@ -33,11 +33,11 @@ public abstract class AbstractEventTransceiver extends AbstractTransceiver
     /**
      * Construct a Sim0MQ MetaData object that corresponds to the MetaData of DJUTILS EventType. Classes that do not have a
      * corresponding Sim0MQ type will result in a ClassCastException.
-     * @param eventType
+     * @param eventType TimedEventType; the event type
      * @return MetaData; a MetaData object that corresponds to the MetaData of the event type
      * @throws ClassCastException when the <code>eventType</code> contains a class that cannot be carried over Sim0MQ
      */
-    public static MetaData constructResultFields(final EventType eventType) throws ClassCastException
+    public static MetaData constructResultFields(final TimedEventType eventType) throws ClassCastException
     {
         List<ObjectDescriptor> resultList = new ArrayList<>();
         for (int index = 0; index < eventType.getMetaData().size(); index++)

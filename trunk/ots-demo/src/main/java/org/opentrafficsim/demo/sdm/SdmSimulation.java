@@ -290,7 +290,7 @@ public class SdmSimulation extends AbstractSimulationScript
                 AdaptationSituationalAwareness.TR_MAX.getDefaultValue(), Duration.instantiateSI(10.0)));
 
         // Network
-        this.network = new OTSRoadNetwork("SDM", true);
+        this.network = new OTSRoadNetwork("SDM", true, getSimulator());
         OTSPoint3D pointA = new OTSPoint3D(0.0, 0.0);
         OTSPoint3D pointB = new OTSPoint3D(0.0, -20.0);
         OTSPoint3D pointC = new OTSPoint3D(1600.0, -20.0);

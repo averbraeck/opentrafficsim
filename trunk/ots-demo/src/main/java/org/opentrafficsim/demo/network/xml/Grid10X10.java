@@ -336,7 +336,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
         public final void constructModel() throws SimRuntimeException
         {
 
-            this.network = new OTSRoadNetwork("Grid network", true);
+            this.network = new OTSRoadNetwork("Grid network", true, getSimulator());
             try
             {
                 ByteArrayInputStream bos = new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8));

@@ -41,7 +41,7 @@ public class GTUCharacteristicsTest implements OTSModelInterface
     @Test
     public final void testGTUCharacteristics() throws SimRuntimeException, NamingException
     {
-        OTSNetwork network = new OTSNetwork("network", true);
+        OTSNetwork network = new OTSNetwork("network", true, simulator);
         // Make two sets of values so we can prove that the constructed GTUCharacteristics sets are really distinct.
         GTUType gtuTypeA = new GTUType("Type A", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         GTUType gtuTypeB = new GTUType("Type B", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
@@ -51,10 +51,10 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         Length widthB = new Length(2.5, LengthUnit.METER);
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
-        GTUCharacteristics gtucA = new GTUCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA, Acceleration.instantiateSI(3.0),
-                Acceleration.instantiateSI(-8.0), lengthA.times(0.5));
-        GTUCharacteristics gtucB = new GTUCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB, Acceleration.instantiateSI(3.0),
-                Acceleration.instantiateSI(-8.0), lengthB.times(0.5));
+        GTUCharacteristics gtucA = new GTUCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA,
+                Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), lengthA.times(0.5));
+        GTUCharacteristics gtucB = new GTUCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB,
+                Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), lengthB.times(0.5));
         assertEquals("gtuTypeA", gtuTypeA, gtucA.getGTUType());
         assertEquals("gtuTypeB", gtuTypeB, gtucB.getGTUType());
         assertEquals("lengthA", lengthA, gtucA.getLength());

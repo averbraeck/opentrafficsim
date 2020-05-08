@@ -143,7 +143,7 @@ public class TestXMLParserA58 extends OTSSimulationApplication<TestXMLModelA58>
         public final void constructModel() throws SimRuntimeException
         {
             URL xmlURL = URLResource.getResource("/xml/A58.xml");
-            this.network = new OTSRoadNetwork("Example network", true);
+            this.network = new OTSRoadNetwork("Example network", true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);

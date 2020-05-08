@@ -161,7 +161,7 @@ public class A58IMB extends OTSSimulationApplication<A58Model>
         private static final long serialVersionUID = 20141121L;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
-        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+        private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
         /** the GIS map. */
         private GisRenderable2D gisMap;

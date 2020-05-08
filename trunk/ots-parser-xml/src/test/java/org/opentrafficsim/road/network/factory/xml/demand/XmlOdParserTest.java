@@ -54,14 +54,14 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class XmlOdParserTest
 {
 
-    /** Network. */
-    OTSRoadNetwork network = new OTSRoadNetwork("OD test", true);
-
     /** GTU types. */
     private Set<GTUType> gtuTypes = new LinkedHashSet<>();
 
     /** Simulator. */
     OTSSimulatorInterface simulator;
+
+    /** Network. */
+    OTSRoadNetwork network = new OTSRoadNetwork("OD test", true, simulator);
 
     /** Parser. */
     private XmlOdParser parser;

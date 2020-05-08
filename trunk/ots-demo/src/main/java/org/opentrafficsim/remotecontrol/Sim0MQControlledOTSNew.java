@@ -33,7 +33,7 @@ import org.djutils.cli.CliUtil;
 import org.djutils.decoderdumper.HexDumper;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.logger.LogCategory;
@@ -381,7 +381,8 @@ public class Sim0MQControlledOTSNew implements EventListenerInterface
                                         {
                                             System.out
                                                     .println("SIMULATOR DOES NOT STOP. TIME = " + simulator.getSimulatorTime());
-                                            Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt = simulator.getEventList().iterator();
+                                            Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt =
+                                                    simulator.getEventList().iterator();
                                             while (elIt.hasNext())
                                             {
                                                 System.out.println("EVENTLIST: " + elIt.next());
@@ -495,7 +496,7 @@ public class Sim0MQControlledOTSNew implements EventListenerInterface
         toMaster.connect("inproc://toMaster");
         try
         {
-            EventType type = event.getType();
+            EventTypeInterface type = event.getType();
             String eventTypeName = type.getName();
             System.out.println("notify: start processing event " + eventTypeName);
             switch (eventTypeName)
@@ -696,7 +697,7 @@ public class Sim0MQControlledOTSNew implements EventListenerInterface
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.network = new OTSRoadNetwork(getShortName(), true);
+            this.network = new OTSRoadNetwork(getShortName(), true, getSimulator());
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,

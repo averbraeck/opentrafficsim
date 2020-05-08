@@ -9,7 +9,7 @@ import org.djunits.Throw;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventProducerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
@@ -36,14 +36,14 @@ public class SubscriptionHandler
     /** Event producer for add, remove, or change events; e.g. the OTSNetwork. */
     private final LookupEventProducerInterface eventProducerForAddRemoveOrChange;
 
-    /** EventType to subscribe to in order to receive creation of added object events; e.g. NETWORK.GTU_ADD_EVENT. */
-    private final EventType addedEventType;
+    /** TimedEventType to subscribe to in order to receive creation of added object events; e.g. NETWORK.GTU_ADD_EVENT. */
+    private final TimedEventType addedEventType;
 
-    /** EventType to subscribe to in order to receive removed object events; e.g. NETWORK.GTU_REMOVE_EVENT. */
-    private final EventType removedEventType;
+    /** TimedEventType to subscribe to in order to receive removed object events; e.g. NETWORK.GTU_REMOVE_EVENT. */
+    private final TimedEventType removedEventType;
 
-    /** EventType to subscript to in order to receive change of the collection, or object events. */
-    private final EventType changeEventType;
+    /** TimedEventType to subscript to in order to receive change of the collection, or object events. */
+    private final TimedEventType changeEventType;
 
     /** SubscriptionHandler that handles subscriptions to individual objects; e.g. GTU.MOVE_EVENT. */
     private final SubscriptionHandler elementSubscriptionHandler;
@@ -66,8 +66,8 @@ public class SubscriptionHandler
      * @param elementSubscriptionHandler SubscriptionHandler; SubscriptionHandler for events produced by the underlying elements
      */
     SubscriptionHandler(final String id, final TransceiverInterface listTransceiver,
-            final LookupEventProducerInterface eventProducerForAddRemoveOrChange, final EventType addedEventType,
-            final EventType removedEventType, final EventType changeEventType,
+            final LookupEventProducerInterface eventProducerForAddRemoveOrChange, final TimedEventType addedEventType,
+            final TimedEventType removedEventType, final TimedEventType changeEventType,
             final SubscriptionHandler elementSubscriptionHandler)
     {
         Throw.whenNull(id, "Id may not be null");
@@ -152,11 +152,11 @@ public class SubscriptionHandler
     /**
      * Create a new subscription to ADD events.
      * @param address Object[]; the data that is required to find the correct EventProducer
-     * @param eventType EventType; one of the event types that the addressed EventProducer can fire
+     * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; generates envelopes for the returned events
      * @throws RemoteException when communication fails
      */
-    private void subscribeTo(final Object[] address, final EventType eventType, final ReturnWrapper returnWrapper)
+    private void subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
             throws RemoteException
     {
         Throw.whenNull(eventType, "eventType may not be null");
@@ -178,11 +178,11 @@ public class SubscriptionHandler
     /**
      * Cancel a subscription to ADD events.
      * @param address Object[]; the data that is required to find the correct EventProducer
-     * @param eventType EventType; one of the event types that the addressed EventProducer can fire
+     * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; the ReturnWapper that sent the results until now
      * @throws RemoteException when communication fails
      */
-    private void unsubscribeFrom(final Object[] address, final EventType eventType, final ReturnWrapper returnWrapper)
+    private void unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
             throws RemoteException
     {
         Throw.whenNull(eventType, "eventType may not be null");
@@ -379,7 +379,7 @@ class Subscription implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        // TODO: figure out how to include the time stamp if event is a TimedEvent.
+        // TODO: figure out how to include the time stamp if event is a TimedEvent (which is probably always the case).
         MetaData metaData = event.getType().getMetaData();
         Object[] result = new Object[1 + metaData.size()];
         result[0] = event.getType().getName();

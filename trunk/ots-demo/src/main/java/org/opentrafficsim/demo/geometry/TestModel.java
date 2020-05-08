@@ -53,7 +53,7 @@ public class TestModel extends AbstractOTSModel implements UNITS
     private static final long serialVersionUID = 1L;
 
     /** the network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("geometry test network", true);
+    private OTSRoadNetwork network = new OTSRoadNetwork("geometry test network", true, getSimulator());
 
     /** {@inheritDoc} */
     @Override

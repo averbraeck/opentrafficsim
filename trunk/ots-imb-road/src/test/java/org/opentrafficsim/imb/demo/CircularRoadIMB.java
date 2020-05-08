@@ -314,7 +314,7 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
     /** the network as created by the AbstractWrappableIMBAnimation. */
-    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
     /** The random number generator used to decide what kind of GTU to generate etc. */
     private StreamInterface stream = new MersenneTwister(12345);

@@ -89,7 +89,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
     private static final long serialVersionUID = 20140815L;
 
     /** The network. */
-    private final OTSRoadNetwork network = new OTSRoadNetwork("network", true);
+    private final OTSRoadNetwork network;
 
     /** the random stream for this demo. */
     private StreamInterface stream = new MersenneTwister(555);
@@ -128,6 +128,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
     public CrossingTrafficLightsModel(final OTSSimulatorInterface simulator)
     {
         super(simulator);
+        this.network  = new OTSRoadNetwork("network", true, simulator);
         createInputParameters();
     }
 

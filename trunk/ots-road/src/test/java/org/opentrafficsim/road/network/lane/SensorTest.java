@@ -61,8 +61,11 @@ public class SensorTest implements UNITS
     @Test
     public final void sensorTest() throws Exception
     {
-        OTSRoadNetwork network = new OTSRoadNetwork("sensor test network", true);
-        // First we need a set of Lanes
+        // We need a simulator, but for that we first need something that implements OTSModelInterface
+        OTSSimulatorInterface simulator = new OTSSimulator("SensorTest");
+        OTSModelInterface model = new DummyModelForSensorTest(simulator);
+        OTSRoadNetwork network = new OTSRoadNetwork("sensor test network", true, simulator);
+        // Now we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
         OTSRoadNode nodeAFrom = new OTSRoadNode(network, "AFrom", new OTSPoint3D(0, 0, 0), Direction.ZERO);
         OTSRoadNode nodeATo = new OTSRoadNode(network, "ATo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
@@ -70,9 +73,6 @@ public class SensorTest implements UNITS
         // so car won't run off lane B in 100 s.
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-        // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSSimulatorInterface simulator = new OTSSimulator("SensorTest");
-        OTSModelInterface model = new DummyModelForSensorTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
