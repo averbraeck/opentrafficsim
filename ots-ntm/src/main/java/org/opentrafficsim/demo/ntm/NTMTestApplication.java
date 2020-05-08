@@ -17,8 +17,8 @@ import org.djutils.event.TimedEvent;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.demo.ntm.IO.ProjectConfigurations;
 
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
@@ -88,7 +88,7 @@ public class NTMTestApplication extends DSOLApplication
         // tell the animation panel to update its statistics
         // TODO should be done automatically in DSOL!
         animationPanel.notify(
-                new TimedEvent(SimulatorInterface.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
+                new TimedEvent(Replication.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
         // infoBox("Start initialization", "NTM");
         new NTMTestApplication("Network Transmission Model", panel);
 

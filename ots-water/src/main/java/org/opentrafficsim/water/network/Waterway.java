@@ -7,9 +7,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.water.network.infra.Obstacle;
 import org.opentrafficsim.water.transfer.Terminal;
@@ -48,7 +48,7 @@ public class Waterway extends OTSLink
 
     /**
      * Construct a new waterway.
-     * @param network Network; the network.
+     * @param network OTSNetwork; the network.
      * @param id String; the waterway id
      * @param name String; the name
      * @param startNode OTSNode; start node (directional)
@@ -59,10 +59,11 @@ public class Waterway extends OTSLink
      * @throws NetworkException when waterway with this id already exists
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Waterway(final Network network, final String id, final String name, final OTSNode startNode, final OTSNode endNode,
-            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator) throws NetworkException
+    public Waterway(final OTSNetwork network, final String id, final String name, final OTSNode startNode,
+            final OTSNode endNode, final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator)
+            throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, simulator);
+        super(network, id, startNode, endNode, linkType, designLine);
         this.name = name;
     }
 

@@ -36,7 +36,7 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CapacityOTSLink(final OTSNetwork network, final String id, final Node startNode, final Node endNode,
+    public CapacityOTSLink(final Network network, final String id, final Node startNode, final Node endNode,
             final LinkType linkType, final OTSLine3D designLine, final Frequency capacity) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine);
@@ -50,7 +50,7 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CapacityOTSLink(final OTSNetwork newNetwork, final CapacityOTSLink link)
+    protected CapacityOTSLink(final Network newNetwork, final CapacityOTSLink link)
             throws NetworkException
     {
         super(newNetwork, link);

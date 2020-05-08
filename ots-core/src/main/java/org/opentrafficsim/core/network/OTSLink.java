@@ -69,7 +69,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public OTSLink(final OTSNetwork network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
+    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
             final OTSLine3D designLine) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
@@ -98,7 +98,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected OTSLink(final OTSNetwork newNetwork, final OTSLink link) throws NetworkException
+    protected OTSLink(final Network newNetwork, final OTSLink link) throws NetworkException
     {
         this(newNetwork, link.id, newNetwork.getNode(link.startNode.getId()), newNetwork.getNode(link.endNode.getId()),
                 link.linkType, link.designLine);

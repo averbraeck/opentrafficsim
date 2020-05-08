@@ -126,7 +126,7 @@ public class TestOpenDriveParser extends OTSSimulationApplication<OTSModelInterf
         {
             URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
-            this.network = new OTSRoadNetwork(url.getPath(), true);
+            this.network = new OTSRoadNetwork(url.getPath(), true, getSimulator());
             try
             {
                 OpenDriveNetworkLaneParser.build(url, this.network, this.simulator);

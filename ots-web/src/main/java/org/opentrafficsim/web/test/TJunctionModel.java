@@ -57,8 +57,8 @@ public class TJunctionModel extends AbstractOTSModel
         try
         {
             URL xmlURL = URLResource.getResource("/xml/TJunction.xml");
-            this.network = new OTSRoadNetwork("TJunction", true);
-            XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
+            this.network = new OTSRoadNetwork("TJunction", true, getSimulator());
+            XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
             // add conflicts
             // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);

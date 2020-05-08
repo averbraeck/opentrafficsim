@@ -131,7 +131,7 @@ public class OpenDriveNetworkLaneParserOld implements Serializable
             throw new SAXException("OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
                     + document.getDocumentElement().getNodeName() + " instead");
 
-        this.network = new OTSRoadNetwork(url.toString(), true);
+        this.network = new OTSRoadNetwork(url.toString(), true, this.simulator);
 
         // there should be a header tag
         List<Node> headerNodes = XMLParser.getNodes(networkNodeList, "header");
@@ -217,7 +217,7 @@ public class OpenDriveNetworkLaneParserOld implements Serializable
     @SuppressWarnings({"unused"})
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
-        this.network = new OTSRoadNetwork(name, true);
+        this.network = new OTSRoadNetwork(name, true, this.simulator);
         return this.network;
     }
 

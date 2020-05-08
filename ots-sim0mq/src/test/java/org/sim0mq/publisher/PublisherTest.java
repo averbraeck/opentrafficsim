@@ -81,8 +81,8 @@ public class PublisherTest implements OTSModelInterface
      * @throws RemoteException when that happens this test has failed
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OTSGeometryException if that happens uncaught; this test has failed
-     * @throws NamingException
-     * @throws SimRuntimeException
+     * @throws NamingException on context error
+     * @throws SimRuntimeException on DSOL error
      */
     @Test
     public void testPublisher()
@@ -248,8 +248,8 @@ public class PublisherTest implements OTSModelInterface
      * @param warmupTime Duration; warm up time of the simulation
      * @param seed Long; seed for the experiment
      * @return OTSSimulator; the simulator
-     * @throws NamingException
-     * @throws SimRuntimeException
+     * @throws NamingException on context error
+     * @throws SimRuntimeException on DSOL error
      */
     private OTSSimulator loadNetwork(final String xml, final Duration simulationDuration, final Duration warmupTime,
             final Long seed) throws SimRuntimeException, NamingException

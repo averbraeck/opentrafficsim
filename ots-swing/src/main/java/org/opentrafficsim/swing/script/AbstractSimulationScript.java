@@ -33,9 +33,9 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import picocli.CommandLine.Command;
@@ -205,7 +205,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             this.simulator = new OTSSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
-            this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
+            this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
             double tReport = 60.0;
             Time t = this.simulator.getSimulatorTime();
             while (t.si < this.simulationTime.si)
@@ -261,7 +261,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(SimulatorInterface.END_REPLICATION_EVENT))
+        if (event.getType().equals(Replication.END_REPLICATION_EVENT))
         {
             // try
             // {
@@ -274,7 +274,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             onSimulationEnd();
             // solve bug that event is fired twice
             AbstractSimulationScript.this.simulator.removeListener(AbstractSimulationScript.this,
-                    SimulatorInterface.END_REPLICATION_EVENT);
+                    Replication.END_REPLICATION_EVENT);
         }
     }
 
@@ -407,7 +407,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             try
             {
                 AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
-                        SimulatorInterface.END_REPLICATION_EVENT);
+                        Replication.END_REPLICATION_EVENT);
             }
             catch (RemoteException exception)
             {

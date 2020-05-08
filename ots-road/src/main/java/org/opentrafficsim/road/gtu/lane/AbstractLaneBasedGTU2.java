@@ -558,7 +558,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 
     /** {@inheritDoc} */
     @Override
-    public synchronized final GTUDirectionality getDirection(final Lane lane) throws GTUException
+    public final synchronized GTUDirectionality getDirection(final Lane lane) throws GTUException
     {
         for (CrossSection crossSection : this.crossSections)
         {

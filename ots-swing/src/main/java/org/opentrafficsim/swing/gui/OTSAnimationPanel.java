@@ -49,6 +49,7 @@ import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.GridPanel;
@@ -218,7 +219,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         setGtuCountText();
 
         // Tell the animation to build the list of animation objects.
-        this.animationPanel.notify(new TimedEvent(SimulatorInterface.START_REPLICATION_EVENT, simulator.getSourceId(), null,
+        this.animationPanel.notify(new TimedEvent(Replication.START_REPLICATION_EVENT, simulator.getSourceId(), null,
                 getSimulator().getSimulatorTime()));
 
         // switch off the X and Y coordinates in a tooltip.
