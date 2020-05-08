@@ -11,6 +11,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.definitions.Definitions;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -35,6 +36,12 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
     /** @return String; the id */
     @Override
     String getId();
+
+    /**
+     * Return the simulator.
+     * @return OTSSimulatorInterface; the simulator
+     */
+    OTSSimulatorInterface getSimulator();
 
     /***************************************************************************************/
     /**************************************** NODES ****************************************/
@@ -469,8 +476,8 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      */
     TimedEventType ANIMATION_ROUTE_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.ROUTE.ADD",
             new MetaData("Route animation added", "Route animation",
-                    new ObjectDescriptor[] { new ObjectDescriptor("GTU type", "GTU type", GTUType.class),
-                            new ObjectDescriptor("Route animation", "Route animation", Route.class) }));
+                    new ObjectDescriptor[] {new ObjectDescriptor("GTU type", "GTU type", GTUType.class),
+                            new ObjectDescriptor("Route animation", "Route animation", Route.class)}));
 
     /**
      * The timed event type for pub/sub indicating the removal of a Route for a gtuType. <br>
@@ -478,8 +485,8 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      */
     TimedEventType ANIMATION_ROUTE_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.ROUTE.REMOVE",
             new MetaData("Route animation removed", "Route animation",
-                    new ObjectDescriptor[] { new ObjectDescriptor("GTU type", "GTU type", GTUType.class),
-                            new ObjectDescriptor("Route animation", "Route animation", Route.class) }));
+                    new ObjectDescriptor[] {new ObjectDescriptor("GTU type", "GTU type", GTUType.class),
+                            new ObjectDescriptor("Route animation", "Route animation", Route.class)}));
 
     /**
      * The timed> event type for pub/sub indicating the addition of a GTU to the network. <br>
@@ -583,8 +590,8 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      */
     TimedEventType ROUTE_ADD_EVENT = new TimedEventType("NETWORK.ROUTE.ADD",
             new MetaData("Route added", "Route added",
-                    new ObjectDescriptor[] { new ObjectDescriptor("GTU Type id", "GTU Type id", String.class),
-                            new ObjectDescriptor("Route id", "Route id", String.class) }));
+                    new ObjectDescriptor[] {new ObjectDescriptor("GTU Type id", "GTU Type id", String.class),
+                            new ObjectDescriptor("Route id", "Route id", String.class)}));
 
     /**
      * The timed event type for pub/sub indicating the removal of a Route for a gtuType. <br>
@@ -592,8 +599,8 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      */
     TimedEventType ROUTE_REMOVE_EVENT = new TimedEventType("NETWORK.ROUTE.REMOVE",
             new MetaData("Route removed", "Route removed",
-                    new ObjectDescriptor[] { new ObjectDescriptor("GTU Type id", "GTU Type id", String.class),
-                            new ObjectDescriptor("Route id", "Route id", String.class) }));
+                    new ObjectDescriptor[] {new ObjectDescriptor("GTU Type id", "GTU Type id", String.class),
+                            new ObjectDescriptor("Route id", "Route id", String.class)}));
 
     /**
      * The timed event type for pub/sub indicating the addition of a GTU to the network. <br>
@@ -622,5 +629,5 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      */
     TimedEventType GENERATOR_REMOVE_EVENT = new TimedEventType("NETWORK.GENERATOR.REMOVE", new MetaData("GTU generator removed",
             "GTU generator re moved", new ObjectDescriptor("GTU generator name", "GTU generator name", String.class)));
-    
+
 }

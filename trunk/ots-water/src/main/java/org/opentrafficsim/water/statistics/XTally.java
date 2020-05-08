@@ -9,12 +9,13 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.djutils.exceptions.Throw;
+import org.djutils.stats.ConfidenceInterval;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
-import nl.tudelft.simulation.jstats.statistics.Tally;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 /**
@@ -101,7 +102,7 @@ public class XTally implements Serializable
      */
     public double[] getConfidenceInterval(final double alpha)
     {
-        return this.getConfidenceInterval(alpha, Tally.BOTH_SIDE_CONFIDENCE);
+        return this.getConfidenceInterval(alpha, ConfidenceInterval.BOTH_SIDE_CONFIDENCE);
     }
 
     /**
@@ -111,16 +112,11 @@ public class XTally implements Serializable
      * @param side short; the side of the confidence interval with respect to the mean
      * @return double[] the confidence interval of this tally
      */
-    public double[] getConfidenceInterval(final double alpha, final short side)
+    public double[] getConfidenceInterval(final double alpha, final ConfidenceInterval side)
     {
-        if (!(side == LEFT_SIDE_CONFIDENCE || side == BOTH_SIDE_CONFIDENCE || side == RIGTH_SIDE_CONFIDENCE))
-        {
-            throw new IllegalArgumentException("side of confidence level is not defined");
-        }
-        if (alpha < 0 || alpha > 1)
-        {
-            throw new IllegalArgumentException("1 >= confidenceLevel >= 0");
-        }
+        Throw.whenNull(side, "type of confidence level cannot be null");
+        Throw.when(alpha < 0 || alpha > 1, IllegalArgumentException.class,
+                "confidenceLevel should be between 0 and 1 (inclusive)");
         synchronized (this.semaphore)
         {
             if (Double.isNaN(this.getSampleMean()) || Double.isNaN(this.getStdDev()))
@@ -128,18 +124,18 @@ public class XTally implements Serializable
                 return null;
             }
             double level = 1 - alpha;
-            if (side == Tally.BOTH_SIDE_CONFIDENCE)
+            if (side.equals(ConfidenceInterval.BOTH_SIDE_CONFIDENCE))
             {
                 level = 1 - alpha / 2.0;
             }
             double z = this.confidenceDistribution.getInverseCumulativeProbability(level);
             double confidence = z * Math.sqrt(this.getSampleVariance() / this.n);
             double[] result = {this.getSampleMean() - confidence, this.getSampleMean() + confidence};
-            if (side == Tally.LEFT_SIDE_CONFIDENCE)
+            if (side.equals(ConfidenceInterval.LEFT_SIDE_CONFIDENCE))
             {
                 result[1] = this.getSampleMean();
             }
-            if (side == Tally.RIGTH_SIDE_CONFIDENCE)
+            if (side.equals(ConfidenceInterval.RIGHT_SIDE_CONFIDENCE))
             {
                 result[0] = this.getSampleMean();
             }

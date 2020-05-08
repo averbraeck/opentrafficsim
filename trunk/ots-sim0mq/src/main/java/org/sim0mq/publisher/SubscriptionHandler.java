@@ -109,8 +109,8 @@ public class SubscriptionHandler
      * @param address Object[]; address of the requested data collection
      * @param returnWrapper ReturnWrapper; to send back the result
      * @throws RemoteException when communication fails
-     * @throws SerializationException
-     * @throws Sim0MQException
+     * @throws SerializationException on context error
+     * @throws Sim0MQException on DSOL error
      */
     public void get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
@@ -237,8 +237,8 @@ public class SubscriptionHandler
      * @param address Object[] the address of the object on which the command must be applied
      * @param returnWrapper ReturnWrapper; envelope generator for replies
      * @throws RemoteException on communication failure
-     * @throws SerializationException
-     * @throws Sim0MQException
+     * @throws SerializationException on illegal type in serialization
+     * @throws Sim0MQException on communication error
      */
     public void executeCommand(final Command command, final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
@@ -311,8 +311,8 @@ public class SubscriptionHandler
      * Stub. Should send data over Sim0MQ to master
      * @param data Object[]; the data to transmit
      * @param returnWrapper ReturnWrapper; envelope constructor for returned results
-     * @throws SerializationException
-     * @throws Sim0MQException
+     * @throws SerializationException on illegal type in serialization
+     * @throws Sim0MQException on communication error
      */
     private void sendResult(final Object[] data, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException

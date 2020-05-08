@@ -26,7 +26,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DComparator;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.web.animation.HTMLGraphics2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -111,7 +111,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
         super(extent, size);
         super.showGrid = true;
         this.simulator = simulator;
-        simulator.addListener(this, SimulatorInterface.START_REPLICATION_EVENT);
+        simulator.addListener(this, Replication.START_REPLICATION_EVENT);
     }
 
     /** {@inheritDoc} */
@@ -217,7 +217,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
         }
 
         else if //(this.simulator.getSourceId().equals(event.getSourceId()) &&
-                (event.getType().equals(SimulatorInterface.START_REPLICATION_EVENT))
+                (event.getType().equals(Replication.START_REPLICATION_EVENT))
         {
             synchronized (this.elementList)
             {

@@ -244,9 +244,9 @@ public class Publisher extends AbstractTransceiver
      * @param command Command; the operation to perform
      * @param address Object[]; the address on which to perform the operation
      * @param returnWrapper ReturnWrapper; to transmit the result
-     * @throws RemoteException ...
-     * @throws SerializationException
-     * @throws Sim0MQException
+     * @throws RemoteException on RMI network failure
+     * @throws SerializationException on illegal type in serialization
+     * @throws Sim0MQException on communication error
      */
     public void executeCommand(final String subscriptionHandlerName, final SubscriptionHandler.Command command,
             final Object[] address, final ReturnWrapper returnWrapper)

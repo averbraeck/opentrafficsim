@@ -75,7 +75,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
                 {
                     if (!animator.isRunning()) // to break message cycle between OTS and IMB
                     {
-                        animator.start(true);
+                        animator.start();
                     }
                 }
                 catch (SimRuntimeException exception)
@@ -101,7 +101,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
                 {
                     try
                     {
-                        animator.stop(true);
+                        animator.stop();
                     }
                     catch (SimRuntimeException exception)
                     {

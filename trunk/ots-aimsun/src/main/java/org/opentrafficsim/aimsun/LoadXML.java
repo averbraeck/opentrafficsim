@@ -186,7 +186,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                        getSimulator(), false);
+                        false);
                 // TODO: These links are Aimsun specific.
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),

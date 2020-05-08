@@ -25,6 +25,7 @@ import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
@@ -206,13 +207,15 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     {
         if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
         {
-            // Payload: [String gtuId, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
-            // turnIndicatorStatus, Length odometer, Lane referenceLane, Length positionOnReferenceLane]
-            Object[] payload = (Object[]) event.getContent();
-            KpiLaneDirection laneDirection =
-                    new KpiLaneDirection(new LaneData((Lane) payload[6]), KpiGtuDirectionality.DIR_PLUS);
-            processGtuMoveEvent(laneDirection, (Length) payload[7], (Speed) payload[2], (Acceleration) payload[3], now(),
-                    new GtuData((LaneBasedGTU) event.getSourceId()));
+            // Payload: [String gtuId, PositionVector currentPosition, Direction currentDirection, Speed speed, Acceleration
+            // acceleration, TurnIndicatorStatus turnIndicatorStatus, Length odometer, Link id of referenceLane, Lane id of
+            // referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
+            // XXX: the objects are not transferred anymore, and the Sampler is not Network aware...
+//            Object[] payload = (Object[]) event.getContent();
+//            KpiLaneDirection laneDirection =
+//                    new KpiLaneDirection(new LaneData((Lane) payload[8]), KpiGtuDirectionality.DIR_PLUS);
+//            processGtuMoveEvent(laneDirection, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(),
+//                    new GtuData((LaneBasedGTU) event.getSourceId()));
         }
         else if (event.getType().equals(Lane.GTU_ADD_EVENT))
         {

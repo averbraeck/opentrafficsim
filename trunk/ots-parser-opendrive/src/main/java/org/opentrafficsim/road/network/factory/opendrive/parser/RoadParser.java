@@ -117,8 +117,7 @@ public class RoadParser
             {
                 OTSLine3D designLine = new OTSLine3D(pointList);
                 CrossSectionLink otsLink = new CrossSectionLink(this.otsNetwork, roadEntry.getKey(), startNode, endNode,
-                        this.otsNetwork.getLinkType(LinkType.DEFAULTS.ROAD), designLine, this.simulator,
-                        LaneKeepingPolicy.KEEPLANE);
+                        this.otsNetwork.getLinkType(LinkType.DEFAULTS.ROAD), designLine, LaneKeepingPolicy.KEEPLANE);
                 this.otsNetwork.addLink(otsLink);
                 new LinkAnimation(otsLink, this.simulator, 0.01f);
             }

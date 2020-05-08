@@ -3,7 +3,6 @@ package org.opentrafficsim.core.network;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;

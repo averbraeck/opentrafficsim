@@ -20,9 +20,9 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
 import nl.tudelft.simulation.language.DSOLException;
@@ -81,7 +81,7 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
         // tell the animation panel to update its statistics
         // TODO should be done automatically in DSOL!
         animationPanel.notify(
-                new TimedEvent(SimulatorInterface.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
+                new TimedEvent(Replication.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
 
         new ShapeTestApplication("Network Transmission Model", panel);
     }

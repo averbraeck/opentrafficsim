@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import org.djutils.exceptions.Try;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType.DEFAULTS;
 import org.opentrafficsim.core.network.OTSNetwork;
 

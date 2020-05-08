@@ -53,6 +53,7 @@ import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -177,7 +178,7 @@ public class OTSControlPanel extends JPanel
         this.add(this.otsSearchPanel, BorderLayout.SOUTH);
         fixButtons();
         installWindowCloseHandler();
-        this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
+        this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
         this.simulator.addListener(this, SimulatorInterface.START_EVENT);
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
         this.simulator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
@@ -1173,7 +1174,7 @@ public class OTSControlPanel extends JPanel
     @Override
     public final void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(SimulatorInterface.END_REPLICATION_EVENT)
+        if (event.getType().equals(Replication.END_REPLICATION_EVENT)
                 || event.getType().equals(SimulatorInterface.START_EVENT)
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
                 || event.getType().equals(DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT))

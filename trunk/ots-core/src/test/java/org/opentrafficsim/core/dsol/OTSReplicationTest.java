@@ -19,8 +19,8 @@ import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Experiment;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the OTSReplication class.
@@ -58,11 +58,11 @@ public class OTSReplicationTest
         assertEquals("runLength can be retrieved", runLength, replication.getExperiment().getTreatment().getRunLength());
         assertEquals("model can be retrieved", model, replication.getExperiment().getModel());
         simulator.initialize(replication, ReplicationMode.TERMINATING);
-        int listenerCount = simulator.numberOfListeners(SimulatorInterface.END_REPLICATION_EVENT);
+        int listenerCount = simulator.numberOfListeners(Replication.END_REPLICATION_EVENT);
         HistoryManagerDEVS hm = (HistoryManagerDEVS) replication.getHistoryManager(simulator);
         assertEquals("history manager knows time of simulator", simulator.getSimulatorTime(), hm.now());
         assertEquals("history manager has subscribed to our simulator", listenerCount + 1,
-                simulator.numberOfListeners(SimulatorInterface.END_REPLICATION_EVENT));
+                simulator.numberOfListeners(Replication.END_REPLICATION_EVENT));
         Duration history = new Duration(123, DurationUnit.SECOND);
         Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
         HistoryManager ourHM = new HistoryManagerDEVS(simulator, history, cleanupInterval);

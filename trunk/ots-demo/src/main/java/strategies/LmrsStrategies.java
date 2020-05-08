@@ -165,8 +165,8 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
@@ -548,7 +548,7 @@ public class LmrsStrategies implements EventListenerInterface
             OTSRoadNetwork net = new OTSRoadNetwork("LMRS strategies", true, getSimulator());
             try
             {
-                LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, SimulatorInterface.END_REPLICATION_EVENT);
+                LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, Replication.END_REPLICATION_EVENT);
             }
             catch (RemoteException exception1)
             {
@@ -976,7 +976,7 @@ public class LmrsStrategies implements EventListenerInterface
         {
             this.network.getGTU((String) event.getContent()).removeListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
         }
-        else if (event.getType().equals(SimulatorInterface.END_REPLICATION_EVENT))
+        else if (event.getType().equals(Replication.END_REPLICATION_EVENT))
         {
             CompressionMethod compression = this.autorun ? CompressionMethod.ZIP : CompressionMethod.NONE;
             // write detector data
@@ -1020,7 +1020,7 @@ public class LmrsStrategies implements EventListenerInterface
                 LmrsStrategies.this.sampler.writeToFile(this.folder + "sampled" + LmrsStrategies.this.suffix + ".txt");
             }
             // solve bug that event is fired twice
-            LmrsStrategies.this.simulator.removeListener(LmrsStrategies.this, SimulatorInterface.END_REPLICATION_EVENT);
+            LmrsStrategies.this.simulator.removeListener(LmrsStrategies.this, Replication.END_REPLICATION_EVENT);
             // beep
             if (!this.autorun)
             {

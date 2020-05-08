@@ -310,7 +310,7 @@ public class RoadTag implements Serializable
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
                         CrossSectionLink sublink = new CrossSectionLink(openDriveNetworkLaneParser.network, sublinkId,
                                 from.node, to.node, openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD),
-                                designLine, simulator, LaneKeepingPolicy.KEEPLANE);
+                                designLine, LaneKeepingPolicy.KEEPLANE);
 
                         roadTag.subLinks.add(sublink);
 
@@ -378,7 +378,7 @@ public class RoadTag implements Serializable
             OTSLine3D designLine = new OTSLine3D(points);
             String sublinkId = roadTag.id + "." + Integer.toString(roadTag.lanesTag.laneSectionTags.size());
             CrossSectionLink sublink = new CrossSectionLink(openDriveNetworkLaneParser.network, sublinkId, from.node, to.node,
-                    openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD), designLine, simulator,
+                    openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD), designLine,
                     LaneKeepingPolicy.KEEPLANE);
 
             roadTag.subLinks.add(sublink);
@@ -864,7 +864,8 @@ public class RoadTag implements Serializable
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public static void buildLink(RoadTag roadTag, OpenDriveNetworkLaneParserOld openDriveNetworkLaneParser) throws NetworkException
+    public static void buildLink(RoadTag roadTag, OpenDriveNetworkLaneParserOld openDriveNetworkLaneParser)
+            throws NetworkException
     {
         if (roadTag.junctionId == null)
             System.out.println("sth is wrong in building links");
@@ -897,7 +898,7 @@ public class RoadTag implements Serializable
 
             CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
                     openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD), roadTag.designLine,
-                    openDriveNetworkLaneParser.simulator, LaneKeepingPolicy.KEEPLANE);
+                    LaneKeepingPolicy.KEEPLANE);
             roadTag.link = newlink;
 
             roadTag.link = newlink;
@@ -909,7 +910,7 @@ public class RoadTag implements Serializable
             OTSRoadNode to = roadTag.endNode;
             CrossSectionLink newlink = new CrossSectionLink(openDriveNetworkLaneParser.network, roadTag.id, from, to,
                     openDriveNetworkLaneParser.network.getLinkType(LinkType.DEFAULTS.ROAD), roadTag.designLine,
-                    openDriveNetworkLaneParser.simulator, LaneKeepingPolicy.KEEPLANE);
+                    LaneKeepingPolicy.KEEPLANE);
 
             roadTag.link = newlink;
         }
@@ -922,15 +923,15 @@ public class RoadTag implements Serializable
      * @throws NetworkException on network error
      */
     public static void generateTrafficLightsbySignal(final RoadTag roadTag,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OpenDriveNetworkLaneParserOld openDriveNetworkLaneParser)
-            throws NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OpenDriveNetworkLaneParserOld openDriveNetworkLaneParser) throws NetworkException
     {
         for (SignalTag signalTag : roadTag.signalsTag.signalTags)
         {
             // Length sOffset = signalTag.s;
             // Length tOffset = signalTag.t;
             // String id = signalTag.id;
-            
+
             if (true)
                 return;
 
@@ -1003,8 +1004,7 @@ public class RoadTag implements Serializable
         {
             if (true)
                 return;
-            
-            
+
             LaneSectionTag laneSec = roadTag.lanesTag.findDrivingLaneSec(signalReferenceTag.s);
             Lane lane = laneSec.findLanes(signalReferenceTag.orientation).get(0);
 
