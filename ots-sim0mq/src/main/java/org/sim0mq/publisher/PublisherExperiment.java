@@ -256,7 +256,7 @@ class Sim0MQOTSModel extends AbstractOTSModel implements EventListenerInterface
         try
         {
             XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                    getSimulator(), false);
+                    false);
             LaneCombinationList ignoreList = new LaneCombinationList();
             LaneCombinationList permittedList = new LaneCombinationList();
             ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),

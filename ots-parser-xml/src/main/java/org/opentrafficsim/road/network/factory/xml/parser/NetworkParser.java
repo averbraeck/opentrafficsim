@@ -174,7 +174,7 @@ public final class NetworkParser
             double demandWeight = xmlConnector.getDEMANDWEIGHT();
             OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
             CrossSectionLink link = new CrossSectionLink(otsNetwork, id, startNode, endNode,
-                    otsNetwork.getLinkType(LinkType.DEFAULTS.CONNECTOR), designLine, simulator, null);
+                    otsNetwork.getLinkType(LinkType.DEFAULTS.CONNECTOR), designLine, null);
             link.setDemandWeight(demandWeight);
         }
 
@@ -311,7 +311,7 @@ public final class NetworkParser
             LaneKeepingPolicy laneKeepingPolicy = LaneKeepingPolicy.valueOf(xmlLink.getLANEKEEPING().name());
             LinkType linkType = otsNetwork.getLinkType(xmlLink.getTYPE());
             CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getID(), startNode, endNode, linkType, designLine,
-                    simulator, laneKeepingPolicy);
+                    laneKeepingPolicy);
 
             if (xmlLink.getPRIORITY() != null)
             {

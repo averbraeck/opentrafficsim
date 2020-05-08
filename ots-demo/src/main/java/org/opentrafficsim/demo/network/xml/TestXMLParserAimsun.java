@@ -132,7 +132,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
             this.network = new OTSRoadNetwork("Aimsun network", true, getSimulator());
             try
             {
-                XmlNetworkLaneParser.build(url.getPath(), this.network, getSimulator(), true);
+                XmlNetworkLaneParser.build(url.getPath(), this.network, true);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
                     | URISyntaxException | XmlParserException | GTUException | IOException | TrafficControlException exception)

@@ -35,14 +35,14 @@ public class LinkDirectionTest
     {
         OTSPoint3D fromPoint = new OTSPoint3D(100, 200, 300);
         OTSPoint3D toPoint = new OTSPoint3D(1000, 2000, 330);
-        Network network =
-                new OTSNetwork("testNetworkForCapacityOTSLink", true, new OTSSimulator("Simulator for LinkDirectionTest"));
+        OTSNetwork network =
+                new OTSNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
         OTSSimulatorInterface simulator = MockSimulator.createMock();
-        Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator);
+        Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine);
         LinkDirection ld = new LinkDirection(link, GTUDirectionality.DIR_PLUS);
         assertTrue(ld.getLink().equals(link));
         assertTrue(ld.getDirection().equals(GTUDirectionality.DIR_PLUS));

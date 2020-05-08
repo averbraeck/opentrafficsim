@@ -65,13 +65,12 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @param endNode Node; end node (directional)
      * @param linkType LinkType; Link type to indicate compatibility with GTU types
      * @param designLine OTSLine3D; the OTSLine3D design line of the Link
-     * @param simulator OTSSimulatorInterface; the simulator on which events can be scheduled
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OTSLine3D designLine, final OTSSimulatorInterface simulator) throws NetworkException
+    public OTSLink(final OTSNetwork network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
+            final OTSLine3D designLine) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -79,7 +78,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         Throw.whenNull(endNode, "endNode cannot be null (link %s)", id);
         Throw.whenNull(linkType, "linkType cannot be null (link %s)", id);
         Throw.whenNull(designLine, "designLine cannot be null (link %s)", id);
-        Throw.whenNull(simulator, "simulator cannot be null");
 
         this.network = network;
         this.id = id;
@@ -89,23 +87,21 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.startNode.addLink(this);
         this.endNode.addLink(this);
         this.designLine = designLine;
-        this.simulator = simulator;
+        this.simulator = network.getSimulator();
         this.network.addLink(this);
     }
 
     /**
      * Clone a link for a new network.
      * @param newNetwork Network; the new network to which the clone belongs
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
      * @param link OTSLink; the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected OTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final OTSLink link)
-            throws NetworkException
+    protected OTSLink(final OTSNetwork newNetwork, final OTSLink link) throws NetworkException
     {
         this(newNetwork, link.id, newNetwork.getNode(link.startNode.getId()), newNetwork.getNode(link.endNode.getId()),
-                link.linkType, link.designLine, newSimulator);
+                link.linkType, link.designLine);
     }
 
     /** {@inheritDoc} */
@@ -306,9 +302,9 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
+    public OTSLink clone(final OTSNetwork newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
-        return new OTSLink(newNetwork, newSimulator, this);
+        return new OTSLink(newNetwork, this);
     }
 
     /** {@inheritDoc} */

@@ -132,7 +132,7 @@ public class FourStop extends OTSSimulationApplication<OTSModelInterface>
             {
                 URL xmlURL = URLResource.getResource("/xml/4-stop-3-1.xml");
                 this.network = new OTSRoadNetwork("4-stop-3-1", true, getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);
+                XmlNetworkLaneParser.build(xmlURL, this.network, true);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
                     | JAXBException | URISyntaxException | XmlParserException | IOException | TrafficControlException exception)

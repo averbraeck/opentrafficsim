@@ -788,7 +788,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 }
                 OTSLine3D designLine = Bezier.cubic(64, sp, ep);
                 CrossSectionLink newLink = new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine,
-                        this.simulator, laneKeepingPolicy);
+                        laneKeepingPolicy);
                 Lane newLane = new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
                         sLane.getSpeedLimit(network.getGtuType(GTUType.DEFAULTS.VEHICLE)));
                 return newLane;

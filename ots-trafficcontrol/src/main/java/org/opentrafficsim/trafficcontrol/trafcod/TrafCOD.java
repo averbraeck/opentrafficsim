@@ -25,7 +25,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableCollection;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -882,8 +882,9 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             result = destination.setValue(resultValue, this.currentTime10, new CausePrinter(rule), this);
             if (destination.isOutput())
             {
-                fireEvent(TRAFFIC_LIGHT_CHANGED,
-                        new Object[] {getId(), new Integer(destination.getStream()), destination.getColor()});
+                fireTimedEvent(TRAFFIC_LIGHT_CHANGED,
+                        new Object[] { getId(), new Integer(destination.getStream()), destination.getColor() },
+                        getSimulator().getSimulatorTime());
             }
             if (destination.isConflictGroup() && resultValue != 0)
             {
@@ -897,8 +898,9 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     }
                     conflictGroupList.append(String.format("%02d", stream));
                 }
-                fireEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED,
-                        new Object[] {getId(), this.currentConflictGroup, conflictGroupList.toString()});
+                fireTimedEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED,
+                        new Object[] { getId(), this.currentConflictGroup, conflictGroupList.toString() },
+                        getSimulator().getSimulatorTime());
                 // System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
                 // + conflictGroupList.toString());
                 this.currentConflictGroup = conflictGroupList.toString();
@@ -1875,10 +1877,10 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Fire an event on behalf of this TrafCOD engine (used for tracing variable changes).
-     * @param eventType EventType; the type of the event
+     * @param eventType TimedEventType; the type of the event
      * @param payload Object[]; the payload of the event
      */
-    void fireTrafCODEvent(final EventType eventType, final Object[] payload)
+    void fireTrafCODEvent(final TimedEventType eventType, final Object[] payload)
     {
         fireTimedEvent(eventType, payload, getSimulator().getSimulatorTime());
     }

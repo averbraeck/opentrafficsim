@@ -132,7 +132,7 @@ public class NetworkTest extends OTSSimulationApplication<OTSModelInterface>
             {
                 URL xmlURL = URLResource.getResource("/xml/Test-Network-14.xml");
                 this.network = new OTSRoadNetwork("Test-Network-14", true, getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
+                XmlNetworkLaneParser.build(xmlURL, this.network, false);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
                     | JAXBException | URISyntaxException | XmlParserException | IOException | TrafficControlException exception)

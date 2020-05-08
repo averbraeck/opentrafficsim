@@ -205,7 +205,7 @@ public class A58IMB extends OTSSimulationApplication<A58Model>
             InputStream stream = URLResource.getResourceAsStream("/A58v2.xml");
             try
             {
-                XmlNetworkLaneParser.build(stream, this.network, this.simulator, false);
+                XmlNetworkLaneParser.build(stream, this.network, false);
                 // ODMatrixTrips matrix = A58ODfactory.get(network);
                 // A58ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }

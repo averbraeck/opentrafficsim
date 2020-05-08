@@ -15,8 +15,10 @@ import org.junit.Test;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
  * Test the StaticObject class.
@@ -74,7 +76,11 @@ public class StaticObjectTest implements EventListenerInterface
             // Ignore expected exception
         }
         this.lastEvent = null;
+        OTSNetwork network = new OTSNetwork("Test network for static object test", false, MockSimulator.createMock());
+        network.addListener(this, Network.ANIMATION_OBJECT_ADD_EVENT);
         StaticObject so = new StaticObject(id, geometry, height);
+        assertNull("Constructor should not have fired an event", this.lastEvent);
+        network.addObject(so);
         assertEquals("id", id, so.getId());
         assertEquals("full id", id, so.getFullId());
         assertEquals("geometry", geometry, so.getGeometry());
@@ -82,10 +88,8 @@ public class StaticObjectTest implements EventListenerInterface
         assertEquals("location", geometry.getLocation(), so.getLocation());
         assertEquals("bounds", geometry.getBounds(), so.getBounds());
         assertTrue("toString returns something descriptive", so.toString().startsWith("StaticObject"));
-        assertNull("Constructor should not have fired an event", this.lastEvent);
-        so.addListener(this, Network.ANIMATION_OBJECT_ADD_EVENT);
         so.init();
-        assertNotNull("init should have fired an event", this.lastEvent);
+        assertNotNull("adding so to network should have fired an event", this.lastEvent);
         assertEquals("Payload of event is the static object", so, this.lastEvent.getContent());
         this.lastEvent = null;
         StaticObject so2 = StaticObject.create(id, geometry, height);

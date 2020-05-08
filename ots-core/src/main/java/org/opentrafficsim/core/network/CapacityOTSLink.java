@@ -25,38 +25,35 @@ public class CapacityOTSLink extends OTSLink implements Capacity
 
     /**
      * Construct a new link.
-     * @param network Network; the network.
+     * @param network OTSNetwork; the network.
      * @param id String; the link id
      * @param startNode Node; start node (directional)
      * @param endNode Node; end node (directional)
      * @param linkType LinkType; Link type to indicate compatibility with GTU types
      * @param designLine OTSLine3D; the OTSLine3D design line of the Link
-     * @param simulator OTSSimulatorInterface; the simulator on which events can be scheduled
      * @param capacity Frequency; link capacity in GTUs per hour // XXX per direction? which GTUType?
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CapacityOTSLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
-            final Frequency capacity) throws NetworkException
+    public CapacityOTSLink(final OTSNetwork network, final String id, final Node startNode, final Node endNode,
+            final LinkType linkType, final OTSLine3D designLine, final Frequency capacity) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, simulator);
+        super(network, id, startNode, endNode, linkType, designLine);
         this.capacity = capacity;
     }
 
     /**
      * Clone a link for a new network.
-     * @param newNetwork Network; the new network to which the clone belongs
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
+     * @param newNetwork OTSNetwork; the new network to which the clone belongs
      * @param link CapacityOTSLink; the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CapacityOTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final CapacityOTSLink link)
+    protected CapacityOTSLink(final OTSNetwork newNetwork, final CapacityOTSLink link)
             throws NetworkException
     {
-        super(newNetwork, newSimulator, link);
+        super(newNetwork, link);
         this.capacity = link.capacity;
     }
 
@@ -84,9 +81,9 @@ public class CapacityOTSLink extends OTSLink implements Capacity
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CapacityOTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
+    public CapacityOTSLink clone(final OTSNetwork newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
-        return new CapacityOTSLink(newNetwork, newSimulator, this);
+        return new CapacityOTSLink(newNetwork, this);
     }
 
 }

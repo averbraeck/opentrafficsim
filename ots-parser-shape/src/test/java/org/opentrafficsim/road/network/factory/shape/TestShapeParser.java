@@ -381,7 +381,7 @@ public class TestShapeParser extends DSOLApplication
                     new NodeAnimation(startNode, this.simulator);
                     new NodeAnimation(endNode, this.simulator);
                     OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                            new OTSLine3D(coordinates), this.simulator);
+                            new OTSLine3D(coordinates));
                     new LinkAnimation(link, this.simulator, 2.0f);
                 }
                 catch (RemoteException | NamingException | OTSGeometryException exception)
@@ -442,7 +442,7 @@ public class TestShapeParser extends DSOLApplication
                     new NodeAnimation(startNode, this.simulator);
                     new NodeAnimation(endNode, this.simulator);
                     OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                            new OTSLine3D(coordinates), this.simulator);
+                            new OTSLine3D(coordinates));
                     new LinkAnimation(link, this.simulator, 1.0f);
                 }
                 catch (RemoteException | NamingException | OTSGeometryException exception)
@@ -505,7 +505,7 @@ public class TestShapeParser extends DSOLApplication
                     new NodeAnimation(startNode, this.simulator);
                     new NodeAnimation(endNode, this.simulator);
                     OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                            new OTSLine3D(coordinates), this.simulator);
+                            new OTSLine3D(coordinates));
                     new LinkAnimation(link, this.simulator, 1.0f);
                 }
                 catch (RemoteException | NamingException | OTSGeometryException exception)

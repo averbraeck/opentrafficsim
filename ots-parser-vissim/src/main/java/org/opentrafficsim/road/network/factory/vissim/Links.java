@@ -180,7 +180,7 @@ final class Links
         // Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link =
                 new CrossSectionLink(parser.getNetwork(), linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node,
-                        parser.network.getLinkType(LinkType.DEFAULTS.ROAD), designLine, simulator, linkTag.laneKeepingPolicy);
+                        parser.network.getLinkType(LinkType.DEFAULTS.ROAD), designLine, linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 

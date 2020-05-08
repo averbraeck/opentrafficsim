@@ -148,7 +148,7 @@ public final class Convert
                 continue;
             }
             result = new CrossSectionLink(network, linkId, start, end, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine,
-                    simulator, LaneKeepingPolicy.KEEPRIGHT);
+                    LaneKeepingPolicy.KEEPRIGHT);
             return result;
         }
     }

@@ -423,15 +423,14 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Clone a Lane for a new network.
      * @param newParentLink CrossSectionLink; the new link to which the clone belongs
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
      * @param cse Lane; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Lane(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final Lane cse)
+    protected Lane(final CrossSectionLink newParentLink, final Lane cse)
             throws NetworkException
     {
-        super(newParentLink, newSimulator, cse);
+        super(newParentLink, newParentLink.getNetwork().getSimulator(), cse);
         this.laneType = cse.laneType;
         this.speedLimitMap = new LinkedHashMap<>(cse.speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(newParentLink));
@@ -1927,7 +1926,7 @@ public class Lane extends CrossSectionElement implements Serializable
     public Lane clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws NetworkException
     {
-        Lane newLane = new Lane(newParentLink, newSimulator, this);
+        Lane newLane = new Lane(newParentLink, this);
         // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request
 
         SortedMap<Double, List<SingleSensor>> newSensorMap = new TreeMap<>();

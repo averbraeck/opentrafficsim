@@ -13,9 +13,10 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -86,51 +87,48 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /**
      * Construction of a cross section link.
-     * @param network RoadNetwork; the network
+     * @param network OTSRoadNetwork; the network
      * @param id String; the link id.
      * @param startNode OTSRoadNode; the start node (directional).
      * @param endNode OTSRoadNode; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OTSLine3D; the design line of the Link
-     * @param simulator OTSSimulatorInterface; the simulator on which events can be scheduled
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public CrossSectionLink(final RoadNetwork network, final String id, final OTSRoadNode startNode, final OTSRoadNode endNode,
-            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
+    public CrossSectionLink(final OTSRoadNetwork network, final String id, final OTSRoadNode startNode,
+            final OTSRoadNode endNode, final LinkType linkType, final OTSLine3D designLine,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, simulator);
+        super(network, id, startNode, endNode, linkType, designLine);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
     /**
      * Clone a CrossSectionLink for a new network.
      * @param newNetwork Network; the new network to which the clone belongs
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
      * @param link CrossSectionLink; the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CrossSectionLink(final RoadNetwork newNetwork, final OTSSimulatorInterface newSimulator,
-            final CrossSectionLink link) throws NetworkException
+    protected CrossSectionLink(final OTSRoadNetwork newNetwork, final CrossSectionLink link) throws NetworkException
     {
-        super(newNetwork, newSimulator, link);
+        super(newNetwork, link);
         this.laneKeepingPolicy = link.laneKeepingPolicy;
         for (CrossSectionElement cse : link.crossSectionElementList)
         {
-            cse.clone(this, newSimulator);
+            cse.clone(this, newNetwork.getSimulator());
             // the CrossSectionElement will add itself to the Link (OTS-237)
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public RoadNetwork getNetwork()
+    public OTSRoadNetwork getNetwork()
     {
-        return (RoadNetwork) super.getNetwork();
+        return (OTSRoadNetwork) super.getNetwork();
     }
 
     /**
@@ -321,11 +319,11 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CrossSectionLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
+    public CrossSectionLink clone(final OTSNetwork newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         Throw.when(!(newNetwork instanceof RoadNetwork), NetworkException.class,
                 "CrossSectionLink.clone. newNetwork not of the type Roadnetwork");
-        return new CrossSectionLink((RoadNetwork) newNetwork, newSimulator, this);
+        return new CrossSectionLink((OTSRoadNetwork) newNetwork, this);
     }
 
     /**

@@ -186,7 +186,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                        getSimulator(), false);
+                        false);
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 try
                 {

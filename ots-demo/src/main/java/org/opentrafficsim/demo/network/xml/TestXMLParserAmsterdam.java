@@ -169,7 +169,7 @@ public class TestXMLParserAmsterdam extends OTSSimulationApplication<TestXMLMode
             this.network = new OTSRoadNetwork("Amsterdam network", true, getSimulator());
             try
             {
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);
+                XmlNetworkLaneParser.build(xmlURL, this.network, true);
                 List<Node> unbalancedCentroids = this.network.getUnbalancedCentroids(this.network.getGtuType("Car.53"));
                 System.out.println("The network has " + unbalancedCentroids.size() + " unbalanced centroids");
                 // System.out.println("OBJECTMAP.SIZE  = " + this.network.getObjectMap().size());

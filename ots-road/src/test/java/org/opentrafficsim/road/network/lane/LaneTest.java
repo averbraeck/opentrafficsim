@@ -89,7 +89,7 @@ public class LaneTest implements UNITS
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         CrossSectionLink link =
                 new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                        new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
+                        new OTSLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
@@ -154,8 +154,7 @@ public class LaneTest implements UNITS
         coordinates[1] = new OTSPoint3D(200, 100);
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo,
-                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(coordinates), simulator,
-                LaneKeepingPolicy.KEEPRIGHT);
+                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         // FIXME what overtaking conditions do we want to test in this unit test?
         lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
         // Verify the easy bits
@@ -585,7 +584,7 @@ public class LaneTest implements UNITS
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                line, simulator, LaneKeepingPolicy.KEEPRIGHT);
+                line, LaneKeepingPolicy.KEEPRIGHT);
         Length offsetAtStart = Length.instantiateSI(5);
         Length offsetAtEnd = Length.instantiateSI(15);
         Length width = Length.instantiateSI(4);
@@ -672,7 +671,7 @@ public class LaneTest implements UNITS
                     Model model = new Model(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end,
-                            network.getLinkType(LinkType.DEFAULTS.ROAD), line, simulator, LaneKeepingPolicy.KEEPRIGHT);
+                            network.getLinkType(LinkType.DEFAULTS.ROAD), line, LaneKeepingPolicy.KEEPRIGHT);
                     final int[] lateralOffsets = { -10, -3, -1, 0, 1, 3, 10 };
                     for (int startLateralOffset : lateralOffsets)
                     {

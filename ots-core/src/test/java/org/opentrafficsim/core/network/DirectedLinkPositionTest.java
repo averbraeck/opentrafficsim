@@ -11,6 +11,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.mock.MockSimulator;
 
 /**
  * Test the DirectedLinkPosition class.
@@ -31,12 +32,11 @@ public class DirectedLinkPositionTest
     @Test
     public void directedLinkPositionTest() throws NetworkException, OTSGeometryException
     {
-        Network network = new OTSNetwork("test network for DirectedLinkPosition test", true,
-                new OTSSimulator("Simulator for DirectedLinkPositionTest"));
+        OTSNetwork network = new OTSNetwork("test network for DirectedLinkPosition test", true, MockSimulator.createMock());
         Node nodeA = new OTSNode(network, "A", new OTSPoint3D(10, 10, 10));
         Node nodeB = new OTSNode(network, "B", new OTSPoint3D(110, 10, 10));
         Link link = new OTSLink(network, "A to B", nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OTSLine3D(nodeA.getPoint(), nodeB.getPoint()), new OTSSimulator("simulator for DirectedLinkPosition test"));
+                new OTSLine3D(nodeA.getPoint(), nodeB.getPoint()));
         double linkLength = link.getLength().si;
         // Apparently (reading the source), DirectedLinkPosition is not restricted to the length-range of the link
         for (double fraction : new double[] { -10, 0, 0.1, 0.5, 0.9, 1.0, 11.0 })

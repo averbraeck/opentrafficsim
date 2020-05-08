@@ -90,7 +90,7 @@ public class NTMLink extends CapacityOTSLink
             final Length length, final NTMNode startNode, final NTMNode endNode, Speed freeSpeed, Duration time,
             final Frequency capacity, final TrafficBehaviourType behaviourType, LinkData linkData) throws NetworkException
     {
-        super(network, nr, startNode, endNode, network.getLinkType(LinkType.DEFAULTS.ROAD), geometry, simulator, capacity);
+        super(network, nr, startNode, endNode, network.getLinkType(LinkType.DEFAULTS.ROAD), geometry, capacity);
         if (null == behaviourType)
         {
             System.out.println("behaviourType is null!");
@@ -226,8 +226,7 @@ public class NTMLink extends CapacityOTSLink
     public NTMLink(final NTMLink link) throws NetworkException
     {
         super(link.getNetwork(), link.getId(), link.getStartNode(), link.getEndNode(),
-                link.getNetwork().getLinkType(LinkType.DEFAULTS.ROAD), link.getDesignLine(), link.getSimulator(),
-                link.getCapacity());
+                link.getNetwork().getLinkType(LinkType.DEFAULTS.ROAD), link.getDesignLine(), link.getCapacity());
         this.freeSpeed = link.freeSpeed;
         this.numberOfLanes = link.getNumberOfLanes();
         this.behaviourType = link.behaviourType;

@@ -16,7 +16,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventProducer;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -194,7 +194,7 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        EventType eventType = event.getType();
+        EventTypeInterface eventType = event.getType();
         if (eventType.equals(SimulatorInterface.END_REPLICATION_EVENT))
         {
             if (null != this.serverSocket)
