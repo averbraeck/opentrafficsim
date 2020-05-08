@@ -8,7 +8,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -34,7 +34,7 @@ public class ExtendedCrossSectionLink extends CrossSectionLink
 
     /**
      * Construction of a cross section link with some extra data.
-     * @param network RoadNetwork; the network
+     * @param network OTSRoadNetwork; the network
      * @param id String; the link id.
      * @param startNode OTSRoadNode; the start node (directional).
      * @param endNode OTSRoadNode; the end node (directional).
@@ -46,11 +46,11 @@ public class ExtendedCrossSectionLink extends CrossSectionLink
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public ExtendedCrossSectionLink(final RoadNetwork network, final String id, final OTSRoadNode startNode,
+    public ExtendedCrossSectionLink(final OTSRoadNetwork network, final String id, final OTSRoadNode startNode,
             final OTSRoadNode endNode, final LinkType linkType, final OTSLine3D designLine,
             final OTSSimulatorInterface simulator, final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, simulator, laneKeepingPolicy);
+        super(network, id, startNode, endNode, linkType, designLine, laneKeepingPolicy);
     }
 
     /**

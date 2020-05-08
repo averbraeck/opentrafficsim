@@ -160,7 +160,7 @@ public class PublisherTest implements OTSModelInterface
         OTSPoint3D nodeBPoint = new OTSPoint3D(20, 200, 2000);
         OTSRoadNode nodeB = new OTSRoadNode(network, "NodeB", nodeBPoint, new Direction(0.2, DirectionUnit.EAST_RADIAN));
         CrossSectionLink link = new CrossSectionLink(network, "Id of test link", nodeA, nodeB, linkType,
-                new OTSLine3D(nodeAPoint, nodeBPoint), simulator, null);
+                new OTSLine3D(nodeAPoint, nodeBPoint), null);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.RURAL_ROAD_LANE);
 
         new Lane(link, "LaneId", new Length(2.0, LengthUnit.METER), new Length(3.0, LengthUnit.METER), laneType,
@@ -303,7 +303,7 @@ public class PublisherTest implements OTSModelInterface
             try
             {
                 XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
-                        getSimulator(), false);
+                        false);
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),

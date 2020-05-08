@@ -120,7 +120,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
             {
                 URL xmlURL = URLResource.getResource("/conflict/TurboRoundabout.xml");
                 this.network = new OTSRoadNetwork("TurboRoundabout", true, getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), true);
+                XmlNetworkLaneParser.build(xmlURL, this.network, true);
 
                 // add trafficlights
                 for (Lane lane : ((CrossSectionLink) this.network.getLink("SEXITS2")).getLanes())

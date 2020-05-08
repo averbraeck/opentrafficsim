@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.mock;
 
+import org.djunits.value.vdouble.scalar.Time;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
@@ -24,6 +25,8 @@ public final class MockSimulator
      */
     public static OTSSimulatorInterface createMock()
     {
-        return Mockito.mock(OTSSimulatorInterface.class);
+        OTSSimulatorInterface result = Mockito.mock(OTSSimulatorInterface.class);
+        Mockito.when(result.getSimulatorTime()).thenReturn(Time.ZERO);
+        return result;
     }
 }

@@ -132,7 +132,7 @@ public class Circuit extends OTSSimulationApplication<OTSModelInterface>
             {
                 URL xmlURL = URLResource.getResource("/xml/Circuit.xml");
                 this.network = new OTSRoadNetwork("Circuit", true, getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
+                XmlNetworkLaneParser.build(xmlURL, this.network, false);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
                     | JAXBException | URISyntaxException | XmlParserException | IOException | TrafficControlException exception)

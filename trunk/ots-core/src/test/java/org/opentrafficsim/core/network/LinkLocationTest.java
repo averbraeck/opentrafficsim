@@ -8,7 +8,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -37,20 +36,18 @@ public class LinkLocationTest
     {
         OTSPoint3D fromPoint = new OTSPoint3D(100, 200, 300);
         OTSPoint3D toPoint = new OTSPoint3D(1000, 2000, 330);
-        Network network =
-                new OTSNetwork("testNetworkForCapacityOTSLink", true, new OTSSimulator("Simulator for LinkLocationTest"));
+        OTSNetwork network = new OTSNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
-        Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator);
+        Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine);
         Length linkLength = link.getLength();
         // Create an unrelated link
         OTSPoint3D a = new OTSPoint3D(1, 2, 3);
         OTSPoint3D b = new OTSPoint3D(11, 12, 13);
         Link otherLink = new OTSLink(network, "otherLink", new OTSNode(network, "a", a), new OTSNode(network, "b", b), linkType,
-                new OTSLine3D(a, b), simulator);
+                new OTSLine3D(a, b));
         for (int percentage = 0; percentage <= 100; percentage += 10)
         {
             double fraction = percentage / 100.0;

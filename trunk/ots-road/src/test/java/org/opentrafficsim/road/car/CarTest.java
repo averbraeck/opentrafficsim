@@ -40,7 +40,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -161,14 +160,14 @@ public class CarTest implements UNITS
      * @throws NetworkException on network error
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane makeLane(final RoadNetwork network, final LaneType laneType, final OTSSimulatorInterface simulator)
+    public static Lane makeLane(final OTSRoadNetwork network, final LaneType laneType, final OTSSimulatorInterface simulator)
             throws NetworkException, OTSGeometryException
     {
         OTSRoadNode n1 = new OTSRoadNode(network, "n1", new OTSPoint3D(0, 0), Direction.ZERO);
         OTSRoadNode n2 = new OTSRoadNode(network, "n2", new OTSPoint3D(100000.0, 0.0), Direction.ZERO);
         OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
         CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEPRIGHT);
+                new OTSLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, new Speed(100, KM_PER_HOUR));

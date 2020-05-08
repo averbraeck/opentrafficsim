@@ -210,7 +210,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
             InputStream stream = URLResource.getResourceAsStream("/N201v8.xml");
             try
             {
-                XmlNetworkLaneParser.build(stream, this.network, this.simulator, false);
+                XmlNetworkLaneParser.build(stream, this.network, false);
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
             }

@@ -39,19 +39,18 @@ public class CapacityOTSLinkTest
     {
         OTSPoint3D fromPoint = new OTSPoint3D(100, 200, 300);
         OTSPoint3D toPoint = new OTSPoint3D(1000, 2000, 330);
-        Network network =
-                new OTSNetwork("testNetworkForCapacityOTSLink", true, new OTSSimulator("Simulator for CapacityOTSLinkTest"));
+        OTSNetwork network =
+                new OTSNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
         CapacityOTSLink link =
-                new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator, initialCapacity);
+                new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
         assertTrue("from node matches", fromNode.equals(link.getStartNode()));
@@ -60,13 +59,12 @@ public class CapacityOTSLinkTest
         link.setCapacity(finalCapacity);
         assertTrue("capacity mathes", finalCapacity.equals(link.getCapacity()));
 
-        Network newNetwork =
-                new OTSNetwork("clonedNetworkForCapacityOTSLink", true, new OTSSimulator("Simulator for CapacityOTSLinkTest"));
+        OTSNetwork newNetwork = new OTSNetwork("clonedNetworkForCapacityOTSLink", true, MockSimulator.createMock());
         // Create nodes with matching IDs in the new network
         new OTSNode(newNetwork, fromNode.getId(), fromPoint);
         new OTSNode(newNetwork, toNode.getId(), toPoint);
         OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        CapacityOTSLink clonedLink = new CapacityOTSLink(newNetwork, newSimulator, link);
+        CapacityOTSLink clonedLink = new CapacityOTSLink(newNetwork, link);
         assertTrue("from point matches", fromPoint.equals(clonedLink.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(clonedLink.getDesignLine().get(1)));
         // XXXX is it really intentional that the equals method of Node does NOT check equality of the network field?

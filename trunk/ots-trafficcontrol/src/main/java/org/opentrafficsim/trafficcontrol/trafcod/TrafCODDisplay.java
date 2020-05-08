@@ -21,7 +21,7 @@ import javax.swing.ToolTipManager;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.event.EventType;
+import org.djutils.event.EventTypeInterface;
 import org.djutils.event.ref.ReferenceType;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -412,7 +412,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType,
+    public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType,
             final ReferenceType referenceType) throws RemoteException
     {
         return false;
@@ -420,7 +420,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final int position)
+    public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType, final int position)
             throws RemoteException
     {
         return false;
@@ -428,7 +428,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType, final int position,
+    public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType, final int position,
             final ReferenceType referenceType) throws RemoteException
     {
         return false;
@@ -437,7 +437,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public boolean addListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
+    public boolean addListener(final EventListenerInterface listener, final EventTypeInterface eventType) throws RemoteException
     {
         return false;
     }
@@ -451,21 +451,22 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
 
     /** {@inheritDoc} */
     @Override
-    public int numberOfListeners(final EventType eventType) throws RemoteException
+    public int numberOfListeners(final EventTypeInterface eventType) throws RemoteException
     {
         return 0;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<EventType> getEventTypesWithListeners() throws RemoteException
+    public Set<EventTypeInterface> getEventTypesWithListeners() throws RemoteException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean removeListener(final EventListenerInterface listener, final EventType eventType) throws RemoteException
+    public boolean removeListener(final EventListenerInterface listener, final EventTypeInterface eventType)
+            throws RemoteException
     {
         return false;
     }

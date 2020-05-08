@@ -340,7 +340,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
             try
             {
                 ByteArrayInputStream bos = new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8));
-                XmlNetworkLaneParser.build(bos, this.network, getSimulator(), true);
+                XmlNetworkLaneParser.build(bos, this.network, true);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
                     | URISyntaxException | XmlParserException | GTUException | IOException | TrafficControlException exception)

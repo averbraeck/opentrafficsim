@@ -59,16 +59,15 @@ public class OTSLinkTest implements EventListenerInterface
     @Test
     public final void testOTSLink() throws NetworkException, OTSGeometryException
     {
-        Network network = new OTSNetwork("OTSLinkTestNetwork", true, new OTSSimulator("Simulator for OTSLinkTest"));
+        OTSNetwork network = new OTSNetwork("OTSLinkTestNetwork", true, MockSimulator.createMock());
         Node startNode = new OTSNode(network, "start", new OTSPoint3D(10, 20, 0));
         Node endNode = new OTSNode(network, "end", new OTSPoint3D(1000, 2000, 10));
         GTUCompatibility<LinkType> compatibility = new GTUCompatibility<LinkType>((LinkType) null)
                 .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_NONE);
         LinkType linkType = new LinkType("myLinkType", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
-        OTSSimulatorInterface simulator = MockSimulator.createMock();
         // Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine, simulator);
+        OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         // directionalityMap is currently empty
         assertEquals("directionality for network.getGtuType(GTUType.DEFAULTS.VEHICLE) is DIR_NONE",
@@ -76,7 +75,7 @@ public class OTSLinkTest implements EventListenerInterface
         GTUType carType = new GTUType("car", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         compatibility.addAllowedGTUType(carType, LongitudinalDirectionality.DIR_MINUS);
         linkType = new LinkType("myLinkType2", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
-        link = new OTSLink(network, "link2", startNode, endNode, linkType, designLine, simulator);
+        link = new OTSLink(network, "link2", startNode, endNode, linkType, designLine);
         assertEquals("directionality for carType is DIR_MINUS", LongitudinalDirectionality.DIR_MINUS,
                 link.getDirectionality(carType));
         GTUType bicycle = new GTUType("bicycle", network.getGtuType(GTUType.DEFAULTS.BICYCLE));
@@ -84,12 +83,12 @@ public class OTSLinkTest implements EventListenerInterface
                 link.getDirectionality(bicycle));
         compatibility.addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.BICYCLE), LongitudinalDirectionality.DIR_PLUS);
         linkType = new LinkType("myLinkType3", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
-        link = new OTSLink(network, "link3", startNode, endNode, linkType, designLine, simulator);
+        link = new OTSLink(network, "link3", startNode, endNode, linkType, designLine);
         assertEquals("directionality for bicycle is now DIR_PLUS", LongitudinalDirectionality.DIR_PLUS,
                 link.getDirectionality(bicycle));
         compatibility.addAllowedGTUType(carType, LongitudinalDirectionality.DIR_NONE);
         linkType = new LinkType("myLinkType4", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
-        link = new OTSLink(network, "link4", startNode, endNode, linkType, designLine, simulator);
+        link = new OTSLink(network, "link4", startNode, endNode, linkType, designLine);
         assertEquals("directionality for bicycle is now DIR_PLUS", LongitudinalDirectionality.DIR_PLUS,
                 link.getDirectionality(network.getGtuType(GTUType.DEFAULTS.BICYCLE)));
         assertEquals("directionality for bicycle is now DIR_PLUS", LongitudinalDirectionality.DIR_NONE,
@@ -155,13 +154,13 @@ public class OTSLinkTest implements EventListenerInterface
         assertFalse("link is not equal to null", link.equals(null));
         assertFalse("link is not equal to some other object", link.equals("Hello World!"));
         // Make another link to test the rest of equals
-        OTSLink otherLink = new OTSLink(network, "link5", startNode, endNode, linkType, designLine, simulator);
+        OTSLink otherLink = new OTSLink(network, "link5", startNode, endNode, linkType, designLine);
         assertFalse("link is not equal to extremely similar link with different id", link.equals(otherLink));
         // make a link with the same name in another network
-        Network otherNetwork = new OTSNetwork("other", true, new OTSSimulator("Simulator for OTSLinkTest"));
+        OTSNetwork otherNetwork = new OTSNetwork("other", true, MockSimulator.createMock());
         linkType = new LinkType("myLinkType4", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         otherLink = new OTSLink(otherNetwork, "link4", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
-                new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator);
+                new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
         otherNetwork.removeLink(otherLink);
         OTSSimulatorInterface simulator2 = MockSimulator.createMock();

@@ -45,7 +45,7 @@ public class LinkLocationTest implements UNITS
         OTSRoadNode nodeTo = new OTSRoadNode(network, "To", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
         CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo,
-                network.getLinkType(LinkType.DEFAULTS.ROAD), line, simulator, LaneKeepingPolicy.KEEPRIGHT);
+                network.getLinkType(LinkType.DEFAULTS.ROAD), line, LaneKeepingPolicy.KEEPRIGHT);
         Length linkLength = line.getLength();
         // Now we can make a LinkLocation.
         Length referenceLocationDistance = new Length(123, METER);

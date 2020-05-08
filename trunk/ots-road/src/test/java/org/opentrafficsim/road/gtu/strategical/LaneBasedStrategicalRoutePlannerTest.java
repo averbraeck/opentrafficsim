@@ -46,8 +46,7 @@ public class LaneBasedStrategicalRoutePlannerTest
         OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));
         OTSNode toNode = new OTSNode(network, "to", new OTSPoint3D(100, 0, 0));
         OTSLine3D designLine = new OTSLine3D(fromNode.getPoint(), toNode.getPoint());
-        OTSLink link = new OTSLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine,
-                simulator);
+        OTSLink link = new OTSLink(network, "link", fromNode, toNode, network.getLinkType(LinkType.DEFAULTS.ROAD), designLine);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
         Parameters params = DefaultTestParameters.create();

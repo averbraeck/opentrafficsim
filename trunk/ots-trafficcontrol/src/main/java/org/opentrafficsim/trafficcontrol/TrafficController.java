@@ -3,6 +3,7 @@ package org.opentrafficsim.trafficcontrol;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventProducerInterface;
 import org.djutils.event.EventType;
+import org.djutils.event.TimedEventType;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 
@@ -49,33 +50,33 @@ public interface TrafficController
      * The <b>timed</b> event type for pub/sub that a newly created traffic controller emits. <br>
      * Payload: Object[] { String trafficControllerId, String initialState }
      */
-    EventType TRAFFICCONTROL_CONTROLLER_CREATED = new EventType("TRAFFICCONTROL.CONTROLLER_CREATED");
+    TimedEventType TRAFFICCONTROL_CONTROLLER_CREATED = new TimedEventType("TRAFFICCONTROL.CONTROLLER_CREATED");
 
     /**
      * The <b>timed</b> event type for pub/sub that a traffic controller emits when it begins the computations to determine its
      * response to the current input (detector states).<br>
      * Payload: Object[] { String trafficControllerId }
      */
-    EventType TRAFFICCONTROL_CONTROLLER_EVALUATING = new EventType("TRAFFICCONTROL.CONTROLLER_EVALUATING");
+    TimedEventType TRAFFICCONTROL_CONTROLLER_EVALUATING = new TimedEventType("TRAFFICCONTROL.CONTROLLER_EVALUATING");
 
     /**
      * The <b>timed</b> event type for pub/sub that a traffic controller uses to convey warnings.<br>
      * Payload: Object[] { String trafficControllerId, String message }
      */
-    EventType TRAFFICCONTROL_CONTROLLER_WARNING = new EventType("TRAFFICCONTROL.CONTROLLER_WARNING");
+    TimedEventType TRAFFICCONTROL_CONTROLLER_WARNING = new TimedEventType("TRAFFICCONTROL.CONTROLLER_WARNING");
 
     /**
      * The <b>timed</b> event for pub/sub emitted by a traffic control machine when it changes state (STARTING_UP, RUNNING,
      * SHUTTING_DOWN, OFF, etc. The exact set of states may vary depending on the type of traffic control machine. <br>
      * Payload: Object[] { String trafficControllerId, String oldState, String newState }
      */
-    EventType TRAFFICCONTROL_STATE_CHANGED = new EventType("TRAFFIC_CONTROL.STATE_CHANGED");
+    TimedEventType TRAFFICCONTROL_STATE_CHANGED = new TimedEventType("TRAFFIC_CONTROL.STATE_CHANGED");
 
     /**
      * The <b>timed</b>event that is fired by a traffic control program when a traffic light must change state. <br>
      * Payload: Object[] { String trafficControllerId, Integer stream, TrafficLightColor newColor }
      */
-    EventType TRAFFIC_LIGHT_CHANGED = new EventType("TrafficLightChanged");
+    TimedEventType TRAFFIC_LIGHT_CHANGED = new TimedEventType("TrafficLightChanged");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the creation of a traffic control program variable. <br>
@@ -83,7 +84,7 @@ public interface TrafficController
      * variable.<br>
      * Payload: Object[] {String trafficControllerId, String variableId, Integer trafficStream, Double initialValue}
      */
-    EventType TRAFFICCONTROL_VARIABLE_CREATED = new EventType("TRAFFICCONTROL.VARIABLE_CREATED");
+    TimedEventType TRAFFICCONTROL_VARIABLE_CREATED = new TimedEventType("TRAFFICCONTROL.VARIABLE_CREATED");
 
     /**
      * The <b>timed</b> event type that instruct a traffic controller to change the tracing level of a variable. <br>
@@ -106,7 +107,7 @@ public interface TrafficController
      * <code>NO_STREAM</code> <br>
      * Remark 2: if the variable is a timer that has just been initialized; newValue will reflect the duration in seconds
      */
-    EventType TRAFFICCONTROL_TRACED_VARIABLE_UPDATED = new EventType("TRAFFICCONTROL.VARIABLE_UPDATED");
+    TimedEventType TRAFFICCONTROL_TRACED_VARIABLE_UPDATED = new TimedEventType("TRAFFICCONTROL.VARIABLE_UPDATED");
 
     /**
      * The <b>timed</b> event for pub/sub emitted by a traffic control machine when it changes to another conflict group. <br>
@@ -119,6 +120,6 @@ public interface TrafficController
      * Remark 4: Some traffic control systems may not operate in a conflict group by conflict group fashion and therefore not
      * emit these events.
      */
-    EventType TRAFFICCONTROL_CONFLICT_GROUP_CHANGED = new EventType("TRAFFICCONTROL.CONFLICT_GROUP_CHANGED");
+    TimedEventType TRAFFICCONTROL_CONFLICT_GROUP_CHANGED = new TimedEventType("TRAFFICCONTROL.CONFLICT_GROUP_CHANGED");
 
 }

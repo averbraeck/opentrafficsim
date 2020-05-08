@@ -156,7 +156,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
             {
                 URL xmlURL = URLResource.getResource("/conflictAndControl/TurboRoundaboutAndSignal.xml");
                 this.network = new OTSRoadNetwork("TurboRoundaboutAndSignal", true, getSimulator());
-                XmlNetworkLaneParser.build(xmlURL, this.network, getSimulator(), false);
+                XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
                 // add conflicts
                 ((CrossSectionLink) this.network.getLink("EBNA")).setPriority(Priority.PRIORITY);

@@ -250,12 +250,10 @@ public final class ShapeFileReader implements UNITS
                     CrossSectionLink linkAB = null;
                     CrossSectionLink linkBA = null;
                     linkAB = new CrossSectionLink(network, nr, nodeA, nodeB, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                            new OTSLine3D(new OTSPoint3D[] {nodeA.getPoint(), nodeB.getPoint()}), simulator,
-                            LaneKeepingPolicy.KEEPRIGHT);
+                            new OTSLine3D(new OTSPoint3D[] {nodeA.getPoint(), nodeB.getPoint()}), LaneKeepingPolicy.KEEPRIGHT);
                     animate(linkAB, typeWegVak, simulator);
                     linkBA = new CrossSectionLink(network, nrBA, nodeB, nodeA, network.getLinkType(LinkType.DEFAULTS.ROAD),
-                            new OTSLine3D(new OTSPoint3D[] {nodeB.getPoint(), nodeA.getPoint()}), simulator,
-                            LaneKeepingPolicy.KEEPRIGHT);
+                            new OTSLine3D(new OTSPoint3D[] {nodeB.getPoint(), nodeA.getPoint()}), LaneKeepingPolicy.KEEPRIGHT);
                     animate(linkBA, typeWegVak, simulator);
                     if (direction == 1)
                     {

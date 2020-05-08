@@ -49,7 +49,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementSte
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -87,7 +86,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
 
     /**
      * Create a Link.
-     * @param network RoadNetwork; the network
+     * @param network OTSRoadNetwork; the network
      * @param name String; name of the new Link
      * @param from OTSRoadNode; start node of the new Link
      * @param to OTSRoadNode; end node of the new Link
@@ -98,7 +97,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network
      */
-    private static CrossSectionLink makeLink(final RoadNetwork network, final String name, final OTSRoadNode from,
+    private static CrossSectionLink makeLink(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
             final OTSRoadNode to, final Length width, final OTSSimulatorInterface simulator)
             throws OTSGeometryException, NetworkException
     {
@@ -108,7 +107,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0) };
         OTSLine3D line = new OTSLine3D(coordinates);
         CrossSectionLink link = new CrossSectionLink(network, name, from, to, network.getLinkType(LinkType.DEFAULTS.ROAD), line,
-                simulator, LaneKeepingPolicy.KEEPRIGHT);
+                LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 
@@ -136,7 +135,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
 
     /**
      * Create a simple straight road with the specified number of Lanes.
-     * @param network RoadNetwork; the network
+     * @param network OTSRoadNetwork; the network
      * @param name String; name of the Link
      * @param from OTSRoadNode; starting node of the new Lane
      * @param to OTSRoadNode; ending node of the new Lane
@@ -146,7 +145,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static Lane[] makeMultiLane(final RoadNetwork network, final String name, final OTSRoadNode from,
+    public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
             final OTSRoadNode to, final LaneType laneType, final int laneCount, final OTSSimulatorInterface simulator)
             throws Exception
     {
