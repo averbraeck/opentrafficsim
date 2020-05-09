@@ -73,7 +73,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    if (!animator.isRunning()) // to break message cycle between OTS and IMB
+                    if (!animator.isStartingOrRunning()) // to break message cycle between OTS and IMB
                     {
                         animator.start();
                     }
@@ -97,7 +97,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
             @Override
             public void handle(TByteBuffer imbPayload) throws IMBException
             {
-                if (animator.isRunning()) // to break message cycle between OTS and IMB
+                if (animator.isStartingOrRunning()) // to break message cycle between OTS and IMB
                 {
                     try
                     {

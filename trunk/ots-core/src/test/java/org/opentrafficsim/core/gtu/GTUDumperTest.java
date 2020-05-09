@@ -96,7 +96,7 @@ public class GTUDumperTest implements OTSModelInterface
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         simulator.scheduleEventAbs(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
         this.simulator.start();
-        while (this.simulator.isRunning())
+        while (this.simulator.isStartingOrRunning())
         {
             // System.out.println("Simulator time is " + this.simulator.getSimTime());
             Thread.sleep(100);

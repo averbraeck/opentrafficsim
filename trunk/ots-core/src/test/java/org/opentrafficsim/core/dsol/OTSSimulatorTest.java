@@ -55,11 +55,11 @@ public class OTSSimulatorTest
         simulator.scheduleEvent(new Time(400, TimeUnit.BASE_SECOND), (short) 0, this, this, "eventReceiver",
                 new Object[] { testArgument });
         simulator.start();
-        while (simulator.isRunning())
+        while (simulator.isStartingOrRunning())
         {
             Thread.sleep(100);
         }
-        assertFalse("simulator has stopped", simulator.isRunning());
+        assertFalse("simulator has stopped", simulator.isStartingOrRunning());
         assertEquals("simulator time is runLength", runLength, simulator.getSimTime().get().minus(startTime));
         assertEquals("event has been executed", testArgument, this.receivedArgument);
     }

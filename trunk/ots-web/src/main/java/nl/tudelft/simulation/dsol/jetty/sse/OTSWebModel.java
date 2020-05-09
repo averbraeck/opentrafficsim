@@ -158,7 +158,7 @@ public class OTSWebModel implements EventListenerInterface
         {
             getSimulator().getLogger().always().warn(exception, "Problem starting Simulator");
         }
-        if (getSimulator().isRunning())
+        if (getSimulator().isStartingOrRunning())
         {
             return true;
         }
@@ -185,7 +185,7 @@ public class OTSWebModel implements EventListenerInterface
         {
             getSimulator().getLogger().always().warn(exception, "Problem stopping Simulator");
         }
-        if (!getSimulator().isRunning())
+        if (!getSimulator().isStartingOrRunning())
         {
             return true;
         }
@@ -263,7 +263,7 @@ public class OTSWebModel implements EventListenerInterface
                 case "init":
                 {
                     boolean simOk = getSimulator() != null;
-                    boolean started = simOk ? getSimulator().isRunning() : false;
+                    boolean started = simOk ? getSimulator().isStartingOrRunning() : false;
                     answer = controlButtonResponse(simOk, started);
                     break;
                 }
@@ -284,7 +284,7 @@ public class OTSWebModel implements EventListenerInterface
                 case "startStop":
                 {
                     boolean simOk = getSimulator() != null;
-                    boolean started = simOk ? getSimulator().isRunning() : false;
+                    boolean started = simOk ? getSimulator().isStartingOrRunning() : false;
                     if (simOk && started)
                         started = !stopSimulator();
                     else if (simOk && !started)

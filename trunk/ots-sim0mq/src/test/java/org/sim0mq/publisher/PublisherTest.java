@@ -351,7 +351,7 @@ public class PublisherTest implements OTSModelInterface
         Publisher publisher = new Publisher(network);
         Time stopTime = new Time(30, TimeUnit.BASE_SECOND);
         simulation.runUpTo(stopTime); // ensure there will be a few GTUs
-        while (simulation.isRunning())
+        while (simulation.isStartingOrRunning())
         {
             try
             {

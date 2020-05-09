@@ -264,7 +264,7 @@ public class SuperDemoWebApplication implements Checkable
             this.federationRunId = message.getFederationId();
         }
         String status = "started";
-        if (this.simulator.isRunning())
+        if (this.simulator.isStartingOrRunning())
         {
             status = "running";
         }

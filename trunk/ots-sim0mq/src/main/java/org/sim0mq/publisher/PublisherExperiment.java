@@ -168,7 +168,7 @@ public final class PublisherExperiment
         Time endTime = new Time(10, TimeUnit.BASE_SECOND);
         System.out.println("Simulating up to " + endTime);
         animator.runUpTo(endTime);
-        while (animator.isRunning())
+        while (animator.isStartingOrRunning())
         {
             try
             {
@@ -185,7 +185,7 @@ public final class PublisherExperiment
         endTime = new Time(60, TimeUnit.BASE_SECOND);
         System.out.println("Simulating up to " + endTime);
         animator.runUpTo(endTime);
-        while (animator.isRunning())
+        while (animator.isStartingOrRunning())
         {
             try
             {

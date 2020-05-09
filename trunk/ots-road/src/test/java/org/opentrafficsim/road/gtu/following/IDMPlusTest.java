@@ -321,7 +321,7 @@ public class IDMPlusTest implements UNITS
         {
             Time simulateUntil = new Time(0.1 * timeStep, TimeUnit.BASE_SECOND);
             simulator.runUpTo(simulateUntil);
-            while (simulator.isRunning())
+            while (simulator.isStartingOrRunning())
             {
                 try
                 {

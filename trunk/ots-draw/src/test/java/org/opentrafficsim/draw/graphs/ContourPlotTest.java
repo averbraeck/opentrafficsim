@@ -508,7 +508,7 @@ public class ContourPlotTest implements UNITS
         // // + gtuFollowingModel.timeAfterCompletionOfStep(0));
         // double stopTime = gtuFollowingModel.timeAfterCompletionOfStep(0).si;
         // simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.BASE_SECOND));
-        // while (simulator.isRunning())
+        // while (simulator.isStartingOrRunning())
         // {
         // try
         // {
@@ -631,7 +631,7 @@ public class ContourPlotTest implements UNITS
         // // + gtuFollowingModel.timeAfterCompletionOfStep(1));
         // stopTime = gtuFollowingModel.timeAfterCompletionOfStep(1).si;
         // simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.BASE_SECOND));
-        // while (simulator.isRunning())
+        // while (simulator.isStartingOrRunning())
         // {
         // try
         // {

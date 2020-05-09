@@ -378,7 +378,7 @@ public class OTSControlPanel extends JPanel
         {
             if (actionCommand.equals("Step"))
             {
-                if (getSimulator().isRunning())
+                if (getSimulator().isStartingOrRunning())
                 {
                     getSimulator().stop();
                 }
@@ -386,7 +386,7 @@ public class OTSControlPanel extends JPanel
             }
             if (actionCommand.equals("RunPause"))
             {
-                if (this.simulator.isRunning())
+                if (this.simulator.isStartingOrRunning())
                 {
                     // System.out.println("RunPause: Stopping simulator");
                     this.simulator.stop();
@@ -399,7 +399,7 @@ public class OTSControlPanel extends JPanel
             }
             if (actionCommand.equals("NextTime"))
             {
-                if (getSimulator().isRunning())
+                if (getSimulator().isStartingOrRunning())
                 {
                     // System.out.println("NextTime: Stopping simulator");
                     getSimulator().stop();
@@ -422,7 +422,7 @@ public class OTSControlPanel extends JPanel
             }
             if (actionCommand.equals("Reset"))
             {
-                if (getSimulator().isRunning())
+                if (getSimulator().isStartingOrRunning())
                 {
                     getSimulator().stop();
                 }
@@ -464,7 +464,7 @@ public class OTSControlPanel extends JPanel
             {
                 if (this.simulator != null)
                 {
-                    if (this.simulator.isRunning())
+                    if (this.simulator.isStartingOrRunning())
                     {
                         this.simulator.stop();
                     }
@@ -518,7 +518,7 @@ public class OTSControlPanel extends JPanel
             else if (actionCommand.equals("RunPause"))
             {
                 button.setEnabled(moreWorkToDo);
-                if (this.simulator.isRunning())
+                if (this.simulator.isStartingOrRunning())
                 {
                     button.setToolTipText("Pause the simulation");
                     button.setIcon(OTSControlPanel.loadIcon("/Pause.png"));
@@ -552,7 +552,7 @@ public class OTSControlPanel extends JPanel
     public final void autoPauseSimulator()
     {
         // System.out.println("OTSControlPanel.autoPauseSimulator entered");
-        if (getSimulator().isRunning())
+        if (getSimulator().isStartingOrRunning())
         {
             try
             {
@@ -688,7 +688,7 @@ public class OTSControlPanel extends JPanel
         {
             try
             {
-                if (this.simulator.isRunning())
+                if (this.simulator.isStartingOrRunning())
                 {
                     this.simulator.stop();
                 }

@@ -246,7 +246,7 @@ public class TestFixedTimeController
         assertTrue("toString returns something descriptive", ftc.toString().startsWith("FixedTimeController ["));
 
         simulator.runUpTo(Time.instantiateSI(1));
-        while (simulator.isRunning())
+        while (simulator.isStartingOrRunning())
         {
             try
             {
@@ -405,7 +405,7 @@ public class TestFixedTimeController
                                     }
                                     Time stopTime = Time.instantiateSI(300);
                                     simulator.runUpTo(stopTime);
-                                    while (simulator.isRunning())
+                                    while (simulator.isStartingOrRunning())
                                     {
                                         try
                                         {

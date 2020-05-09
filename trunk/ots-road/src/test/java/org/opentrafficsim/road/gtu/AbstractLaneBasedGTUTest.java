@@ -222,7 +222,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
             }
             // System.out.println("Simulating until " + stepTime.getSI());
             simulator.runUpTo(stepTime);
-            while (simulator.isRunning())
+            while (simulator.isStartingOrRunning())
             {
                 try
                 {

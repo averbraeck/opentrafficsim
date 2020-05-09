@@ -177,7 +177,7 @@ public abstract class OTSWebServer implements EventListenerInterface
         {
             getSimulator().getLogger().always().warn(exception, "Problem starting Simulator");
         }
-        if (getSimulator().isRunning())
+        if (getSimulator().isStartingOrRunning())
         {
             return true;
         }
@@ -204,7 +204,7 @@ public abstract class OTSWebServer implements EventListenerInterface
         {
             getSimulator().getLogger().always().warn(exception, "Problem stopping Simulator");
         }
-        if (!getSimulator().isRunning())
+        if (!getSimulator().isStartingOrRunning())
         {
             return true;
         }
@@ -296,7 +296,7 @@ public abstract class OTSWebServer implements EventListenerInterface
                     case "init":
                     {
                         boolean simOk = this.webServer.getSimulator() != null;
-                        boolean started = simOk ? this.webServer.getSimulator().isRunning() : false;
+                        boolean started = simOk ? this.webServer.getSimulator().isStartingOrRunning() : false;
                         answer = controlButtonResponse(simOk, started);
                         break;
                     }
@@ -317,7 +317,7 @@ public abstract class OTSWebServer implements EventListenerInterface
                     case "startStop":
                     {
                         boolean simOk = this.webServer.getSimulator() != null;
-                        boolean started = simOk ? this.webServer.getSimulator().isRunning() : false;
+                        boolean started = simOk ? this.webServer.getSimulator().isStartingOrRunning() : false;
                         if (simOk && started)
                             started = !this.webServer.stopSimulator();
                         else if (simOk && !started)

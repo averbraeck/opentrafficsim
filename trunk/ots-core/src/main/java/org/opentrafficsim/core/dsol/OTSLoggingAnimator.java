@@ -127,7 +127,7 @@ public class OTSLoggingAnimator extends OTSAnimator
         /* wall clock milliseconds per 1 simulation clock millisecond. */
         double msec1 = simulatorTimeForWallClockMillis(1.0).doubleValue();
 
-        while (this.isRunning() && !this.eventList.isEmpty()
+        while (this.isStartingOrRunning() && !this.eventList.isEmpty()
                 && this.simulatorTime.le(this.replication.getTreatment().getEndSimTime()))
         {
             // check if speedFactor has changed. If yes: re-baseline.
@@ -196,7 +196,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                     }
 
                     // did we stop running between events?
-                    if (!isRunning())
+                    if (!isStartingOrRunning())
                     {
                         wallMillisNextEventSinceBaseline = 0.0; // jump out of the while loop for sleeping
                         break;
@@ -249,7 +249,7 @@ public class OTSLoggingAnimator extends OTSAnimator
             }
 
             // only execute an event if we are still running...
-            if (isRunning())
+            if (isStartingOrRunning())
             {
                 synchronized (super.semaphore)
                 {
@@ -261,7 +261,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                     this.simulatorTime.set(nextEvent.getAbsoluteExecutionTime().get());
 
                     // carry out all events scheduled on this simulation time, as long as we are still running.
-                    while (this.isRunning() && !this.eventList.isEmpty()
+                    while (this.isStartingOrRunning() && !this.eventList.isEmpty()
                             && nextEvent.getAbsoluteExecutionTime().eq(this.simulatorTime))
                     {
                         nextEvent = this.eventList.removeFirst();

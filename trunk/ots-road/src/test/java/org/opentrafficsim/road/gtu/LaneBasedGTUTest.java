@@ -375,7 +375,7 @@ public class LaneBasedGTUTest implements UNITS
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
             // Run the simulator clock to some non-zero value
             simulator.runUpTo(new Time(60, TimeUnit.BASE_SECOND));
-            while (simulator.isRunning())
+            while (simulator.isStartingOrRunning())
             {
                 try
                 {
@@ -411,7 +411,7 @@ public class LaneBasedGTUTest implements UNITS
             car.init(strategicalPlanner, carPositions, carSpeed);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time(61, TimeUnit.BASE_SECOND));
-            while (simulator.isRunning())
+            while (simulator.isStartingOrRunning())
             {
                 try
                 {

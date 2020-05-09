@@ -269,10 +269,10 @@ public class AimsunControl
                 if (waitingForSimulator)
                 {
                     // System.err.println("Polling waitingForSimulator");
-                    // System.err.println("Simulator running status is " + this.model.getSimulator().isRunning());
+                    // System.err.println("Simulator running status is " + this.model.getSimulator().isStartingOrRunning());
                     while (waitingForSimulator)
                     {
-                        if (!this.model.getSimulator().isRunning())
+                        if (!this.model.getSimulator().isStartingOrRunning())
                         {
                             System.out.println("Simulator has stopped; constructing GTUPositions message with error status");
                             Time stopTime = this.model.getSimulator().getSimulatorTime();
@@ -333,7 +333,7 @@ public class AimsunControl
                         }
                     }
                     // System.err.println("waitingForSimulator flag became false");
-                    // System.err.println("Simulator running status is " + this.model.getSimulator().isRunning());
+                    // System.err.println("Simulator running status is " + this.model.getSimulator().isStartingOrRunning());
                 }
                 byte[] sizeBytes = new byte[4];
                 // System.err.println("CommandLoop: request fillBuffer to read 4 bytes");
@@ -416,7 +416,7 @@ public class AimsunControl
                             this.simulateUntil = stopTime;
                             simulator.start();
                         }
-                        else if (!simulator.isRunning())
+                        else if (!simulator.isStartingOrRunning())
                         {
                             // Whoops: simulator has stopped
                             error = "HMM Simulator stopped";

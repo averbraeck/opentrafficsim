@@ -291,7 +291,7 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
         System.out.println("Error: " + errorMessage);
         try
         {
-            if (theSimulator.isRunning())
+            if (theSimulator.isStartingOrRunning())
             {
                 theSimulator.stop();
             }

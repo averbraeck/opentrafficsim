@@ -6,6 +6,22 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
 
+    <release version="1.04.01" date="2020-05-XX" description="New version of djutils, dsol - TimedEvent">
+      <action dev="averbraeck" type="update">
+        DJUTILS and DSOL have been updated to contain TimedEvents and strongly typed events rather than events
+        that can take any payload. 
+      </action>
+      <action dev="averbraeck" type="fix">
+        The latest version of DSOL has a much more strict state machine that prevents unclear states between stopping the 
+        simulator from the outside and actually stopping of the run thread of the simulator. This solves problems with
+        the runUntil() methods.  
+      </action>
+      <action dev="pknoppers" type="update">
+        The OTSNetwork now has the simulator stored in the network, which can prevent all classes to have to store a 
+        pointer to the simulator in addition to storing a pointer to the network.     
+      </action>
+    </release>
+
     <release version="1.04.00" date="2019-12-23" description="New version of djunits, djutils, dsol">
       <action dev="averbraeck" type="update">
         Code has been adapted to the changes in DSOL, DJUNITS and DJUTILS. Several constructors, methods
