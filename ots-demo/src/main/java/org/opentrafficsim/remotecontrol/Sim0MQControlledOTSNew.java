@@ -373,7 +373,7 @@ public class Sim0MQControlledOTSNew implements EventListenerInterface
                                     System.out.println("Simulating up to " + message[8]);
                                     simulator.runUpTo((Time) message[8]);
                                     int count = 0;
-                                    while (simulator.isRunning())
+                                    while (simulator.isStartingOrRunning())
                                     {
                                         System.out.print(".");
                                         count++;
@@ -399,14 +399,14 @@ public class Sim0MQControlledOTSNew implements EventListenerInterface
                                         }
                                     }
                                     System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
-                                    try
-                                    {
-                                        Thread.sleep(100); // EXTRA STOP FOR SYNC REASONS - BUG IN DSOL!
-                                    }
-                                    catch (InterruptedException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
+                                    // try
+                                    // {
+                                    // Thread.sleep(100); // EXTRA STOP FOR SYNC REASONS - BUG IN DSOL - SOLVED IN DSOL 3.04.06
+                                    // }
+                                    // catch (InterruptedException e)
+                                    // {
+                                    // e.printStackTrace();
+                                    // }
                                 }
                                 else
                                 {

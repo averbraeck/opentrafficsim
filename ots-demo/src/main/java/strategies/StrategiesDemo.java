@@ -228,7 +228,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             public void stateChanged(final ChangeEvent e)
             {
                 StrategiesDemo.this.gtuNum = ((JSlider) e.getSource()).getValue();
-                if (!StrategiesDemo.this.getSimulator().isRunning())
+                if (!StrategiesDemo.this.getSimulator().isStartingOrRunning())
                 {
                     // StrategiesDemo.this.checkVehicleNumber();
                     animation.getDemoPanel().getParent().repaint();

@@ -105,7 +105,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
         Duration rSim = this.simulatorTimeForWallClockMillis(getUpdateMsec() * factor); // sim clock change for 'updateMsec'
                                                                                         // wall clock
 
-        while (this.isRunning() && !this.eventList.isEmpty()
+        while (this.isStartingOrRunning() && !this.eventList.isEmpty()
                 && this.getSimulatorTime().le(this.replication.getTreatment().getEndTime()))
         {
             // check if speedFactor has changed. If yes: re-baseline.
@@ -213,7 +213,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                 synchronized (super.semaphore)
                 {
                     // carry out all events scheduled on this simulation time, as long as we are still running.
-                    while (this.isRunning() && !this.eventList.isEmpty()
+                    while (this.isStartingOrRunning() && !this.eventList.isEmpty()
                             && event.getAbsoluteExecutionTime().eq(this.simulatorTime))
                     {
                         event = this.eventList.removeFirst();
@@ -253,7 +253,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                 List<SimEventInterface<SimTimeDoubleUnit>> moveEvents = new ArrayList<>();
                 synchronized (super.semaphore)
                 {
-                    while (this.isRunning() && !this.eventList.isEmpty()
+                    while (this.isStartingOrRunning() && !this.eventList.isEmpty()
                             && event.getAbsoluteExecutionTime().eq(this.simulatorTime))
                     {
                         event = this.eventList.removeFirst();

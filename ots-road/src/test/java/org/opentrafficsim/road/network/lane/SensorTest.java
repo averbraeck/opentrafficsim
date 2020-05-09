@@ -116,11 +116,11 @@ public class SensorTest implements UNITS
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));
-        if (!simulator.isRunning())
+        if (!simulator.isStartingOrRunning())
         {
             simulator.start();
         }
-        while (simulator.isRunning())
+        while (simulator.isStartingOrRunning())
         {
             try
             {

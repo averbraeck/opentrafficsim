@@ -397,7 +397,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                 System.out.println("Simulating up to " + message[8]);
                                 simulator.runUpTo((Time) message[8]);
                                 int count = 0;
-                                while (simulator.isRunning())
+                                while (simulator.isStartingOrRunning())
                                 {
                                     System.out.print(".");
                                     count++;
