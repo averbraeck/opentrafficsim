@@ -131,7 +131,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
         int columns = 1;
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
-        RoadSampler sampler = new RoadSampler(simulator);
+        RoadSampler sampler = new RoadSampler(getModel().getNetwork());
         Duration updateInterval = Duration.instantiateSI(10.0);
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {

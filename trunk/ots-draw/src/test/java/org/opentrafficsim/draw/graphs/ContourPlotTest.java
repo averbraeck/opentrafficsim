@@ -196,7 +196,7 @@ public class ContourPlotTest implements UNITS
                 new OTSRoadNetwork("density contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
         OTSSimulatorInterface simulator = new OTSSimulator("densityContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
-        RoadSampler sampler = new RoadSampler(simulator);
+        RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
         ContourPlotDensity dcp = new ContourPlotDensity("Density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
@@ -216,7 +216,7 @@ public class ContourPlotTest implements UNITS
                 new OTSRoadNetwork("flow contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
         OTSSimulatorInterface simulator = new OTSSimulator("flowContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
-        RoadSampler sampler = new RoadSampler(simulator);
+        RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
         ContourPlotFlow fcp = new ContourPlotFlow("Density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
@@ -236,7 +236,7 @@ public class ContourPlotTest implements UNITS
                 new OTSRoadNetwork("flow contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
         OTSSimulatorInterface simulator = new OTSSimulator("speedContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
-        RoadSampler sampler = new RoadSampler(simulator);
+        RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
         ContourPlotSpeed scp = new ContourPlotSpeed("Density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);

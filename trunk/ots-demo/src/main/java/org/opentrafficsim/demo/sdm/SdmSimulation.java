@@ -369,7 +369,7 @@ public class SdmSimulation extends AbstractSimulationScript
         // sampler
         if (this.output)
         {
-            this.sampler = new RoadSampler(sim);
+            this.sampler = new RoadSampler(this.network);
             Time start = new Time(0.05, TimeUnit.BASE_HOUR);
             Time end = new Time(1.05, TimeUnit.BASE_HOUR);
             for (Lane lane : allLanes)

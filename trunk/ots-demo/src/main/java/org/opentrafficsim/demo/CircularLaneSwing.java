@@ -130,7 +130,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
 
-        RoadSampler sampler = new RoadSampler(simulator);
+        RoadSampler sampler = new RoadSampler(getModel().getNetwork());
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;

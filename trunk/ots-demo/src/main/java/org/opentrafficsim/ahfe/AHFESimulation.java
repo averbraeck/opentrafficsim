@@ -471,7 +471,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.sampler = new RoadSampler(this.simulator);
+            this.sampler = new RoadSampler(this.network);
             this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {

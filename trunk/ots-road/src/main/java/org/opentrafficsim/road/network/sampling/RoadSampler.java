@@ -25,6 +25,7 @@ import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
@@ -47,9 +48,14 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
  */
 public class RoadSampler extends Sampler<GtuData> implements EventListenerInterface
 {
+    /** */
+    private static final long serialVersionUID = 1L;
 
     /** Simulator. */
     private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+
+    /** Network. */
+    private final OTSRoadNetwork network;
 
     /** Sampling interval. */
     private final Duration samplingInterval;
@@ -62,30 +68,32 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param network OTSRoadNetwork; the network
      * @throws NullPointerException if the simulator is {@code null}
      */
-    public RoadSampler(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public RoadSampler(final OTSRoadNetwork network)
     {
-        Throw.whenNull(simulator, "Simulator may not be null.");
-        this.simulator = simulator;
+        Throw.whenNull(network, "Network may not be null.");
+        this.network = network;
+        this.simulator = network.getSimulator();
         this.samplingInterval = null;
     }
 
     /**
      * Constructor which uses the given frequency to determine the sampling interval.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param network OTSRoadNetwork; the network
      * @param frequency Frequency; sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
-    public RoadSampler(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Frequency frequency)
+    public RoadSampler(final OTSRoadNetwork network, final Frequency frequency)
     {
-        Throw.whenNull(simulator, "Simulator may not be null.");
+        Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(frequency, "Frequency may not be null.");
         Throw.when(frequency.le(Frequency.ZERO), IllegalArgumentException.class,
                 "Negative or zero sampling frequency is not permitted.");
-        this.simulator = simulator;
+        this.network = network;
+        this.simulator = network.getSimulator();
         this.samplingInterval = new Duration(1.0 / frequency.si, DurationUnit.SI);
     }
 
@@ -210,12 +218,14 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             // Payload: [String gtuId, PositionVector currentPosition, Direction currentDirection, Speed speed, Acceleration
             // acceleration, TurnIndicatorStatus turnIndicatorStatus, Length odometer, Link id of referenceLane, Lane id of
             // referenceLane, Length positionOnReferenceLane, GTUDirectionality direction]
-            // XXX: the objects are not transferred anymore, and the Sampler is not Network aware...
-//            Object[] payload = (Object[]) event.getContent();
-//            KpiLaneDirection laneDirection =
-//                    new KpiLaneDirection(new LaneData((Lane) payload[8]), KpiGtuDirectionality.DIR_PLUS);
-//            processGtuMoveEvent(laneDirection, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(),
-//                    new GtuData((LaneBasedGTU) event.getSourceId()));
+            Object[] payload = (Object[]) event.getContent();
+            CrossSectionLink link = (CrossSectionLink) this.network.getLink(payload[7].toString());
+            Lane lane = (Lane) link.getCrossSectionElement(payload[8].toString());
+            LaneBasedGTU gtu = (LaneBasedGTU) this.network.getGTU(payload[0].toString());
+            KpiLaneDirection laneDirection = 
+                new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
+            processGtuMoveEvent(laneDirection, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(),
+             new GtuData(gtu));
         }
         else if (event.getType().equals(Lane.GTU_ADD_EVENT))
         {

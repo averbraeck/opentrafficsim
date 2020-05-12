@@ -165,7 +165,7 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
 
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
-                RoadSampler sampler = new RoadSampler(this.simulator, new Frequency(10.0, FrequencyUnit.SI));
+                RoadSampler sampler = new RoadSampler(this.network, new Frequency(10.0, FrequencyUnit.SI));
                 sampler.registerExtendedDataType(new SpeedLimit());
                 Query query = N201ODfactory.getQuery(this.network, sampler);
                 scheduleKpiEvent(30.0, this.simulator, query);
