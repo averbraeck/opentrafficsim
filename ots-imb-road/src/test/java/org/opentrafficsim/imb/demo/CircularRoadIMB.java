@@ -204,7 +204,7 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
         {
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
-        RoadSampler sampler = new RoadSampler(simulator);
+        RoadSampler sampler = new RoadSampler((OTSRoadNetwork) getModel().getNetwork());
         ContourDataSource<?> dataPool0 = new ContourDataSource<>(sampler, path0);
         ContourDataSource<?> dataPool1 = new ContourDataSource<>(sampler, path1);
         Duration updateInterval = Duration.instantiateSI(10.0);

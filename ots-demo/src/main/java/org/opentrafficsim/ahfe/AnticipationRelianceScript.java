@@ -384,7 +384,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         // Sampler
         if (this.doSampler)
         {
-            this.sampler = new RoadSampler(sim);
+            this.sampler = new RoadSampler(network);
             this.sampler.registerExtendedDataType(new TimeToCollision());
             this.sampler.registerExtendedDataType(new TaskSaturationDataType());
             this.sampler.registerExtendedDataType(new LeaderId());

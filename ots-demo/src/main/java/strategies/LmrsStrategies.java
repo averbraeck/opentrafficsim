@@ -842,7 +842,7 @@ public class LmrsStrategies implements EventListenerInterface
                 // Sampler
                 if (LmrsStrategies.this.sampling)
                 {
-                    LmrsStrategies.this.sampler = new RoadSampler(LmrsStrategies.this.simulator);
+                    LmrsStrategies.this.sampler = new RoadSampler(LmrsStrategies.this.network);
                     addLaneToSampler(laneAB1);
                     addLaneToSampler(laneAB2);
                     addLaneToSampler(laneAB3);

@@ -220,7 +220,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
             {
                 exception.printStackTrace();
             }
-            Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
+            Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.network));
             try
             {
                 new StatisticsGTULaneTransceiver(this.imbConnector, getSimulator(), this.network.getId(), query,

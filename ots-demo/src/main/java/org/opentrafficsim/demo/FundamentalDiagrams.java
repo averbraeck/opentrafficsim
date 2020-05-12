@@ -155,7 +155,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(4, panelsPerRow);
-        RoadSampler sampler = new RoadSampler(simulator);
+        RoadSampler sampler = new RoadSampler(getModel().getNetwork());
         for (int plotNumber = 0; plotNumber < 10; plotNumber++)
         {
             Length detectorLocation = new Length(400 + 500 * plotNumber, METER);
