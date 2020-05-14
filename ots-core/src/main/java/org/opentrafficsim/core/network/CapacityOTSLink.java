@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network;
 
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
 /**
@@ -81,7 +80,7 @@ public class CapacityOTSLink extends OTSLink implements Capacity
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CapacityOTSLink clone(final OTSNetwork newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
+    public CapacityOTSLink clone(final OTSNetwork newNetwork) throws NetworkException
     {
         return new CapacityOTSLink(newNetwork, this);
     }

@@ -17,7 +17,6 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -426,12 +425,11 @@ public class OTSNode implements Node, Locatable, Serializable
     /**
      * Clone the OTSode for e.g., copying a network.
      * @param newNetwork Network; the new network to which the clone belongs
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone1(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public OTSNode clone1(final Network newNetwork)
             throws NetworkException
     {
         return new OTSNode(newNetwork, this.id, this.point);
@@ -441,12 +439,11 @@ public class OTSNode implements Node, Locatable, Serializable
      * Complete the cloning of the OTSode for e.g., copying a network. Call this method after all the links have been
      * constructed in the new network.
      * @param newNetwork Network; the new network to which the clone belongs
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
      * @return the completed clone
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone2(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public OTSNode clone2(final Network newNetwork)
             throws NetworkException
     {
         OTSNode clone = (OTSNode) newNetwork.getNode(this.id);

@@ -51,9 +51,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     /** Design line of the link. */
     private final OTSLine3D designLine;
 
-    /** The simulator on which events can be scheduled. */
-    private final OTSSimulatorInterface simulator;
-
     /** The GTUs on this Link. */
     private final Set<GTU> gtus = new LinkedHashSet<>();
 
@@ -87,7 +84,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.startNode.addLink(this);
         this.endNode.addLink(this);
         this.designLine = designLine;
-        this.simulator = network.getSimulator();
         this.network.addLink(this);
     }
 
@@ -115,6 +111,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     @Override
     public final void addGTU(final GTU gtu)
     {
+        // TODO verify that gtu.getSimulator() equals getSimulator() ?
         if (!this.gtus.contains(gtu))
         {
             this.gtus.add(gtu);
@@ -127,6 +124,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     @Override
     public final void removeGTU(final GTU gtu)
     {
+        // TODO verify that gtu.getSimulator() equals getSimulator() ?
         if (this.gtus.contains(gtu))
         {
             this.gtus.remove(gtu);
@@ -195,7 +193,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     @Override
     public final OTSSimulatorInterface getSimulator()
     {
-        return this.simulator;
+        return getNetwork().getSimulator();
     }
 
     /** {@inheritDoc} */
@@ -297,12 +295,11 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     /**
      * Clone the OTSLink for e.g., copying a network.
      * @param newNetwork Network; the new network to which the clone belongs
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSLink clone(final OTSNetwork newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
+    public OTSLink clone(final OTSNetwork newNetwork) throws NetworkException
     {
         return new OTSLink(newNetwork, this);
     }

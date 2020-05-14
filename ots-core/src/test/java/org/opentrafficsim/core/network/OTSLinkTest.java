@@ -163,7 +163,7 @@ public class OTSLinkTest implements EventListenerInterface
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
         otherNetwork.removeLink(otherLink);
         OTSSimulatorInterface simulator2 = MockSimulator.createMock();
-        otherLink = link.clone(otherNetwork, simulator2);
+        otherLink = link.clone(otherNetwork);
         assertTrue("link is equal to clone in different network", link.equals(otherLink));
     }
 

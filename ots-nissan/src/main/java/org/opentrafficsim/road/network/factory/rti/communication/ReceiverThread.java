@@ -95,7 +95,7 @@ public class ReceiverThread extends Thread
                         0.0, (Math.PI / 2 - simData.getEgoOri().getYaw()));
 
                 if (this.car == null)
-                    this.car = new SubjectiveCar("nissan", this.carType, this.simulator, position, this.network);
+                    this.car = new SubjectiveCar("nissan", this.carType, position, this.network);
 
                 this.car.setPosition(position);
 

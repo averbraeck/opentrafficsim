@@ -108,10 +108,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return this.id;
     }
 
-    /**
-     * Retrieve the DSOL simulator engine.
-     * @return OTSSimulatorInterface; the DSOL simulator engine
-     */
+    /** {@inheritDoc} */
+    @Override
     public OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
@@ -1012,16 +1010,17 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final void addGTU(final GTU gtu)
     {
         this.gtuMap.put(gtu.getId(), gtu);
-        fireTimedEvent(Network.GTU_ADD_EVENT, gtu.getId(), gtu.getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_GTU_ADD_EVENT, gtu, gtu.getSimulator().getSimulatorTime());
+        // TODO verify that gtu.getSimulator() equals getSimulator() ?
+        fireTimedEvent(Network.GTU_ADD_EVENT, gtu.getId(), getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.ANIMATION_GTU_ADD_EVENT, gtu, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void removeGTU(final GTU gtu)
     {
-        fireTimedEvent(Network.GTU_REMOVE_EVENT, gtu.getId(), gtu.getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_GTU_REMOVE_EVENT, gtu, gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.GTU_REMOVE_EVENT, gtu.getId(), getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.ANIMATION_GTU_REMOVE_EVENT, gtu, getSimulator().getSimulatorTime());
         this.gtuMap.remove(gtu.getId());
     }
 

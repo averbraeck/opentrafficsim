@@ -51,7 +51,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final OTSSimulatorInterface simulator, final OTSRoadNetwork network) throws GTUException
     {
-        super(id, gtuType, simulator, network);
+        super(id, gtuType, network);
         this.length = length;
         this.width = width;
         if (null == maximumSpeed)

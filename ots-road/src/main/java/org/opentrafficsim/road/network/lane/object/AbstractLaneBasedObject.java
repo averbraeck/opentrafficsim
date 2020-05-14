@@ -176,8 +176,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /** {@inheritDoc} */
     @Override
-    public final StaticObject clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public final StaticObject clone(final Network newNetwork, final boolean animation) throws NetworkException
     {
         throw new NetworkException("LaneBasedObjects should be cloned with the clone(lane, simulator, animation) method");
     }

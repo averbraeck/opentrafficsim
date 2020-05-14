@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -25,15 +24,13 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
     /**
      * @param id String; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator OTSSimulatorInterface; the simulator to schedule plan changes on
      * @param network OTSNetwork; the network in which this GTU is (initially) registered
      * @throws GTUException when the construction of the original waiting path fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLinkBasedGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
-            final OTSNetwork network) throws GTUException
+    public AbstractLinkBasedGTU(final String id, final GTUType gtuType, final OTSNetwork network) throws GTUException
     {
-        super(id, gtuType, simulator, network);
+        super(id, gtuType, network.getSimulator(), network);
         this.network = network;
     }
 

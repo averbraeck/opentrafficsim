@@ -455,7 +455,7 @@ public class OTSNodeTest
     {
         OTSSimulatorInterface oldSimulator = MockSimulator.createMock();
         OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        OTSNetwork clonedNetwork = OTSNetworkUtils.clone(network, "clonedNetwork", oldSimulator, newSimulator);
+        OTSNetwork clonedNetwork = OTSNetworkUtils.clone(network, "clonedNetwork", newSimulator);
         assertEquals("Number of nodes should be same", network.getNodeMap().size(), clonedNetwork.getNodeMap().size());
         assertTrue("Node map should be equal", network.getNodeMap().equals(clonedNetwork.getNodeMap()));
     }

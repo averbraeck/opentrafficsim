@@ -173,14 +173,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * Construct a Lane Based GTU.
      * @param id String; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator OTSSimulatorInterface; to initialize the move method and to get the current time
      * @param network OTSRoadNetwork; the network that the GTU is initially registered in
      * @throws GTUException when initial values are not correct
      */
-    public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
-            final OTSRoadNetwork network) throws GTUException
+    public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final OTSRoadNetwork network) throws GTUException
     {
-        super(id, gtuType, simulator, network);
+        super(id, gtuType, network.getSimulator(), network);
+        OTSSimulatorInterface simulator = network.getSimulator();
         HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
         this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(historyManager);
         this.currentLanes = new HistoricalLinkedHashMap<>(historyManager);
