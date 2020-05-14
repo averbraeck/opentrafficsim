@@ -13,8 +13,6 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 /**
  * A Route consists of a list of Nodes. A route does not have to be complete. As long as all 'splitting' nodes are part of the
  * route and have a valid successor node (connected by a Link), the strategical planner is able to make a plan. An extension of
@@ -269,12 +267,11 @@ public class Route implements Serializable, Identifiable
     /**
      * Clone the Route.
      * @param newNetwork Network; the new network
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
      * @return a clone of this route
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public Route clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator) throws NetworkException
+    public Route clone(final Network newNetwork) throws NetworkException
     {
         Route newRoute = new Route(this.id);
         for (Node node : this.nodes)

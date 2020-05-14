@@ -8,8 +8,6 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 /**
  * A CompleteRoute is a Route with directly connected Nodes.
  * <p>
@@ -106,7 +104,7 @@ public class CompleteRoute extends Route
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CompleteRoute clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public CompleteRoute clone(final Network newNetwork)
             throws NetworkException
     {
         CompleteRoute newRoute = new CompleteRoute(getId(), this.gtuType);

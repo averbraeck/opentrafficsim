@@ -374,7 +374,7 @@ public class OTSNetworkTest implements EventListenerInterface
     {
         OTSSimulatorInterface oldSimulator = MockSimulator.createMock();
         OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        OTSNetwork clone = OTSNetworkUtils.clone(network, "cloned network", oldSimulator, newSimulator);
+        OTSNetwork clone = OTSNetworkUtils.clone(network, "cloned network", newSimulator);
         assertTrue("nodes match", network.getNodeMap().equals(clone.getNodeMap()));
         assertTrue("links match", network.getLinkMap().equals(clone.getLinkMap()));
         // TODO: Checking routes is a bit harder; not done for now

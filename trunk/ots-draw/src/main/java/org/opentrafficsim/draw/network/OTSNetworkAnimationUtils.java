@@ -53,7 +53,7 @@ public final class OTSNetworkAnimationUtils
             final SimulatorInterface.TimeDoubleUnit oldSimulator, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
-        OTSNetwork newNetwork = OTSNetworkUtils.clone(network, newId, oldSimulator, newSimulator);
+        OTSNetwork newNetwork = OTSNetworkUtils.clone(network, newId, newSimulator);
 
         // clone the link animation
         for (Link oldLink : network.getLinkMap().values())
@@ -153,7 +153,7 @@ public final class OTSNetworkAnimationUtils
         }
 
         // destroy the network, GTUs, Routes, etc.
-        OTSNetworkUtils.destroy(network, simulator);
+        OTSNetworkUtils.destroy(network);
     }
 
     /**

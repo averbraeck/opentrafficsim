@@ -53,19 +53,19 @@ public final class OTSRoadNetworkUtils
         // clone the nodes
         for (Node node : network.getNodeMap().values())
         {
-            ((OTSNode) node).clone1(newNetwork, newSimulator);
+            ((OTSNode) node).clone1(newNetwork);
         }
 
         // clone the links
         for (Link oldLink : network.getLinkMap().values())
         {
-            ((OTSLink) oldLink).clone(newNetwork, newSimulator);
+            ((OTSLink) oldLink).clone(newNetwork);
         }
 
         // make the link-connections for the cloned nodes
         for (Node oldNode : network.getNodeMap().values())
         {
-            ((OTSNode) oldNode).clone2(newNetwork, newSimulator);
+            ((OTSNode) oldNode).clone2(newNetwork);
         }
 
         // clone the graphs that had been created for the old network
@@ -81,7 +81,7 @@ public final class OTSRoadNetworkUtils
             Map<String, Route> newRoutes = new LinkedHashMap<>();
             for (Route route : network.getRouteMap().get(gtuType).values())
             {
-                newRoutes.put(route.getId(), route.clone(newNetwork, newSimulator));
+                newRoutes.put(route.getId(), route.clone(newNetwork));
             }
             newRouteMap.put(gtuType, newRoutes);
         }

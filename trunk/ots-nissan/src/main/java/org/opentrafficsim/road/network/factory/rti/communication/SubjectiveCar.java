@@ -11,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -41,7 +40,6 @@ public class SubjectiveCar extends AbstractGTU
     /**
      * @param id String; car id
      * @param type GTUType; GTU type
-     * @param simulator OTSSimulatorInterface; simulator
      * @param initialLocation DirectedPoint; location
      * @param network OTSRoadNetwork; the network in which the subjective car will be registered
      * @throws GTUException when GTU cannot be initialized
@@ -49,18 +47,18 @@ public class SubjectiveCar extends AbstractGTU
      * @throws NamingException when animation cannot be registered
      * @throws RemoteException when animation context or simulator cannot be reached
      */
-    public SubjectiveCar(final String id, final GTUType type, final OTSSimulatorInterface simulator,
-            final DirectedPoint initialLocation, final OTSRoadNetwork network)
+    public SubjectiveCar(final String id, final GTUType type, final DirectedPoint initialLocation,
+            final OTSRoadNetwork network)
             throws SimRuntimeException, GTUException, RemoteException, NamingException
     {
-        super(id, type, simulator, network);
+        super(id, type, network.getSimulator(), network);
         this.position = initialLocation;
         System.out.println("Subjective car created at position " + this.position);
 
         this.length = new Length(4.0, LengthUnit.METER);
         this.width = new Length(2.0, LengthUnit.METER);
 
-        new SubjectiveCarAnimation(this, simulator);
+        new SubjectiveCarAnimation(this, network.getSimulator());
     }
 
     /**

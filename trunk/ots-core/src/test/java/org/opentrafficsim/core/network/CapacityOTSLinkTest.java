@@ -73,7 +73,7 @@ public class CapacityOTSLinkTest
         clonedLink.setCapacity(initialCapacity);
         assertTrue("capacity mathes", initialCapacity.equals(clonedLink.getCapacity()));
         newNetwork.removeLink(clonedLink);
-        clonedLink = link.clone(newNetwork, newSimulator);
+        clonedLink = link.clone(newNetwork);
         assertTrue("from point matches", fromPoint.equals(clonedLink.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(clonedLink.getDesignLine().get(1)));
         // XXXX is it really intentional that the equals method of Node does NOT check equality of the network field?

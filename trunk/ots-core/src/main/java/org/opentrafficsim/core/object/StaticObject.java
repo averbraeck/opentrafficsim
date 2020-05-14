@@ -13,7 +13,6 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -154,15 +153,14 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     /**
      * Clone the StaticObject for e.g., copying a network.
      * @param newNetwork Network; the new network to which the clone belongs
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
      * @param animation boolean; whether to (re)create animation or not
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public StaticObject clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public StaticObject clone(final Network newNetwork, final boolean animation) throws NetworkException
     {
+        // FIXME: why does this method have any arguments?
         return new StaticObject(this.id, this.geometry, this.height);
     }
 

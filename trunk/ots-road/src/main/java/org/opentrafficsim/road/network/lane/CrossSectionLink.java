@@ -9,7 +9,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkType;
@@ -319,7 +318,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CrossSectionLink clone(final OTSNetwork newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
+    public CrossSectionLink clone(final OTSNetwork newNetwork) throws NetworkException
     {
         Throw.when(!(newNetwork instanceof RoadNetwork), NetworkException.class,
                 "CrossSectionLink.clone. newNetwork not of the type Roadnetwork");

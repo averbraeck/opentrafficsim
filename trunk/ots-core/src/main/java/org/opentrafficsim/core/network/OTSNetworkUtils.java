@@ -10,8 +10,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 /**
  * OTSNetworkCloner makes a deep clone of a network. <br>
  * <br>
@@ -32,14 +30,13 @@ public final class OTSNetworkUtils
      * Clone the OTSNetwork.
      * @param network OTSNetwork; the network to clone
      * @param newId String; the new id of the network
-     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator for this network
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
      * @return a clone of this network
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
     public static OTSNetwork clone(final OTSNetwork network, final String newId,
-            final SimulatorInterface.TimeDoubleUnit oldSimulator, final OTSSimulatorInterface newSimulator)
+            final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         OTSNetwork newNetwork = new OTSNetwork(newId, false, newSimulator);
@@ -47,19 +44,19 @@ public final class OTSNetworkUtils
         // clone the nodes
         for (Node node : network.getNodeMap().values())
         {
-            ((OTSNode) node).clone1(newNetwork, newSimulator);
+            ((OTSNode) node).clone1(newNetwork);
         }
 
         // clone the links
         for (Link oldLink : network.getLinkMap().values())
         {
-            ((OTSLink) oldLink).clone(newNetwork, newSimulator);
+            ((OTSLink) oldLink).clone(newNetwork);
         }
 
         // make the link-connections for the cloned nodes
         for (Node oldNode : network.getNodeMap().values())
         {
-            ((OTSNode) oldNode).clone2(newNetwork, newSimulator);
+            ((OTSNode) oldNode).clone2(newNetwork);
         }
 
         // clone the graphs that had been created for the old network
@@ -75,7 +72,7 @@ public final class OTSNetworkUtils
             Map<String, Route> newRoutes = new LinkedHashMap<>();
             for (Route route : network.getRouteMap().get(gtuType).values())
             {
-                newRoutes.put(route.getId(), route.clone(newNetwork, newSimulator));
+                newRoutes.put(route.getId(), route.clone(newNetwork));
             }
             newRouteMap.put(gtuType, newRoutes);
         }
@@ -122,9 +119,8 @@ public final class OTSNetworkUtils
     /**
      * Remove all objects and animation in the network.
      * @param network OTSNetwork; the network to destroy
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator of the old network
      */
-    public static void destroy(final OTSNetwork network, final SimulatorInterface.TimeDoubleUnit simulator)
+    public static void destroy(final OTSNetwork network)
     {
         for (GTU gtu : network.getGTUs())
         {
