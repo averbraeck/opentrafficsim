@@ -36,7 +36,6 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -123,7 +122,7 @@ public final class PublisherExperiment
 
         String xml = new String(Files
                 .readAllBytes(Paths.get("C:/Users/pknoppers/Java/ots-demo/src/main/resources/TrafCODDemo2/TrafCODDemo2.xml")));
-        Sim0MQOTSModel model = new Sim0MQOTSModel(animator, "Remotely controlled OTS model", network, xml);
+        Sim0MQOTSModel model = new Sim0MQOTSModel("Remotely controlled OTS model", network, xml);
         Map<String, StreamInterface> map = new LinkedHashMap<>();
         Long seed = 123456L;
         map.put("generation", new MersenneTwister(seed));
@@ -229,15 +228,13 @@ class Sim0MQOTSModel extends AbstractOTSModel implements EventListenerInterface
     private final String xml;
 
     /**
-     * @param simulator OTSSimulatorInterface; the simulator
      * @param description String; the model description
-     * @param network TODO
+     * @param network OTSRoadNetwork; the network
      * @param xml String; the XML description of the simulation model
      */
-    Sim0MQOTSModel(final OTSSimulatorInterface simulator, final String description, final OTSRoadNetwork network,
-            final String xml)
+    Sim0MQOTSModel(final String description, final OTSRoadNetwork network, final String xml)
     {
-        super(simulator, network.getId(), description);
+        super(network.getSimulator(), network.getId(), description);
         this.network = network;
         this.xml = xml;
     }
