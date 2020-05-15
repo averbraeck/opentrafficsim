@@ -64,7 +64,6 @@ public class GTUDumper
 
     /**
      * Construct a new GTUDumper.
-     * @param simulator OTSSimulatorInterface; the simulator
      * @param firstDumpTime Time; the time of the first dump
      * @param interval Duration; the interval until each subsequent dump
      * @param network OTSNetwork; the network (that will contain the GTUs to dump)
@@ -72,18 +71,17 @@ public class GTUDumper
      *            appended to the file name. The file type will be .txt
      * @throws SimRuntimeException when scheduling the first dump time fails
      */
-    public GTUDumper(final OTSSimulatorInterface simulator, final Time firstDumpTime, final Duration interval,
-            final OTSNetwork network, final String fileNamePrefix) throws SimRuntimeException
+    public GTUDumper(final Time firstDumpTime, final Duration interval, final OTSNetwork network,
+            final String fileNamePrefix) throws SimRuntimeException
     {
-        Throw.whenNull(simulator, "Simulator may not be null");
+        Throw.whenNull(network, "Network may not be null");
+        this.simulator = network.getSimulator();
         Throw.whenNull(firstDumpTime, "firstDumpTime may not be null");
-        Throw.when(firstDumpTime.lt(simulator.getSimulatorTime()), RuntimeException.class,
+        Throw.when(firstDumpTime.lt(this.simulator.getSimulatorTime()), RuntimeException.class,
                 "firstDumptTime may not be before current simulator time");
         Throw.whenNull(interval, "interval may not be null");
         Throw.when(interval.le(Duration.ZERO), RuntimeException.class, "Duration must be positive");
-        Throw.whenNull(network, "Network may not be null");
         Throw.whenNull(fileNamePrefix, "fileNamePrefix may not be null");
-        this.simulator = simulator;
         this.interval = interval;
         this.network = network;
         this.fileNamePrefix = fileNamePrefix;
@@ -94,8 +92,7 @@ public class GTUDumper
     @Override
     public String toString()
     {
-        return "GTUDumper [interval=" + interval + ", network=" + network + ", fileNamePrefix=" + fileNamePrefix
-                + ", simulator=" + simulator + "]";
+        return "GTUDumper [interval=" + interval + ", network=" + network + ", fileNamePrefix=" + fileNamePrefix + "]";
     }
 
 }
