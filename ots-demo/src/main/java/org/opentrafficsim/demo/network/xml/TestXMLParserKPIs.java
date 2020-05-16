@@ -6,7 +6,9 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
@@ -30,11 +32,14 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
+import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTravelTimePerDistance;
 import org.opentrafficsim.kpi.sampling.indicator.MeanTripLength;
@@ -42,11 +47,16 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalDelay;
 import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataGtuType;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataSet;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.GtuTypeData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -101,8 +111,8 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
                     OTSAnimator simulator = new OTSAnimator("TestXMLParserKPIs");
                     TestXMLModelKPIs xmlModel = new TestXMLModelKPIs(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel);
-                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
-                            new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
+                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(
+                        800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new TestXMLParserKPIs(xmlModel, animationPanel);
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
@@ -165,13 +175,27 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
 
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
-                RoadSampler sampler = new RoadSampler(this.network, new Frequency(10.0, FrequencyUnit.SI));
-                sampler.registerExtendedDataType(new SpeedLimit());
-                Query query = N201ODfactory.getQuery(this.network, sampler);
+                FilterDataGtuType filterDataGtuType = new FilterDataGtuType();
+                SpeedLimit speedLimit = new SpeedLimit();
+                Set<ExtendedDataType<?, ?, ?, GtuData>> extendedDataTypes = new LinkedHashSet<>();
+                Set<FilterDataType<?>> filterDataTypes = new LinkedHashSet<>();
+                extendedDataTypes.add(speedLimit);
+                filterDataTypes.add(filterDataGtuType);
+
+                RoadSampler sampler = new RoadSampler(extendedDataTypes, filterDataTypes, this.network, new Frequency(10.0,
+                    FrequencyUnit.SI));
+
+                FilterDataSet metaDataSet = new FilterDataSet();
+                Set<GtuTypeDataInterface> gtuTypes = new LinkedHashSet<>();
+                gtuTypes.add(new GtuTypeData(this.network.getGtuType(GTUType.DEFAULTS.CAR)));
+                gtuTypes.add(new GtuTypeData(this.network.getGtuType(GTUType.DEFAULTS.BUS)));
+                metaDataSet.put(filterDataGtuType, gtuTypes);
+
+                Query query = N201ODfactory.getQuery(this.network, sampler, metaDataSet);
                 scheduleKpiEvent(30.0, this.simulator, query);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
-                    | JAXBException | URISyntaxException | XmlParserException | IOException | TrafficControlException exception)
+                | JAXBException | URISyntaxException | XmlParserException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();
             }
@@ -237,8 +261,8 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
         {
             try
             {
-                simulator.scheduleEventAbs(new Time(time, TimeUnit.BASE_SECOND), this, this, "publishKpis",
-                        new Object[] {time, simulator, query});
+                simulator.scheduleEventAbs(new Time(time, TimeUnit.BASE_SECOND), this, this, "publishKpis", new Object[] {time,
+                    simulator, query});
             }
             catch (SimRuntimeException exception)
             {

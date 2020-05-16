@@ -24,7 +24,7 @@ public class MetaData
 {
 
     /** Meta data. */
-    private final Map<MetaDataType<?>, Object> metaDataMap = new LinkedHashMap<>();
+    private final Map<FilterDataType<?>, Object> metaDataMap = new LinkedHashMap<>();
 
     /**
      * Default constructor.
@@ -40,7 +40,7 @@ public class MetaData
     public MetaData(final MetaData metaData)
     {
         Throw.whenNull(metaData, "Meta data may not be null.");
-        for (MetaDataType<?> metaDataType : metaData.metaDataMap.keySet())
+        for (FilterDataType<?> metaDataType : metaData.metaDataMap.keySet())
         {
             this.metaDataMap.put(metaDataType, metaData.metaDataMap.get(metaDataType));
         }
@@ -51,7 +51,7 @@ public class MetaData
      * @param <T> class of meta data
      * @param value T; value of meta data
      */
-    public final <T> void put(final MetaDataType<T> metaDataType, final T value)
+    public final <T> void put(final FilterDataType<T> metaDataType, final T value)
     {
         Throw.whenNull(metaDataType, "Meta data type may not be null.");
         this.metaDataMap.put(metaDataType, value);
@@ -61,7 +61,7 @@ public class MetaData
      * @param metaDataType MetaDataType&lt;?&gt;; meta data type
      * @return whether the trajectory contains the meta data of give type
      */
-    public final boolean contains(final MetaDataType<?> metaDataType)
+    public final boolean contains(final FilterDataType<?> metaDataType)
     {
         return this.metaDataMap.containsKey(metaDataType);
     }
@@ -72,7 +72,7 @@ public class MetaData
      * @return value of meta data
      */
     @SuppressWarnings("unchecked")
-    public final <T> T get(final MetaDataType<T> metaDataType)
+    public final <T> T get(final FilterDataType<T> metaDataType)
     {
         return (T) this.metaDataMap.get(metaDataType);
     }
@@ -80,7 +80,7 @@ public class MetaData
     /**
      * @return set of meta data types
      */
-    public final Set<MetaDataType<?>> getMetaDataTypes()
+    public final Set<FilterDataType<?>> getMetaDataTypes()
     {
         return this.metaDataMap.keySet();
     }
@@ -96,7 +96,7 @@ public class MetaData
     /**
      * @return iterator over meta data entries, removal is not allowed
      */
-    public final Iterator<Entry<MetaDataType<?>, Object>> getMetaDataIterator()
+    public final Iterator<Entry<FilterDataType<?>, Object>> getMetaDataIterator()
     {
         return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
     }

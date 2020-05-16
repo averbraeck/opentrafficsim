@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -11,6 +12,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.lane.tactical.routesystem.RouteSystem;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 /**
@@ -28,6 +30,9 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
 
     /** LaneTypes registered for this network. */
     private Map<String, LaneType> laneTypeMap = new LinkedHashMap<>();
+    
+    /** Route system. */
+    private RouteSystem routeSystem;
 
     /**
      * Construction of an empty network.
@@ -42,6 +47,8 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
         {
             addDefaultLaneTypes();
         }
+        // TODO: not null once the route system works
+        this.routeSystem = null; //new DefaultRouteSystem();
     }
 
     /** {@inheritDoc} */
@@ -108,6 +115,25 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
     public ImmutableMap<String, LaneType> getLaneTypes()
     {
         return new ImmutableHashMap<>(this.laneTypeMap, Immutable.WRAP);
+    }
+    
+    /**
+     * Sets the route system.
+     * @param routeSystem RouteSystem; route system
+     */
+    public void setRouteSystem(final RouteSystem routeSystem)
+    {
+        Throw.whenNull(routeSystem, "Route system may not be null.");
+        this.routeSystem = routeSystem;
+    }
+    
+    /**
+     * Returns the route system.
+     * @return RouteSystem; route system
+     */
+    public RouteSystem getRouteSystem()
+    {
+        return this.routeSystem;
     }
 
 }

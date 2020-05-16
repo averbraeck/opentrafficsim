@@ -21,8 +21,8 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataSet;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
 
 /**
  * A query defines which subset of trajectory information should be included. This is in terms of space-time regions, and in
@@ -50,7 +50,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     private final String description;
 
     /** Meta data set. */
-    private final MetaDataSet metaDataSet;
+    private final FilterDataSet filterDataSet;
 
     /** Update frequency. */
     private final Frequency updateFrequency;
@@ -65,114 +65,118 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
-     * @param metaDataSet MetaDataSet; meta data
-     * @throws NullPointerException if sampling, description or metaDataSet is null
+     * @param filterDataSet filterDataSet; meta data
+     * @throws NullPointerException if sampling, description or filterDataSet is null
      */
-    public Query(final Sampler<G> sampler, final String id, final String description, final MetaDataSet metaDataSet)
+    public Query(final Sampler<G> sampler, final String id, final String description, final FilterDataSet filterDataSet)
     {
-        this(sampler, description, metaDataSet, null, null);
+        this(sampler, description, filterDataSet, null, null);
     }
 
     /**
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
-     * @param metaDataSet MetaDataSet; meta data
+     * @param filterDataSet filterDataSet; meta data
      * @param interval Duration; interval to gather statistics over
-     * @throws NullPointerException if sampling, description or metaDataSet is null
+     * @throws NullPointerException if sampling, description or filterDataSet is null
      */
-    public Query(final Sampler<G> sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String id, final String description, final FilterDataSet filterDataSet,
             final Duration interval)
     {
-        this(sampler, id, description, metaDataSet, null, interval);
+        this(sampler, id, description, filterDataSet, null, interval);
     }
 
     /**
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
-     * @param metaDataSet MetaDataSet; meta data
+     * @param filterDataSet filterDataSet; meta data
      * @param updateFrequency Frequency; update frequency
-     * @throws NullPointerException if sampling, description or metaDataSet is null
+     * @throws NullPointerException if sampling, description or filterDataSet is null
      */
-    public Query(final Sampler<G> sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String id, final String description, final FilterDataSet filterDataSet,
             final Frequency updateFrequency)
     {
-        this(sampler, id, description, metaDataSet, updateFrequency, null);
+        this(sampler, id, description, filterDataSet, updateFrequency, null);
     }
 
     /**
+     * Constructor. The filter data types must be registered with the sampler.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
-     * @param metaDataSet MetaDataSet; meta data
+     * @param filterDataSet filterDataSet; filter data
      * @param updateFrequency Frequency; update frequency
      * @param interval Duration; interval to gather statistics over
-     * @throws NullPointerException if sampling, description or metaDataSet is null
+     * @throws NullPointerException if sampling, description or filterDataSet is null
      */
-    public Query(final Sampler<G> sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String id, final String description, final FilterDataSet filterDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
         Throw.whenNull(sampler, "Sampling may not be null.");
         Throw.whenNull(description, "Description may not be null.");
-        Throw.whenNull(metaDataSet, "Meta data may not be null.");
+        Throw.whenNull(filterDataSet, "Meta data may not be null.");
         this.sampler = sampler;
-        this.metaDataSet = new MetaDataSet(metaDataSet);
+        this.filterDataSet = new FilterDataSet(filterDataSet);
         this.id = id == null ? UUID.randomUUID().toString() : id;
         this.description = description;
         this.updateFrequency = updateFrequency;
         this.interval = interval;
-        sampler.registerMetaDataTypes(metaDataSet.getMetaDataTypes());
     }
 
     /**
+     * Constructor. The filter data types must be registered with the sampler.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
-     * @param metaDataSet MetaDataSet; meta data
-     * @throws NullPointerException if sampling, description or metaDataSet is null
+     * @param filterDataSet filterDataSet; filter data
+     * @throws NullPointerException if sampling, description or filterDataSet is null
      */
-    public Query(final Sampler<G> sampler, final String description, final MetaDataSet metaDataSet)
+    public Query(final Sampler<G> sampler, final String description, final FilterDataSet filterDataSet)
     {
-        this(sampler, null, description, metaDataSet, null, null);
+        this(sampler, null, description, filterDataSet, null, null);
     }
 
     /**
+     * Constructor. The filter data types must be registered with the sampler.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
-     * @param metaDataSet MetaDataSet; meta data
+     * @param filterDataSet filterDataSet; filter data
      * @param interval Duration; interval to gather statistics over
-     * @throws NullPointerException if sampling, description or metaDataSet is null
+     * @throws NullPointerException if sampling, description or filterDataSet is null
      */
-    public Query(final Sampler<G> sampler, final String description, final MetaDataSet metaDataSet, final Duration interval)
+    public Query(final Sampler<G> sampler, final String description, final FilterDataSet filterDataSet, final Duration interval)
     {
-        this(sampler, null, description, metaDataSet, null, interval);
+        this(sampler, null, description, filterDataSet, null, interval);
     }
 
     /**
+     * Constructor. The filter data types must be registered with the sampler.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
-     * @param metaDataSet MetaDataSet; meta data
+     * @param filterDataSet filterDataSet; filter data
      * @param updateFrequency Frequency; update frequency
-     * @throws NullPointerException if sampling, description or metaDataSet is null
+     * @throws NullPointerException if sampling, description or filterDataSet is null
      */
-    public Query(final Sampler<G> sampler, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String description, final FilterDataSet filterDataSet,
             final Frequency updateFrequency)
     {
-        this(sampler, null, description, metaDataSet, updateFrequency, null);
+        this(sampler, null, description, filterDataSet, updateFrequency, null);
     }
 
     /**
+     * Constructor. The filter data types must be registered with the sampler.
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
-     * @param metaDataSet MetaDataSet; meta data
+     * @param filterDataSet filterDataSet; filter data
      * @param updateFrequency Frequency; update frequency
      * @param interval Duration; interval to gather statistics over
-     * @throws NullPointerException if sampling, description or metaDataSet is null
+     * @throws NullPointerException if sampling, description or filterDataSet is null
      */
-    public Query(final Sampler<G> sampler, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String description, final FilterDataSet filterDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
-        this(sampler, null, description, metaDataSet, updateFrequency, interval);
+        this(sampler, null, description, filterDataSet, updateFrequency, interval);
     }
 
     /**
@@ -212,17 +216,17 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     /**
      * @return number of meta data entries
      */
-    public int metaDataSize()
+    public int metaFilterSize()
     {
-        return this.metaDataSet.size();
+        return this.filterDataSet.size();
     }
 
     /**
-     * @return iterator over meta data entries, removal is not allowed
+     * @return iterator over filter data entries, removal is not allowed
      */
-    public Iterator<Entry<MetaDataType<?>, Set<?>>> getMetaDataSetIterator()
+    public Iterator<Entry<FilterDataType<?>, Set<?>>> getFilterDataSetIterator()
     {
-        return this.metaDataSet.getMetaDataSetIterator();
+        return this.filterDataSet.getFilterDataSetIterator();
     }
 
     /**
@@ -329,13 +333,13 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
             Time start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
             Time end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
             TrajectoryGroup<G> trajectoryGroup;
-            if (this.sampler.getTrajectoryGroup(spaceTimeRegion.getLaneDirection()) == null)
+            if (this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.getLaneDirection()) == null)
             {
                 trajectoryGroup = new TrajectoryGroup<>(start, spaceTimeRegion.getLaneDirection());
             }
             else
             {
-                trajectoryGroup = this.sampler.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
+                trajectoryGroup = this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
                         .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
             }
             for (Trajectory<G> trajectory : trajectoryGroup.getTrajectories())
@@ -355,7 +359,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
             String gtuId = iterator.next();
             TrajectoryAcceptList trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
             trajectoryAcceptListCombined.acceptAll(); // refuse only if any meta data type refuses
-            for (MetaDataType<?> metaDataType : this.metaDataSet.getMetaDataTypes())
+            for (FilterDataType<?> metaDataType : this.filterDataSet.getMetaDataTypes())
             {
                 // create safe copy per meta data type, with defaults accepts = false
                 TrajectoryAcceptList trajectoryAcceptList = trajectoryAcceptLists.get(gtuId);
@@ -366,8 +370,8 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
                             trajectoryAcceptList.getTrajectoryGroup(i));
                 }
                 // request meta data type to accept or reject
-                ((MetaDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
-                        (Set<T>) new LinkedHashSet<>(this.metaDataSet.get(metaDataType)));
+                ((FilterDataType<T>) metaDataType).accept(trajectoryAcceptListCopy,
+                        (Set<T>) new LinkedHashSet<>(this.filterDataSet.get(metaDataType)));
                 // combine acceptance/rejection of meta data type so far
                 for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
                 {
@@ -412,7 +416,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         int result = 1;
         result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.interval == null) ? 0 : this.interval.hashCode());
-        result = prime * result + ((this.metaDataSet == null) ? 0 : this.metaDataSet.hashCode());
+        result = prime * result + ((this.filterDataSet == null) ? 0 : this.filterDataSet.hashCode());
         result = prime * result + ((this.sampler == null) ? 0 : this.sampler.hashCode());
         result = prime * result + ((this.spaceTimeRegions == null) ? 0 : this.spaceTimeRegions.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
@@ -459,14 +463,14 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         {
             return false;
         }
-        if (this.metaDataSet == null)
+        if (this.filterDataSet == null)
         {
-            if (other.metaDataSet != null)
+            if (other.filterDataSet != null)
             {
                 return false;
             }
         }
-        else if (!this.metaDataSet.equals(other.metaDataSet))
+        else if (!this.filterDataSet.equals(other.filterDataSet))
         {
             return false;
         }

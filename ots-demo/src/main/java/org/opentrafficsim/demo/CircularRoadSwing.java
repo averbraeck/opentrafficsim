@@ -105,8 +105,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800,
+                    600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
             }
@@ -150,8 +150,11 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
         RoadSampler sampler = new RoadSampler(getModel().getNetwork());
-        ContourDataSource<?> dataPool0 = new ContourDataSource<>(sampler, path0);
-        ContourDataSource<?> dataPool1 = new ContourDataSource<>(sampler, path1);
+        GraphPath.initRecording(sampler, path01);
+        GraphPath.initRecording(sampler, path0);
+        GraphPath.initRecording(sampler, path1);
+        ContourDataSource<?> dataPool0 = new ContourDataSource<>(sampler.getSamplerData(), path0);
+        ContourDataSource<?> dataPool1 = new ContourDataSource<>(sampler.getSamplerData(), path1);
         Duration updateInterval = Duration.instantiateSI(10.0);
 
         SwingPlot plot = null;
@@ -159,7 +162,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         ContourDataSource<?> dataPool = null;
 
         TablePanel trajectoryChart = new TablePanel(2, 2);
-        plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler, path01));
+        plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler
+            .getSamplerData(), path01));
         trajectoryChart.setCell(plot.getContentPane(), 0, 0);
 
         List<KpiLaneDirection> lanes = new ArrayList<>();
@@ -171,8 +175,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         List<String> names = new ArrayList<>();
         names.add("Left lane");
         names.add("Right lane");
-        DirectedLinkPosition linkPosition =
-                new DirectedLinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0, GTUDirectionality.DIR_PLUS);
+        DirectedLinkPosition linkPosition = new DirectedLinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0,
+            GTUDirectionality.DIR_PLUS);
         GraphCrossSection<KpiLaneDirection> crossSection;
         try
         {
@@ -184,15 +188,17 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         }
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY,
-                Quantity.FLOW, simulator, sampler, crossSection, true, Duration.instantiateSI(60.0), false));
+            Quantity.FLOW, simulator, FundamentalDiagram.sourceFromSampler(sampler, crossSection, true, Duration.instantiateSI(
+                60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 0);
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW,
-                Quantity.SPEED, simulator, sampler, crossSection, false, Duration.instantiateSI(60.0), false));
+            Quantity.SPEED, simulator, FundamentalDiagram.sourceFromSampler(sampler, crossSection, false, Duration
+                .instantiateSI(60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
-                trajectoryChart);
+            trajectoryChart);
 
         for (int lane : new int[] {0, 1})
         {
@@ -200,8 +206,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
             path = lane == 0 ? path0 : path1;
             dataPool = lane == 0 ? dataPool0 : dataPool1;
 
-            plot = new SwingTrajectoryPlot(
-                    new TrajectoryPlot("Trajectory lane " + lane, updateInterval, simulator, sampler, path));
+            plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectory lane " + lane, updateInterval, simulator, sampler
+                .getSamplerData(), path));
             charts.setCell(plot.getContentPane(), 0, 0);
 
             plot = new SwingContourPlot(new ContourPlotDensity("Density lane " + lane, simulator, dataPool));
@@ -217,7 +223,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
             charts.setCell(plot.getContentPane(), 2, 1);
 
             getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "stats lane " + lane,
-                    charts);
+                charts);
         }
     }
 

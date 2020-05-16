@@ -378,7 +378,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
                                     System.out.println("Simulation ends; time is " + simulator.getSimulatorTime());
                                     if (ahfeModel.getSampler() != null)
                                     {
-                                        ahfeModel.getSampler().writeToFile(finalScenario + ".csv");
+                                        ahfeModel.getSampler().getSamplerData().writeToFile(finalScenario + ".csv");
                                     }
                                 }
                                 long t2 = System.currentTimeMillis();
@@ -491,8 +491,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            this.sampler = new RoadSampler(this.network);
-            this.sampler.registerExtendedDataType(new TimeToCollision());
+            this.sampler = RoadSampler.build(this.network).registerExtendedDataType(new TimeToCollision()).create();
             try
             {
                 URL xmlURL = URLResource.getResource("/AHFE/Network.xml");

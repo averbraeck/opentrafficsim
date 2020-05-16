@@ -1,9 +1,7 @@
 package org.opentrafficsim.demo.network.xml;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
@@ -30,12 +28,10 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Sampler;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataSet;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividualOld;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -50,7 +46,6 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.sampling.GtuTypeData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -100,9 +95,8 @@ public class N201ODfactory
         ODMatrix matrix;
         try
         {
-            matrix = new ODMatrix("N201demo", origins, destinations, Categorization.UNCATEGORIZED,
-                    DoubleVector.instantiate(new double[] {0, 3600}, TimeUnit.DEFAULT, StorageType.DENSE),
-                    Interpolation.STEPWISE);
+            matrix = new ODMatrix("N201demo", origins, destinations, Categorization.UNCATEGORIZED, DoubleVector.instantiate(
+                new double[] {0, 3600}, TimeUnit.DEFAULT, StorageType.DENSE), Interpolation.STEPWISE);
         }
         catch (ValueRuntimeException exception)
         {
@@ -111,9 +105,9 @@ public class N201ODfactory
 
         // loop matrix
         // 2*0 because the through movement on the IJweg is not incorporated
-        int[][] od = new int[][] {{0, 502, 309, 35, 285, 33, 218}, {331, 0, 229, 26, 212, 25, 162},
-                {150, 89, 0, 12, 98, 11, 75}, {29, 17, 14, 0, 30, 4, 23}, {30, 18, 14, 2 * 0, 32, 4, 25},
-                {296, 175, 143, 18, 0, 21, 136}, {67, 40, 32, 4, 63, 0, 787}, {373, 221, 180, 22, 350, 815, 0}};
+        int[][] od = new int[][] {{0, 502, 309, 35, 285, 33, 218}, {331, 0, 229, 26, 212, 25, 162}, {150, 89, 0, 12, 98, 11,
+            75}, {29, 17, 14, 0, 30, 4, 23}, {30, 18, 14, 2 * 0, 32, 4, 25}, {296, 175, 143, 18, 0, 21, 136}, {67, 40, 32, 4,
+                63, 0, 787}, {373, 221, 180, 22, 350, 815, 0}};
         for (int o = 0; o < origins.size(); o++)
         {
             for (int d = 0; d < destinations.size(); d++)
@@ -144,14 +138,14 @@ public class N201ODfactory
         Time endTime = new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
         Length position = new Length(1.0, LengthUnit.SI);
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
-        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(30, SpeedUnit.KM_PER_HOUR);
-        ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist =
-                new ContinuousDistDoubleScalar.Rel<>(4, LengthUnit.METER);
-        ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist =
-                new ContinuousDistDoubleScalar.Rel<>(2, LengthUnit.METER);
-        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(200, SpeedUnit.KM_PER_HOUR);
+        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initSpeedDist = new ContinuousDistDoubleScalar.Rel<>(30,
+            SpeedUnit.KM_PER_HOUR);
+        ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist = new ContinuousDistDoubleScalar.Rel<>(4,
+            LengthUnit.METER);
+        ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist = new ContinuousDistDoubleScalar.Rel<>(2,
+            LengthUnit.METER);
+        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist = new ContinuousDistDoubleScalar.Rel<>(200,
+            SpeedUnit.KM_PER_HOUR);
         DefaultSwitchableGTUColorer colorer = new DefaultSwitchableGTUColorer();
         MersenneTwister rand = new MersenneTwister();
         // loop origins
@@ -168,7 +162,7 @@ public class N201ODfactory
                     try
                     {
                         route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), origin,
-                                destination);
+                            destination);
                     }
                     catch (NetworkException exception)
                     {
@@ -189,24 +183,24 @@ public class N201ODfactory
             }
             // strategical planner factory using route generator (i.e. a strategical planner factory required per origin)
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(
-                            new LaneBasedGTUFollowingTacticalPlannerFactory(new IDMPlusOld()));
+                    new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedGTUFollowingTacticalPlannerFactory(
+                        new IDMPlusOld()));
             // time
             CrossSectionLink link = (CrossSectionLink) origin.getLinks().iterator().next(); // should be only 1 for origins
             int lanes = link.getLanes().size();
             double iat = 3600 / (dem / lanes);
-            ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> iatDist =
-                    new ContinuousDistDoubleScalar.Rel<>(iat, DurationUnit.SECOND);
-            GTUDirectionality dir =
-                    link.getStartNode().equals(origin) ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
+            ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> iatDist = new ContinuousDistDoubleScalar.Rel<>(iat,
+                DurationUnit.SECOND);
+            GTUDirectionality dir = link.getStartNode().equals(origin) ? GTUDirectionality.DIR_PLUS
+                    : GTUDirectionality.DIR_MINUS;
             // put generator on each lane
             for (Lane lane : link.getLanes())
             {
                 try
                 {
                     new GTUGeneratorIndividualOld(origin + "." + link.getLanes().indexOf(lane), simulator, gtuType, gtuClass,
-                            initSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime, endTime,
-                            lane, position, dir, strategicalPlannerFactory, routeGenerator, network);
+                        initSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime, endTime,
+                        lane, position, dir, strategicalPlannerFactory, routeGenerator, network);
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -221,9 +215,10 @@ public class N201ODfactory
     /**
      * @param network network
      * @param sampling sampling
+     * @param metaDataSet meta data set
      * @return query covering the entire N201
      */
-    public static Query getQuery(final OTSRoadNetwork network, final Sampler sampling)
+    public static Query getQuery(final OTSRoadNetwork network, final Sampler sampling, final FilterDataSet metaDataSet)
     {
         // String[] southBound = new String[] { "L1a", "L2a", "L3a4a", "L5a", "L6a", "L7a", "L8a9a", "L10a11a", "L12a",
         // "L13a14a",
@@ -232,14 +227,9 @@ public class N201ODfactory
         // "L46a", "L47a48a", "L49a" };
         String[] southBound = new String[] {"L2a"};
         String[] northBound = new String[] {"L49b", "L48b47b", "L46b", "L45b", "L44b", "L43b", "L42b", "L41b", "L40b", "L39b",
-                "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
-                "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
-                "L6b", "L5b", "L4b3b", "L2b", "L1b"};
-        MetaDataSet metaDataSet = new MetaDataSet();
-        Set<GtuTypeDataInterface> gtuTypes = new LinkedHashSet<>();
-        gtuTypes.add(new GtuTypeData(network.getGtuType(GTUType.DEFAULTS.CAR)));
-        gtuTypes.add(new GtuTypeData(network.getGtuType(GTUType.DEFAULTS.BUS)));
-        metaDataSet.put(new MetaDataGtuType(), gtuTypes);
+            "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
+            "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
+            "L6b", "L5b", "L4b3b", "L2b", "L1b"};
         Query query = new Query(sampling, "N201 both directions", metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));
         // addSpaceTimeRegions(query, network, northBound);
         addSpaceTimeRegions(query, network, southBound);
@@ -256,8 +246,8 @@ public class N201ODfactory
         for (String link : links)
         {
             query.addSpaceTimeRegionLink(new LinkData((CrossSectionLink) network.getLink(link)), KpiGtuDirectionality.DIR_PLUS,
-                    Length.ZERO, network.getLink(link).getLength(), new Time(0, TimeUnit.BASE_HOUR),
-                    new Time(1.0, TimeUnit.BASE_HOUR));
+                Length.ZERO, network.getLink(link).getLength(), new Time(0, TimeUnit.BASE_HOUR), new Time(1.0,
+                    TimeUnit.BASE_HOUR));
         }
     }
 

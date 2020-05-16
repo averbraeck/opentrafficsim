@@ -21,7 +21,7 @@ public abstract class ExtendedDataTypeString<G extends GtuDataInterface> extends
      */
     public ExtendedDataTypeString(final String id)
     {
-        super(id);
+        super(id, String.class);
     }
 
     /** {@inheritDoc} */
@@ -29,6 +29,13 @@ public abstract class ExtendedDataTypeString<G extends GtuDataInterface> extends
     public String formatValue(final String format, final String value)
     {
         return value;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String parseValue(final String string)
+    {
+        return string;
     }
 
 }

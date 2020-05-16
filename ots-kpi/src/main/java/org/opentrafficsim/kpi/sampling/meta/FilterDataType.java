@@ -8,7 +8,7 @@ import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 
 /**
- * Abstract class for defining a type of meta data.
+ * Abstract class for defining a type of filter data.
  * <p>
  * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -19,23 +19,26 @@ import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> class of meta data
  */
-public abstract class MetaDataType<T> implements Identifiable
+public abstract class FilterDataType<T> implements Identifiable
 {
 
     /** Id. */
     private final String id;
+    
 
     /**
+     * Constructor.
      * @param id String; id
      */
-    public MetaDataType(final String id)
+    public FilterDataType(final String id)
     {
         Throw.whenNull(id, "Id may not be null.");
         this.id = id;
     }
 
     /**
-     * @return id.
+     * Returns the id.
+     * @return id
      */
     @Override
     public final String getId()
@@ -48,7 +51,7 @@ public abstract class MetaDataType<T> implements Identifiable
      * @param gtu GtuDataInterface; gtu to retrieve the value from
      * @return value of the meta data of this type from a GTU, may be {@code null} if not applicable.
      */
-    public abstract T getValue(final GtuDataInterface gtu);
+    public abstract T getValue(GtuDataInterface gtu);
 
     /**
      * Formats the value into a string. If the value is numeric, the default implementation is:
@@ -97,7 +100,7 @@ public abstract class MetaDataType<T> implements Identifiable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MetaDataType [id=" + this.id + "]";
+        return "FilterDataType [id=" + this.id + "]";
     }
 
 }

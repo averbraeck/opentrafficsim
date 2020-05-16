@@ -32,7 +32,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.draw.core.BoundsPaintScale;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.kpi.sampling.Sampler;
+import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -98,13 +98,13 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
-     * @param sampler Sampler&lt;?&gt;; road sampler
+     * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      */
     public TrajectoryPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
-            final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path)
+            final SamplerData<?> samplerData, final GraphPath<KpiLaneDirection> path)
     {
-        super(caption, updateInterval, simulator, sampler, path, Duration.ZERO);
+        super(caption, updateInterval, simulator, samplerData, path, Duration.ZERO);
         for (int i = 0; i < path.getNumberOfSeries(); i++)
         {
             this.curves.add(new ArrayList<>());
@@ -123,7 +123,11 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                 for (int i = 0; i < path.getNumberOfSeries(); i++)
                 {
                     KpiLaneDirection lane = section.getSource(i);
-                    TrajectoryGroup<?> trajectoryGroup = getSampler().getTrajectoryGroup(lane);
+                    if (lane == null)
+                    {
+                        continue; // lane is not part of this section, e.g. after a lane-drop
+                    }
+                    TrajectoryGroup<?> trajectoryGroup = getSamplerData().getTrajectoryGroup(lane);
                     int from = this.knownTrajectories.getOrDefault(lane, 0);
                     int to = trajectoryGroup.size();
                     double scaleFactor = section.getLength().si / lane.getLaneData().getLength().si;
@@ -585,7 +589,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      */
     public LegendItemCollection getLegend()
     {
-        return legend;
+        return this.legend;
     }
 
     /**
@@ -594,7 +598,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      */
     public List<Boolean> getLaneVisible()
     {
-        return laneVisible;
+        return this.laneVisible;
     }
 
 }

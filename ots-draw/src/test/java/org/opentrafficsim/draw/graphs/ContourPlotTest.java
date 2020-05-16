@@ -43,6 +43,7 @@ import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -95,7 +96,7 @@ public class ContourPlotTest implements UNITS
 
     LaneDataInterface mockedLane1 = Mockito.mock(LaneDataInterface.class);
 
-    RoadSampler mockedRoadSampler = Mockito.mock(RoadSampler.class);
+    SamplerData mockedSamplerData = Mockito.mock(SamplerData.class);
 
     OTSSimulatorInterface mockedSimulator = Mockito.mock(OTSSimulatorInterface.class);
 
@@ -178,7 +179,7 @@ public class ContourPlotTest implements UNITS
     public final void accelerationContourTest() throws Exception
     {
         setUp();
-        ContourDataSource<?> dataPool = new ContourDataSource<>(this.mockedRoadSampler, this.mockedPath);
+        ContourDataSource<?> dataPool = new ContourDataSource<>(this.mockedSamplerData, this.mockedPath);
         ContourPlotAcceleration acp = new ContourPlotAcceleration("acceleration", this.mockedSimulator, dataPool);
         assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
         assertEquals("SeriesKey should be \"acceleration\"", "acceleration", acp.getSeriesKey(0));
@@ -197,7 +198,7 @@ public class ContourPlotTest implements UNITS
         OTSSimulatorInterface simulator = new OTSSimulator("densityContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
-        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
+        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
         ContourPlotDensity dcp = new ContourPlotDensity("Density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
         assertEquals("SeriesKey should be \"density\"", "density", dcp.getSeriesKey(0));
@@ -217,7 +218,7 @@ public class ContourPlotTest implements UNITS
         OTSSimulatorInterface simulator = new OTSSimulator("flowContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
-        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
+        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
         ContourPlotFlow fcp = new ContourPlotFlow("Density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
         assertEquals("SeriesKey should be \"flow\"", "flow", fcp.getSeriesKey(0));
@@ -237,7 +238,7 @@ public class ContourPlotTest implements UNITS
         OTSSimulatorInterface simulator = new OTSSimulator("speedContourTest");
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
-        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
+        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
         ContourPlotSpeed scp = new ContourPlotSpeed("Density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);
         assertEquals("SeriesKey should be \"speed\"", "speed", scp.getSeriesKey(0));

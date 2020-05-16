@@ -66,7 +66,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool,
             final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
     {
-        super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSampler(), dataPool.getPath(), dataPool.getDelay());
+        super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSamplerData(), dataPool.getPath(), dataPool.getDelay());
         dataPool.registerContourPlot(this);
         this.dataPool = dataPool;
         this.paintScale = paintScale;
@@ -335,9 +335,13 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      */
     protected abstract ContourDataType<Z, ?> getContourDataType();
 
+    /**
+     * Returns the block renderer.
+     * @return block renderer
+     */
     public XYInterpolatedBlockRenderer getBlockRenderer()
     {
-        return blockRenderer;
+        return this.blockRenderer;
     }
 
     @Override

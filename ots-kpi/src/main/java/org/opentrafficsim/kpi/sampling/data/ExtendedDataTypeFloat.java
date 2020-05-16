@@ -31,10 +31,11 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
     /**
      * Constructor setting the id.
      * @param id String; id
+     * @param type Class&lt;T&gt;; type class
      */
-    public ExtendedDataTypeFloat(final String id)
+    public ExtendedDataTypeFloat(final String id, final Class<T> type)
     {
-        super(id);
+        super(id, type);
     }
 
     /** {@inheritDoc} */

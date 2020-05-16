@@ -30,7 +30,7 @@ public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface>
      */
     public ExtendedDataTypeSpeed(final String id)
     {
-        super(id);
+        super(id, FloatSpeed.class);
     }
 
     /** {@inheritDoc} */
@@ -52,6 +52,13 @@ public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface>
     public FloatSpeed interpolate(final FloatSpeed value0, final FloatSpeed value1, final double f)
     {
         return FloatSpeed.interpolate(value0, value1, (float) f);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public FloatSpeed parseValue(final String string)
+    {
+        return FloatSpeed.instantiateSI(Float.valueOf(string));
     }
 
 }

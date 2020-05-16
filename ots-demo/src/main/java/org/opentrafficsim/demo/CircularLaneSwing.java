@@ -131,12 +131,13 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
         }
 
         RoadSampler sampler = new RoadSampler(getModel().getNetwork());
-        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
+        GraphPath.initRecording(sampler, path);
+        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
 
         plot = new SwingTrajectoryPlot(
-                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler, path));
+                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler.getSamplerData(), path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));

@@ -3,6 +3,7 @@ package org.opentrafficsim.kpi.interfaces;
 import org.opentrafficsim.base.Identifiable;
 
 /**
+ * Represents a route for sampling.
  * <p>
  * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.

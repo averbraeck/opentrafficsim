@@ -102,8 +102,8 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
             if (NetworksParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800,
+                    600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 NetworksSwing app = new NetworksSwing("Networks", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
             }
@@ -146,8 +146,9 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
             {
                 throw new RuntimeException(exception);
             }
-            SwingPlot plot = new SwingPlot(
-                    new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), updateInterval, simulator, sampler, path));
+            GraphPath.initRecording(sampler, path);
+            SwingPlot plot = new SwingPlot(new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), updateInterval,
+                simulator, sampler.getSamplerData(), path));
             charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
 

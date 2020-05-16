@@ -9,8 +9,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.kpi.sampling.Sampler;
-import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
+import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
 /**
@@ -30,8 +29,8 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 {
 
-    /** Sampler. */
-    private final Sampler<?> sampler;
+    /** Sampler data. */
+    private final SamplerData<?> samplerData;
 
     /** KPI lane directions registered in the sampler. */
     private final GraphPath<KpiLaneDirection> path;
@@ -47,24 +46,16 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
-     * @param sampler Sampler&lt;?&gt;; road sampler
+     * @param samplerData SamplerData&lt;?&gt;; sampler data
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
     public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
-            final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path, final Duration delay)
+            final SamplerData<?> samplerData, final GraphPath<KpiLaneDirection> path, final Duration delay)
     {
         super(caption, updateInterval, simulator, delay, DEFAULT_INITIAL_UPPER_TIME_BOUND);
-        this.sampler = sampler;
+        this.samplerData = samplerData;
         this.path = path;
-        for (Section<KpiLaneDirection> section : path.getSections())
-        {
-            for (KpiLaneDirection kpiLaneDirection : section)
-            {
-                sampler.registerSpaceTimeRegion(new SpaceTimeRegion(kpiLaneDirection, Length.ZERO,
-                        kpiLaneDirection.getLaneData().getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
-            }
-        }
         for (int i = 0; i < path.getNumberOfSeries(); i++)
         {
             this.trajectoriesCache.add(new ArrayList<>());
@@ -84,7 +75,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
             List<TrajectoryGroup<?>> cache = new ArrayList<>();
             for (Section<KpiLaneDirection> section : getPath().getSections())
             {
-                cache.add(this.sampler.getTrajectoryGroup(section.getSource(series)));
+                cache.add(this.samplerData.getTrajectoryGroup(section.getSource(series)));
             }
             this.trajectoriesCache.set(series, cache);
             this.lastUpdateTime.set(series, getUpdateTime());
@@ -92,7 +83,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
         return this.trajectoriesCache.get(series);
     }
 
-    /**
+    /** 
      * Returns the path.
      * @return GraphPath&lt;KpiLaneDirection&gt;; the path
      */
@@ -109,12 +100,12 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
     }
 
     /**
-     * Returns the sampler.
-     * @return Sampler&lt;?&gt;; sampler.
+     * Returns the sampler data.
+     * @return SamplerData&lt;?&gt;; sampler.
      */
-    protected final Sampler<?> getSampler()
+    protected final SamplerData<?> getSamplerData()
     {
-        return this.sampler;
+        return this.samplerData;
     }
 
 }

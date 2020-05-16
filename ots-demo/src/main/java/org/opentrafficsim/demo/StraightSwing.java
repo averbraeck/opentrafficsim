@@ -95,8 +95,8 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(1500.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800,
+                    600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 StraightSwing app = new StraightSwing("Straight", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
             }
@@ -131,12 +131,13 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
         }
 
         RoadSampler sampler = new RoadSampler(getModel().getNetwork());
-        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler, path);
+        GraphPath.initRecording(sampler, path);
+        ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
 
-        plot = new SwingTrajectoryPlot(
-                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler, path));
+        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler
+            .getSamplerData(), path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));
