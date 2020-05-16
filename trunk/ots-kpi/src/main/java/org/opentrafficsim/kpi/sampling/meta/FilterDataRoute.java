@@ -2,10 +2,10 @@ package org.opentrafficsim.kpi.sampling.meta;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
+import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
 
 /**
- * Accepts trajectories with a destination node included in a set in a query.
+ * Accepts trajectories with a Route included in a set in a query.
  * <p>
  * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -15,28 +15,28 @@ import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MetaDataDestination extends MetaDataType<NodeDataInterface>
+public class FilterDataRoute extends FilterDataType<RouteDataInterface>
 {
 
     /**
-     * 
+     * Constructor.
      */
-    public MetaDataDestination()
+    public FilterDataRoute()
     {
-        super("destination");
+        super("route");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final NodeDataInterface getValue(final GtuDataInterface gtu)
+    public final RouteDataInterface getValue(final GtuDataInterface gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
-        return gtu.getDestinationNodeData();
+        return gtu.getRouteData();
     }
 
     /** {@inheritDoc} */
     @Override
-    public String formatValue(String format, NodeDataInterface value)
+    public String formatValue(final String format, final RouteDataInterface value)
     {
         return value.getId();
     }
@@ -46,7 +46,7 @@ public class MetaDataDestination extends MetaDataType<NodeDataInterface>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MetaDataDestination: [id=" + getId() + "]";
+        return "FilterDataRoute: [id=" + getId() + "]";
     }
 
 }

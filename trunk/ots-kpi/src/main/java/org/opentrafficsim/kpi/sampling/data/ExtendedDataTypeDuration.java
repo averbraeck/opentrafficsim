@@ -30,7 +30,7 @@ public abstract class ExtendedDataTypeDuration<G extends GtuDataInterface>
      */
     public ExtendedDataTypeDuration(final String id)
     {
-        super(id);
+        super(id, FloatDuration.class);
     }
 
     /** {@inheritDoc} */
@@ -54,4 +54,11 @@ public abstract class ExtendedDataTypeDuration<G extends GtuDataInterface>
         return FloatDuration.interpolate(value0, value1, (float) f);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public FloatDuration parseValue(final String string)
+    {
+        return FloatDuration.instantiateSI(Float.valueOf(string));
+    }
+    
 }

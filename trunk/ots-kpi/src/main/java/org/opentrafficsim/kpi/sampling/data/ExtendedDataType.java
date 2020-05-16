@@ -34,24 +34,37 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
 
     /** Id. */
     private final String id;
+    
+    /** Type of value. */
+    private final Class<T> type;
 
     /**
      * Constructor setting the id.
      * @param id String; id
+     * @param type Class&lt;T&gt;; type class
      */
-    public ExtendedDataType(final String id)
+    public ExtendedDataType(final String id, final Class<T> type)
     {
         Throw.whenNull(id, "Id may nog be null.");
+        Throw.whenNull(type, "Type may not bee null.");
         this.id = id;
+        this.type = type;
     }
 
-    /**
-     * @return id
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.id;
+    }
+    
+    /**
+     * Returns the type.
+     * @return the type
+     */
+    public Class<T> getType()
+    {
+        return this.type;
     }
 
     /**
@@ -114,6 +127,13 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
      * @return formatted value
      */
     public abstract String formatValue(String format, T value);
+    
+    /**
+     * Parses a stored string representation to original type.
+     * @param string String; stored string representation
+     * @return T; value in original type
+     */
+    public abstract T parseValue(String string);
 
     /**
      * Interpolate value between two measured values. The default implementation takes a linear interpolation over time for

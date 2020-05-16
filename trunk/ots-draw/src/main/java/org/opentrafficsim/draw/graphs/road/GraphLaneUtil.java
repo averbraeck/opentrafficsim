@@ -138,6 +138,11 @@ public final class GraphLaneUtil
             Speed speed = null;
             for (LaneDirection lane : lanes)
             {
+                if (lane == null)
+                {
+                    list.add(null);
+                    continue;
+                }
                 speed = speed == null ? lane.getLane().getLowestSpeedLimit()
                         : Speed.min(speed, lane.getLane().getLowestSpeedLimit());
                 KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(new LaneData(lane.getLane()),
@@ -145,7 +150,16 @@ public final class GraphLaneUtil
                 list.add(kpiLaneDirection);
             }
             Speed finalSpeed = speed;
-            Length length = lanes.get(0).getLane().getLength();
+            LaneDirection firstNextLane = null;
+            for (LaneDirection lane : lanes)
+            {
+                if (lane != null)
+                {
+                    firstNextLane = lane;
+                    continue;
+                }
+            }
+            Length length = firstNextLane.getLength();
             sections.add(new Section<KpiLaneDirection>()
             {
                 /** {@inheritDoc} */
@@ -179,9 +193,9 @@ public final class GraphLaneUtil
             set.addAll(lanes);
             // per link and then per lane, find the downstream lane
             Map<Link, List<LaneDirection>> linkMap = new LinkedHashMap<>();
-            Link link = lanes.get(0).getLane().getParentLink();
+            Link link = firstNextLane.getLane().getParentLink();
             ImmutableSet<Link> links =
-                    (lanes.get(0).getDirection().isPlus() ? link.getEndNode() : link.getStartNode()).getLinks();
+                    (firstNextLane.getDirection().isPlus() ? link.getEndNode() : link.getStartNode()).getLinks();
             for (Link nextLink : links)
             {
                 if (!link.equals(nextLink))
@@ -208,7 +222,7 @@ public final class GraphLaneUtil
                         }
                         else if (n == 0)
                         {
-                            nextLanes.addAll(null);
+                            nextLanes.add(null);
                         }
                     }
                     if (nextLanes.size() == lanes.size())

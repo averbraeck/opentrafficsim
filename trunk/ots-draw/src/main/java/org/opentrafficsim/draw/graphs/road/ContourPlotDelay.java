@@ -82,8 +82,8 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
 
         /** {@inheritDoc} */
         @Override
-        public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup<?>> trajectories,
-                final List<Length> xFrom, final List<Length> xTo, final Time tFrom, final Time tTo)
+        public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup<?>> trajectories, final List<
+                Length> xFrom, final List<Length> xTo, final Time tFrom, final Time tTo)
         {
             double sumActualTime = 0.0;
             double sumRefTime = 0.0;
@@ -134,17 +134,17 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
     };
 
     /**
-     * Constructor.
+     * Constructor. In case this plot is created live, the sampler of the sample data in the data source needs to have the
+     * extended data type {@code ReferenceSpeed.INSTANCE} registered.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;GtuData&gt;; data pool
      */
-    public ContourPlotDelay(final String caption, final OTSSimulatorInterface simulator,
-            final ContourDataSource<GtuData> dataPool)
+    public ContourPlotDelay(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<
+            GtuData> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
-                "delay %.1f /km");
-        dataPool.getSampler().registerExtendedDataType(ReferenceSpeed.INSTANCE);
+            "delay %.1f /km");
     }
 
     /**

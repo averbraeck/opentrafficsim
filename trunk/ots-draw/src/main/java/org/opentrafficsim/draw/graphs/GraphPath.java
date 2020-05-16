@@ -7,11 +7,15 @@ import java.util.NoSuchElementException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.base.WeightedMeanAndSum;
+import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.Sampler;
+import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 
 /**
  * A {@code GraphPath} defines the spatial dimension of graphs. It has a number of sections, each of which may have one or more
@@ -228,7 +232,24 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
     public String toString()
     {
         return "GraphPath [sections=" + this.sections + ", startDistances=" + this.startDistances + ", totalLength="
-                + this.totalLength + ", speedLimit=" + this.speedLimit + "]";
+            + this.totalLength + ", speedLimit=" + this.speedLimit + "]";
+    }
+
+    /**
+     * Start recording along path.
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
+     */
+    public static void initRecording(final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path)
+    {
+        for (Section<KpiLaneDirection> section : path.getSections())
+        {
+            for (KpiLaneDirection kpiLaneDirection : section)
+            {
+                sampler.registerSpaceTimeRegion(new SpaceTimeRegion(kpiLaneDirection, Length.ZERO,
+                        kpiLaneDirection.getLaneData().getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
+            }
+        }
     }
 
 }

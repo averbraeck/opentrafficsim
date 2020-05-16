@@ -38,7 +38,6 @@ public class SwingSpaceTimePlot extends SwingPlot
         fixedDomainCheckBox.addActionListener(new ActionListener()
         {
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -56,6 +55,5 @@ public class SwingSpaceTimePlot extends SwingPlot
     {
         return (AbstractSpaceTimePlot) super.getPlot();
     }
-
 
 }

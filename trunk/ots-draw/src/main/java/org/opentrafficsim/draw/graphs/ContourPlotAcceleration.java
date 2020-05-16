@@ -100,6 +100,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                 }
 
                 /** {@inheritDoc} */
+                @SuppressWarnings("synthetic-access")
                 @Override
                 public Quantity<Acceleration, ?> getQuantity()
                 {

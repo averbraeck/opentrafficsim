@@ -22,16 +22,16 @@ import org.djutils.immutablecollections.ImmutableIterator;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MetaDataSet
+public class FilterDataSet
 {
 
     /** Meta data. */
-    private final Map<MetaDataType<?>, Set<?>> metaDataMap = new LinkedHashMap<>();
+    private final Map<FilterDataType<?>, Set<?>> metaDataMap = new LinkedHashMap<>();
 
     /**
      * Default constructor.
      */
-    public MetaDataSet()
+    public FilterDataSet()
     {
         //
     }
@@ -39,10 +39,10 @@ public class MetaDataSet
     /**
      * @param metaDataSet MetaDataSet; set of meta data to copy into new meta data set
      */
-    public MetaDataSet(final MetaDataSet metaDataSet)
+    public FilterDataSet(final FilterDataSet metaDataSet)
     {
         Throw.whenNull(metaDataSet, "Meta data set may not be null.");
-        for (MetaDataType<?> metaDataType : metaDataSet.metaDataMap.keySet())
+        for (FilterDataType<?> metaDataType : metaDataSet.metaDataMap.keySet())
         {
             this.metaDataMap.put(metaDataType, metaDataSet.metaDataMap.get(metaDataType));
         }
@@ -53,7 +53,7 @@ public class MetaDataSet
      * @param <T> class of meta data
      * @param values Set&lt;T&gt;; values of meta data
      */
-    public final <T> void put(final MetaDataType<T> metaDataType, final Set<T> values)
+    public final <T> void put(final FilterDataType<T> metaDataType, final Set<T> values)
     {
         Throw.whenNull(metaDataType, "Meta data type may not be null.");
         Throw.whenNull(values, "Values may not be null.");
@@ -64,7 +64,7 @@ public class MetaDataSet
      * @param metaDataType MetaDataType&lt;?&gt;; meta data type
      * @return whether the trajectory contains the meta data of give type
      */
-    public final boolean contains(final MetaDataType<?> metaDataType)
+    public final boolean contains(final FilterDataType<?> metaDataType)
     {
         return this.metaDataMap.containsKey(metaDataType);
     }
@@ -75,7 +75,7 @@ public class MetaDataSet
      * @return value of meta data
      */
     @SuppressWarnings("unchecked")
-    public final <T> Set<T> get(final MetaDataType<T> metaDataType)
+    public final <T> Set<T> get(final FilterDataType<T> metaDataType)
     {
         return (Set<T>) this.metaDataMap.get(metaDataType);
     }
@@ -83,7 +83,7 @@ public class MetaDataSet
     /**
      * @return set of meta data types
      */
-    public final Set<MetaDataType<?>> getMetaDataTypes()
+    public final Set<FilterDataType<?>> getMetaDataTypes()
     {
         return new LinkedHashSet<>(this.metaDataMap.keySet());
     }
@@ -99,7 +99,7 @@ public class MetaDataSet
     /**
      * @return iterator over meta data entries, removal is not allowed
      */
-    public final Iterator<Entry<MetaDataType<?>, Set<?>>> getMetaDataSetIterator()
+    public final Iterator<Entry<FilterDataType<?>, Set<?>>> getFilterDataSetIterator()
     {
         return new ImmutableIterator<>(this.metaDataMap.entrySet().iterator());
     }
@@ -130,7 +130,7 @@ public class MetaDataSet
         {
             return false;
         }
-        MetaDataSet other = (MetaDataSet) obj;
+        FilterDataSet other = (FilterDataSet) obj;
         if (this.metaDataMap == null)
         {
             if (other.metaDataMap != null)

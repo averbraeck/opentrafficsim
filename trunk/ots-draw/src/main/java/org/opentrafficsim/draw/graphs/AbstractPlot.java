@@ -103,6 +103,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
         this.caption = caption;
         this.updateInterval = updateInterval;
         this.delay = delay;
+        this.updates = (int) (simulator.getSimulatorTime().si / updateInterval.si); // when creating plot during simulation
         update(); // start redraw chain
     }
 
@@ -261,7 +262,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      */
     public OTSSimulatorInterface getSimulator()
     {
-        return simulator;
+        return this.simulator;
     }
 
     /**
@@ -294,6 +295,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      */
     protected void update()
     {
+        // TODO: next event may be scheduled in the past if the simulator is running fast during these few calls
         this.updateTime = this.simulator.getSimulatorTime();
         increaseTime(this.updateTime.minus(this.delay));
         notifyPlotChange();
@@ -309,8 +311,8 @@ public abstract class AbstractPlot implements Identifiable, Dataset
         {
             this.updates++;
             // events are scheduled slightly later, so all influencing movements have occurred
-            this.updateEvent = this.simulator.scheduleEventAbs(
-                    Time.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this, this, "update", null);
+            this.updateEvent = this.simulator.scheduleEventAbs(Time.instantiateSI(this.updateInterval.si * this.updates
+                + this.delay.si), this, this, "update", null);
         }
         catch (SimRuntimeException exception)
         {
@@ -324,7 +326,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      */
     public String getCaption()
     {
-        return caption;
+        return this.caption;
     }
-    
+
 }

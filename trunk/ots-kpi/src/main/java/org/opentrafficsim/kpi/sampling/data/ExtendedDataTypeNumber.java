@@ -27,7 +27,7 @@ public abstract class ExtendedDataTypeNumber<G extends GtuDataInterface> extends
      */
     public ExtendedDataTypeNumber(final String id)
     {
-        super(id);
+        super(id, Float.class);
     }
 
     /** {@inheritDoc} */
@@ -82,6 +82,13 @@ public abstract class ExtendedDataTypeNumber<G extends GtuDataInterface> extends
     public String formatValue(final String format, final Float value)
     {
         return String.format(format, value);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Float parseValue(final String string)
+    {
+        return Float.valueOf(string);
     }
 
 }

@@ -159,6 +159,9 @@ import picocli.CommandLine.Option;
 public final class AnticipationRelianceScript extends AbstractSimulationScript
 {
 
+    /** */
+    private static final long serialVersionUID = 20200516L;
+
     /** Car-following task parameter. */
     static final ParameterTypeDuration HEXP = new ParameterTypeDuration("Hexp",
             "Exponential decay of car-following task by headway.", Duration.instantiateSI(4.0), NumericConstraint.POSITIVE);
@@ -330,7 +333,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     {
         if (this.sampler != null)
         {
-            this.sampler.writeToFile(getOutputFileStart() + ".csv");
+            this.sampler.getSamplerData().writeToFile(getOutputFileStart() + ".csv");
         }
     }
 
@@ -384,19 +387,20 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         // Sampler
         if (this.doSampler)
         {
-            this.sampler = new RoadSampler(network);
-            this.sampler.registerExtendedDataType(new TimeToCollision());
-            this.sampler.registerExtendedDataType(new TaskSaturationDataType());
-            this.sampler.registerExtendedDataType(new LeaderId());
-            this.sampler.registerExtendedDataType(new ReactionTime());
-            this.sampler.registerExtendedDataType(new SituationalAwarenessDataType());
+            RoadSampler.Factory factory = RoadSampler.build(network);
+            factory.registerExtendedDataType(new TimeToCollision());
+            factory.registerExtendedDataType(new TaskSaturationDataType());
+            factory.registerExtendedDataType(new LeaderId());
+            factory.registerExtendedDataType(new ReactionTime());
+            factory.registerExtendedDataType(new SituationalAwarenessDataType());
             if (this.tasks)
             {
-                this.sampler.registerExtendedDataType(new TaskAnticipationRelianceDataType("car-following"));
-                this.sampler.registerExtendedDataType(new TaskDemandDataType("car-following"));
-                this.sampler.registerExtendedDataType(new TaskAnticipationRelianceDataType("lane-changing"));
-                this.sampler.registerExtendedDataType(new TaskDemandDataType("lane-changing"));
+                factory.registerExtendedDataType(new TaskAnticipationRelianceDataType("car-following"));
+                factory.registerExtendedDataType(new TaskDemandDataType("car-following"));
+                factory.registerExtendedDataType(new TaskAnticipationRelianceDataType("lane-changing"));
+                factory.registerExtendedDataType(new TaskDemandDataType("lane-changing"));
             }
+            this.sampler = factory.create();
 
             LinkData linkData = new LinkData((CrossSectionLink) network.getLink("LEFTIN"));
             registerLinkToSampler(linkData, ignoreStart, linkData.getLength());

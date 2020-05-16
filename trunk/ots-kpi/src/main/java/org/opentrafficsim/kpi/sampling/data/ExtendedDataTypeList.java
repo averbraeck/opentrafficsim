@@ -26,10 +26,11 @@ public abstract class ExtendedDataTypeList<T, G extends GtuDataInterface> extend
     /**
      * Constructor setting the id.
      * @param id String; id
+     * @param type Class&lt;T&gt;; type class
      */
-    public ExtendedDataTypeList(final String id)
+    public ExtendedDataTypeList(final String id, final Class<T> type)
     {
-        super(id);
+        super(id, type);
     }
 
     /** {@inheritDoc} */

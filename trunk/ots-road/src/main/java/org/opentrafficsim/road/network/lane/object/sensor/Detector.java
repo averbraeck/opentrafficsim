@@ -558,6 +558,7 @@ public class Detector extends AbstractSensor
     public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws NetworkException
     {
+        // TODO: implement
         return null;
     }
 
@@ -627,7 +628,7 @@ public class Detector extends AbstractSensor
             // create data lines
             for (Detector detector : detectors)
             {
-                String id = detector.getId();
+                String id = detector.getFullId();
                 // meso
                 if (!periodic)
                 {
@@ -636,6 +637,7 @@ public class Detector extends AbstractSensor
                     {
                         if (map.containsKey(measurement))
                         {
+                            // TODO: values can contain ","; use csv writer
                             bw.write(id + "," + measurement.getName() + ","
                                     + ((DetectorMeasurement<?, C>) measurement).stringValue((C) map.get(measurement), format));
                             bw.newLine();
@@ -764,7 +766,8 @@ public class Detector extends AbstractSensor
         C identity();
 
         /**
-         * Returns an accumulated value for when the front reaches the detector.
+         * Returns an accumulated value for when the front reaches the detector. GTU's may trigger an exit without having
+         * triggered an entry due to a lane change. Reversely, GTU's may not trigger an exit while they did trigger an entry.
          * @param cumulative C; accumulated value
          * @param gtu LaneBasedGTU; gtu
          * @param loopDetector Detector; loop detector

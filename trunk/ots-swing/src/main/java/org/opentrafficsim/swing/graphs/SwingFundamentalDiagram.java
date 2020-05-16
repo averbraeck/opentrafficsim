@@ -55,12 +55,12 @@ public class SwingFundamentalDiagram extends SwingPlot
     @Override
     protected ChartMouseListener getChartMouseListener()
     {
-        ChartMouseListener toggle = getPlot().getSource().getNumberOfSeries() < 2 ? null
-                : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
+        ChartMouseListener toggle = !getPlot().hasLineFD() && getPlot().getSource().getNumberOfSeries() < 2 ? null : GraphUtil
+            .getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
         return new ChartMouseListener()
         {
             /** {@inheritDoc} */
-            @SuppressWarnings({"unchecked", "synthetic-access"})
+            @SuppressWarnings("unchecked")
             @Override
             public void chartMouseClicked(final ChartMouseEvent event)
             {
@@ -83,9 +83,9 @@ public class SwingFundamentalDiagram extends SwingPlot
                     int series = itemEntity.getSeriesIndex();
                     for (int i = 0; i < getPlot().getItemCount(series) - 1; i++)
                     {
-                        XYLineAnnotation annotation = new XYLineAnnotation(getPlot().getXValue(series, i),
-                                getPlot().getYValue(series, i), getPlot().getXValue(series, i + 1),
-                                getPlot().getYValue(series, i + 1), new BasicStroke(1.0f), Color.WHITE);
+                        XYLineAnnotation annotation = new XYLineAnnotation(getPlot().getXValue(series, i), getPlot().getYValue(
+                            series, i), getPlot().getXValue(series, i + 1), getPlot().getYValue(series, i + 1), new BasicStroke(
+                                1.0f), Color.WHITE);
                         getPlot().getChart().getXYPlot().addAnnotation(annotation);
                     }
                 }
@@ -111,7 +111,7 @@ public class SwingFundamentalDiagram extends SwingPlot
             }
 
             /** {@inheritDoc} */
-            @SuppressWarnings({"synthetic-access", "unchecked"})
+            @SuppressWarnings("unchecked")
             @Override
             public void chartMouseMoved(final ChartMouseEvent event)
             {
@@ -119,62 +119,66 @@ public class SwingFundamentalDiagram extends SwingPlot
                 {
                     toggle.chartMouseMoved(event); // forward as we use two listeners
                 }
+                boolean clearText = true;
                 // set text annotation and status text to time of item
                 if (event.getEntity() instanceof XYItemEntity)
                 {
                     // create time info for status label
                     XYItemEntity itemEntity = (XYItemEntity) event.getEntity();
                     int series = itemEntity.getSeriesIndex();
-                    int item = itemEntity.getItem();
-                    double t = item * getPlot().getSource().getUpdateInterval().si;
-                    getPlot().setTimeInfo(String.format(", %.0fs", t));
-                    double x = getPlot().getXValue(series, item);
-                    double y = getPlot().getYValue(series, item);
-                    Range domain = getPlot().getChart().getXYPlot().getDomainAxis().getRange();
-                    Range range = getPlot().getChart().getXYPlot().getRangeAxis().getRange();
-                    TextAnchor anchor;
-                    if (range.getUpperBound() - y < y - range.getLowerBound())
+                    if (!getPlot().hasLineFD() || series != getPlot().getSeriesCount() - 1)
                     {
-                        // upper half
-                        if (domain.getUpperBound() - x < x - domain.getLowerBound())
+                        clearText = false;
+                        int item = itemEntity.getItem();
+                        double t = item * getPlot().getSource().getUpdateInterval().si;
+                        getPlot().setTimeInfo(String.format(", %.0fs", t));
+                        double x = getPlot().getXValue(series, item);
+                        double y = getPlot().getYValue(series, item);
+                        Range domain = getPlot().getChart().getXYPlot().getDomainAxis().getRange();
+                        Range range = getPlot().getChart().getXYPlot().getRangeAxis().getRange();
+                        TextAnchor anchor;
+                        if (range.getUpperBound() - y < y - range.getLowerBound())
                         {
-                            // upper right quadrant
-                            anchor = TextAnchor.TOP_RIGHT;
-                        }
-                        else
-                        {
-                            // upper left quadrant, can't use TOP_LEFT as text will be under mouse pointer
-                            if ((range.getUpperBound() - y)
-                                    / (range.getUpperBound() - range.getLowerBound()) < (x - domain.getLowerBound())
-                                            / (domain.getUpperBound() - domain.getLowerBound()))
+                            // upper half
+                            if (domain.getUpperBound() - x < x - domain.getLowerBound())
                             {
-                                // closer to top (at least relatively) so move text down
+                                // upper right quadrant
                                 anchor = TextAnchor.TOP_RIGHT;
                             }
                             else
                             {
-                                // closer to left (at least relatively) so move text right
-                                anchor = TextAnchor.BOTTOM_LEFT;
+                                // upper left quadrant, can't use TOP_LEFT as text will be under mouse pointer
+                                if ((range.getUpperBound() - y) / (range.getUpperBound() - range.getLowerBound()) < (x - domain
+                                    .getLowerBound()) / (domain.getUpperBound() - domain.getLowerBound()))
+                                {
+                                    // closer to top (at least relatively) so move text down
+                                    anchor = TextAnchor.TOP_RIGHT;
+                                }
+                                else
+                                {
+                                    // closer to left (at least relatively) so move text right
+                                    anchor = TextAnchor.BOTTOM_LEFT;
+                                }
                             }
                         }
+                        else if (domain.getUpperBound() - x < x - domain.getLowerBound())
+                        {
+                            // lower right quadrant
+                            anchor = TextAnchor.BOTTOM_RIGHT;
+                        }
+                        else
+                        {
+                            // lower left quadrant
+                            anchor = TextAnchor.BOTTOM_LEFT;
+                        }
+                        XYTextAnnotation textAnnotation = new XYTextAnnotation(String.format("%.0fs", t), x, y);
+                        textAnnotation.setTextAnchor(anchor);
+                        textAnnotation.setFont(textAnnotation.getFont().deriveFont(14.0f).deriveFont(Font.BOLD));
+                        getPlot().getChart().getXYPlot().addAnnotation(textAnnotation);
                     }
-                    else if (domain.getUpperBound() - x < x - domain.getLowerBound())
-                    {
-                        // lower right quadrant
-                        anchor = TextAnchor.BOTTOM_RIGHT;
-                    }
-                    else
-                    {
-                        // lower left quadrant
-                        anchor = TextAnchor.BOTTOM_LEFT;
-                    }
-                    XYTextAnnotation textAnnotation = new XYTextAnnotation(String.format("%.0fs", t), x, y);
-                    textAnnotation.setTextAnchor(anchor);
-                    textAnnotation.setFont(textAnnotation.getFont().deriveFont(14.0f).deriveFont(Font.BOLD));
-                    getPlot().getChart().getXYPlot().addAnnotation(textAnnotation);
                 }
-                // remove texts when mouse is elsewhere
-                else
+                // remove texts when mouse is elsewhere, or on FD line
+                if (clearText)
                 {
                     for (XYAnnotation annotation : ((List<XYAnnotation>) getPlot().getChart().getXYPlot().getAnnotations()))
                     {
@@ -210,18 +214,24 @@ public class SwingFundamentalDiagram extends SwingPlot
                 public void actionPerformed(final ActionEvent e)
                 {
 
-                    if ((int) (.5 + getPlot().getSource().getAggregationPeriod().si
-                            / getPlot().getSource().getUpdateInterval().si) != f)
+                    if ((int) (.5 + getPlot().getSource().getAggregationPeriod().si / getPlot().getSource()
+                        .getUpdateInterval().si) != f)
                     {
                         Duration interval = Duration.instantiateSI(getPlot().getSource().getAggregationPeriod().si / f);
-                        getPlot().setUpdateInterval(interval);
+                        for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
+                        {
+                            diagram.setUpdateInterval(interval);
+                        }
                         // the above setUpdateInterval also recalculates the virtual last update time
                         // add half an interval to avoid any rounding issues
-                        getPlot().getSource().setUpdateInterval(interval,
-                                getPlot().getUpdateTime().plus(interval.times(0.5)), getPlot());
-                        getPlot().getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
-                        getPlot().getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
-                        getPlot().notifyPlotChange();
+                        getPlot().getSource().setUpdateInterval(interval, getPlot().getUpdateTime().plus(interval.times(0.5)));
+
+                        for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
+                        {
+                            diagram.getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
+                            diagram.getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
+                            diagram.notifyPlotChange();
+                        }
                     }
                 }
             });
@@ -247,24 +257,29 @@ public class SwingFundamentalDiagram extends SwingPlot
             {
 
                 /** {@inheritDoc} */
-                @SuppressWarnings("synthetic-access")
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
                     if (getPlot().getSource().getAggregationPeriod().si != t)
                     {
-                        int n = (int) (0.5 + getPlot().getSource().getAggregationPeriod().si
-                                / getPlot().getSource().getUpdateInterval().si);
+                        int n = (int) (0.5 + getPlot().getSource().getAggregationPeriod().si / getPlot().getSource()
+                            .getUpdateInterval().si);
                         Duration period = Duration.instantiateSI(t);
-                        getPlot().setUpdateInterval(period.divide(n));
+                        Duration interval = period.divide(n);
+                        for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
+                        {
+                            diagram.setUpdateInterval(interval);
+                        }
                         // add half an interval to avoid any rounding issues
                         getPlot().getSource().setAggregationPeriod(period);
-                        getPlot().getSource().setUpdateInterval(period.divide(n),
-                                getPlot().getUpdateTime().plus(period.divide(n).times(0.5)),
-                                getPlot());
-                        getPlot().getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
-                        getPlot().getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
-                        getPlot().notifyPlotChange();
+                        getPlot().getSource().setUpdateInterval(period.divide(n), getPlot().getUpdateTime().plus(period.divide(
+                            n).times(0.5)));
+                        for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
+                        {
+                            diagram.getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
+                            diagram.getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
+                            diagram.notifyPlotChange();
+                        }
                     }
                 }
 

@@ -38,6 +38,7 @@ import javax.swing.border.EmptyBorder;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -156,8 +157,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSAnimator simulator,
-            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network)
-            throws RemoteException, DSOLException
+            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network) throws RemoteException,
+            DSOLException
     {
         super(simulator, otsModel);
 
@@ -558,6 +559,28 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     }
 
     /**
+     * Creates a demo panel within the animation area.
+     * @param position String; any string from BorderLayout indicating the position of the demo panel, except CENTER.
+     * @throws IllegalStateException if the panel was already created
+     */
+    public void createDemoPanel(final DemoPanelPosition position)
+    {
+        Throw.when(this.demoPanel != null, IllegalStateException.class,
+            "Attempt to create demo panel, but it's already created");
+        Throw.whenNull(position, "Position may not be null.");
+        Container parent = this.animationPanel.getParent();
+        parent.remove(this.animationPanel);
+
+        JPanel splitPanel = new JPanel(new BorderLayout());
+        parent.add(splitPanel);
+        splitPanel.add(this.animationPanel, BorderLayout.CENTER);
+
+        this.demoPanel = new JPanel();
+        this.demoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        splitPanel.add(this.demoPanel, position.getBorderLayoutPosition());
+    }
+
+    /**
      * Return a panel for on-screen demo controls. The panel is create on first call.
      * @return JPanel; panel
      */
@@ -565,11 +588,12 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     {
         if (this.demoPanel == null)
         {
-            this.demoPanel = new JPanel();
-            this.demoPanel.setLayout(new BoxLayout(this.demoPanel, BoxLayout.Y_AXIS));
-            this.demoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-            this.demoPanel.setPreferredSize(new Dimension(300, 300));
-            getAnimationPanel().getParent().add(this.demoPanel, BorderLayout.EAST);
+            createDemoPanel(DemoPanelPosition.RIGHT);
+            // this.demoPanel = new JPanel();
+            // this.demoPanel.setLayout(new BoxLayout(this.demoPanel, BoxLayout.Y_AXIS));
+            // this.demoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+            // this.demoPanel.setPreferredSize(new Dimension(300, 300));
+            // getAnimationPanel().getParent().add(this.demoPanel, BorderLayout.EAST);
             this.demoPanel.addContainerListener(new ContainerListener()
             {
                 @Override
@@ -614,8 +638,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      */
     protected final void updateWorldCoordinate()
     {
-        String worldPoint = "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
-                + FORMATTER.format(this.animationPanel.getWorldCoordinate().getY()) + ")";
+        String worldPoint = "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y=" + FORMATTER
+            .format(this.animationPanel.getWorldCoordinate().getY()) + ")";
         this.coordinateField.setText("Mouse: " + worldPoint);
         int requiredWidth = this.coordinateField.getGraphics().getFontMetrics().stringWidth(this.coordinateField.getText());
         if (this.coordinateField.getPreferredSize().width < requiredWidth)
@@ -985,12 +1009,12 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         protected GTU getSelectedGTU(final Point2D mousePoint)
         {
             List<GTU> targets = new ArrayList<>();
-            Point2D point = Renderable2DInterface.Util.getWorldCoordinates(mousePoint,
-                    OTSAnimationPanel.this.animationPanel.getExtent(), OTSAnimationPanel.this.animationPanel.getSize());
+            Point2D point = Renderable2DInterface.Util.getWorldCoordinates(mousePoint, OTSAnimationPanel.this.animationPanel
+                .getExtent(), OTSAnimationPanel.this.animationPanel.getSize());
             for (Renderable2DInterface<?> renderable : OTSAnimationPanel.this.animationPanel.getElements())
             {
                 if (OTSAnimationPanel.this.animationPanel.isShowElement(renderable) && renderable.contains(point,
-                        OTSAnimationPanel.this.animationPanel.getExtent(), OTSAnimationPanel.this.animationPanel.getSize()))
+                    OTSAnimationPanel.this.animationPanel.getExtent(), OTSAnimationPanel.this.animationPanel.getSize()))
                 {
                     if (renderable.getSource() instanceof GTU)
                     {
@@ -1032,8 +1056,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                     catch (RemoteException exception)
                     {
                         getSimulator().getLogger().always().warn(
-                                "Caught RemoteException trying to locate {} with id {} in network {}.", panKind, panId,
-                                network.getId());
+                            "Caught RemoteException trying to locate {} with id {} in network {}.", panKind, panId, network
+                                .getId());
                         return;
                     }
                 }
@@ -1046,6 +1070,44 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         public String toString()
         {
             return "AutoAnimationPanel [network=" + this.network + ", lastGtu=" + this.lastGtu + "]";
+        }
+    }
+
+    /**
+     * Enum for demo panel position. Each value contains a field representing the position correlating to the
+     * {@code BorderLayout} class.
+     */
+    public enum DemoPanelPosition
+    {
+        /** Top. */
+        TOP("First"),
+
+        /** Bottom. */
+        BOTTOM("Last"),
+
+        /** Left. */
+        LEFT("Before"),
+
+        /** Right. */
+        RIGHT("After");
+
+        /** Value used in {@code BorderLayout}. */
+        private final String direction;
+
+        /**
+         * @param direction String; value used in {@code BorderLayout}
+         */
+        DemoPanelPosition(final String direction)
+        {
+            this.direction = direction;
+        }
+
+        /**
+         * @return direction String; value used in {@code BorderLayout}
+         */
+        public String getBorderLayoutPosition()
+        {
+            return this.direction;
         }
     }
 

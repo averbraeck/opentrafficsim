@@ -22,13 +22,13 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class MetaDataCrossSections extends MetaDataType<CrossSection>
+public class FilterDataCrossSections extends FilterDataType<CrossSection>
 {
 
     /**
-     * 
+     * Constructor.
      */
-    public MetaDataCrossSections()
+    public FilterDataCrossSections()
     {
         super("crossSection");
     }
@@ -42,7 +42,7 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
 
     /** {@inheritDoc} */
     @Override
-    public String formatValue(String format, CrossSection value)
+    public String formatValue(final String format, final CrossSection value)
     {
         StringBuilder str = new StringBuilder();
         str.append("[");
@@ -111,7 +111,7 @@ public class MetaDataCrossSections extends MetaDataType<CrossSection>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MetaDataCrossSections: [id=" + getId() + "]";
+        return "FilterDataCrossSections: [id=" + getId() + "]";
     }
 
 }
