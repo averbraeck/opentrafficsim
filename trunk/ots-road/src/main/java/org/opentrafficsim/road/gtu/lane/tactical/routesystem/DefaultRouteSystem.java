@@ -47,6 +47,7 @@ public class DefaultRouteSystem implements RouteSystem
     public SortedSet<LaneChangeInfo> getLaneChangeInfo(final DirectedLanePosition position, final Length front,
             final Route route, final GTUType gtuType, final Length distance)
     {
+        /*
         // obtain set
         LaneChangeInfoSet set = this.cache.get(() -> determineSet(position, route, gtuType, distance), position.getLane(),
             position.getGtuDirection(), route, gtuType);
@@ -58,6 +59,7 @@ public class DefaultRouteSystem implements RouteSystem
                 position.getPosition());
             return set.getAdjustedSet(pos, distance);
         }
+        */
         // previously calculated set does not have sufficient length, clear and recalculate
         this.cache.clear(position.getLane(), position.getGtuDirection(), route, gtuType);
         return getLaneChangeInfo(position, front, route, gtuType, distance);
@@ -71,9 +73,10 @@ public class DefaultRouteSystem implements RouteSystem
      * @param gtuType GTUType; GTU type
      * @param distance Length; distance over which required lane changes are desired to be known
      * @return SortedSet&lt;LaneChangeInfo&gt;; lane change information
+     * @throws GTUException in case of multiple adjacent lanes
      */
     private LaneChangeInfoSet determineSet(final DirectedLanePosition position, final Length front, final Route route,
-            final GTUType gtuType, final Length distance)
+            final GTUType gtuType, final Length distance) throws GTUException
     {
         // the search can stop as soon as all lanes are reachable on a link that starts beyond 'distance' of the end of the lane
 
