@@ -1,7 +1,9 @@
 package org.opentrafficsim.sim0mq.kpi;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -56,6 +58,14 @@ public abstract class Sim0MQSampler extends Sampler
     /** the default route (for now). */
     // protected final RouteData defaultRoute;
 
+    /**
+     */
+    public Sim0MQSampler()
+    {
+        super(new LinkedHashSet<>(), new LinkedHashSet<>());
+    }
+
+    
     // /**
     // * Main program for IMBSampler. Listens to events on the IMB bus and calculates and publishes statistics.
     // * @param args the arguments with [0]=IP address, [1]=port

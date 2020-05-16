@@ -104,8 +104,10 @@ public class IMBSampler extends Sampler<GtuData>
      * @param imbConnector IMBConnector; IMB connection
      * @throws IMBException on connection error
      */
-    public IMBSampler(IMBConnector imbConnector) throws IMBException
+    public IMBSampler(final IMBConnector imbConnector) throws IMBException
     {
+        super(new LinkedHashSet<>(), new LinkedHashSet<>()); // TODO: other constructor with extended + filter data types?
+
         this.imbConnector = imbConnector;
 
         // default GTU Type and default route
@@ -176,8 +178,8 @@ public class IMBSampler extends Sampler<GtuData>
      * @param speed double; speed
      * @param acceleration double; acceleration
      */
-    protected void sample(double timeStamp, String gtuId, String laneId, boolean forward, double longitudinalPosition,
-            double speed, double acceleration)
+    protected void sample(final double timeStamp, final String gtuId, final String laneId, final boolean forward,
+            final double longitudinalPosition, final double speed, final double acceleration)
     {
         // update clock
         updateClock(timeStamp);
@@ -189,21 +191,21 @@ public class IMBSampler extends Sampler<GtuData>
         KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(this.lanes.get(laneId),
                 forward ? KpiGtuDirectionality.DIR_PLUS : KpiGtuDirectionality.DIR_MINUS);
         GtuData gtu = this.gtus.get(gtuId);
-        if (this.lastLanes.containsKey(gtuId) && contains(this.lastLanes.get(gtuId))
+        if (this.lastLanes.containsKey(gtuId) && getSamplerData().contains(this.lastLanes.get(gtuId))
                 && !this.lastLanes.get(gtuId).equals(kpiLaneDirection))
         {
             processGtuRemoveEvent(this.lastLanes.get(gtuId), gtu);
         }
         if ((!this.lastLanes.containsKey(gtuId) || !this.lastLanes.get(gtuId).equals(kpiLaneDirection))
-                && contains(kpiLaneDirection))
+                && getSamplerData().contains(kpiLaneDirection))
         {
             processGtuAddEvent(kpiLaneDirection, Length.instantiateSI(longitudinalPosition), Speed.instantiateSI(speed),
                     Acceleration.instantiateSI(acceleration), now(), gtu);
         }
-        else if (contains(kpiLaneDirection))
+        else if (getSamplerData().contains(kpiLaneDirection))
         {
             // TEST LOOP
-            for (Trajectory<GtuData> trajectory : getTrajectoryGroup(kpiLaneDirection).getTrajectories())
+            for (Trajectory<GtuData> trajectory : getSamplerData().getTrajectoryGroup(kpiLaneDirection).getTrajectories())
             {
                 if (trajectory.getGtuId().equals(gtu.getId()))
                 {
