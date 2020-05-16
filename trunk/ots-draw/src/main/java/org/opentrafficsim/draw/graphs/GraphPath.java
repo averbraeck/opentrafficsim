@@ -205,7 +205,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <S> underlying type
      */
-    public interface Section<S> extends Iterable<S>
+    public static interface Section<S> extends Iterable<S>
     {
         /**
          * Returns the section length.

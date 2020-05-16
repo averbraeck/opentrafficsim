@@ -205,8 +205,8 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
         RoadSampler sampler = new RoadSampler((OTSRoadNetwork) getModel().getNetwork());
-        ContourDataSource<?> dataPool0 = new ContourDataSource<>(sampler, path0);
-        ContourDataSource<?> dataPool1 = new ContourDataSource<>(sampler, path1);
+        ContourDataSource<?> dataPool0 = new ContourDataSource<>(sampler.getSamplerData(), path0);
+        ContourDataSource<?> dataPool1 = new ContourDataSource<>(sampler.getSamplerData(), path1);
         Duration updateInterval = Duration.instantiateSI(10.0);
 
         SwingPlot plot = null;
@@ -214,7 +214,8 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
         ContourDataSource<?> dataPool = null;
 
         TablePanel trajectoryChart = new TablePanel(2, 2);
-        plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler, path01));
+        plot = new SwingTrajectoryPlot(
+                new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler.getSamplerData(), path01));
         trajectoryChart.setCell(plot.getContentPane(), 0, 0);
 
         List<KpiLaneDirection> lanes = new ArrayList<>();
@@ -239,11 +240,13 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
         }
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY,
-                Quantity.FLOW, simulator, sampler, crossSection, true, Duration.instantiateSI(60.0), false));
+                Quantity.FLOW, simulator,
+                FundamentalDiagram.sourceFromSampler(sampler, crossSection, true, Duration.instantiateSI(60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 0);
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW,
-                Quantity.SPEED, simulator, sampler, crossSection, false, Duration.instantiateSI(60.0), false));
+                Quantity.SPEED, simulator,
+                FundamentalDiagram.sourceFromSampler(sampler, crossSection, false, Duration.instantiateSI(60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
@@ -256,7 +259,7 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
             dataPool = lane == 0 ? dataPool0 : dataPool1;
 
             plot = new SwingTrajectoryPlot(
-                    new TrajectoryPlot("Trajectory lane " + lane, updateInterval, simulator, sampler, path));
+                    new TrajectoryPlot("Trajectory lane " + lane, updateInterval, simulator, sampler.getSamplerData(), path));
             charts.setCell(plot.getContentPane(), 0, 0);
 
             plot = new SwingContourPlot(new ContourPlotDensity("Density lane " + lane, simulator, dataPool));
@@ -495,9 +498,8 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-        LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
-                        new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
+        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength,
+                new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
         gtu.setNoLaneChangeDistance(Length.ZERO);
         gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
         gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));

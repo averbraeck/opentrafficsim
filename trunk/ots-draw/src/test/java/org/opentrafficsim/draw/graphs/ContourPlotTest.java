@@ -31,6 +31,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -129,8 +131,9 @@ public class ContourPlotTest implements UNITS
     /**
      * Code common to all contour plot tests.
      * @throws SimRuntimeException if that happens uncaught; this test has failed
+     * @throws NamingException on error
      */
-    public final void setUp() throws SimRuntimeException
+    public final void setUp() throws SimRuntimeException, NamingException
     {
         Mockito.when(this.mockedPath.getTotalLength()).thenReturn(Length.valueOf("2000m"));
         Mockito.when(this.mockedPath.getNumberOfSeries()).thenReturn(2);
@@ -169,6 +172,10 @@ public class ContourPlotTest implements UNITS
                     }
                 });
         Mockito.when(this.mockedSimulator.getSimulatorTime()).thenReturn(Time.ZERO);
+        OTSModelInterface model = Mockito.mock(OTSModelInterface.class);
+        OTSReplication replication =
+                OTSReplication.create("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
+        Mockito.when(this.mockedSimulator.getReplication()).thenReturn(replication);
     }
 
     /**
@@ -193,13 +200,13 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void densityContourTest() throws Exception
     {
-        OTSRoadNetwork network =
-                new OTSRoadNetwork("density contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
-        OTSSimulatorInterface simulator = new OTSSimulator("densityContourTest");
+        setUp();
+        OTSSimulatorInterface simulator = this.mockedSimulator;
+        OTSRoadNetwork network = new OTSRoadNetwork("density contour test network", true, simulator);
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
-        ContourPlotDensity dcp = new ContourPlotDensity("Density", simulator, dataPool);
+        ContourPlotDensity dcp = new ContourPlotDensity("density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
         assertEquals("SeriesKey should be \"density\"", "density", dcp.getSeriesKey(0));
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
@@ -213,13 +220,15 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void flowContourTest() throws Exception
     {
-        OTSRoadNetwork network =
-                new OTSRoadNetwork("flow contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
-        OTSSimulatorInterface simulator = new OTSSimulator("flowContourTest");
+        setUp();
+        OTSSimulatorInterface simulator = this.mockedSimulator;
+        OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true, simulator);
+        System.out.println(simulator);
+        System.out.println(simulator.getSimulatorTime());
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
-        ContourPlotFlow fcp = new ContourPlotFlow("Density", simulator, dataPool);
+        ContourPlotFlow fcp = new ContourPlotFlow("flow", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
         assertEquals("SeriesKey should be \"flow\"", "flow", fcp.getSeriesKey(0));
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
@@ -233,13 +242,13 @@ public class ContourPlotTest implements UNITS
     @Test
     public final void speedContourTest() throws Exception
     {
-        OTSRoadNetwork network =
-                new OTSRoadNetwork("flow contour test network", true, new OTSSimulator("Simulator for densityContourTest"));
-        OTSSimulatorInterface simulator = new OTSSimulator("speedContourTest");
+        setUp();
+        OTSSimulatorInterface simulator = this.mockedSimulator;
+        OTSRoadNetwork network = new OTSRoadNetwork("flow contour test network", true, simulator);
         GraphPath<KpiLaneDirection> path = dummyPath(simulator, network);
         RoadSampler sampler = new RoadSampler(network);
         ContourDataSource<?> dataPool = new ContourDataSource<>(sampler.getSamplerData(), path);
-        ContourPlotSpeed scp = new ContourPlotSpeed("Density", simulator, dataPool);
+        ContourPlotSpeed scp = new ContourPlotSpeed("speed", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);
         assertEquals("SeriesKey should be \"speed\"", "speed", scp.getSeriesKey(0));
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
@@ -326,10 +335,12 @@ public class ContourPlotTest implements UNITS
             {
                 cp.actionPerformed(new ActionEvent(distanceGranularity, 0, "setSpaceGranularity"));
                 cp.notifyPlotChange();
-                expectedXBins = (int) Math.ceil((AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI()) / timeGranularity);
+                expectedXBins = (int) Math.ceil((AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI()) / timeGranularity) 
+                        + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0);
                 xBins = cp.getDataPool().timeAxis.getBinCount();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
-                expectedYBins = (int) Math.ceil(path.get(0).getLength().getSI() / distanceGranularity);
+                expectedYBins = (int) Math.ceil(path.get(0).getLength().getSI() / distanceGranularity)
+                        + (cp.getDataPool().spaceAxis.isInterpolate() ? 1 : 0);
                 yBins = cp.getDataPool().spaceAxis.getBinCount();
                 assertEquals("Modified yBins should be " + expectedYBins, expectedYBins, yBins);
                 bins = cp.getItemCount(0);

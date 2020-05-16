@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.xml.bind.JAXBException;
@@ -28,6 +30,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -42,11 +45,19 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
+import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataGtuType;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataSet;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.GtuTypeData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
+import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
@@ -206,6 +217,13 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
                 throw new SimRuntimeException(exception);
             }
 
+            FilterDataGtuType filterDataGtuType = new FilterDataGtuType();
+            SpeedLimit speedLimit = new SpeedLimit();
+            Set<ExtendedDataType<?, ?, ?, GtuData>> extendedDataTypes = new LinkedHashSet<>();
+            Set<FilterDataType<?>> filterDataTypes = new LinkedHashSet<>();
+            extendedDataTypes.add(speedLimit);
+            filterDataTypes.add(filterDataGtuType);
+
             // Stream to allow the xml-file to be retrievable from a JAR file
             InputStream stream = URLResource.getResourceAsStream("/N201v8.xml");
             try
@@ -220,7 +238,14 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
             {
                 exception.printStackTrace();
             }
-            Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.network));
+            
+            FilterDataSet metaDataSet = new FilterDataSet();
+            Set<GtuTypeDataInterface> gtuTypes = new LinkedHashSet<>();
+            gtuTypes.add(new GtuTypeData(this.network.getGtuType(GTUType.DEFAULTS.CAR)));
+            gtuTypes.add(new GtuTypeData(this.network.getGtuType(GTUType.DEFAULTS.BUS)));
+            metaDataSet.put(filterDataGtuType, gtuTypes);
+            
+            Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.network), metaDataSet);
             try
             {
                 new StatisticsGTULaneTransceiver(this.imbConnector, getSimulator(), this.network.getId(), query,

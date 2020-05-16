@@ -25,8 +25,8 @@ import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Query;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
-import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataGtuType;
+import org.opentrafficsim.kpi.sampling.meta.FilterDataSet;
 
 import nl.tno.imb.TConnection;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
@@ -154,29 +154,29 @@ public class VissimQueryKPI
         Set<GtuTypeDataInterface> gtuTypes;
         String id;
         String queryDescription;
-        MetaDataSet metaDataSet;
+        FilterDataSet metaDataSet;
 
         id = "All";
         queryDescription = "All query for VISSIM model.";
-        metaDataSet = new MetaDataSet();
+        metaDataSet = new FilterDataSet();
         makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
 
         id = "Equipped";
         queryDescription = "Equipped query for VISSIM model.";
-        metaDataSet = new MetaDataSet();
+        metaDataSet = new FilterDataSet();
         gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(new GtuTypeData("car_equipped"));
         gtuTypes.add(new GtuTypeData("truck_equipped"));
-        metaDataSet.put(new MetaDataGtuType(), gtuTypes);
+        metaDataSet.put(new FilterDataGtuType(), gtuTypes);
         makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
 
         id = "Not equipped";
         queryDescription = "Not equipped query for VISSIM model.";
-        metaDataSet = new MetaDataSet();
+        metaDataSet = new FilterDataSet();
         gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(new GtuTypeData("car"));
         gtuTypes.add(new GtuTypeData("truck"));
-        metaDataSet.put(new MetaDataGtuType(), gtuTypes);
+        metaDataSet.put(new FilterDataGtuType(), gtuTypes);
         makeQuery(sampler, id, queryDescription, metaDataSet, lanes, imbConnector);
 
     }
@@ -185,12 +185,12 @@ public class VissimQueryKPI
      * @param sampler IMBSampler; sampler
      * @param id String; id
      * @param queryDescription String; query description
-     * @param metaDataSet MetaDataSet; meta data set
+     * @param metaDataSet FilterDataSet; meta data set
      * @param lanes Map&lt;String,LaneData&gt;; lanes
      * @param imbConnector IMBConnector; imb connector
      * @throws IMBException on connection error
      */
-    private static void makeQuery(IMBSampler sampler, String id, String queryDescription, MetaDataSet metaDataSet,
+    private static void makeQuery(IMBSampler sampler, String id, String queryDescription, FilterDataSet metaDataSet,
             Map<String, LaneData> lanes, IMBConnector imbConnector) throws IMBException
     {
         Query query = new Query(sampler, id, queryDescription, metaDataSet, new Frequency(2.0, FrequencyUnit.PER_MINUTE));

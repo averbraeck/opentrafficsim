@@ -165,6 +165,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     public final void setSpaceGranularity(final double granularity)
     {
         this.blockRenderer.setBlockHeight(granularity);
+        this.dataPool.spaceAxis.setGranularity(granularity); // XXX: AV added 16-5-2020
     }
 
     /**
@@ -175,6 +176,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     public final void setTimeGranularity(final double granularity)
     {
         this.blockRenderer.setBlockWidth(granularity);
+        this.dataPool.timeAxis.setGranularity(granularity); // XXX: AV added 16-5-2020
     }
 
     /**
@@ -185,7 +187,9 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     public final void setInterpolation(final boolean interpolate)
     {
         this.blockRenderer.setInterpolate(interpolate);
-    }
+        this.dataPool.timeAxis.setInterpolate(interpolate); // XXX: AV added 16-5-2020
+        this.dataPool.spaceAxis.setInterpolate(interpolate); // XXX: AV added 16-5-2020
+    } 
     
     /**
      * Returns the data pool for sub classes.

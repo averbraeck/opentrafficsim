@@ -56,9 +56,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Replication;
@@ -77,8 +74,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({OTSReplication.class, OTSSimulatorInterface.class})
 public class ODApplierTest
 {
 
@@ -109,8 +104,8 @@ public class ODApplierTest
     @SuppressWarnings("static-access")
     private OTSReplication createReplicationMock()
     {
-        OTSReplication replicationMock = PowerMockito.mock(OTSReplication.class);
-        PowerMockito.when(replicationMock.getStream(Mockito.anyString())).thenReturn(this.stream);
+        OTSReplication replicationMock = Mockito.mock(OTSReplication.class);
+        Mockito.when(replicationMock.getStream(Mockito.anyString())).thenReturn(this.stream);
         Answer<HistoryManager> answerHM = new Answer<HistoryManager>()
         {
             @Override
@@ -120,7 +115,7 @@ public class ODApplierTest
             }
 
         };
-        PowerMockito.when(replicationMock.getHistoryManager(Mockito.any())).then(answerHM);
+        Mockito.when(replicationMock.getHistoryManager(Mockito.any())).then(answerHM);
         return replicationMock;
     }
 
@@ -129,7 +124,7 @@ public class ODApplierTest
      */
     private OTSSimulatorInterface createSimulatorMock()
     {
-        OTSSimulatorInterface simulatorMock = PowerMockito.mock(OTSSimulatorInterface.class);
+        OTSSimulatorInterface simulatorMock = Mockito.mock(OTSSimulatorInterface.class);
         Answer<Time> answerTime = new Answer<Time>()
         {
             @Override
@@ -138,8 +133,8 @@ public class ODApplierTest
                 return ODApplierTest.this.time;
             }
         };
-        PowerMockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
-        PowerMockito.when(simulatorMock.getReplication()).thenReturn(this.replication);
+        Mockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
+        Mockito.when(simulatorMock.getReplication()).thenReturn(this.replication);
         return simulatorMock;
     }
 
