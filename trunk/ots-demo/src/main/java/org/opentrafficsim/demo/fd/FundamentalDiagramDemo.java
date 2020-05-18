@@ -208,9 +208,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         GTUType car = network.getGtuType(DEFAULTS.CAR);
         GTUType truck = network.getGtuType(DEFAULTS.TRUCK);
 
-        OTSRoadNode nodeA = new OTSRoadNode(network, "A", new OTSPoint3D(0.0, 0.0), Direction.ZERO);
-        OTSRoadNode nodeB = new OTSRoadNode(network, "B", new OTSPoint3D(1500.0, 0.0), Direction.ZERO);
-        OTSRoadNode nodeC = new OTSRoadNode(network, "C", new OTSPoint3D(2500.0, 0.0), Direction.ZERO);
+        OTSRoadNode nodeA = new OTSRoadNode(network, "Origin", new OTSPoint3D(0.0, 0.0), Direction.ZERO);
+        OTSRoadNode nodeB = new OTSRoadNode(network, "Lane-drop", new OTSPoint3D(1500.0, 0.0), Direction.ZERO);
+        OTSRoadNode nodeC = new OTSRoadNode(network, "Destination", new OTSPoint3D(2500.0, 0.0), Direction.ZERO);
 
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.FREEWAY);
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
@@ -602,13 +602,13 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             if (i >= 1500.0)
             {
                 lanePosition = Length.instantiateSI(i - 1500.0);
-                linkId = "BC";
+                linkId = "Lane-dropDestination";
             }
             else
             {
                 names.add(1, "Middle");
                 lanePosition = Length.instantiateSI(i);
-                linkId = "AB";
+                linkId = "OriginLane-drop";
             }
             DirectedLinkPosition linkPosition = new DirectedLinkPosition(getNetwork().getLink(linkId), lanePosition,
                 GTUDirectionality.DIR_PLUS);
@@ -632,7 +632,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         names.add("Middle lane");
         names.add("Right lane");
         List<LaneDirection> firstLanes = new ArrayList<>();
-        for (Lane lane : ((CrossSectionLink) getNetwork().getLink("AB")).getLanes())
+        for (Lane lane : ((CrossSectionLink) getNetwork().getLink("OriginLane-drop")).getLanes())
         {
             firstLanes.add(new LaneDirection(lane, GTUDirectionality.DIR_PLUS));
         }
@@ -845,16 +845,17 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             int kJam = (int) (1000.0 / (meanLength + 3.0));
 
             // initialize and fill arrays for each quantity
-            double[] k = new double[kJam + 1];
-            double[] q = new double[kJam + 1];
-            double[] v = new double[kJam + 1];
-            for (int kk = 0; kk <= kJam; kk++)
+            double[] k = new double[kJam * 10 + 1];
+            double[] q = new double[kJam * 10 + 1];
+            double[] v = new double[kJam * 10 + 1];
+            for (int kk = 0; kk <= kJam * 10; kk++)
             {
-                k[kk] = kk;
-                if (kk > kCrit)
+                double kVal = kk / 10.0;
+                k[kk] = kVal;
+                if (kVal > kCrit)
                 {
                     // congestion branch
-                    q[kk] = qMax * (1.0 - (kk - kCrit) / (kJam - kCrit));
+                    q[kk] = qMax * (1.0 - (kVal - kCrit) / (kJam - kCrit));
                     v[kk] = q[kk] / k[kk];
                 }
                 else
