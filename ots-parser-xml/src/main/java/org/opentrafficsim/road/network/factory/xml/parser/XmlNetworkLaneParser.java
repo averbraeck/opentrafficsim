@@ -261,8 +261,8 @@ public final class XmlNetworkLaneParser implements Serializable
             Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap =
                     GeneratorSinkParser.parseShortestRouteMix(otsNetwork, demand);
             List<LaneBasedGTUGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates,
-                    routeMixMap, shortestRouteMixMap, otsNetwork.getSimulator(), streamMap);
-            System.out.println("Created " + generators.size() + " generators (1)");
+                    routeMixMap, shortestRouteMixMap, streamMap);
+            System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
             GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator());
         }
 
@@ -301,9 +301,9 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getSCENARIO(), ots.getNETWORKDEMAND());
         try
         {
-            List<LaneBasedGTUGenerator> generators = ODParser.parseDemand(otsNetwork, otsNetwork.getSimulator(), demands,
-                    gtuTemplates, factories, modelIdReferrals, streamMap);
-            System.out.println("Created " + generators.size() + " generators (2)");
+            List<LaneBasedGTUGenerator> generators = ODParser.parseDemand(otsNetwork, demands, gtuTemplates,
+                    factories, modelIdReferrals, streamMap);
+            System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
         catch (Exception e)
         {

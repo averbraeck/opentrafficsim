@@ -366,7 +366,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         }
         else
         {
-            throw new RuntimeException("Unhandled ActionEvent");
+            throw new RuntimeException("Unhandled ActionEvent (actionCommand is " + actionEvent.getActionCommand() + "\")");
         }
     }
 

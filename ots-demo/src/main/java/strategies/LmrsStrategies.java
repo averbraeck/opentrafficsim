@@ -824,7 +824,7 @@ public class LmrsStrategies implements EventListenerInterface
                     LmrsStrategies.this.network), biases).set(ODOptions.NO_LC_DIST, Length.instantiateSI(100.0)).set(
                         ODOptions.INSTANT_LC, true).set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
                     .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
-                Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, getSimulator(), odOptions);
+                Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, odOptions);
                 for (String str : generatedObjects.keySet())
                 {
                     new GtuGeneratorQueueAnimation(generatedObjects.get(str).getGenerator(), getSimulator());

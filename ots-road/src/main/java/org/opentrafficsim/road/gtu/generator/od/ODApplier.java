@@ -52,7 +52,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -115,7 +114,6 @@ public final class ODApplier
      * </table>
      * @param network OTSRoadNetwork; network
      * @param od ODMatrix; OD matrix
-     * @param simulator OTSSimulatorInterface; simulator
      * @param odOptions ODOptions; options for vehicle generation
      * @return Map&lt;String, GeneratorObjects&gt; map of generator id's and created generator objects mainly for testing
      * @throws ParameterException if a parameter is missing
@@ -123,12 +121,12 @@ public final class ODApplier
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static Map<String, GeneratorObjects> applyOD(final OTSRoadNetwork network, final ODMatrix od,
-            final OTSSimulatorInterface simulator, final ODOptions odOptions) throws ParameterException, SimRuntimeException
+            final ODOptions odOptions) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(od, "OD matrix may not be null.");
-        Throw.whenNull(simulator, "Simulator may not be null.");
         Throw.whenNull(odOptions, "OD options may not be null.");
+        OTSSimulatorInterface simulator = network.getSimulator();
         Throw.when(!simulator.getSimulatorTime().eq0(), SimRuntimeException.class,
             "Method ODApplier.applyOD() should be invoked at simulation time 0.");
 

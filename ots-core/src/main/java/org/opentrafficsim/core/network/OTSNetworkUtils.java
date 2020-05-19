@@ -35,8 +35,7 @@ public final class OTSNetworkUtils
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static OTSNetwork clone(final OTSNetwork network, final String newId,
-            final OTSSimulatorInterface newSimulator)
+    public static OTSNetwork clone(final OTSNetwork network, final String newId, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         OTSNetwork newNetwork = new OTSNetwork(newId, false, newSimulator);

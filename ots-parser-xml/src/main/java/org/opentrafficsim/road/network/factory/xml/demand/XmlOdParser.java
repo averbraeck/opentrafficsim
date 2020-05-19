@@ -198,7 +198,7 @@ public class XmlOdParser implements Serializable
     {
         try
         {
-            ODApplier.applyOD(this.network, od, this.simulator, odOptions);
+            ODApplier.applyOD(this.network, od, odOptions);
         }
         catch (ParameterException | SimRuntimeException exception)
         {

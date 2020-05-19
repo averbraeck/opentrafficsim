@@ -374,8 +374,7 @@ public class AimsunControl
                             OTSAnimationPanel animationPanel =
                                     new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
                                             animator, this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
-                            DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), animator,
-                                    new DefaultSwitchableGTUColorer());
+                            DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGTUColorer());
                             new AimsunSwingApplication(this.model, animationPanel);
                             JFrame frame = (JFrame) animationPanel.getParent().getParent().getParent();
                             frame.setExtendedState(Frame.NORMAL);

@@ -78,6 +78,8 @@ public class LaneTest implements UNITS
     {
         OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
         OTSRoadNetwork network = new OTSRoadNetwork("lane test network", true, simulator);
+        Model model = new Model(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         // First we need two Nodes
         OTSRoadNode nodeFrom = new OTSRoadNode(network, "A", new OTSPoint3D(0, 0, 0), Direction.ZERO);
         OTSRoadNode nodeTo = new OTSRoadNode(network, "B", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
@@ -85,8 +87,6 @@ public class LaneTest implements UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[2];
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        Model model = new Model(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         CrossSectionLink link =
                 new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
                         new OTSLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
@@ -569,6 +569,8 @@ public class LaneTest implements UNITS
         OTSPoint3D from = new OTSPoint3D(10, 10, 0);
         OTSPoint3D to = new OTSPoint3D(1010, 10, 0);
         OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
+        Model model = new Model(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
@@ -581,8 +583,6 @@ public class LaneTest implements UNITS
         coordinates[0] = start.getPoint();
         coordinates[1] = end.getPoint();
         OTSLine3D line = new OTSLine3D(coordinates);
-        Model model = new Model(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, network.getLinkType(LinkType.DEFAULTS.ROAD),
                 line, LaneKeepingPolicy.KEEPRIGHT);
         Length offsetAtStart = Length.instantiateSI(5);
@@ -651,6 +651,8 @@ public class LaneTest implements UNITS
                 for (double angle : angles)
                 {
                     OTSSimulatorInterface simulator = new OTSSimulator("LaneTest");
+                    Model model = new Model(simulator);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
                     LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
                     Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
@@ -668,8 +670,6 @@ public class LaneTest implements UNITS
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
-                    Model model = new Model(simulator);
-                    simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end,
                             network.getLinkType(LinkType.DEFAULTS.ROAD), line, LaneKeepingPolicy.KEEPRIGHT);
                     final int[] lateralOffsets = { -10, -3, -1, 0, 1, 3, 10 };

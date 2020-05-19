@@ -79,15 +79,14 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
      * adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
-     * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GTUColorer; GTU colorer
      * @param animateNetwork boolean; whether to animate the current network objects
      * @throws OTSDrawingException on drawing error
      */
-    protected DefaultAnimationFactory(final OTSNetwork network, final OTSSimulatorInterface simulator,
-            final GTUColorer gtuColorer, final boolean animateNetwork) throws OTSDrawingException
+    protected DefaultAnimationFactory(final OTSNetwork network, final GTUColorer gtuColorer,
+            final boolean animateNetwork) throws OTSDrawingException
     {
-        this.simulator = simulator;
+        this.simulator = network.getSimulator();
         this.gtuColorer = gtuColorer;
 
         // subscribe to adding and removing events
@@ -180,22 +179,20 @@ public class DefaultAnimationFactory implements EventListenerInterface
     public static DefaultAnimationFactory animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator,
             final GTUColorer gtuColorer) throws OTSDrawingException
     {
-        return new DefaultAnimationFactory(network, simulator, gtuColorer, true);
+        return new DefaultAnimationFactory(network, gtuColorer, true);
     }
 
     /**
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
-     * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GTUColorer; GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OTSDrawingException on drawing error
      */
-    public static DefaultAnimationFactory animateXmlNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator,
-            final GTUColorer gtuColorer) throws OTSDrawingException
+    public static DefaultAnimationFactory animateXmlNetwork(final OTSNetwork network, final GTUColorer gtuColorer) throws OTSDrawingException
     {
-        return new DefaultAnimationFactory(network, simulator, gtuColorer, false);
+        return new DefaultAnimationFactory(network, gtuColorer, false);
     }
 
     /** {@inheritDoc} */

@@ -35,7 +35,8 @@ public class TJunctionDemo extends OTSWebServer
             throws Exception
     {
         super(title, simulator, new Rectangle2D.Double(-200, -200, 400, 400));
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), simulator, new DefaultSwitchableGTUColorer());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
+                new DefaultSwitchableGTUColorer());
     }
 
     /**

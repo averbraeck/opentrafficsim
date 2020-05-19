@@ -347,7 +347,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         od.putDemandVector(nodeE, nodeD, controlledCarCat, this.rampDemand, 0.4);
         ODOptions odOptions = new ODOptions();
         odOptions.set(ODOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator()).set(ODOptions.INSTANT_LC, true);
-        ODApplier.applyOD(network, od, sim, odOptions);
+        ODApplier.applyOD(network, od, odOptions);
 
         return network;
     }

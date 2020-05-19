@@ -356,7 +356,7 @@ public class SdmSimulation extends AbstractSimulationScript
         ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.instantiateSI(200)).set(ODOptions.GTU_TYPE,
             new DefaultGTUCharacteristicsGeneratorOD(new SdmStrategicalPlannerFactory(this.network, sim.getReplication()
                 .getStream("generation"), this)));
-        ODApplier.applyOD(this.network, odMatrix, sim, odOptions);
+        ODApplier.applyOD(this.network, odMatrix, odOptions);
 
         // setup the SDM
         DistractionFactory distFactory = new DistractionFactory(sim.getReplication().getStream("default"));
