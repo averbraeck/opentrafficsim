@@ -42,7 +42,7 @@ public class DSOLProblem
     /**
      * Demonstrate the problem.
      * @throws NamingException ...
-     * @throws SimRuntimeException 
+     * @throws SimRuntimeException on error
      */
     public void execute() throws SimRuntimeException, NamingException
     {
