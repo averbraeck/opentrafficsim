@@ -46,7 +46,7 @@ public class OTSSimulationApplication<T extends OTSModelInterface> extends OTSSw
      */
     protected void animateNetwork() throws OTSDrawingException
     {
-        DefaultAnimationFactory.animateNetwork(getModel().getNetwork(), getModel().getSimulator(),
+        DefaultAnimationFactory.animateNetwork(getModel().getNetwork(), getModel().getNetwork().getSimulator(),
                 getAnimationPanel().getGTUColorer());
     }
 

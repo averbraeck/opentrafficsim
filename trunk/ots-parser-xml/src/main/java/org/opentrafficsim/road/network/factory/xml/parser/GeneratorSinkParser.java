@@ -216,7 +216,6 @@ public final class GeneratorSinkParser
      * @param gtuTemplates GGTUTEMPLATE tags
      * @param routeMixMap map with route mix entries
      * @param shortestRouteMixMap map with shortest route mix entries
-     * @param simulator OTSSimulatorInterface; the simulator
      * @param streamMap map with stream information
      * @return list of created GTU generators
      * @throws XmlParserException when the objects cannot be inserted into the network due to inconsistencies
@@ -224,9 +223,10 @@ public final class GeneratorSinkParser
     @SuppressWarnings("checkstyle:needbraces")
     public static List<LaneBasedGTUGenerator> parseGenerators(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand,
             final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
-            final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final OTSSimulatorInterface simulator,
+            final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap,
             final Map<String, StreamInformation> streamMap) throws XmlParserException
     {
+        OTSSimulatorInterface simulator = otsNetwork.getSimulator();
         List<LaneBasedGTUGenerator> generators = new ArrayList<>();
         try
         {

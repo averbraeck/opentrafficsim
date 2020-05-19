@@ -192,7 +192,7 @@ public class TestDemoServer
                         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
                         OTSWebModel webModel = new OTSWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
-                        DefaultAnimationFactory.animateNetwork(model.getNetwork(), simulator,
+                        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
                                 new DefaultSwitchableGTUColorer());
                     }
                     catch (Exception exception)

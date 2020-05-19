@@ -91,8 +91,8 @@ public class GTUDumperTest implements OTSModelInterface
         // System.out.println("testdir is " + this.testDir.getRoot());
         this.containerDir = this.testDir.newFolder("subfolder");
         // System.out.println("containerDir is " + this.containerDir);
-        this.network = new OTSNetwork("Network for testing GTUDumper class", true, simulator);
         this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
+        this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         simulator.scheduleEventAbs(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
         this.simulator.start();
@@ -498,23 +498,14 @@ public class GTUDumperTest implements OTSModelInterface
     public void testArgumentChecks() throws SimRuntimeException, IOException, NamingException
     {
         this.containerDir = this.testDir.newFolder("subfolder");
-        this.network = new OTSNetwork("Network for testing GTUDumper class", true, simulator);
         this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
+        this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         try
         {
-            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network, this.containerDir.getCanonicalPath() + "/");
-            fail("null parameter should have thrown a NullPointerException");
-        }
-        catch (NullPointerException npe)
-        {
-            // Ignore expected exception
-        }
-
-        try
-        {
-            new GTUDumper(null, new Duration(300, DurationUnit.SECOND), this.network, this.containerDir.getCanonicalPath() + "/");
-            fail("null parameter should have thrown a NullPointerException");
+            new GTUDumper(null, new Duration(300, DurationUnit.SECOND), this.network,
+                    this.containerDir.getCanonicalPath() + "/");
+            fail("null firstDumpTime should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
         {
@@ -524,7 +515,7 @@ public class GTUDumperTest implements OTSModelInterface
         try
         {
             new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), null, this.network, this.containerDir.getCanonicalPath() + "/");
-            fail("null parameter should have thrown a NullPointerException");
+            fail("null interval should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
         {
@@ -533,8 +524,9 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), null, this.containerDir.getCanonicalPath() + "/");
-            fail("null parameter should have thrown a NullPointerException");
+            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), null,
+                    this.containerDir.getCanonicalPath() + "/");
+            fail("null network should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
         {
@@ -545,7 +537,7 @@ public class GTUDumperTest implements OTSModelInterface
         {
             new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network,
                     null);
-            fail("null parameter should have thrown a NullPointerException");
+            fail("null fileNamePrefix should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
         {
@@ -554,7 +546,8 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(-10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network, this.containerDir.getCanonicalPath() + "/");
+            new GTUDumper(new Time(-10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network,
+                    this.containerDir.getCanonicalPath() + "/");
             fail("null parameter should have thrown a NullPointerException");
         }
         catch (RuntimeException rte)
@@ -564,8 +557,9 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(-300, DurationUnit.SECOND), this.network, this.containerDir.getCanonicalPath() + "/");
-            fail("null parameter should have thrown a NullPointerException");
+            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(-300, DurationUnit.SECOND), this.network,
+                    this.containerDir.getCanonicalPath() + "/");
+            fail("firstDumpTime before current simulator time should have thrown a RuntimeException");
         }
         catch (RuntimeException rte)
         {

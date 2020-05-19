@@ -27,7 +27,6 @@ import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
@@ -99,7 +98,6 @@ public final class ODParser
     /**
      * Creates generators and returns OD matrices.
      * @param otsNetwork OTSRoadNetwork; network
-     * @param simulator OTSSimulatorInterface; simulator
      * @param demands List&lt;NETWORKDEMAND&gt;; demand
      * @param gtuTemplates Map&lt;String, GTUTEMPLATE&gt;; GTU templates
      * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
@@ -110,9 +108,9 @@ public final class ODParser
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static List<LaneBasedGTUGenerator> parseDemand(final OTSRoadNetwork otsNetwork,
-            final OTSSimulatorInterface simulator, final List<NETWORKDEMAND> demands,
-            final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
-            final Map<String, String> modelIdReferrals, final Map<String, StreamInformation> streamMap)
+            final List<NETWORKDEMAND> demands, final Map<String, GTUTEMPLATE> gtuTemplates,
+            final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
+            final Map<String, StreamInformation> streamMap)
             throws XmlParserException
     {
         List<LaneBasedGTUGenerator> generators = new ArrayList<>();
@@ -583,9 +581,8 @@ public final class ODParser
                 }
 
                 // Invoke ODApplier
-                Map<String, GeneratorObjects> output =
-                        Try.assign(() -> ODApplier.applyOD(otsNetwork, odMatrix, simulator, odOptions),
-                                XmlParserException.class, "Simulator time should be zero when parsing an OD.");
+                Map<String, GeneratorObjects> output = Try.assign(() -> ODApplier.applyOD(otsNetwork, odMatrix, odOptions),
+                        XmlParserException.class, "Simulator time should be zero when parsing an OD.");
 
                 // Collect generators in output
                 for (GeneratorObjects generatorObject : output.values())

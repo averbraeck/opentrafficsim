@@ -55,13 +55,13 @@ public class ContourDataSource<G extends GtuDataInterface>
     // *************************
 
     /** Space granularity values. */
-    protected static final double[] DEFAULT_SPACE_GRANULARITIES = {10, 20, 50, 100, 200, 500, 1000};
+    protected static final double[] DEFAULT_SPACE_GRANULARITIES = { 10, 20, 50, 100, 200, 500, 1000 };
 
     /** Index of the initial space granularity. */
     protected static final int DEFAULT_SPACE_GRANULARITY_INDEX = 3;
 
     /** Time granularity values. */
-    protected static final double[] DEFAULT_TIME_GRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
+    protected static final double[] DEFAULT_TIME_GRANULARITIES = { 1, 2, 5, 10, 20, 30, 60, 120, 300, 600 };
 
     /** Index of the initial time granularity. */
     protected static final int DEFAULT_TIME_GRANULARITY_INDEX = 3;
@@ -200,8 +200,8 @@ public class ContourDataSource<G extends GtuDataInterface>
     public ContourDataSource(final SamplerData<G> samplerData, final GraphPath<KpiLaneDirection> path)
     {
         this(samplerData, Duration.instantiateSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
-            DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
-            AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND);
+                DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
+                AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND);
     }
 
     /**
@@ -504,7 +504,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * last part that falls within the kernel.
      * @param t Time; time up to which to show data
      */
-    @SuppressWarnings({"synthetic-access", "methodlength"})
+    @SuppressWarnings({ "synthetic-access", "methodlength" })
     private void update(final Time t)
     {
         Throw.when(this.plots.isEmpty(), IllegalStateException.class, "ContourDataSource is used, but not by a contour plot!");
@@ -563,8 +563,8 @@ public class ContourDataSource<G extends GtuDataInterface>
             if (smooth0)
             {
                 // time of current bin - kernel size, get bin of that time, get time (middle) of that bin
-                tFromEgtf = this.timeAxis.getBinValue(redo0 ? 0 : this.timeAxis.getValueBin(this.timeAxis.getBinValue(
-                    fromTimeIndex) - Math.max(TAU.si, timeGranularity / 2) * KERNEL_FACTOR));
+                tFromEgtf = this.timeAxis.getBinValue(redo0 ? 0 : this.timeAxis.getValueBin(
+                        this.timeAxis.getBinValue(fromTimeIndex) - Math.max(TAU.si, timeGranularity / 2) * KERNEL_FACTOR));
                 nFromEgtf = this.timeAxis.getValueBin(tFromEgtf);
             }
             // starting execution, so reset redo trigger which any next command may set to true if needed
@@ -626,8 +626,8 @@ public class ContourDataSource<G extends GtuDataInterface>
                             setStatusLabel(" "); // reset status label so no "ASM at 12.6%" remains there
                             return;
                         }
-                        String status = event.getProgress() >= 1.0 ? " " : String.format("ASM at %.2f%%", event.getProgress()
-                            * 100);
+                        String status =
+                                event.getProgress() >= 1.0 ? " " : String.format("ASM at %.2f%%", event.getProgress() * 100);
                         setStatusLabel(status);
                     }
                 });
@@ -709,14 +709,14 @@ public class ContourDataSource<G extends GtuDataInterface>
                         KpiLaneDirection lane = trajectoryGroup.getLaneDirection();
                         Length startDistance = this.path.getStartDistance(this.path.get(k));
                         if (startDistance.si + this.path.get(k).getLength().si > spaceTicks[i]
-                            && startDistance.si < spaceTicks[i + 1])
+                                && startDistance.si < spaceTicks[i + 1])
                         {
                             included.add(trajectoryGroup);
                             double scale = this.path.get(k).getLength().si / lane.getLaneData().getLength().si;
                             // divide by scale, so we go from base length to section length
                             xStart.add(Length.max(xFrom.minus(startDistance).divide(scale), Length.ZERO));
-                            xEnd.add(Length.min(xTo.minus(startDistance).divide(scale), trajectoryGroup.getLaneDirection()
-                                .getLaneData().getLength()));
+                            xEnd.add(Length.min(xTo.minus(startDistance).divide(scale),
+                                    trajectoryGroup.getLaneDirection().getLaneData().getLength()));
                         }
                     }
 
@@ -739,8 +739,8 @@ public class ContourDataSource<G extends GtuDataInterface>
                                 catch (IllegalArgumentException exception)
                                 {
                                     CategoryLogger.always().debug(exception,
-                                        "Unable to generate space-time view from x = {} to {} and t = {} to {}.", xStart.get(k),
-                                        xEnd.get(k), tFrom, tTo);
+                                            "Unable to generate space-time view from x = {} to {} and t = {} to {}.",
+                                            xStart.get(k), xEnd.get(k), tFrom, tTo);
                                     continue;
                                 }
                                 totalDistance += spaceTimeView.getDistance().si;
@@ -765,8 +765,8 @@ public class ContourDataSource<G extends GtuDataInterface>
                 this.time[i][j] = (float) totalTime;
                 for (ContourDataType<?, ?> contourDataType : this.additionalData.keySet())
                 {
-                    this.additionalData.get(contourDataType)[i][j] = finalizeAdditional(additionalIntermediate,
-                        contourDataType);
+                    this.additionalData.get(contourDataType)[i][j] =
+                            finalizeAdditional(additionalIntermediate, contourDataType);
                 }
 
                 // add data to EGTF (yes it's a copy, but our local data will be overwritten with smoothed data later)
@@ -781,8 +781,9 @@ public class ContourDataSource<G extends GtuDataInterface>
                     this.egtf.addPointDataSI(this.travelTimeStream, xDat, tDat, totalTime);
                     for (ContourDataType<?, ?> contourDataType : this.additionalStreams.keySet())
                     {
-                        ContourDataSource.this.egtf.addPointDataSI(ContourDataSource.this.additionalStreams.get(
-                            contourDataType), xDat, tDat, this.additionalData.get(contourDataType)[i][j]);
+                        ContourDataSource.this.egtf.addPointDataSI(
+                                ContourDataSource.this.additionalStreams.get(contourDataType), xDat, tDat,
+                                this.additionalData.get(contourDataType)[i][j]);
                     }
                 }
 
@@ -811,17 +812,17 @@ public class ContourDataSource<G extends GtuDataInterface>
             {
                 quantities.add(contourDataType.getQuantity());
             }
-            Filter filter = this.egtf.filterFastSI(spaceTicks[0] + 0.5 * spaceGranularity, spaceGranularity, spaceTicks[0]
-                + (-1.5 + spaceTicks.length) * spaceGranularity, tFromEgtf, timeGranularity, t.si, quantities.toArray(
-                    new Quantity<?, ?>[quantities.size()]));
+            Filter filter = this.egtf.filterFastSI(spaceTicks[0] + 0.5 * spaceGranularity, spaceGranularity,
+                    spaceTicks[0] + (-1.5 + spaceTicks.length) * spaceGranularity, tFromEgtf, timeGranularity, t.si,
+                    quantities.toArray(new Quantity<?, ?>[quantities.size()]));
             if (filter != null) // null if interrupted
             {
                 overwriteSmoothed(this.distance, nFromEgtf, filter.getSI(this.travelDistanceQuantity));
                 overwriteSmoothed(this.time, nFromEgtf, filter.getSI(this.travelTimeQuantity));
                 for (ContourDataType<?, ?> contourDataType : this.additionalData.keySet())
                 {
-                    overwriteSmoothed(this.additionalData.get(contourDataType), nFromEgtf, filter.getSI(contourDataType
-                        .getQuantity()));
+                    overwriteSmoothed(this.additionalData.get(contourDataType), nFromEgtf,
+                            filter.getSI(contourDataType.getQuantity()));
                 }
                 this.plots.forEach((plot) -> plot.notifyPlotChange());
             }
@@ -840,12 +841,12 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @param <I> intermediate data type
      */
     @SuppressWarnings("unchecked")
-    private <I> void addAdditional(final Map<ContourDataType<?, ?>, Object> additionalIntermediate, final ContourDataType<?,
-            ?> contourDataType, final List<TrajectoryGroup<?>> included, final List<Length> xStart, final List<Length> xEnd,
-            final Time tFrom, final Time tTo)
+    private <I> void addAdditional(final Map<ContourDataType<?, ?>, Object> additionalIntermediate,
+            final ContourDataType<?, ?> contourDataType, final List<TrajectoryGroup<?>> included, final List<Length> xStart,
+            final List<Length> xEnd, final Time tFrom, final Time tTo)
     {
-        additionalIntermediate.put(contourDataType, ((ContourDataType<?, I>) contourDataType).processSeries(
-            (I) additionalIntermediate.get(contourDataType), included, xStart, xEnd, tFrom, tTo));
+        additionalIntermediate.put(contourDataType, ((ContourDataType<?, I>) contourDataType)
+                .processSeries((I) additionalIntermediate.get(contourDataType), included, xStart, xEnd, tFrom, tTo));
     }
 
     /**
@@ -856,8 +857,8 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @param <I> intermediate data type
      */
     @SuppressWarnings("unchecked")
-    private <I> float finalizeAdditional(final Map<ContourDataType<?, ?>, Object> additionalIntermediate, final ContourDataType<
-            ?, ?> contourDataType)
+    private <I> float finalizeAdditional(final Map<ContourDataType<?, ?>, Object> additionalIntermediate,
+            final ContourDataType<?, ?> contourDataType)
     {
         return ((ContourDataType<?, I>) contourDataType).finalize((I) additionalIntermediate.get(contourDataType)).floatValue();
     }
@@ -960,6 +961,8 @@ public class ContourDataSource<G extends GtuDataInterface>
      */
     private int getTimeBin(final int item)
     {
+        Throw.when(item < 0 || item >= this.spaceAxis.getBinCount() * this.timeAxis.getBinCount(),
+                IndexOutOfBoundsException.class, "Item out of range");
         return item / this.spaceAxis.getBinCount();
     }
 
@@ -1186,8 +1189,8 @@ public class ContourDataSource<G extends GtuDataInterface>
         public String toString()
         {
             return "Axis [minValue=" + this.minValue + ", maxValue=" + this.maxValue + ", granularity=" + this.granularity
-                + ", granularities=" + Arrays.toString(this.granularities) + ", interpolate=" + this.interpolate + ", ticks="
-                + Arrays.toString(this.ticks) + "]";
+                    + ", granularities=" + Arrays.toString(this.granularities) + ", interpolate=" + this.interpolate
+                    + ", ticks=" + Arrays.toString(this.ticks) + "]";
         }
 
     }
@@ -1247,15 +1250,15 @@ public class ContourDataSource<G extends GtuDataInterface>
     public String toString()
     {
         return "ContourDataSource [samplerData=" + this.samplerData + ", updateInterval=" + this.updateInterval + ", delay="
-            + this.delay + ", path=" + this.path + ", spaceAxis=" + this.spaceAxis + ", timeAxis=" + this.timeAxis + ", plots="
-            + this.plots + ", distance=" + Arrays.toString(this.distance) + ", time=" + Arrays.toString(this.time)
-            + ", additionalData=" + this.additionalData + ", smooth=" + this.smooth + ", cFree=" + this.cFree + ", vc="
-            + this.vc + ", egtf=" + this.egtf + ", speedStream=" + this.speedStream + ", travelTimeStream="
-            + this.travelTimeStream + ", travelDistanceStream=" + this.travelDistanceStream + ", travelTimeQuantity="
-            + this.travelTimeQuantity + ", travelDistanceQuantity=" + this.travelDistanceQuantity + ", additionalStreams="
-            + this.additionalStreams + ", graphUpdater=" + this.graphUpdater + ", redo=" + this.redo + ", toTime=" + this.toTime
-            + ", readyItems=" + this.readyItems + ", desiredSpaceGranularity=" + this.desiredSpaceGranularity
-            + ", desiredTimeGranularity=" + this.desiredTimeGranularity + "]";
+                + this.delay + ", path=" + this.path + ", spaceAxis=" + this.spaceAxis + ", timeAxis=" + this.timeAxis
+                + ", plots=" + this.plots + ", distance=" + Arrays.toString(this.distance) + ", time="
+                + Arrays.toString(this.time) + ", additionalData=" + this.additionalData + ", smooth=" + this.smooth
+                + ", cFree=" + this.cFree + ", vc=" + this.vc + ", egtf=" + this.egtf + ", speedStream=" + this.speedStream
+                + ", travelTimeStream=" + this.travelTimeStream + ", travelDistanceStream=" + this.travelDistanceStream
+                + ", travelTimeQuantity=" + this.travelTimeQuantity + ", travelDistanceQuantity=" + this.travelDistanceQuantity
+                + ", additionalStreams=" + this.additionalStreams + ", graphUpdater=" + this.graphUpdater + ", redo="
+                + this.redo + ", toTime=" + this.toTime + ", readyItems=" + this.readyItems + ", desiredSpaceGranularity="
+                + this.desiredSpaceGranularity + ", desiredTimeGranularity=" + this.desiredTimeGranularity + "]";
     }
 
 }

@@ -378,7 +378,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         ODOptions odOptions = new ODOptions()
                 .set(ODOptions.GTU_TYPE, new DefaultGTUCharacteristicsGeneratorOD(new DistractionFactorySupplier()))
                 .set(ODOptions.INSTANT_LC, true);
-        ODApplier.applyOD(network, od, sim, odOptions);
+        ODApplier.applyOD(network, od, odOptions);
 
         // History
         sim.getReplication()
@@ -454,7 +454,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     {
         try
         {
-            DefaultAnimationFactory.animateXmlNetwork(net, getSimulator(), getGtuColorer());
+            DefaultAnimationFactory.animateXmlNetwork(net, getGtuColorer());
         }
         catch (OTSDrawingException exception)
         {

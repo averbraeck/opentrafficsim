@@ -289,7 +289,7 @@ public class SteeringSimulation extends AbstractSimulationScript
         // od options
         ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.instantiateSI(300.0)).set(ODOptions.GTU_TYPE,
                 characteristicsGenerator);
-        ODApplier.applyOD(network, odMatrix, sim, odOptions);
+        ODApplier.applyOD(network, odMatrix, odOptions);
 
         return network;
     }
