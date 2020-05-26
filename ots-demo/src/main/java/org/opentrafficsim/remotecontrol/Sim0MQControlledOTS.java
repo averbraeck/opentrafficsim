@@ -142,7 +142,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
             ZMQ.Socket toCommandLoop = zContext.createSocket(SocketType.PUSH);
             toCommandLoop.setHWM(1000);
             toCommandLoop.connect("inproc://commands");
-            while(!Thread.interrupted())
+            /*-
+            while (!Thread.interrupted())
             {
                 byte[] data;
                 data = remoteControllerSocket.recv(ZMQ.DONTWAIT);
@@ -169,7 +170,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     //e.printStackTrace();
                 }
             }
-            /*-
+            */
+            ///*-
             ZMQ.Poller poller = zContext.createPoller(2);
             poller.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
             poller.register(resultQueue, ZMQ.Poller.POLLIN);
@@ -191,7 +193,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     System.err.println("Outgoing result handed over to remoteControllerSocket");
                 }
             }
-            */
+            //*/
         }
     }
 
@@ -529,39 +531,39 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         {
             e.printStackTrace();
         }
-//        Long threadId = Thread.currentThread().getId();
-//        ZMQ.Socket socket = this.socketMap.get(threadId);
-//        while (null == socket)
-//        {
-//            System.out.println("Creating new internal socket for thread " + threadId);
-//            try
-//            {
-//                socket = this.zContext.createSocket(SocketType.PUSH);
-//                socket.setHWM(100000);
-//                socket.connect("inproc://results");
-//                this.socketMap.put(threadId, socket);
-//                System.out.println("Socket created");
-//            }
-//            catch (Exception cbie)
-//            {
-//                System.err.println("Caught funny exception - probably related to DSOL animator start/stop code ... retrying");
-//                try
-//                {
-//                    Thread.sleep(100);
-//                }
-//                catch (InterruptedException e)
-//                {
-//                    System.err.println("Sleep interrupted!");
-//                }
-//            }
-//        }
-        //System.out.println("pre send");
+        Long threadId = Thread.currentThread().getId();
+        ZMQ.Socket socket = this.socketMap.get(threadId);
+        while (null == socket)
+        {
+            System.out.println("Creating new internal socket for thread " + threadId);
+            try
+            {
+                socket = this.zContext.createSocket(SocketType.PUSH);
+                socket.setHWM(100000);
+                socket.connect("inproc://results");
+                this.socketMap.put(threadId, socket);
+                // System.out.println("Socket created");
+            }
+            catch (Exception cbie)
+            {
+                System.err.println("Caught funny exception - probably related to DSOL animator start/stop code ... retrying");
+                try
+                {
+                    Thread.sleep(100);
+                }
+                catch (InterruptedException e)
+                {
+                    System.err.println("Sleep interrupted!");
+                }
+            }
+        }
+        System.out.println("pre send");
         
-        ZMQ.Socket socket = this.zContext.createSocket(SocketType.PUSH);
-        socket.setHWM(100000);
-        socket.connect("inproc://results");
+//        ZMQ.Socket socket = this.zContext.createSocket(SocketType.PUSH);
+//        socket.setHWM(100000);
+//        socket.connect("inproc://results");
         socket.send(fixedData, 0);
-        socket.close();
+        //        socket.close();
         //System.out.println("post send");
     }
 
