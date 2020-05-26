@@ -408,6 +408,15 @@ class ReturnWrapper
 
     /** {@inheritDoc} */
     @Override
+    public String toString()
+    {
+        return "ReturnWrapper [federationId=" + federationId + ", returnAddress=" + returnAddress + ", ourAddress=" + ourAddress
+                + ", messageTypeId=" + messageTypeId + ", messageId=" + messageId + ", replyCount=" + replyCount
+                + ", packetsSent=" + packetsSent + "]";
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int hashCode()
     {
         final int prime = 31;

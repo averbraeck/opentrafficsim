@@ -199,6 +199,15 @@ public class SubscriptionHandler
         if (null != epi)
         {
             Subscription subscription = this.subscriptions.get(returnWrapper);
+            if (null == subscription)
+            {
+                System.err.println("Could not find subscription for " + returnWrapper);
+                System.err.println("Existing subscriptions:");
+                for (ReturnWrapper rw : this.subscriptions.keySet())
+                {
+                    System.err.println("\t" + rw);
+                }
+            }
             Throw.whenNull(subscription, "No subscription found that can be unsubscribed");
             epi.removeListener(subscription, eventType); // TODO complain if there was no subscription?
         }
