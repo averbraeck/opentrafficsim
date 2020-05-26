@@ -368,6 +368,10 @@ public final class PublisherExperiment
         message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", 0,
                 new Object[] { new Time(10, TimeUnit.BASE_SECOND) });
         publisherSocket.send(message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_CURRENT", 0);
+        publisherSocket.send(message);
+        Thread.sleep(2000);
+        readMessages(publisherSocket);
         message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
         publisherSocket.send(message);
         Thread.sleep(2000);
