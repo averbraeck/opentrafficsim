@@ -101,11 +101,12 @@ public class PublisherTest implements OTSModelInterface
             // System.out.println("transceiver: " + o);
         }
         // See if we can obtain the GTUIdTransceiver
-        Object[] gtuIdTransceiver = publisher.get(new Object[] { "GTU id transceiver" });
-        assertNotNull("result of get should not be null", gtuIdTransceiver);
-        assertEquals("result should contain one element", 1, gtuIdTransceiver.length);
-        assertTrue("result should contain a TransceiverInterface", gtuIdTransceiver[0] instanceof GTUIdTransceiver);
+        Object[] subScriptionHandler = publisher.get(new Object[] { "GTUs in network" });
+        assertNotNull("result of get should not be null", subScriptionHandler);
+        assertEquals("result should contain one element", 1, subScriptionHandler.length);
+        assertTrue("result should contain a SubscriptionHandler", subScriptionHandler[0] instanceof SubscriptionHandler);
         // See if we can obtain the GTUTransceiver
+        // FIXME not going to happen anymore...
         Object[] gtuTransceiver = publisher.get(new Object[] { "GTU transceiver" });
         assertNotNull("result of get should not be null", gtuTransceiver);
         assertEquals("result should contain one element", 1, gtuTransceiver.length);
@@ -364,7 +365,9 @@ public class PublisherTest implements OTSModelInterface
         }
         System.out.println("time is now " + simulation.getSimulatorTime());
         assertEquals("Simulation has stopped at stop time", stopTime, simulation.getSimulatorTime());
-        LinkIdTransceiver lit = (LinkIdTransceiver) publisher.get(new Object[] { "Link id transceiver" })[0];
+        SubscriptionHandler sh = (SubscriptionHandler) publisher.get(new Object[] { "Links in network" })[0];
+        LinkIdTransceiver lit = (LinkIdTransceiver) sh.getListTransceiver();
+        sh = (SubscriptionHandler) publisher.get(new Object[] { "Link transceiver" })[0];
         LinkTransceiver lt = (LinkTransceiver) publisher.get(new Object[] { "Link transceiver" })[0];
         LinkGTUIdTransceiver lgit = (LinkGTUIdTransceiver) publisher.get(new Object[] { "Link GTU id transceiver" })[0];
         LaneGTUIdTransceiver lanegid = (LaneGTUIdTransceiver) publisher.get(new Object[] { "Lane GTU id transceiver" })[0];

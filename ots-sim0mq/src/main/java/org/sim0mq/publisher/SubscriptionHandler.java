@@ -119,6 +119,15 @@ public class SubscriptionHandler
     }
 
     /**
+     * Retrieve the list transceiver (only for testing).
+     * @return TransceiverInterface; the list transceiver
+     */
+    public TransceiverInterface getListTransceiver()
+    {
+        return this.listTransceiver;
+    }
+
+    /**
      * Return the set of supported commands.
      * @return EnumSet<Command>; the set of supported commands.
      */
@@ -229,6 +238,52 @@ public class SubscriptionHandler
         GET_ADDRESS_META_DATA,
         /** Get the result meta data. */
         GET_RESULT_META_DATA;
+    }
+
+    /**
+     * Convert a String representing a Command into that Command.
+     * @param commandString String; the string
+     * @return Command; the corresponding Command, or null if the <code>commandString</code> is not a valid Command
+     */
+    public static Command lookupCommand(final String commandString)
+    {
+        if ("GET_ADDRESS_META_DATA".equals(commandString))
+        {
+            return Command.GET_ADDRESS_META_DATA;
+        }
+        else if ("GET_CURRENT".equals(commandString))
+        {
+            return Command.GET_CURRENT;
+        }
+        else if ("GET_RESULT_META_DATA".equals(commandString))
+        {
+            return Command.GET_RESULT_META_DATA;
+        }
+        else if ("GET_RESULT_META_DATA".equals(commandString))
+        {
+            return Command.GET_RESULT_META_DATA;
+        }
+        else if ("SUBSCRIBE_TO_ADD".equals(commandString))
+        {
+            return Command.SUBSCRIBE_TO_ADD;
+        }
+        else if ("SUBSCRIBE_TO_CHANGE".equals(commandString))
+        {
+            return Command.SUBSCRIBE_TO_CHANGE;
+        }
+        else if ("SUBSCRIBE_TO_REMOVE".equals(commandString))
+        {
+            return Command.SUBSCRIBE_TO_REMOVE;
+        }
+        else if ("UNSUBSCRIBE_FROM_ADD".equals(commandString))
+        {
+            return Command.UNSUBSCRIBE_FROM_ADD;
+        }
+        else if ("UNSUBSCRIBE_FROM_REMOVE".equals(commandString))
+        {
+            return Command.UNSUBSCRIBE_FROM_REMOVE;
+        }
+        return null;
     }
 
     /**
