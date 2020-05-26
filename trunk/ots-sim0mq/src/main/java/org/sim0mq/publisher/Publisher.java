@@ -1,17 +1,17 @@
 package org.sim0mq.publisher;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.djunits.Throw;
 import org.djutils.event.EventProducerInterface;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.djutils.serialization.EndianUtil;
 import org.djutils.serialization.SerializationException;
 import org.djutils.serialization.SerializationRuntimeException;
-import org.djutils.serialization.util.SerialDataDumper;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
@@ -19,6 +19,9 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
+import org.zeromq.SocketType;
+import org.zeromq.ZContext;
+import org.zeromq.ZMQ;
 
 /**
  * Publish all available transceivers for an OTS network to a Sim0MQ master and handle its requests. <br>
@@ -241,7 +244,7 @@ public class Publisher extends AbstractTransceiver
     /**
      * Execute one command.
      * @param subscriptionHandlerName String; name of the SubscriptionHandler for which the command is destined
-     * @param command Command; the operation to perform
+     * @param command SubscriptionHandler.Command; the operation to perform
      * @param address Object[]; the address on which to perform the operation
      * @param returnWrapper ReturnWrapper; to transmit the result
      * @throws RemoteException on RMI network failure
@@ -252,7 +255,6 @@ public class Publisher extends AbstractTransceiver
             final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
-
         SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(subscriptionHandlerName);
         if (null == subscriptionHandler)
         {
@@ -262,6 +264,24 @@ public class Publisher extends AbstractTransceiver
         subscriptionHandler.executeCommand(command, address, returnWrapper);
     }
 
+    /**
+     * Execute one command.
+     * @param subscriptionHandlerName String; name of the SubscriptionHandler for which the command is destined
+     * @param commandString String; the operation to perform
+     * @param address Object[]; the address on which to perform the operation
+     * @param returnWrapper ReturnWrapper; to transmit the result
+     * @throws RemoteException on RMI network failure
+     * @throws SerializationException on illegal type in serialization
+     * @throws Sim0MQException on communication error
+     */
+    public void executeCommand(final String subscriptionHandlerName, final String commandString, final Object[] address,
+            final ReturnWrapper returnWrapper) throws RemoteException, Sim0MQException, SerializationException
+    {
+        executeCommand(subscriptionHandlerName,
+                Throw.whenNull(SubscriptionHandler.lookupCommand(commandString), "Invalid command (%s", commandString), address,
+                returnWrapper);
+    }
+
 }
 
 /**
@@ -269,6 +289,9 @@ public class Publisher extends AbstractTransceiver
  */
 class ReturnWrapper
 {
+    /** The ZContext needed to create the return socket(s). */
+    private final ZContext zContext;
+
     /** Federation id. */
     private final Object federationId;
 
@@ -289,21 +312,25 @@ class ReturnWrapper
 
     /**
      * Construct a new ReturnWrapper.
+     * @param zContext ZContext; the ZContext needed to create sockets for returned messages
      * @param receivedMessage byte[]; the received message from which the reply envelope will be derived
      * @throws SerializationException when the received message has an incorrect envelope
      * @throws Sim0MQException when the received message cannot be decoded
      */
-    ReturnWrapper(final byte[] receivedMessage) throws Sim0MQException, SerializationException
+    ReturnWrapper(final ZContext zContext, final byte[] receivedMessage) throws Sim0MQException, SerializationException
     {
-        this(Sim0MQMessage.decode(receivedMessage).createObjectArray());
+        this(zContext, Sim0MQMessage.decode(receivedMessage).createObjectArray());
     }
 
     /**
      * Construct a new ReturnWrapper.
+     * @param zContext ZContext; the ZContext needed to create sockets for returned messages
      * @param decodedReceivedMessage Object[]; decoded Sim0MQ message
      */
-    ReturnWrapper(final Object[] decodedReceivedMessage)
+    ReturnWrapper(final ZContext zContext, final Object[] decodedReceivedMessage)
     {
+        Throw.whenNull(zContext, "zContext may not be null");
+        this.zContext = zContext;
         Throw.when(decodedReceivedMessage.length < 8, SerializationRuntimeException.class,
                 "Received message is too short (minumum number of elements is 8; got %d", decodedReceivedMessage.length);
         this.federationId = decodedReceivedMessage[2];
@@ -313,10 +340,53 @@ class ReturnWrapper
         this.messageId = decodedReceivedMessage[6];
     }
 
+    /** In memory sockets to talk to the multiplexer. */
+    private Map<Long, ZMQ.Socket> socketMap = new LinkedHashMap<>();
+
+    /** Count transmitted messages. */
+    private AtomicInteger packetsSent = new AtomicInteger(0);
+
+    /**
+     * Safe - synchronized - portal to send a message to the remote controller.
+     * @param data byte[]; the data to send
+     */
+    public synchronized void sendToMaster(final byte[] data)
+    {
+        byte[] fixedData = data;
+        int number = -1;
+        try
+        {
+            // Patch the sender field to include the packet counter value.
+            Object[] messageFields = Sim0MQMessage.decode(data).createObjectArray();
+            Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
+            number = this.packetsSent.addAndGet(1);
+            fixedData = Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number), messageFields[4],
+                    messageFields[5], messageFields[6], newMessageFields);
+            System.out.println("Prepared message " + number + ", type is " + messageFields[5]);
+        }
+        catch (Sim0MQException | SerializationException e)
+        {
+            e.printStackTrace();
+        }
+        Long threadId = Thread.currentThread().getId();
+        ZMQ.Socket socket = this.socketMap.get(threadId);
+        while (null == socket)
+        {
+            System.out.println("Creating new internal socket for thread " + threadId);
+            socket = this.zContext.createSocket(SocketType.PUSH);
+            socket.setHWM(100000);
+            socket.connect("inproc://simulationEvents");
+            this.socketMap.put(threadId, socket);
+            // System.out.println("Socket created");
+        }
+        // System.out.println("pre send");
+        socket.send(fixedData, 0);
+        // System.out.println("post send");
+    }
+
     /**
      * Encode a reply and transmit it. If the message id field is an Integer then it is incremented <b>after</b> encoding the
-     * reply. <br>
-     * TODO: transmit the result (not just dump it to the console); but that requires a thread safe poller and socket.
+     * reply.
      * @param payload Object[]; payload of the reply message
      * @throws Sim0MQException not sure if that can happen
      * @throws SerializationException when an object in payload cannot be serialized
@@ -332,7 +402,8 @@ class ReturnWrapper
         this.replyCount++; // Always increment; even when it is not in the reply
         byte[] result = Sim0MQMessage.encodeUTF8(true, this.federationId, this.ourAddress, this.returnAddress,
                 this.messageTypeId, messageIdValue, payload);
-        System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
+        sendToMaster(result);
+        // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
     }
 
     /** {@inheritDoc} */
