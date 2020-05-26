@@ -385,14 +385,14 @@ class ReturnWrapper
         ZMQ.Socket socket = this.socketMap.get(threadId);
         while (null == socket)
         {
-            System.out.println("socket map is " + this.socketMap);
+            // System.out.println("socket map is " + this.socketMap);
             System.out.println("Creating new internal socket for thread " + threadId + " (map contains " + this.socketMap.size()
                     + " entries)");
             socket = this.zContext.createSocket(SocketType.PUSH);
             socket.setHWM(100000);
             socket.connect("inproc://simulationEvents");
             this.socketMap.put(threadId, socket);
-            System.out.println("Socket created; map now contains " + this.socketMap.size() + " entries");
+            // System.out.println("Socket created; map now contains " + this.socketMap.size() + " entries");
         }
         // System.out.println("pre send");
         socket.send(fixedData, 0);
