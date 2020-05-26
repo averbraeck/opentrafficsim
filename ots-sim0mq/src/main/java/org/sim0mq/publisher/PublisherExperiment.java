@@ -12,10 +12,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.NamingException;
 import javax.swing.JFrame;
@@ -98,6 +100,8 @@ public final class PublisherExperiment
             throws IOException, SimRuntimeException, NamingException, OTSDrawingException, DSOLException
     {
         this.zContext = zContext;
+        AtomicInteger packetsSent = new AtomicInteger(0);
+        Map<Long, ZMQ.Socket> socketMap = new HashMap<>();
         OTSAnimator animator = new OTSAnimator("OTS Animator");
         this.network = new OTSRoadNetwork("OTS model for Publisher test", true, animator);
         String xml = new String(Files
@@ -147,7 +151,7 @@ public final class PublisherExperiment
                 byte[] data = controlSocket.recv(ZMQ.DONTWAIT);
                 Throw.whenNull(data, "cannot happen");
                 System.out.println("Publisher thread received a command of " + data.length + " bytes");
-                if (!handleCommand(data))
+                if (!handleCommand(data, socketMap, packetsSent))
                 {
                     return;
                 }
@@ -194,9 +198,11 @@ public final class PublisherExperiment
     /**
      * Execute one remote control command.
      * @param data byte[]; the SIM0MQ encoded command
+     * @param socketMap Map&lt;Long, ZMQ.Socket&gt;; cache of created sockets for returned messages
+     * @param packetsSent AtomicInteger; counter for returned messages
      * @return boolean; true if another command can be processed after this one; false when no further commands can be processed
      */
-    private boolean handleCommand(final byte[] data)
+    private boolean handleCommand(final byte[] data, final Map<Long, ZMQ.Socket> socketMap, final AtomicInteger packetsSent)
     {
         Object[] message;
         try
@@ -218,7 +224,8 @@ public final class PublisherExperiment
                         payload[index] = message[index + 8];
                     }
                     ReturnWrapper returnWrapper = new ReturnWrapper(zContext,
-                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], 0, 0 });
+                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], 0, 0 }, socketMap,
+                            packetsSent);
                     publisher.executeCommand(parts[0], parts[1], payload, returnWrapper);
                 }
                 else
@@ -396,6 +403,12 @@ public final class PublisherExperiment
         Thread.sleep(2000);
         readMessages(publisherSocket);
         message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
+        publisherSocket.send(message);
+        Thread.sleep(2000);
+        readMessages(publisherSocket);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_RESULT_META_DATA", 0);
+        publisherSocket.send(message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_ADDRESS_META_DATA", 0);
         publisherSocket.send(message);
         Thread.sleep(2000);
         readMessages(publisherSocket);

@@ -22,6 +22,7 @@ import org.sim0mq.message.Sim0MQMessage;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
+import org.zeromq.ZMQ.Socket;
 
 /**
  * Publish all available transceivers for an OTS network to a Sim0MQ master and handle its requests. <br>
@@ -316,23 +317,33 @@ class ReturnWrapper
      * Construct a new ReturnWrapper.
      * @param zContext ZContext; the ZContext needed to create sockets for returned messages
      * @param receivedMessage byte[]; the received message from which the reply envelope will be derived
+     * @param socketMap Map&lt;Long, ZMQ.Socket&gt;; cache of created sockets for returned messages
+     * @param packetsSent AtomicInteger; counter for returned messages
      * @throws SerializationException when the received message has an incorrect envelope
      * @throws Sim0MQException when the received message cannot be decoded
      */
-    ReturnWrapper(final ZContext zContext, final byte[] receivedMessage) throws Sim0MQException, SerializationException
+    ReturnWrapper(final ZContext zContext, final byte[] receivedMessage, final Map<Long, Socket> socketMap,
+            final AtomicInteger packetsSent) throws Sim0MQException, SerializationException
     {
-        this(zContext, Sim0MQMessage.decode(receivedMessage).createObjectArray());
+        this(zContext, Sim0MQMessage.decode(receivedMessage).createObjectArray(), socketMap, packetsSent);
     }
 
     /**
      * Construct a new ReturnWrapper.
      * @param zContext ZContext; the ZContext needed to create sockets for returned messages
      * @param decodedReceivedMessage Object[]; decoded Sim0MQ message
+     * @param socketMap Map&lt;Long, ZMQ.Socket&gt;; cache of created sockets for returned messages
+     * @param packetsSent AtomicInteger; counter for returned messages
      */
-    ReturnWrapper(final ZContext zContext, final Object[] decodedReceivedMessage)
+    ReturnWrapper(final ZContext zContext, final Object[] decodedReceivedMessage, final Map<Long, Socket> socketMap,
+            final AtomicInteger packetsSent)
     {
         Throw.whenNull(zContext, "zContext may not be null");
+        Throw.whenNull(socketMap, "socket map may not be null");
+        Throw.whenNull(packetsSent, "packets sent may not be null");
         this.zContext = zContext;
+        this.socketMap = socketMap;
+        this.packetsSent = packetsSent;
         Throw.when(decodedReceivedMessage.length < 8, SerializationRuntimeException.class,
                 "Received message is too short (minumum number of elements is 8; got %d", decodedReceivedMessage.length);
         this.federationId = decodedReceivedMessage[2];
@@ -343,10 +354,10 @@ class ReturnWrapper
     }
 
     /** In memory sockets to talk to the multiplexer. */
-    private Map<Long, ZMQ.Socket> socketMap = new LinkedHashMap<>();
+    private final Map<Long, ZMQ.Socket> socketMap;
 
     /** Count transmitted messages. */
-    private AtomicInteger packetsSent = new AtomicInteger(0);
+    private final AtomicInteger packetsSent;
 
     /**
      * Safe - synchronized - portal to send a message to the remote controller.
@@ -374,12 +385,14 @@ class ReturnWrapper
         ZMQ.Socket socket = this.socketMap.get(threadId);
         while (null == socket)
         {
-            System.out.println("Creating new internal socket for thread " + threadId);
+            System.out.println("socket map is " + this.socketMap);
+            System.out.println("Creating new internal socket for thread " + threadId + " (map contains " + this.socketMap.size()
+                    + " entries)");
             socket = this.zContext.createSocket(SocketType.PUSH);
             socket.setHWM(100000);
             socket.connect("inproc://simulationEvents");
             this.socketMap.put(threadId, socket);
-            // System.out.println("Socket created");
+            System.out.println("Socket created; map now contains " + this.socketMap.size() + " entries");
         }
         // System.out.println("pre send");
         socket.send(fixedData, 0);
