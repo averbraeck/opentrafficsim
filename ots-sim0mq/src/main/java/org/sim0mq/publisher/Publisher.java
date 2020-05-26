@@ -87,8 +87,7 @@ public class Publisher extends AbstractTransceiver
     public Publisher(final OTSNetwork network)
     {
         super("Publisher for " + Throw.whenNull(network, "Network may not be null").getId(),
-                new MetaData("Publisher for " + network.getId(), "Publisher",
-                        new ObjectDescriptor[] { new ObjectDescriptor("Transceiver name", "Transceiver name", String.class) }),
+                new MetaData("Publisher for " + network.getId(), "Publisher", new ObjectDescriptor[0]),
                 new MetaData("Subscription handlers", "Subscription handlers", new ObjectDescriptor[] {
                         new ObjectDescriptor("Subscription handler", "Subscription handler", SubscriptionHandler.class) }));
         this.network = network;
@@ -180,6 +179,8 @@ public class Publisher extends AbstractTransceiver
                 new CrossSectionElementTransceiver(network), lookupLink, CrossSectionLink.LANE_ADD_EVENT,
                 CrossSectionLink.LANE_REMOVE_EVENT, null, linkGTUIdSubscriptionHandler));
         // addTransceiver(new LaneGTUIdTransceiver(network));
+
+        addSubscriptionHandler(new SubscriptionHandler("", this, null, null, null, null, null));
     }
 
     /** Lookup a CrossSectionLink in the network. */
@@ -225,12 +226,13 @@ public class Publisher extends AbstractTransceiver
     public Object[] get(final Object[] address)
     {
         getAddressFields().verifyComposition(address);
-        SubscriptionHandler result = this.subscriptionHandlerMap.get(address[0]);
-        if (null != result)
+        Object[] result = new Object[this.subscriptionHandlerMap.size()];
+        int index = 0;
+        for (String key : this.subscriptionHandlerMap.keySet())
         {
-            return new Object[] { result };
+            result[index++] = key;
         }
-        return null;
+        return result;
     }
 
     /** {@inheritDoc} */
