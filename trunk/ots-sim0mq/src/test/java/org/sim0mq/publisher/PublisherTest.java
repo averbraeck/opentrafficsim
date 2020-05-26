@@ -19,15 +19,10 @@ import java.util.Scanner;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
@@ -35,27 +30,18 @@ import org.djutils.io.URLResource;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -105,12 +91,6 @@ public class PublisherTest implements OTSModelInterface
         assertNotNull("result of get should not be null", subScriptionHandler);
         assertEquals("result should contain one element", 1, subScriptionHandler.length);
         assertTrue("result should contain a SubscriptionHandler", subScriptionHandler[0] instanceof SubscriptionHandler);
-        // See if we can obtain the GTUTransceiver
-        // FIXME not going to happen anymore...
-        Object[] gtuTransceiver = publisher.get(new Object[] { "GTU transceiver" });
-        assertNotNull("result of get should not be null", gtuTransceiver);
-        assertEquals("result should contain one element", 1, gtuTransceiver.length);
-        assertTrue("result should contain a TransceiverInterface", gtuTransceiver[0] instanceof GTUTransceiver);
         assertNull("request for non existent transceiver should return null",
                 publisher.get(new Object[] { "No such transceiver" }));
         try
@@ -133,96 +113,47 @@ public class PublisherTest implements OTSModelInterface
             // Ignore expected exception
         }
 
-        Object[] result = publisher.getIdSource(0).get(null);
-        for (Object o : result)
-        {
-            System.out.println(o + ": " + o.getClass().getName());
-            Object[] t = publisher.get(new Object[] { o });
-            for (Object o2 : t)
-            {
-                TransceiverInterface ti = (TransceiverInterface) o2;
-                System.out.println("\t" + ti.getId());
-            }
-        }
-
-        LinkTransceiver lt = (LinkTransceiver) publisher.get(new Object[] { "Link transceiver" })[0];
-        TransceiverInterface lit = lt.getIdSource(0);
-        assertNotNull("got the link id transceiver", lit);
-        // Network has 0 links
-        result = lit.get(new Object[0]);
-        assertEquals("there are 0 links", 0, result.length);
-
-        simulator.initialize(
-                OTSReplication.create("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, DurationUnit.SECOND), this),
-                ReplicationMode.TERMINATING);
-        LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
-        OTSPoint3D nodeAPoint = new OTSPoint3D(10, 100, 1000);
-        OTSRoadNode nodeA = new OTSRoadNode(network, "NodeA", nodeAPoint, new Direction(0.1, DirectionUnit.EAST_RADIAN));
-        OTSPoint3D nodeBPoint = new OTSPoint3D(20, 200, 2000);
-        OTSRoadNode nodeB = new OTSRoadNode(network, "NodeB", nodeBPoint, new Direction(0.2, DirectionUnit.EAST_RADIAN));
-        CrossSectionLink link = new CrossSectionLink(network, "Id of test link", nodeA, nodeB, linkType,
-                new OTSLine3D(nodeAPoint, nodeBPoint), null);
-        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.RURAL_ROAD_LANE);
-
-        new Lane(link, "LaneId", new Length(2.0, LengthUnit.METER), new Length(3.0, LengthUnit.METER), laneType,
-                new Speed(50, SpeedUnit.KM_PER_HOUR));
-
-        result = lit.get(new Object[0]);
-        assertEquals("there is 1 link", 1, result.length);
-        assertEquals("returned link is our link", link.getId(), result[0]);
-        result = lt.get(new Object[] { link.getId() });
-        assertEquals("link data refers to our link", link.getId(), result[0]);
-        assertEquals("link type id", linkType.getId(), result[1]);
-        assertEquals("start node id", nodeA.getId(), result[2]);
-        assertEquals("end node id", nodeB.getId(), result[3]);
-        assertEquals("design line has 2 points", 2, result[4]);
-        assertEquals("cross element count is 0", 0, result[5]);
-
     }
 
     @Override
     public void constructModel() throws SimRuntimeException
     {
-        // TODO Auto-generated method stub
-        
+        // Ignore
     }
 
     @Override
-    public OTSSimulatorInterface getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return null;
     }
 
     @Override
-    public InputParameterMap getInputParameterMap()
+    public final InputParameterMap getInputParameterMap()
     {
         return null;
     }
 
     @Override
-    public List<OutputStatistic<?>> getOutputStatistics()
+    public final List<OutputStatistic<?>> getOutputStatistics()
     {
         return null;
     }
 
     @Override
-    public OTSNetwork getNetwork()
+    public final OTSNetwork getNetwork()
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getShortName()
+    public final String getShortName()
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getDescription()
+    public final String getDescription()
     {
-        // TODO Auto-generated method stub
         return null;
     }
 

@@ -22,6 +22,7 @@ import javax.swing.JFrame;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.djunits.Throw;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -72,13 +73,17 @@ import nl.tudelft.simulation.language.DSOLException;
  */
 public final class PublisherExperiment
 {
-    /**
-     * Do not instantiate.
-     */
-    private PublisherExperiment()
-    {
-        // Do not instantiate
-    }
+    /** The publisher. */
+    private final Publisher publisher;
+
+    /** The ZContect. */
+    private final ZContext zContext;
+
+    /** The OTS road network. */
+    private final OTSRoadNetwork network;
+
+    /** The OTS animation panel. */
+    private final OTSAnimationPanel animationPanel;
 
     /**
      * Create the publisher part.
@@ -92,8 +97,9 @@ public final class PublisherExperiment
     private PublisherExperiment(final ZContext zContext)
             throws IOException, SimRuntimeException, NamingException, OTSDrawingException, DSOLException
     {
+        this.zContext = zContext;
         OTSAnimator animator = new OTSAnimator("OTS Animator");
-        OTSRoadNetwork network = new OTSRoadNetwork("OTS model for Publisher test", true, animator);
+        this.network = new OTSRoadNetwork("OTS model for Publisher test", true, animator);
         String xml = new String(Files
                 .readAllBytes(Paths.get("C:/Users/pknoppers/Java/ots-demo/src/main/resources/TrafCODDemo2/TrafCODDemo2.xml")));
         Sim0MQOTSModel model = new Sim0MQOTSModel("Remotely controlled OTS model", network, xml);
@@ -103,8 +109,8 @@ public final class PublisherExperiment
         Duration warmupDuration = Duration.ZERO;
         Duration runDuration = new Duration(3600, DurationUnit.SECOND);
         animator.initialize(Time.ZERO, warmupDuration, runDuration, model, map);
-        OTSAnimationPanel animationPanel = new OTSAnimationPanel(model.getNetwork().getExtent(), new Dimension(1200, 1000),
-                animator, model, OTSSwingApplication.DEFAULT_COLORER, model.getNetwork());
+        this.animationPanel = new OTSAnimationPanel(model.getNetwork().getExtent(), new Dimension(1200, 1000), animator, model,
+                OTSSwingApplication.DEFAULT_COLORER, model.getNetwork());
         DefaultAnimationFactory.animateXmlNetwork(model.getNetwork(), new DefaultSwitchableGTUColorer());
         new OTSSimulationApplication<OTSModelInterface>(model, animationPanel);
         JFrame frame = (JFrame) animationPanel.getParent().getParent().getParent();
@@ -113,15 +119,42 @@ public final class PublisherExperiment
         frame.setBounds(0, 25, 1100, 1000);
         animator.setSpeedFactor(Double.MAX_VALUE, true);
         animator.setSpeedFactor(1000.0, true);
-        Publisher publisher = new Publisher(network);
+        this.publisher = new Publisher(network);
         System.out.println("MasterCommunication thread id is " + Thread.currentThread().getId());
         ZMQ.Socket controlSocket = zContext.createSocket(SocketType.PAIR);
         controlSocket.setHWM(100000);
         controlSocket.bind("inproc://publisher");
         ZMQ.Socket resultQueue = zContext.createSocket(SocketType.PULL);
         resultQueue.bind("inproc://simulationEvents");
-        // Poll the two input sockets
-        // TODO rewrite using ZMQ poller
+        // Poll the two input sockets using ZMQ poller
+        ZMQ.Poller poller = zContext.createPoller(2);
+        poller.register(resultQueue, ZMQ.Poller.POLLIN);
+        poller.register(controlSocket, ZMQ.Poller.POLLIN);
+        while (!Thread.currentThread().isInterrupted())
+        {
+            poller.poll();
+            if (poller.pollin(0))
+            {
+                byte[] data = resultQueue.recv(ZMQ.DONTWAIT);
+                Throw.whenNull(data, "cannot happen");
+                // System.out.println("Got outgoing result");
+                controlSocket.send(data, 0);
+                // System.out.println("Outgoing result handed over to controlSocket");
+                continue;
+            }
+            else if (poller.pollin(1))
+            {
+                byte[] data = controlSocket.recv(ZMQ.DONTWAIT);
+                Throw.whenNull(data, "cannot happen");
+                System.out.println("Publisher thread received a command of " + data.length + " bytes");
+                if (!handleCommand(data))
+                {
+                    return;
+                }
+            }
+        }
+        /*-
+        // Use busy waiting (with 1 ms sleep)
         while (!Thread.interrupted())
         {
             byte[] data;
@@ -138,109 +171,9 @@ public final class PublisherExperiment
             if (null != data)
             {
                 System.out.println("Publisher thread received a command of " + data.length + " bytes");
-                Object[] message;
-                try
+                if (!handleCommand(data))
                 {
-                    message = Sim0MQMessage.decode(data).createObjectArray();
-                    System.out.println("Publisher thread decoded Sim0MQ message:");
-
-                    if (message.length >= 8 && message[5] instanceof String)
-                    {
-                        String command = (String) message[5];
-                        System.out.println("Command is " + command);
-
-                        String[] parts = command.split("\\|");
-                        if (parts.length == 2)
-                        {
-                            Object[] payload = new Object[message.length - 8];
-                            for (int index = 0; index < payload.length; index++)
-                            {
-                                payload[index] = message[index + 8];
-                            }
-                            ReturnWrapper returnWrapper = new ReturnWrapper(zContext,
-                                    new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], 0, 0 });
-                            publisher.executeCommand(parts[0], parts[1], payload, returnWrapper);
-                        }
-                        else
-                        {
-                            switch (command)
-                            {
-                                case "DIE":
-                                    for (Container container = animationPanel; container != null; container =
-                                            container.getParent())
-                                    {
-                                        // System.out.println("container is " + container);
-                                        if (container instanceof JFrame)
-                                        {
-                                            JFrame jFrame = (JFrame) container;
-                                            jFrame.dispose();
-                                        }
-                                    }
-                                    return; // There may not be a return ...
-
-                                case "SIMULATEUNTIL":
-                                    if (message.length == 9 && message[8] instanceof Time)
-                                    {
-                                        System.out.println("Simulating up to " + message[8]);
-                                        animator.runUpTo((Time) message[8]);
-                                        int count = 0;
-                                        while (animator.isStartingOrRunning())
-                                        {
-                                            System.out.print(".");
-                                            count++;
-                                            if (count > 1000) // 10 seconds
-                                            {
-                                                System.out.println(
-                                                        "SIMULATOR DOES NOT STOP. TIME = " + animator.getSimulatorTime());
-                                                Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt =
-                                                        animator.getEventList().iterator();
-                                                while (elIt.hasNext())
-                                                {
-                                                    System.out.println("EVENTLIST: " + elIt.next());
-                                                }
-                                                animator.stop();
-                                            }
-                                            try
-                                            {
-                                                Thread.sleep(10);
-                                            }
-                                            catch (InterruptedException e)
-                                            {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                        System.out.println("Simulator has stopped at time " + animator.getSimulatorTime());
-                                        try
-                                        {
-                                            Thread.sleep(100); // EXTRA STOP FOR SYNC REASONS - BUG IN DSOL!
-                                        }
-                                        catch (InterruptedException e)
-                                        {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    else
-                                    {
-                                        System.out.println("Bad or missing stop time");
-                                    }
-                                    break;
-
-                                default:
-                                    System.out.println("Don't know how to handle message:");
-                                    System.out.println(Sim0MQMessage.print(message));
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        System.out.println("Don't know how to handle message:");
-                        System.out.println(HexDumper.hexDumper(data));
-                    }
-                }
-                catch (Sim0MQException | SerializationException | RemoteException e)
-                {
-                    e.printStackTrace();
+                    return;
                 }
                 continue;
             }
@@ -254,7 +187,122 @@ public final class PublisherExperiment
                 return;
             }
         }
+        */
         System.out.println("Exiting publisher polling loop");
+    }
+
+    /**
+     * Execute one remote control command.
+     * @param data byte[]; the SIM0MQ encoded command
+     * @return boolean; true if another command can be processed after this one; false when no further commands can be processed
+     */
+    private boolean handleCommand(final byte[] data)
+    {
+        Object[] message;
+        try
+        {
+            message = Sim0MQMessage.decode(data).createObjectArray();
+            System.out.println("Publisher thread decoded Sim0MQ message:");
+
+            if (message.length >= 8 && message[5] instanceof String)
+            {
+                String command = (String) message[5];
+                System.out.println("Command is " + command);
+
+                String[] parts = command.split("\\|");
+                if (parts.length == 2)
+                {
+                    Object[] payload = new Object[message.length - 8];
+                    for (int index = 0; index < payload.length; index++)
+                    {
+                        payload[index] = message[index + 8];
+                    }
+                    ReturnWrapper returnWrapper = new ReturnWrapper(zContext,
+                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], 0, 0 });
+                    publisher.executeCommand(parts[0], parts[1], payload, returnWrapper);
+                }
+                else
+                {
+                    switch (command)
+                    {
+                        case "DIE":
+                            for (Container container = animationPanel; container != null; container = container.getParent())
+                            {
+                                // System.out.println("container is " + container);
+                                if (container instanceof JFrame)
+                                {
+                                    JFrame jFrame = (JFrame) container;
+                                    jFrame.dispose();
+                                }
+                            }
+                            return false; // There may not be a return ...
+
+                        case "SIMULATEUNTIL":
+                            if (message.length == 9 && message[8] instanceof Time)
+                            {
+                                System.out.println("Simulating up to " + message[8]);
+                                this.network.getSimulator().runUpTo((Time) message[8]);
+                                int count = 0;
+                                while (this.network.getSimulator().isStartingOrRunning())
+                                {
+                                    System.out.print(".");
+                                    count++;
+                                    if (count > 1000) // 10 seconds
+                                    {
+                                        System.out.println("SIMULATOR DOES NOT STOP. TIME = "
+                                                + this.network.getSimulator().getSimulatorTime());
+                                        Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt =
+                                                this.network.getSimulator().getEventList().iterator();
+                                        while (elIt.hasNext())
+                                        {
+                                            System.out.println("EVENTLIST: " + elIt.next());
+                                        }
+                                        this.network.getSimulator().stop();
+                                    }
+                                    try
+                                    {
+                                        Thread.sleep(10);
+                                    }
+                                    catch (InterruptedException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                System.out.println(
+                                        "Simulator has stopped at time " + this.network.getSimulator().getSimulatorTime());
+                                try
+                                {
+                                    Thread.sleep(100); // EXTRA STOP FOR SYNC REASONS - BUG IN DSOL!
+                                }
+                                catch (InterruptedException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else
+                            {
+                                System.out.println("Bad or missing stop time");
+                            }
+                            break;
+
+                        default:
+                            System.out.println("Don't know how to handle message:");
+                            System.out.println(Sim0MQMessage.print(message));
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                System.out.println("Don't know how to handle message:");
+                System.out.println(HexDumper.hexDumper(data));
+            }
+        }
+        catch (Sim0MQException | SerializationException | RemoteException e)
+        {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     /**
@@ -326,12 +374,22 @@ public final class PublisherExperiment
         readMessages(publisherSocket);
         message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD", 0);
         publisherSocket.send(message);
-        Thread.sleep(2000);
         message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", 0,
                 new Object[] { new Time(20, TimeUnit.BASE_SECOND) });
         publisherSocket.send(message);
         Thread.sleep(2000);
-        // Try to read from the publisher
+        readMessages(publisherSocket);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
+        publisherSocket.send(message);
+        Thread.sleep(2000);
+        readMessages(publisherSocket);
+        // unsubscribe
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|UNSUBSCRIBE_FROM_ADD", 0);
+        publisherSocket.send(message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", 0,
+                new Object[] { new Time(30, TimeUnit.BASE_SECOND) });
+        publisherSocket.send(message);
+        Thread.sleep(2000);
         readMessages(publisherSocket);
         message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
         publisherSocket.send(message);
