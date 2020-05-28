@@ -24,7 +24,6 @@ import javax.swing.JFrame;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.Throw;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -122,24 +121,27 @@ public final class PublisherExperiment
         animator.setSpeedFactor(Double.MAX_VALUE, true);
         animator.setSpeedFactor(1000.0, true);
         this.publisher = new Publisher(network);
-        System.out.println("MasterCommunication thread id is " + Thread.currentThread().getId());
-        ZMQ.Socket controlSocket = zContext.createSocket(SocketType.PAIR);
-        controlSocket.setHWM(100000);
-        controlSocket.bind("inproc://publisher");
-        ZMQ.Socket resultQueue = zContext.createSocket(SocketType.PULL);
-        resultQueue.bind("inproc://simulationEvents");
+        System.out
+                .println("Publisher communication relay and simulation control thread id is " + Thread.currentThread().getId());
+        ZMQ.Socket controlSocket = zContext.createSocket(SocketType.PULL);
+        controlSocket.bind("inproc://publisherControl");
+        ZMQ.Socket resultOutputQueue = zContext.createSocket(SocketType.PUSH);
+        resultOutputQueue.setHWM(100000);
+        resultOutputQueue.connect("inproc://publisherOutput");
+        ZMQ.Socket resultInputQueue = zContext.createSocket(SocketType.PULL);
+        resultInputQueue.bind("inproc://simulationEvents");
         // Poll the two input sockets using ZMQ poller
         ZMQ.Poller poller = zContext.createPoller(2);
-        poller.register(resultQueue, ZMQ.Poller.POLLIN);
+        poller.register(resultInputQueue, ZMQ.Poller.POLLIN);
         poller.register(controlSocket, ZMQ.Poller.POLLIN);
         while (!Thread.currentThread().isInterrupted())
         {
             poller.poll();
             if (poller.pollin(0))
             {
-                byte[] data = resultQueue.recv();
+                byte[] data = resultInputQueue.recv();
                 // System.out.println("Got outgoing result");
-                controlSocket.send(data, 0);
+                resultOutputQueue.send(data, 0);
                 // System.out.println("Outgoing result handed over to controlSocket");
                 continue; // Check for more results before checking the control input
             }
@@ -204,12 +206,11 @@ public final class PublisherExperiment
         try
         {
             message = Sim0MQMessage.decode(data).createObjectArray();
-            System.out.println("Publisher thread decoded Sim0MQ command:");
 
             if (message.length >= 8 && message[5] instanceof String)
             {
                 String command = (String) message[5];
-                System.out.println("Command is " + command);
+                System.out.println("Publisher thread decoded Sim0MQ command:" + command);
 
                 String[] parts = command.split("\\|");
                 if (parts.length == 2)
@@ -220,8 +221,8 @@ public final class PublisherExperiment
                         payload[index] = message[index + 8];
                     }
                     ReturnWrapper returnWrapper = new ReturnWrapper(zContext,
-                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], 0, 0 }, socketMap,
-                            packetsSent);
+                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0 },
+                            socketMap, packetsSent);
                     publisher.executeCommand(parts[0], parts[1], payload, returnWrapper);
                 }
                 else
@@ -238,7 +239,7 @@ public final class PublisherExperiment
                                     jFrame.dispose();
                                 }
                             }
-                            return false; // There may not be a return ...
+                            return false;
 
                         case "SIMULATEUNTIL":
                             if (message.length == 9 && message[8] instanceof Time)
@@ -297,7 +298,7 @@ public final class PublisherExperiment
             }
             else
             {
-                System.out.println("Don't know how to handle message:");
+                System.out.println("Publisher thread decoded Sim0MQ command but is has too few fields:");
                 System.out.println(HexDumper.hexDumper(data));
             }
         }
@@ -358,72 +359,93 @@ public final class PublisherExperiment
             OTSDrawingException, Sim0MQException, SerializationException, InterruptedException
     {
         ZContext zContext = new ZContext(10); // 10 IO threads
+
+        ReadMessageThread readMessageThread = new ReadMessageThread(zContext);
+        readMessageThread.start();
+
         PublisherThread publisherThread = new PublisherThread(zContext);
         publisherThread.start();
-        Thread.sleep(5000); // Starts up a DSOL animator, loads a network generates conflicts, etc.
+        // Thread.sleep(5000); // Starts up a DSOL animator, loads a network generates conflicts, etc.
 
-        ZMQ.Socket publisherSocket = zContext.createSocket(SocketType.PAIR);
-        publisherSocket.connect("inproc://publisher");
+        ZMQ.Socket publisherControlSocket = zContext.createSocket(SocketType.PUSH);
+        publisherControlSocket.connect("inproc://publisherControl");
 
-        
+        int conversationId = 100; // Start with something that is very different from 0
         byte[] message;
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
-        publisherSocket.send(message);
-        Thread.sleep(2000);
-        readMessages(publisherSocket);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", 0,
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++);
+        sendCommand(publisherControlSocket, message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", conversationId++,
                 new Object[] { new Time(10, TimeUnit.BASE_SECOND) });
-        publisherSocket.send(message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_CURRENT", 0);
-        publisherSocket.send(message);
-        Thread.sleep(2000);
-        readMessages(publisherSocket);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
-        publisherSocket.send(message);
-        Thread.sleep(2000);
-        readMessages(publisherSocket);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD", 0);
-        publisherSocket.send(message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", 0,
+        sendCommand(publisherControlSocket, message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_CURRENT", conversationId++);
+        sendCommand(publisherControlSocket, message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++);
+        sendCommand(publisherControlSocket, message);
+        int conversationIdForSubscribeToAdd = conversationId++;
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD",
+                conversationIdForSubscribeToAdd);
+        sendCommand(publisherControlSocket, message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", conversationId++,
                 new Object[] { new Time(20, TimeUnit.BASE_SECOND) });
-        publisherSocket.send(message);
-        Thread.sleep(2000);
-        readMessages(publisherSocket);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
-        publisherSocket.send(message);
-        Thread.sleep(2000);
-        readMessages(publisherSocket);
+        sendCommand(publisherControlSocket, message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++);
+        sendCommand(publisherControlSocket, message);
         // unsubscribe
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|UNSUBSCRIBE_FROM_ADD", 0);
-        publisherSocket.send(message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", 0,
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|UNSUBSCRIBE_FROM_ADD",
+                conversationIdForSubscribeToAdd);
+        sendCommand(publisherControlSocket, message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", conversationId++,
                 new Object[] { new Time(30, TimeUnit.BASE_SECOND) });
-        publisherSocket.send(message);
-        Thread.sleep(2000);
-        readMessages(publisherSocket);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
-        publisherSocket.send(message);
-        Thread.sleep(2000);
-        readMessages(publisherSocket);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_RESULT_META_DATA", 0);
-        publisherSocket.send(message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_ADDRESS_META_DATA", 0);
-        publisherSocket.send(message);
-        Thread.sleep(2000);
-        readMessages(publisherSocket);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", 0);
-        publisherSocket.send(message);
-        System.out.println("Publisher should be dead or dying");
+        sendCommand(publisherControlSocket, message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++);
+        sendCommand(publisherControlSocket, message);
+        message =
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_ADDRESS_META_DATA", conversationId++);
+        sendCommand(publisherControlSocket, message);
+        message =
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_RESULT_META_DATA", conversationId++);
+        sendCommand(publisherControlSocket, message);
+        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", conversationId++);
+        sendCommand(publisherControlSocket, message);
+        System.out.println("Master has sent last command; Publisher should be busy for a while and then die");
+        System.out.println("Master joining publisher thread (this should block until publisher has died)");
+        publisherThread.join();
+        System.out.println("Master has joined publisher thread");
+        System.out.println("Master interrupts read message thread");
+        readMessageThread.interrupt();
+        System.out.println("Master has interrupted read message thread; joining ...");
+        readMessageThread.join();
+        System.out.println("Master has joined read message thread");
+        System.out.println("Master exits");
     }
 
     /**
-     * Repeatedly try to read all available messages. 
+     * Wrapper for ZMQ.Socket.send that may output some debugging information.
+     * @param socket ZMQ.Socket; the socket to send onto
+     * @param message byte[]; the message to transmit
      */
-    class ReadMessageThread extends Thread
+    static void sendCommand(final ZMQ.Socket socket, final byte[] message)
+    {
+        try
+        {
+            Object[] unpackedMessage = Sim0MQMessage.decodeToArray(message);
+            System.out.println("Master sending command " + unpackedMessage[5] + " conversation id " + unpackedMessage[6]);
+        }
+        catch (Sim0MQException | SerializationException e)
+        {
+            e.printStackTrace();
+        }
+        socket.send(message);
+    }
+
+    /**
+     * Repeatedly try to read all available messages.
+     */
+    static class ReadMessageThread extends Thread
     {
         /** The ZContext needed to create the socket. */
         private final ZContext zContext;
-        
+
         /**
          * Repeatedly read all available messages.
          * @param zContext ZContext; the ZContext needed to create the read socket.
@@ -436,16 +458,19 @@ public final class PublisherExperiment
         @Override
         public void run()
         {
-            ZMQ.Socket socket = this.zContext.createSocket(SocketType.PAIR);
-            socket.connect("inproc://publisher");
-            while (! Thread.interrupted())
+            System.out.println("Read message thread starting up");
+            ZMQ.Socket socket = this.zContext.createSocket(SocketType.PULL);
+            socket.setReceiveTimeOut(100);
+            socket.bind("inproc://publisherOutput");
+            while (!Thread.interrupted())
             {
                 readMessages(socket);
             }
+            System.out.println("Read message thread exits due to interrupt");
         }
 
     }
-    
+
     /**
      * Read as many messages from a ZMQ socket as are available. Do NOT block when there are no (more) messages to read.
      * @param socket ZMQ.Socket; the socket
@@ -456,29 +481,35 @@ public final class PublisherExperiment
         List<byte[]> resultList = new ArrayList<>();
         while (true)
         {
-            byte[] message = socket.recv(ZMQ.DONTWAIT);
+            byte[] message = socket.recv();
+            StringBuilder output = new StringBuilder();
             if (null != message)
             {
-                System.out.println("Master received " + message.length + " byte message:");
+                output.append("Master received " + message.length + " byte message: ");
                 // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, message));
                 try
                 {
                     Object[] fields = Sim0MQMessage.decodeToArray(message);
                     for (Object field : fields)
                     {
-                        System.out.print("|" + field);
+                        output.append("|" + field);
                     }
-                    System.out.println("|");
+                    output.append("|");
                 }
                 catch (Sim0MQException | SerializationException e)
                 {
                     e.printStackTrace();
                 }
+                System.out.println(output);
                 resultList.add(message);
             }
             else
             {
-                System.out.println("Master picked up " + resultList.size() + " message" + (resultList.size() == 1 ? "" : "s"));
+                if (resultList.size() > 0)
+                {
+                    System.out.println(
+                            "Master picked up " + resultList.size() + " message" + (resultList.size() == 1 ? "" : "s"));
+                }
                 break;
             }
         }
