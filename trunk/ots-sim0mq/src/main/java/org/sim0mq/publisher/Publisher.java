@@ -360,43 +360,47 @@ class ReturnWrapper
     private final AtomicInteger packetsSent;
 
     /**
-     * Safe - synchronized - portal to send a message to the remote controller.
+     * Safe - synchronized - portal to send a message to the master.
      * @param data byte[]; the data to send
      */
     public synchronized void sendToMaster(final byte[] data)
     {
-        byte[] fixedData = data;
-        int number = -1;
-        try
+        synchronized (this.packetsSent) // Ensure that packets are transmitted in sequence
         {
-            // Patch the sender field to include the packet counter value.
-            Object[] messageFields = Sim0MQMessage.decode(data).createObjectArray();
-            Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
-            number = this.packetsSent.addAndGet(1);
-            fixedData = Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number), messageFields[4],
-                    messageFields[5], messageFields[6], newMessageFields);
-            System.out.println("Prepared message " + number + ", type is " + messageFields[5]);
+            byte[] fixedData = data;
+            int number = -1;
+            try
+            {
+                // Patch the sender field to include the packet counter value.
+                Object[] messageFields = Sim0MQMessage.decode(data).createObjectArray();
+                Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
+                number = this.packetsSent.addAndGet(1);
+                fixedData = Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number),
+                        messageFields[4], messageFields[5], messageFields[6], newMessageFields);
+                System.out
+                        .println("Prepared message " + number + ", type is \"" + messageFields[5] + "\", " + messageFields[6]);
+            }
+            catch (Sim0MQException | SerializationException e)
+            {
+                e.printStackTrace();
+            }
+            Long threadId = Thread.currentThread().getId();
+            ZMQ.Socket socket = this.socketMap.get(threadId);
+            while (null == socket)
+            {
+                // System.out.println("socket map is " + this.socketMap);
+                System.out.println("Creating new internal socket for thread " + threadId + " (map currently contains "
+                        + this.socketMap.size() + " entries)");
+                socket = this.zContext.createSocket(SocketType.PUSH);
+                socket.setHWM(100000);
+                socket.connect("inproc://simulationEvents");
+                this.socketMap.put(threadId, socket);
+                // System.out.println("Socket created; map now contains " + this.socketMap.size() + " entries");
+            }
+            // System.out.println("pre send");
+            socket.send(fixedData, 0);
+            // System.out.println("post send");
         }
-        catch (Sim0MQException | SerializationException e)
-        {
-            e.printStackTrace();
-        }
-        Long threadId = Thread.currentThread().getId();
-        ZMQ.Socket socket = this.socketMap.get(threadId);
-        while (null == socket)
-        {
-            // System.out.println("socket map is " + this.socketMap);
-            System.out.println("Creating new internal socket for thread " + threadId + " (map contains " + this.socketMap.size()
-                    + " entries)");
-            socket = this.zContext.createSocket(SocketType.PUSH);
-            socket.setHWM(100000);
-            socket.connect("inproc://simulationEvents");
-            this.socketMap.put(threadId, socket);
-            // System.out.println("Socket created; map now contains " + this.socketMap.size() + " entries");
-        }
-        // System.out.println("pre send");
-        socket.send(fixedData, 0);
-        // System.out.println("post send");
     }
 
     /**
@@ -409,14 +413,8 @@ class ReturnWrapper
     public void encodeReplyAndTransmit(final Object[] payload) throws Sim0MQException, SerializationException
     {
         Throw.whenNull(payload, "payload may not be null (but it can be an emty Object array");
-        Object messageIdValue = this.messageId;
-        if (messageIdValue instanceof Integer)
-        {
-            messageIdValue = ((Integer) messageIdValue) + this.replyCount;
-        }
-        this.replyCount++; // Always increment; even when it is not in the reply
         byte[] result = Sim0MQMessage.encodeUTF8(true, this.federationId, this.ourAddress, this.returnAddress,
-                this.messageTypeId, messageIdValue, payload);
+                this.messageTypeId, this.messageId, payload);
         sendToMaster(result);
         // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
     }
