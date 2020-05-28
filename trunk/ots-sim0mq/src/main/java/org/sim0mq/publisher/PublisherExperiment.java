@@ -33,9 +33,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.decoderdumper.HexDumper;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.serialization.EndianUtil;
 import org.djutils.serialization.SerializationException;
-import org.djutils.serialization.util.SerialDataDumper;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -139,21 +137,19 @@ public final class PublisherExperiment
             poller.poll();
             if (poller.pollin(0))
             {
-                byte[] data = resultQueue.recv(ZMQ.DONTWAIT);
-                Throw.whenNull(data, "cannot happen");
+                byte[] data = resultQueue.recv();
                 // System.out.println("Got outgoing result");
                 controlSocket.send(data, 0);
                 // System.out.println("Outgoing result handed over to controlSocket");
-                continue;
+                continue; // Check for more results before checking the control input
             }
-            else if (poller.pollin(1))
+            if (poller.pollin(1))
             {
-                byte[] data = controlSocket.recv(ZMQ.DONTWAIT);
-                Throw.whenNull(data, "cannot happen");
-                System.out.println("Publisher thread received a command of " + data.length + " bytes");
+                byte[] data = controlSocket.recv();
+                // System.out.println("Publisher thread received a command of " + data.length + " bytes");
                 if (!handleCommand(data, socketMap, packetsSent))
                 {
-                    return;
+                    break;
                 }
             }
         }
@@ -208,7 +204,7 @@ public final class PublisherExperiment
         try
         {
             message = Sim0MQMessage.decode(data).createObjectArray();
-            System.out.println("Publisher thread decoded Sim0MQ message:");
+            System.out.println("Publisher thread decoded Sim0MQ command:");
 
             if (message.length >= 8 && message[5] instanceof String)
             {
@@ -307,6 +303,7 @@ public final class PublisherExperiment
         }
         catch (Sim0MQException | SerializationException | RemoteException e)
         {
+            System.err.println("Publisher thread could not decode command");
             e.printStackTrace();
         }
         return true;
@@ -340,6 +337,7 @@ public final class PublisherExperiment
             {
                 e.printStackTrace();
             }
+            System.out.println("Publisher thread exits");
         }
 
     }
@@ -367,6 +365,7 @@ public final class PublisherExperiment
         ZMQ.Socket publisherSocket = zContext.createSocket(SocketType.PAIR);
         publisherSocket.connect("inproc://publisher");
 
+        
         byte[] message;
         message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", 0);
         publisherSocket.send(message);
@@ -418,6 +417,36 @@ public final class PublisherExperiment
     }
 
     /**
+     * Repeatedly try to read all available messages. 
+     */
+    class ReadMessageThread extends Thread
+    {
+        /** The ZContext needed to create the socket. */
+        private final ZContext zContext;
+        
+        /**
+         * Repeatedly read all available messages.
+         * @param zContext ZContext; the ZContext needed to create the read socket.
+         */
+        ReadMessageThread(final ZContext zContext)
+        {
+            this.zContext = zContext;
+        }
+
+        @Override
+        public void run()
+        {
+            ZMQ.Socket socket = this.zContext.createSocket(SocketType.PAIR);
+            socket.connect("inproc://publisher");
+            while (! Thread.interrupted())
+            {
+                readMessages(socket);
+            }
+        }
+
+    }
+    
+    /**
      * Read as many messages from a ZMQ socket as are available. Do NOT block when there are no (more) messages to read.
      * @param socket ZMQ.Socket; the socket
      * @return byte[][]; the read messages
@@ -430,13 +459,26 @@ public final class PublisherExperiment
             byte[] message = socket.recv(ZMQ.DONTWAIT);
             if (null != message)
             {
-                System.out.println("Received " + message.length + " byte message:");
-                System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, message));
+                System.out.println("Master received " + message.length + " byte message:");
+                // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, message));
+                try
+                {
+                    Object[] fields = Sim0MQMessage.decodeToArray(message);
+                    for (Object field : fields)
+                    {
+                        System.out.print("|" + field);
+                    }
+                    System.out.println("|");
+                }
+                catch (Sim0MQException | SerializationException e)
+                {
+                    e.printStackTrace();
+                }
                 resultList.add(message);
             }
             else
             {
-                System.out.println("Received " + resultList.size() + " messages");
+                System.out.println("Master picked up " + resultList.size() + " message" + (resultList.size() == 1 ? "" : "s"));
                 break;
             }
         }
