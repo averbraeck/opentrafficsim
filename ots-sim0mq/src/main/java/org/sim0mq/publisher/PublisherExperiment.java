@@ -155,41 +155,6 @@ public final class PublisherExperiment
                 }
             }
         }
-        /*-
-        // Use busy waiting (with 1 ms sleep)
-        while (!Thread.interrupted())
-        {
-            byte[] data;
-            // Handle results from the simulator event system
-            data = resultQueue.recv(ZMQ.DONTWAIT);
-            if (null != data)
-            {
-                // System.out.println("Got outgoing result");
-                controlSocket.send(data, 0);
-                // System.out.println("Outgoing result handed over to controlSocket");
-                continue;
-            }
-            data = controlSocket.recv(ZMQ.DONTWAIT);
-            if (null != data)
-            {
-                System.out.println("Publisher thread received a command of " + data.length + " bytes");
-                if (!handleCommand(data))
-                {
-                    return;
-                }
-                continue;
-            }
-            try
-            {
-                Thread.sleep(1);
-            }
-            catch (InterruptedException e)
-            {
-                System.out.println("Publisher polling loop thread was interrupted in sleep ... returning");
-                return;
-            }
-        }
-        */
         System.out.println("Exiting publisher polling loop");
     }
 
@@ -365,48 +330,38 @@ public final class PublisherExperiment
 
         PublisherThread publisherThread = new PublisherThread(zContext);
         publisherThread.start();
-        // Thread.sleep(5000); // Starts up a DSOL animator, loads a network generates conflicts, etc.
 
         ZMQ.Socket publisherControlSocket = zContext.createSocket(SocketType.PUSH);
         publisherControlSocket.connect("inproc://publisherControl");
 
-        int conversationId = 100; // Start with something that is very different from 0
-        byte[] message;
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++);
-        sendCommand(publisherControlSocket, message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", conversationId++,
-                new Object[] { new Time(10, TimeUnit.BASE_SECOND) });
-        sendCommand(publisherControlSocket, message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_CURRENT", conversationId++);
-        sendCommand(publisherControlSocket, message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++);
-        sendCommand(publisherControlSocket, message);
-        int conversationIdForSubscribeToAdd = conversationId++;
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD",
-                conversationIdForSubscribeToAdd);
-        sendCommand(publisherControlSocket, message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", conversationId++,
-                new Object[] { new Time(20, TimeUnit.BASE_SECOND) });
-        sendCommand(publisherControlSocket, message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++);
-        sendCommand(publisherControlSocket, message);
-        // unsubscribe
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|UNSUBSCRIBE_FROM_ADD",
-                conversationIdForSubscribeToAdd);
-        sendCommand(publisherControlSocket, message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL", conversationId++,
-                new Object[] { new Time(30, TimeUnit.BASE_SECOND) });
-        sendCommand(publisherControlSocket, message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++);
-        sendCommand(publisherControlSocket, message);
-        message =
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_ADDRESS_META_DATA", conversationId++);
-        sendCommand(publisherControlSocket, message);
-        message =
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_RESULT_META_DATA", conversationId++);
-        sendCommand(publisherControlSocket, message);
-        message = Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", conversationId++);
-        sendCommand(publisherControlSocket, message);
+        int conversationId = 100; // Number the commands starting with something that is very different from 0
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
+                conversationId++, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_CURRENT", conversationId++));
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
+        int conversationIdForSubscribeToAdd = conversationId++; // We need that to unsubscribe later
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
+                "GTUs in network|SUBSCRIBE_TO_ADD", conversationIdForSubscribeToAdd));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
+                conversationId++, new Object[] { new Time(20, TimeUnit.BASE_SECOND) }));
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
+        // unsubscribe using saved conversationId
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
+                "GTUs in network|UNSUBSCRIBE_FROM_ADD", conversationIdForSubscribeToAdd));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
+                conversationId++, new Object[] { new Time(30, TimeUnit.BASE_SECOND) }));
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
+                "GTUs in network|GET_ADDRESS_META_DATA", conversationId++));
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_RESULT_META_DATA", conversationId++));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", conversationId++));
         System.out.println("Master has sent last command; Publisher should be busy for a while and then die");
         System.out.println("Master joining publisher thread (this should block until publisher has died)");
         publisherThread.join();
