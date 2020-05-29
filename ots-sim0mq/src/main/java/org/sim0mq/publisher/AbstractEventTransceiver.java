@@ -3,6 +3,7 @@ package org.sim0mq.publisher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -40,6 +41,7 @@ public abstract class AbstractEventTransceiver extends AbstractTransceiver
     public static MetaData constructResultFields(final TimedEventType eventType) throws ClassCastException
     {
         List<ObjectDescriptor> resultList = new ArrayList<>();
+        resultList.add(new ObjectDescriptor("TimeStamp", "Time", Time.class));
         for (int index = 0; index < eventType.getMetaData().size(); index++)
         {
             ObjectDescriptor od = eventType.getMetaData().getObjectDescriptor(index);

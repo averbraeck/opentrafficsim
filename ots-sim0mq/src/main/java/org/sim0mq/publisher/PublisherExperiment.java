@@ -346,13 +346,20 @@ public final class PublisherExperiment
         int conversationIdForSubscribeToAdd = conversationId++; // We need that to unsubscribe later
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|SUBSCRIBE_TO_ADD", conversationIdForSubscribeToAdd));
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|GET_RESULT_META_DATA", conversationId++));
+        int conversationIdForGTU2Move = conversationId++;
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
+                conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
                 conversationId++, new Object[] { new Time(20, TimeUnit.BASE_SECOND) }));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
-        // unsubscribe using saved conversationId
+        // unsubscribe from GTU ADD events using saved conversationId
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|UNSUBSCRIBE_FROM_ADD", conversationIdForSubscribeToAdd));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
+                "GTU move|UNSUBSCRIBE_FROM_CHANGE", conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
                 conversationId++, new Object[] { new Time(30, TimeUnit.BASE_SECOND) }));
         sendCommand(publisherControlSocket,
