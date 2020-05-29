@@ -9,6 +9,7 @@ import org.djunits.Throw;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventProducerInterface;
+import org.djutils.event.TimedEvent;
 import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -159,7 +160,7 @@ public class SubscriptionHandler
     }
 
     /**
-     * Create a new subscription to ADD events.
+     * Create a new subscription to ADD, REMOVE, or CHANGE events.
      * @param address Object[]; the data that is required to find the correct EventProducer
      * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; generates envelopes for the returned events
@@ -185,7 +186,7 @@ public class SubscriptionHandler
     }
 
     /**
-     * Cancel a subscription to ADD events.
+     * Cancel a subscription to ADD, REMOVE, or CHANGE events.
      * @param address Object[]; the data that is required to find the correct EventProducer
      * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; the ReturnWapper that sent the results until now
@@ -292,6 +293,10 @@ public class SubscriptionHandler
         {
             return Command.UNSUBSCRIBE_FROM_REMOVE;
         }
+        else if ("UNSUBSCRIBE_FROM_CHANGE".equals(commandString))
+        {
+            return Command.UNSUBSCRIBE_FROM_CHANGE;
+        }
         return null;
     }
 
@@ -372,7 +377,7 @@ public class SubscriptionHandler
     }
 
     /**
-     * Stub. Should send data over Sim0MQ to master
+     * Send data over Sim0MQ to master.
      * @param data Object[]; the data to transmit
      * @param returnWrapper ReturnWrapper; envelope constructor for returned results
      * @throws SerializationException on illegal type in serialization
@@ -382,15 +387,6 @@ public class SubscriptionHandler
             throws Sim0MQException, SerializationException
     {
         returnWrapper.encodeReplyAndTransmit(data);
-        // if (null == data)
-        // {
-        // System.out.println("NULL");
-        // return;
-        // }
-        // for (int index = 0; index < data.length; index++)
-        // {
-        // System.out.println(index + "\t" + data[index]);
-        // }
     }
 
     /** {@inheritDoc} */
@@ -443,22 +439,27 @@ class Subscription implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        // TODO: figure out how to include the time stamp if event is a TimedEvent (which is probably always the case).
         MetaData metaData = event.getType().getMetaData();
-        Object[] result = new Object[1 + metaData.size()];
-        result[0] = event.getType().getName();
+        int additionalFields = event.getType() instanceof TimedEventType ? 1 : 0;
+        Object[] result = new Object[additionalFields + metaData.size()];
+        // result[0] = event.getType().getName();
+        if (additionalFields > 0)
+        {
+            result[0] = ((TimedEvent<?>) event).getTimeStamp();
+        }
         Object payload = event.getContent();
         if (payload instanceof Object[])
         {
             for (int index = 0; index < event.getType().getMetaData().size(); index++)
             {
-                result[1 + index] = ((Object[]) payload)[index];
+                result[additionalFields + index] = ((Object[]) payload)[index];
             }
         }
         else
         {
-            result[1] = payload;
+            result[additionalFields] = payload;
         }
+        // TODO verify the composition of the result. Problem: no access to the metadata here
         try
         {
             this.returnWrapper.encodeReplyAndTransmit(result);
