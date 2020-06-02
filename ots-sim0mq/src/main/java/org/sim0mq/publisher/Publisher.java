@@ -57,27 +57,6 @@ public class Publisher extends AbstractTransceiver
     /** Map Publisher names to the corresponding Publisher object. */
     private final Map<String, SubscriptionHandler> subscriptionHandlerMap = new LinkedHashMap<>();
 
-    /** Embedded transceiver that can produce the names of all the subscription handlers for the objects in the OTS network. */
-    private final TransceiverInterface idTransceiver = new AbstractTransceiver("Ids of available SubscriptionHandlers",
-            new MetaData("SubscriptionHandler", "id of subscription handler", new ObjectDescriptor[0]),
-            new MetaData("SubscriptionHandler", "Id of subscription handler", new ObjectDescriptor[] {
-                    new ObjectDescriptor("SubscriptionHandler", "Id of subscription handler", String.class) }))
-    {
-        /** {@inheritDoc} */
-        @Override
-        public Object[] get(final Object[] address)
-        {
-            getAddressFields().verifyComposition(address);
-            Object[] result = new Object[subscriptionHandlerMap.size()];
-            int index = 0;
-            for (String key : subscriptionHandlerMap.keySet())
-            {
-                result[index++] = key;
-            }
-            return result;
-        };
-    };
-
     /** The OTS network. */
     private final OTSNetwork network;
 
@@ -181,7 +160,7 @@ public class Publisher extends AbstractTransceiver
                 CrossSectionLink.LANE_REMOVE_EVENT, null, linkGTUIdSubscriptionHandler));
         // addTransceiver(new LaneGTUIdTransceiver(network));
 
-        addSubscriptionHandler(new SubscriptionHandler("", this, null, null, null, null, null));
+        addSubscriptionHandler(new SubscriptionHandler("", this, null, null, null, null, null)); // The meta transceiver
     }
 
     /** Lookup a CrossSectionLink in the network. */
@@ -226,7 +205,8 @@ public class Publisher extends AbstractTransceiver
     @Override
     public Object[] get(final Object[] address)
     {
-        getAddressFields().verifyComposition(address);
+        getAddressFields().verifyComposition(address); // Should be empty
+        // Construct an array containing the names all subscription handlers.
         Object[] result = new Object[this.subscriptionHandlerMap.size()];
         int index = 0;
         for (String key : this.subscriptionHandlerMap.keySet())
@@ -241,7 +221,7 @@ public class Publisher extends AbstractTransceiver
     public final TransceiverInterface getIdSource(final int addressLevel)
     {
         Throw.when(addressLevel != 0, IndexOutOfBoundsException.class, "addressLevel must be 0");
-        return this.idTransceiver;
+        return null;
     }
 
     /**
