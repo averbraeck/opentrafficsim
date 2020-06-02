@@ -36,16 +36,19 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
+import org.zeromq.ZContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Unit tests. This requires half of OTS in the imports because it sets up a simulation and runs that for a couple of seconds.
@@ -263,6 +266,53 @@ public class PublisherTest implements OTSModelInterface
         }
 
     }
+    
+    /**
+     * Test the new publisher.
+     * @throws NamingException 
+     * @throws SimRuntimeException 
+     */
+    @Test
+    public void testNewPublisher() throws SimRuntimeException, NamingException
+    {
+        String xml = TEST_NETWORK_XML;
+        OTSSimulatorInterface simulator = loadNetwork(xml, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L);
+        OTSNetwork network = ((TestModel) simulator.getReplication().getExperiment().getModel()).getNetwork();
+        ZContext zContext = new ZContext(5);
+        PublisherThread publisherthread = new PublisherThread(zContext, network);
+        // WORK IN PROGRESS
+    }
+    
+    /**
+     * Starts and runs the publisher. 
+     */
+    class PublisherThread extends Thread
+    {
+        /** The ZMQ context. */
+        final ZContext zContext;
+        
+        /** The network. */
+        private final OTSNetwork network;
+        
+        /**
+         * Construct the publisher thread.
+         * @param zContext ZContext; the ZMQ context
+         * @param network OTSNetwork; the network
+         */
+        PublisherThread(final ZContext zContext, final OTSNetwork network)
+        {
+            this.zContext = zContext;
+            this.network = network;
+        }
+        
+        @Override
+        public void run()
+        {
+            // TODO: everything
+            System.out.println("Publisher thread exits");
+        }
+        
+    }
 
     /**
      * Test that makes the network using the XML parser.
@@ -270,6 +320,7 @@ public class PublisherTest implements OTSModelInterface
      * @throws NamingException if that happens uncaught; this test has failed
      * @throws SimRuntimeException if that happens uncaught; this test has failed
      */
+    /*-
     @Test
     public void testUsingXMLParser() throws IOException, SimRuntimeException, NamingException
     {
@@ -470,6 +521,7 @@ public class PublisherTest implements OTSModelInterface
 
         assertNull("non existent node returns null", nt.get(new Object[] { "Non existend node id" }));
     }
+    */
 
     /** The test network. */
     // @formatter:off
