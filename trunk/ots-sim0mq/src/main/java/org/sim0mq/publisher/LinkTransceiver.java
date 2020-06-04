@@ -2,13 +2,14 @@ package org.sim0mq.publisher;
 
 import java.rmi.RemoteException;
 
-import org.djunits.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.sim0mq.Sim0MQException;
 
 /**
  * Transceiver for Link data.
@@ -56,12 +57,19 @@ public class LinkTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public Object[] get(final Object[] address) throws RemoteException
+    public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
-        getAddressFields().verifyComposition(address);
+        String bad = verifyMetaData(getAddressFields(), address);
+        if (bad != null)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address; should be id of a link" });
+            return null;
+        }
         Link link = this.network.getLink((String) address[0]);
         if (null == link)
         {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a link with id " + address[0] });
             return null;
         }
         return new Object[] { link.getId(), link.getLinkType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
@@ -71,9 +79,14 @@ public class LinkTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public TransceiverInterface getIdSource(final int addressLevel)
+    public TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        Throw.when(addressLevel != 0, IndexOutOfBoundsException.class, "Only addressLevel 0 is valid");
+        if (addressLevel != 0)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Only empty address is valid" });
+            return null;
+        }
         return this.linkIdSource;
     }
 

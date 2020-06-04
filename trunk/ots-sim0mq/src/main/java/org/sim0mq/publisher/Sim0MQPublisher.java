@@ -27,7 +27,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.decoderdumper.HexDumper;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -69,7 +68,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.DSOLException;
 
 /**
- * Test code to see if the Publisher works.
+ * Sim0MQPublisher - make many OTS simulation controls and observations available over Sim0MQ.
  * <p>
  * Copyright (c) 2020-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -95,7 +94,7 @@ public final class Sim0MQPublisher
     private OTSAnimationPanel animationPanel = null;
 
     /**
-     * Create the publisher part.
+     * Create a new Sim0MQPublisher.
      * @param zContext ZContext; needed to create the sockets
      * @throws IOException ...
      * @throws NamingException ...
@@ -218,15 +217,16 @@ public final class Sim0MQPublisher
      */
     private boolean handleCommand(final byte[] data, final Map<Long, ZMQ.Socket> socketMap, final AtomicInteger packetsSent)
     {
-        Object[] message;
+        boolean result = true;
         try
         {
-            message = Sim0MQMessage.decode(data).createObjectArray();
+            Object[] message = Sim0MQMessage.decode(data).createObjectArray();
+            String resultMessage = null;
 
             if (message.length >= 8 && message[5] instanceof String)
             {
                 String command = (String) message[5];
-                System.out.println("Publisher thread decoded Sim0MQ command:" + command);
+                System.out.println("Publisher thread decoded Sim0MQ command: " + command);
 
                 String[] parts = command.split("\\|");
                 if (parts.length == 2)
@@ -267,7 +267,7 @@ public final class Sim0MQPublisher
                                     && message[10] instanceof Duration && message[11] instanceof Long)
                             {
                                 // System.out.println("xml length = " + ((String) message[8]).length());
-                                loadNetwork((String) message[8], (Duration) message[9], (Duration) message[10],
+                                resultMessage = loadNetwork((String) message[8], (Duration) message[9], (Duration) message[10],
                                         (Long) message[11]);
                             }
                             else
@@ -275,8 +275,7 @@ public final class Sim0MQPublisher
                                 System.err.println(
                                         "No network, warmupTime and/or runTime, or seed provided with NEWSIMULATION command");
                             }
-
-                            return true;
+                            break;
 
                         case "DIE":
                             for (Container container = animationPanel; container != null; container = container.getParent())
@@ -344,16 +343,22 @@ public final class Sim0MQPublisher
                             break;
 
                         default:
-                            System.out.println("Don't know how to handle message:");
-                            System.out.println(Sim0MQMessage.print(message));
+                            resultMessage =
+                                    "Don't know how to handle message:\n" + Sim0MQMessage.print(message);
                             break;
                     }
                 }
             }
             else
             {
-                System.out.println("Publisher thread decoded Sim0MQ command but is has too few fields:");
-                System.out.println(HexDumper.hexDumper(data));
+                resultMessage = "Publisher decoded Sim0MQ command but is has too few fields:";
+                // System.out.println(HexDumper.hexDumper(data));
+            }
+            if (null != resultMessage)
+            {
+                new ReturnWrapper(zContext,
+                        new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 },
+                        socketMap, packetsSent).encodeReplyAndTransmit(new Object[] { resultMessage });
             }
         }
         catch (Sim0MQException | SerializationException | RemoteException e)
@@ -361,7 +366,7 @@ public final class Sim0MQPublisher
             System.err.println("Publisher thread could not decode command");
             e.printStackTrace();
         }
-        return true;
+        return result;
     }
 
 }

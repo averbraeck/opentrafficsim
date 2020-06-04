@@ -49,7 +49,7 @@ public class SubscriptionHandler
     /** SubscriptionHandler that handles subscriptions to individual objects; e.g. GTU.MOVE_EVENT. */
     private final SubscriptionHandler elementSubscriptionHandler;
 
-    /** The currently active subsciptions. */
+    /** The currently active subscriptions. */
     private final Map<ReturnWrapper, Subscription> subscriptions = new LinkedHashMap<>();
 
     /**
@@ -116,7 +116,7 @@ public class SubscriptionHandler
     public void get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
-        sendResult(this.listTransceiver.get(address), returnWrapper);
+        sendResult(this.listTransceiver.get(address, returnWrapper), returnWrapper);
     }
 
     /**
@@ -164,13 +164,24 @@ public class SubscriptionHandler
      * @param address Object[]; the data that is required to find the correct EventProducer
      * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; generates envelopes for the returned events
+     * @return String; one liner report of the result;
      * @throws RemoteException when communication fails
+     * @throws SerializationException should never happen
+     * @throws Sim0MQException should never happen
      */
-    private void subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
-            throws RemoteException
+    private String subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
-        Throw.whenNull(eventType, "eventType may not be null");
-        EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address);
+        if (null == eventType)
+        {
+            return "Does not support subscribe to";
+        }
+        String bad = AbstractTransceiver.verifyMetaData(this.eventProducerForAddRemoveOrChange.getAddressMetaData(), address);
+        if (bad != null)
+        {
+            return "Bad address: " + bad;
+        }
+        EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address, returnWrapper);
         if (null != epi)
         {
             Subscription subscription = this.subscriptions.get(returnWrapper);
@@ -178,11 +189,16 @@ public class SubscriptionHandler
             {
                 subscription = new Subscription(returnWrapper);
             }
-            epi.addListener(subscription, eventType); // TODO complain if there was already a subscription?
+            if (!epi.addListener(subscription, eventType))
+            {
+                // There was already a subscription
+                return "There is already such a subscription active";
+            }
             this.subscriptions.put(returnWrapper, subscription);
+            return "OK; subscription created";
         }
-        // else: Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
-        // TODO inform the master
+        // Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
+        return "Could not find event producer; has it disappeared?";
     }
 
     /**
@@ -190,30 +206,45 @@ public class SubscriptionHandler
      * @param address Object[]; the data that is required to find the correct EventProducer
      * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; the ReturnWapper that sent the results until now
+     * @return String; one liner report of the result
      * @throws RemoteException when communication fails
+     * @throws SerializationException should never happen
+     * @throws Sim0MQException should never happen
      */
-    private void unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
-            throws RemoteException
+    private String unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
-        Throw.whenNull(eventType, "eventType may not be null");
-        EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address);
+        if (null == eventType)
+        {
+            return "Does not support unsubscribe from";
+        }
+        String bad = AbstractTransceiver.verifyMetaData(this.eventProducerForAddRemoveOrChange.getAddressMetaData(), address);
+        if (bad != null)
+        {
+            return "Bad address: " + bad;
+        }
+        EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address, returnWrapper);
         if (null != epi)
         {
             Subscription subscription = this.subscriptions.get(returnWrapper);
             if (null == subscription)
             {
-                System.err.println("Could not find subscription for " + returnWrapper);
-                System.err.println("Existing subscriptions:");
-                for (ReturnWrapper rw : this.subscriptions.keySet())
-                {
-                    System.err.println("\t" + rw);
-                }
+                // System.err.println("Could not find subscription for " + returnWrapper);
+                // System.err.println("Existing subscriptions:");
+                // for (ReturnWrapper rw : this.subscriptions.keySet())
+                // {
+                // System.err.println("\t" + rw);
+                // }
+                return "Cound not find a subscription to cancel";
             }
-            Throw.whenNull(subscription, "No subscription found that can be unsubscribed");
-            epi.removeListener(subscription, eventType); // TODO complain if there was no subscription?
+            if (!epi.removeListener(subscription, eventType))
+            {
+                returnWrapper.encodeReplyAndTransmit(new Object[] { "Subscription was not found" });
+            }
+            this.subscriptions.remove(returnWrapper);
+            return "OK; subscription removed";
         }
-        // else: Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
-        // TODO inform the master
+        return "Cound not find the event producer of the subscription; has it dissapeared?";
     }
 
     /**
@@ -317,32 +348,38 @@ public class SubscriptionHandler
         switch (command)
         {
             case SUBSCRIBE_TO_ADD:
-                subscribeTo(address, this.addedEventType, returnWrapper);
+                sendResult(new Object[] { subscribeTo(address, this.addedEventType, returnWrapper) }, returnWrapper);
                 break;
 
             case SUBSCRIBE_TO_CHANGE:
-                subscribeTo(address, this.changeEventType, returnWrapper);
+                sendResult(new Object[] { subscribeTo(address, this.changeEventType, returnWrapper) }, returnWrapper);
                 break;
 
             case SUBSCRIBE_TO_REMOVE:
-                subscribeTo(address, this.removedEventType, returnWrapper);
+                sendResult(new Object[] { subscribeTo(address, this.removedEventType, returnWrapper) }, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_ADD:
-                unsubscribeFrom(address, this.addedEventType, returnWrapper);
+                sendResult(new Object[] { unsubscribeFrom(address, this.addedEventType, returnWrapper) }, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_CHANGE:
-                unsubscribeFrom(address, this.changeEventType, returnWrapper);
+                sendResult(new Object[] { unsubscribeFrom(address, this.changeEventType, returnWrapper) }, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_REMOVE:
-                unsubscribeFrom(address, this.removedEventType, returnWrapper);
+                sendResult(new Object[] { unsubscribeFrom(address, this.removedEventType, returnWrapper) }, returnWrapper);
                 break;
 
             case GET_CURRENT:
-                sendResult(this.listTransceiver.get(address), returnWrapper);
+            {
+                Object[] result = this.listTransceiver.get(address, returnWrapper);
+                if (null != result)
+                {
+                    sendResult(result, returnWrapper);
+                }
                 break;
+            }
 
             case GET_ADDRESS_META_DATA:
                 sendResult(extractObjectDescriptorClassNames(this.listTransceiver.getAddressFields().getObjectDescriptors()),
@@ -377,7 +414,7 @@ public class SubscriptionHandler
     }
 
     /**
-     * Send data over Sim0MQ to master.
+     * Send data via Sim0MQ to master if (and only if) it is non-null.
      * @param data Object[]; the data to transmit
      * @param returnWrapper ReturnWrapper; envelope constructor for returned results
      * @throws SerializationException on illegal type in serialization
@@ -386,7 +423,10 @@ public class SubscriptionHandler
     private void sendResult(final Object[] data, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
     {
-        returnWrapper.encodeReplyAndTransmit(data);
+        if (data != null)
+        {
+            returnWrapper.encodeReplyAndTransmit(data);
+        }
     }
 
     /** {@inheritDoc} */
@@ -409,10 +449,19 @@ interface LookupEventProducerInterface
     /**
      * Find the EventProducerInterface with the given address.
      * @param address Object[]; the address
+     * @param returnWrapper ReturnWrapper; to be used to send back complaints about bad addresses, etc.
      * @return EventProducerInterface; can be null in case the address is (no longer) valid
-     * @throws IndexOutOfBoundsException when the address has an invalid format
+     * @throws SerializationException when an error occurs while serializing an error response
+     * @throws Sim0MQException when an error occurs while serializing an error response
      */
-    EventProducerInterface lookup(Object[] address) throws IndexOutOfBoundsException;
+    EventProducerInterface lookup(Object[] address, ReturnWrapper returnWrapper) throws Sim0MQException, SerializationException;
+
+    /**
+     * Return a MetaData object that can be used to verify the correctness of an address for the <code>lookup</code> method.
+     * @return MetaData; to be used to verify the correctness of an address for the <code>lookup</code> method
+     */
+    MetaData getAddressMetaData();
+
 }
 
 /**

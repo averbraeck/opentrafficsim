@@ -4,6 +4,7 @@ import org.djunits.Throw;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -11,6 +12,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.sim0mq.Sim0MQException;
 
 /**
  * Transceiver for the ids of the GTUs on a link.
@@ -46,20 +48,29 @@ public class LaneGTUIdTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public final Object[] get(final Object[] address)
+    public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        getAddressFields().verifyComposition(address);
+        String bad = verifyMetaData(getAddressFields(), address);
+        if (bad != null)
+        {
+            returnWrapper
+                    .encodeReplyAndTransmit(new Object[] { "Bad address; need id of a link and id of a CrossSectionElement" });
+            return null;
+        }
         Link link = this.network.getLink((String) address[0]);
         if (null == link || (!(link instanceof CrossSectionLink)))
         {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a link with id " + address[0] });
             return null;
         }
         CrossSectionLink csl = (CrossSectionLink) link;
         CrossSectionElement cse = csl.getCrossSectionElement((String) address[1]);
         if (!(cse instanceof Lane))
         {
+            returnWrapper.encodeReplyAndTransmit(new Object[] {
+                    "CrossSectionElement " + address[1] + " of link with id " + address[0] + ", is not a lane" });
             return null;
-
         }
         Lane lane = (Lane) cse;
         ImmutableList<LaneBasedGTU> gtus = lane.getGtuList();

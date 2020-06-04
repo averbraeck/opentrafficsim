@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -57,7 +58,9 @@ public final class PublisherDemo
     {
         ZContext zContext = new ZContext(5); // 5 IO threads - how many is reasonable? It actually works with 1 IO thread.
 
-        ReadMessageThread readMessageThread = new ReadMessageThread(zContext);
+        List<byte[]> receivedMessages = new ArrayList<>();
+        List<byte[]> synchronizedReceivedMessages = Collections.synchronizedList(receivedMessages);
+        ReadMessageThread readMessageThread = new ReadMessageThread(zContext, synchronizedReceivedMessages);
         readMessageThread.start();
 
         PublisherThread publisherThread = new PublisherThread(zContext);
@@ -67,12 +70,40 @@ public final class PublisherDemo
         publisherControlSocket.connect("inproc://publisherControl");
 
         int conversationId = 100; // Number the commands starting with something that is very different from 0
+        String badCommand = "THIS_IS_NOT_A_SUPPORTED_COMMAND";
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, conversationId++));
+        for (int attempt = 0; attempt < 100; attempt++)
+        {
+            if (receivedMessages.size() > 0)
+            {
+                break;
+            }
+            Thread.sleep(100);
+        }
+        if (receivedMessages.size() == 0)
+        {
+            System.err.println("publisher does not respond");
+        }
+        else
+        {
+            Object[] objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
+            if (!objects[5].equals(badCommand))
+            {
+                System.err.println("publisher return unexpected response");
+            }
+            System.out.println("Got expected response to unsupported command");
+        }
+        
         String xml = new String(Files
                 .readAllBytes(Paths.get("C:/Users/pknoppers/Java/ots-demo/src/main/resources/TrafCODDemo2/TrafCODDemo2.xml")));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "NEWSIMULATION",
                 conversationId++, xml, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_CURRENT", conversationId++));
+        
+        
+        
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
@@ -143,14 +174,19 @@ public final class PublisherDemo
     {
         /** The ZContext needed to create the socket. */
         private final ZContext zContext;
+        
+        /** Storage for the received messages. */
+        private final List<byte[]> storage;
 
         /**
          * Repeatedly read all available messages.
-         * @param zContext ZContext; the ZContext needed to create the read socket.
+         * @param zContext ZContext; the ZContext needed to create the read socket
+         * @param storage List&lt;String&gt;; storage for the received messages
          */
-        ReadMessageThread(final ZContext zContext)
+        ReadMessageThread(final ZContext zContext, final List<byte[]> storage)
         {
             this.zContext = zContext;
+            this.storage = storage;
         }
 
         @Override
@@ -162,7 +198,11 @@ public final class PublisherDemo
             socket.bind("inproc://publisherOutput");
             while (!Thread.interrupted())
             {
-                readMessages(socket);
+                byte[][] all = readMessages(socket);
+                for (byte[] one : all)
+                {
+                    this.storage.add(one);
+                }
             }
             System.out.println("Read message thread exits due to interrupt");
         }
