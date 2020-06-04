@@ -2,16 +2,17 @@ package org.sim0mq.publisher;
 
 import java.rmi.RemoteException;
 
-import org.djunits.Throw;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.sim0mq.Sim0MQException;
 
 /**
  * Transceiver for Node data.
@@ -52,12 +53,19 @@ public class NodeTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public Object[] get(final Object[] address) throws RemoteException
+    public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
-        getAddressFields().verifyComposition(address);
+        String bad = verifyMetaData(getAddressFields(), address);
+        if (bad != null)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address; should be empty" });
+            return null;
+        }
         Node node = this.network.getNode((String) address[0]);
         if (null == node)
         {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a node with id " + address[0] });
             return null;
         }
         return new Object[] { node.getId(), node.getPoint().doubleVector(PositionUnit.METER),
@@ -66,9 +74,14 @@ public class NodeTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public TransceiverInterface getIdSource(final int addressLevel)
+    public TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        Throw.when(addressLevel != 0, IndexOutOfBoundsException.class, "Only addressLevel 0 is valid");
+        if (addressLevel != 0)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Only empty address is valid" });
+            return null;
+        }
         return this.nodeIdSource;
     }
 

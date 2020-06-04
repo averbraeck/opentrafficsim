@@ -6,10 +6,12 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.sim0mq.Sim0MQException;
 
 /**
  * Transceiver for CrossSectionElement data.
@@ -49,16 +51,26 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public Object[] get(final Object[] address) throws RemoteException
+    public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
-        getAddressFields().verifyComposition(address);
+        String bad = verifyMetaData(getAddressFields(), address);
+        if (bad != null)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address" });
+            return null;
+        }
         Link link = network.getLink((String) (address[0]));
         if (link == null)
         {
+            returnWrapper
+                    .encodeReplyAndTransmit(new Object[] { "Network does not contain a link with id \"" + address[0] + "\"" });
             return null;
         }
         if (!(link instanceof CrossSectionLink))
         {
+            returnWrapper
+                    .encodeReplyAndTransmit(new Object[] { "Link with id \"" + address[0] + "\" is not a CrossSectionLink" });
             return null;
         }
         CrossSectionLink csl = (CrossSectionLink) link;
@@ -66,6 +78,9 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
         int rank = (Integer) (address[1]);
         if (rank < 0 || rank >= cseList.size())
         {
+            returnWrapper.encodeReplyAndTransmit(
+                    new Object[] { "Link with id \"" + address[0] + "\" does not have a CrossSectionElement with rank "
+                            + address[1] + " valid range is 0.." + cseList.size() });
             return null;
         }
         CrossSectionElement cse = cseList.get(rank);

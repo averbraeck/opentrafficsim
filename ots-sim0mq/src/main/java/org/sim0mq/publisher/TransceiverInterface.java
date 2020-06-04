@@ -4,7 +4,9 @@ import java.rmi.RemoteException;
 
 import org.djunits.Throw;
 import org.djutils.metadata.MetaData;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.base.Identifiable;
+import org.sim0mq.Sim0MQException;
 
 /**
  * Transceivers with machine interpretable description of address and result types. A transceiver converts DSOL events to Sim0MQ
@@ -28,14 +30,17 @@ public interface TransceiverInterface extends Identifiable
     /**
      * Retrieve the TransceiverInterface that can be used to get valid values for one argument in a request.
      * @param addressLevel int; index of the argument in the address fields
+     * @param returnWrapper ReturnWrapper; to be used to report problems
      * @return TransceiverInterface; to be used to get valid values for argument <code>addressLevel</code>, or null if valid
      *         values for the argument at index <code>addressLevel</code> can not be obtained through a TransceiverInterface
      *         object
+     * @throws SerializationException when the ReturnWrapper fails
+     * @throws Sim0MQException when the ReturnWrapper fails
      */
-    default TransceiverInterface getIdSource(int addressLevel)
+    default TransceiverInterface getIdSource(int addressLevel, ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        Throw.when(addressLevel < 0 || addressLevel >= getAddressFields().size(), IndexOutOfBoundsException.class,
-                "Invalid addressLevel");
+        returnWrapper.encodeReplyAndTransmit(new Object[] { "Invalid addressLevel (" + addressLevel + ")" });
         return null; // Default is no id source. Override this method if there is one.
     }
 
@@ -48,9 +53,12 @@ public interface TransceiverInterface extends Identifiable
     /**
      * Retrieve the data.
      * @param address Object[]; the address of the data to retrieve
+     * @param returnWrapper ReturnWrapper; to be used to report problems
      * @return Object[]; the retrieved data, or null when no object with the address could be found
      * @throws RemoteException when communication needed to retrieve the data failed
+     * @throws SerializationException when encoding an error message fails
+     * @throws Sim0MQException when encoding an error message fails
      */
-    Object[] get(Object[] address) throws RemoteException;
+    Object[] get(Object[] address, ReturnWrapper returnWrapper) throws RemoteException, Sim0MQException, SerializationException;
 
 }

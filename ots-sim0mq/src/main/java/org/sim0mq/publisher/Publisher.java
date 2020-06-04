@@ -77,23 +77,47 @@ public class Publisher extends AbstractTransceiver
         SubscriptionHandler gtuSubscriptionHandler =
                 new SubscriptionHandler("GTU move", gtuTransceiver, new LookupEventProducerInterface()
                 {
+                    @Override
+                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+                            throws Sim0MQException, SerializationException
+                    {
+                        String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
+                        if (bad != null)
+                        {
+                            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address: " + bad });
+                            return null;
+                        }
+                        EventProducerInterface result = network.getGTU((String) address[0]);
+                        if (null == result)
+                        {
+                            returnWrapper
+                                    .encodeReplyAndTransmit(new Object[] { "No GTU with ID \"" + address[0] + "\" found" });
+                        }
+                        return result;
+                    }
+
+                    private final MetaData metaData = new MetaData("GTU Id", "GTU Id",
+                            new ObjectDescriptor[] { new ObjectDescriptor("GTU ID", "GTU Id", String.class) });
 
                     @Override
-                    public EventProducerInterface lookup(final Object[] address) throws IndexOutOfBoundsException
+                    public MetaData getAddressMetaData()
                     {
-                        Throw.when(address == null || address.length != 1 || (!(address[0] instanceof String)),
-                                IllegalArgumentException.class, "Bad address; expected id of a GTU");
-                        return network.getGTU((String) address[0]);
-                        // TODO should we complain about a non-existing GTU?
+                        return this.metaData;
                     }
                 }, null, null, GTU.MOVE_EVENT, null);
         addSubscriptionHandler(gtuSubscriptionHandler);
         addSubscriptionHandler(new SubscriptionHandler("GTUs in network", gtuIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+                    throws Sim0MQException, SerializationException
             {
-                Throw.when(address != null && address.length != 0, IllegalArgumentException.class, "Bad address");
+                String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
+                if (bad != null)
+                {
+                    returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address: " + bad });
+                    return null;
+                }
                 return network;
             }
 
@@ -101,6 +125,12 @@ public class Publisher extends AbstractTransceiver
             public String toString()
             {
                 return "Subscription handler for GTUs in network";
+            }
+
+            @Override
+            public MetaData getAddressMetaData()
+            {
+                return MetaData.EMPTY;
             }
         }, Network.GTU_ADD_EVENT, Network.GTU_REMOVE_EVENT, null, gtuSubscriptionHandler));
         LinkIdTransceiver linkIdTransceiver = new LinkIdTransceiver(network);
@@ -111,9 +141,15 @@ public class Publisher extends AbstractTransceiver
         addSubscriptionHandler(new SubscriptionHandler("Links in network", linkIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+                    throws Sim0MQException, SerializationException
             {
-                Throw.when(address != null && address.length != 0, IllegalArgumentException.class, "Bad address");
+                String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
+                if (bad != null)
+                {
+                    returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address: " + bad });
+                    return null;
+                }
                 return network;
             }
 
@@ -121,6 +157,12 @@ public class Publisher extends AbstractTransceiver
             public String toString()
             {
                 return "Subscription handler for Links in network";
+            }
+
+            @Override
+            public MetaData getAddressMetaData()
+            {
+                return MetaData.EMPTY;
             }
         }, Network.LINK_ADD_EVENT, Network.LINK_REMOVE_EVENT, null, linkSubscriptionHandler));
         NodeIdTransceiver nodeIdTransceiver = new NodeIdTransceiver(network);
@@ -131,18 +173,39 @@ public class Publisher extends AbstractTransceiver
                 new SubscriptionHandler("Node change", nodeTransceiver, new LookupEventProducerInterface()
                 {
                     @Override
-                    public EventProducerInterface lookup(final Object[] address)
+                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
                     {
                         return null; // Nodes do not emit events
+                    }
+
+                    @Override
+                    public String toString()
+                    {
+                        return "Subscription handler for Node change";
+                    }
+
+                    private final MetaData metaData = new MetaData("Node Id", "Node Id",
+                            new ObjectDescriptor[] { new ObjectDescriptor("Node ID", "Node Id", String.class) });
+
+                    @Override
+                    public MetaData getAddressMetaData()
+                    {
+                        return this.metaData;
                     }
                 }, null, null, null, null);
         addSubscriptionHandler(nodeSubscriptionHandler);
         addSubscriptionHandler(new SubscriptionHandler("Nodes in network", nodeIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+                    throws Sim0MQException, SerializationException
             {
-                Throw.when(address != null && address.length != 0, IllegalArgumentException.class, "Bad address");
+                String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
+                if (bad != null)
+                {
+                    returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address: " + bad });
+                    return null;
+                }
                 return network;
             }
 
@@ -150,6 +213,12 @@ public class Publisher extends AbstractTransceiver
             public String toString()
             {
                 return "Subscription handler for Nodes in network";
+            }
+
+            @Override
+            public MetaData getAddressMetaData()
+            {
+                return MetaData.EMPTY;
             }
         }, Network.NODE_ADD_EVENT, Network.NODE_REMOVE_EVENT, null, nodeSubscriptionHandler));
         SubscriptionHandler linkGTUIdSubscriptionHandler = new SubscriptionHandler("GTUs on Link",
@@ -167,19 +236,21 @@ public class Publisher extends AbstractTransceiver
     private LookupEventProducerInterface lookupLink = new LookupEventProducerInterface()
     {
         @Override
-        public EventProducerInterface lookup(final Object[] address) throws IndexOutOfBoundsException
+        public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+                throws IndexOutOfBoundsException, Sim0MQException, SerializationException
         {
             Throw.whenNull(address, "LookupLink requires the name of a link");
             Throw.when(address.length != 1 || !(address[1] instanceof String), IllegalArgumentException.class, "Bad address");
             Link link = network.getLink((String) address[0]);
             if (null == link)
             {
-                // TODO report that there is no link with this id
+                returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a Link with id " + address[0] });
                 return null;
             }
             if (!(link instanceof EventProducerInterface))
             {
-                // TODO report that (and why) this link is not capable of handling a subscription request
+                returnWrapper.encodeReplyAndTransmit(
+                        new Object[] { "Link \"" + address[0] + "\" is not able to handle subscriptions" });
                 return null;
             }
             return (CrossSectionLink) link;
@@ -189,6 +260,13 @@ public class Publisher extends AbstractTransceiver
         public String toString()
         {
             return "LookupProducerInterface that looks up a Link in the network";
+        }
+
+        @Override
+        public MetaData getAddressMetaData()
+        {
+            return new MetaData("Link id", "Name of a link in the network",
+                    new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Name of a link in the network", String.class) });
         }
     };
 
@@ -203,9 +281,14 @@ public class Publisher extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public Object[] get(final Object[] address)
+    public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        getAddressFields().verifyComposition(address); // Should be empty
+        String bad = verifyMetaData(getAddressFields(), address);
+        if (bad != null)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Address should be empty" });
+        }
         // Construct an array containing the names all subscription handlers.
         Object[] result = new Object[this.subscriptionHandlerMap.size()];
         int index = 0;
@@ -214,14 +297,6 @@ public class Publisher extends AbstractTransceiver
             result[index++] = key;
         }
         return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final TransceiverInterface getIdSource(final int addressLevel)
-    {
-        Throw.when(addressLevel != 0, IndexOutOfBoundsException.class, "addressLevel must be 0");
-        return null;
     }
 
     /**
@@ -357,8 +432,8 @@ class ReturnWrapper
                 number = this.packetsSent.addAndGet(1);
                 fixedData = Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number),
                         messageFields[4], messageFields[5], messageFields[6], newMessageFields);
-                System.out
-                        .println("Prepared message " + number + ", type is \"" + messageFields[5] + "\", " + messageFields[6]);
+                // System.out
+                // .println("Prepared message " + number + ", type is \"" + messageFields[5] + "\", " + messageFields[6]);
             }
             catch (Sim0MQException | SerializationException e)
             {

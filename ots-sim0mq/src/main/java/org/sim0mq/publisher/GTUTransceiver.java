@@ -2,15 +2,16 @@ package org.sim0mq.publisher;
 
 import java.rmi.RemoteException;
 
-import org.djunits.Throw;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.sim0mq.Sim0MQException;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -45,22 +46,38 @@ public class GTUTransceiver extends AbstractEventTransceiver
         this.gtuIdSource = gtuIdSource;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @throws Sim0MQException
+     */
     @Override
-    public final TransceiverInterface getIdSource(final int addressLevel)
+    public final TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        Throw.when(addressLevel != 0, IndexOutOfBoundsException.class, "Only addressLevel 0 is valid");
+        if (addressLevel != 0)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Only empty address is valid" });
+            return null;
+        }
         return this.gtuIdSource;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Object[] get(final Object[] address) throws RemoteException
+    public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
-        getAddressFields().verifyComposition(address);
+        String bad = verifyMetaData(getAddressFields(), address);
+        if (bad != null)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address - should be id of a GTU" });
+            return null;
+        }
+
         GTU gtu = this.network.getGTU((String) address[0]);
         if (null == gtu)
         {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "No GTU found with id \"" + address[0] + "\"" });
             return null;
         }
         DirectedPoint gtuPosition = gtu.getLocation();

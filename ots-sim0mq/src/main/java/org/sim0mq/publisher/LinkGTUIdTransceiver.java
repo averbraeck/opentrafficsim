@@ -5,9 +5,11 @@ import java.util.Set;
 import org.djunits.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.sim0mq.Sim0MQException;
 
 /**
  * Transceiver for the ids of the GTUs on a link.
@@ -42,12 +44,19 @@ public class LinkGTUIdTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public final Object[] get(final Object[] address)
+    public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        getAddressFields().verifyComposition(address);
+        String bad = verifyMetaData(getAddressFields(), address);
+        if (bad != null)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address; need id of a link" });
+            return null;
+        }
         Link link = this.network.getLink((String) address[0]);
         if (null == link)
         {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a link with id " + address[0] });
             return null;
         }
         Set<GTU> gtus = link.getGTUs();

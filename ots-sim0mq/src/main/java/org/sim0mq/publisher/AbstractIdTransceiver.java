@@ -4,8 +4,10 @@ import org.djunits.Throw;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.sim0mq.Sim0MQException;
 
 /**
  * Common code for id transceivers that use an empty address.
@@ -45,9 +47,15 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
-    public final Object[] get(final Object[] address)
+    public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
     {
-        getAddressFields().verifyComposition(address);
+        String bad = verifyMetaData(getAddressFields(), address);
+        if (bad != null)
+        {
+            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address" });
+            return null;
+        }
         ImmutableSet<?> set = getSet();
         Object[] result = new Object[set.size()];
         int nextIndex = 0;

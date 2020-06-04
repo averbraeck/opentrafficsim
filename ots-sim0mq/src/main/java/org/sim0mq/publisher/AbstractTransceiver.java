@@ -62,6 +62,43 @@ public abstract class AbstractTransceiver implements TransceiverInterface
         return this.resultFields;
     }
 
+    /**
+     * Verify the composition of an Object[].
+     * @param metaData MetaData; the expected composition
+     * @param address Object[]; the object array that must be verified
+     * @return String; null if metaData is OK; descriptive text on error
+     */
+    public static String verifyMetaData(final MetaData metaData, final Object[] address)
+    {
+        if ((metaData.size() == 0 || metaData.size() == 1) && address == null)
+        {
+            return null;
+        }
+        if (metaData.equals(MetaData.NO_META_DATA)) // anything goes
+        {
+            return null;
+        }
+        if (null == address)
+        {
+            return ("Address may not be null");
+        }
+        if (address.length != metaData.size())
+        {
+            return String.format("Address for %s has wrong length (expected %d, got %d)", metaData.getName(), metaData.size(),
+                    address.length);
+        }
+        for (int index = 0; index < address.length; index++)
+        {
+            Object object = address[index];
+            if ((null != object) && (!(metaData.getObjectClass(index).isAssignableFrom(object.getClass()))))
+            {
+                return String.format("objectArray[%d] (%s) cannot be used for %s", index, address[index],
+                        metaData.getObjectClass(index).getName());
+            }
+        }
+        return null;
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString()
