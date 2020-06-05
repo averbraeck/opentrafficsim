@@ -69,7 +69,7 @@ public class Sim0MQPublisherTest
         int conversationId = 100; // Number the commands starting with something that is very different from 0
         String badCommand = "THIS_IS_NOT_A_SUPPORTED_COMMAND";
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, conversationId++));
-        waitForReceivedMessages(receivedMessages);
+        waitForReceivedMessages(receivedMessages, 1.0);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         Object[] objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
         assertEquals("Field 5 of message echos the bad command", badCommand, objects[5]);
@@ -77,7 +77,7 @@ public class Sim0MQPublisherTest
         receivedMessages.clear();
         badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, conversationId++));
-        waitForReceivedMessages(receivedMessages);
+        waitForReceivedMessages(receivedMessages, 1.0);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
         assertEquals("Field 5 of message echos the bad command", "GTUs in network", objects[5]);
@@ -88,10 +88,7 @@ public class Sim0MQPublisherTest
         // Discover what services and commands are available
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_LIST", conversationId++));
-        for (int attempt = 0; attempt < 10; attempt++)
-        {
-            waitForReceivedMessages(receivedMessages);
-        }
+        waitForReceivedMessages(receivedMessages, 10);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         Object[] commands = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
         assertTrue("message decodes into more than 8 fields", commands.length > 8);
@@ -103,7 +100,7 @@ public class Sim0MQPublisherTest
             System.out.println("Service " + service);
             sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                     service + "|" + SubscriptionHandler.Command.GET_COMMANDS, conversationId++));
-            waitForReceivedMessages(receivedMessages);
+            waitForReceivedMessages(receivedMessages, 1.0);
             if (receivedMessages.size() > 0)
             {
                 Object[] result = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
@@ -115,7 +112,7 @@ public class Sim0MQPublisherTest
                     // System.out.println("trying command " + service + "|" + command);
                     sendCommand(publisherControlSocket,
                             Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", service + "|" + command, conversationId++));
-                    waitForReceivedMessages(receivedMessages);
+                    waitForReceivedMessages(receivedMessages, 1.0);
                     if (receivedMessages.size() > 0)
                     {
                         for (int ii = 8; ii < receivedMessages.size(); ii++)
@@ -178,19 +175,17 @@ public class Sim0MQPublisherTest
     /**
      * Sleep up to 1 second waiting for at least one message to be received.
      * @param receivedMessages List&lt;?&gt;; the list to monitor
+     * @param maximumSeconds double; how long to wait (in seconds)
      * @throws InterruptedException when that happens uncaught; this test has failed
      */
-    static void waitForReceivedMessages(final List<?> receivedMessages) throws InterruptedException
+    static void waitForReceivedMessages(final List<?> receivedMessages, final double maximumSeconds) throws InterruptedException
     {
-        for (int attempt = 0; attempt < 100; attempt++)
+        double timeWaited = 0;
+        while (receivedMessages.size() == 0 && timeWaited < maximumSeconds)
         {
-            if (receivedMessages.size() > 0)
-            {
-                break;
-            }
             Thread.sleep(10);
+            timeWaited += 0.01;
         }
-
     }
 
     /**
