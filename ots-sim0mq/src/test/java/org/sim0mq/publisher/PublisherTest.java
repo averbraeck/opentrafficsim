@@ -20,13 +20,11 @@ import java.util.Scanner;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -37,7 +35,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -50,7 +47,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Unit tests. This requires half of OTS in the imports because it sets up a simulation and runs that for a couple of seconds.
@@ -67,6 +63,9 @@ public class PublisherTest implements OTSModelInterface
     /** ... */
     private static final long serialVersionUID = 20200505L;
 
+    /** Storage for the last result submitted to the ReturnWrapper. */
+    private Object[] lastResult = null;
+
     /**
      * Test the Publisher class.
      * @throws RemoteException when that happens this test has failed
@@ -74,19 +73,28 @@ public class PublisherTest implements OTSModelInterface
      * @throws OTSGeometryException if that happens uncaught; this test has failed
      * @throws NamingException on context error
      * @throws SimRuntimeException on DSOL error
-     * @throws SerializationException 
-     * @throws Sim0MQException 
+     * @throws SerializationException
+     * @throws Sim0MQException
      */
     @Test
-    public void testPublisher()
-            throws RemoteException, NetworkException, OTSGeometryException, SimRuntimeException, NamingException, Sim0MQException, SerializationException
+    public void testPublisher() throws RemoteException, NetworkException, OTSGeometryException, SimRuntimeException,
+            NamingException, Sim0MQException, SerializationException
     {
+        ReturnWrapper storeLastResult = new ReturnWrapper()
+        {
+            @Override
+            public void encodeReplyAndTransmit(final Object[] payload)
+            {
+                lastResult = payload;
+            }
+        };
         OTSSimulatorInterface simulator = new OTSSimulator("test simulator for PublisherTest");
         OTSRoadNetwork network = new OTSRoadNetwork("test network for PublisherTest", true, simulator);
         Publisher publisher = new Publisher(network);
         assertTrue("id of publisher contains id of network", publisher.getId().contains(network.getId()));
-        Object[] transceiverNames = publisher.getIdSource(0, null).get(null);
-        assertNotNull("result of getIdSource should not be null", transceiverNames);
+        TransceiverInterface transceiverInterface = publisher.getIdSource(0, storeLastResult);
+        assertNotNull("result of getIdSource should not be null", transceiverInterface);
+        Object[] transceiverNames = transceiverInterface.get(null, storeLastResult);
         assertTrue("result of getIdSource should not be empty", transceiverNames.length > 0);
         for (Object o : transceiverNames)
         {
@@ -94,32 +102,15 @@ public class PublisherTest implements OTSModelInterface
             // System.out.println("transceiver: " + o);
         }
         // See if we can obtain the GTUIdTransceiver
-        Object[] subScriptionHandler = publisher.get(new Object[] { "GTUs in network" });
-        assertNotNull("result of get should not be null", subScriptionHandler);
-        assertEquals("result should contain one element", 1, subScriptionHandler.length);
-        assertTrue("result should contain a SubscriptionHandler", subScriptionHandler[0] instanceof SubscriptionHandler);
+        Object[] subscriptionHandler = publisher.get(new Object[] { "GTUs in network" }, storeLastResult);
+        assertNotNull("result of get should not be null", subscriptionHandler);
+        assertEquals("result should contain one elements", 1, subscriptionHandler.length);
+        System.out.println(subscriptionHandler[0]);
+        assertTrue("Result should contain a String", subscriptionHandler[0] instanceof SubscriptionHandler);
         assertNull("request for non existent transceiver should return null",
-                publisher.get(new Object[] { "No such transceiver" }));
-        try
-        {
-            publisher.getIdSource(1, null);
-            fail("should have thrown an IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ioobe)
-        {
-            // Ignore expected exception
-        }
-
-        try
-        {
-            publisher.getIdSource(-1, null);
-            fail("should have thrown an IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ioobe)
-        {
-            // Ignore expected exception
-        }
-
+                publisher.get(new Object[] { "No such transceiver" }, storeLastResult));
+        assertNull("getIdSource with wrong index returns null", publisher.getIdSource(1, storeLastResult));
+        assertNull("getIdSource with wrong index returns null", publisher.getIdSource(-1, storeLastResult));
     }
 
     @Override
@@ -270,11 +261,11 @@ public class PublisherTest implements OTSModelInterface
         }
 
     }
-    
+
     /**
      * Test the new publisher.
-     * @throws NamingException 
-     * @throws SimRuntimeException 
+     * @throws NamingException
+     * @throws SimRuntimeException
      */
     @Test
     public void testNewPublisher() throws SimRuntimeException, NamingException
@@ -286,18 +277,18 @@ public class PublisherTest implements OTSModelInterface
         PublisherThread publisherthread = new PublisherThread(zContext, network);
         // WORK IN PROGRESS
     }
-    
+
     /**
-     * Starts and runs the publisher. 
+     * Starts and runs the publisher.
      */
     class PublisherThread extends Thread
     {
         /** The ZMQ context. */
-        final ZContext zContext;
-        
+        private final ZContext zContext;
+
         /** The network. */
         private final OTSNetwork network;
-        
+
         /**
          * Construct the publisher thread.
          * @param zContext ZContext; the ZMQ context
@@ -308,14 +299,14 @@ public class PublisherTest implements OTSModelInterface
             this.zContext = zContext;
             this.network = network;
         }
-        
+
         @Override
         public void run()
         {
             // TODO: everything
             System.out.println("Publisher thread exits");
         }
-        
+
     }
 
     /**
@@ -420,7 +411,7 @@ public class PublisherTest implements OTSModelInterface
         assertNull("Non existent GTU id returns null", gt.get(new Object[] { "Non existent GTU" }));
         assertNull("Out of range index returns null", cset.get(new Object[] { "NCEC", -1 }));
         assertNull("Out of range index returns null", cset.get(new Object[] { "NCEC", 9999 }));
-
+    
         assertTrue("CrossSectionElementTransceiver has descriptive toString",
                 cset.toString().startsWith("CrossSectionElementTransceiver"));
         assertTrue("LinkGTUIdTransceiver has descriptive toString", lgit.toString().startsWith("LinkGTUIdTransceiver"));
@@ -435,7 +426,7 @@ public class PublisherTest implements OTSModelInterface
         {
             // Ignore expected exception
         }
-
+    
         try
         {
             lt.getIdSource(-1);
@@ -445,7 +436,7 @@ public class PublisherTest implements OTSModelInterface
         {
             // Ignore expected exception
         }
-
+    
         assertTrue("LinkTransceiver has descriptive toString", lt.toString().startsWith("LinkTransceiver"));
         assertTrue("GTUTransceiver has descriptive toString", gt.toString().startsWith("GTUTransceiver"));
         GTUIdTransceiver git = (GTUIdTransceiver) publisher.get(new Object[] { "GTU id transceiver" })[0];
@@ -470,7 +461,7 @@ public class PublisherTest implements OTSModelInterface
         {
             // Ignore expected exception
         }
-
+    
         try
         {
             gt.getIdSource(-1);
@@ -480,7 +471,7 @@ public class PublisherTest implements OTSModelInterface
         {
             // Ignore expected exception
         }
-
+    
         NodeIdTransceiver nit = (NodeIdTransceiver) publisher.get(new Object[] { "Node id transceiver" })[0];
         assertNotNull("Node id transceiver was returned", nit);
         assertTrue("toString of NodeIdTransceiver returns something descriptive",
@@ -498,7 +489,7 @@ public class PublisherTest implements OTSModelInterface
         {
             // Ignore expected exception
         }
-
+    
         try
         {
             nt.getIdSource(-1);
@@ -508,7 +499,7 @@ public class PublisherTest implements OTSModelInterface
         {
             // Ignore expected exception
         }
-
+    
         for (Object object : nit.get(null))
         {
             assertNotNull("Node ids should not be null", object);
@@ -520,9 +511,9 @@ public class PublisherTest implements OTSModelInterface
             {
                 System.out.println("\t" + i + "\t" + nt.getResultFields().getFieldName(i) + "\t" + nodeData[i]);
             }
-
+    
         }
-
+    
         assertNull("non existent node returns null", nt.get(new Object[] { "Non existend node id" }));
     }
     */

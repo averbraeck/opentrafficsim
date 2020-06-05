@@ -66,9 +66,11 @@ public class Publisher extends AbstractTransceiver
     public Publisher(final OTSNetwork network)
     {
         super("Publisher for " + Throw.whenNull(network, "Network may not be null").getId(),
-                new MetaData("Publisher for " + network.getId(), "Publisher", new ObjectDescriptor[0]),
+                new MetaData("Publisher for " + network.getId(), "Publisher",
+                        new ObjectDescriptor[] {
+                                new ObjectDescriptor("Name of subscription handler", "String", String.class) }),
                 new MetaData("Subscription handlers", "Subscription handlers", new ObjectDescriptor[] {
-                        new ObjectDescriptor("Subscription handler", "Subscription handler", SubscriptionHandler.class) }));
+                        new ObjectDescriptor("Name of subscription handler", "String", String.class) }));
         this.network = network;
 
         GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
@@ -77,7 +79,7 @@ public class Publisher extends AbstractTransceiver
                 new SubscriptionHandler("GTU move", gtuTransceiver, new LookupEventProducerInterface()
                 {
                     @Override
-                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
                             throws Sim0MQException, SerializationException
                     {
                         String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
@@ -107,7 +109,7 @@ public class Publisher extends AbstractTransceiver
         addSubscriptionHandler(new SubscriptionHandler("GTUs in network", gtuIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
                     throws Sim0MQException, SerializationException
             {
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
@@ -139,7 +141,7 @@ public class Publisher extends AbstractTransceiver
         addSubscriptionHandler(new SubscriptionHandler("Links in network", linkIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
                     throws Sim0MQException, SerializationException
             {
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
@@ -171,7 +173,7 @@ public class Publisher extends AbstractTransceiver
                 new SubscriptionHandler("Node change", nodeTransceiver, new LookupEventProducerInterface()
                 {
                     @Override
-                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
                     {
                         return null; // Nodes do not emit events
                     }
@@ -195,7 +197,7 @@ public class Publisher extends AbstractTransceiver
         addSubscriptionHandler(new SubscriptionHandler("Nodes in network", nodeIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
                     throws Sim0MQException, SerializationException
             {
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
@@ -234,7 +236,7 @@ public class Publisher extends AbstractTransceiver
     private LookupEventProducerInterface lookupLink = new LookupEventProducerInterface()
     {
         @Override
-        public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
+        public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
                 throws IndexOutOfBoundsException, Sim0MQException, SerializationException
         {
             Throw.whenNull(address, "LookupLink requires the name of a link");
@@ -285,16 +287,69 @@ public class Publisher extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit("Address should be empty");
+            returnWrapper.encodeReplyAndTransmit("Address should be the name of a transceiver");
+            return null;
         }
-        // Construct an array containing the names all subscription handlers.
-        Object[] result = new Object[this.subscriptionHandlerMap.size()];
-        int index = 0;
-        for (String key : this.subscriptionHandlerMap.keySet())
+        SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(address[0]);
+        if (null == subscriptionHandler)
         {
-            result[index++] = key;
+            returnWrapper.encodeReplyAndTransmit("No transceiver with name \"" + address[0] + "\"");
+            return null;
         }
-        return result;
+        return new Object[] { subscriptionHandler };
+    }
+
+    /** Returned by the getIdSource method. */
+    private final TransceiverInterface idSource = new TransceiverInterface()
+    {
+        @Override
+        public String getId()
+        {
+            return "Transceiver for names of available transceivers in Publisher";
+        }
+
+        @Override
+        public MetaData getAddressFields()
+        {
+            return MetaData.EMPTY;
+        }
+
+        /** Result of getResultFields. */
+        private MetaData resultMetaData =
+                new MetaData("Transceiver names available in Publisher", "String array", new ObjectDescriptor[] {
+                        new ObjectDescriptor("Transceiver names available in Publisher", "String array", String[].class) });
+
+        @Override
+        public MetaData getResultFields()
+        {
+            return resultMetaData;
+        }
+
+        @Override
+        public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
+                throws RemoteException, Sim0MQException, SerializationException
+        {
+            Object[] result = new Object[subscriptionHandlerMap.size()];
+            int index = 0;
+            for (String key : subscriptionHandlerMap.keySet())
+            {
+                result[index++] = key;
+            }
+            return result;
+        }
+    };
+
+    /** {@inheritDoc} */
+    @Override
+    public TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
+            throws Sim0MQException, SerializationException
+    {
+        if (0 != addressLevel)
+        {
+            returnWrapper.encodeReplyAndTransmit("Address should be empty");
+            return null;
+        }
+        return this.idSource;
     }
 
     /**
@@ -308,7 +363,7 @@ public class Publisher extends AbstractTransceiver
      * @throws Sim0MQException on communication error
      */
     public void executeCommand(final String subscriptionHandlerName, final SubscriptionHandler.Command command,
-            final Object[] address, final ReturnWrapper returnWrapper)
+            final Object[] address, final ReturnWrapperImpl returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(subscriptionHandlerName);
@@ -331,7 +386,7 @@ public class Publisher extends AbstractTransceiver
      * @throws Sim0MQException on communication error
      */
     public void executeCommand(final String subscriptionHandlerName, final String commandString, final Object[] address,
-            final ReturnWrapper returnWrapper) throws RemoteException, Sim0MQException, SerializationException
+            final ReturnWrapperImpl returnWrapper) throws RemoteException, Sim0MQException, SerializationException
     {
         executeCommand(subscriptionHandlerName,
                 Throw.whenNull(SubscriptionHandler.lookupCommand(commandString), "Invalid command (%s", commandString), address,
@@ -343,7 +398,7 @@ public class Publisher extends AbstractTransceiver
 /**
  * Container for all data needed to reply (once, or multiple times) to a Sim0MQ request.
  */
-class ReturnWrapper
+class ReturnWrapperImpl implements ReturnWrapper
 {
     /** The ZContext needed to create the return socket(s). */
     private final ZContext zContext;
@@ -375,7 +430,7 @@ class ReturnWrapper
      * @throws SerializationException when the received message has an incorrect envelope
      * @throws Sim0MQException when the received message cannot be decoded
      */
-    ReturnWrapper(final ZContext zContext, final byte[] receivedMessage, final Map<Long, Socket> socketMap,
+    ReturnWrapperImpl(final ZContext zContext, final byte[] receivedMessage, final Map<Long, Socket> socketMap,
             final AtomicInteger packetsSent) throws Sim0MQException, SerializationException
     {
         this(zContext, Sim0MQMessage.decode(receivedMessage).createObjectArray(), socketMap);
@@ -387,7 +442,7 @@ class ReturnWrapper
      * @param decodedReceivedMessage Object[]; decoded Sim0MQ message
      * @param socketMap Map&lt;Long, ZMQ.Socket&gt;; cache of created sockets for returned messages
      */
-    ReturnWrapper(final ZContext zContext, final Object[] decodedReceivedMessage, final Map<Long, Socket> socketMap)
+    ReturnWrapperImpl(final ZContext zContext, final Object[] decodedReceivedMessage, final Map<Long, Socket> socketMap)
     {
         Throw.whenNull(zContext, "zContext may not be null");
         Throw.whenNull(socketMap, "socket map may not be null");
@@ -429,13 +484,8 @@ class ReturnWrapper
         // System.out.println("post send");
     }
 
-    /**
-     * Encode a reply and transmit it. If the message id field is an Integer then it is incremented <b>after</b> encoding the
-     * reply.
-     * @param payload Object[]; payload of the reply message
-     * @throws Sim0MQException not sure if that can happen
-     * @throws SerializationException when an object in payload cannot be serialized
-     */
+    /** {@inheritDoc} */
+    @Override
     public void encodeReplyAndTransmit(final Object[] payload) throws Sim0MQException, SerializationException
     {
         Throw.whenNull(payload, "payload may not be null (but it can be an emty Object array)");
@@ -443,19 +493,6 @@ class ReturnWrapper
                 this.messageTypeId, this.messageId, payload);
         sendToMaster(result);
         // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
-    }
-
-    /**
-     * Encode a reply and transmit it. If the message id field is an Integer then it is incremented <b>after</b> encoding the
-     * reply.
-     * @param payload String; payload of the reply message
-     * @throws Sim0MQException not sure if that can happen
-     * @throws SerializationException when an object in payload cannot be serialized
-     */
-    public void encodeReplyAndTransmit(final String payload) throws Sim0MQException, SerializationException
-    {
-        Throw.whenNull(payload, "payload may not be null");
-        encodeReplyAndTransmit(new Object[] { payload });
     }
 
     /** {@inheritDoc} */
@@ -491,7 +528,7 @@ class ReturnWrapper
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ReturnWrapper other = (ReturnWrapper) obj;
+        ReturnWrapperImpl other = (ReturnWrapperImpl) obj;
         if (federationId == null)
         {
             if (other.federationId != null)

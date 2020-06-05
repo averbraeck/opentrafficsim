@@ -57,7 +57,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
         if (addressLevel != 0)
         {
             returnWrapper.encodeReplyAndTransmit("Only empty address is valid");
-            return null;
+            throw new IndexOutOfBoundsException("Only empty address is valid");
         }
         return this.gtuIdSource;
     }
