@@ -38,15 +38,26 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class TransceiverTest
 {
+    /** Storage for the last result submitted to the ReturnWrapper. */
+    private Object[] lastResult = null;
+
     /**
      * Test the GTUIdTransceiver and the GTUTransceiver.
      * @throws RemoteException if the happens, this test has failed
-     * @throws SerializationException 
-     * @throws Sim0MQException 
+     * @throws SerializationException
+     * @throws Sim0MQException
      */
     @Test
     public void testGTUIdTransceiver() throws RemoteException, Sim0MQException, SerializationException
     {
+        ReturnWrapper storeLastResult = new ReturnWrapper()
+        {
+            @Override
+            public void encodeReplyAndTransmit(final Object[] payload)
+            {
+                lastResult = payload;
+            }
+        };
         try
         {
             new GTUIdTransceiver(null);
@@ -110,7 +121,7 @@ public class TransceiverTest
         {
             try
             {
-                gtuIdTransceiver.getIdSource(i, null);
+                gtuIdTransceiver.getIdSource(i, storeLastResult);
                 fail("any address level should have thrown an IndexOutOfBoundsException");
             }
             catch (IndexOutOfBoundsException ioobe)
@@ -118,20 +129,20 @@ public class TransceiverTest
                 // Ignore expected exception
             }
         }
-        Object[] result = gtuIdTransceiver.get(null);
+        Object[] result = gtuIdTransceiver.get(null, storeLastResult);
         assertNotNull("result should not be null", result);
         assertEquals("length of result should be 0", 0, result.length);
         MyMockGTU gtu1 = new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
                 new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator);
         network.addGTU(gtu1.getMock());
-        result = gtuIdTransceiver.get(null);
+        result = gtuIdTransceiver.get(null, storeLastResult);
         assertEquals("length of result is now 1", 1, result.length);
         assertTrue("result contains a string", result[0] instanceof String);
         assertEquals("result[0] is name of our mocked GTU", "gtu 1", (String) (result[0]));
         MyMockGTU gtu2 = new MyMockGTU("gtu 2", new GTUType("gtuType 2", network), new DirectedPoint(2, 20, 200, 2, 2, 2),
                 new Speed(2, SpeedUnit.KM_PER_HOUR), new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator);
         network.addGTU(gtu2.getMock());
-        result = gtuIdTransceiver.get(new Object[0]);
+        result = gtuIdTransceiver.get(new Object[0], storeLastResult);
         assertEquals("length of result is now 2", 2, result.length);
         for (int i = 0; i < 2; i++)
         {
@@ -154,7 +165,7 @@ public class TransceiverTest
         assertEquals("getIdSource returns gtuIdTransceiver", gtuIdTransceiver, gtuTransceiver.getIdSource(0, null));
         try
         {
-            gtuTransceiver.getIdSource(1, null);
+            gtuTransceiver.getIdSource(1, storeLastResult);
             fail("Invalid index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -164,7 +175,7 @@ public class TransceiverTest
 
         try
         {
-            gtuTransceiver.getIdSource(-1, null);
+            gtuTransceiver.getIdSource(-1, storeLastResult);
             fail("Invalid index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -216,26 +227,19 @@ public class TransceiverTest
 
         for (int i = 0; i < 2; i++)
         {
-            Object[] gtuResult = gtuTransceiver.get(new Object[] { result[i] });
+            Object[] gtuResult = gtuTransceiver.get(new Object[] { result[i] }, storeLastResult);
             assertNotNull("result is not null", gtuResult);
             assertEquals("result has 6 fields", 6, gtuResult.length);
             assertEquals("first field is a String", String.class, gtuResult[0].getClass());
             assertEquals("gtuResult is gtu with expected id", result[i], gtuResult[0]);
         }
-        assertNull("gtuTransceiver returns null for non-existend ID", gtuTransceiver.get(new Object[] { "NONEXISTENTGTU" }));
-        try
-        {
-            gtuTransceiver.get(new Object[] { 123 });
-            fail("wrong type in Object[] should have thrown a ClassCastException");
-        }
-        catch (ClassCastException cce)
-        {
-            // Ignore expected exception
-        }
+        assertNull("gtuTransceiver returns null for non-existend ID",
+                gtuTransceiver.get(new Object[] { "NONEXISTENTGTU" }, storeLastResult));
+        gtuTransceiver.get(new Object[] { 123 }, storeLastResult);
         assertTrue("toString returns something descriptive", gtuTransceiver.toString().contains("Transceiver"));
 
     }
-    
+
     /**
      * Test the constructResultFields method for a class that it cannot handle.
      */
@@ -256,7 +260,7 @@ public class TransceiverTest
             // Ignore expected exception
         }
     }
-    
+
 }
 
 /** ... */

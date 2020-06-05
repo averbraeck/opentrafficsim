@@ -28,7 +28,7 @@ public interface TransceiverInterface extends Identifiable
     MetaData getAddressFields();
 
     /**
-     * Retrieve the TransceiverInterface that can be used to get valid values for one argument in a request.
+     * Retrieve the TransceiverInterface that can be used to get detailed information about a single object.
      * @param addressLevel int; index of the argument in the address fields
      * @param returnWrapper ReturnWrapper; to be used to report problems
      * @return TransceiverInterface; to be used to get valid values for argument <code>addressLevel</code>, or null if valid
@@ -40,8 +40,10 @@ public interface TransceiverInterface extends Identifiable
     default TransceiverInterface getIdSource(int addressLevel, ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
     {
-        returnWrapper.encodeReplyAndTransmit("Invalid addressLevel (" + addressLevel + ")");
-        return null; // Default is no id source. Override this method if there is one.
+        // There is no id source by default. Override this method if there is one.
+        Throw.whenNull(returnWrapper, "returnWrapper may not be null");
+        returnWrapper.encodeReplyAndTransmit("No id source");
+        throw new IndexOutOfBoundsException("No id source");
     }
 
     /**

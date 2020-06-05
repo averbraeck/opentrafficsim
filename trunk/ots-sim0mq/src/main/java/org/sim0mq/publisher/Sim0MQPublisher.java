@@ -250,7 +250,7 @@ public final class Sim0MQPublisher
                 if (parts.length == 2)
                 {
                     // This is a command for the embedded Publisher
-                    ReturnWrapper returnWrapper = new ReturnWrapper(zContext,
+                    ReturnWrapperImpl returnWrapper = new ReturnWrapperImpl(zContext,
                             new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0 },
                             socketMap);
                     if (null == this.publisher)
@@ -372,7 +372,7 @@ public final class Sim0MQPublisher
             }
             if (null != resultMessage)
             {
-                new ReturnWrapper(zContext,
+                new ReturnWrapperImpl(zContext,
                         new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 },
                         socketMap).encodeReplyAndTransmit(new Object[] { resultMessage });
             }

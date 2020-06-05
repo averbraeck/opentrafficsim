@@ -52,7 +52,7 @@ public class SubscriptionHandler
     private final SubscriptionHandler elementSubscriptionHandler;
 
     /** The currently active subscriptions. */
-    private final Map<ReturnWrapper, Subscription> subscriptions = new LinkedHashMap<>();
+    private final Map<ReturnWrapperImpl, Subscription> subscriptions = new LinkedHashMap<>();
 
     /**
      * Create a new SubscriptionHandler.
@@ -115,7 +115,7 @@ public class SubscriptionHandler
      * @throws SerializationException on context error
      * @throws Sim0MQException on DSOL error
      */
-    public void get(final Object[] address, final ReturnWrapper returnWrapper)
+    public void get(final Object[] address, final ReturnWrapperImpl returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         sendResult(this.listTransceiver.get(address, returnWrapper), returnWrapper);
@@ -171,7 +171,7 @@ public class SubscriptionHandler
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private String subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
+    private String subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapperImpl returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
@@ -213,7 +213,7 @@ public class SubscriptionHandler
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private String unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
+    private String unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapperImpl returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
@@ -348,7 +348,7 @@ public class SubscriptionHandler
      * @throws SerializationException on illegal type in serialization
      * @throws Sim0MQException on communication error
      */
-    public void executeCommand(final Command command, final Object[] address, final ReturnWrapper returnWrapper)
+    public void executeCommand(final Command command, final Object[] address, final ReturnWrapperImpl returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         Throw.whenNull(command, "Command may not be null");
@@ -463,7 +463,7 @@ public class SubscriptionHandler
      * @throws SerializationException on illegal type in serialization
      * @throws Sim0MQException on communication error
      */
-    private void sendResult(final Object[] data, final ReturnWrapper returnWrapper)
+    private void sendResult(final Object[] data, final ReturnWrapperImpl returnWrapper)
             throws Sim0MQException, SerializationException
     {
         if (data != null)
@@ -497,7 +497,7 @@ interface LookupEventProducerInterface
      * @throws SerializationException when an error occurs while serializing an error response
      * @throws Sim0MQException when an error occurs while serializing an error response
      */
-    EventProducerInterface lookup(Object[] address, ReturnWrapper returnWrapper) throws Sim0MQException, SerializationException;
+    EventProducerInterface lookup(Object[] address, ReturnWrapperImpl returnWrapper) throws Sim0MQException, SerializationException;
 
     /**
      * Return a MetaData object that can be used to verify the correctness of an address for the <code>lookup</code> method.
@@ -516,13 +516,13 @@ class Subscription implements EventListenerInterface
     private static final long serialVersionUID = 20200428L;
 
     /** Generates envelopes for the messages sent over Sim0MQ. */
-    private final ReturnWrapper returnWrapper;
+    private final ReturnWrapperImpl returnWrapper;
 
     /**
      * Construct a new Subscription.
      * @param returnWrapper ReturnWrapper; envelope generator for the messages
      */
-    Subscription(final ReturnWrapper returnWrapper)
+    Subscription(final ReturnWrapperImpl returnWrapper)
     {
         this.returnWrapper = returnWrapper;
     }
