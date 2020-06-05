@@ -390,7 +390,7 @@ public final class Sim0MQPublisher
 /**
  * The Model.
  */
-class Sim0MQOTSModel extends AbstractOTSModel implements EventListenerInterface
+class Sim0MQOTSModel extends AbstractOTSModel
 {
     /** */
     private static final long serialVersionUID = 20170419L;
@@ -411,13 +411,6 @@ class Sim0MQOTSModel extends AbstractOTSModel implements EventListenerInterface
         super(network.getSimulator(), network.getId(), description);
         this.network = network;
         this.xml = xml;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void notify(final EventInterface event) throws RemoteException
-    {
-        System.err.println("Received event " + event);
     }
 
     /** {@inheritDoc} */

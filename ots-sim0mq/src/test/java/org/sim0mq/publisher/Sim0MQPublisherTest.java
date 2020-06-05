@@ -87,7 +87,7 @@ public class Sim0MQPublisherTest
                 conversationId++, networkXML, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L));
         // Discover what services and commands are available
         sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_CURRENT", conversationId++));
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_LIST", conversationId++));
         for (int attempt = 0; attempt < 10; attempt++)
         {
             waitForReceivedMessages(receivedMessages);
