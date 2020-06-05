@@ -57,20 +57,20 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address" });
+            returnWrapper.encodeReplyAndTransmit("Bad address");
             return null;
         }
         Link link = network.getLink((String) (address[0]));
         if (link == null)
         {
             returnWrapper
-                    .encodeReplyAndTransmit(new Object[] { "Network does not contain a link with id \"" + address[0] + "\"" });
+                    .encodeReplyAndTransmit("Network does not contain a link with id \"" + address[0] + "\"");
             return null;
         }
         if (!(link instanceof CrossSectionLink))
         {
             returnWrapper
-                    .encodeReplyAndTransmit(new Object[] { "Link with id \"" + address[0] + "\" is not a CrossSectionLink" });
+                    .encodeReplyAndTransmit("Link with id \"" + address[0] + "\" is not a CrossSectionLink");
             return null;
         }
         CrossSectionLink csl = (CrossSectionLink) link;

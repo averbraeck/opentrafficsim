@@ -50,13 +50,13 @@ public class LinkGTUIdTransceiver extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address; need id of a link" });
+            returnWrapper.encodeReplyAndTransmit("Bad address; need id of a link");
             return null;
         }
         Link link = this.network.getLink((String) address[0]);
         if (null == link)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a link with id " + address[0] });
+            returnWrapper.encodeReplyAndTransmit("Network does not contain a link with id " + address[0]);
             return null;
         }
         Set<GTU> gtus = link.getGTUs();

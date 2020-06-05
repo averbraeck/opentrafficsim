@@ -75,6 +75,14 @@ public class Sim0MQPublisherTest
         assertEquals("Field 5 of message echos the bad command", badCommand, objects[5]);
 
         receivedMessages.clear();
+        badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, conversationId++));
+        waitForReceivedMessages(receivedMessages);
+        assertEquals("Should have received one message", 1, receivedMessages.size());
+        objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
+        assertEquals("Field 5 of message echos the bad command", "GTUs in network", objects[5]);
+
+        receivedMessages.clear();
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "NEWSIMULATION",
                 conversationId++, networkXML, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L));
         // Discover what services and commands are available
@@ -89,28 +97,42 @@ public class Sim0MQPublisherTest
         assertTrue("message decodes into more than 8 fields", commands.length > 8);
         for (int index = 8; index < commands.length; index++)
         {
+            receivedMessages.clear();
             assertTrue("A service is identified by a String", commands[index] instanceof String);
             String service = (String) commands[index];
             System.out.println("Service " + service);
-            for (SubscriptionHandler.Command command : SubscriptionHandler.Command.values())
+            sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
+                    service + "|" + SubscriptionHandler.Command.GET_COMMANDS, conversationId++));
+            waitForReceivedMessages(receivedMessages);
+            if (receivedMessages.size() > 0)
             {
-                receivedMessages.clear();
-                System.out.println("trying command " + service + "|" + command.toString());
-                sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
-                        service + "|" + command.toString(), conversationId++));
-                waitForReceivedMessages(receivedMessages);
-                if (receivedMessages.size() > 0)
+                Object[] result = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
+                assertTrue("result of GET_COMMANDS should be at least 8 long", result.length >= 8);
+                for (int i = 8; i < result.length; i++)
                 {
-                    for (int i = 0; i < receivedMessages.size(); i++)
+                    String command = (String) result[i];
+                    receivedMessages.clear();
+                    // System.out.println("trying command " + service + "|" + command);
+                    sendCommand(publisherControlSocket,
+                            Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", service + "|" + command, conversationId++));
+                    waitForReceivedMessages(receivedMessages);
+                    if (receivedMessages.size() > 0)
                     {
-                        System.out.println(Sim0MQMessage.print(Sim0MQMessage.decodeToArray(receivedMessages.get(i))));
+                        for (int ii = 8; ii < receivedMessages.size(); ii++)
+                        {
+                            System.out.println(Sim0MQMessage.print(Sim0MQMessage.decodeToArray(receivedMessages.get(ii))));
+                        }
                     }
+                    else
+                    {
+                        System.out.println("Received no reply");
+                    }
+                    System.out.print(""); // Good for a breakpoint
                 }
-                else
-                {
-                    System.out.println("Received no reply");
-                }
-                System.out.print(""); // Good for a breakpoint
+            }
+            else
+            {
+                System.out.println("Received no reply to GET_COMMANDS request");
             }
         }
         sendCommand(publisherControlSocket,
@@ -122,8 +144,6 @@ public class Sim0MQPublisherTest
         int conversationIdForSubscribeToAdd = conversationId++; // We need that to unsubscribe later
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|SUBSCRIBE_TO_ADD", conversationIdForSubscribeToAdd));
-        sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|GET_RESULT_META_DATA", conversationId++));
         int conversationIdForGTU2Move = conversationId++;
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
@@ -142,8 +162,6 @@ public class Sim0MQPublisherTest
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|GET_ADDRESS_META_DATA", conversationId++));
-        sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_RESULT_META_DATA", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", conversationId++));
         System.out.println("Master has sent last command; Publisher should be busy for a while and then die");
         System.out.println("Master joining publisher thread (this should block until publisher has died)");
@@ -323,7 +341,7 @@ public class Sim0MQPublisherTest
     }
 
     /** The test network. */
-    static String networkXML = "<?xml version='1.0' encoding='UTF-8'?>\r\n"
+    private static String networkXML = "<?xml version='1.0' encoding='UTF-8'?>\r\n"
             + "<OTS xmlns=\"http://www.opentrafficsim.org/ots\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n"
             + "  xsi:schemaLocation=\"http://www.opentrafficsim.org/ots ../../../../../ots-xsd/src/main/resources/xsd/1.03.00/ots.xsd\"\r\n"
             + "  xmlns:xi=\"http://www.w3.org/2001/XInclude\">\r\n" + "\r\n" + "  <DEFINITIONS>\r\n"

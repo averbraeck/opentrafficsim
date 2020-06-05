@@ -56,7 +56,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
     {
         if (addressLevel != 0)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Only empty address is valid" });
+            returnWrapper.encodeReplyAndTransmit("Only empty address is valid");
             return null;
         }
         return this.gtuIdSource;
@@ -70,14 +70,14 @@ public class GTUTransceiver extends AbstractEventTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address - should be id of a GTU" });
+            returnWrapper.encodeReplyAndTransmit("Bad address - should be id of a GTU");
             return null;
         }
 
         GTU gtu = this.network.getGTU((String) address[0]);
         if (null == gtu)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "No GTU found with id \"" + address[0] + "\"" });
+            returnWrapper.encodeReplyAndTransmit("No GTU found with id \"" + address[0] + "\"");
             return null;
         }
         DirectedPoint gtuPosition = gtu.getLocation();

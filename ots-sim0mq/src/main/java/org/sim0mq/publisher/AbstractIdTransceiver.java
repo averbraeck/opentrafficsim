@@ -53,7 +53,7 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address" });
+            returnWrapper.encodeReplyAndTransmit("Bad address");
             return null;
         }
         ImmutableSet<?> set = getSet();

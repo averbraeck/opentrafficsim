@@ -1,8 +1,10 @@
 package org.sim0mq.publisher;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.djunits.Throw;
@@ -239,7 +241,7 @@ public class SubscriptionHandler
             }
             if (!epi.removeListener(subscription, eventType))
             {
-                returnWrapper.encodeReplyAndTransmit(new Object[] { "Subscription was not found" });
+                returnWrapper.encodeReplyAndTransmit("Subscription was not found");
             }
             this.subscriptions.remove(returnWrapper);
             return "OK; subscription removed";
@@ -278,7 +280,9 @@ public class SubscriptionHandler
         /** Get the address meta data. */
         GET_ADDRESS_META_DATA,
         /** Get the result meta data. */
-        GET_RESULT_META_DATA;
+        GET_RESULT_META_DATA,
+        /** Get the set of implemented commands (must - itself - always be implemented). */
+        GET_COMMANDS;
     }
 
     /**
@@ -327,6 +331,10 @@ public class SubscriptionHandler
         else if ("UNSUBSCRIBE_FROM_CHANGE".equals(commandString))
         {
             return Command.UNSUBSCRIBE_FROM_CHANGE;
+        }
+        else if ("GET_COMMANDS".contentEquals(commandString))
+        {
+            return Command.GET_COMMANDS;
         }
         return null;
     }
@@ -378,6 +386,7 @@ public class SubscriptionHandler
                 {
                     sendResult(result, returnWrapper);
                 }
+                // TODO else?
                 break;
             }
 
@@ -390,11 +399,45 @@ public class SubscriptionHandler
                 sendResult(extractObjectDescriptorClassNames(this.listTransceiver.getResultFields().getObjectDescriptors()),
                         returnWrapper);
                 break;
+                
+            case GET_COMMANDS:
+                List<String> resultList = new ArrayList<>();
+                if (null != this.addedEventType)
+                {
+                    resultList.add(Command.SUBSCRIBE_TO_ADD.toString());
+                    resultList.add(Command.UNSUBSCRIBE_FROM_ADD.toString());
+                }
+                if (null != this.removedEventType)
+                {
+                    resultList.add(Command.SUBSCRIBE_TO_REMOVE.toString());
+                    resultList.add(Command.UNSUBSCRIBE_FROM_REMOVE.toString());
+                    
+                }
+                if (null != this.changeEventType)
+                {
+                    resultList.add(Command.SUBSCRIBE_TO_CHANGE.toString());
+                    resultList.add(Command.UNSUBSCRIBE_FROM_CHANGE.toString());
+                }
+                if (this.listTransceiver.getAddressFields() != null)
+                {
+                    resultList.add(Command.GET_ADDRESS_META_DATA.toString());
+                }
+                if (this.listTransceiver.getResultFields() != null)
+                {
+                    resultList.add(Command.GET_RESULT_META_DATA.toString());
+                }
+                resultList.add(Command.GET_COMMANDS.toString());
+                Object[] result = new Object[resultList.size()];
+                for (int index = 0; index < result.length; index++)
+                {
+                    result[index] = resultList.get(index);
+                }
+                returnWrapper.encodeReplyAndTransmit(result);
+                break;
 
             default:
                 // Cannot happen
                 break;
-
         }
     }
 

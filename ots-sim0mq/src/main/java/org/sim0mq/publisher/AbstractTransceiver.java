@@ -84,8 +84,9 @@ public abstract class AbstractTransceiver implements TransceiverInterface
         }
         if (address.length != metaData.size())
         {
-            return String.format("Address for %s has wrong length (expected %d, got %d)", metaData.getName(), metaData.size(),
-                    address.length);
+            return String.format("Address for %s has wrong length (expected %d address element%s, got %d address element%s)",
+                    metaData.getName(), metaData.size(), metaData.size() != 1 ? "s" : "", address.length,
+                    address.length != 1 ? "s" : "");
         }
         for (int index = 0; index < address.length; index++)
         {

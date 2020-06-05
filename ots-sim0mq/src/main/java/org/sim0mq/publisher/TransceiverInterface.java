@@ -40,7 +40,7 @@ public interface TransceiverInterface extends Identifiable
     default TransceiverInterface getIdSource(int addressLevel, ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
     {
-        returnWrapper.encodeReplyAndTransmit(new Object[] { "Invalid addressLevel (" + addressLevel + ")" });
+        returnWrapper.encodeReplyAndTransmit("Invalid addressLevel (" + addressLevel + ")");
         return null; // Default is no id source. Override this method if there is one.
     }
 

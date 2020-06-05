@@ -27,6 +27,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.io.URLResource;
+import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -41,6 +42,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
+import org.sim0mq.Sim0MQException;
 import org.zeromq.ZContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -72,16 +74,18 @@ public class PublisherTest implements OTSModelInterface
      * @throws OTSGeometryException if that happens uncaught; this test has failed
      * @throws NamingException on context error
      * @throws SimRuntimeException on DSOL error
+     * @throws SerializationException 
+     * @throws Sim0MQException 
      */
     @Test
     public void testPublisher()
-            throws RemoteException, NetworkException, OTSGeometryException, SimRuntimeException, NamingException
+            throws RemoteException, NetworkException, OTSGeometryException, SimRuntimeException, NamingException, Sim0MQException, SerializationException
     {
         OTSSimulatorInterface simulator = new OTSSimulator("test simulator for PublisherTest");
         OTSRoadNetwork network = new OTSRoadNetwork("test network for PublisherTest", true, simulator);
         Publisher publisher = new Publisher(network);
         assertTrue("id of publisher contains id of network", publisher.getId().contains(network.getId()));
-        Object[] transceiverNames = publisher.getIdSource(0).get(null);
+        Object[] transceiverNames = publisher.getIdSource(0, null).get(null);
         assertNotNull("result of getIdSource should not be null", transceiverNames);
         assertTrue("result of getIdSource should not be empty", transceiverNames.length > 0);
         for (Object o : transceiverNames)
@@ -98,7 +102,7 @@ public class PublisherTest implements OTSModelInterface
                 publisher.get(new Object[] { "No such transceiver" }));
         try
         {
-            publisher.getIdSource(1);
+            publisher.getIdSource(1, null);
             fail("should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -108,7 +112,7 @@ public class PublisherTest implements OTSModelInterface
 
         try
         {
-            publisher.getIdSource(-1);
+            publisher.getIdSource(-1, null);
             fail("should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)

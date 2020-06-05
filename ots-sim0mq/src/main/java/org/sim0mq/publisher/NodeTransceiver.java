@@ -59,13 +59,13 @@ public class NodeTransceiver extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address; should be empty" });
+            returnWrapper.encodeReplyAndTransmit("Bad address; should be empty");
             return null;
         }
         Node node = this.network.getNode((String) address[0]);
         if (null == node)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a node with id " + address[0] });
+            returnWrapper.encodeReplyAndTransmit("Network does not contain a node with id " + address[0]);
             return null;
         }
         return new Object[] { node.getId(), node.getPoint().doubleVector(PositionUnit.METER),
@@ -79,7 +79,7 @@ public class NodeTransceiver extends AbstractTransceiver
     {
         if (addressLevel != 0)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Only empty address is valid" });
+            returnWrapper.encodeReplyAndTransmit("Only empty address is valid");
             return null;
         }
         return this.nodeIdSource;

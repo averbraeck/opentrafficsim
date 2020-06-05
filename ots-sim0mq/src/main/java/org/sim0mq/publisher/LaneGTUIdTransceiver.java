@@ -54,22 +54,21 @@ public class LaneGTUIdTransceiver extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper
-                    .encodeReplyAndTransmit(new Object[] { "Bad address; need id of a link and id of a CrossSectionElement" });
+            returnWrapper.encodeReplyAndTransmit("Bad address; need id of a link and id of a CrossSectionElement");
             return null;
         }
         Link link = this.network.getLink((String) address[0]);
         if (null == link || (!(link instanceof CrossSectionLink)))
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a link with id " + address[0] });
+            returnWrapper.encodeReplyAndTransmit("Network does not contain a link with id " + address[0]);
             return null;
         }
         CrossSectionLink csl = (CrossSectionLink) link;
         CrossSectionElement cse = csl.getCrossSectionElement((String) address[1]);
         if (!(cse instanceof Lane))
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] {
-                    "CrossSectionElement " + address[1] + " of link with id " + address[0] + ", is not a lane" });
+            returnWrapper.encodeReplyAndTransmit(
+                    "CrossSectionElement " + address[1] + " of link with id " + address[0] + ", is not a lane");
             return null;
         }
         Lane lane = (Lane) cse;
