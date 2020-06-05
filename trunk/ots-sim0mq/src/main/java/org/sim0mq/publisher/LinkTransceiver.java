@@ -92,6 +92,13 @@ public class LinkTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
+    public boolean hasIdSource()
+    {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString()
     {
         return "LinkTransceiver [network=" + network + ", super=" + super.toString() + "]";
