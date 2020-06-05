@@ -87,6 +87,13 @@ public class NodeTransceiver extends AbstractTransceiver
 
     /** {@inheritDoc} */
     @Override
+    public boolean hasIdSource()
+    {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString()
     {
         return "NodeTransceiver [network=" + network + ", super=" + super.toString() + "]";

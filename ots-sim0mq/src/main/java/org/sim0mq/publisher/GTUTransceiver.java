@@ -64,6 +64,13 @@ public class GTUTransceiver extends AbstractEventTransceiver
 
     /** {@inheritDoc} */
     @Override
+    public boolean hasIdSource()
+    {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {

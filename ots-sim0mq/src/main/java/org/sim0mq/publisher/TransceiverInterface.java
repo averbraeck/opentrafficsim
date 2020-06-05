@@ -40,10 +40,19 @@ public interface TransceiverInterface extends Identifiable
     default TransceiverInterface getIdSource(int addressLevel, ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
     {
-        // There is no id source by default. Override this method if there is one.
+        // There is no id source by default. Override this method (and the hasIdSource method) if there is one.
         Throw.whenNull(returnWrapper, "returnWrapper may not be null");
-        returnWrapper.encodeReplyAndTransmit("No id source");
         throw new IndexOutOfBoundsException("No id source");
+    }
+    
+    /**
+     * Report if this transceiver has an id source.
+     * @return boolean; true if this transceiver has an id source; false if this transceiver does not have an id source
+     */
+    default boolean hasIdSource()
+    {
+        // There is no id source by default. Override this method if there is one.
+        return false;
     }
 
     /**

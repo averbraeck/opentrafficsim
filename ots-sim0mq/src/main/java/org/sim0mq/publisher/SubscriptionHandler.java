@@ -213,8 +213,8 @@ public class SubscriptionHandler
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private String unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapperImpl returnWrapper)
-            throws RemoteException, Sim0MQException, SerializationException
+    private String unsubscribeFrom(final Object[] address, final TimedEventType eventType,
+            final ReturnWrapperImpl returnWrapper) throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
         {
@@ -342,6 +342,7 @@ public class SubscriptionHandler
         {
             return Command.GET_COMMANDS;
         }
+        System.err.println("Could not find command with name \"" + commandString + "\"");
         return null;
     }
 
@@ -405,18 +406,21 @@ public class SubscriptionHandler
                 sendResult(extractObjectDescriptorClassNames(this.listTransceiver.getResultFields().getObjectDescriptors()),
                         returnWrapper);
                 break;
-                
+
             case GET_LIST:
             {
-                TransceiverInterface transceiver = this.listTransceiver.getIdSource(0, returnWrapper);
-                if (null == transceiver)
+                if (this.listTransceiver.hasIdSource())
                 {
-                    sendResult(new Object[] { "No list transceiver" }, returnWrapper);
+                    sendResult(this.listTransceiver.getIdSource(address.length, returnWrapper).get(null, returnWrapper),
+                            returnWrapper);
                 }
-                sendResult(transceiver.get(address, returnWrapper), returnWrapper);
+                else
+                {
+                    sendResult(new Object[] { "No list transceiver exists in " + getId() }, returnWrapper);
+                }
                 break;
             }
-                
+
             case GET_COMMANDS:
                 List<String> resultList = new ArrayList<>();
                 if (null != this.addedEventType)
@@ -428,7 +432,7 @@ public class SubscriptionHandler
                 {
                     resultList.add(Command.SUBSCRIBE_TO_REMOVE.toString());
                     resultList.add(Command.UNSUBSCRIBE_FROM_REMOVE.toString());
-                    
+
                 }
                 if (null != this.changeEventType)
                 {
@@ -442,6 +446,10 @@ public class SubscriptionHandler
                 if (this.listTransceiver.getResultFields() != null)
                 {
                     resultList.add(Command.GET_RESULT_META_DATA.toString());
+                }
+                if (null != this.listTransceiver)
+                {
+                    resultList.add(Command.GET_LIST.toString());
                 }
                 resultList.add(Command.GET_COMMANDS.toString());
                 Object[] result = new Object[resultList.size()];
@@ -514,7 +522,8 @@ interface LookupEventProducerInterface
      * @throws SerializationException when an error occurs while serializing an error response
      * @throws Sim0MQException when an error occurs while serializing an error response
      */
-    EventProducerInterface lookup(Object[] address, ReturnWrapperImpl returnWrapper) throws Sim0MQException, SerializationException;
+    EventProducerInterface lookup(Object[] address, ReturnWrapperImpl returnWrapper)
+            throws Sim0MQException, SerializationException;
 
     /**
      * Return a MetaData object that can be used to verify the correctness of an address for the <code>lookup</code> method.

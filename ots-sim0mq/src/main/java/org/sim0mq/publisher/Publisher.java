@@ -351,6 +351,13 @@ public class Publisher extends AbstractTransceiver
         }
         return this.idSource;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasIdSource()
+    {
+        return true;
+    }
 
     /**
      * Execute one command.
@@ -389,8 +396,8 @@ public class Publisher extends AbstractTransceiver
             final ReturnWrapperImpl returnWrapper) throws RemoteException, Sim0MQException, SerializationException
     {
         executeCommand(subscriptionHandlerName,
-                Throw.whenNull(SubscriptionHandler.lookupCommand(commandString), "Invalid command (%s", commandString), address,
-                returnWrapper);
+                Throw.whenNull(SubscriptionHandler.lookupCommand(commandString), "Invalid command (%s)", commandString),
+                address, returnWrapper);
     }
 
 }
