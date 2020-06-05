@@ -281,6 +281,8 @@ public class SubscriptionHandler
         GET_ADDRESS_META_DATA,
         /** Get the result meta data. */
         GET_RESULT_META_DATA,
+        /** Get the output of the IdSource. */
+        GET_LIST,
         /** Get the set of implemented commands (must - itself - always be implemented). */
         GET_COMMANDS;
     }
@@ -331,6 +333,10 @@ public class SubscriptionHandler
         else if ("UNSUBSCRIBE_FROM_CHANGE".equals(commandString))
         {
             return Command.UNSUBSCRIBE_FROM_CHANGE;
+        }
+        else if ("GET_LIST".contentEquals(commandString))
+        {
+            return Command.GET_LIST;
         }
         else if ("GET_COMMANDS".contentEquals(commandString))
         {
@@ -399,6 +405,17 @@ public class SubscriptionHandler
                 sendResult(extractObjectDescriptorClassNames(this.listTransceiver.getResultFields().getObjectDescriptors()),
                         returnWrapper);
                 break;
+                
+            case GET_LIST:
+            {
+                TransceiverInterface transceiver = this.listTransceiver.getIdSource(0, returnWrapper);
+                if (null == transceiver)
+                {
+                    sendResult(new Object[] { "No list transceiver" }, returnWrapper);
+                }
+                sendResult(transceiver.get(address, returnWrapper), returnWrapper);
+                break;
+            }
                 
             case GET_COMMANDS:
                 List<String> resultList = new ArrayList<>();

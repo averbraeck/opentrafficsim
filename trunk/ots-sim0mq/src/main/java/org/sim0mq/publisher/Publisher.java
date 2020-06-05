@@ -287,7 +287,7 @@ public class Publisher extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit("Address should be the name of a transceiver");
+            returnWrapper.encodeReplyAndTransmit("Bad address (should be the name of a transceiver): " + bad);
             return null;
         }
         SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(address[0]);
