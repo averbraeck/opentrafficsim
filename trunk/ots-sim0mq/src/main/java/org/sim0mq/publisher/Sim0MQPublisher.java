@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,6 +28,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.decoderdumper.HexDumper;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -128,7 +130,24 @@ public final class Sim0MQPublisher
             {
                 byte[] data = resultInputQueue.recv();
                 // System.out.println("Got outgoing result");
-                resultOutputQueue.send(data, 0);
+                byte[] fixedData = data;
+                int number = -1;
+                try
+                {
+                    // Patch the sender field to include the packet counter value - this is bloody expensive...
+                    Object[] messageFields = Sim0MQMessage.decode(data).createObjectArray();
+                    Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
+                    number = packetsSent.addAndGet(1);
+                    fixedData = Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number),
+                            messageFields[4], messageFields[5], messageFields[6], newMessageFields);
+                    // System.out
+                    // .println("Prepared message " + number + ", type is \"" + messageFields[5] + "\", " + messageFields[6]);
+                }
+                catch (Sim0MQException | SerializationException e)
+                {
+                    e.printStackTrace();
+                }
+                resultOutputQueue.send(fixedData, 0);
                 // System.out.println("Outgoing result handed over to controlSocket");
                 continue; // Check for more results before checking the control input
             }
@@ -136,7 +155,7 @@ public final class Sim0MQPublisher
             {
                 byte[] data = controlSocket.recv();
                 // System.out.println("Publisher thread received a command of " + data.length + " bytes");
-                if (!handleCommand(data, socketMap, packetsSent))
+                if (!handleCommand(data, socketMap))
                 {
                     break;
                 }
@@ -158,7 +177,7 @@ public final class Sim0MQPublisher
         try
         {
             OTSAnimator animator = new OTSAnimator("OTS Animator");
-            this.network = new OTSRoadNetwork("OTS model for Publisher test", true, animator);
+            this.network = new OTSRoadNetwork("OTS model for Sim0MQPublisher", true, animator);
             this.model = new Sim0MQOTSModel("Remotely controlled OTS model", this.network, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             map.put("generation", new MersenneTwister(seed));
@@ -212,10 +231,9 @@ public final class Sim0MQPublisher
      * Execute one remote control command.
      * @param data byte[]; the SIM0MQ encoded command
      * @param socketMap Map&lt;Long, ZMQ.Socket&gt;; cache of created sockets for returned messages
-     * @param packetsSent AtomicInteger; counter for returned messages
      * @return boolean; true if another command can be processed after this one; false when no further commands can be processed
      */
-    private boolean handleCommand(final byte[] data, final Map<Long, ZMQ.Socket> socketMap, final AtomicInteger packetsSent)
+    private boolean handleCommand(final byte[] data, final Map<Long, ZMQ.Socket> socketMap)
     {
         boolean result = true;
         try
@@ -231,19 +249,18 @@ public final class Sim0MQPublisher
                 String[] parts = command.split("\\|");
                 if (parts.length == 2)
                 {
+                    // This is a command for the embedded Publisher
+                    ReturnWrapper returnWrapper = new ReturnWrapper(zContext,
+                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0 },
+                            socketMap);
                     if (null == this.publisher)
                     {
+                        returnWrapper.encodeReplyAndTransmit(
+                                new Object[] { "No simulation loaded; cannot execute command " + command });
                         System.err.println("No publisher for command " + command);
                         return true;
                     }
-                    Object[] payload = new Object[message.length - 8];
-                    for (int index = 0; index < payload.length; index++)
-                    {
-                        payload[index] = message[index + 8];
-                    }
-                    ReturnWrapper returnWrapper = new ReturnWrapper(zContext,
-                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0 },
-                            socketMap, packetsSent);
+                    Object[] payload = Arrays.copyOfRange(message, 8, message.length);
                     publisher.executeCommand(parts[0], parts[1], payload, returnWrapper);
                 }
                 else
@@ -251,29 +268,29 @@ public final class Sim0MQPublisher
                     switch (command)
                     {
                         case "NEWSIMULATION":
-                            if (null != this.animationPanel)
-                            {
-                                for (Container container = animationPanel; container != null; container = container.getParent())
-                                {
-                                    // System.out.println("container is " + container);
-                                    if (container instanceof JFrame)
-                                    {
-                                        JFrame jFrame = (JFrame) container;
-                                        jFrame.dispose();
-                                    }
-                                }
-                            }
                             if (message.length == 12 && message[8] instanceof String && message[9] instanceof Duration
                                     && message[10] instanceof Duration && message[11] instanceof Long)
                             {
+                                if (null != this.animationPanel)
+                                {
+                                    for (Container container = animationPanel; container != null; container =
+                                            container.getParent())
+                                    {
+                                        if (container instanceof JFrame)
+                                        {
+                                            JFrame jFrame = (JFrame) container;
+                                            jFrame.dispose();
+                                        }
+                                    }
+                                }
                                 // System.out.println("xml length = " + ((String) message[8]).length());
                                 resultMessage = loadNetwork((String) message[8], (Duration) message[9], (Duration) message[10],
                                         (Long) message[11]);
                             }
                             else
                             {
-                                System.err.println(
-                                        "No network, warmupTime and/or runTime, or seed provided with NEWSIMULATION command");
+                                resultMessage =
+                                        "No network, warmupTime and/or runTime, or seed provided with NEWSIMULATION command";
                             }
                             break;
 
@@ -295,8 +312,8 @@ public final class Sim0MQPublisher
                                 System.out.println("Simulating up to " + message[8]);
                                 if (null == this.network)
                                 {
-                                    System.err.println("No network loaded");
-                                    return true;
+                                    resultMessage = "No network loaded";
+                                    break;
                                 }
                                 this.network.getSimulator().runUpTo((Time) message[8]);
                                 int count = 0;
@@ -306,27 +323,27 @@ public final class Sim0MQPublisher
                                     count++;
                                     if (count > 1000) // 10 seconds
                                     {
-                                        System.out.println("SIMULATOR DOES NOT STOP. TIME = "
+                                        System.out.println("TIMEOUT - STOPPING SIMULATOR. TIME = "
                                                 + this.network.getSimulator().getSimulatorTime());
+                                        this.network.getSimulator().stop();
                                         Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt =
                                                 this.network.getSimulator().getEventList().iterator();
                                         while (elIt.hasNext())
                                         {
                                             System.out.println("EVENTLIST: " + elIt.next());
                                         }
-                                        this.network.getSimulator().stop();
                                     }
                                     try
                                     {
-                                        Thread.sleep(10);
+                                        Thread.sleep(10); // 10 ms
                                     }
                                     catch (InterruptedException e)
                                     {
                                         e.printStackTrace();
                                     }
                                 }
-                                System.out.println(
-                                        "Simulator has stopped at time " + this.network.getSimulator().getSimulatorTime());
+                                resultMessage =
+                                        "Simulator has stopped at time " + this.network.getSimulator().getSimulatorTime();
                                 try
                                 {
                                     Thread.sleep(100); // EXTRA STOP FOR SYNC REASONS - BUG IN DSOL!
@@ -338,13 +355,12 @@ public final class Sim0MQPublisher
                             }
                             else
                             {
-                                System.out.println("Bad or missing stop time");
+                                resultMessage = "Bad or missing stop time";
                             }
                             break;
 
                         default:
-                            resultMessage =
-                                    "Don't know how to handle message:\n" + Sim0MQMessage.print(message);
+                            resultMessage = "Don't know how to handle message:\n" + Sim0MQMessage.print(message);
                             break;
                     }
                 }
@@ -352,13 +368,13 @@ public final class Sim0MQPublisher
             else
             {
                 resultMessage = "Publisher decoded Sim0MQ command but is has too few fields:";
-                // System.out.println(HexDumper.hexDumper(data));
+                System.out.println(HexDumper.hexDumper(data));
             }
             if (null != resultMessage)
             {
                 new ReturnWrapper(zContext,
                         new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 },
-                        socketMap, packetsSent).encodeReplyAndTransmit(new Object[] { resultMessage });
+                        socketMap).encodeReplyAndTransmit(new Object[] { resultMessage });
             }
         }
         catch (Sim0MQException | SerializationException | RemoteException e)

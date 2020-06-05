@@ -63,13 +63,13 @@ public class LinkTransceiver extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address; should be id of a link" });
+            returnWrapper.encodeReplyAndTransmit("Bad address; should be id of a link");
             return null;
         }
         Link link = this.network.getLink((String) address[0]);
         if (null == link)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a link with id " + address[0] });
+            returnWrapper.encodeReplyAndTransmit("Network does not contain a link with id " + address[0]);
             return null;
         }
         return new Object[] { link.getId(), link.getLinkType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
@@ -84,7 +84,7 @@ public class LinkTransceiver extends AbstractTransceiver
     {
         if (addressLevel != 0)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Only empty address is valid" });
+            returnWrapper.encodeReplyAndTransmit("Only empty address is valid");
             return null;
         }
         return this.linkIdSource;

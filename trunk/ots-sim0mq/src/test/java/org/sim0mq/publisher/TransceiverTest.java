@@ -15,6 +15,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -22,6 +23,7 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockDEVSSimulator;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.sim0mq.Sim0MQException;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -39,9 +41,11 @@ public class TransceiverTest
     /**
      * Test the GTUIdTransceiver and the GTUTransceiver.
      * @throws RemoteException if the happens, this test has failed
+     * @throws SerializationException 
+     * @throws Sim0MQException 
      */
     @Test
-    public void testGTUIdTransceiver() throws RemoteException
+    public void testGTUIdTransceiver() throws RemoteException, Sim0MQException, SerializationException
     {
         try
         {
@@ -106,7 +110,7 @@ public class TransceiverTest
         {
             try
             {
-                gtuIdTransceiver.getIdSource(i);
+                gtuIdTransceiver.getIdSource(i, null);
                 fail("any address level should have thrown an IndexOutOfBoundsException");
             }
             catch (IndexOutOfBoundsException ioobe)
@@ -147,10 +151,10 @@ public class TransceiverTest
         // Make the GTUTransceiver
         GTUTransceiver gtuTransceiver = new GTUTransceiver(network, gtuIdTransceiver);
         assertEquals("GTUTransceiver returns correct id", "GTU transceiver", gtuTransceiver.getId());
-        assertEquals("getIdSource returns gtuIdTransceiver", gtuIdTransceiver, gtuTransceiver.getIdSource(0));
+        assertEquals("getIdSource returns gtuIdTransceiver", gtuIdTransceiver, gtuTransceiver.getIdSource(0, null));
         try
         {
-            gtuTransceiver.getIdSource(1);
+            gtuTransceiver.getIdSource(1, null);
             fail("Invalid index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)
@@ -160,7 +164,7 @@ public class TransceiverTest
 
         try
         {
-            gtuTransceiver.getIdSource(-1);
+            gtuTransceiver.getIdSource(-1, null);
             fail("Invalid index should have thrown an IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException ioobe)

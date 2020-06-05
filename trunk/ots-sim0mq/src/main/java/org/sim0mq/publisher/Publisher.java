@@ -1,7 +1,6 @@
 package org.sim0mq.publisher;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -84,14 +83,13 @@ public class Publisher extends AbstractTransceiver
                         String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
                         if (bad != null)
                         {
-                            returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address: " + bad });
+                            returnWrapper.encodeReplyAndTransmit("Bad address: " + bad);
                             return null;
                         }
                         EventProducerInterface result = network.getGTU((String) address[0]);
                         if (null == result)
                         {
-                            returnWrapper
-                                    .encodeReplyAndTransmit(new Object[] { "No GTU with ID \"" + address[0] + "\" found" });
+                            returnWrapper.encodeReplyAndTransmit("No GTU with ID \"" + address[0] + "\" found");
                         }
                         return result;
                     }
@@ -115,7 +113,7 @@ public class Publisher extends AbstractTransceiver
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
                 if (bad != null)
                 {
-                    returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address: " + bad });
+                    returnWrapper.encodeReplyAndTransmit("Bad address: " + bad);
                     return null;
                 }
                 return network;
@@ -147,7 +145,7 @@ public class Publisher extends AbstractTransceiver
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
                 if (bad != null)
                 {
-                    returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address: " + bad });
+                    returnWrapper.encodeReplyAndTransmit("Bad address: " + bad);
                     return null;
                 }
                 return network;
@@ -203,7 +201,7 @@ public class Publisher extends AbstractTransceiver
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
                 if (bad != null)
                 {
-                    returnWrapper.encodeReplyAndTransmit(new Object[] { "Bad address: " + bad });
+                    returnWrapper.encodeReplyAndTransmit("Bad address: " + bad);
                     return null;
                 }
                 return network;
@@ -244,7 +242,7 @@ public class Publisher extends AbstractTransceiver
             Link link = network.getLink((String) address[0]);
             if (null == link)
             {
-                returnWrapper.encodeReplyAndTransmit(new Object[] { "Network does not contain a Link with id " + address[0] });
+                returnWrapper.encodeReplyAndTransmit("Network does not contain a Link with id " + address[0]);
                 return null;
             }
             if (!(link instanceof EventProducerInterface))
@@ -287,7 +285,7 @@ public class Publisher extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit(new Object[] { "Address should be empty" });
+            returnWrapper.encodeReplyAndTransmit("Address should be empty");
         }
         // Construct an array containing the names all subscription handlers.
         Object[] result = new Object[this.subscriptionHandlerMap.size()];
@@ -380,7 +378,7 @@ class ReturnWrapper
     ReturnWrapper(final ZContext zContext, final byte[] receivedMessage, final Map<Long, Socket> socketMap,
             final AtomicInteger packetsSent) throws Sim0MQException, SerializationException
     {
-        this(zContext, Sim0MQMessage.decode(receivedMessage).createObjectArray(), socketMap, packetsSent);
+        this(zContext, Sim0MQMessage.decode(receivedMessage).createObjectArray(), socketMap);
     }
 
     /**
@@ -388,17 +386,13 @@ class ReturnWrapper
      * @param zContext ZContext; the ZContext needed to create sockets for returned messages
      * @param decodedReceivedMessage Object[]; decoded Sim0MQ message
      * @param socketMap Map&lt;Long, ZMQ.Socket&gt;; cache of created sockets for returned messages
-     * @param packetsSent AtomicInteger; counter for returned messages
      */
-    ReturnWrapper(final ZContext zContext, final Object[] decodedReceivedMessage, final Map<Long, Socket> socketMap,
-            final AtomicInteger packetsSent)
+    ReturnWrapper(final ZContext zContext, final Object[] decodedReceivedMessage, final Map<Long, Socket> socketMap)
     {
         Throw.whenNull(zContext, "zContext may not be null");
         Throw.whenNull(socketMap, "socket map may not be null");
-        Throw.whenNull(packetsSent, "packets sent may not be null");
         this.zContext = zContext;
         this.socketMap = socketMap;
-        this.packetsSent = packetsSent;
         Throw.when(decodedReceivedMessage.length < 8, SerializationRuntimeException.class,
                 "Received message is too short (minumum number of elements is 8; got %d", decodedReceivedMessage.length);
         this.federationId = decodedReceivedMessage[2];
@@ -411,51 +405,28 @@ class ReturnWrapper
     /** In memory sockets to talk to the multiplexer. */
     private final Map<Long, ZMQ.Socket> socketMap;
 
-    /** Count transmitted messages. */
-    private final AtomicInteger packetsSent;
-
     /**
-     * Safe - synchronized - portal to send a message to the master.
+     * Central portal to send a message to the master.
      * @param data byte[]; the data to send
      */
     public synchronized void sendToMaster(final byte[] data)
     {
-        synchronized (this.packetsSent) // Ensure that packets are transmitted in sequence
+        Long threadId = Thread.currentThread().getId();
+        ZMQ.Socket socket = this.socketMap.get(threadId);
+        while (null == socket)
         {
-            byte[] fixedData = data;
-            int number = -1;
-            try
-            {
-                // Patch the sender field to include the packet counter value.
-                Object[] messageFields = Sim0MQMessage.decode(data).createObjectArray();
-                Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
-                number = this.packetsSent.addAndGet(1);
-                fixedData = Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number),
-                        messageFields[4], messageFields[5], messageFields[6], newMessageFields);
-                // System.out
-                // .println("Prepared message " + number + ", type is \"" + messageFields[5] + "\", " + messageFields[6]);
-            }
-            catch (Sim0MQException | SerializationException e)
-            {
-                e.printStackTrace();
-            }
-            Long threadId = Thread.currentThread().getId();
-            ZMQ.Socket socket = this.socketMap.get(threadId);
-            while (null == socket)
-            {
-                // System.out.println("socket map is " + this.socketMap);
-                System.out.println("Creating new internal socket for thread " + threadId + " (map currently contains "
-                        + this.socketMap.size() + " entries)");
-                socket = this.zContext.createSocket(SocketType.PUSH);
-                socket.setHWM(100000);
-                socket.connect("inproc://simulationEvents");
-                this.socketMap.put(threadId, socket);
-                // System.out.println("Socket created; map now contains " + this.socketMap.size() + " entries");
-            }
-            // System.out.println("pre send");
-            socket.send(fixedData, 0);
-            // System.out.println("post send");
+            // System.out.println("socket map is " + this.socketMap);
+            System.out.println("Creating new internal socket for thread " + threadId + " (map currently contains "
+                    + this.socketMap.size() + " entries)");
+            socket = this.zContext.createSocket(SocketType.PUSH);
+            socket.setHWM(100000);
+            socket.connect("inproc://simulationEvents");
+            this.socketMap.put(threadId, socket);
+            // System.out.println("Socket created; map now contains " + this.socketMap.size() + " entries");
         }
+        // System.out.println("pre send");
+        socket.send(data, 0);
+        // System.out.println("post send");
     }
 
     /**
@@ -467,11 +438,24 @@ class ReturnWrapper
      */
     public void encodeReplyAndTransmit(final Object[] payload) throws Sim0MQException, SerializationException
     {
-        Throw.whenNull(payload, "payload may not be null (but it can be an emty Object array");
+        Throw.whenNull(payload, "payload may not be null (but it can be an emty Object array)");
         byte[] result = Sim0MQMessage.encodeUTF8(true, this.federationId, this.ourAddress, this.returnAddress,
                 this.messageTypeId, this.messageId, payload);
         sendToMaster(result);
         // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
+    }
+
+    /**
+     * Encode a reply and transmit it. If the message id field is an Integer then it is incremented <b>after</b> encoding the
+     * reply.
+     * @param payload String; payload of the reply message
+     * @throws Sim0MQException not sure if that can happen
+     * @throws SerializationException when an object in payload cannot be serialized
+     */
+    public void encodeReplyAndTransmit(final String payload) throws Sim0MQException, SerializationException
+    {
+        Throw.whenNull(payload, "payload may not be null");
+        encodeReplyAndTransmit(new Object[] { payload });
     }
 
     /** {@inheritDoc} */
@@ -479,8 +463,7 @@ class ReturnWrapper
     public String toString()
     {
         return "ReturnWrapper [federationId=" + federationId + ", returnAddress=" + returnAddress + ", ourAddress=" + ourAddress
-                + ", messageTypeId=" + messageTypeId + ", messageId=" + messageId + ", replyCount=" + replyCount
-                + ", packetsSent=" + packetsSent + "]";
+                + ", messageTypeId=" + messageTypeId + ", messageId=" + messageId + ", replyCount=" + replyCount + "]";
     }
 
     /** {@inheritDoc} */
