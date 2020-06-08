@@ -38,6 +38,10 @@
       <artifactId>ots-web</artifactId>
     </dependency>
     <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-sim0mq</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
     </dependency>
