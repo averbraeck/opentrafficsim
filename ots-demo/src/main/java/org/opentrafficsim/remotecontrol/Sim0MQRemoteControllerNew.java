@@ -323,6 +323,10 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
         getGTUPositions.setActionCommand("GetAllGTUPositions");
         getGTUPositions.addActionListener(this);
         controls.add(getGTUPositions);
+        JButton shutDown = new JButton("Shutdown server");
+        shutDown.setActionCommand("Send DIE command");
+        shutDown.addActionListener(this);
+        controls.add(shutDown);
         panelAll.add(controls, BorderLayout.CENTER);
     }
 
@@ -610,6 +614,19 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
                 try
                 {
                     write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "GTUs in network|GET_CURRENT", 0));
+                }
+                catch (IOException | Sim0MQException | SerializationException e1)
+                {
+                    e1.printStackTrace();
+                }
+                break;
+            }
+            
+            case "Send DIE command":
+            {
+                try
+                {
+                    write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "DIE", 0));
                 }
                 catch (IOException | Sim0MQException | SerializationException e1)
                 {
