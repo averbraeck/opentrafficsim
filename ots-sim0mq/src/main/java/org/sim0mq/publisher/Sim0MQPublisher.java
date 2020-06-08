@@ -18,7 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,8 +28,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.decoderdumper.HexDumper;
-import org.djutils.event.EventInterface;
-import org.djutils.event.EventListenerInterface;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
@@ -42,7 +39,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
-import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -67,7 +63,6 @@ import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.DSOLException;
 
 /**
  * Sim0MQPublisher - make many OTS simulation controls and observations available over Sim0MQ.
@@ -96,40 +91,60 @@ public final class Sim0MQPublisher
     private OTSAnimationPanel animationPanel = null;
 
     /**
-     * Create a new Sim0MQPublisher.
+     * Create a new Sim0MQPublisher that is operated through //inproc sockets.
      * @param zContext ZContext; needed to create the sockets
-     * @throws IOException ...
-     * @throws NamingException ...
-     * @throws SimRuntimeException ...
-     * @throws OTSDrawingException ...
-     * @throws DSOLException ...
+     * @param controlInput String; PULL socket for control input
+     * @param resultOutput String; PUSH socket to output results
      */
-    public Sim0MQPublisher(final ZContext zContext)
-            throws IOException, SimRuntimeException, NamingException, OTSDrawingException, DSOLException
+    public Sim0MQPublisher(final ZContext zContext, final String controlInput, final String resultOutput)
     {
         this.zContext = zContext;
-        AtomicInteger packetsSent = new AtomicInteger(0);
-        Map<Long, ZMQ.Socket> socketMap = new HashMap<>();
+        ZMQ.Socket controlSocket = zContext.createSocket(SocketType.PULL);
+        controlSocket.bind("inproc://" + controlInput);
+        ZMQ.Socket resultOutputQueue = zContext.createSocket(SocketType.PUSH);
+        resultOutputQueue.connect("inproc://" + resultOutput);
+        pollingLoop(controlSocket, resultOutputQueue);
+    }
+
+    /**
+     * Create a new Sim0MQPublisher.
+     * @param port int; port number to bind to
+     */
+    public Sim0MQPublisher(final int port)
+    {
+        this.zContext = new ZContext(5);
+        ZMQ.Socket socket = zContext.createSocket(SocketType.PAIR);
+        socket.bind("tcp://*:" + port);
+        pollingLoop(socket, socket);
+    }
+
+    /**
+     * Poller that receives the commands and ensures that various output sources can talk to the master.
+     * @param controlSocket ZMQ.Socket; PULL socket for commands from the master
+     * @param resultOutputQueue ZMQ.Socket; PULL socket for output that must be relayed to the master
+     */
+    private void pollingLoop(final ZMQ.Socket controlSocket, final ZMQ.Socket resultOutputQueue)
+    {
         System.out
                 .println("Publisher communication relay and simulation control thread id is " + Thread.currentThread().getId());
-        ZMQ.Socket controlSocket = zContext.createSocket(SocketType.PULL);
-        controlSocket.bind("inproc://publisherControl");
-        ZMQ.Socket resultOutputQueue = zContext.createSocket(SocketType.PUSH);
         resultOutputQueue.setHWM(100000);
-        resultOutputQueue.connect("inproc://publisherOutput");
+        AtomicInteger packetsSent = new AtomicInteger(0);
+        Map<Long, ZMQ.Socket> socketMap = new HashMap<>();
         ZMQ.Socket resultInputQueue = zContext.createSocket(SocketType.PULL);
         resultInputQueue.bind("inproc://simulationEvents");
         // Poll the two input sockets using ZMQ poller
         ZMQ.Poller poller = zContext.createPoller(2);
+        // TODO ensure that this also handles a closed control socket gracefully
         poller.register(resultInputQueue, ZMQ.Poller.POLLIN);
         poller.register(controlSocket, ZMQ.Poller.POLLIN);
         while (!Thread.currentThread().isInterrupted())
         {
+            // System.out.println("Publisher calls Poller.poll()");
             poller.poll();
             if (poller.pollin(0))
             {
                 byte[] data = resultInputQueue.recv();
-                // System.out.println("Got outgoing result");
+                // System.out.println("Publisher got outgoing result of " + data.length + " bytes");
                 byte[] fixedData = data;
                 int number = -1;
                 try
@@ -154,7 +169,7 @@ public final class Sim0MQPublisher
             if (poller.pollin(1))
             {
                 byte[] data = controlSocket.recv();
-                // System.out.println("Publisher thread received a command of " + data.length + " bytes");
+                // System.out.println("Publisher received a command of " + data.length + " bytes");
                 if (!handleCommand(data, socketMap))
                 {
                     break;

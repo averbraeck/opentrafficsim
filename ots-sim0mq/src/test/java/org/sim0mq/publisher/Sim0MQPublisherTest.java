@@ -322,14 +322,7 @@ public class Sim0MQPublisherTest
         @Override
         public void run()
         {
-            try
-            {
-                new Sim0MQPublisher(zContext);
-            }
-            catch (SimRuntimeException | IOException | NamingException | OTSDrawingException | DSOLException e)
-            {
-                e.printStackTrace();
-            }
+            new Sim0MQPublisher(zContext, "publisherControl", "publisherOutput");
             System.out.println("Publisher thread exits");
         }
 

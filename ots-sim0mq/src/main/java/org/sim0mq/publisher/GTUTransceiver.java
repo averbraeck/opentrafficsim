@@ -77,7 +77,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit("Bad address - should be id of a GTU");
+            returnWrapper.encodeReplyAndTransmit(bad);
             return null;
         }
 
@@ -90,7 +90,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
         DirectedPoint gtuPosition = gtu.getLocation();
         return new Object[] { gtu.getId(), gtu.getGTUType().getId(),
                 new OTSPoint3D(gtuPosition).doubleVector(PositionUnit.METER),
-                new Direction(gtuPosition.getZ(), DirectionUnit.EAST_RADIAN), gtu.getSpeed(), gtu.getAcceleration() };
+                new Direction(gtuPosition.getZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration() };
     }
 
     /** {@inheritDoc} */
