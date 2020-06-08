@@ -284,9 +284,9 @@ public final class PublisherDemo
         {
             try
             {
-                new Sim0MQPublisher(zContext);
+                new Sim0MQPublisher(zContext, "publisherControl", "publisherOutput");
             }
-            catch (SimRuntimeException | IOException | NamingException | OTSDrawingException | DSOLException e)
+            catch (SimRuntimeException e)
             {
                 e.printStackTrace();
             }
