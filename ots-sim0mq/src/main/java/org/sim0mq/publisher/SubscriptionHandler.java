@@ -166,41 +166,48 @@ public class SubscriptionHandler
      * @param address Object[]; the data that is required to find the correct EventProducer
      * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; generates envelopes for the returned events
-     * @return String; one liner report of the result;
      * @throws RemoteException when communication fails
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private String subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapperImpl returnWrapper)
+    private void subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapperImpl returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
         {
-            return "Does not support subscribe to";
+            returnWrapper.nack("Does not support subscribe to");
+            return;
         }
         String bad = AbstractTransceiver.verifyMetaData(this.eventProducerForAddRemoveOrChange.getAddressMetaData(), address);
         if (bad != null)
         {
-            return "Bad address: " + bad;
+            returnWrapper.nack("Bad address: " + bad);
+            return;
         }
         EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address, returnWrapper);
-        if (null != epi)
+        if (null == epi)
         {
-            Subscription subscription = this.subscriptions.get(returnWrapper);
-            if (null == subscription)
-            {
-                subscription = new Subscription(returnWrapper);
-            }
-            if (!epi.addListener(subscription, eventType))
-            {
-                // There was already a subscription
-                return "There is already such a subscription active";
-            }
-            this.subscriptions.put(returnWrapper, subscription);
-            return "OK; subscription created";
+            // Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
+            returnWrapper.nack("Could not find event producer; has it disappeared?");
+            return;
         }
-        // Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
-        return "Could not find event producer; has it disappeared?";
+        Subscription subscription = this.subscriptions.get(returnWrapper);
+        if (null == subscription)
+        {
+            subscription = new Subscription(returnWrapper);
+            this.subscriptions.put(returnWrapper, subscription);
+        }
+        if (epi.addListener(subscription, eventType))
+        {
+            returnWrapper.ack("Subscription created");
+        }
+        else
+        {
+            // There was already a subscription?
+            returnWrapper.ack("There was already such a subscription active");
+        }
+        // FIXME: if the subscription is an an Object that later disappears, the subscription map will still consume memory for
+        // that subscription. That could add up to a lot of memory ...
     }
 
     /**
@@ -208,45 +215,44 @@ public class SubscriptionHandler
      * @param address Object[]; the data that is required to find the correct EventProducer
      * @param eventType TimedEventType; one of the event types that the addressed EventProducer can fire
      * @param returnWrapper ReturnWrapper; the ReturnWapper that sent the results until now
-     * @return String; one liner report of the result
      * @throws RemoteException when communication fails
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private String unsubscribeFrom(final Object[] address, final TimedEventType eventType,
-            final ReturnWrapperImpl returnWrapper) throws RemoteException, Sim0MQException, SerializationException
+    private void unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapperImpl returnWrapper)
+            throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
         {
-            return "Does not support unsubscribe from";
+            returnWrapper.nack("Does not support unsubscribe from");
+            return;
         }
         String bad = AbstractTransceiver.verifyMetaData(this.eventProducerForAddRemoveOrChange.getAddressMetaData(), address);
         if (bad != null)
         {
-            return "Bad address: " + bad;
+            returnWrapper.nack("Bad address: " + bad);
+            return;
         }
         EventProducerInterface epi = this.eventProducerForAddRemoveOrChange.lookup(address, returnWrapper);
-        if (null != epi)
+        if (null == epi)
         {
-            Subscription subscription = this.subscriptions.get(returnWrapper);
-            if (null == subscription)
-            {
-                // System.err.println("Could not find subscription for " + returnWrapper);
-                // System.err.println("Existing subscriptions:");
-                // for (ReturnWrapper rw : this.subscriptions.keySet())
-                // {
-                // System.err.println("\t" + rw);
-                // }
-                return "Cound not find a subscription to cancel";
-            }
-            if (!epi.removeListener(subscription, eventType))
-            {
-                returnWrapper.encodeReplyAndTransmit("Subscription was not found");
-            }
-            this.subscriptions.remove(returnWrapper);
-            return "OK; subscription removed";
+            returnWrapper.nack("Cound not find the event producer of the subscription; has it dissapeared?");
+            return;
         }
-        return "Cound not find the event producer of the subscription; has it dissapeared?";
+        Subscription subscription = this.subscriptions.get(returnWrapper);
+        if (null == subscription)
+        {
+            returnWrapper.nack("Cound not find a subscription to cancel");
+        }
+        else if (!epi.removeListener(subscription, eventType))
+        {
+            returnWrapper.nack("Subscription was not found");
+        }
+        else
+        {
+            this.subscriptions.remove(returnWrapper);
+            returnWrapper.ack("subscription removed");
+        }
     }
 
     /**
@@ -363,27 +369,27 @@ public class SubscriptionHandler
         switch (command)
         {
             case SUBSCRIBE_TO_ADD:
-                sendResult(new Object[] { subscribeTo(address, this.addedEventType, returnWrapper) }, returnWrapper);
+                subscribeTo(address, this.addedEventType, returnWrapper);
                 break;
 
             case SUBSCRIBE_TO_CHANGE:
-                sendResult(new Object[] { subscribeTo(address, this.changeEventType, returnWrapper) }, returnWrapper);
+                subscribeTo(address, this.changeEventType, returnWrapper);
                 break;
 
             case SUBSCRIBE_TO_REMOVE:
-                sendResult(new Object[] { subscribeTo(address, this.removedEventType, returnWrapper) }, returnWrapper);
+                subscribeTo(address, this.removedEventType, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_ADD:
-                sendResult(new Object[] { unsubscribeFrom(address, this.addedEventType, returnWrapper) }, returnWrapper);
+                unsubscribeFrom(address, this.addedEventType, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_CHANGE:
-                sendResult(new Object[] { unsubscribeFrom(address, this.changeEventType, returnWrapper) }, returnWrapper);
+                unsubscribeFrom(address, this.changeEventType, returnWrapper);
                 break;
 
             case UNSUBSCRIBE_FROM_REMOVE:
-                sendResult(new Object[] { unsubscribeFrom(address, this.removedEventType, returnWrapper) }, returnWrapper);
+                unsubscribeFrom(address, this.removedEventType, returnWrapper);
                 break;
 
             case GET_CURRENT:

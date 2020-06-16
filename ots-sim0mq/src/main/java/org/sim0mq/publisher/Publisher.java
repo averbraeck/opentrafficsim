@@ -351,7 +351,7 @@ public class Publisher extends AbstractTransceiver
         }
         return this.idSource;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public boolean hasIdSource()
@@ -376,7 +376,7 @@ public class Publisher extends AbstractTransceiver
         SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(subscriptionHandlerName);
         if (null == subscriptionHandler)
         {
-            System.err.println("No subscription handler for \"" + subscriptionHandlerName + "\"");
+            returnWrapper.nack("No subscription handler for \"" + subscriptionHandlerName + "\"");
             return;
         }
         subscriptionHandler.executeCommand(command, address, returnWrapper);
@@ -493,11 +493,17 @@ class ReturnWrapperImpl implements ReturnWrapper
 
     /** {@inheritDoc} */
     @Override
-    public void encodeReplyAndTransmit(final Object[] payload) throws Sim0MQException, SerializationException
+    public void encodeReplyAndTransmit(final String suffix, final Object[] payload)
+            throws Sim0MQException, SerializationException
     {
         Throw.whenNull(payload, "payload may not be null (but it can be an emty Object array)");
+        Object fixedMessageTypeId = this.messageTypeId;
+        if (null != suffix)
+        {
+            fixedMessageTypeId = "" + fixedMessageTypeId + "|" + suffix; // Can't do this with a conditional expression
+        }
         byte[] result = Sim0MQMessage.encodeUTF8(true, this.federationId, this.ourAddress, this.returnAddress,
-                this.messageTypeId, this.messageId, payload);
+                fixedMessageTypeId, this.messageId, payload);
         sendToMaster(result);
         // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
     }

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -83,7 +82,7 @@ public class PublisherTest implements OTSModelInterface
         ReturnWrapper storeLastResult = new ReturnWrapper()
         {
             @Override
-            public void encodeReplyAndTransmit(final Object[] payload)
+            public void encodeReplyAndTransmit(final String suffix, final Object[] payload)
             {
                 lastResult = payload;
             }
