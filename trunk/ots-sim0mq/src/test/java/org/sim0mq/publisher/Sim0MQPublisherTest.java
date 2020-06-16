@@ -72,7 +72,7 @@ public class Sim0MQPublisherTest
         waitForReceivedMessages(receivedMessages, 1.0);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         Object[] objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertEquals("Field 5 of message echos the bad command", badCommand, objects[5]);
+        assertEquals("Field 5 of message echos the bad command", badCommand + "|NACK", objects[5]);
 
         receivedMessages.clear();
         badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
@@ -80,7 +80,7 @@ public class Sim0MQPublisherTest
         waitForReceivedMessages(receivedMessages, 1.0);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertEquals("Field 5 of message echos the bad command", "GTUs in network", objects[5]);
+        assertEquals("Field 5 of message echos the bad command", "GTUs in network|NACK", objects[5]);
 
         receivedMessages.clear();
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "NEWSIMULATION",
@@ -270,9 +270,9 @@ public class Sim0MQPublisherTest
                     Object[] fields = Sim0MQMessage.decodeToArray(message);
                     for (Object field : fields)
                     {
-                        output.append("|" + field);
+                        output.append("/" + field);
                     }
-                    output.append("|");
+                    output.append("/");
                 }
                 catch (Sim0MQException | SerializationException e)
                 {

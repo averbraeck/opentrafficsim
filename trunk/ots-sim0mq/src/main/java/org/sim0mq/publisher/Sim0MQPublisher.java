@@ -270,8 +270,7 @@ public final class Sim0MQPublisher
                             socketMap);
                     if (null == this.publisher)
                     {
-                        returnWrapper.encodeReplyAndTransmit(
-                                new Object[] { "No simulation loaded; cannot execute command " + command });
+                        returnWrapper.nack("No simulation loaded; cannot execute command " + command);
                         System.err.println("No publisher for command " + command);
                         return true;
                     }
@@ -389,7 +388,7 @@ public final class Sim0MQPublisher
             {
                 new ReturnWrapperImpl(zContext,
                         new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 },
-                        socketMap).encodeReplyAndTransmit(new Object[] { resultMessage });
+                        socketMap).nack(resultMessage);
             }
         }
         catch (Sim0MQException | SerializationException | RemoteException e)
