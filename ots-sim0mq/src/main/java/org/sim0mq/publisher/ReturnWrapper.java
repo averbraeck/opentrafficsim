@@ -18,38 +18,13 @@ public interface ReturnWrapper
 {
     /**
      * Encode a String reply and transmit it while patching the message type id field by adding a vertical bar and a suffix.
-     * @param suffix String; suffix to be added to the message type id field (which will be converted to a String if needed). If
-     *            the suffix is null; the message type id field is transmitted as is
+     * @param status Boolean; if null, the payload is transmitted as is; if true, a boolean true is prepended to the payload; if
+     *            false, a boolean false is prepended to the payload
      * @param payload Object []; payload of the reply message
      * @throws Sim0MQException not sure if that can happen
      * @throws SerializationException when an object in payload cannot be serialized
      */
-    void encodeReplyAndTransmit(String suffix, Object[] payload) throws Sim0MQException, SerializationException;
-
-    /**
-     * Encode a String reply and transmit it while patching the message type id field by adding a vertical bar and a suffix.
-     * @param suffix String; suffix to be added to the message type id field (which will be converted to a String if needed). If
-     *            the suffix is null; the message type id field is transmitted as is
-     * @param payload String; payload of the reply message
-     * @throws Sim0MQException not sure if that can happen
-     * @throws SerializationException when an object in payload cannot be serialized
-     */
-    default void encodeReplyAndTransmit(final String suffix, final String payload)
-            throws Sim0MQException, SerializationException
-    {
-        encodeReplyAndTransmit(suffix, new Object[] { payload });
-    }
-
-    /**
-     * Encode a reply and transmit it.
-     * @param payload Object[]; payload of the reply message
-     * @throws Sim0MQException not sure if that can happen
-     * @throws SerializationException when an object in payload cannot be serialized
-     */
-    default void encodeReplyAndTransmit(Object[] payload) throws Sim0MQException, SerializationException
-    {
-        encodeReplyAndTransmit(null, payload);
-    }
+    void encodeReplyAndTransmit(Boolean status, Object[] payload) throws Sim0MQException, SerializationException;
 
     /**
      * Encode a String reply and transmit it.
@@ -64,6 +39,33 @@ public interface ReturnWrapper
     }
 
     /**
+     * Encode a String reply and transmit it.
+     * @param payload Object[]; payload of the reply message
+     * @throws Sim0MQException not sure if that can happen
+     * @throws SerializationException when an object in payload cannot be serialized
+     */
+    default void encodeReplyAndTransmit(final Object[] payload) throws Sim0MQException, SerializationException
+    {
+        Throw.whenNull(payload, "payload may not be null");
+        encodeReplyAndTransmit(null, payload);
+    }
+
+    /**
+     * Encode a String reply and transmit it.
+     * @param status Boolean; if null, the payload is transmitted as is; if true, a boolean true is prepended to the payload; if
+     *            false, a boolean false is prepended to the payload
+     * @param payload String; payload of the reply message
+     * @throws Sim0MQException not sure if that can happen
+     * @throws SerializationException when an object in payload cannot be serialized
+     */
+    default void encodeReplyAndTransmit(final Boolean status, final String payload)
+            throws Sim0MQException, SerializationException
+    {
+        Throw.whenNull(payload, "payload may not be null");
+        encodeReplyAndTransmit(status, new Object[] { payload });
+    }
+
+    /**
      * Signal successful execution of a request.
      * @param payload String; additional description of the result
      * @throws Sim0MQException not sure if that can happen
@@ -71,7 +73,7 @@ public interface ReturnWrapper
      */
     default void ack(final String payload) throws Sim0MQException, SerializationException
     {
-        encodeReplyAndTransmit("ACK", payload);
+        encodeReplyAndTransmit(true, payload);
     }
 
     /**
@@ -82,7 +84,7 @@ public interface ReturnWrapper
      */
     default void nack(final String payload) throws Sim0MQException, SerializationException
     {
-        encodeReplyAndTransmit("NACK", payload);
+        encodeReplyAndTransmit(false, payload);
     }
 
 }

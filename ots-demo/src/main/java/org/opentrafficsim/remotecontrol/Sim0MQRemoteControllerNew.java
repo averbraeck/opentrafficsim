@@ -410,6 +410,24 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
             this.fromOTS.connect("inproc://toAWT");
         }
 
+        /**
+         * Interpret the ACK NACK field.
+         * @param o Object; the actual object that should be an ACK or a NACK
+         * @return String; textual representation of <code>o</code>
+         */
+        private String ackNack(final Object o)
+        {
+            if (null == o)
+            {
+                return "null";
+            }
+            if (o instanceof Boolean)
+            {
+                return ((Boolean) o) ? "ACK" : "NACK";
+            }
+            return "????";
+        }
+        
         /** {@inheritDoc} */
         @Override
         public void run()
@@ -424,24 +442,36 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
                     Object[] message = Sim0MQMessage.decode(bytes).createObjectArray();
                     if (message.length > 8 && message[5] instanceof String)
                     {
+                        // System.out.println(Sim0MQMessage.print(message));
                         String command = (String) message[5];
                         switch (command)
                         {
                             case "GTU move":
-                                Sim0MQRemoteControllerNew.this.output.println(String.format(
-                                        "%10.10s (%s): location=%s heading=%s, v=%s, a=%s", message[8], message[9],
-                                        message[10], message[11], message[12], message[13]));
+                                Sim0MQRemoteControllerNew.this.output
+                                        .println(String.format("%10.10s (%s): location=%s heading=%s, v=%s, a=%s", message[8],
+                                                message[9], message[10], message[11], message[12], message[13]));
+                                break;
+
+                            case "NEWSIMULATION":
+                                Sim0MQRemoteControllerNew.this.output
+                                        .println(String.format("NEWSIMULATION %s: %s", ackNack(message[8]), message[9]));
                                 break;
 
                             case "SIMULATEUNTIL":
-                                Sim0MQRemoteControllerNew.this.output.println(message[8]);
+                                Sim0MQRemoteControllerNew.this.output
+                                        .println(String.format("SIMULATEUNTIL %s: %s", ackNack(message[8]), message[9]));
                                 break;
 
                             case "GTUs in network":
-                                Sim0MQRemoteControllerNew.this.output.println(message[5] + ":");
+                                StringBuilder listOfGTUIds = new StringBuilder();
+                                listOfGTUIds.append(message[5] + ":");
                                 for (int index = 8; index < message.length; index++)
                                 {
-                                    Sim0MQRemoteControllerNew.this.output.println(message[index]);
+                                    listOfGTUIds.append(" " + message[index]);
+                                }
+                                Sim0MQRemoteControllerNew.this.output.println(listOfGTUIds.toString());
+                                for (int index = 8; index < message.length; index++)
+                                {
                                     // Request detailed data
                                     try
                                     {
@@ -452,7 +482,6 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
                                     {
                                         e.printStackTrace();
                                     }
-
                                 }
                                 break;
 
@@ -621,7 +650,7 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
                 }
                 break;
             }
-            
+
             case "Send DIE command":
             {
                 try

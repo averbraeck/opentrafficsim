@@ -72,7 +72,10 @@ public class Sim0MQPublisherTest
         waitForReceivedMessages(receivedMessages, 1.0);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         Object[] objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertEquals("Field 5 of message echos the bad command", badCommand + "|NACK", objects[5]);
+        assertEquals("Field 5 of message echos the bad command", badCommand, objects[5]);
+        assertEquals("Response has 2 field payload", 10, objects.length);
+        assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
+        assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
 
         receivedMessages.clear();
         badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
@@ -80,11 +83,24 @@ public class Sim0MQPublisherTest
         waitForReceivedMessages(receivedMessages, 1.0);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertEquals("Field 5 of message echos the bad command", "GTUs in network|NACK", objects[5]);
+        assertEquals("Field 5 of message echos the bad command", "GTUs in network", objects[5]);
+        assertEquals("Response has 2 field payload", 10, objects.length);
+        assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
+        assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
 
         receivedMessages.clear();
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "NEWSIMULATION",
                 conversationId++, networkXML, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L));
+        waitForReceivedMessages(receivedMessages, 10);
+        assertEquals("Should have received one message", 1, receivedMessages.size());
+        objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
+        assertEquals("Response has 2 field payload", 10, objects.length);
+        assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
+        assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
+        assertTrue("Network was successfully loaded", (Boolean) objects[8]);
+        assertEquals("Last field of payload is String \"OK\"", "OK", objects[9]);
+        
+        receivedMessages.clear();
         // Discover what services and commands are available
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_LIST", conversationId++));

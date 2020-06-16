@@ -82,7 +82,7 @@ public class PublisherTest implements OTSModelInterface
         ReturnWrapper storeLastResult = new ReturnWrapper()
         {
             @Override
-            public void encodeReplyAndTransmit(final String suffix, final Object[] payload)
+            public void encodeReplyAndTransmit(final Boolean ackNack, final Object[] payload)
             {
                 lastResult = payload;
             }

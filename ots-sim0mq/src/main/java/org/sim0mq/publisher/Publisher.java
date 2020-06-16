@@ -493,17 +493,23 @@ class ReturnWrapperImpl implements ReturnWrapper
 
     /** {@inheritDoc} */
     @Override
-    public void encodeReplyAndTransmit(final String suffix, final Object[] payload)
+    public void encodeReplyAndTransmit(final Boolean ackNack, final Object[] payload)
             throws Sim0MQException, SerializationException
     {
         Throw.whenNull(payload, "payload may not be null (but it can be an emty Object array)");
         Object fixedMessageTypeId = this.messageTypeId;
-        if (null != suffix)
+        Object[] fixedPayload = payload;
+        if (null != ackNack)
         {
-            fixedMessageTypeId = "" + fixedMessageTypeId + "|" + suffix; // Can't do this with a conditional expression
+            fixedPayload = new Object[payload.length + 1];
+            fixedPayload[0] = ackNack;
+            for (int index = 0; index < payload.length; index++)
+            {
+                fixedPayload[index + 1] = payload[index];
+            }
         }
         byte[] result = Sim0MQMessage.encodeUTF8(true, this.federationId, this.ourAddress, this.returnAddress,
-                fixedMessageTypeId, this.messageId, payload);
+                fixedMessageTypeId, this.messageId, fixedPayload);
         sendToMaster(result);
         // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
     }
