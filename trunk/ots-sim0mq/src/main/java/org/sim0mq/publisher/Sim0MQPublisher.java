@@ -254,7 +254,8 @@ public final class Sim0MQPublisher
         try
         {
             Object[] message = Sim0MQMessage.decode(data).createObjectArray();
-            String resultMessage = null;
+            String resultMessage = "OK";
+            Boolean ackNack = null;
 
             if (message.length >= 8 && message[5] instanceof String)
             {
@@ -276,6 +277,7 @@ public final class Sim0MQPublisher
                     }
                     Object[] payload = Arrays.copyOfRange(message, 8, message.length);
                     publisher.executeCommand(parts[0], parts[1], payload, returnWrapper);
+                    return true;
                 }
                 else
                 {
@@ -300,11 +302,17 @@ public final class Sim0MQPublisher
                                 // System.out.println("xml length = " + ((String) message[8]).length());
                                 resultMessage = loadNetwork((String) message[8], (Duration) message[9], (Duration) message[10],
                                         (Long) message[11]);
+                                ackNack = null == resultMessage;
+                                if (ackNack)
+                                {
+                                    resultMessage = "OK";
+                                }
                             }
                             else
                             {
                                 resultMessage =
                                         "No network, warmupTime and/or runTime, or seed provided with NEWSIMULATION command";
+                                ackNack = false;
                             }
                             break;
 
@@ -358,6 +366,8 @@ public final class Sim0MQPublisher
                                 }
                                 resultMessage =
                                         "Simulator has stopped at time " + this.network.getSimulator().getSimulatorTime();
+                                ackNack = this.network.getSimulator().getSimulatorTime().equals(message[8]);
+                                // TODO Fix this (it is still needed - 2020-06-16)
                                 try
                                 {
                                     Thread.sleep(100); // EXTRA STOP FOR SYNC REASONS - BUG IN DSOL!
@@ -370,11 +380,13 @@ public final class Sim0MQPublisher
                             else
                             {
                                 resultMessage = "Bad or missing stop time";
+                                ackNack = false;
                             }
                             break;
 
                         default:
                             resultMessage = "Don't know how to handle message:\n" + Sim0MQMessage.print(message);
+                            ackNack = false;
                             break;
                     }
                 }
@@ -382,13 +394,18 @@ public final class Sim0MQPublisher
             else
             {
                 resultMessage = "Publisher decoded Sim0MQ command but is has too few fields:";
+                ackNack = false;
                 System.out.println(HexDumper.hexDumper(data));
             }
-            if (null != resultMessage)
+            ReturnWrapper returnWrapper = new ReturnWrapperImpl(zContext,
+                    new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 }, socketMap);
+            if (ackNack)
             {
-                new ReturnWrapperImpl(zContext,
-                        new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 },
-                        socketMap).nack(resultMessage);
+                returnWrapper.ack(resultMessage);
+            }
+            else
+            {
+                returnWrapper.nack(resultMessage);
             }
         }
         catch (Sim0MQException | SerializationException | RemoteException e)
