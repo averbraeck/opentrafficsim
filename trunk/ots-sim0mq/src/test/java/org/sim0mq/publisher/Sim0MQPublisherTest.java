@@ -1,6 +1,7 @@
 package org.sim0mq.publisher;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -99,7 +100,7 @@ public class Sim0MQPublisherTest
         assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
         assertTrue("Network was successfully loaded", (Boolean) objects[8]);
         assertEquals("Last field of payload is String \"OK\"", "OK", objects[9]);
-        
+
         receivedMessages.clear();
         // Discover what services and commands are available
         sendCommand(publisherControlSocket,
@@ -148,8 +149,52 @@ public class Sim0MQPublisherTest
                 System.out.println("Received no reply to GET_COMMANDS request");
             }
         }
+        waitForReceivedMessages(receivedMessages, 1.0);
+        receivedMessages.clear();
+        waitForReceivedMessages(receivedMessages, 1.0); // Make another attempt because the first one may not have gotten all.
+        receivedMessages.clear();
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
+                conversationId++, "2", "BAD")); // Too many fields
+        waitForReceivedMessages(receivedMessages, 1.0);
+        // for (int index = 0; index < receivedMessages.size(); index++)
+        // {
+        // System.out.println(Sim0MQMessage.print(Sim0MQMessage.decodeToArray(receivedMessages.get(index))));
+        // }
+        assertEquals("Should have received one message", 1, receivedMessages.size());
+        Object[] fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
+        assertTrue("message is a NACK", fields.length == 10 && fields[8].equals(Boolean.FALSE) && fields[9] instanceof String);
+        assertTrue("Error message contains \"Bad address\"",
+                ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("Bad address"));
+        receivedMessages.clear();
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
+                conversationId++)); // Too few fields
+        waitForReceivedMessages(receivedMessages, 1.0);
+        // for (int index = 0; index < receivedMessages.size(); index++)
+        // {
+        // System.out.println(Sim0MQMessage.print(Sim0MQMessage.decodeToArray(receivedMessages.get(index))));
+        // }
+        assertEquals("Should have received one message", 1, receivedMessages.size());
+        fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
+        assertTrue("message is a NACK", fields.length == 10 && fields[8].equals(Boolean.FALSE) && fields[9] instanceof String);
+        assertTrue("Error message contains \"Bad address\"",
+                ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("Bad address"));
+        receivedMessages.clear();
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
+                conversationId++, "NON EXISTING GTU ID")); // GTU id is not (currently) in use
+        waitForReceivedMessages(receivedMessages, 1.0);
+        for (int index = 0; index < receivedMessages.size(); index++)
+        {
+            System.out.println(Sim0MQMessage.print(Sim0MQMessage.decodeToArray(receivedMessages.get(index))));
+        }
+        assertEquals("Should have received one message", 1, receivedMessages.size());
+        fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
+        assertTrue("message is a NACK", fields.length == 10 && fields[8].equals(Boolean.FALSE) && fields[9] instanceof String);
+        assertTrue("Error message contains \"No GTU with id\"",
+                ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("No GTU with id"));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
                 conversationId++, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
         sendCommand(publisherControlSocket,

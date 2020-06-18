@@ -188,8 +188,7 @@ public class SubscriptionHandler
         if (null == epi)
         {
             // Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
-            returnWrapper.nack("Could not find event producer; has it disappeared?");
-            return;
+            return; // NACK has been sent by this.eventProducerForAddRemoveOrChange.lookup 
         }
         Subscription subscription = this.subscriptions.get(returnWrapper);
         if (null == subscription)

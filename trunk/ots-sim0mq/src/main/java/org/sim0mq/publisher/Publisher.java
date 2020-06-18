@@ -91,7 +91,7 @@ public class Publisher extends AbstractTransceiver
                         EventProducerInterface result = network.getGTU((String) address[0]);
                         if (null == result)
                         {
-                            returnWrapper.encodeReplyAndTransmit("No GTU with ID \"" + address[0] + "\" found");
+                            returnWrapper.nack("No GTU with id \"" + address[0] + "\" found");
                         }
                         return result;
                     }
@@ -284,6 +284,7 @@ public class Publisher extends AbstractTransceiver
     public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
     {
+        Throw.whenNull(returnWrapper, "returnWrapper may not be null");
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
@@ -346,7 +347,7 @@ public class Publisher extends AbstractTransceiver
     {
         if (0 != addressLevel)
         {
-            returnWrapper.encodeReplyAndTransmit("Address should be empty");
+            returnWrapper.encodeReplyAndTransmit("Address should be 0");
             return null;
         }
         return this.idSource;
