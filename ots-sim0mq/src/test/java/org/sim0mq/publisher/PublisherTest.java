@@ -11,17 +11,12 @@ import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.DurationUnit;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.serialization.SerializationException;
@@ -39,13 +34,10 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.sim0mq.Sim0MQException;
-import org.zeromq.ZContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Unit tests. This requires half of OTS in the imports because it sets up a simulation and runs that for a couple of seconds.
@@ -106,10 +98,28 @@ public class PublisherTest implements OTSModelInterface
         assertEquals("result should contain one elements", 1, subscriptionHandler.length);
         System.out.println(subscriptionHandler[0]);
         assertTrue("Result should contain a String", subscriptionHandler[0] instanceof SubscriptionHandler);
+        lastResult = null;
         assertNull("request for non existent transceiver should return null",
                 publisher.get(new Object[] { "No such transceiver" }, storeLastResult));
+        checkLastResult("No transceiver with name \"No such transceiver\"");
         assertNull("getIdSource with wrong index returns null", publisher.getIdSource(1, storeLastResult));
+        checkLastResult("Address should be 0");
         assertNull("getIdSource with wrong index returns null", publisher.getIdSource(-1, storeLastResult));
+        checkLastResult("Address should be 0");
+    }
+
+    /**
+     * Verify that <code>lastResult</code> is not null, an Object array of length 1 and the one and only element is a String
+     * with the expected text.
+     * @param expectedText String; the expected text
+     */
+    public void checkLastResult(final String expectedText)
+    {
+        assertNotNull("returnWrapper has stored something", lastResult);
+        assertTrue("Stored result is an Object array", lastResult instanceof Object[]);
+        assertEquals("returnWrapper has stored one object error message", 1, ((Object[]) lastResult).length);
+        assertEquals("Stored result is expected string", expectedText, lastResult[0]);
+        lastResult = null;
     }
 
     @Override
@@ -168,27 +178,6 @@ public class PublisherTest implements OTSModelInterface
             scanner.useDelimiter("\\A");
             return scanner.hasNext() ? scanner.next() : "";
         }
-    }
-
-    /**
-     * Construct an OTS simulation experiment from an XML description.
-     * @param xml String; the XML encoded network
-     * @param simulationDuration Duration; total duration of the simulation
-     * @param warmupTime Duration; warm up time of the simulation
-     * @param seed Long; seed for the experiment
-     * @return OTSSimulator; the simulator
-     * @throws NamingException on context error
-     * @throws SimRuntimeException on DSOL error
-     */
-    private OTSSimulator loadNetwork(final String xml, final Duration simulationDuration, final Duration warmupTime,
-            final Long seed) throws SimRuntimeException, NamingException
-    {
-        OTSSimulator simulator = new OTSSimulator("OTS Simulator");
-        TestModel model = new TestModel(simulator, "Test model", "Test model for unit test", xml);
-        Map<String, StreamInterface> map = new LinkedHashMap<>();
-        map.put("generation", new MersenneTwister(seed));
-        simulator.initialize(Time.ZERO, warmupTime, simulationDuration, model);
-        return simulator;
     }
 
     /**
@@ -260,262 +249,6 @@ public class PublisherTest implements OTSModelInterface
         }
 
     }
-
-    /**
-     * Test the new publisher.
-     * @throws NamingException
-     * @throws SimRuntimeException
-     */
-    @Test
-    public void testNewPublisher() throws SimRuntimeException, NamingException
-    {
-        String xml = TEST_NETWORK_XML;
-        OTSSimulatorInterface simulator = loadNetwork(xml, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L);
-        OTSNetwork network = ((TestModel) simulator.getReplication().getExperiment().getModel()).getNetwork();
-        ZContext zContext = new ZContext(5);
-        PublisherThread publisherthread = new PublisherThread(zContext, network);
-        // WORK IN PROGRESS
-    }
-
-    /**
-     * Starts and runs the publisher.
-     */
-    class PublisherThread extends Thread
-    {
-        /** The ZMQ context. */
-        private final ZContext zContext;
-
-        /** The network. */
-        private final OTSNetwork network;
-
-        /**
-         * Construct the publisher thread.
-         * @param zContext ZContext; the ZMQ context
-         * @param network OTSNetwork; the network
-         */
-        PublisherThread(final ZContext zContext, final OTSNetwork network)
-        {
-            this.zContext = zContext;
-            this.network = network;
-        }
-
-        @Override
-        public void run()
-        {
-            // TODO: everything
-            System.out.println("Publisher thread exits");
-        }
-
-    }
-
-    /**
-     * Test that makes the network using the XML parser.
-     * @throws IOException if that happens uncaught; this test has failed
-     * @throws NamingException if that happens uncaught; this test has failed
-     * @throws SimRuntimeException if that happens uncaught; this test has failed
-     */
-    /*-
-    @Test
-    public void testUsingXMLParser() throws IOException, SimRuntimeException, NamingException
-    {
-        String networkFile = "/Temp.xml";
-        URL url = URLResource.getResource(networkFile);
-        // System.out.println("url is " + url);
-        String xml = readStringFromURL(url);
-        OTSSimulatorInterface simulation = loadNetwork(xml, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L);
-        OTSNetwork network = ((TestModel) simulation.getReplication().getExperiment().getModel()).getNetwork();
-        System.out.println(network);
-        Publisher publisher = new Publisher(network);
-        Time stopTime = new Time(30, TimeUnit.BASE_SECOND);
-        simulation.runUpTo(stopTime); // ensure there will be a few GTUs
-        while (simulation.isStartingOrRunning())
-        {
-            try
-            {
-                Thread.sleep(100);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        System.out.println("time is now " + simulation.getSimulatorTime());
-        assertEquals("Simulation has stopped at stop time", stopTime, simulation.getSimulatorTime());
-        SubscriptionHandler sh = (SubscriptionHandler) publisher.get(new Object[] { "Links in network" })[0];
-        LinkIdTransceiver lit = (LinkIdTransceiver) sh.getListTransceiver();
-        sh = (SubscriptionHandler) publisher.get(new Object[] { "Link transceiver" })[0];
-        LinkTransceiver lt = (LinkTransceiver) publisher.get(new Object[] { "Link transceiver" })[0];
-        LinkGTUIdTransceiver lgit = (LinkGTUIdTransceiver) publisher.get(new Object[] { "Link GTU id transceiver" })[0];
-        LaneGTUIdTransceiver lanegid = (LaneGTUIdTransceiver) publisher.get(new Object[] { "Lane GTU id transceiver" })[0];
-        GTUTransceiver gt = (GTUTransceiver) publisher.get(new Object[] { "GTU transceiver" })[0];
-        CrossSectionElementTransceiver cset =
-                (CrossSectionElementTransceiver) publisher.get(new Object[] { "CrossSectionElement transceiver" })[0];
-        Object[] linkIds = (Object[]) (lit.get(null));
-        for (Object linkIdObject : linkIds)
-        {
-            String linkId = (String) linkIdObject;
-            System.out.println("Link " + linkId);
-            Object[] linkData = lt.get(new Object[] { linkId });
-            assertNotNull("Link data should not be null", linkData);
-            for (int i = 0; i < linkData.length; i++)
-            {
-                System.out.println("\t" + lt.getResultFields().getFieldName(i) + ": " + linkData[i]);
-                if (5 == i)
-                {
-                    int gtuCount = (Integer) linkData[i];
-                    Object[] gtuIds = lgit.get(new Object[] { linkId });
-                    assertEquals("gtu count", gtuCount, gtuIds.length);
-                    for (int j = 0; j < gtuCount; j++)
-                    {
-                        Object[] gtuData = gt.get(new Object[] { gtuIds[j] });
-                        for (int k = 0; k < gtuData.length; k++)
-                        {
-                            System.out.println("\t" + j + "\t" + gt.getResultFields().getFieldName(k) + ": " + gtuData[k]);
-                        }
-                    }
-                }
-                if (6 == i)
-                {
-                    int cseCount = (Integer) linkData[i];
-                    for (int j = 0; j < cseCount; j++)
-                    {
-                        Object[] cseData = cset.get(new Object[] { linkId, j });
-                        for (int k = 0; k < cseData.length; k++)
-                        {
-                            System.out.println("\t" + j + "\t" + cset.getResultFields().getFieldName(k) + ": " + cseData[k]);
-                            if (1 == k && "org.opentrafficsim.road.network.lane.Lane".equals(cseData[k]))
-                            {
-                                String laneId = (String) cseData[0];
-                                Object[] gtuIdObjects = lanegid.get(new Object[] { linkId, laneId });
-                                for (int l = 0; l < gtuIdObjects.length; l++)
-                                {
-                                    Object[] gtuData = gt.get(new Object[] { gtuIdObjects[l] });
-                                    for (int m = 0; m < gtuData.length; m++)
-                                    {
-                                        System.out.println(
-                                                "\t\t" + l + "\t" + gt.getResultFields().getFieldName(m) + ": " + gtuData[m]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        assertNull("non existent link id returns null", cset.get(new Object[] { "Non existent link id", 0 }));
-        assertNull("non existent link id returns null", lgit.get(new Object[] { "Non existent link id" }));
-        assertNull("non existent link id returns null", lanegid.get(new Object[] { "Non existent link id", "FORWARD" }));
-        assertNull("non existent link id returns null", lanegid.get(new Object[] { "NCEC", "FORWARD123" }));
-        assertNull("non existent link id returns null", lt.get(new Object[] { "Non existent link id" }));
-        assertNull("Non existent GTU id returns null", gt.get(new Object[] { "Non existent GTU" }));
-        assertNull("Out of range index returns null", cset.get(new Object[] { "NCEC", -1 }));
-        assertNull("Out of range index returns null", cset.get(new Object[] { "NCEC", 9999 }));
-    
-        assertTrue("CrossSectionElementTransceiver has descriptive toString",
-                cset.toString().startsWith("CrossSectionElementTransceiver"));
-        assertTrue("LinkGTUIdTransceiver has descriptive toString", lgit.toString().startsWith("LinkGTUIdTransceiver"));
-        assertTrue("LaneGTUIdTransceiver has descriptive toString", lanegid.toString().startsWith("LaneGTUIdTransceiver"));
-        assertTrue("LinkIdTransceiver has descriptive toString", lit.toString().startsWith("LinkIdTransceiver"));
-        try
-        {
-            lt.getIdSource(1);
-            fail("Should have thrown an IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ioobe)
-        {
-            // Ignore expected exception
-        }
-    
-        try
-        {
-            lt.getIdSource(-1);
-            fail("Should have thrown an IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ioobe)
-        {
-            // Ignore expected exception
-        }
-    
-        assertTrue("LinkTransceiver has descriptive toString", lt.toString().startsWith("LinkTransceiver"));
-        assertTrue("GTUTransceiver has descriptive toString", gt.toString().startsWith("GTUTransceiver"));
-        GTUIdTransceiver git = (GTUIdTransceiver) publisher.get(new Object[] { "GTU id transceiver" })[0];
-        assertEquals("gtu id transceiver can also be obtained from gtu transceiver", git, gt.getIdSource(0));
-        assertTrue("GTUIdTransceiver has descriptive toString", git.toString().startsWith("GTUIdTransceiver"));
-        Object[] gtuObjects = git.get(null);
-        assertNotNull("GTU array should not be null", gtuObjects);
-        // Check that each entry is a GTU
-        for (Object o : gtuObjects)
-        {
-            String gtuId = (String) o;
-            Object[] gtuData = gt.get(new Object[] { o });
-            assertNotNull("GTU data should not be null", gtuData);
-            assertEquals("first element of gtuData is GTU id", gtuId, gtuData[0]);
-        }
-        try
-        {
-            gt.getIdSource(1);
-            fail("Should have thrown an IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ioobe)
-        {
-            // Ignore expected exception
-        }
-    
-        try
-        {
-            gt.getIdSource(-1);
-            fail("Should have thrown an IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ioobe)
-        {
-            // Ignore expected exception
-        }
-    
-        NodeIdTransceiver nit = (NodeIdTransceiver) publisher.get(new Object[] { "Node id transceiver" })[0];
-        assertNotNull("Node id transceiver was returned", nit);
-        assertTrue("toString of NodeIdTransceiver returns something descriptive",
-                nit.toString().startsWith("NodeIdTransceiver"));
-        NodeTransceiver nt = (NodeTransceiver) publisher.get(new Object[] { "Node transceiver" })[0];
-        assertNotNull("Node transceiver was returned", nt);
-        assertTrue("toString of NodeTransceiver returns something descriptive", nt.toString().startsWith("NodeTransceiver"));
-        assertEquals("nit should be retrievable from nt", nit, nt.getIdSource(0));
-        try
-        {
-            nt.getIdSource(1);
-            fail("Should have thrown an IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ioobe)
-        {
-            // Ignore expected exception
-        }
-    
-        try
-        {
-            nt.getIdSource(-1);
-            fail("Should have thrown an IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ioobe)
-        {
-            // Ignore expected exception
-        }
-    
-        for (Object object : nit.get(null))
-        {
-            assertNotNull("Node ids should not be null", object);
-            String nodeId = (String) object;
-            System.out.println("Node " + nodeId);
-            Object[] nodeData = nt.get(new Object[] { object });
-            assertNotNull("nodeData should not be null", nodeData);
-            for (int i = 0; i < nodeData.length; i++)
-            {
-                System.out.println("\t" + i + "\t" + nt.getResultFields().getFieldName(i) + "\t" + nodeData[i]);
-            }
-    
-        }
-    
-        assertNull("non existent node returns null", nt.get(new Object[] { "Non existend node id" }));
-    }
-    */
 
     /** The test network. */
     // @formatter:off
