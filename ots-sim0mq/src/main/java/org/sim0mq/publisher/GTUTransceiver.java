@@ -46,10 +46,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
         this.gtuIdSource = gtuIdSource;
     }
 
-    /**
-     * {@inheritDoc}
-     * @throws Sim0MQException
-     */
+    /** {@inheritDoc} */
     @Override
     public final TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException

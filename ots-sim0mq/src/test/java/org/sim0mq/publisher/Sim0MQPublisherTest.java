@@ -1,7 +1,6 @@
 package org.sim0mq.publisher;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -156,23 +155,16 @@ public class Sim0MQPublisherTest
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationId++, "2", "BAD")); // Too many fields
         waitForReceivedMessages(receivedMessages, 1.0);
-        // for (int index = 0; index < receivedMessages.size(); index++)
-        // {
-        // System.out.println(Sim0MQMessage.print(Sim0MQMessage.decodeToArray(receivedMessages.get(index))));
-        // }
         assertEquals("Should have received one message", 1, receivedMessages.size());
         Object[] fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
         assertTrue("message is a NACK", fields.length == 10 && fields[8].equals(Boolean.FALSE) && fields[9] instanceof String);
         assertTrue("Error message contains \"Bad address\"",
                 ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("Bad address"));
         receivedMessages.clear();
-        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
-                conversationId++)); // Too few fields
+        sendCommand(publisherControlSocket,
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE", conversationId++));
+        // Too few fields
         waitForReceivedMessages(receivedMessages, 1.0);
-        // for (int index = 0; index < receivedMessages.size(); index++)
-        // {
-        // System.out.println(Sim0MQMessage.print(Sim0MQMessage.decodeToArray(receivedMessages.get(index))));
-        // }
         assertEquals("Should have received one message", 1, receivedMessages.size());
         fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
         assertTrue("message is a NACK", fields.length == 10 && fields[8].equals(Boolean.FALSE) && fields[9] instanceof String);
