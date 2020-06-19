@@ -62,8 +62,9 @@ public class Publisher extends AbstractTransceiver
     /**
      * Construct a Publisher for an OTS network.
      * @param network OTSNetwork; the OTS network
+     * @throws RemoteException ...
      */
-    public Publisher(final OTSNetwork network)
+    public Publisher(final OTSNetwork network) throws RemoteException
     {
         super("Publisher for " + Throw.whenNull(network, "Network may not be null").getId(),
                 new MetaData("Publisher for " + network.getId(), "Publisher",
@@ -228,6 +229,11 @@ public class Publisher extends AbstractTransceiver
                 new CrossSectionElementTransceiver(network), lookupLink, CrossSectionLink.LANE_ADD_EVENT,
                 CrossSectionLink.LANE_REMOVE_EVENT, null, linkGTUIdSubscriptionHandler));
         // addTransceiver(new LaneGTUIdTransceiver(network));
+        SimulatorStateTransceiver stt = new SimulatorStateTransceiver(network.getSimulator());
+        SubscriptionHandler simulatorStateSubscriptionHandler =
+                new SubscriptionHandler("Simulator running", stt, 
+                        stt.getLookupEventProducerInterface(), null, null, EventMultiplexer.SIMULATOR_STATE_CHANGED, null);
+        addSubscriptionHandler(simulatorStateSubscriptionHandler);
 
         addSubscriptionHandler(new SubscriptionHandler("", this, null, null, null, null, null)); // The meta transceiver
     }

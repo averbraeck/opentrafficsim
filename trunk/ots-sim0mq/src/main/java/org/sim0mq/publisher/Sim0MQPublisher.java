@@ -33,6 +33,7 @@ import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -335,15 +336,33 @@ public final class Sim0MQPublisher
                                 if (null == this.network)
                                 {
                                     resultMessage = "No network loaded";
+                                    ackNack = false;
                                     break;
                                 }
-                                this.network.getSimulator().runUpTo((Time) message[8]);
+                                OTSSimulatorInterface simulator = this.network.getSimulator();
+                                if (simulator.getSimulatorTime()
+                                        .ge(simulator.getReplication().getExperiment().getTreatment().getEndTime()))
+                                {
+                                    resultMessage = "Simulation is already at end of simulation time";
+                                    ackNack = false;
+                                    break;
+                                }
+                                if (simulator.isStartingOrRunning())
+                                {
+                                    resultMessage = "Simulator is already running"; // cannot happen for now
+                                    ackNack = false;
+                                    break;
+                                }
+                                ReturnWrapper returnWrapper = new ReturnWrapperImpl(zContext, new Object[] { "SIM01", true,
+                                        message[2], message[3], message[4], message[5], message[6], 0 }, socketMap);
+                                returnWrapper.ack(resultMessage);
+                                simulator.runUpTo((Time) message[8]);
                                 int count = 0;
                                 while (this.network.getSimulator().isStartingOrRunning())
                                 {
                                     System.out.print(".");
                                     count++;
-                                    if (count > 1000) // 10 seconds
+                                    if (count > 1000) // Quit after 1000 attempts of 10 ms; 10 s
                                     {
                                         System.out.println("TIMEOUT - STOPPING SIMULATOR. TIME = "
                                                 + this.network.getSimulator().getSimulatorTime());
@@ -364,9 +383,6 @@ public final class Sim0MQPublisher
                                         e.printStackTrace();
                                     }
                                 }
-                                resultMessage =
-                                        "Simulator has stopped at time " + this.network.getSimulator().getSimulatorTime();
-                                ackNack = this.network.getSimulator().getSimulatorTime().equals(message[8]);
                                 // TODO Fix this (it is still needed - 2020-06-16)
                                 try
                                 {
@@ -376,6 +392,7 @@ public final class Sim0MQPublisher
                                 {
                                     e.printStackTrace();
                                 }
+                                return true; // ack has been sent when simulation started
                             }
                             else
                             {
