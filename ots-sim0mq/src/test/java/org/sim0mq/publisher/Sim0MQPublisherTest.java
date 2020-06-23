@@ -2,6 +2,7 @@ package org.sim0mq.publisher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +40,54 @@ public class Sim0MQPublisherTest
 {
 
     /**
+     * Verify an ACK or a NACK message.
+     * @param got bute[]; the not-yet-decoded message that is expected to decode into an ACK or a NACK
+     * @param field5 String; expected content for the message type id field
+     * @param field6 int; expected content for the message id field
+     * @param expectedValue Boolean; expected Boolean value for the first payload field (field 8)
+     * @param expectedDescription String; expected String value for the second and last payload field (field 9)
+     * @throws Sim0MQException when that happens, this test has failed
+     * @throws SerializationException when that happens this test has failed
+     */
+    public void verifyAckNack(final byte[] got, final String field5, final int field6, final Boolean expectedValue,
+            final String expectedDescription) throws Sim0MQException, SerializationException
+    {
+        Object[] objects = Sim0MQMessage.decodeToArray(got);
+        assertEquals("Field 5 of message echos the command", field5, objects[5]);
+        assertEquals("Response has 2 field payload", 10, objects.length);
+        assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
+        assertEquals("First payload field has the expected value", expectedValue, objects[8]);
+        assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
+        if (!((String) objects[9]).startsWith(expectedDescription))
+        {
+            fail("Description of ACK/NACK does not start with \"" + expectedDescription + "\" instead it contains \""
+                    + objects[9] + "\"");
+        }
+    }
+
+    /**
+     * Wait for an incoming message and verify that it is an ACK or a NACK.
+     * @param receivedMessages List&lt;byte[]&gt;; the list where incoming messages should appear
+     * @param maximumSeconds double; maximum time to wait
+     * @param field5 String; expected content for the message type id field
+     * @param field6 int; expected content for the message id field
+     * @param expectedValue Boolean; expected Boolean value for the first payload field (field 8)
+     * @param expectedDescription String; expected String value for the second and last payload field (field 9)
+     * @throws Sim0MQException when that happens, this test has failed
+     * @throws SerializationException when that happens this test has failed
+     * @throws InterruptedException when that happens this test has failed
+     */
+    public void waitAndVerifyAckNack(final List<byte[]> receivedMessages, final double maximumSeconds, final String field5,
+            final int field6, final Boolean expectedValue, final String expectedDescription)
+            throws Sim0MQException, SerializationException, InterruptedException
+    {
+        waitForReceivedMessages(receivedMessages, maximumSeconds);
+        assertEquals("Should have received one message", 1, receivedMessages.size());
+        verifyAckNack(receivedMessages.get(0), field5, field6, expectedValue, expectedDescription);
+        receivedMessages.clear();
+    }
+
+    /**
      * Test code.
      * @throws IOException if that happens uncaught; this test has failed
      * @throws NamingException if that happens uncaught; this test has failed
@@ -55,7 +104,7 @@ public class Sim0MQPublisherTest
     {
         ZContext zContext = new ZContext(5); // 5 IO threads - how many is reasonable? It actually works with 1 IO thread.
 
-        List<byte[]> receivedMessages = new ArrayList<>();
+        List<byte[]> receivedMessages = Collections.synchronizedList(new ArrayList<>());
         List<byte[]> synchronizedReceivedMessages = Collections.synchronizedList(receivedMessages);
         ReadMessageThread readMessageThread = new ReadMessageThread(zContext, synchronizedReceivedMessages);
         readMessageThread.start();
@@ -68,43 +117,27 @@ public class Sim0MQPublisherTest
 
         int conversationId = 100; // Number the commands starting with something that is very different from 0
         String badCommand = "THIS_IS_NOT_A_SUPPORTED_COMMAND";
-        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, conversationId++));
-        waitForReceivedMessages(receivedMessages, 1.0);
-        assertEquals("Should have received one message", 1, receivedMessages.size());
-        Object[] objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertEquals("Field 5 of message echos the bad command", badCommand, objects[5]);
-        assertEquals("Response has 2 field payload", 10, objects.length);
-        assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
-        assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, ++conversationId));
+        waitAndVerifyAckNack(receivedMessages, 1.0, badCommand, conversationId, false, "Don't know how to handle message:");
+
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
+                ++conversationId, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
+        waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false, "No network loaded");
 
         receivedMessages.clear();
         badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
-        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, conversationId++));
-        waitForReceivedMessages(receivedMessages, 1.0);
-        assertEquals("Should have received one message", 1, receivedMessages.size());
-        objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertEquals("Field 5 of message echos the bad command", "GTUs in network", objects[5]);
-        assertEquals("Response has 2 field payload", 10, objects.length);
-        assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
-        assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, ++conversationId));
+        waitAndVerifyAckNack(receivedMessages, 1.0, "GTUs in network", conversationId, false,
+                "No simulation loaded; cannot execute command GTUs in network|SUBSCRIBE_TO_ADD");
 
-        receivedMessages.clear();
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "NEWSIMULATION",
-                conversationId++, networkXML, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L));
-        waitForReceivedMessages(receivedMessages, 10);
-        assertEquals("Should have received one message", 1, receivedMessages.size());
-        objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertEquals("Response has 2 field payload", 10, objects.length);
-        assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
-        assertTrue("Second (and last) payload field is a String", objects[9] instanceof String);
-        assertTrue("Network was successfully loaded", (Boolean) objects[8]);
-        assertEquals("Last field of payload is String \"OK\"", "OK", objects[9]);
+                ++conversationId, networkXML, new Duration(60, DurationUnit.SECOND), Duration.ZERO, 123456L));
+        waitAndVerifyAckNack(receivedMessages, 10.0, "NEWSIMULATION", conversationId, true, "OK");
 
-        receivedMessages.clear();
         // Discover what services and commands are available
         sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_LIST", conversationId++));
-        waitForReceivedMessages(receivedMessages, 10);
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_LIST", ++conversationId));
+        waitForReceivedMessages(receivedMessages, 1);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         Object[] commands = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
         assertTrue("message decodes into more than 8 fields", commands.length > 8);
@@ -115,7 +148,7 @@ public class Sim0MQPublisherTest
             String service = (String) commands[index];
             System.out.println("Service " + service);
             sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
-                    service + "|" + SubscriptionHandler.Command.GET_COMMANDS, conversationId++));
+                    service + "|" + SubscriptionHandler.Command.GET_COMMANDS, ++conversationId));
             waitForReceivedMessages(receivedMessages, 1.0);
             if (receivedMessages.size() > 0)
             {
@@ -127,7 +160,7 @@ public class Sim0MQPublisherTest
                     receivedMessages.clear();
                     // System.out.println("trying command " + service + "|" + command);
                     sendCommand(publisherControlSocket,
-                            Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", service + "|" + command, conversationId++));
+                            Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", service + "|" + command, ++conversationId));
                     waitForReceivedMessages(receivedMessages, 1.0);
                     if (receivedMessages.size() > 0)
                     {
@@ -153,7 +186,7 @@ public class Sim0MQPublisherTest
         waitForReceivedMessages(receivedMessages, 1.0); // Make another attempt because the first one may not have gotten all.
         receivedMessages.clear();
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
-                conversationId++, "2", "BAD")); // Too many fields
+                ++conversationId, "2", "BAD")); // Too many fields
         waitForReceivedMessages(receivedMessages, 1.0);
         assertEquals("Should have received one message", 1, receivedMessages.size());
         Object[] fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
@@ -162,7 +195,7 @@ public class Sim0MQPublisherTest
                 ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("Bad address"));
         receivedMessages.clear();
         sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE", conversationId++));
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE", ++conversationId));
         // Too few fields
         waitForReceivedMessages(receivedMessages, 1.0);
         assertEquals("Should have received one message", 1, receivedMessages.size());
@@ -172,7 +205,7 @@ public class Sim0MQPublisherTest
                 ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("Bad address"));
         receivedMessages.clear();
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
-                conversationId++, "NON EXISTING GTU ID")); // GTU id is not (currently) in use
+                ++conversationId, "NON EXISTING GTU ID")); // GTU id is not (currently) in use
         waitForReceivedMessages(receivedMessages, 1.0);
         for (int index = 0; index < receivedMessages.size(); index++)
         {
@@ -184,35 +217,61 @@ public class Sim0MQPublisherTest
         assertTrue("Error message contains \"No GTU with id\"",
                 ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("No GTU with id"));
         sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD", conversationId++));
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
         sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
-        int conversationIdForSubscribeToAdd = conversationId++; // We need that to unsubscribe later
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
+        int conversationIdForSubscribeToAdd = ++conversationId; // We need that to unsubscribe later
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|SUBSCRIBE_TO_ADD", conversationIdForSubscribeToAdd));
-        int conversationIdForGTU2Move = conversationId++;
+        int conversationIdForGTU2Move = ++conversationId;
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] { new Time(20, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] { new Time(20, TimeUnit.BASE_SECOND) }));
         sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         // unsubscribe from GTU ADD events using saved conversationId
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|UNSUBSCRIBE_FROM_ADD", conversationIdForSubscribeToAdd));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTU move|UNSUBSCRIBE_FROM_CHANGE", conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] { new Time(30, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] { new Time(30, TimeUnit.BASE_SECOND) }));
         sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
+                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
-                "GTUs in network|GET_ADDRESS_META_DATA", conversationId++));
-        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", conversationId++));
+                "GTUs in network|GET_ADDRESS_META_DATA", ++conversationId));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
+                ++conversationId, new Object[] { new Time(60, TimeUnit.BASE_SECOND) }));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
+                ++conversationId, new Object[] { new Time(70, TimeUnit.BASE_SECOND) }));
+        // Skip incoming messages up to ACK or NACK with the expected conversationId; give up after 1000 attempts
+        for (int attempt = 0; attempt < 1000; attempt++)
+        {
+            waitForReceivedMessages(receivedMessages, 1.0);
+            // System.out.println("attempt = " + attempt + " received " + receivedMessages.size() + " message(s)");
+            while (receivedMessages.size() > 1)
+            {
+                receivedMessages.remove(0);
+            }
+            if (receivedMessages.size() == 1)
+            {
+                Object[] objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
+                if (objects[6].equals(conversationId))
+                {
+                    break;
+                }
+                receivedMessages.remove(0);
+            }
+        }
+        waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false,
+                "Simulation is already at end of simulation time");
+
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", ++conversationId));
         System.out.println("Master has sent last command; Publisher should be busy for a while and then die");
         System.out.println("Master joining publisher thread (this should block until publisher has died)");
         publisherThread.join();

@@ -108,7 +108,7 @@ public final class Sim0MQPublisher
     }
 
     /**
-     * Create a new Sim0MQPublisher.
+     * Create a new Sim0MQPublisher that uses TCP transport.
      * @param port int; port number to bind to
      */
     public Sim0MQPublisher(final int port)
@@ -407,22 +407,23 @@ public final class Sim0MQPublisher
                             break;
                     }
                 }
+                ReturnWrapper returnWrapper = new ReturnWrapperImpl(zContext,
+                        new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 }, socketMap);
+                if (ackNack)
+                {
+                    returnWrapper.ack(resultMessage);
+                }
+                else
+                {
+                    returnWrapper.nack(resultMessage);
+                }
             }
             else
             {
-                resultMessage = "Publisher decoded Sim0MQ command but is has too few fields:";
-                ackNack = false;
-                System.out.println(HexDumper.hexDumper(data));
-            }
-            ReturnWrapper returnWrapper = new ReturnWrapperImpl(zContext,
-                    new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 }, socketMap);
-            if (ackNack)
-            {
-                returnWrapper.ack(resultMessage);
-            }
-            else
-            {
-                returnWrapper.nack(resultMessage);
+                // We cannot construct a ReturnWrapper because the request has too few fields.
+                System.err.println("Publisher expected Sim0MQ command but is has too few fields:");
+                System.err.println(HexDumper.hexDumper(data));
+                return true; // Do we really want to try again?
             }
         }
         catch (Sim0MQException | SerializationException | RemoteException e)
@@ -494,7 +495,7 @@ class Sim0MQOTSModel extends AbstractOTSModel
     @Override
     public Serializable getSourceId()
     {
-        return "PublisherTestModel";
+        return "Sim0MQPublisherModel";
     }
 
 }
