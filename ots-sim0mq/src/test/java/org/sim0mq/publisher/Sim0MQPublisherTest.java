@@ -41,7 +41,7 @@ public class Sim0MQPublisherTest
 
     /**
      * Verify an ACK or a NACK message.
-     * @param got bute[]; the not-yet-decoded message that is expected to decode into an ACK or a NACK
+     * @param got byte[]; the not-yet-decoded message that is expected to decode into an ACK or a NACK
      * @param field5 String; expected content for the message type id field
      * @param field6 int; expected content for the message id field
      * @param expectedValue Boolean; expected Boolean value for the first payload field (field 8)
