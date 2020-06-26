@@ -25,6 +25,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.cli.Checkable;
@@ -579,6 +580,18 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
                     {
                         write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "NEWSIMULATION", 0, xml, runDuration,
                                 warmupDuration, seed));
+                        String caption = this.stepTo.getText();
+                        int position;
+                        for (position = 0; position < caption.length(); position++)
+                        {
+                            if (Character.isDigit(caption.charAt(position)))
+                            {
+                                break;
+                            }
+                        }
+                        Time toTime = new Time(10.0, TimeUnit.BASE_SECOND);
+                        this.stepTo.setText(caption.substring(0, position)
+                                + String.format("%.0f %s", toTime.getInUnit(), toTime.getDisplayUnit()));
                     }
                     catch (IOException e1)
                     {
@@ -604,8 +617,7 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
 
             case "StepTo":
             {
-                JButton button = (JButton) e.getSource();
-                String caption = button.getText();
+                String caption = this.stepTo.getText();
                 int position;
                 for (position = 0; position < caption.length(); position++)
                 {
@@ -619,7 +631,7 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
                 {
                     write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "SIMULATEUNTIL", 0, toTime));
                     toTime = toTime.plus(new Duration(10, DurationUnit.SECOND));
-                    button.setText(caption.substring(0, position)
+                    this.stepTo.setText(caption.substring(0, position)
                             + String.format("%.0f %s", toTime.getInUnit(), toTime.getDisplayUnit()));
                 }
                 catch (IOException | Sim0MQException | SerializationException e1)
