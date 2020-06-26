@@ -250,7 +250,7 @@ public class SubscriptionHandler
         else
         {
             this.subscriptions.remove(returnWrapper);
-            returnWrapper.ack("subscription removed");
+            returnWrapper.ack("Subscription removed");
         }
     }
 
