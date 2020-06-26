@@ -575,7 +575,7 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
                 try
                 {
                     String xml = readStringFromURL(url);
-                    System.out.println("xml length = " + xml.length());
+                    // System.out.println("xml length = " + xml.length());
                     try
                     {
                         write(Sim0MQMessage.encodeUTF8(true, 0, "RemoteControl", "OTS", "NEWSIMULATION", 0, xml, runDuration,
