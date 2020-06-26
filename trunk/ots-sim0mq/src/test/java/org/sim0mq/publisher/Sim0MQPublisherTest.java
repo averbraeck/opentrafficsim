@@ -54,6 +54,7 @@ public class Sim0MQPublisherTest
     {
         Object[] objects = Sim0MQMessage.decodeToArray(got);
         assertEquals("Field 5 of message echos the command", field5, objects[5]);
+        assertEquals("conversation id (field 6) matches", field6, objects[6]);
         assertEquals("Response has 2 field payload", 10, objects.length);
         assertTrue("First payload field is a boolean", objects[8] instanceof Boolean);
         assertEquals("First payload field has the expected value", expectedValue, objects[8]);
@@ -124,7 +125,6 @@ public class Sim0MQPublisherTest
                 ++conversationId, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
         waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false, "No network loaded");
 
-        receivedMessages.clear();
         badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, ++conversationId));
         waitAndVerifyAckNack(receivedMessages, 1.0, "GTUs in network", conversationId, false,
@@ -181,41 +181,18 @@ public class Sim0MQPublisherTest
                 System.out.println("Received no reply to GET_COMMANDS request");
             }
         }
-        waitForReceivedMessages(receivedMessages, 1.0);
-        receivedMessages.clear();
-        waitForReceivedMessages(receivedMessages, 1.0); // Make another attempt because the first one may not have gotten all.
-        receivedMessages.clear();
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 ++conversationId, "2", "BAD")); // Too many fields
-        waitForReceivedMessages(receivedMessages, 1.0);
-        assertEquals("Should have received one message", 1, receivedMessages.size());
-        Object[] fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertTrue("message is a NACK", fields.length == 10 && fields[8].equals(Boolean.FALSE) && fields[9] instanceof String);
-        assertTrue("Error message contains \"Bad address\"",
-                ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("Bad address"));
-        receivedMessages.clear();
+        waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
+        waitAndVerifyAckNack(receivedMessages, 1.0, "GTU move", conversationId, false, "Bad address");
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE", ++conversationId));
         // Too few fields
-        waitForReceivedMessages(receivedMessages, 1.0);
-        assertEquals("Should have received one message", 1, receivedMessages.size());
-        fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertTrue("message is a NACK", fields.length == 10 && fields[8].equals(Boolean.FALSE) && fields[9] instanceof String);
-        assertTrue("Error message contains \"Bad address\"",
-                ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("Bad address"));
-        receivedMessages.clear();
+        waitAndVerifyAckNack(receivedMessages, 1.0, "GTU move", conversationId, false,
+                "Bad address: Address for GTU Id has wrong length");
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 ++conversationId, "NON EXISTING GTU ID")); // GTU id is not (currently) in use
-        waitForReceivedMessages(receivedMessages, 1.0);
-        for (int index = 0; index < receivedMessages.size(); index++)
-        {
-            System.out.println(Sim0MQMessage.print(Sim0MQMessage.decodeToArray(receivedMessages.get(index))));
-        }
-        assertEquals("Should have received one message", 1, receivedMessages.size());
-        fields = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
-        assertTrue("message is a NACK", fields.length == 10 && fields[8].equals(Boolean.FALSE) && fields[9] instanceof String);
-        assertTrue("Error message contains \"No GTU with id\"",
-                ((String) (Sim0MQMessage.decodeToArray(receivedMessages.get(0))[9])).contains("No GTU with id"));
+        waitAndVerifyAckNack(receivedMessages, 1.0, "GTU move", conversationId, false, "No GTU with id");
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         sendCommand(publisherControlSocket,
@@ -227,6 +204,9 @@ public class Sim0MQPublisherTest
         int conversationIdForSubscribeToAdd = ++conversationId; // We need that to unsubscribe later
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|SUBSCRIBE_TO_ADD", conversationIdForSubscribeToAdd));
+        waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationIdForSubscribeToAdd);
+        waitAndVerifyAckNack(receivedMessages, 1.0, "GTUs in network", conversationIdForSubscribeToAdd, true,
+                "Subscription created");
         int conversationIdForGTU2Move = ++conversationId;
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
@@ -234,9 +214,13 @@ public class Sim0MQPublisherTest
                 ++conversationId, new Object[] { new Time(20, TimeUnit.BASE_SECOND) }));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
-        // unsubscribe from GTU ADD events using saved conversationId
+        waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
+        // unsubscribe from GTU ADD events using the previously saved conversationId
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|UNSUBSCRIBE_FROM_ADD", conversationIdForSubscribeToAdd));
+        waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationIdForSubscribeToAdd);
+        waitAndVerifyAckNack(receivedMessages, 1.0, "GTUs in network", conversationIdForSubscribeToAdd, true,
+                "Subscription removed");
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTU move|UNSUBSCRIBE_FROM_CHANGE", conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
@@ -249,7 +233,35 @@ public class Sim0MQPublisherTest
                 ++conversationId, new Object[] { new Time(60, TimeUnit.BASE_SECOND) }));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
                 ++conversationId, new Object[] { new Time(70, TimeUnit.BASE_SECOND) }));
-        // Skip incoming messages up to ACK or NACK with the expected conversationId; give up after 1000 attempts
+        waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
+        waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false,
+                "Simulation is already at end of simulation time");
+
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", ++conversationId));
+        System.out.println("Master has sent last command; Publisher should be busy for a while and then die");
+        System.out.println("Master joining publisher thread (this should block until publisher has died)");
+        publisherThread.join();
+        System.out.println("Master has joined publisher thread");
+        System.out.println("Master interrupts read message thread");
+        readMessageThread.interrupt();
+        System.out.println("Master has interrupted read message thread; joining ...");
+        readMessageThread.join();
+        System.out.println("Master has joined read message thread");
+        System.out.println("Master exits");
+    }
+
+    /**
+     * Wait for incoming messages up to one that has a specified conversation id, or until 1000 times time out.
+     * @param receivedMessages List&lt;byte[]&gt;; the list to monitor
+     * @param maximumSeconds double; how long to wait (in seconds)
+     * @param conversationId int; the conversation id to wait for
+     * @throws Sim0MQException when that happens, this test has failed
+     * @throws SerializationException when that happens, this test has failed
+     * @throws InterruptedException when that happens, this test has failed
+     */
+    public void waitAndEatMessagesUntilConversationId(final List<byte[]> receivedMessages, final double maximumSeconds,
+            final int conversationId) throws Sim0MQException, SerializationException, InterruptedException
+    {
         for (int attempt = 0; attempt < 1000; attempt++)
         {
             waitForReceivedMessages(receivedMessages, 1.0);
@@ -268,29 +280,17 @@ public class Sim0MQPublisherTest
                 receivedMessages.remove(0);
             }
         }
-        waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false,
-                "Simulation is already at end of simulation time");
 
-        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", ++conversationId));
-        System.out.println("Master has sent last command; Publisher should be busy for a while and then die");
-        System.out.println("Master joining publisher thread (this should block until publisher has died)");
-        publisherThread.join();
-        System.out.println("Master has joined publisher thread");
-        System.out.println("Master interrupts read message thread");
-        readMessageThread.interrupt();
-        System.out.println("Master has interrupted read message thread; joining ...");
-        readMessageThread.join();
-        System.out.println("Master has joined read message thread");
-        System.out.println("Master exits");
     }
 
     /**
      * Sleep up to 1 second waiting for at least one message to be received.
-     * @param receivedMessages List&lt;?&gt;; the list to monitor
+     * @param receivedMessages List&lt;byte[]&gt;; the list to monitor
      * @param maximumSeconds double; how long to wait (in seconds)
      * @throws InterruptedException when that happens uncaught; this test has failed
      */
-    static void waitForReceivedMessages(final List<?> receivedMessages, final double maximumSeconds) throws InterruptedException
+    static void waitForReceivedMessages(final List<byte[]> receivedMessages, final double maximumSeconds)
+            throws InterruptedException
     {
         double timeWaited = 0;
         while (receivedMessages.size() == 0 && timeWaited < maximumSeconds)
