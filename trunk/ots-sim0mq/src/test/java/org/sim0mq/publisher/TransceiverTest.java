@@ -6,12 +6,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventInterface;
+import org.djutils.event.EventListenerInterface;
+import org.djutils.event.EventProducerInterface;
+import org.djutils.event.TimedEvent;
 import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -25,6 +32,7 @@ import org.opentrafficsim.core.mock.MockDEVSSimulator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.sim0mq.Sim0MQException;
 
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -43,6 +51,12 @@ public class TransceiverTest
 
     /** Storage for the last payload submitted to the ReturnWrapper. */
     private Object[] lastPayload = null;
+
+    /** Storage for last content submitted to notify method in EventListenerInterface. */
+    private Serializable lastContent = null;
+
+    /** Time stamp of last notify event. */
+    private Time lastTime = null;
 
     /**
      * Test the GTUIdTransceiver and the GTUTransceiver.
@@ -72,6 +86,7 @@ public class TransceiverTest
             // Ignore expected exception
         }
         OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
+
         OTSNetwork network = new OTSNetwork("test network for TransceiverTest", true, simulator);
         GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
         assertEquals("getId returns correct id", "GTU id transceiver", gtuIdTransceiver.getId());
@@ -136,13 +151,13 @@ public class TransceiverTest
         Object[] result = gtuIdTransceiver.get(null, storeLastResult);
         assertNotNull("result should not be null", result);
         assertEquals("length of result should be 0", 0, result.length);
-        result = gtuIdTransceiver.get(new Object[] {"this is a bad address"}, storeLastResult);
+        result = gtuIdTransceiver.get(new Object[] { "this is a bad address" }, storeLastResult);
         assertNull("result should not be null", result);
         assertEquals("return wrapper got a nack", Boolean.FALSE, this.lastAckNack);
         assertEquals("payload has length 1", 1, this.lastPayload.length);
         assertTrue("element of payload is a String", this.lastPayload[0] instanceof String);
         assertTrue("payload contains \"wrong length\"", ((String) this.lastPayload[0]).contains("wrong length"));
-        
+
         MyMockGTU gtu1 = new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
                 new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator);
         network.addGTU(gtu1.getMock());
@@ -249,6 +264,66 @@ public class TransceiverTest
         gtuTransceiver.get(new Object[] { 123 }, storeLastResult);
         assertTrue("toString returns something descriptive", gtuTransceiver.toString().contains("Transceiver"));
 
+        NodeIdTransceiver nit = new NodeIdTransceiver(network);
+        assertTrue("toString of node id transceiver returns something descriptive",
+                nit.toString().startsWith("NodeIdTransceiver"));
+
+        LinkIdTransceiver lit = new LinkIdTransceiver(network);
+        assertTrue("toString of link id transceiver returns something descriptive",
+                lit.toString().startsWith("LinkIdTransceiver"));
+
+        // Next statement is not really needed; just making sure
+        Mockito.when(simulator.isInitialized()).thenReturn(false);
+        SimulatorStateTransceiver sst = new SimulatorStateTransceiver(simulator);
+        result = sst.get(null, storeLastResult);
+        assertEquals("get returned one element Object array", 1, result.length);
+        assertEquals("Mock simulator pretends not to have been initialized", "Not (yet) initialized", result[0]);
+        Mockito.when(simulator.isInitialized()).thenReturn(true);
+        // Next statement is not really needed; just making sure
+        Mockito.when(simulator.isStartingOrRunning()).thenReturn(false);
+        result = sst.get(null, storeLastResult);
+        assertEquals("get returned one element Object array", 1, result.length);
+        assertEquals("Mock simulator pretends be in stopped state", "Stopping or stopped", result[0]);
+        Mockito.when(simulator.isStartingOrRunning()).thenReturn(true);
+        result = sst.get(null, storeLastResult);
+        assertEquals("get returned one element Object array", 1, result.length);
+        assertEquals("Mock simulator pretends be in stopped state", "Starting or running", result[0]);
+        LookupEventProducerInterface lepi = sst.getLookupEventProducerInterface();
+        EventProducerInterface epi = lepi.lookup(null, storeLastResult);
+        TimedEvent<Time> tev =
+                new TimedEvent<>(SimulatorInterface.START_EVENT, simulator, null, new Time(123, TimeUnit.BASE_SECOND));
+        EventListenerInterface recordingListener = new EventListenerInterface()
+        {
+            /** ... */
+            private static final long serialVersionUID = 1L;
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void notify(final EventInterface event) throws RemoteException
+            {
+                lastContent = event.getContent();
+                lastTime = null;
+                if (event instanceof TimedEvent)
+                {
+                    lastTime = (Time) ((TimedEvent<Time>) event).getTimeStamp();
+                }
+            }
+        };
+        epi.addListener(recordingListener, SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED);
+        this.lastContent = null;
+        ((EventListenerInterface) epi).notify(tev);
+        System.out.println("LastContent is now " + this.lastContent);
+        assertEquals("last time is 123", 123.0, this.lastTime.si, 0);
+        tev = new TimedEvent<>(SimulatorInterface.STOP_EVENT, simulator, null, new Time(1234, TimeUnit.BASE_SECOND));
+        this.lastContent = null;
+        ((EventListenerInterface) epi).notify(tev);
+        assertEquals("lastContent is now true", Boolean.FALSE, this.lastContent);
+        assertEquals("last time is 1234", 1234.0, this.lastTime.si, 0);
+        this.lastAckNack = null; // make sure we can see that is has been set
+        assertNull("using a bad address returns null", lepi.lookup(new Object[] { "This is a bad address" }, storeLastResult));
+        assertEquals("using a bad address sends a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("NACK message contains \"wrong length\"", ((String) this.lastPayload[0]).contains("wrong length"));
+
     }
 
     /**
@@ -270,6 +345,26 @@ public class TransceiverTest
         {
             // Ignore expected exception
         }
+    }
+
+    /**
+     * Test the static verifyMetaData method in AbstractTransceiver.
+     */
+    @Test
+    public void testVerifyMetaData()
+    {
+        assertNull("NO_META_DATA allows anything", AbstractTransceiver.verifyMetaData(MetaData.NO_META_DATA, null));
+        assertNull("NO_META_DATA allows anything", AbstractTransceiver.verifyMetaData(MetaData.NO_META_DATA, new Object[] {}));
+        assertNull("NO_META_DATA allows anything",
+                AbstractTransceiver.verifyMetaData(MetaData.NO_META_DATA, new Object[] { "Anything goes" }));
+
+        MetaData md = new MetaData("A", "a", new ObjectDescriptor[] { new ObjectDescriptor("String", "string", String.class),
+                new ObjectDescriptor("Double", "double", Double.class) });
+        assertEquals("empty is not ok", "Address may not be null", AbstractTransceiver.verifyMetaData(md, null));
+        assertTrue("wrong length", AbstractTransceiver.verifyMetaData(md, new Object[] {}).contains("has wrong length"));
+        assertTrue("wrong type",
+                AbstractTransceiver.verifyMetaData(md, new Object[] { 123.456, 234.567 }).contains("cannot be used for"));
+        assertNull("Good address returns null", AbstractTransceiver.verifyMetaData(md, new Object[] { "hello", 234.567 }));
     }
 
 }
