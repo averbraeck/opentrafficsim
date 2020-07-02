@@ -39,8 +39,8 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
     }
 
     /**
-     * Retrieve the set of objects whose names will be returned by the get method.
-     * @return Set&lt;?&gt;; the set of objects whose names will be returned by the get method. Each object in this set should
+     * Retrieve the set of names of objects that can be individually subscribed to.
+     * @return Set&lt;?&gt;; the set of names of objects whose that can be subscribed to. Each object in this set should
      *         implement <code>Identifiable</code>
      */
     abstract ImmutableSet<?> getSet();
@@ -53,7 +53,7 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit("Bad address");
+            returnWrapper.nack(bad);
             return null;
         }
         ImmutableSet<?> set = getSet();

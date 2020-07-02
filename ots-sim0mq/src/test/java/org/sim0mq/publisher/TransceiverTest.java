@@ -38,8 +38,11 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class TransceiverTest
 {
-    /** Storage for the last result submitted to the ReturnWrapper. */
-    private Object[] lastResult = null;
+    /** Storage for the last ACK or NACK value submitted to the ReturnWrapper. */
+    private Boolean lastAckNack = null;
+
+    /** Storage for the last payload submitted to the ReturnWrapper. */
+    private Object[] lastPayload = null;
 
     /**
      * Test the GTUIdTransceiver and the GTUTransceiver.
@@ -55,7 +58,8 @@ public class TransceiverTest
             @Override
             public void encodeReplyAndTransmit(final Boolean ackNack, final Object[] payload)
             {
-                lastResult = payload;
+                lastAckNack = ackNack;
+                lastPayload = payload;
             }
         };
         try
@@ -132,6 +136,13 @@ public class TransceiverTest
         Object[] result = gtuIdTransceiver.get(null, storeLastResult);
         assertNotNull("result should not be null", result);
         assertEquals("length of result should be 0", 0, result.length);
+        result = gtuIdTransceiver.get(new Object[] {"this is a bad address"}, storeLastResult);
+        assertNull("result should not be null", result);
+        assertEquals("return wrapper got a nack", Boolean.FALSE, this.lastAckNack);
+        assertEquals("payload has length 1", 1, this.lastPayload.length);
+        assertTrue("element of payload is a String", this.lastPayload[0] instanceof String);
+        assertTrue("payload contains \"wrong length\"", ((String) this.lastPayload[0]).contains("wrong length"));
+        
         MyMockGTU gtu1 = new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
                 new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator);
         network.addGTU(gtu1.getMock());
