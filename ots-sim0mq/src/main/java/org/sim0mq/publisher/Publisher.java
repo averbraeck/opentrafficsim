@@ -80,7 +80,7 @@ public class Publisher extends AbstractTransceiver
                 new SubscriptionHandler("GTU move", gtuTransceiver, new LookupEventProducerInterface()
                 {
                     @Override
-                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
+                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
                             throws Sim0MQException, SerializationException
                     {
                         String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
@@ -110,7 +110,7 @@ public class Publisher extends AbstractTransceiver
         addSubscriptionHandler(new SubscriptionHandler("GTUs in network", gtuIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
                     throws Sim0MQException, SerializationException
             {
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
@@ -142,7 +142,7 @@ public class Publisher extends AbstractTransceiver
         addSubscriptionHandler(new SubscriptionHandler("Links in network", linkIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
                     throws Sim0MQException, SerializationException
             {
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
@@ -174,7 +174,7 @@ public class Publisher extends AbstractTransceiver
                 new SubscriptionHandler("Node change", nodeTransceiver, new LookupEventProducerInterface()
                 {
                     @Override
-                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
+                    public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
                     {
                         return null; // Nodes do not emit events
                     }
@@ -198,7 +198,7 @@ public class Publisher extends AbstractTransceiver
         addSubscriptionHandler(new SubscriptionHandler("Nodes in network", nodeIdTransceiver, new LookupEventProducerInterface()
         {
             @Override
-            public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
+            public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
                     throws Sim0MQException, SerializationException
             {
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
@@ -230,9 +230,8 @@ public class Publisher extends AbstractTransceiver
                 CrossSectionLink.LANE_REMOVE_EVENT, null, linkGTUIdSubscriptionHandler));
         // addTransceiver(new LaneGTUIdTransceiver(network));
         SimulatorStateTransceiver stt = new SimulatorStateTransceiver(network.getSimulator());
-        SubscriptionHandler simulatorStateSubscriptionHandler =
-                new SubscriptionHandler("Simulator running", stt, 
-                        stt.getLookupEventProducerInterface(), null, null, EventMultiplexer.SIMULATOR_STATE_CHANGED, null);
+        SubscriptionHandler simulatorStateSubscriptionHandler = new SubscriptionHandler("Simulator running", stt,
+                stt.getLookupEventProducerInterface(), null, null, SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED, null);
         addSubscriptionHandler(simulatorStateSubscriptionHandler);
 
         addSubscriptionHandler(new SubscriptionHandler("", this, null, null, null, null, null)); // The meta transceiver
@@ -242,7 +241,7 @@ public class Publisher extends AbstractTransceiver
     private LookupEventProducerInterface lookupLink = new LookupEventProducerInterface()
     {
         @Override
-        public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
+        public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
                 throws IndexOutOfBoundsException, Sim0MQException, SerializationException
         {
             Throw.whenNull(address, "LookupLink requires the name of a link");
@@ -377,7 +376,7 @@ public class Publisher extends AbstractTransceiver
      * @throws Sim0MQException on communication error
      */
     public void executeCommand(final String subscriptionHandlerName, final SubscriptionHandler.Command command,
-            final Object[] address, final ReturnWrapperImpl returnWrapper)
+            final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(subscriptionHandlerName);

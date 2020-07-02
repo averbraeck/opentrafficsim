@@ -52,7 +52,7 @@ public class SubscriptionHandler
     private final SubscriptionHandler elementSubscriptionHandler;
 
     /** The currently active subscriptions. */
-    private final Map<ReturnWrapperImpl, Subscription> subscriptions = new LinkedHashMap<>();
+    private final Map<ReturnWrapper, Subscription> subscriptions = new LinkedHashMap<>();
 
     /**
      * Create a new SubscriptionHandler.
@@ -115,7 +115,7 @@ public class SubscriptionHandler
      * @throws SerializationException on context error
      * @throws Sim0MQException on DSOL error
      */
-    public void get(final Object[] address, final ReturnWrapperImpl returnWrapper)
+    public void get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         sendResult(this.listTransceiver.get(address, returnWrapper), returnWrapper);
@@ -170,7 +170,7 @@ public class SubscriptionHandler
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private void subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapperImpl returnWrapper)
+    private void subscribeTo(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
@@ -188,7 +188,7 @@ public class SubscriptionHandler
         if (null == epi)
         {
             // Not necessarily bad; some EventProducers (e.g. GTUs) may disappear at any time
-            return; // NACK has been sent by this.eventProducerForAddRemoveOrChange.lookup 
+            return; // NACK has been sent by this.eventProducerForAddRemoveOrChange.lookup
         }
         Subscription subscription = this.subscriptions.get(returnWrapper);
         if (null == subscription)
@@ -218,7 +218,7 @@ public class SubscriptionHandler
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
      */
-    private void unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapperImpl returnWrapper)
+    private void unsubscribeFrom(final Object[] address, final TimedEventType eventType, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         if (null == eventType)
@@ -360,7 +360,7 @@ public class SubscriptionHandler
      * @throws SerializationException on illegal type in serialization
      * @throws Sim0MQException on communication error
      */
-    public void executeCommand(final Command command, final Object[] address, final ReturnWrapperImpl returnWrapper)
+    public void executeCommand(final Command command, final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
     {
         Throw.whenNull(command, "Command may not be null");
@@ -493,7 +493,7 @@ public class SubscriptionHandler
      * @throws SerializationException on illegal type in serialization
      * @throws Sim0MQException on communication error
      */
-    private void sendResult(final Object[] data, final ReturnWrapperImpl returnWrapper)
+    private void sendResult(final Object[] data, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
     {
         if (data != null)
@@ -527,8 +527,7 @@ interface LookupEventProducerInterface
      * @throws SerializationException when an error occurs while serializing an error response
      * @throws Sim0MQException when an error occurs while serializing an error response
      */
-    EventProducerInterface lookup(Object[] address, ReturnWrapperImpl returnWrapper)
-            throws Sim0MQException, SerializationException;
+    EventProducerInterface lookup(Object[] address, ReturnWrapper returnWrapper) throws Sim0MQException, SerializationException;
 
     /**
      * Return a MetaData object that can be used to verify the correctness of an address for the <code>lookup</code> method.
@@ -547,13 +546,13 @@ class Subscription implements EventListenerInterface
     private static final long serialVersionUID = 20200428L;
 
     /** Generates envelopes for the messages sent over Sim0MQ. */
-    private final ReturnWrapperImpl returnWrapper;
+    private final ReturnWrapper returnWrapper;
 
     /**
      * Construct a new Subscription.
      * @param returnWrapper ReturnWrapper; envelope generator for the messages
      */
-    Subscription(final ReturnWrapperImpl returnWrapper)
+    Subscription(final ReturnWrapper returnWrapper)
     {
         this.returnWrapper = returnWrapper;
     }

@@ -34,6 +34,12 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
     /** Multiplexes SimulatorInterface.START_EVENT and SimulatorInterface.STOP_EVENT. */
     private final EventProducerInterface eventMultiplexer;
 
+    /** The event that will be emitted for either the START_EVENT or the STOP_EVENT. */
+    public static final TimedEventType SIMULATOR_STATE_CHANGED =
+            new TimedEventType(new MetaData("SIMULATOR_STATE_CHANGED_EVENT", "simulator started or stopped",
+                    new ObjectDescriptor[] { new ObjectDescriptor("New simulator state",
+                            "New simulator state; true if running; false if stopped", Boolean.class) }));
+
     /**
      * Construct a new SimulatorStateTransceiver.
      * @param simulator OTSSimulatorInterface; the simulator
@@ -72,11 +78,11 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
         return new Object[] { result };
     }
 
-    /** Reuslt of the getLookupEventProducerInterface method. */
+    /** Result of the getLookupEventProducerInterface method. */
     private LookupEventProducerInterface lepi = new LookupEventProducerInterface()
     {
         @Override
-        public EventProducerInterface lookup(final Object[] address, final ReturnWrapperImpl returnWrapper)
+        public EventProducerInterface lookup(final Object[] address, final ReturnWrapper returnWrapper)
                 throws Sim0MQException, SerializationException
         {
             String bad = AbstractTransceiver.verifyMetaData(MetaData.EMPTY, address);
@@ -115,12 +121,6 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
     /** ... */
     private static final long serialVersionUID = 20200618L;
 
-    /** The event that will be emitted for either the START_EVENT or the STOP_EVENT. */
-    public static final TimedEventType SIMULATOR_STATE_CHANGED =
-            new TimedEventType(new MetaData("SIMULATOR_STATE_CHANGED_EVENT", "simulator started or stopped",
-                    new ObjectDescriptor[] { new ObjectDescriptor("New simulator state",
-                            "New simulator state; true if running; false if stopped", Boolean.class) }));
-
     /**
      * @param simulator OTSSimulatorInterface; the simulator
      * @throws RemoteException
@@ -135,8 +135,8 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        fireTimedEvent(SIMULATOR_STATE_CHANGED, event.getType().equals(SimulatorInterface.START_EVENT),
-                ((TimedEvent<?>) event).getTimeStamp());
+        fireTimedEvent(SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED,
+                event.getType().equals(SimulatorInterface.START_EVENT), ((TimedEvent<?>) event).getTimeStamp());
     }
 
     /** {@inheritDoc} */
