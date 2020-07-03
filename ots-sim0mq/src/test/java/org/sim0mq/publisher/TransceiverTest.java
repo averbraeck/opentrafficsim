@@ -1,6 +1,7 @@
 package org.sim0mq.publisher;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -9,10 +10,15 @@ import static org.junit.Assert.fail;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
+import javax.naming.NamingException;
+
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
@@ -25,13 +31,28 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockDEVSSimulator;
-import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.OTSRoadNetwork;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.OTSRoadNode;
+import org.opentrafficsim.road.network.lane.Stripe;
+import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.sim0mq.Sim0MQException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -63,9 +84,15 @@ public class TransceiverTest
      * @throws RemoteException if the happens, this test has failed
      * @throws SerializationException
      * @throws Sim0MQException
+     * @throws NetworkException
+     * @throws OTSGeometryException
+     * @throws NamingException
+     * @throws SimRuntimeException
+     * @throws GTUException
      */
     @Test
-    public void testGTUIdTransceiver() throws RemoteException, Sim0MQException, SerializationException
+    public void testGTUIdTransceiver() throws RemoteException, Sim0MQException, SerializationException, NetworkException,
+            OTSGeometryException, SimRuntimeException, NamingException, GTUException
     {
         ReturnWrapper storeLastResult = new ReturnWrapper()
         {
@@ -87,7 +114,7 @@ public class TransceiverTest
         }
         OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
 
-        OTSNetwork network = new OTSNetwork("test network for TransceiverTest", true, simulator);
+        OTSRoadNetwork network = new OTSRoadNetwork("test network for TransceiverTest", true, simulator);
         GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
         assertEquals("getId returns correct id", "GTU id transceiver", gtuIdTransceiver.getId());
         assertEquals("address has 0 entries", 0, gtuIdTransceiver.getAddressFields().size());
@@ -158,16 +185,18 @@ public class TransceiverTest
         assertTrue("element of payload is a String", this.lastPayload[0] instanceof String);
         assertTrue("payload contains \"wrong length\"", ((String) this.lastPayload[0]).contains("wrong length"));
 
-        MyMockGTU gtu1 = new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
-                new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator);
-        network.addGTU(gtu1.getMock());
+        LaneBasedGTU gtu1 = new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
+                new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator)
+                        .getMock();
+        network.addGTU(gtu1);
         result = gtuIdTransceiver.get(null, storeLastResult);
         assertEquals("length of result is now 1", 1, result.length);
         assertTrue("result contains a string", result[0] instanceof String);
         assertEquals("result[0] is name of our mocked GTU", "gtu 1", (String) (result[0]));
-        MyMockGTU gtu2 = new MyMockGTU("gtu 2", new GTUType("gtuType 2", network), new DirectedPoint(2, 20, 200, 2, 2, 2),
-                new Speed(2, SpeedUnit.KM_PER_HOUR), new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator);
-        network.addGTU(gtu2.getMock());
+        LaneBasedGTU gtu2 = new MyMockGTU("gtu 2", new GTUType("gtuType 2", network), new DirectedPoint(2, 20, 200, 2, 2, 2),
+                new Speed(2, SpeedUnit.KM_PER_HOUR), new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator)
+                        .getMock();
+        network.addGTU(gtu2);
         result = gtuIdTransceiver.get(new Object[0], storeLastResult);
         assertEquals("length of result is now 2", 2, result.length);
         for (int i = 0; i < 2; i++)
@@ -272,7 +301,97 @@ public class TransceiverTest
         assertTrue("toString of link id transceiver returns something descriptive",
                 lit.toString().startsWith("LinkIdTransceiver"));
 
-        // Next statement is not really needed; just making sure
+        // Give the network two nodes and a link with a lane - A lot of code is required to create a lane :-(
+        OTSRoadNode node1 = new OTSRoadNode(network, "node 1", new OTSPoint3D(10, 20, 30), Direction.ZERO);
+        OTSRoadNode node2 = new OTSRoadNode(network, "node 2", new OTSPoint3D(110, 20, 30), Direction.ZERO);
+        LinkType roadLinkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
+        CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
+                new OTSLine3D(node1.getPoint(), node2.getPoint()), LaneKeepingPolicy.KEEPRIGHT);
+        LaneType laneType = network.getLaneType(LaneType.DEFAULTS.RESIDENTIAL_ROAD_LANE);
+        OTSReplication replication = Mockito.mock(OTSReplication.class);
+        HistoryManagerDEVS hmd = Mockito.mock(HistoryManagerDEVS.class);
+        Mockito.when(hmd.now()).thenReturn(Time.ZERO);
+        Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
+        Mockito.when(simulator.getReplication()).thenReturn(replication);
+        Lane lane = new Lane(link, "lane", Length.ZERO, Length.ZERO, new Length(3, LengthUnit.METER),
+                new Length(3, LengthUnit.METER), laneType, new Speed(50, SpeedUnit.KM_PER_HOUR));
+        Stripe stripe = new Stripe(link, Length.ZERO, Length.ZERO, new Length(20, LengthUnit.DECIMETER));
+        String stripeId = stripe.getId();
+
+        LinkGTUIdTransceiver linkgit = new LinkGTUIdTransceiver(network);
+        assertTrue("toString of LinkGTUIdTransceiver returns something descriptive",
+                linkgit.toString().startsWith("LinkGTUIdTransceiver"));
+        assertFalse("LinkGTUIdTransceiver does not have an id source", linkgit.hasIdSource());
+
+        lastAckNack = null;
+        result = linkgit.get(new Object[] { "bad", "address" }, storeLastResult);
+        assertNull(result);
+        assertEquals("Bad address have sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("NACK describes the problem", ((String) this.lastPayload[0]).contains("need id of a link"));
+
+        lastAckNack = null;
+        result = linkgit.get(new Object[] { "Non existing link" }, storeLastResult);
+        assertNull("Non existing link should have returned null", result);
+        assertEquals("Non existing link should have sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("Description for non existing link",
+                ((String) this.lastPayload[0]).startsWith("Network does not contain a link with id"));
+
+        lastAckNack = null;
+        result = linkgit.get(new Object[] { "1 to 2" }, storeLastResult);
+        assertNotNull(result);
+        assertEquals("result is empty array", 0, result.length);
+        assertNull(this.lastAckNack);
+
+        LaneGTUIdTransceiver lanegit = new LaneGTUIdTransceiver(network);
+        assertTrue("toString of LaneGTUIdTransceiver returns something descriptive",
+                lanegit.toString().startsWith("LaneGTUIdTransceiver"));
+        assertFalse("LaneGTUIdTransceiver does not have an Id source", lanegit.hasIdSource());
+
+        lastAckNack = null;
+        result = lanegit.get(new Object[] { "this", "is", "a", "bad", "address" }, storeLastResult);
+        assertNull(result);
+        assertEquals("Bad address have sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("NACK describes the problem",
+                ((String) this.lastPayload[0]).contains("need id of a link and id of a CrossSectionElement"));
+
+        lastAckNack = null;
+        result = lanegit.get(new Object[] { "Non existing link", "Non existing lane" }, storeLastResult);
+        assertEquals("Non existing link should have sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("Description for non existing link",
+                ((String) this.lastPayload[0]).startsWith("Network does not contain a link with id"));
+
+        lastAckNack = null;
+        result = lanegit.get(new Object[] { "1 to 2", "Non existing lane" }, storeLastResult);
+        assertEquals("Existing link but non existing lane should have sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("Description for non existing link",
+                ((String) this.lastPayload[0]).contains("does not contain a cross section element with id"));
+
+        lastAckNack = null;
+        result = lanegit.get(new Object[] { "1 to 2", stripeId }, storeLastResult);
+        assertEquals("Existing link but non existing lane should have sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("Description for non existing link", ((String) this.lastPayload[0]).contains("is not a lane"));
+
+        lastAckNack = null;
+        result = lanegit.get(new Object[] { "1 to 2", "lane" }, storeLastResult);
+        assertNull("Existing link and lane should not have sent a NACK or ACK", this.lastAckNack);
+        assertEquals("Existing link and lane should have sent empty array", 0, result.length);
+
+        // Put one of the GTUs on the lane
+        lane.addGTU((LaneBasedGTU) gtu1, 0.3);
+
+        lastAckNack = null;
+        result = linkgit.get(new Object[] { "1 to 2" }, storeLastResult);
+        assertNotNull(result);
+        assertEquals("result is array with one entry", 1, result.length);
+        assertEquals("content of entry is id of gtu1", gtu1.getId(), result[0]);
+        assertNull(this.lastAckNack);
+
+        result = lanegit.get(new Object[] { "1 to 2", "lane" }, storeLastResult);
+        assertNull("Existing link and lane should not have sent a NACK or ACK", this.lastAckNack);
+        assertEquals("Existing link and lane should have sent empty array", 1, result.length);
+        assertEquals("content of entry is id of gtu1", gtu1.getId(), result[0]);
+        assertNull(this.lastAckNack);
+
         Mockito.when(simulator.isInitialized()).thenReturn(false);
         SimulatorStateTransceiver sst = new SimulatorStateTransceiver(simulator);
         result = sst.get(null, storeLastResult);
@@ -323,7 +442,6 @@ public class TransceiverTest
         assertNull("using a bad address returns null", lepi.lookup(new Object[] { "This is a bad address" }, storeLastResult));
         assertEquals("using a bad address sends a NACK", Boolean.FALSE, this.lastAckNack);
         assertTrue("NACK message contains \"wrong length\"", ((String) this.lastPayload[0]).contains("wrong length"));
-
     }
 
     /**
@@ -373,7 +491,7 @@ public class TransceiverTest
 class MyMockGTU
 {
     /** mocked GTU. */
-    private GTU mockGTU;
+    private LaneBasedGTU mockGTU;
 
     /** name. */
     private final java.lang.String name;
@@ -411,7 +529,7 @@ class MyMockGTU
         this.speed = speed;
         this.acceleration = acceleration;
         this.simulator = simulator;
-        this.mockGTU = Mockito.mock(GTU.class);
+        this.mockGTU = Mockito.mock(LaneBasedGTU.class);
         Mockito.when(this.mockGTU.getSimulator()).thenReturn(this.simulator);
         Mockito.when(this.mockGTU.getGTUType()).thenReturn(this.gtuType);
         Mockito.when(this.mockGTU.getLocation()).thenReturn(this.location);
@@ -421,9 +539,9 @@ class MyMockGTU
     }
 
     /**
-     * @return mocked DEVSSimulator
+     * @return mocked GTU
      */
-    public GTU getMock()
+    public LaneBasedGTU getMock()
     {
         return this.mockGTU;
     }
