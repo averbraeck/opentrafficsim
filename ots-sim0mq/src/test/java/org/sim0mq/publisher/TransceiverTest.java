@@ -21,6 +21,8 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.PositionVector;
+import org.djunits.value.vdouble.vector.data.DoubleVectorData;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventProducerInterface;
@@ -302,7 +304,8 @@ public class TransceiverTest
                 lit.toString().startsWith("LinkIdTransceiver"));
 
         // Give the network two nodes and a link with a lane - A lot of code is required to create a lane :-(
-        OTSRoadNode node1 = new OTSRoadNode(network, "node 1", new OTSPoint3D(10, 20, 30), Direction.ZERO);
+        OTSPoint3D node1Point = new OTSPoint3D(10, 20, 30);
+        OTSRoadNode node1 = new OTSRoadNode(network, "node 1", node1Point, Direction.ZERO);
         OTSRoadNode node2 = new OTSRoadNode(network, "node 2", new OTSPoint3D(110, 20, 30), Direction.ZERO);
         LinkType roadLinkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         CrossSectionLink link = new CrossSectionLink(network, "1 to 2", node1, node2, roadLinkType,
@@ -431,17 +434,80 @@ public class TransceiverTest
         epi.addListener(recordingListener, SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED);
         this.lastContent = null;
         ((EventListenerInterface) epi).notify(tev);
-        System.out.println("LastContent is now " + this.lastContent);
         assertEquals("last time is 123", 123.0, this.lastTime.si, 0);
         tev = new TimedEvent<>(SimulatorInterface.STOP_EVENT, simulator, null, new Time(1234, TimeUnit.BASE_SECOND));
         this.lastContent = null;
         ((EventListenerInterface) epi).notify(tev);
         assertEquals("lastContent is now true", Boolean.FALSE, this.lastContent);
         assertEquals("last time is 1234", 1234.0, this.lastTime.si, 0);
+
         this.lastAckNack = null; // make sure we can see that is has been set
         assertNull("using a bad address returns null", lepi.lookup(new Object[] { "This is a bad address" }, storeLastResult));
         assertEquals("using a bad address sends a NACK", Boolean.FALSE, this.lastAckNack);
         assertTrue("NACK message contains \"wrong length\"", ((String) this.lastPayload[0]).contains("wrong length"));
+
+        NodeTransceiver nt = new NodeTransceiver(network, nit);
+        assertTrue("toString of NodeTransceiver returns something descriptive", nt.toString().startsWith("NodeTransceiver"));
+        assertTrue("NodeTransceiver has a Id source", nt.hasIdSource());
+        assertEquals("NodeTransceiver returns NodeIdTransceiver at level 0", nit, nt.getIdSource(0, storeLastResult));
+
+        this.lastAckNack = null; // make sure we can see that is has been set
+        assertNull("Bad address level returns null", nt.getIdSource(1, storeLastResult));
+        assertEquals("Bad address sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertEquals("Bad address NACK describes the problem", "Only empty address is valid", this.lastPayload[0]);
+
+        this.lastAckNack = null; // make sure we can see that is has been set
+        result = nt.get(null, storeLastResult);
+        assertNull("bad address should have returned null", result);
+        assertEquals("bad address should have returned NACK", Boolean.FALSE, this.lastAckNack);
+        assertEquals("null address is correctly diagnosed as error", "Address may not be null", this.lastPayload[0]);
+
+        this.lastAckNack = null; // make sure we can see that is has been set
+        result = nt.get(new Object[] { "Non existing node" }, storeLastResult);
+        assertNull("non existing node should have returned null", result);
+        assertEquals("non existing node should have sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertEquals("message with NACK is descriptive", "Network does not contain a node with id Non existing node",
+                this.lastPayload[0]);
+
+        this.lastAckNack = null;
+        result = nt.get(new Object[] { node1.getId() }, storeLastResult);
+        assertEquals("result contains 3 fields", 4, result.length);
+        assertEquals("field 0 is node id", node1.getId(), result[0]);
+        assertTrue("field 1 is a position vector", result[1] instanceof PositionVector);
+        PositionVector pv = (PositionVector) result[1];
+        assertEquals("Position vector size is 3", 3, pv.size());
+        assertEquals("x matches", node1Point.x, pv.get(0).si, 0);
+        assertEquals("y matches", node1Point.y, pv.get(1).si, 0);
+        assertEquals("z matches", node1Point.z, pv.get(2).si, 0);
+        assertEquals("direction matches", Direction.ZERO, result[2]);
+        assertEquals("Number of links is 1", 1, result[3]);
+
+        this.lastAckNack = null;
+        LinkTransceiver lt = new LinkTransceiver(network, lit);
+        assertTrue("toString returns something descriptive", lt.toString().startsWith("LinkTransceiver"));
+        assertEquals("LinkTransceiver can return LinkIdTransceiver", lit, lt.getIdSource(0, storeLastResult));
+        assertNull("No ACK or NACK received", this.lastAckNack);
+
+        assertNull("Bad address level returns null", lt.getIdSource(1, storeLastResult));
+        assertEquals("Bad address level sent a NACK", Boolean.FALSE, this.lastAckNack);
+        assertEquals("Message of NACK describes the problem", "Only empty address is valid", this.lastPayload[0]);
+
+        this.lastAckNack = null;
+        assertNull("bad address returns null", lt.get(null, storeLastResult));
+        assertEquals("bad address sends a NACK", Boolean.FALSE, this.lastAckNack);
+        assertEquals("bad address NACK describes the problem", "Address may not be null", this.lastPayload[0]);
+
+        this.lastAckNack = null;
+        assertNull("bad address returns null", lt.get(new Object[] {}, storeLastResult));
+        assertEquals("bad address sends a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("bad address NACK describes the problem", ((String) this.lastPayload[0]).contains("has wrong length"));
+
+        this.lastAckNack = null;
+        assertNull("Non existing link name returns null", lt.get(new Object[] { "Non existing link name" }, storeLastResult));
+        assertEquals("Non existing link name sends a NACK", Boolean.FALSE, this.lastAckNack);
+        assertTrue("Non existing link name NACK describes the problem",
+                ((String) this.lastPayload[0]).contains("Network does not contain a link with id"));
+        // TODO test with existing name
     }
 
     /**

@@ -70,7 +70,7 @@ public abstract class AbstractTransceiver implements TransceiverInterface
      */
     public static String verifyMetaData(final MetaData metaData, final Object[] address)
     {
-        if ((metaData.size() == 0 || metaData.size() == 1) && address == null)
+        if (metaData.size() == 0 && (address == null || address.length == 0))
         {
             return null;
         }
