@@ -87,7 +87,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
         DirectedPoint gtuPosition = gtu.getLocation();
         return new Object[] { gtu.getId(), gtu.getGTUType().getId(),
                 new OTSPoint3D(gtuPosition).doubleVector(PositionUnit.METER),
-                new Direction(gtuPosition.getZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration() };
+                new Direction(gtuPosition.getRotZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration() };
     }
 
     /** {@inheritDoc} */

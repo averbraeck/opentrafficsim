@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -22,7 +23,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djunits.value.vdouble.vector.data.DoubleVectorData;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventProducerInterface;
@@ -180,24 +180,21 @@ public class TransceiverTest
         Object[] result = gtuIdTransceiver.get(null, storeLastResult);
         assertNotNull("result should not be null", result);
         assertEquals("length of result should be 0", 0, result.length);
-        result = gtuIdTransceiver.get(new Object[] { "this is a bad address" }, storeLastResult);
-        assertNull("result should not be null", result);
-        assertEquals("return wrapper got a nack", Boolean.FALSE, this.lastAckNack);
-        assertEquals("payload has length 1", 1, this.lastPayload.length);
-        assertTrue("element of payload is a String", this.lastPayload[0] instanceof String);
-        assertTrue("payload contains \"wrong length\"", ((String) this.lastPayload[0]).contains("wrong length"));
+        assertNull("Bad address",
+                checkAckNack(gtuIdTransceiver, new Object[] { "this is a bad address" }, false, "wrong length"));
 
-        LaneBasedGTU gtu1 = new MyMockGTU("gtu 1", new GTUType("gtuType 1", network), new DirectedPoint(1, 10, 100, 1, 1, 1),
-                new Speed(1, SpeedUnit.KM_PER_HOUR), new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator)
-                        .getMock();
+        GTUType gtuType = new GTUType("gtuType 1", network);
+        LaneBasedGTU gtu1 =
+                new MyMockGTU("gtu 1", gtuType, new DirectedPoint(1, 10, 100, 1, 1, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
+                        new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu1);
         result = gtuIdTransceiver.get(null, storeLastResult);
         assertEquals("length of result is now 1", 1, result.length);
         assertTrue("result contains a string", result[0] instanceof String);
         assertEquals("result[0] is name of our mocked GTU", "gtu 1", (String) (result[0]));
-        LaneBasedGTU gtu2 = new MyMockGTU("gtu 2", new GTUType("gtuType 2", network), new DirectedPoint(2, 20, 200, 2, 2, 2),
-                new Speed(2, SpeedUnit.KM_PER_HOUR), new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator)
-                        .getMock();
+        LaneBasedGTU gtu2 =
+                new MyMockGTU("gtu 2", gtuType, new DirectedPoint(2, 20, 200, 2, 2, 2), new Speed(2, SpeedUnit.KM_PER_HOUR),
+                        new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu2);
         result = gtuIdTransceiver.get(new Object[0], storeLastResult);
         assertEquals("length of result is now 2", 2, result.length);
@@ -289,6 +286,17 @@ public class TransceiverTest
             assertEquals("result has 6 fields", 6, gtuResult.length);
             assertEquals("first field is a String", String.class, gtuResult[0].getClass());
             assertEquals("gtuResult is gtu with expected id", result[i], gtuResult[0]);
+            LaneBasedGTU gtu = (LaneBasedGTU) network.getGTU(((String) gtuResult[0]));
+            assertNotNull("GTU is in the network", gtu);
+            assertTrue("field 1 is id of a GTUType", gtuResult[1] instanceof String);
+            assertEquals("gtu type matches", gtuType.getId(), gtuResult[1]);
+            assertEquals("x matches", gtu.getLocation().x, ((PositionVector) gtuResult[2]).get(0).si, 0.0000);
+            assertEquals("y matches", gtu.getLocation().y, ((PositionVector) gtuResult[2]).get(1).si, 0.0000);
+            assertEquals("z matches", gtu.getLocation().z, ((PositionVector) gtuResult[2]).get(2).si, 0.0000);
+            assertEquals("direction matches", new Direction(gtu.getLocation().getRotZ(), DirectionUnit.EAST_DEGREE).si,
+                    ((Direction) gtuResult[3]).si, 0.0001);
+            assertEquals("speed", gtu.getSpeed(), gtuResult[4]);
+            assertEquals("acceleration", gtu.getAcceleration(), gtuResult[5]);
         }
         assertNull("gtuTransceiver returns null for non-existend ID",
                 gtuTransceiver.get(new Object[] { "NONEXISTENTGTU" }, storeLastResult));
@@ -326,18 +334,9 @@ public class TransceiverTest
                 linkgit.toString().startsWith("LinkGTUIdTransceiver"));
         assertFalse("LinkGTUIdTransceiver does not have an id source", linkgit.hasIdSource());
 
-        lastAckNack = null;
-        result = linkgit.get(new Object[] { "bad", "address" }, storeLastResult);
-        assertNull(result);
-        assertEquals("Bad address have sent a NACK", Boolean.FALSE, this.lastAckNack);
-        assertTrue("NACK describes the problem", ((String) this.lastPayload[0]).contains("need id of a link"));
-
-        lastAckNack = null;
-        result = linkgit.get(new Object[] { "Non existing link" }, storeLastResult);
-        assertNull("Non existing link should have returned null", result);
-        assertEquals("Non existing link should have sent a NACK", Boolean.FALSE, this.lastAckNack);
-        assertTrue("Description for non existing link",
-                ((String) this.lastPayload[0]).startsWith("Network does not contain a link with id"));
+        assertNull("Bad address", checkAckNack(linkgit, new Object[] { "bad", "address" }, false, "need id of a link"));
+        assertNull("Non existing link",
+                checkAckNack(linkgit, new Object[] { "Non existing link" }, false, "Network does not contain a link with id"));
 
         lastAckNack = null;
         result = linkgit.get(new Object[] { "1 to 2" }, storeLastResult);
@@ -350,29 +349,14 @@ public class TransceiverTest
                 lanegit.toString().startsWith("LaneGTUIdTransceiver"));
         assertFalse("LaneGTUIdTransceiver does not have an Id source", lanegit.hasIdSource());
 
-        lastAckNack = null;
-        result = lanegit.get(new Object[] { "this", "is", "a", "bad", "address" }, storeLastResult);
-        assertNull(result);
-        assertEquals("Bad address have sent a NACK", Boolean.FALSE, this.lastAckNack);
-        assertTrue("NACK describes the problem",
-                ((String) this.lastPayload[0]).contains("need id of a link and id of a CrossSectionElement"));
-
-        lastAckNack = null;
-        result = lanegit.get(new Object[] { "Non existing link", "Non existing lane" }, storeLastResult);
-        assertEquals("Non existing link should have sent a NACK", Boolean.FALSE, this.lastAckNack);
-        assertTrue("Description for non existing link",
-                ((String) this.lastPayload[0]).startsWith("Network does not contain a link with id"));
-
-        lastAckNack = null;
-        result = lanegit.get(new Object[] { "1 to 2", "Non existing lane" }, storeLastResult);
-        assertEquals("Existing link but non existing lane should have sent a NACK", Boolean.FALSE, this.lastAckNack);
-        assertTrue("Description for non existing link",
-                ((String) this.lastPayload[0]).contains("does not contain a cross section element with id"));
-
-        lastAckNack = null;
-        result = lanegit.get(new Object[] { "1 to 2", stripeId }, storeLastResult);
-        assertEquals("Existing link but non existing lane should have sent a NACK", Boolean.FALSE, this.lastAckNack);
-        assertTrue("Description for non existing link", ((String) this.lastPayload[0]).contains("is not a lane"));
+        assertNull("Bad address", checkAckNack(lanegit, new Object[] { "this", "is", "a", "bad", "address" }, false,
+                "need id of a link and id of a CrossSectionElement"));
+        assertNull("Non existing link", checkAckNack(lanegit, new Object[] { "Non existing link", "Non existing lane" }, false,
+                "Network does not contain a link with id"));
+        assertNull("Existing link but non existing lane", checkAckNack(lanegit, new Object[] { "1 to 2", "Non existing lane" },
+                false, "does not contain a cross section element with id"));
+        assertNull("Existing link, but non a lane",
+                checkAckNack(lanegit, new Object[] { "1 to 2", stripeId }, false, "is not a lane"));
 
         lastAckNack = null;
         result = lanegit.get(new Object[] { "1 to 2", "lane" }, storeLastResult);
@@ -456,18 +440,9 @@ public class TransceiverTest
         assertEquals("Bad address sent a NACK", Boolean.FALSE, this.lastAckNack);
         assertEquals("Bad address NACK describes the problem", "Only empty address is valid", this.lastPayload[0]);
 
-        this.lastAckNack = null; // make sure we can see that is has been set
-        result = nt.get(null, storeLastResult);
-        assertNull("bad address should have returned null", result);
-        assertEquals("bad address should have returned NACK", Boolean.FALSE, this.lastAckNack);
-        assertEquals("null address is correctly diagnosed as error", "Address may not be null", this.lastPayload[0]);
-
-        this.lastAckNack = null; // make sure we can see that is has been set
-        result = nt.get(new Object[] { "Non existing node" }, storeLastResult);
-        assertNull("non existing node should have returned null", result);
-        assertEquals("non existing node should have sent a NACK", Boolean.FALSE, this.lastAckNack);
-        assertEquals("message with NACK is descriptive", "Network does not contain a node with id Non existing node",
-                this.lastPayload[0]);
+        assertNull("Bad address", checkAckNack(nt, null, false, "Address may not be null"));
+        assertNull("Bad address", checkAckNack(nt, new Object[] { "Non existing node" }, false,
+                "Network does not contain a node with id Non existing node"));
 
         this.lastAckNack = null;
         result = nt.get(new Object[] { node1.getId() }, storeLastResult);
@@ -492,24 +467,13 @@ public class TransceiverTest
         assertEquals("Bad address level sent a NACK", Boolean.FALSE, this.lastAckNack);
         assertEquals("Message of NACK describes the problem", "Only empty address is valid", this.lastPayload[0]);
 
-        this.lastAckNack = null;
-        assertNull("bad address returns null", lt.get(null, storeLastResult));
-        assertEquals("bad address sends a NACK", Boolean.FALSE, this.lastAckNack);
-        assertEquals("bad address NACK describes the problem", "Address may not be null", this.lastPayload[0]);
+        assertNull("Bad address", checkAckNack(lt, null, false, "Address may not be null"));
+        assertNull("Bad address", checkAckNack(lt, new Object[] {}, false, "has wrong length"));
+        assertNull("Non existing link name",
+                checkAckNack(lt, new Object[] { "Non existing link name" }, false, "Network does not contain a link with id"));
 
         this.lastAckNack = null;
-        assertNull("bad address returns null", lt.get(new Object[] {}, storeLastResult));
-        assertEquals("bad address sends a NACK", Boolean.FALSE, this.lastAckNack);
-        assertTrue("bad address NACK describes the problem", ((String) this.lastPayload[0]).contains("has wrong length"));
-
-        this.lastAckNack = null;
-        assertNull("Non existing link name returns null", lt.get(new Object[] { "Non existing link name" }, storeLastResult));
-        assertEquals("Non existing link name sends a NACK", Boolean.FALSE, this.lastAckNack);
-        assertTrue("Non existing link name NACK describes the problem",
-                ((String) this.lastPayload[0]).contains("Network does not contain a link with id"));
-
-        this.lastAckNack = null;
-        result = lt.get(new Object[] {"1 to 2"}, storeLastResult);
+        result = lt.get(new Object[] { "1 to 2" }, storeLastResult);
         assertNull("No ACK or NACK", this.lastAckNack);
         assertEquals("result contains 7 elements", 7, result.length);
         assertEquals("result is our link", link.getId(), result[0]);
@@ -519,6 +483,66 @@ public class TransceiverTest
         assertEquals("number of points in design line is 2", link.getDesignLine().size(), result[4]);
         assertEquals("number of GTUs on link", link.getGTUCount(), result[5]);
         assertEquals("number of cross section elements", link.getCrossSectionElementList().size(), result[6]);
+
+        CrossSectionElementTransceiver cset = new CrossSectionElementTransceiver(network);
+        assertTrue("toString returns something descriptive", cset.toString().startsWith("CrossSectionElementTransceiver"));
+
+        assertNull("Bad address", checkAckNack(cset, null, false, "Address may not be null"));
+        assertNull("Bad address", checkAckNack(cset, new Object[] { "bad", "address", "has", "too", "many", "fields" }, false,
+                "has wrong length"));
+        assertNull("Bad address", checkAckNack(cset, new Object[] { "1 to 2", -1 }, false, "valid range is"));
+        assertNull("Bad address",
+                checkAckNack(cset, new Object[] { "NON EXISTENT LINK", 0 }, false, "Network does not contain a link with id"));
+        assertNull("Bad address", checkAckNack(cset, new Object[] { "1 to 2", 2 }, false, "valid range is"));
+
+        this.lastAckNack = null;
+        result = cset.get(new Object[] { "1 to 2", 0 }, storeLastResult);
+        assertNull("No NACK (or ACK)", this.lastAckNack);
+        assertEquals("result contains 7 elements", 7, result.length);
+        assertEquals("id", lane.getId(), result[0]);
+        assertEquals("class name", lane.getClass().getName(), result[1]);
+        assertEquals("length", lane.getLength(), result[2]);
+        assertEquals("width at begin", lane.getWidth(0.0), result[3]);
+        assertEquals("design line offset at begin", lane.getDesignLineOffsetAtBegin(), result[4]);
+        assertEquals("width at end", lane.getWidth(1.0), result[5]);
+        assertEquals("design line offset at end", lane.getDesignLineOffsetAtEnd(), result[6]);
+
+    }
+
+    /**
+     * Call the get method of a TransceiverInterface and verify most of the results.
+     * @param transceiver TransceiverInterface; the transceiver to test
+     * @param address Object[]; the argument of the get method of the transceiver
+     * @param expectedAckNack Boolean; null if neither an ACK nor a NACK is expected, Boolean.FALSE if a NACK is expected,
+     *            Boolean.TRUE if an ACK is expected
+     * @param expectedInPayload String; text that should occur in the payload of the ACK or NACK, or null if no ACK or NACK is
+     *            expected
+     * @return Object[]; the result of the get method should be null if an ACK or a NACK was received; non-null otherwise
+     * @throws SerializationException if that happens, this test has failed
+     * @throws Sim0MQException if that happens, this test has failed
+     * @throws RemoteException if that happens, this test has failed
+     */
+    public Object[] checkAckNack(final TransceiverInterface transceiver, final Object[] address, final Boolean expectedAckNack,
+            final String expectedInPayload) throws RemoteException, Sim0MQException, SerializationException
+    {
+        ReturnWrapper storeLastResult = new ReturnWrapper()
+        {
+            @Override
+            public void encodeReplyAndTransmit(final Boolean ackNack, final Object[] payload)
+            {
+                assertEquals("ACK/NACK", expectedAckNack, ackNack);
+                if (null != ackNack)
+                {
+                    assertNotNull("ACK or NACK should have a payload", payload);
+                    assertNotNull("payload with ACK or NACK should not be null", payload);
+                    assertEquals("payload has one element", 1, payload.length);
+                    assertTrue("the single field of the payload is a string", payload[0] instanceof String);
+                    assertTrue("payload should contain expected text", ((String) payload[0]).contains(expectedInPayload));
+                }
+                assertNotNull("payload should not be null", payload);
+            }
+        };
+        return transceiver.get(address, storeLastResult);
     }
 
     /**
