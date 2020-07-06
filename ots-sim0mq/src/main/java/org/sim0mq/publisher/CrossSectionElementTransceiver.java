@@ -77,7 +77,7 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
         if (rank < 0 || rank >= cseList.size())
         {
             returnWrapper.nack("Link with id \"" + address[0] + "\" does not have a CrossSectionElement with rank " + address[1]
-                    + " valid range is 0.." + cseList.size());
+                    + " valid range is 0.." + (cseList.size() - 1));
             return null;
         }
         CrossSectionElement cse = cseList.get(rank);
