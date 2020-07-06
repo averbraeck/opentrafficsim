@@ -86,7 +86,7 @@ public class Publisher extends AbstractTransceiver
                         String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
                         if (bad != null)
                         {
-                            returnWrapper.encodeReplyAndTransmit("Bad address: " + bad);
+                            returnWrapper.nack(bad);
                             return null;
                         }
                         EventProducerInterface result = network.getGTU((String) address[0]);
@@ -116,7 +116,7 @@ public class Publisher extends AbstractTransceiver
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
                 if (bad != null)
                 {
-                    returnWrapper.encodeReplyAndTransmit("Bad address: " + bad);
+                    returnWrapper.nack(bad);
                     return null;
                 }
                 return network;
@@ -148,7 +148,7 @@ public class Publisher extends AbstractTransceiver
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
                 if (bad != null)
                 {
-                    returnWrapper.encodeReplyAndTransmit("Bad address: " + bad);
+                    returnWrapper.nack(bad);
                     return null;
                 }
                 return network;
@@ -204,7 +204,7 @@ public class Publisher extends AbstractTransceiver
                 String bad = AbstractTransceiver.verifyMetaData(getAddressMetaData(), address);
                 if (bad != null)
                 {
-                    returnWrapper.encodeReplyAndTransmit("Bad address: " + bad);
+                    returnWrapper.nack(bad);
                     return null;
                 }
                 return network;
@@ -249,13 +249,12 @@ public class Publisher extends AbstractTransceiver
             Link link = network.getLink((String) address[0]);
             if (null == link)
             {
-                returnWrapper.encodeReplyAndTransmit("Network does not contain a Link with id " + address[0]);
+                returnWrapper.nack("Network does not contain a Link with id " + address[0]);
                 return null;
             }
             if (!(link instanceof EventProducerInterface))
             {
-                returnWrapper.encodeReplyAndTransmit(
-                        new Object[] { "Link \"" + address[0] + "\" is not able to handle subscriptions" });
+                returnWrapper.nack("Link \"" + address[0] + "\" is not able to handle subscriptions");
                 return null;
             }
             return (CrossSectionLink) link;
@@ -293,13 +292,13 @@ public class Publisher extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit("Bad address (should be the name of a transceiver): " + bad);
+            returnWrapper.nack("Bad address (should be the name of a transceiver): " + bad);
             return null;
         }
         SubscriptionHandler subscriptionHandler = this.subscriptionHandlerMap.get(address[0]);
         if (null == subscriptionHandler)
         {
-            returnWrapper.encodeReplyAndTransmit("No transceiver with name \"" + address[0] + "\"");
+            returnWrapper.nack("No transceiver with name \"" + address[0] + "\"");
             return null;
         }
         return new Object[] { subscriptionHandler };

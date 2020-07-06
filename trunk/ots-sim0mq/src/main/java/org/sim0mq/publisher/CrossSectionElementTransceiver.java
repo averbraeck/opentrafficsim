@@ -57,20 +57,18 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit("Bad address");
+            returnWrapper.nack(bad);
             return null;
         }
         Link link = network.getLink((String) (address[0]));
         if (link == null)
         {
-            returnWrapper
-                    .encodeReplyAndTransmit("Network does not contain a link with id \"" + address[0] + "\"");
+            returnWrapper.nack("Network does not contain a link with id \"" + address[0] + "\"");
             return null;
         }
         if (!(link instanceof CrossSectionLink))
         {
-            returnWrapper
-                    .encodeReplyAndTransmit("Link with id \"" + address[0] + "\" is not a CrossSectionLink");
+            returnWrapper.nack("Link with id \"" + address[0] + "\" is not a CrossSectionLink");
             return null;
         }
         CrossSectionLink csl = (CrossSectionLink) link;
@@ -78,9 +76,8 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
         int rank = (Integer) (address[1]);
         if (rank < 0 || rank >= cseList.size())
         {
-            returnWrapper.encodeReplyAndTransmit(
-                    new Object[] { "Link with id \"" + address[0] + "\" does not have a CrossSectionElement with rank "
-                            + address[1] + " valid range is 0.." + cseList.size() });
+            returnWrapper.nack("Link with id \"" + address[0] + "\" does not have a CrossSectionElement with rank " + address[1]
+                    + " valid range is 0.." + cseList.size());
             return null;
         }
         CrossSectionElement cse = cseList.get(rank);
