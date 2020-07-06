@@ -507,7 +507,18 @@ public class TransceiverTest
         assertEquals("Non existing link name sends a NACK", Boolean.FALSE, this.lastAckNack);
         assertTrue("Non existing link name NACK describes the problem",
                 ((String) this.lastPayload[0]).contains("Network does not contain a link with id"));
-        // TODO test with existing name
+
+        this.lastAckNack = null;
+        result = lt.get(new Object[] {"1 to 2"}, storeLastResult);
+        assertNull("No ACK or NACK", this.lastAckNack);
+        assertEquals("result contains 7 elements", 7, result.length);
+        assertEquals("result is our link", link.getId(), result[0]);
+        assertEquals("link type is ROAD", LinkType.DEFAULTS.ROAD.getId(), result[1]);
+        assertEquals("from node", node1.getId(), result[2]);
+        assertEquals("to node", node2.getId(), result[3]);
+        assertEquals("number of points in design line is 2", link.getDesignLine().size(), result[4]);
+        assertEquals("number of GTUs on link", link.getGTUCount(), result[5]);
+        assertEquals("number of cross section elements", link.getCrossSectionElementList().size(), result[6]);
     }
 
     /**

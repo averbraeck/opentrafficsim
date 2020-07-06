@@ -74,14 +74,14 @@ public class GTUTransceiver extends AbstractEventTransceiver
         String bad = verifyMetaData(getAddressFields(), address);
         if (bad != null)
         {
-            returnWrapper.encodeReplyAndTransmit(bad);
+            returnWrapper.nack(bad);
             return null;
         }
 
         GTU gtu = this.network.getGTU((String) address[0]);
         if (null == gtu)
         {
-            returnWrapper.encodeReplyAndTransmit("No GTU found with id \"" + address[0] + "\"");
+            returnWrapper.nack("No GTU found with id \"" + address[0] + "\"");
             return null;
         }
         DirectedPoint gtuPosition = gtu.getLocation();
