@@ -150,6 +150,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /////////////////////////////////////////////////////////////////
 
     /**
+     * Construct a new Conflict.
      * @param lane Lane; lane where this conflict starts
      * @param longitudinalPosition Length; position of start of conflict on lane
      * @param length Length; length of the conflict along the lane centerline
@@ -159,7 +160,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator for animation and timed events
      * @param permitted boolean; whether the conflict is permitted in traffic light control
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GTUType; GTU type
      * @param cloneLock Object; lock object for cloning a pair of conflicts
      * @throws NetworkException when the position on the lane is out of bounds
      */
@@ -530,7 +531,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Light-weight lane based object to indicate the end of a conflict. It is used to perceive conflicts when a GTU is on the
-     * conflict area, and hence the conflict lane based object is usptream.
+     * conflict area, and hence the conflict lane based object is upstream.
      * <p>
      * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
