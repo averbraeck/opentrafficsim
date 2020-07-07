@@ -35,14 +35,20 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     /** Second right lane. */
     public static final RelativeLane SECOND_RIGHT = new RelativeLane(LateralDirectionality.RIGHT, 2);
 
-    /** Lateral direction. */
-    private final LateralDirectionality lat;
-
-    /** Number of lanes to lateral direction. */
-    private final int numLanes;
-
-    /** Rank, for sorting. Is equal to number of lanes, but negative for left lanes. */
+    /**
+     * Rank, summarizes both the lateral directionality and the number of lanes. Is zero for CURRENT, otherwise equal to number
+     * of lanes for RIGHT, negative number of lanes for LEFT.
+     */
     private final int rank;
+
+    /**
+     * Private constructor.
+     * @param rank int; the rank
+     */
+    private RelativeLane(final int rank)
+    {
+        this.rank = rank;
+    }
 
     /**
      * Constructor.
@@ -56,29 +62,29 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
         Throw.whenNull(lat, "Lateral directionality may not be null.");
         Throw.when(lat.isNone() && numLanes != 0, IllegalArgumentException.class,
                 "Number of lanes must be zero if the lateral directionality is NONE.");
-        Throw.when(numLanes < 0, IllegalArgumentException.class,
+        Throw.when((!lat.isNone()) && numLanes <= 0, IllegalArgumentException.class,
                 "Relative lane with %d lanes in %s direction is not allowed, use values > 0.", numLanes, lat);
-        this.lat = lat;
-        this.numLanes = numLanes;
         this.rank = lat.isLeft() ? -numLanes : numLanes;
     }
 
     /**
      * Returns the lateral direction.
-     * @return lat lateral direction
+     * @return LateralDirectionality; the lateral direction
      */
     public final LateralDirectionality getLateralDirectionality()
     {
-        return this.lat;
+        // return this.lat;
+        return this.rank == 0 ? LateralDirectionality.NONE
+                : this.rank < 0 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
     }
 
     /**
      * Returns the number of lanes in the lateral direction.
-     * @return number of lanes in the lateral direction
+     * @return int; number of lanes in the lateral direction
      */
     public final int getNumLanes()
     {
-        return this.numLanes;
+        return Math.abs(this.rank);
     }
 
     /**
@@ -152,16 +158,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
      */
     public final RelativeLane add(final RelativeLane relativeLane)
     {
-        int rankSum = this.rank + relativeLane.rank;
-        if (rankSum < 0)
-        {
-            return new RelativeLane(LateralDirectionality.LEFT, -rankSum);
-        }
-        if (rankSum > 0)
-        {
-            return new RelativeLane(LateralDirectionality.RIGHT, rankSum);
-        }
-        return CURRENT;
+        return new RelativeLane(this.rank + relativeLane.rank);
     }
 
     /** {@inheritDoc} */
@@ -191,7 +188,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
             return false;
         }
         RelativeLane other = (RelativeLane) obj;
-        if (this.rank != other.rank) // relative lane us uniquely defined by the rank
+        if (this.rank != other.rank) // relative lane is uniquely defined by the rank
         {
             return false;
         }
@@ -206,7 +203,8 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
         {
             return "RelativeLane [CURRENT]";
         }
-        return new StringBuilder("RelativeLane [").append(this.lat).append(", ").append(this.numLanes).append("]").toString();
+        return new StringBuilder("RelativeLane [").append(getLateralDirectionality()).append(", ").append(getNumLanes())
+                .append("]").toString();
     }
 
     /** {@inheritDoc} */

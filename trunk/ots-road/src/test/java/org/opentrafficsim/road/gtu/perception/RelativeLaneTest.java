@@ -200,6 +200,7 @@ public class RelativeLaneTest
                 }
                 assertFalse("Not equal to null", rl.equals(null));
                 assertFalse("Not equal to some unrelated object", rl.equals("NO WAY"));
+                assertEquals("Equal to itself", rl, rl);
             }
         }
 
