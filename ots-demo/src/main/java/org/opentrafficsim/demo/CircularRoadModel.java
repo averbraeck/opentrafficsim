@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -8,10 +9,12 @@ import java.util.Random;
 import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -19,11 +22,13 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
@@ -47,6 +52,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import traceverifier.TraceVerifier;
 
 /**
  * Simulate traffic on a circular, two-lane road.
@@ -102,7 +108,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     public CircularRoadModel(final OTSSimulatorInterface simulator)
     {
         super(simulator);
-        this.network  = new OTSRoadNetwork("network", true, simulator);
+        this.network = new OTSRoadNetwork("network", true, simulator);
         makeInputParameterMap();
     }
 
@@ -152,12 +158,38 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         return this.paths.get(index);
     }
 
+    /**
+     * Sample the state of the simulation.
+     * @param tv TraceVerifier; sampler or verifier of the state
+     */
+    public void sample(final TraceVerifier tv)
+    {
+        try
+        {
+            StringBuilder state = new StringBuilder();
+            for (GTU gtu : this.network.getGTUs())
+            {
+                LaneBasedGTU lbg = (LaneBasedGTU) gtu;
+                state.append(String.format("%s: %130.130s ", lbg.getId(), lbg.getLocation().toString()));
+            }
+
+            tv.sample(this.simulator.getSimulatorTime().toString(), state.toString());
+            this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, this, "sample", new Object[] { tv });
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {
         try
         {
+            TraceVerifier tv = new TraceVerifier("C:/Temp/circularRoadTrace.txt");
+            this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, this, "sample", new Object[] { tv });
             final int laneCount = 2;
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
@@ -224,7 +256,6 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
                     pos += actualHeadway;
                 }
             }
-
         }
         catch (Exception exception)
         {
@@ -249,9 +280,8 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-        LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
-                        new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
+        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength,
+                new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
         gtu.setInstantaneousLaneChange(!((boolean) getInputParameter("generic.gradualLaneChange")));

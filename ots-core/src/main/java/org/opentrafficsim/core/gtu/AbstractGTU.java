@@ -31,6 +31,7 @@ import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.PerceivableContext;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -589,36 +590,39 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.maximumDeceleration = maximumDeceleration;
     }
 
-    /** cache time. */
+    /** Cache location time. */
     private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.DEFAULT);
 
-    /** caced position at time. */
+    /** Cached location at that time. */
     private DirectedPoint cacheLocation = null;
-
+    
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint getLocation()
     {
-        if (this.operationalPlan.get() == null)
+        synchronized (this)
         {
-            this.simulator.getLogger().always()
-                    .error("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
-            return new DirectedPoint(0, 0, 0);
-        }
-        try
-        {
-            // cache
-            if (this.cacheLocationTime.si != this.simulator.getSimulatorTime().si)
+            if (this.operationalPlan.get() == null)
             {
-                this.cacheLocationTime = this.simulator.getSimulatorTime();
-                this.cacheLocation = this.operationalPlan.get().getLocation(this.cacheLocationTime);
+                this.simulator.getLogger().always()
+                        .error("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
+                return new DirectedPoint(0, 0, 0);
             }
-            return this.cacheLocation;
-        }
-        catch (OperationalPlanException exception)
-        {
-            return new DirectedPoint(0, 0, 0);
+            try
+            {
+                // cache
+                if (this.cacheLocationTime.si != this.simulator.getSimulatorTime().si)
+                {
+                    this.cacheLocationTime = this.simulator.getSimulatorTime();
+                    this.cacheLocation = this.operationalPlan.get().getLocation(this.cacheLocationTime);
+                }
+                return this.cacheLocation;
+            }
+            catch (OperationalPlanException exception)
+            {
+                return new DirectedPoint(0, 0, 0);
+            }
         }
     }
 

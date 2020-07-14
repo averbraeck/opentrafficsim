@@ -11,7 +11,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.DirectedLinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -89,7 +91,72 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
      */
     public static void main(final String[] args)
     {
-        demo(true);
+        simulatorDemo();
+        // demo(true);
+    }
+
+    /**
+     * Run the simulation without animation.
+     */
+    public static void simulatorDemo()
+    {
+        try
+        {
+            OTSSimulator simulator = new OTSSimulator("CircularRoadSwing");
+            final CircularRoadModel otsModel = new CircularRoadModel(simulator);
+            System.out.println(otsModel.getInputParameterMap());
+            TabbedParameterDialog.process(otsModel.getInputParameterMap());
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
+            Thread getLocationThread = new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    System.out.println("getLocationThread starts up");
+                    int iteration = 0;
+                    int getLocationCalls = 0;
+                    while (simulator.isStartingOrRunning())
+                    {
+                        iteration++;
+                        for (GTU gtu : otsModel.getNetwork().getGTUs())
+                        {
+                            try
+                            {
+                                gtu.getLocation();
+                                getLocationCalls++;
+                            }
+                            catch (RemoteException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                        try
+                        {
+                            Thread.sleep(1);
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    System.out.println("getLocationThread exits after " + iteration + " iterations and " + getLocationCalls
+                            + " getLocation calls");
+                }
+
+            };
+            simulator.start();
+            getLocationThread.start();
+            while (simulator.isStartingOrRunning())
+            {
+                Thread.sleep(1000);
+                // System.out.println("Simulator time is " + simulator.getSimulatorTime());
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        System.exit(0);
     }
 
     /**
@@ -105,8 +172,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800,
-                    600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
             }
@@ -162,8 +229,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         ContourDataSource<?> dataPool = null;
 
         TablePanel trajectoryChart = new TablePanel(2, 2);
-        plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler
-            .getSamplerData(), path01));
+        plot = new SwingTrajectoryPlot(
+                new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler.getSamplerData(), path01));
         trajectoryChart.setCell(plot.getContentPane(), 0, 0);
 
         List<KpiLaneDirection> lanes = new ArrayList<>();
@@ -175,8 +242,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         List<String> names = new ArrayList<>();
         names.add("Left lane");
         names.add("Right lane");
-        DirectedLinkPosition linkPosition = new DirectedLinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0,
-            GTUDirectionality.DIR_PLUS);
+        DirectedLinkPosition linkPosition =
+                new DirectedLinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0, GTUDirectionality.DIR_PLUS);
         GraphCrossSection<KpiLaneDirection> crossSection;
         try
         {
@@ -188,26 +255,26 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         }
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY,
-            Quantity.FLOW, simulator, FundamentalDiagram.sourceFromSampler(sampler, crossSection, true, Duration.instantiateSI(
-                60.0), false), null));
+                Quantity.FLOW, simulator,
+                FundamentalDiagram.sourceFromSampler(sampler, crossSection, true, Duration.instantiateSI(60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 0);
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW,
-            Quantity.SPEED, simulator, FundamentalDiagram.sourceFromSampler(sampler, crossSection, false, Duration
-                .instantiateSI(60.0), false), null));
+                Quantity.SPEED, simulator,
+                FundamentalDiagram.sourceFromSampler(sampler, crossSection, false, Duration.instantiateSI(60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
-            trajectoryChart);
+                trajectoryChart);
 
-        for (int lane : new int[] {0, 1})
+        for (int lane : new int[] { 0, 1 })
         {
             TablePanel charts = new TablePanel(3, 2);
             path = lane == 0 ? path0 : path1;
             dataPool = lane == 0 ? dataPool0 : dataPool1;
 
-            plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectory lane " + lane, updateInterval, simulator, sampler
-                .getSamplerData(), path));
+            plot = new SwingTrajectoryPlot(
+                    new TrajectoryPlot("Trajectory lane " + lane, updateInterval, simulator, sampler.getSamplerData(), path));
             charts.setCell(plot.getContentPane(), 0, 0);
 
             plot = new SwingContourPlot(new ContourPlotDensity("Density lane " + lane, simulator, dataPool));
@@ -223,7 +290,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
             charts.setCell(plot.getContentPane(), 2, 1);
 
             getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "stats lane " + lane,
-                charts);
+                    charts);
         }
     }
 
