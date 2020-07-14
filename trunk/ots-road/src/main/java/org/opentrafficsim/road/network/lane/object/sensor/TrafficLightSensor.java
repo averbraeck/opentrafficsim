@@ -25,6 +25,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
@@ -71,6 +72,9 @@ public class TrafficLightSensor extends EventProducer
 
     /** The lanes that the detector (partly) covers. */
     private final Set<Lane> lanes = new LinkedHashSet<>();
+    
+    /** The OTS network. */
+    private final OTSNetwork network;
 
     /** Which side of the position of flank sensor A is the TrafficLightSensor. */
     private final GTUDirectionality directionalityA;
@@ -110,6 +114,7 @@ public class TrafficLightSensor extends EventProducer
         // Set up detection of GTUs that enter or leave the sensor laterally or appear due to a generator or disappear due to a
         // sink
         this.lanes.add(laneA);
+        this.network = laneA.getParentLink().getNetwork();
         if (null != intermediateLanes)
         {
             this.lanes.addAll(intermediateLanes);
@@ -259,7 +264,8 @@ public class TrafficLightSensor extends EventProducer
     public final void notify(final EventInterface event) throws RemoteException
     {
         // System.out.println("Received notification: " + event);
-        LaneBasedGTU gtu = (LaneBasedGTU) ((Object[]) event.getContent())[1];
+        String gtuId = (String) ((Object[]) event.getContent())[0];
+        LaneBasedGTU gtu = (LaneBasedGTU) this.network.getGTU(gtuId);
         if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
         {
             if (!this.currentGTUs.contains(gtu))

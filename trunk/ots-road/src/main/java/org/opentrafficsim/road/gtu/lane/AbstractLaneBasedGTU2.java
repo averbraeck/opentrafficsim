@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -74,6 +75,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
+import traceverifier.TraceVerifier;
 
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
@@ -262,10 +264,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         // init event
         DirectedLanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] {getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
+                new Object[] { getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
                         OTSPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
                         referencePosition.getLane().getParentLink().getId(), referencePosition.getLane().getId(),
-                        referencePosition.getPosition(), referencePosition.getGtuDirection().name(), getGTUType().getId()},
+                        referencePosition.getPosition(), referencePosition.getGtuDirection().name(), getGTUType().getId() },
                 getSimulator().getSimulatorTime());
 
         // register the GTU on the lanes
@@ -347,8 +349,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 
         // fire event
         this.fireTimedEvent(
-                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
-                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
+                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection.name(),
+                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition() },
                 getSimulator().getSimulatorTime());
 
     }
@@ -537,12 +539,12 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             throw new RuntimeException(exception);
         }
-        
+
         // XXX: WRONG: this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
         // XXX: WRONG: getSimulator().getSimulatorTime());
         this.fireTimedEvent(
-                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
-                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
+                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection.name(),
+                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition() },
                 getSimulator().getSimulatorTime());
 
         this.finalizeLaneChangeEvent = null;
@@ -568,6 +570,9 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         }
         throw new GTUException("getDirection: GTU does not contain " + lane);
     }
+
+    /** Verify that runs are totally predictable. */
+    private static TraceVerifier traceVerifier = null;
 
     /** {@inheritDoc} */
     @Override
@@ -611,12 +616,25 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                     scheduleTriggers(lane, crossSection.getDirection());
                 }
             }
+            try
+            {
+                if (null == traceVerifier)
+                {
+                    traceVerifier = new TraceVerifier("c:/Temp/moveTrace.txt");
+                }
+                traceVerifier.sample(String.format("%s GTU %s", getSimulator().getSimulatorTime().toString(), getId()),
+                        String.format("%s", this.getOperationalPlan().getEndLocation()));
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
 
             fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
-                    new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                    new Object[] { getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getParentLink().getId(),
-                            dlp.getLane().getId(), dlp.getPosition(), dlp.getGtuDirection().name()},
+                            dlp.getLane().getId(), dlp.getPosition(), dlp.getGtuDirection().name() },
                     getSimulator().getSimulatorTime());
 
             return false;
@@ -901,7 +919,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 Time time = timeAtLine(sensor.getGeometry(), pos);
                 if (time != null)
                 {
-                    this.sensorEvents.add(getSimulator().scheduleEventAbs(time, this, sensor, "trigger", new Object[] {this}));
+                    this.sensorEvents
+                            .add(getSimulator().scheduleEventAbs(time, this, sensor, "trigger", new Object[] { this }));
                 }
             }
         }
@@ -1037,131 +1056,134 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     @SuppressWarnings("checkstyle:designforextension")
     public Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GTUException
     {
-        int cacheIndex = 0;
-        if (CACHING)
+        synchronized (this)
         {
-            cacheIndex = 17 * lane.hashCode() + relativePosition.hashCode();
-            Length l;
-            if (when.si == this.cachePositionsTime && (l = this.cachedPositions.get(cacheIndex)) != null)
+            int cacheIndex = 0;
+            if (CACHING)
             {
-                // PK verify the result; uncomment if you don't trust the cache
-                // this.cachedPositions.clear();
-                // Length difficultWay = position(lane, relativePosition, when);
-                // if (Math.abs(l.si - difficultWay.si) > 0.00001)
-                // {
-                // System.err.println("Whoops: cache returns bad value for GTU " + getId());
-                // }
-                CACHED_POSITION++;
-                return l;
-            }
-            if (when.si != this.cachePositionsTime)
-            {
-                this.cachedPositions.clear();
-                this.cachePositionsTime = when.si;
-            }
-        }
-        NON_CACHED_POSITION++;
-
-        synchronized (this.lock)
-        {
-            List<CrossSection> whenCrossSections = this.crossSections.get(when);
-            double loc = Double.NaN;
-
-            try
-            {
-                int crossSectionIndex = -1;
-                int lateralIndex = -1;
-                for (int i = 0; i < whenCrossSections.size(); i++)
+                cacheIndex = 17 * lane.hashCode() + relativePosition.hashCode();
+                Length l;
+                if (when.si == this.cachePositionsTime && (l = this.cachedPositions.get(cacheIndex)) != null)
                 {
-                    if (whenCrossSections.get(i).getLanes().contains(lane))
-                    {
-                        crossSectionIndex = i;
-                        lateralIndex = whenCrossSections.get(i).getLanes().indexOf(lane);
-                        break;
-                    }
+                    // PK verify the result; uncomment if you don't trust the cache
+                    // this.cachedPositions.clear();
+                    // Length difficultWay = position(lane, relativePosition, when);
+                    // if (Math.abs(l.si - difficultWay.si) > 0.00001)
+                    // {
+                    // System.err.println("Whoops: cache returns bad value for GTU " + getId());
+                    // }
+                    CACHED_POSITION++;
+                    return l;
                 }
-                Throw.when(lateralIndex == -1, GTUException.class, "GTU %s is not on lane %s.", this, lane);
-
-                OperationalPlan plan = getOperationalPlan(when);
-                DirectedPoint p = plan.getLocation(when, relativePosition);
-                double f = lane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
-                if (!Double.isNaN(f))
+                if (when.si != this.cachePositionsTime)
                 {
-                    loc = f * lane.getLength().si;
+                    this.cachedPositions.clear();
+                    this.cachePositionsTime = when.si;
                 }
-                else
+            }
+            NON_CACHED_POSITION++;
+
+            synchronized (this.lock)
+            {
+                List<CrossSection> whenCrossSections = this.crossSections.get(when);
+                double loc = Double.NaN;
+
+                try
                 {
-                    // the point does not project fractionally to this lane, it has to be up- or downstream of the lane
-                    // try upstream
-                    double distance = 0.0;
-                    for (int i = crossSectionIndex - 1; i >= 0; i--)
+                    int crossSectionIndex = -1;
+                    int lateralIndex = -1;
+                    for (int i = 0; i < whenCrossSections.size(); i++)
                     {
-                        Lane tryLane = whenCrossSections.get(i).getLanes().get(lateralIndex);
-                        f = tryLane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
-                        if (!Double.isNaN(f))
+                        if (whenCrossSections.get(i).getLanes().contains(lane))
                         {
-                            f = whenCrossSections.get(i).getDirection() == GTUDirectionality.DIR_PLUS ? 1 - f : f;
-                            loc = distance - f * tryLane.getLength().si;
+                            crossSectionIndex = i;
+                            lateralIndex = whenCrossSections.get(i).getLanes().indexOf(lane);
                             break;
                         }
-                        distance -= tryLane.getLength().si;
                     }
-                    // try downstream
-                    if (Double.isNaN(loc))
+                    Throw.when(lateralIndex == -1, GTUException.class, "GTU %s is not on lane %s.", this, lane);
+
+                    OperationalPlan plan = getOperationalPlan(when);
+                    DirectedPoint p = plan.getLocation(when, relativePosition);
+                    double f = lane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
+                    if (!Double.isNaN(f))
                     {
-                        distance = lane.getLength().si;
-                        for (int i = crossSectionIndex + 1; i < whenCrossSections.size(); i++)
+                        loc = f * lane.getLength().si;
+                    }
+                    else
+                    {
+                        // the point does not project fractionally to this lane, it has to be up- or downstream of the lane
+                        // try upstream
+                        double distance = 0.0;
+                        for (int i = crossSectionIndex - 1; i >= 0; i--)
                         {
                             Lane tryLane = whenCrossSections.get(i).getLanes().get(lateralIndex);
                             f = tryLane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
                             if (!Double.isNaN(f))
                             {
-                                f = whenCrossSections.get(i).getDirection() == GTUDirectionality.DIR_PLUS ? f : 1 - f;
-                                loc = distance + f * tryLane.getLength().si;
+                                f = whenCrossSections.get(i).getDirection() == GTUDirectionality.DIR_PLUS ? 1 - f : f;
+                                loc = distance - f * tryLane.getLength().si;
                                 break;
                             }
-                            distance += tryLane.getLength().si;
+                            distance -= tryLane.getLength().si;
                         }
+                        // try downstream
+                        if (Double.isNaN(loc))
+                        {
+                            distance = lane.getLength().si;
+                            for (int i = crossSectionIndex + 1; i < whenCrossSections.size(); i++)
+                            {
+                                Lane tryLane = whenCrossSections.get(i).getLanes().get(lateralIndex);
+                                f = tryLane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
+                                if (!Double.isNaN(f))
+                                {
+                                    f = whenCrossSections.get(i).getDirection() == GTUDirectionality.DIR_PLUS ? f : 1 - f;
+                                    loc = distance + f * tryLane.getLength().si;
+                                    break;
+                                }
+                                distance += tryLane.getLength().si;
+                            }
+                        }
+
                     }
 
-                }
+                    if (Double.isNaN(loc))
+                    {
+                        // the GTU is not on the lane with the relativePosition, nor is it registered on next/previous lanes
+                        // this can occur as the GTU was generated with the rear upstream of the lane, or due to rounding errors
+                        // use different fraction projection fallback
+                        f = lane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.ENDPOINT);
+                        loc = lane.getLength().si * f;
 
-                if (Double.isNaN(loc))
+                        // if (CACHING)
+                        // {
+                        // this.cachedPositions.put(cacheIndex, null);
+                        // }
+                        // return null;
+                        // if (getOdometer().lt(getLength()))
+                        // {
+                        // // this occurs when the GTU is generated with the rear upstream of the lane, which we often do
+                        // loc = position(lane, getFront(), when).si + relativePosition.getDx().si - getFront().getDx().si;
+                        // }
+                        // else
+                        // {
+                        // System.out.println("loc is NaN");
+                        // }
+                    }
+                }
+                catch (Exception e)
                 {
-                    // the GTU is not on the lane with the relativePosition, nor is it registered on next/previous lanes
-                    // this can occur as the GTU was generated with the rear upstream of the lane, or due to rounding errors
-                    // use different fraction projection fallback
-                    f = lane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.ENDPOINT);
-                    loc = lane.getLength().si * f;
-
-                    // if (CACHING)
-                    // {
-                    // this.cachedPositions.put(cacheIndex, null);
-                    // }
-                    // return null;
-                    // if (getOdometer().lt(getLength()))
-                    // {
-                    // // this occurs when the GTU is generated with the rear upstream of the lane, which we often do
-                    // loc = position(lane, getFront(), when).si + relativePosition.getDx().si - getFront().getDx().si;
-                    // }
-                    // else
-                    // {
-                    // System.out.println("loc is NaN");
-                    // }
+                    // System.err.println(toString() + ": " + e.getMessage());
+                    throw new GTUException(e);
                 }
-            }
-            catch (Exception e)
-            {
-                // System.err.println(toString() + ": " + e.getMessage());
-                throw new GTUException(e);
-            }
 
-            Length length = Length.instantiateSI(loc);
-            if (CACHING)
-            {
-                this.cachedPositions.put(cacheIndex, length);
+                Length length = Length.instantiateSI(loc);
+                if (CACHING)
+                {
+                    this.cachedPositions.put(cacheIndex, length);
+                }
+                return length;
             }
-            return length;
         }
     }
 
@@ -1170,29 +1192,33 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     @SuppressWarnings("checkstyle:designforextension")
     public DirectedLanePosition getReferencePosition() throws GTUException
     {
-        if (this.referencePositionTime == getSimulator().getSimulatorTime().si)
+        synchronized (this)
         {
-            return this.cachedReferencePosition;
-        }
-        Lane refLane = null;
-        for (CrossSection crossSection : this.crossSections)
-        {
-            Lane lane = crossSection.getLanes().get(this.referenceLaneIndex);
-            double fraction = fractionalPosition(lane, getReference());
-            if (fraction >= 0.0 && fraction <= 1.0)
+            if (this.referencePositionTime == getSimulator().getSimulatorTime().si)
             {
-                refLane = lane;
-                break;
+                return this.cachedReferencePosition;
             }
+            Lane refLane = null;
+            for (CrossSection crossSection : this.crossSections)
+            {
+                Lane lane = crossSection.getLanes().get(this.referenceLaneIndex);
+                double fraction = fractionalPosition(lane, getReference());
+                if (fraction >= 0.0 && fraction <= 1.0)
+                {
+                    refLane = lane;
+                    break;
+                }
+            }
+            if (refLane != null)
+            {
+                this.cachedReferencePosition =
+                        new DirectedLanePosition(refLane, position(refLane, getReference()), this.getDirection(refLane));
+                this.referencePositionTime = getSimulator().getSimulatorTime().si;
+                return this.cachedReferencePosition;
+            }
+            throw new GTUException(
+                    "The reference point of GTU " + this + " is not on any of the lanes on which it is registered");
         }
-        if (refLane != null)
-        {
-            this.cachedReferencePosition =
-                    new DirectedLanePosition(refLane, position(refLane, getReference()), this.getDirection(refLane));
-            this.referencePositionTime = getSimulator().getSimulatorTime().si;
-            return this.cachedReferencePosition;
-        }
-        throw new GTUException("The reference point of GTU " + this + " is not on any of the lanes on which it is registered");
     }
 
     /** {@inheritDoc} */
@@ -1298,16 +1324,16 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                    new Object[] { getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
                             referenceLane.getParentLink().getId(), referenceLane.getId(), dlp.getPosition(),
-                            dlp.getGtuDirection().name()},
+                            dlp.getGtuDirection().name() },
                     getSimulator().getSimulatorTime());
         }
         else
         {
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] {getId(), location, getOdometer(), null, Length.ZERO, null},
+                    new Object[] { getId(), location, getOdometer(), null, Length.ZERO, null },
                     getSimulator().getSimulatorTime());
         }
         cancelAllEvents();
@@ -1349,57 +1375,63 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     @Override
     public Speed getDesiredSpeed()
     {
-        Time simTime = getSimulator().getSimulatorTime();
-        if (this.desiredSpeedTime == null || this.desiredSpeedTime.si < simTime.si)
+        synchronized (this)
         {
-            InfrastructurePerception infra =
-                    getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(InfrastructurePerception.class);
-            SpeedLimitInfo speedInfo;
-            if (infra == null)
+            Time simTime = getSimulator().getSimulatorTime();
+            if (this.desiredSpeedTime == null || this.desiredSpeedTime.si < simTime.si)
             {
-                speedInfo = new SpeedLimitInfo();
-                speedInfo.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, getMaximumSpeed());
+                InfrastructurePerception infra =
+                        getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(InfrastructurePerception.class);
+                SpeedLimitInfo speedInfo;
+                if (infra == null)
+                {
+                    speedInfo = new SpeedLimitInfo();
+                    speedInfo.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, getMaximumSpeed());
+                }
+                else
+                {
+                    // Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
+                    speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+                }
+                this.cachedDesiredSpeed =
+                        Try.assign(() -> getTacticalPlanner().getCarFollowingModel().desiredSpeed(getParameters(), speedInfo),
+                                "Parameter exception while obtaining the desired speed.");
+                this.desiredSpeedTime = simTime;
             }
-            else
-            {
-                // Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
-                speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
-            }
-            this.cachedDesiredSpeed =
-                    Try.assign(() -> getTacticalPlanner().getCarFollowingModel().desiredSpeed(getParameters(), speedInfo),
-                            "Parameter exception while obtaining the desired speed.");
-            this.desiredSpeedTime = simTime;
+            return this.cachedDesiredSpeed;
         }
-        return this.cachedDesiredSpeed;
     }
 
     /** {@inheritDoc} */
     @Override
     public Acceleration getCarFollowingAcceleration()
     {
-        Time simTime = getSimulator().getSimulatorTime();
-        if (this.carFollowingAccelerationTime == null || this.carFollowingAccelerationTime.si < simTime.si)
+        synchronized (this)
         {
-            LanePerception perception = getTacticalPlanner().getPerception();
-            // speed
-            EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
-            Throw.whenNull(ego, "EgoPerception is required to determine the speed.");
-            Speed speed = ego.getSpeed();
-            // speed limit info
-            InfrastructurePerception infra = perception.getPerceptionCategoryOrNull(InfrastructurePerception.class);
-            Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
-            SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
-            // leaders
-            NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
-            Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
-            // obtain
-            this.cachedCarFollowingAcceleration =
-                    Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(), speed,
-                            speedInfo, leaders), "Parameter exception while obtaining the desired speed.");
-            this.carFollowingAccelerationTime = simTime;
+            Time simTime = getSimulator().getSimulatorTime();
+            if (this.carFollowingAccelerationTime == null || this.carFollowingAccelerationTime.si < simTime.si)
+            {
+                LanePerception perception = getTacticalPlanner().getPerception();
+                // speed
+                EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
+                Throw.whenNull(ego, "EgoPerception is required to determine the speed.");
+                Speed speed = ego.getSpeed();
+                // speed limit info
+                InfrastructurePerception infra = perception.getPerceptionCategoryOrNull(InfrastructurePerception.class);
+                Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
+                SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+                // leaders
+                NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
+                Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
+                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+                // obtain
+                this.cachedCarFollowingAcceleration =
+                        Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(),
+                                speed, speedInfo, leaders), "Parameter exception while obtaining the desired speed.");
+                this.carFollowingAccelerationTime = simTime;
+            }
+            return this.cachedCarFollowingAcceleration;
         }
-        return this.cachedCarFollowingAcceleration;
     }
 
     /** {@inheritDoc} */
