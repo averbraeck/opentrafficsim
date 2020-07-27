@@ -51,28 +51,40 @@ public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends
     @Override
     public final void updateSpeed() throws GTUException
     {
-        this.speed = new TimeStampedObject<>(getGtu().getSpeed(), getTimestamp());
+        synchronized (getGtu())
+        {
+            this.speed = new TimeStampedObject<Speed>(getGtu().getSpeed(), getTimestamp());
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final void updateAcceleration() throws GTUException
     {
-        this.acceleration = new TimeStampedObject<>(getGtu().getAcceleration(), getTimestamp());
+        synchronized (getGtu())
+        {
+            this.acceleration = new TimeStampedObject<Acceleration>(getGtu().getAcceleration(), getTimestamp());
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final void updateLength() throws GTUException
     {
-        this.length = new TimeStampedObject<>(getGtu().getLength(), getTimestamp());
+        synchronized (getGtu())
+        {
+            this.length = new TimeStampedObject<Length>(getGtu().getLength(), getTimestamp());
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final void updateWidth() throws GTUException
     {
-        this.width = new TimeStampedObject<>(getGtu().getWidth(), getTimestamp());
+        synchronized (getGtu())
+        {
+            this.width = new TimeStampedObject<Length>(getGtu().getWidth(), getTimestamp());
+        }
     }
 
     /** {@inheritDoc} */
@@ -145,6 +157,59 @@ public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends
     {
         return "DirectEgoPerception [speed=" + this.speed + ", acceleration=" + this.acceleration + ", length=" + this.length
                 + ", width=" + this.width + "]";
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((acceleration == null) ? 0 : acceleration.hashCode());
+        result = prime * result + ((length == null) ? 0 : length.hashCode());
+        result = prime * result + ((speed == null) ? 0 : speed.hashCode());
+        result = prime * result + ((width == null) ? 0 : width.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DirectEgoPerception other = (DirectEgoPerception) obj;
+        if (acceleration == null)
+        {
+            if (other.acceleration != null)
+                return false;
+        }
+        else if (!acceleration.equals(other.acceleration))
+            return false;
+        if (length == null)
+        {
+            if (other.length != null)
+                return false;
+        }
+        else if (!length.equals(other.length))
+            return false;
+        if (speed == null)
+        {
+            if (other.speed != null)
+                return false;
+        }
+        else if (!speed.equals(other.speed))
+            return false;
+        if (width == null)
+        {
+            if (other.width != null)
+                return false;
+        }
+        else if (!width.equals(other.width))
+            return false;
+        return true;
     }
 
 }

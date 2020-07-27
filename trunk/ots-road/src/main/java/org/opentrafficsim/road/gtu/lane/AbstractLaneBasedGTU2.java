@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +27,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.logger.CategoryLogger;
+import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -75,7 +75,6 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
-import traceverifier.TraceVerifier;
 
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
@@ -571,9 +570,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         throw new GTUException("getDirection: GTU does not contain " + lane);
     }
 
-    /** Verify that runs are totally predictable. */
-    private static TraceVerifier traceVerifier = null;
-
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -615,19 +611,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 {
                     scheduleTriggers(lane, crossSection.getDirection());
                 }
-            }
-            try
-            {
-                if (null == traceVerifier)
-                {
-                    traceVerifier = new TraceVerifier("c:/Temp/moveTrace.txt");
-                }
-                traceVerifier.sample(String.format("%s GTU %s", getSimulator().getSimulatorTime().toString(), getId()),
-                        String.format("%s", this.getOperationalPlan().getEndLocation()));
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
             }
 
             fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
@@ -1045,12 +1028,15 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         return position(lane, relativePosition, getSimulator().getSimulatorTime());
     }
 
-    /** caching of time field for last stored position(s). */
+    /** Caching of time field for last stored position(s). */
     private double cachePositionsTime = Double.NaN;
+    
+    /** Caching of operation plan for last stored position(s). */
+    private OperationalPlan cacheOperationalPlan = null;
 
     /** caching of last stored position(s). */
-    private Map<Integer, Length> cachedPositions = new LinkedHashMap<>();
-
+    private MultiKeyMap<Length> cachedPositions = new MultiKeyMap<>(Lane.class, RelativePosition.class);
+    
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -1058,27 +1044,35 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     {
         synchronized (this)
         {
-            int cacheIndex = 0;
+            OperationalPlan plan = getOperationalPlan(when);
             if (CACHING)
             {
-                cacheIndex = 17 * lane.hashCode() + relativePosition.hashCode();
-                Length l;
-                if (when.si == this.cachePositionsTime && (l = this.cachedPositions.get(cacheIndex)) != null)
+                if (when.si == this.cachePositionsTime && plan == this.cacheOperationalPlan)
                 {
-                    // PK verify the result; uncomment if you don't trust the cache
-                    // this.cachedPositions.clear();
-                    // Length difficultWay = position(lane, relativePosition, when);
-                    // if (Math.abs(l.si - difficultWay.si) > 0.00001)
-                    // {
-                    // System.err.println("Whoops: cache returns bad value for GTU " + getId());
-                    // }
-                    CACHED_POSITION++;
-                    return l;
+                    Length l = this.cachedPositions.get(lane, relativePosition);
+                    if (l != null)
+                    {
+                        CACHED_POSITION++;
+                        // PK verify the result; uncomment if you don't trust the cache
+                        // this.cachedPositions.clear();
+                        // Length difficultWay = position(lane, relativePosition, when);
+                        // if (Math.abs(l.si - difficultWay.si) > 0.00001)
+                        // {
+                        // System.err.println("Whoops: cache returns bad value for GTU " + getId() + " cache returned " + l
+                        // + ", re-computing yielded " + difficultWay);
+                        // l = null; // Invalidate; to debug and try again
+                        // }
+                        // }
+                        // if (l != null)
+                        // {
+                        return l;
+                    }
                 }
-                if (when.si != this.cachePositionsTime)
+                if (when.si != this.cachePositionsTime || plan != this.cacheOperationalPlan)
                 {
+                    this.cachePositionsTime = Double.NaN;
+                    this.cacheOperationalPlan = null;
                     this.cachedPositions.clear();
-                    this.cachePositionsTime = when.si;
                 }
             }
             NON_CACHED_POSITION++;
@@ -1103,7 +1097,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                     }
                     Throw.when(lateralIndex == -1, GTUException.class, "GTU %s is not on lane %s.", this, lane);
 
-                    OperationalPlan plan = getOperationalPlan(when);
                     DirectedPoint p = plan.getLocation(when, relativePosition);
                     double f = lane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
                     if (!Double.isNaN(f))
@@ -1180,7 +1173,9 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 Length length = Length.instantiateSI(loc);
                 if (CACHING)
                 {
-                    this.cachedPositions.put(cacheIndex, length);
+                    this.cachedPositions.put(length, lane, relativePosition);
+                    this.cachePositionsTime = when.si;
+                    this.cacheOperationalPlan = plan;
                 }
                 return length;
             }

@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.traceverifier.TraceVerifier;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -52,7 +53,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import traceverifier.TraceVerifier;
 
 /**
  * Simulate traffic on a circular, two-lane road.
@@ -188,8 +188,11 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     {
         try
         {
-            TraceVerifier tv = new TraceVerifier("C:/Temp/circularRoadTrace.txt");
-            this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, this, "sample", new Object[] { tv });
+            // TraceVerifier tv = new TraceVerifier("C:/Temp/circularRoadTrace.txt");
+            // this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, this, "sample", new Object[] { tv });
+            // TraceVerifier tv = new TraceVerifier("C:/Temp/circularRoadTraceEndState.txt");
+            // this.simulator.scheduleEventRel(new Duration(3599.99, DurationUnit.SECOND), this, this, "sample",
+            // new Object[] { tv });
             final int laneCount = 2;
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
