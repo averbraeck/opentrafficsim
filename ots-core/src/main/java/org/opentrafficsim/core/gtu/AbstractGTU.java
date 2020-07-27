@@ -296,12 +296,18 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                 tactPlanner = this.strategicalPlanner.get().getTacticalPlanner();
                 this.tacticalPlanner.set(tactPlanner);
             }
-            tactPlanner.getPerception().perceive();
+            synchronized (this)
+            {
+                tactPlanner.getPerception().perceive();
+            }
             OperationalPlan newOperationalPlan = tactPlanner.generateOperationalPlan(now, fromLocation);
-            this.operationalPlan.set(newOperationalPlan);
-            this.cachedSpeedTime = Double.NaN;
-            this.cachedAccelerationTime = Double.NaN;
-            this.odometer.set(currentOdometer);
+            synchronized (this)
+            {
+                this.operationalPlan.set(newOperationalPlan);
+                this.cachedSpeedTime = Double.NaN;
+                this.cachedAccelerationTime = Double.NaN;
+                this.odometer.set(currentOdometer);
+            }
 
             // TODO allow alignment at different intervals, also different between GTU's within a single simulation
             if (ALIGNED && newOperationalPlan.getTotalDuration().si == 0.5)
@@ -445,17 +451,20 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final Length getOdometer(final Time time)
     {
-        if (getOperationalPlan(time) == null)
+        synchronized (this)
         {
-            return this.odometer.get(time);
-        }
-        try
-        {
-            return this.odometer.get(time).plus(getOperationalPlan(time).getTraveledDistance(time));
-        }
-        catch (OperationalPlanException ope)
-        {
-            return this.odometer.get(time);
+            if (getOperationalPlan(time) == null)
+            {
+                return this.odometer.get(time);
+            }
+            try
+            {
+                return this.odometer.get(time).plus(getOperationalPlan(time).getTraveledDistance(time));
+            }
+            catch (OperationalPlanException ope)
+            {
+                return this.odometer.get(time);
+            }
         }
     }
 
@@ -463,89 +472,107 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final Speed getSpeed()
     {
-        return getSpeed(this.simulator.getSimulatorTime());
+        synchronized (this)
+        {
+            return getSpeed(this.simulator.getSimulatorTime());
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final Speed getSpeed(final Time time)
     {
-        if (this.cachedSpeedTime != time.si)
+        synchronized (this)
         {
-            this.cachedSpeedTime = time.si;
-            OperationalPlan plan = getOperationalPlan(time);
-            if (plan == null)
+            if (this.cachedSpeedTime != time.si)
             {
-                this.cachedSpeed = Speed.ZERO;
-            }
-            else if (time.si < plan.getStartTime().si)
-            {
-                this.cachedSpeed = plan.getStartSpeed();
-            }
-            else if (time.si > plan.getEndTime().si)
-            {
-                if (time.si - plan.getEndTime().si < 1e-6)
+                //Invalidate everything
+                this.cachedSpeedTime = Double.NaN;
+                this.cachedSpeed = null;
+                OperationalPlan plan = getOperationalPlan(time);
+                if (plan == null)
                 {
-                    this.cachedSpeed = Try.assign(() -> plan.getSpeed(plan.getEndTime()),
-                            "getSpeed() could not derive a valid speed for the current operationalPlan");
+                    this.cachedSpeed = Speed.ZERO;
+                }
+                else if (time.si < plan.getStartTime().si)
+                {
+                    this.cachedSpeed = plan.getStartSpeed();
+                }
+                else if (time.si > plan.getEndTime().si)
+                {
+                    if (time.si - plan.getEndTime().si < 1e-6)
+                    {
+                        this.cachedSpeed = Try.assign(() -> plan.getSpeed(plan.getEndTime()),
+                                "getSpeed() could not derive a valid speed for the current operationalPlan");
+                    }
+                    else
+                    {
+                        throw new IllegalStateException("Requesting speed value beyond plan.");
+                    }
                 }
                 else
                 {
-                    throw new IllegalStateException("Requesting speed value beyond plan.");
+                    this.cachedSpeed = Try.assign(() -> plan.getSpeed(time),
+                            "getSpeed() could not derive a valid speed for the current operationalPlan");
                 }
+                this.cachedSpeedTime = time.si; // Do this last
             }
-            else
-            {
-                this.cachedSpeed = Try.assign(() -> plan.getSpeed(time),
-                        "getSpeed() could not derive a valid speed for the current operationalPlan");
-            }
+            return this.cachedSpeed;
         }
-        return this.cachedSpeed;
     }
 
     /** {@inheritDoc} */
     @Override
     public final Acceleration getAcceleration()
     {
-        return getAcceleration(this.simulator.getSimulatorTime());
+        synchronized (this)
+        {
+            return getAcceleration(this.simulator.getSimulatorTime());
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final Acceleration getAcceleration(final Time time)
     {
-        if (this.cachedAccelerationTime != time.si)
+        synchronized (this)
         {
-            this.cachedAccelerationTime = time.si;
-            OperationalPlan plan = getOperationalPlan(time);
-            if (plan == null)
+            if (this.cachedAccelerationTime != time.si)
             {
-                this.cachedAcceleration = Acceleration.ZERO;
-            }
-            else if (time.si < plan.getStartTime().si)
-            {
-                this.cachedAcceleration =
-                        Try.assign(() -> plan.getAcceleration(plan.getStartTime()), "Exception obtaining acceleration.");
-            }
-            else if (time.si > plan.getEndTime().si)
-            {
-                if (time.si - plan.getEndTime().si < 1e-6)
+                // Invalidate everything
+                this.cachedAccelerationTime = Double.NaN;
+                this.cachedAcceleration = null;
+                OperationalPlan plan = getOperationalPlan(time);
+                if (plan == null)
                 {
-                    this.cachedAcceleration = Try.assign(() -> plan.getAcceleration(plan.getEndTime()),
-                            "getAcceleration() could not derive a valid acceleration for the current operationalPlan");
+                    this.cachedAcceleration = Acceleration.ZERO;
+                }
+                else if (time.si < plan.getStartTime().si)
+                {
+                    this.cachedAcceleration =
+                            Try.assign(() -> plan.getAcceleration(plan.getStartTime()), "Exception obtaining acceleration.");
+                }
+                else if (time.si > plan.getEndTime().si)
+                {
+                    if (time.si - plan.getEndTime().si < 1e-6)
+                    {
+                        this.cachedAcceleration = Try.assign(() -> plan.getAcceleration(plan.getEndTime()),
+                                "getAcceleration() could not derive a valid acceleration for the current operationalPlan");
+                    }
+                    else
+                    {
+                        throw new IllegalStateException("Requesting acceleration value beyond plan.");
+                    }
                 }
                 else
                 {
-                    throw new IllegalStateException("Requesting acceleration value beyond plan.");
+                    this.cachedAcceleration = Try.assign(() -> plan.getAcceleration(time),
+                            "getAcceleration() could not derive a valid acceleration for the current operationalPlan");
                 }
+                this.cachedAccelerationTime = time.si;
             }
-            else
-            {
-                this.cachedAcceleration = Try.assign(() -> plan.getAcceleration(time),
-                        "getAcceleration() could not derive a valid acceleration for the current operationalPlan");
-            }
+            return this.cachedAcceleration;
         }
-        return this.cachedAcceleration;
     }
 
     /**
@@ -579,13 +606,15 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     }
 
     /**
-     * @param maximumDeceleration Acceleration; set maximumDeceleration, stored as a negative number
+     * Set the maximum deceleration.
+     * @param maximumDeceleration Acceleration; set maximumDeceleration, must be a negative number
      */
     public final void setMaximumDeceleration(final Acceleration maximumDeceleration)
     {
         if (maximumDeceleration.ge(Acceleration.ZERO))
         {
-            throw new RuntimeException("Maximum deceleration of GTU " + this.id + " set to value >= 0");
+            throw new RuntimeException("Cannot set maximum deceleration of GTU " + this.id + " to " + maximumDeceleration
+                    + " (value must be negative)");
         }
         this.maximumDeceleration = maximumDeceleration;
     }
@@ -607,17 +636,22 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             {
                 this.simulator.getLogger().always()
                         .error("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
-                return new DirectedPoint(0, 0, 0);
+                return new DirectedPoint(0, 0, 0); // Do not cache it
             }
             try
             {
                 // cache
-                if (this.cacheLocationTime.si != this.simulator.getSimulatorTime().si)
+                synchronized (this)
                 {
-                    this.cacheLocationTime = this.simulator.getSimulatorTime();
-                    this.cacheLocation = this.operationalPlan.get().getLocation(this.cacheLocationTime);
+                    Time locationTime = this.simulator.getSimulatorTime();
+                    if (this.cacheLocationTime.si != locationTime.si)
+                    {
+                        this.cacheLocationTime = null;
+                        this.cacheLocation = this.operationalPlan.get().getLocation(locationTime);
+                        this.cacheLocationTime = locationTime;
+                    }
+                    return this.cacheLocation;
                 }
-                return this.cacheLocation;
             }
             catch (OperationalPlanException exception)
             {
