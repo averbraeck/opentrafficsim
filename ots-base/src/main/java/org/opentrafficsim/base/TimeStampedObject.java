@@ -63,4 +63,41 @@ public class TimeStampedObject<C> implements Serializable
         return "TimeStampedObject [object=" + this.object + ", timestamp=" + this.timestamp + "]";
     }
 
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((object == null) ? 0 : object.hashCode());
+        result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TimeStampedObject other = (TimeStampedObject) obj;
+        if (object == null)
+        {
+            if (other.object != null)
+                return false;
+        }
+        else if (!object.equals(other.object))
+            return false;
+        if (timestamp == null)
+        {
+            if (other.timestamp != null)
+                return false;
+        }
+        else if (!timestamp.equals(other.timestamp))
+            return false;
+        return true;
+    }
+
 }
