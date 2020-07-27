@@ -33,7 +33,7 @@ public class DumpOSM implements ProgressListener
      */
     public static void main(final String[] args) throws FileNotFoundException, MalformedURLException, URISyntaxException
     {
-        String fileName = "file:///D:/TUD.osm";
+        String fileName = "file:///C:/OldD/TUD.osm";
         ArrayList<OSMTag> wantedTags = new ArrayList<>();
         // wantedTags.add(new OSMTag("highway", "primary"));
         // wantedTags.add(new OSMTag("highway", "secondary"));
@@ -78,7 +78,7 @@ public class DumpOSM implements ProgressListener
 
     /** {@inheritDoc} */
     @Override
-    public void progress(ProgressEvent progressEvent)
+    public void progress(final ProgressEvent progressEvent)
     {
         System.out.println(progressEvent.getProgress());
     }
