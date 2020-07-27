@@ -280,6 +280,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         }
         // return iterable that uses the base iterable
         return new ConflictGtuIterable(perceivingGtu, headwayGtuType, visibility, false, this.upstreamGtus);
+        // PK does not think this detects GTUs changing lane INTO a lane of concern. Is that bad?
     }
 
     /**
@@ -332,6 +333,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         // return iterable that uses the base iterable
         return new ConflictGtuIterable(perceivingGtu, new OverlapHeadway(headwayGtuType), visibility, true,
                 this.downstreamGtus);
+        // PK does not think this detects GTUs changing lane INTO a lane of concern. Is that bad?
     }
 
     /** {@inheritDoc} */
@@ -547,20 +549,22 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** */
         private static final long serialVersionUID = 20161214L;
 
-        /** Conflict. */
+        /** Conflict at start of conflict area. */
         private final Conflict conflict;
 
         /**
-         * @param conflict Conflict; conflict
+         * Construct a new ConflictEnd object.
+         * @param conflict Conflict; conflict at start of conflict area
          * @param lane Lane; lane
-         * @param direction LongitudinalDirectionality; valid direction
-         * @param longitudinalPosition Length; position
+         * @param direction LongitudinalDirectionality; driving direction (from the conflict to the new ConflictEnd)
+         * @param longitudinalPosition Length; position along the lane of the end of the conflict
          * @throws NetworkException on network exception
          * @throws OTSGeometryException does not happen
          */
         ConflictEnd(final Conflict conflict, final Lane lane, final LongitudinalDirectionality direction,
                 final Length longitudinalPosition) throws NetworkException, OTSGeometryException
         {
+            // FIXME: the OTSLine3D object should be shared by all ConflictEnd objects (removing OTSGeometryException)
             super(conflict.getId() + "End", lane, direction, longitudinalPosition,
                     new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(1, 0, 0)));
             this.conflict = conflict;
