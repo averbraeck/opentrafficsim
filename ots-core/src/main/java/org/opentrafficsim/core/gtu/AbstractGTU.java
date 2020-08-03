@@ -641,17 +641,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             try
             {
                 // cache
-                synchronized (this)
+                Time locationTime = this.simulator.getSimulatorTime();
+                if (null == this.cacheLocationTime || this.cacheLocationTime.si != locationTime.si)
                 {
-                    Time locationTime = this.simulator.getSimulatorTime();
-                    if (this.cacheLocationTime.si != locationTime.si)
-                    {
-                        this.cacheLocationTime = null;
-                        this.cacheLocation = this.operationalPlan.get().getLocation(locationTime);
-                        this.cacheLocationTime = locationTime;
-                    }
-                    return this.cacheLocation;
+                    this.cacheLocationTime = null;
+                    this.cacheLocation = this.operationalPlan.get().getLocation(locationTime);
+                    this.cacheLocationTime = locationTime;
                 }
+                return this.cacheLocation;
             }
             catch (OperationalPlanException exception)
             {
