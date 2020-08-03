@@ -93,7 +93,7 @@ public class SynchronizationColorer implements GTUColorer, Serializable
     @Override
     public final String toString()
     {
-        return "Sycnhronization";
+        return "Synchronization";
     }
 
 }
