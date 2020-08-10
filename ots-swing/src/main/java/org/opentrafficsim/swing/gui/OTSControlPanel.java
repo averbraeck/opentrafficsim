@@ -135,7 +135,7 @@ public class OTSControlPanel extends JPanel
         buttonPanel.add(makeButton("runPauseButton", "/Play.png", "RunPause", "XXX", true));
         this.timeWarpPanel = new TimeWarpPanel(0.1, 1000, 1, 3, simulator);
         buttonPanel.add(this.timeWarpPanel);
-        buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", "Reset the simulation", false));
+        // buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", "Reset the simulation", false));
         /** Label with appearance control. */
         class AppearanceControlLabel extends JLabel implements AppearanceControl
         {
@@ -534,10 +534,10 @@ public class OTSControlPanel extends JPanel
             {
                 button.setEnabled(moreWorkToDo);
             }
-            else if (actionCommand.equals("Reset"))
-            {
-                button.setEnabled(true); // FIXME: should be disabled when the simulator was just reset or initialized
-            }
+//            else if (actionCommand.equals("Reset"))
+//            {
+//                button.setEnabled(true); // FIXME: should be disabled when the simulator was just reset or initialized
+//            }
             else
             {
                 this.simulator.getLogger().always().error(new Exception("Unknown button?"));
