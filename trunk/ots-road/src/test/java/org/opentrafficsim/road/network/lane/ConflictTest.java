@@ -56,8 +56,8 @@ public class ConflictTest implements EventListenerInterface
 
     /**
      * Test the Conflict class.
-     * @throws NetworkException
-     * @throws OTSGeometryException
+     * @throws NetworkException on error
+     * @throws OTSGeometryException on error
      */
     @Test
     public void testConstructor() throws NetworkException, OTSGeometryException
