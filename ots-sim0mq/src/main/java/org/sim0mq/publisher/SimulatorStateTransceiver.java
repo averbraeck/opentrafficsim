@@ -43,7 +43,7 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
     /**
      * Construct a new SimulatorStateTransceiver.
      * @param simulator OTSSimulatorInterface; the simulator
-     * @throws RemoteException
+     * @throws RemoteException on network error
      */
     public SimulatorStateTransceiver(final OTSSimulatorInterface simulator) throws RemoteException
     {
@@ -123,7 +123,7 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator
-     * @throws RemoteException
+     * @throws RemoteException on network error
      */
     EventMultiplexer(final OTSSimulatorInterface simulator) throws RemoteException
     {

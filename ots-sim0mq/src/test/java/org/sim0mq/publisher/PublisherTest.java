@@ -64,8 +64,8 @@ public class PublisherTest implements OTSModelInterface
      * @throws OTSGeometryException if that happens uncaught; this test has failed
      * @throws NamingException on context error
      * @throws SimRuntimeException on DSOL error
-     * @throws SerializationException
-     * @throws Sim0MQException
+     * @throws SerializationException - when encoding an error message fails
+     * @throws Sim0MQException - when encoding an error message fails
      */
     @Test
     public void testPublisher() throws RemoteException, NetworkException, OTSGeometryException, SimRuntimeException,

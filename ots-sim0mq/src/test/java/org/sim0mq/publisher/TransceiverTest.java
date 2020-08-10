@@ -84,13 +84,13 @@ public class TransceiverTest
     /**
      * Test the GTUIdTransceiver and the GTUTransceiver.
      * @throws RemoteException if the happens, this test has failed
-     * @throws SerializationException
-     * @throws Sim0MQException
-     * @throws NetworkException
-     * @throws OTSGeometryException
-     * @throws NamingException
-     * @throws SimRuntimeException
-     * @throws GTUException
+     * @throws SerializationException on error
+     * @throws Sim0MQException on error
+     * @throws NetworkException on error
+     * @throws OTSGeometryException on error
+     * @throws NamingException on error
+     * @throws SimRuntimeException on error
+     * @throws GTUException on error
      */
     @Test
     public void testGTUIdTransceiver() throws RemoteException, Sim0MQException, SerializationException, NetworkException,
