@@ -136,8 +136,9 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
+        TimedEvent<?> timedEvent = (TimedEvent<?>) event;
         fireTimedEvent(SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED,
-                event.getType().equals(SimulatorInterface.START_EVENT), ((TimedEvent<?>) event).getTimeStamp());
+                event.getType().equals(SimulatorInterface.START_EVENT), timedEvent.getTimeStamp());
     }
 
     /** {@inheritDoc} */
