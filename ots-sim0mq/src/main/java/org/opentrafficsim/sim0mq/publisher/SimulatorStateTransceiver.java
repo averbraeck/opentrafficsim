@@ -38,8 +38,8 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
     /** The event that will be emitted for either the START_EVENT or the STOP_EVENT. */
     public static final TimedEventType SIMULATOR_STATE_CHANGED =
             new TimedEventType(new MetaData("SIMULATOR_STATE_CHANGED_EVENT", "simulator started or stopped",
-                    new ObjectDescriptor[] { new ObjectDescriptor("New simulator state",
-                            "New simulator state; true if running; false if stopped", Boolean.class) }));
+                    new ObjectDescriptor[] {new ObjectDescriptor("New simulator state",
+                            "New simulator state; true if running; false if stopped", Boolean.class)}));
 
     /**
      * Construct a new SimulatorStateTransceiver.
@@ -76,7 +76,7 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
         {
             result = "Not (yet) initialized";
         }
-        return new Object[] { result };
+        return new Object[] {result};
     }
 
     /** Result of the getLookupEventProducerInterface method. */
@@ -136,11 +136,20 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        TimedEvent<?> timedEvent = (TimedEvent<?>) event;
-        // boolean b introduced as return type to try to avoid a compilation error with Java 11
-        // could be bug https://bugs.openjdk.java.net/browse/JDK-8206142 which is unsolved...
-        @SuppressWarnings("unused")
-        boolean b = fireTimedEvent(SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED,
+        notifyTimedEvent(event);
+    }
+
+    /**
+     * Avoid a compilation error with Java 11. Could be bug https://bugs.openjdk.java.net/browse/JDK-8206142 which is
+     * unsolved...
+     * @param <C> the casting class for the event timestamp
+     * @param event the event to be notified of
+     */
+    private <C extends Serializable & Comparable<C>> void notifyTimedEvent(final EventInterface event)
+    {
+        @SuppressWarnings("unchecked")
+        TimedEvent<C> timedEvent = (TimedEvent<C>) event;
+        fireTimedEvent(SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED,
                 event.getType().equals(SimulatorInterface.START_EVENT), timedEvent.getTimeStamp());
     }
 
