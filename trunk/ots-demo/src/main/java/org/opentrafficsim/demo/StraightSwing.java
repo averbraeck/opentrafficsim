@@ -22,7 +22,6 @@ import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
@@ -62,8 +61,6 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
             throws OTSDrawingException
     {
         super(model, panel);
-        OTSRoadNetwork network = model.getNetwork();
-        System.out.println(network.getLinkMap());
     }
 
     /** {@inheritDoc} */

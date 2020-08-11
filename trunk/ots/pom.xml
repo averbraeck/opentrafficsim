@@ -72,8 +72,8 @@
     <ots.version>${project.version}</ots.version>
     <djunits.version>4.01.05</djunits.version>
     <djutils.version>1.05.03</djutils.version>
-    <dsol.version>3.04.08</dsol.version>
-    <sim0mq.version>2.00.02</sim0mq.version>
+    <dsol.version>3.04.09</dsol.version>
+    <sim0mq.version>2.00.03</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <geotools.version>20.2</geotools.version>
