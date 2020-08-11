@@ -32,14 +32,14 @@ public class ObjectFactory
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
-     * org.opentrafficsim.road.network.factory.vissim
+     * org.opentrafficsim.road.network.factory.vissim.
      */
     public ObjectFactory()
     {
     }
 
     /**
-     * Create an instance of {@link GLOBAL }
+     * Create an instance of {@link GLOBAL }.
      * @return GLOBAL
      */
     public GLOBAL createGLOBAL()
@@ -48,7 +48,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link GTUMIX }
+     * Create an instance of {@link GTUMIX }.
      * @return GTUMix
      */
     public GTUMIX createGTUMIX()
@@ -57,7 +57,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADTYPE }
+     * Create an instance of {@link ROADTYPE }.
      * @return Roadtype
      */
     public ROADTYPE createROADTYPE()
@@ -66,7 +66,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LANETYPE }
+     * Create an instance of {@link LANETYPE }.
      * @return GLOBAL
      */
     public LANETYPE createLANETYPE()
@@ -75,7 +75,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADLAYOUT }
+     * Create an instance of {@link ROADLAYOUT }.
      * @return GLOBAL
      */
     public ROADLAYOUT createROADLAYOUT()
@@ -84,7 +84,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK }
+     * Create an instance of {@link LINK }.
      * @return GLOBAL
      */
     public LINK createLINK()
@@ -93,7 +93,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROUTEMIX }
+     * Create an instance of {@link ROUTEMIX }.
      * @return GLOBAL
      */
     public ROUTEMIX createROUTEMIX()
@@ -102,7 +102,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link SHORTESTROUTEMIX }
+     * Create an instance of {@link SHORTESTROUTEMIX }.
      * @return GLOBAL
      */
     public SHORTESTROUTEMIX createSHORTESTROUTEMIX()
@@ -111,7 +111,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADLAYOUT.LANE }
+     * Create an instance of {@link ROADLAYOUT.LANE }.
      * @return GLOBAL
      */
     public ROADLAYOUT.LANE createROADLAYOUTLANE()
@@ -120,7 +120,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.ROUTE }
+     * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.ROUTE }.
      * @return GLOBAL
      */
     public org.opentrafficsim.road.network.factory.vissim.xsd.ROUTE createROUTE()
@@ -129,7 +129,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link NETWORK }
+     * Create an instance of {@link NETWORK }.
      * @return GLOBAL
      */
     public NETWORK createNETWORK()
@@ -138,7 +138,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link DEFINITIONS }
+     * Create an instance of {@link DEFINITIONS }.
      * @return GLOBAL
      */
     public DEFINITIONS createDEFINITIONS()
@@ -147,7 +147,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link GLOBAL.SPEEDGTUCOLORER }
+     * Create an instance of {@link GLOBAL.SPEEDGTUCOLORER }.
      * @return GLOBAL
      */
     public GLOBAL.SPEEDGTUCOLORER createGLOBALSPEEDGTUCOLORER()
@@ -156,7 +156,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link GLOBAL.ACCELERATIONGTUCOLORER }
+     * Create an instance of {@link GLOBAL.ACCELERATIONGTUCOLORER }.
      * @return GLOBAL
      */
     public GLOBAL.ACCELERATIONGTUCOLORER createGLOBALACCELERATIONGTUCOLORER()
@@ -165,7 +165,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link GLOBAL.LANECHANGEURGEGTUCOLORER }
+     * Create an instance of {@link GLOBAL.LANECHANGEURGEGTUCOLORER }.
      * @return GLOBAL
      */
     public GLOBAL.LANECHANGEURGEGTUCOLORER createGLOBALLANECHANGEURGEGTUCOLORER()
@@ -174,7 +174,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link IncludeType }
+     * Create an instance of {@link IncludeType }.
      * @return GLOBAL
      */
     public IncludeType createIncludeType()
@@ -183,7 +183,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link GTUTYPE }
+     * Create an instance of {@link GTUTYPE }.
      * @return GLOBAL
      */
     public GTUTYPE createGTUTYPE()
@@ -192,7 +192,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.GTU }
+     * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.GTU }.
      * @return GLOBAL
      */
     public org.opentrafficsim.road.network.factory.vissim.xsd.GTU createGTU()
@@ -201,7 +201,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link GTUMIX.GTU }
+     * Create an instance of {@link GTUMIX.GTU }.
      * @return GLOBAL
      */
     public GTUMIX.GTU createGTUMIXGTU()
@@ -210,7 +210,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADTYPE.SPEEDLIMIT }
+     * Create an instance of {@link ROADTYPE.SPEEDLIMIT }.
      * @return GLOBAL
      */
     public ROADTYPE.SPEEDLIMIT createROADTYPESPEEDLIMIT()
@@ -219,7 +219,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LANETYPE.SPEEDLIMIT }
+     * Create an instance of {@link LANETYPE.SPEEDLIMIT }.
      * @return GLOBAL
      */
     public LANETYPE.SPEEDLIMIT createLANETYPESPEEDLIMIT()
@@ -228,7 +228,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADLAYOUT.SPEEDLIMIT }
+     * Create an instance of {@link ROADLAYOUT.SPEEDLIMIT }.
      * @return GLOBAL
      */
     public ROADLAYOUT.SPEEDLIMIT createROADLAYOUTSPEEDLIMIT()
@@ -237,7 +237,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADLAYOUT.NOTRAFFICLANE }
+     * Create an instance of {@link ROADLAYOUT.NOTRAFFICLANE }.
      * @return GLOBAL
      */
     public ROADLAYOUT.NOTRAFFICLANE createROADLAYOUTNOTRAFFICLANE()
@@ -246,7 +246,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADLAYOUT.SHOULDER }
+     * Create an instance of {@link ROADLAYOUT.SHOULDER }.
      * @return GLOBAL
      */
     public ROADLAYOUT.SHOULDER createROADLAYOUTSHOULDER()
@@ -255,7 +255,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADLAYOUT.STRIPE }
+     * Create an instance of {@link ROADLAYOUT.STRIPE }.
      * @return GLOBAL
      */
     public ROADLAYOUT.STRIPE createROADLAYOUTSTRIPE()
@@ -264,7 +264,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link NODE }
+     * Create an instance of {@link NODE }.
      * @return GLOBAL
      */
     public NODE createNODE()
@@ -273,7 +273,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.CLOTHOID }
+     * Create an instance of {@link LINK.CLOTHOID }.
      * @return GLOBAL
      */
     public LINK.CLOTHOID createLINKCLOTHOID()
@@ -282,7 +282,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.STRAIGHT }
+     * Create an instance of {@link LINK.STRAIGHT }.
      * @return GLOBAL
      */
     public LINK.STRAIGHT createLINKSTRAIGHT()
@@ -291,7 +291,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.ARC }
+     * Create an instance of {@link LINK.ARC }.
      * @return GLOBAL
      */
     public LINK.ARC createLINKARC()
@@ -300,7 +300,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.POLYLINE }
+     * Create an instance of {@link LINK.POLYLINE }.
      * @return GLOBAL
      */
     public LINK.POLYLINE createLINKPOLYLINE()
@@ -309,7 +309,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.LANEOVERRIDE }
+     * Create an instance of {@link LINK.LANEOVERRIDE }.
      * @return GLOBAL
      */
     public LINK.LANEOVERRIDE createLINKLANEOVERRIDE()
@@ -318,7 +318,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.GENERATOR }
+     * Create an instance of {@link LINK.GENERATOR }.
      * @return GLOBAL
      */
     public LINK.GENERATOR createLINKGENERATOR()
@@ -327,7 +327,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.LISTGENERATOR }
+     * Create an instance of {@link LINK.LISTGENERATOR }.
      * @return GLOBAL
      */
     public LINK.LISTGENERATOR createLINKLISTGENERATOR()
@@ -336,7 +336,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.FILL }
+     * Create an instance of {@link LINK.FILL }.
      * @return GLOBAL
      */
     public LINK.FILL createLINKFILL()
@@ -345,7 +345,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.BLOCK }
+     * Create an instance of {@link LINK.BLOCK }.
      * @return GLOBAL
      */
     public LINK.BLOCK createLINKBLOCK()
@@ -354,7 +354,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.SENSOR }
+     * Create an instance of {@link LINK.SENSOR }.
      * @return GLOBAL
      */
     public LINK.SENSOR createLINKSENSOR()
@@ -363,7 +363,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.TRAFFICLIGHT }
+     * Create an instance of {@link LINK.TRAFFICLIGHT }.
      * @return GLOBAL
      */
     public LINK.TRAFFICLIGHT createLINKTRAFFICLIGHT()
@@ -372,7 +372,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link LINK.SINK }
+     * Create an instance of {@link LINK.SINK }.
      * @return GLOBAL
      */
     public LINK.SINK createLINKSINK()
@@ -381,7 +381,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROUTEMIX.ROUTE }
+     * Create an instance of {@link ROUTEMIX.ROUTE }.
      * @return GLOBAL
      */
     public ROUTEMIX.ROUTE createROUTEMIXROUTE()
@@ -390,7 +390,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.SHORTESTROUTE }
+     * Create an instance of {@link org.opentrafficsim.road.network.factory.vissim.SHORTESTROUTE }.
      * @return GLOBAL
      */
     public org.opentrafficsim.road.network.factory.vissim.xsd.SHORTESTROUTE createSHORTESTROUTE()
@@ -399,7 +399,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link SHORTESTROUTEMIX.SHORTESTROUTE }
+     * Create an instance of {@link SHORTESTROUTEMIX.SHORTESTROUTE }.
      * @return GLOBAL
      */
     public SHORTESTROUTEMIX.SHORTESTROUTE createSHORTESTROUTEMIXSHORTESTROUTE()
@@ -408,7 +408,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link FallbackType }
+     * Create an instance of {@link FallbackType }.
      * @return GLOBAL
      */
     public FallbackType createFallbackType()
@@ -417,7 +417,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link ROADLAYOUT.LANE.SPEEDLIMIT }
+     * Create an instance of {@link ROADLAYOUT.LANE.SPEEDLIMIT }.
      * @return GLOBAL
      */
     public ROADLAYOUT.LANE.SPEEDLIMIT createROADLAYOUTLANESPEEDLIMIT()
@@ -426,7 +426,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FallbackType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link FallbackType }{@code >}}.
      * @return GLOBAL
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XInclude", name = "fallback")
@@ -436,7 +436,7 @@ public class ObjectFactory
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link IncludeType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link IncludeType }{@code >}}.
      * @return GLOBAL
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XInclude", name = "include")

@@ -1,5 +1,3 @@
-package org.opentrafficsim.road.network.factory.nwb;
-
 /**
  * Access to the NWB (Nationaal WegenBestand - Dutch National Road database) shape files.
  * <p>
@@ -11,3 +9,4 @@ package org.opentrafficsim.road.network.factory.nwb;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
+package org.opentrafficsim.road.network.factory.nwb;

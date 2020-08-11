@@ -15,16 +15,16 @@ package org.opentrafficsim.water.statistics;
 public enum DirectionEnum
 {
 
-    /** total */
+    /** total. */
     TOTAL("van/naar Rtm"),
 
-    /** From Rotterdam */
+    /** From Rotterdam. */
     FROMRTM("van Rtm"),
 
-    /** To Rotterdam */
+    /** To Rotterdam. */
     TORTM("naar Rtm");
 
-    /** description for screen */
+    /** description for screen. */
     private final String description;
 
     /**

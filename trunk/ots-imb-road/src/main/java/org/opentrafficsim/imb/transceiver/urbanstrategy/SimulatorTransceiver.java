@@ -165,6 +165,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
         }
     }
 
+    @SuppressWarnings("checkstyle:JavadocStyle")
     /**
      * Transform the a simulation speed change event to a corresponding IMB message.<br>
      * Event is sent from OTS to IMB to indicate that the OTS simulation has changed the intended execution speed (there is,

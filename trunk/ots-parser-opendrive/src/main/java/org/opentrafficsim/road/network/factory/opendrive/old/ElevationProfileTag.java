@@ -25,7 +25,7 @@ class ElevationProfileTag implements Serializable
     /** */
     private static final long serialVersionUID = 20150723L;
 
-    /** ElevationTags */
+    /** ElevationTags. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     NavigableMap<Double, ElevationTag> elevationTags = new TreeMap<Double, ElevationTag>();
 
@@ -38,8 +38,8 @@ class ElevationProfileTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParserOld parser, final RoadTag roadTag)
-            throws SAXException, NetworkException
+    static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParserOld parser,
+            final RoadTag roadTag) throws SAXException, NetworkException
     {
         ElevationProfileTag elevationProfileTag = new ElevationProfileTag();
 

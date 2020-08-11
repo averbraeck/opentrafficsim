@@ -12,12 +12,12 @@ package org.opentrafficsim.road.network.factory.opendrive.old;
  */
 public enum TrafficLightState
 {
-    /** Red */
+    /** Red. */
     RED,
 
-    /** Green */
+    /** Green. */
     GREEN,
 
-    /** Yellow */
+    /** Yellow. */
     YELLOW;
 }

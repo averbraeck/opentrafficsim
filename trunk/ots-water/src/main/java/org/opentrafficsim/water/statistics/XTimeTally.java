@@ -38,7 +38,7 @@ public class XTimeTally extends XTally
     }
 
     /**
-     * tally
+     * tally.
      * @param t double; previous time
      */
     public void tally(final double t)

@@ -27,11 +27,11 @@ class ConnectionTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** Incoming Road id */
+    /** Incoming Road id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String incomingRoad = null;
 
-    /** Connecting Road id */
+    /** Connecting Road id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String connectingRoad = null;
 

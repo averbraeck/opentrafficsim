@@ -34,14 +34,14 @@ public class XPersistent extends XTally
     @XStreamOmitField
     private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
-    /** startTime defines the time of the first event */
+    /** startTime defines the time of the first event. */
     @XStreamOmitField
     private double startTime = Double.NaN;
 
-    /** elapsedTime tracks the elapsed time */
+    /** elapsedTime tracks the elapsed time. */
     private double elapsedTime = Double.NaN;
 
-    /** lastvalue tracks the last value */
+    /** lastvalue tracks the last value. */
     @XStreamOmitField
     private double lastValue = Double.NaN;
 
@@ -106,7 +106,7 @@ public class XPersistent extends XTally
     }
 
     /**
-     * dstat
+     * dstat.
      * @param value double; value
      */
     public void persist(final double value)

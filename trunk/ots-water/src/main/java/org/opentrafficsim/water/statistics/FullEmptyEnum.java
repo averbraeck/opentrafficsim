@@ -15,16 +15,16 @@ package org.opentrafficsim.water.statistics;
 public enum FullEmptyEnum
 {
 
-    /** Full container */
+    /** Full container. */
     FULL("vol"),
 
-    /** Empty container */
+    /** Empty container. */
     EMPTY("leeg"),
 
-    /** Full container */
+    /** Full container. */
     TOTAL("totaal");
 
-    /** description for screen */
+    /** description for screen. */
     private final String description;
 
     /**

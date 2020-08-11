@@ -11,6 +11,7 @@ import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * IMB transceiver for the network. <br>
  * OTS publishes events about the Network to IMB to be able to identify the network. At the start of the OTS simulation, or when

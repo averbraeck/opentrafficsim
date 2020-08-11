@@ -23,6 +23,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * OTS publishes events about sensor triggers to IMB, e.g. to show that a vehicle has triggered a sensor for a traffic
  * light.<br>

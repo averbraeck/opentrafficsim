@@ -43,7 +43,7 @@ class ElevationTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length d = null;
 
-    /** Elevation = a + b*ds + c*ds2 + d*ds3 */
+    /** Elevation = a + b*ds + c*ds2 + d*ds3. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length elevation = null;
 

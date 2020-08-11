@@ -13,10 +13,13 @@
   <name>Open Traffic Sim link to IMB</name>
   <description>Open Traffic Sim connector to TNO's IMB bus from Urban Strategy</description>
 
-  <!-- Don't make javadoc crash on the HTML tags for the IMB table such as STYLE, or missing comments in the nl.tno package  -->
   <properties>
+    <!-- Don't make javadoc crash on the HTML tags for the IMB table such as STYLE, or missing comments in the nl.tno package  -->
     <doclint>accessibility,reference,syntax</doclint>
+    <!-- turn off checkstyle  -->
+    <checkstyle.skip>true</checkstyle.skip>
   </properties>
+  
   
   <dependencies>
     <dependency>

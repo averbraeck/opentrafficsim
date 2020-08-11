@@ -18,7 +18,7 @@ public class OpenDriveNetworkWriter implements Serializable
     /** */
     private static final long serialVersionUID = 20150723L;
 
-    /** OTS network */
+    /** OTS network. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSNetwork network = null;
 

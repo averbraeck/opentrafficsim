@@ -17,6 +17,7 @@ import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * OTS publishes events about the Nodes to IMB to be able to identify the nodes in the network.<br>
  * At the start of the OTS simulation, or when a Node is added later, a NEW message is sent to IMB for each node to identify the

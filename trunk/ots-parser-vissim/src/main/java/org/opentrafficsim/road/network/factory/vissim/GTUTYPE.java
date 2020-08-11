@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * <p>
  * Java class for anonymous complex type.

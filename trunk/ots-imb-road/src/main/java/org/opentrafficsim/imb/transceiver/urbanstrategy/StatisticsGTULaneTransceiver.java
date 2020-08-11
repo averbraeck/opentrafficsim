@@ -31,6 +31,7 @@ import org.opentrafficsim.road.network.sampling.indicator.TotalDelayReference;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * OTS can publish messages about statistics or Key Performance Indicators (KPIs) of the relation between GTUs and a part of the
  * network. Examples are average speeds, travel times, trip durations, and number of stops. The statistics can be transmitted
@@ -113,6 +114,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <td>String</td>
  * <td>value of the last metadata entry</td>
  * </tr>
+ * <tr>
  * <td>numberSpaceTimeRegions</td>
  * <td>int</td>
  * <td>number of space-time regions for this statistic</td>

@@ -34,10 +34,10 @@ public enum ContainerTransportTimeBreakdownEnum
 
     TRUCK_REPLACEMENT("vervangend truckvervoer", "tijdsduur vervangend trucktransport");
 
-    /** description for screen */
+    /** description for screen. */
     private final String description;
 
-    /** longer explanation */
+    /** longer explanation. */
     private final String explanation;
 
     /**

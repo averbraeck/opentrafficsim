@@ -28,11 +28,11 @@ class LaneTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Integer id = null;
 
-    /** Type */
+    /** Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
 
-    /** Level */
+    /** Level. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String level = null;
 
@@ -44,19 +44,19 @@ class LaneTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String predecessorId = null;
 
-    /** Width Tag */
+    /** Width Tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<WidthTag> widthTags = new ArrayList<>();
 
-    /** RoadMark Tag */
+    /** RoadMark Tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<RoadMarkTag> roadMarkTags = new ArrayList<>();
 
-    /** Speed Tag */
+    /** Speed Tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SpeedTag> speedTags = new ArrayList<>();
 
-    /** Height Tag */
+    /** Height Tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     HeightTag heightTag = null;
 

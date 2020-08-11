@@ -42,7 +42,7 @@ public class ControllerTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String controlSignalID = null;
 
-    /** Control type */
+    /** Control type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String controlType = null;
 

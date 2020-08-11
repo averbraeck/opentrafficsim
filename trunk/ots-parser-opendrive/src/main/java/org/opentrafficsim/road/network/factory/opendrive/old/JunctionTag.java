@@ -37,11 +37,11 @@ public class JunctionTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** A map of connections in the junction */
+    /** A map of connections in the junction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, ConnectionTag> connectionTags = new LinkedHashMap<String, ConnectionTag>();
 
-    /** A map of controller in the junction */
+    /** A map of controller in the junction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, ControllerTag> controllerTags = new LinkedHashMap<String, ControllerTag>();
 

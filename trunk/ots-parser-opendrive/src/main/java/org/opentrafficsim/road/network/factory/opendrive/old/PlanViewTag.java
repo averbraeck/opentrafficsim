@@ -32,7 +32,7 @@ class PlanViewTag implements Serializable
     /** */
     private static final long serialVersionUID = 20150723L;
 
-    /** GeometryTags */
+    /** GeometryTags. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<GeometryTag> geometryTags = new ArrayList<GeometryTag>();
 

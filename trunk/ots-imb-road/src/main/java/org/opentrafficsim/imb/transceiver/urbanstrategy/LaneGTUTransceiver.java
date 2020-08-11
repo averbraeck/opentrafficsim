@@ -25,6 +25,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * OTS publishes events about the lanes to IMB, e.g. to know about the number of vehicles on a particular lane.<br>
  * At the start of the OTS simulation, or when a Lane is added later, a NEW message is sent to IMB to identify the lane, the

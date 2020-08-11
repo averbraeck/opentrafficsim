@@ -104,7 +104,7 @@ public class IMBChat extends JFrame
     }
 
     /**
-     * Convert a java time in milliseconds to windows time
+     * Convert a java time in milliseconds to windows time.
      * @param milliseconds long; the java time in milliseconds
      * @return double; time in days since windows epoch
      */
@@ -121,7 +121,7 @@ public class IMBChat extends JFrame
     }
 
     /**
-     * Add received message to the message received box
+     * Add received message to the message received box.
      * @param aDateTime Date; when was the message sent
      * @param aName String; name of sender
      * @param aMessage String; the message that was sent

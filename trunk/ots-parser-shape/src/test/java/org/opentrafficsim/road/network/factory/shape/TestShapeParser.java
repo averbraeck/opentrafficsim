@@ -218,7 +218,7 @@ public class TestShapeParser extends DSOLApplication
         }
 
         /**
-         * Import a list of road (link) elements from a shape file
+         * Import a list of road (link) elements from a shape file.
          * @param initialDir String;
          * @param fileName String;
          * @param shapeIdentifier String;

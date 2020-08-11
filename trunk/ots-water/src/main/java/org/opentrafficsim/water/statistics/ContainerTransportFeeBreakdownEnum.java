@@ -47,10 +47,10 @@ public enum ContainerTransportFeeBreakdownEnum
     RTM_PORT_DUES("tarief tbv havengelden Rtm", "aandeel van het tarief tbv de kosten voor de havengelden in Rtm");
      */
 
-    /** description for screen */
+    /** description for screen. */
     private final String description;
 
-    /** longer explanation */
+    /** longer explanation. */
     private final String explanation;
 
     /**

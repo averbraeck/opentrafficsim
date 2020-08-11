@@ -62,7 +62,7 @@ public class XFrequency implements Serializable
     }
 
     /**
-     * Returns all counters
+     * Returns all counters.
      * @return the counter values
      */
     public SortedMap<String, Long> getFrequencies()
@@ -71,7 +71,7 @@ public class XFrequency implements Serializable
     }
 
     /**
-     * Returns the current number of observations
+     * Returns the current number of observations.
      * @return long the number of observations
      */
     public long getN()
@@ -80,7 +80,7 @@ public class XFrequency implements Serializable
     }
 
     /**
-     * count frequency
+     * count frequency.
      * @param key String; the key to count the value under
      * @param value long; the value
      */
@@ -97,7 +97,7 @@ public class XFrequency implements Serializable
     }
 
     /**
-     * count 1
+     * count 1.
      * @param key String; key
      */
     public void count(final String key)
@@ -115,7 +115,7 @@ public class XFrequency implements Serializable
     }
 
     /**
-     * initializes the counter
+     * initializes the counter.
      */
     public void initialize()
     {
@@ -136,7 +136,7 @@ public class XFrequency implements Serializable
     }
 
     /**
-     * sets n
+     * sets n.
      * @param n long; the number of measurements
      */
     private void setN(final long n)
@@ -145,7 +145,7 @@ public class XFrequency implements Serializable
     }
 
     /**
-     * returns the description of the counter
+     * returns the description of the counter.
      * @return String the description
      */
     public String getDescription()
@@ -154,7 +154,7 @@ public class XFrequency implements Serializable
     }
 
     /**
-     * Write statistics to an excel spreadsheet, starting on row "startRow"
+     * Write statistics to an excel spreadsheet, starting on row "startRow".
      * @param sheet Sheet; the excel sheet to write to
      * @param startRow int; the first row of writing
      * @return first free row after writing

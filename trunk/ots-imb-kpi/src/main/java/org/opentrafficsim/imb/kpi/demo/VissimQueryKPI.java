@@ -99,7 +99,7 @@ public class VissimQueryKPI
     }
 
     /**
-     * Starts the KPI module
+     * Starts the KPI module.
      * @param imbConnector IMBConnector; the connector to the IMB bus
      * @throws IMBException when making the query fails
      */

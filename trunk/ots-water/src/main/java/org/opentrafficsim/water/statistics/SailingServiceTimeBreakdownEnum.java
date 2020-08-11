@@ -59,10 +59,10 @@ public enum SailingServiceTimeBreakdownEnum
 
     SAILING_RTM("varen Rtm", "vaartijd container tussen terminals in Rtm");
 
-    /** description for screen */
+    /** description for screen. */
     private final String description;
 
-    /** longer explanation */
+    /** longer explanation. */
     private final String explanation;
 
     /**
