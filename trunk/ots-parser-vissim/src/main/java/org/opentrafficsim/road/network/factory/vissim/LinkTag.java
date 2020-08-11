@@ -115,7 +115,8 @@ final class LinkTag implements Serializable
     /** Map of lane name to generated lanes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, LaneTag> laneTags = new LinkedHashMap<>();
-
+    
+    /** Connector. */
     ConnectorTag connectorTag = null;
 
     /** The calculated Link. */
