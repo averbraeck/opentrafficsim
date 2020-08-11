@@ -266,7 +266,7 @@ public class SubscriptionHandler
     /**
      * The commands that a SubscriptionHandler understands.
      */
-    enum Command
+    public enum Command
     {
         /** Subscribe to add events. */
         SUBSCRIBE_TO_ADD,
@@ -421,7 +421,7 @@ public class SubscriptionHandler
                 }
                 else
                 {
-                    sendResult(new Object[] { "No list transceiver exists in " + getId() }, returnWrapper);
+                    sendResult(new Object[] {"No list transceiver exists in " + getId()}, returnWrapper);
                 }
                 break;
             }
@@ -506,10 +506,10 @@ public class SubscriptionHandler
     @Override
     public String toString()
     {
-        return "SubscriptionHandler [id=" + id + ", listTransceiver=" + listTransceiver + ", eventProducerForAddRemoveOrChange="
-                + eventProducerForAddRemoveOrChange + ", addedEventType=" + addedEventType + ", removedEventType="
-                + removedEventType + ", changeEventType=" + changeEventType + ", elementSubscriptionHandler="
-                + elementSubscriptionHandler + "]";
+        return "SubscriptionHandler [id=" + this.id + ", listTransceiver=" + this.listTransceiver
+                + ", eventProducerForAddRemoveOrChange=" + this.eventProducerForAddRemoveOrChange + ", addedEventType="
+                + this.addedEventType + ", removedEventType=" + this.removedEventType + ", changeEventType="
+                + this.changeEventType + ", elementSubscriptionHandler=" + this.elementSubscriptionHandler + "]";
     }
 
 }

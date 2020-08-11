@@ -90,7 +90,7 @@ public class LaneGTUIdTransceiver extends AbstractTransceiver
     @Override
     public String toString()
     {
-        return "LaneGTUIdTransceiver [network=" + network + ", super=" + super.toString() + "]";
+        return "LaneGTUIdTransceiver [network=" + this.network + ", super=" + super.toString() + "]";
     }
 
 }

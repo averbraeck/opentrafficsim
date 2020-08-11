@@ -104,7 +104,8 @@ public abstract class AbstractTransceiver implements TransceiverInterface
     @Override
     public String toString()
     {
-        return "AbstractTransceiver [id=" + id + ", addressFields=" + addressFields + ", resultFields=" + resultFields + "]";
+        return "AbstractTransceiver [id=" + this.id + ", addressFields=" + this.addressFields + ", resultFields="
+                + this.resultFields + "]";
     }
 
 }

@@ -1,4 +1,4 @@
-package org.sim0mq.publisher;
+package org.opentrafficsim.sim0mq.swing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.serialization.SerializationException;
 import org.junit.Test;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
 import org.zeromq.SocketType;
@@ -434,7 +435,7 @@ public class Sim0MQPublisherTest
         @Override
         public void run()
         {
-            new Sim0MQPublisher(zContext, "publisherControl", "publisherOutput");
+            new Sim0MQPublisher(this.zContext, "publisherControl", "publisherOutput");
             System.out.println("Publisher thread exits");
         }
 

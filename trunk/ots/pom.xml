@@ -39,13 +39,12 @@
         <module>../ots-draw</module>
         <module>../ots-swing</module>
         <module>../ots-web</module>
-        <module>../ots-demo</module>
         <module>../ots-sim0mq</module>
         <module>../ots-sim0mq-kpi</module>
-        <module>../ots-sim0mq-road</module>
-        <module>../ots-sim0mq-multimodal</module>
+        <module>../ots-sim0mq-swing</module>
         <module>../ots-xsd</module>
         <module>../ots-parser-xml</module>
+        <module>../ots-demo</module>
         <module>../ots-xsd-opendrive</module>
         <module>../ots-parser-opendrive</module>
         <module>../ots-parser-osm</module>
@@ -334,8 +333,7 @@
             <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-sim0mq-kpi/apidocs/</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-multimodal/apidocs/</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-road/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-swing/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-trafficcontrol/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs/</link>
@@ -549,8 +547,7 @@
             <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-sim0mq-kpi/apidocs/</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-multimodal/apidocs/</link>
-            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-road/apidocs/</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-swing/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-trafficcontrol/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs/</link>
@@ -956,13 +953,7 @@
 
       <dependency>
         <groupId>opentrafficsim</groupId>
-        <artifactId>ots-sim0mq-road</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>opentrafficsim</groupId>
-        <artifactId>ots-sim0mq-multimodal</artifactId>
+        <artifactId>ots-sim0mq-swing</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

@@ -32,7 +32,8 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
     private final OTSSimulatorInterface simulator;
 
     /** Multiplexes SimulatorInterface.START_EVENT and SimulatorInterface.STOP_EVENT. */
-    private final EventProducerInterface eventMultiplexer;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    final EventProducerInterface eventMultiplexer;
 
     /** The event that will be emitted for either the START_EVENT or the STOP_EVENT. */
     public static final TimedEventType SIMULATOR_STATE_CHANGED =
@@ -91,7 +92,7 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
                 returnWrapper.nack(bad);
                 return null;
             }
-            return eventMultiplexer;
+            return SimulatorStateTransceiver.this.eventMultiplexer;
         }
 
         @Override

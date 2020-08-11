@@ -60,7 +60,7 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
             returnWrapper.nack(bad);
             return null;
         }
-        Link link = network.getLink((String) (address[0]));
+        Link link = this.network.getLink((String) (address[0]));
         if (link == null)
         {
             returnWrapper.nack("Network does not contain a link with id \"" + address[0] + "\"");
@@ -89,7 +89,7 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
     @Override
     public String toString()
     {
-        return "CrossSectionElementTransceiver [network=" + network + ", super=" + super.toString() + "]";
+        return "CrossSectionElementTransceiver [network=" + this.network + ", super=" + super.toString() + "]";
     }
 
 }

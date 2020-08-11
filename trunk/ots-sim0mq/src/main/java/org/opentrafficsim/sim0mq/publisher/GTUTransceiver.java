@@ -94,7 +94,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
     @Override
     public String toString()
     {
-        return "GTUTransceiver [network=" + network.getId() + ", super=" + super.toString() + "]";
+        return "GTUTransceiver [network=" + this.network.getId() + ", super=" + super.toString() + "]";
     }
 
 }

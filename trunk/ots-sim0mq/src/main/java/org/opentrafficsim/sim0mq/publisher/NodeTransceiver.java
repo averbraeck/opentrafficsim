@@ -96,7 +96,7 @@ public class NodeTransceiver extends AbstractTransceiver
     @Override
     public String toString()
     {
-        return "NodeTransceiver [network=" + network + ", super=" + super.toString() + "]";
+        return "NodeTransceiver [network=" + this.network + ", super=" + super.toString() + "]";
     }
 
 }

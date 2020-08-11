@@ -101,7 +101,7 @@ public class LinkTransceiver extends AbstractTransceiver
     @Override
     public String toString()
     {
-        return "LinkTransceiver [network=" + network + ", super=" + super.toString() + "]";
+        return "LinkTransceiver [network=" + this.network + ", super=" + super.toString() + "]";
     }
 
 }

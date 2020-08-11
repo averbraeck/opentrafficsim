@@ -13,9 +13,9 @@ import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.sim0mq.swing.Sim0MQPublisher;
 import org.pmw.tinylog.Level;
 import org.sim0mq.Sim0MQException;
-import org.sim0mq.publisher.Sim0MQPublisher;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import picocli.CommandLine.Command;
