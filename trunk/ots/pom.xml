@@ -308,9 +308,9 @@
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</link>
             <link>https://tinylog.org/v1/javadoc/</link>
             <link>https://djunits.org/docs/current/apidocs/</link>
-            <link>https://djutils.org/docs/current/apidocs/</link>
+            <link>https://djutils.org/docs/current/djutils/apidocs/</link>
             <link>https://djutils.org/docs/current/djutils-serialization/apidocs/</link>
-            <link>https://djutils.org/docs/current/djutils-ext/apidocs/</link>
+            <link>https://djutils.org/docs/current/djutils-cli/apidocs/</link>
             <link>http://www.jdom.org/docs/apidocs/</link>
             <link>https://dst.lbl.gov/ACSSoftware/colt/api/</link>
             <link>https://sim0mq.org/docs/current/apidocs/</link>
@@ -323,7 +323,7 @@
             <link>https://opentrafficsim.org/docs/current/ots-base/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-core/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-road/apidocs/</link>
-            <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs/</link>
+            <!-- link>https://opentrafficsim.org/docs/current/ots-rail/apidocs/</link -->
             <link>https://opentrafficsim.org/docs/current/ots-water/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-animation/apidocs/</link>
@@ -523,9 +523,9 @@
             <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</link>
             <link>https://tinylog.org/v1/javadoc/</link>
             <link>https://djunits.org/docs/current/apidocs/</link>
-            <link>https://djutils.org/docs/current/apidocs/</link>
+            <link>https://djutils.org/docs/current/djutils/apidocs/</link>
             <link>https://djutils.org/docs/current/djutils-serialization/apidocs/</link>
-            <link>https://djutils.org/docs/current/djutils-ext/apidocs/</link>
+            <link>https://djutils.org/docs/current/djutils-cli/apidocs/</link>
             <link>http://www.jdom.org/docs/apidocs/</link>
             <link>https://dst.lbl.gov/ACSSoftware/colt/api/</link>
             <link>https://sim0mq.org/docs/current/apidocs/</link>
@@ -538,7 +538,7 @@
             <link>https://opentrafficsim.org/docs/current/ots-base/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-core/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-road/apidocs/</link>
-            <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs/</link>
+            <!-- link>https://opentrafficsim.org/docs/current/ots-rail/apidocs/</link -->
             <link>https://opentrafficsim.org/docs/current/ots-water/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs/</link>
             <link>https://opentrafficsim.org/docs/current/ots-animation/apidocs/</link>
