@@ -11,4 +11,4 @@
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-package org.sim0mq.publisher;
+package org.opentrafficsim.sim0mq.publisher;

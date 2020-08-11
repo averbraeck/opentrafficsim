@@ -1,4 +1,4 @@
-package org.sim0mq.publisher;
+package org.opentrafficsim.sim0mq.publisher;
 
 import org.djunits.Throw;
 import org.djutils.metadata.MetaData;
