@@ -46,10 +46,10 @@ public enum ContainerTransportCostBreakdownEnum
 
     TRUCK_REPLACEMENT("vervangend truckvervoer", "kosten voor vervangend trucktransport");
 
-    /** description for screen */
+    /** description for screen. */
     private final String description;
 
-    /** longer explanation */
+    /** longer explanation. */
     private final String explanation;
 
     /**

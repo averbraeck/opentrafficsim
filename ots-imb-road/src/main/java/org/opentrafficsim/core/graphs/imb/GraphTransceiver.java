@@ -18,6 +18,7 @@ import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * OTS can publish graphs to IMB, e.g. trajectory graphs, flow graphs and density graphs.<br>
  * When a graph is published for the first time, a NEW message is sent to IMB to identify the graph, the image resolution, and

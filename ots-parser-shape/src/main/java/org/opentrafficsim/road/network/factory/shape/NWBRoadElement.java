@@ -32,7 +32,7 @@ public class NWBRoadElement extends AbstractNWBRoadElement
     private Double endKM;
 
     /**
-     * A road element from the Dutch NDW road map
+     * A road element from the Dutch NDW road map.
      * @param myGeom Geometry;
      * @param startNode OTSNode;
      * @param endNode OTSNode;

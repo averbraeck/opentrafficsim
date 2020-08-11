@@ -120,7 +120,7 @@ public class XCounter implements Serializable
     }
 
     /**
-     * sets n
+     * sets n.
      * @param n long; the number of measurements.
      */
     private void setN(final long n)

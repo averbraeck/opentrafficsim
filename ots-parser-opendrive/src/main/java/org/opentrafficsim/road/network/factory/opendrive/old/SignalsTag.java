@@ -24,11 +24,11 @@ class SignalsTag implements Serializable
     /** */
     private static final long serialVersionUID = 20150723L;
 
-    /** Signal tags */
+    /** Signal tags. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SignalTag> signalTags = new ArrayList<SignalTag>();
 
-    /** Signal reference tag */
+    /** Signal reference tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SignalReferenceTag> signalReferenceTag = new ArrayList<SignalReferenceTag>();
 

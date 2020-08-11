@@ -73,7 +73,7 @@ public class OpenDriveNetworkLaneParserOld implements Serializable
     @SuppressWarnings("visibilitymodifier")
     protected OTSSimulatorInterface simulator;
 
-    /** OTS network */
+    /** OTS network. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSRoadNetwork network = null;
 
@@ -81,11 +81,11 @@ public class OpenDriveNetworkLaneParserOld implements Serializable
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, SignalTag> signalTags = new LinkedHashMap<>();
 
-    /** The trafficLights that have been created, organized by signals */
+    /** The trafficLights that have been created, organized by signals. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, Set<SimpleTrafficLight>> trafficLightsBySignals = new LinkedHashMap<>();
 
-    /** The trafficLights that have been created, organized by lanes */
+    /** The trafficLights that have been created, organized by lanes. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, Set<SimpleTrafficLight>> trafficLightsByLanes = new LinkedHashMap<>();
 

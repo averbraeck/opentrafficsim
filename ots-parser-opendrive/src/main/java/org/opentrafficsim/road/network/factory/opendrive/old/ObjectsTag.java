@@ -24,7 +24,7 @@ class ObjectsTag implements Serializable
     /** */
     private static final long serialVersionUID = 20150723L;
 
-    /** The objectTags */
+    /** The objectTags. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<ObjectTag> objectTags = new ArrayList<ObjectTag>();
 

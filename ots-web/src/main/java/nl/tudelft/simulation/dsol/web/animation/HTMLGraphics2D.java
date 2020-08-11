@@ -102,7 +102,7 @@ public class HTMLGraphics2D extends Graphics2D
     }
 
     /**
-     * Add a draw command
+     * Add a draw command.
      * @param drawCommand String; the tag for the draw command
      * @param params Object...; the params for the draw command
      */
@@ -154,7 +154,7 @@ public class HTMLGraphics2D extends Graphics2D
     }
 
     /**
-     * add font data to the command, font-name, font-size, bold/italic/plain
+     * add font data to the command, font-name, font-size, bold/italic/plain.
      */
     protected void addFontData()
     {
@@ -232,7 +232,7 @@ public class HTMLGraphics2D extends Graphics2D
     }
 
     /**
-     * adds a float array to the command
+     * adds a float array to the command.
      * @param array float[]; the array
      * @param length int; the number of points from the array to write
      */
@@ -245,7 +245,7 @@ public class HTMLGraphics2D extends Graphics2D
     }
 
     /**
-     * adds a double array to the command
+     * adds a double array to the command.
      * @param array double[]; the array
      * @param length int; the number of points from the array to write
      */

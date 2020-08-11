@@ -29,6 +29,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * The GTUTransceiver publishes the following information on the IMB bus:
  * <ol>

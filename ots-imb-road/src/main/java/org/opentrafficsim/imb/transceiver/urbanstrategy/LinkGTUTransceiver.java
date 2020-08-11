@@ -23,6 +23,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * OTS publishes events about the links to IMB, e.g. to know about the number of vehicles on a link.<br>
  * At the start of the OTS simulation, or when a Link is added later, a NEW message is sent to IMB to identify the link, the

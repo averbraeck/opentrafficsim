@@ -45,19 +45,19 @@ public class HeaderTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String date = null;
 
-    /** Range of the map in the north */
+    /** Range of the map in the north. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length north = null;
 
-    /** Range of the map in the south */
+    /** Range of the map in the south. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length south = null;
 
-    /** Range of the map in the east */
+    /** Range of the map in the east. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length east = null;
 
-    /** Range of the map in the west */
+    /** Range of the map in the west. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length west = null;
 
@@ -65,15 +65,15 @@ public class HeaderTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String vendor = null;
 
-    /** Origin latitude of the map */
+    /** Origin latitude of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length originLat = null;
 
-    /** Origin longitude of the map */
+    /** Origin longitude of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length originLong = null;
 
-    /** Origin Hdg of the map */
+    /** Origin Hdg of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle originHdg = null;
 

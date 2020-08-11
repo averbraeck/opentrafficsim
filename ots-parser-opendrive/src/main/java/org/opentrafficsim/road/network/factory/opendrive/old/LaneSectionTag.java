@@ -37,19 +37,19 @@ class LaneSectionTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length s = null;
 
-    /** Left lanes */
+    /** Left lanes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, LaneTag> leftLaneTags = new LinkedHashMap<Integer, LaneTag>();
 
-    /** Center lanes */
+    /** Center lanes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, LaneTag> centerLaneTags = new LinkedHashMap<Integer, LaneTag>();
 
-    /** Right lanes */
+    /** Right lanes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, LaneTag> rightLaneTags = new LinkedHashMap<Integer, LaneTag>();
 
-    /** All lanes */
+    /** All lanes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, Lane> lanes = new LinkedHashMap<Integer, Lane>();
 

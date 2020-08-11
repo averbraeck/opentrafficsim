@@ -25,10 +25,10 @@ public class StudyArea implements Serializable
     /** */
     private static final long serialVersionUID = 1L;
 
-    /** code to identify the study area */
+    /** code to identify the study area. */
     private String code;
 
-    /** the terminals in / for this sailing area */
+    /** the terminals in / for this sailing area. */
     private List<Terminal> terminals = new ArrayList<Terminal>();
 
     /**

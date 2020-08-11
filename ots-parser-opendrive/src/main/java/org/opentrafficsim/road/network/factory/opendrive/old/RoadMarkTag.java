@@ -28,15 +28,15 @@ class RoadMarkTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length sOffst = null;
 
-    /** Type */
+    /** Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
 
-    /** Weight */
+    /** Weight. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String weight = null;
 
-    /** Color */
+    /** Color. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String color = null;
 
@@ -44,7 +44,7 @@ class RoadMarkTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length width = null;
 
-    /** Lane change */
+    /** Lane change. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneChange = null;
 

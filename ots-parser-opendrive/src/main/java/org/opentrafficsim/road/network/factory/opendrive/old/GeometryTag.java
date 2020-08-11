@@ -62,11 +62,11 @@ class GeometryTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length length = null;
 
-    /** SpiralTag */
+    /** SpiralTag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     SpiralTag spiralTag = null;
 
-    /** ArcTag */
+    /** ArcTag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ArcTag arcTag = null;
 

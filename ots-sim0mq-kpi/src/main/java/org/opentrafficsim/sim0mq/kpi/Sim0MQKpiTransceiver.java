@@ -13,6 +13,7 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalNumberOfStops;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * OTS can publish messages about statistics or Key Performance Indicators (KPIs) of the relation between GTUs and a part of the
  * network. Examples are average speeds, travel times, trip durations, and number of stops. The statistics can be transmitted

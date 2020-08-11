@@ -26,7 +26,7 @@ class LanesTag implements Serializable
     /** */
     private static final long serialVersionUID = 20150723L;
 
-    /** GeometryTags */
+    /** GeometryTags. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<LaneSectionTag> laneSectionTags = new ArrayList<LaneSectionTag>();
 

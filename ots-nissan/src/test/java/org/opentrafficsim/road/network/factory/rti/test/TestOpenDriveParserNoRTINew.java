@@ -184,7 +184,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
         /** */
         private GTUType carType;
 
-        /** Last id */
+        /** Last id. */
         private int lastId = 0;
 
         /** */

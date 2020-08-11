@@ -66,7 +66,7 @@ public class N201ODfactory
 {
 
     /**
-     * Creates origin-destination matrix
+     * Creates origin-destination matrix.
      * @param network network
      * @return origin-destination matrix
      */

@@ -38,7 +38,7 @@ public class ModelControlKPI extends ModelStarter
     }
 
     /**
-     * Entry point
+     * Entry point.
      * @param args String[]; args
      * @throws InvocationTargetException if an exception is thrown while running doRun
      * @throws InterruptedException if we're interrupted while waiting for the event dispatching thread to finish executing

@@ -20,6 +20,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+@SuppressWarnings("checkstyle:JavadocStyle")
 /**
  * CrossSectionElement tags as part of the ROADLAYOUT tag.
  *

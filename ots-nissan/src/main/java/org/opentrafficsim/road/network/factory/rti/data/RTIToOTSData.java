@@ -8,7 +8,7 @@ public class RTIToOTSData implements Serializable
     /** */
     private static final long serialVersionUID = 20150000L;
 
-    /** Time stamp */
+    /** Time stamp. */
     private float timeStamp;// int32_t64 Hans suggests
 
     /** */

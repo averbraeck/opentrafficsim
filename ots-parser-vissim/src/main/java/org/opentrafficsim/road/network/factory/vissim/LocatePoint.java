@@ -7,7 +7,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 
 /**
- * Computes the location of the point a given distance along a LineString
+ * Computes the location of the point a given distance along a LineString.
  */
 public class LocatePoint
 {
@@ -74,7 +74,7 @@ public class LocatePoint
     }
 
     /**
-     * Returns the index of the segment containing the computed point
+     * Returns the index of the segment containing the computed point.
      * @return the index
      */
     public int getIndex()

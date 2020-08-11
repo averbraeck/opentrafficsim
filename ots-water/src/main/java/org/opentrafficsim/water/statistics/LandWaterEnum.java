@@ -15,16 +15,16 @@ package org.opentrafficsim.water.statistics;
 public enum LandWaterEnum
 {
 
-    /** hinterland bound */
+    /** hinterland bound. */
     LAND("richting land"),
 
-    /** water bound */
+    /** water bound. */
     WATER("richting water"),
 
-    /** Full container */
+    /** Full container. */
     TOTAL("beide richtingen");
 
-    /** description for screen */
+    /** description for screen. */
     private final String description;
 
     /**

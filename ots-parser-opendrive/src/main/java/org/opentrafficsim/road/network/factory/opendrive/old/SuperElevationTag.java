@@ -44,7 +44,7 @@ class SuperElevationTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length c = null;
 
-    /** The d position (s-coordinate) */
+    /** The d position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length d = null;
 
