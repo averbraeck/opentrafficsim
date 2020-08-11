@@ -132,7 +132,7 @@ public class SubscriptionHandler
 
     /**
      * Return the set of supported commands.
-     * @return EnumSet<Command>; the set of supported commands.
+     * @return EnumSet&lt;Command&gt;; the set of supported commands.
      */
     public final EnumSet<Command> subscriptionOptions()
     {
