@@ -489,14 +489,14 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
                             new ObjectDescriptor("Route animation", "Route animation", Route.class)}));
 
     /**
-     * The timed> event type for pub/sub indicating the addition of a GTU to the network. <br>
+     * The timed event type for pub/sub indicating the addition of a GTU to the network. <br>
      * Payload: GTU gtu (not an array, just an Object)
      */
     TimedEventType ANIMATION_GTU_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.GTU.ADD",
             new MetaData("GTU animation added", "GTU animation", new ObjectDescriptor("GTU", "GTU", GTU.class)));
 
     /**
-     * The timed> event type for pub/sub indicating the removal of a GTU from the network. <br>
+     * The timed event type for pub/sub indicating the removal of a GTU from the network. <br>
      * Payload: GTU gtu (not an array, just an Object)
      */
     TimedEventType ANIMATION_GTU_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.GTU.REMOVE",
@@ -628,6 +628,6 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * Payload: String generatorName (not an array, just a String)
      */
     TimedEventType GENERATOR_REMOVE_EVENT = new TimedEventType("NETWORK.GENERATOR.REMOVE", new MetaData("GTU generator removed",
-            "GTU generator re moved", new ObjectDescriptor("GTU generator name", "GTU generator name", String.class)));
+            "GTU generator removed", new ObjectDescriptor("GTU generator name", "GTU generator name", String.class)));
 
 }
