@@ -6,7 +6,17 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
 
-    <release version="1.04.01" date="2020-05-XX" description="New version of djutils, dsol - TimedEvent">
+    <release version="1.04.02" date="2020-08-11" description="New version of djutils, dsol">
+      <action dev="averbraeck" type="update">
+        DJUTILS and DSOL have been updated to the latest versions. 
+      </action>
+      <action dev="averbraeck" type="fix">
+        StraightModel in the demos did not use a proper generator with a room checker, and with a large truck fraction
+        the model run resulted in car collisions. This has been repaired.
+      </action>
+    </release>
+
+    <release version="1.04.01" date="2020-02-10" description="New version of djutils, dsol - TimedEvent">
       <action dev="averbraeck" type="update">
         DJUTILS and DSOL have been updated to contain TimedEvents and strongly typed events rather than events
         that can take any payload. 

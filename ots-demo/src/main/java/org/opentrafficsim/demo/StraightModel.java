@@ -6,18 +6,25 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.distributions.ConstantGenerator;
+import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
+import org.opentrafficsim.core.distributions.Generator;
+import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -25,8 +32,17 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.core.network.route.FixedRouteGenerator;
+import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
@@ -46,6 +62,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -78,32 +95,11 @@ public class StraightModel extends AbstractOTSModel implements UNITS
     /** The network. */
     private final OTSRoadNetwork network = new OTSRoadNetwork("network", true, getSimulator());
 
-    /** The headway (inter-vehicle time). */
-    private Duration headway;
-
-    /** Number of cars created. */
-    private int carsCreated = 0;
-
-    /** Strategical planner generator for cars. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
-
-    /** Strategical planner generator for trucks. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
-
-    /** Car parameters. */
-    private Parameters parametersCar;
-
-    /** Truck parameters. */
-    private Parameters parametersTruck;
-
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
 
     /** The blocking, implemented as a traffic light. */
     private SimpleTrafficLight block = null;
-
-    /** Minimum distance. */
-    private Length minimumDistance = new Length(0, METER);
 
     /** Maximum distance. */
     private Length maximumDistance = new Length(5000, METER);
@@ -118,7 +114,7 @@ public class StraightModel extends AbstractOTSModel implements UNITS
     private List<Lane> path = new ArrayList<>();
 
     /** The speed limit on all Lanes. */
-    private Speed speedLimit = new Speed(100, KM_PER_HOUR);
+    private Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
     /**
      * @param simulator OTSSimulatorInterface; the simulator for this model
@@ -136,10 +132,10 @@ public class StraightModel extends AbstractOTSModel implements UNITS
         try
         {
             OTSRoadNode from =
-                    new OTSRoadNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0), Direction.ZERO);
+                    new OTSRoadNode(this.network, "From", new OTSPoint3D(0.0, 0, 0), Direction.ZERO);
             OTSRoadNode to =
-                    new OTSRoadNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0), Direction.ZERO);
-            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0),
+                    new OTSRoadNode(this.network, "To", new OTSPoint3D(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
+            OTSRoadNode end = new OTSRoadNode(this.network, "End", new OTSPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
                     Direction.ZERO);
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
@@ -153,19 +149,44 @@ public class StraightModel extends AbstractOTSModel implements UNITS
             this.path.add(sinkLane);
 
             this.carProbability = (double) getInputParameter("generic.carProbability");
-            this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
-            this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
-            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
-            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
-
-            // 1500 [veh / hour] == 2.4s headway
-            this.headway = new Duration(3600.0 / 1500.0, SECOND);
-
-            // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
+            // Generation of a new car / truck
+            TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
+            IdGenerator idGenerator = new IdGenerator("");
+            ParameterSet params = new ParameterSet();
+            params.setDefaultParameter(AbstractIDM.DELTA);
+            GTUType car = new GTUType("car", this.network.getGtuType(GTUType.DEFAULTS.CAR));
+            GTUType truck = new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
+            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
+                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 90.0, 110.0), SpeedUnit.KM_PER_HOUR);
+            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
+                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 80, 95), SpeedUnit.KM_PER_HOUR);
+            Generator<Route> routeGenerator = new FixedRouteGenerator(null);
+            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactoryCars =
+                    new LaneBasedStrategicalRoutePlannerFactory(
+                            new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFctoryTrucks =
+                    new LaneBasedStrategicalRoutePlannerFactory(
+                            new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+            LaneBasedTemplateGTUType carTemplate = new LaneBasedTemplateGTUType(car,
+                    new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
+                    speedCar, strategicalPlannerFactoryCars, routeGenerator);
+            LaneBasedTemplateGTUType truckTemplate = new LaneBasedTemplateGTUType(truck,
+                    new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
+                    speedTruck, strategicalPlannerFctoryTrucks, routeGenerator);
+            Distribution<LaneBasedTemplateGTUType> gtuTypeDistribution = new Distribution<>(this.stream);
+            gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
+            gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
+            Generator<Duration> headwayGenerator = new HeadwayGenerator(new Frequency(1500.0, PER_HOUR));
+            Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
+            initialLongitudinalPositions
+                    .add(new DirectedLanePosition(this.lane, new Length(5.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
+            LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
+                    new LaneBasedTemplateGTUTypeDistribution(gtuTypeDistribution);
+            new LaneBasedGTUGenerator("Generator", headwayGenerator, characteristicsGenerator,
+                    GeneratorPositions.create(initialLongitudinalPositions, this.stream), this.network, getSimulator(),
+                    roomChecker, idGenerator);
+            // End generation
 
             this.block = new SimpleTrafficLight(this.lane.getId() + "_TL", this.lane,
                     new Length(new Length(4000.0, LengthUnit.METER)), this.simulator);
@@ -176,7 +197,7 @@ public class StraightModel extends AbstractOTSModel implements UNITS
             this.simulator.scheduleEventAbs(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
         }
         catch (SimRuntimeException | NetworkException | OTSGeometryException | InputParameterException | GTUException
-                | ParameterException exception)
+                | ParameterException | ProbabilityException exception)
         {
             exception.printStackTrace();
         }
@@ -198,49 +219,6 @@ public class StraightModel extends AbstractOTSModel implements UNITS
         this.block.setTrafficLightColor(TrafficLightColor.GREEN);
     }
 
-    /**
-     * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     */
-    protected final void generateCar()
-    {
-        try
-        {
-            boolean generateTruck = this.stream.nextDouble() > this.carProbability;
-            Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
-                    this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
-                    new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
-            gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
-            gtu.setNoLaneChangeDistance(Length.ZERO);
-            gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
-            gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
-
-            // strategical planner
-            LaneBasedStrategicalPlanner strategicalPlanner =
-                    generateTruck ? this.strategicalPlannerGeneratorTrucks.create(gtu, null, null, null)
-                            : this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
-
-            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-            Length initialPosition = new Length(20, METER);
-            initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            Speed initialSpeed = new Speed(100.0, KM_PER_HOUR);
-            gtu.init(strategicalPlanner, initialPositions, initialSpeed);
-            this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
-        }
-        catch (SimRuntimeException | NetworkException | GTUException | OTSGeometryException exception)
-        {
-            exception.printStackTrace();
-        }
-    }
-
-    /**
-     * @return List&lt;Lane&gt;; the set of lanes for the specified index
-     */
-    public List<Lane> getPath()
-    {
-        return new ArrayList<>(this.path);
-    }
-
     /** {@inheritDoc} */
     @Override
     public OTSRoadNetwork getNetwork()
@@ -249,27 +227,11 @@ public class StraightModel extends AbstractOTSModel implements UNITS
     }
 
     /**
-     * @return minimumDistance
+     * @return the path for sampling the graphs
      */
-    public final Length getMinimumDistance()
+    public final List<Lane> getPath()
     {
-        return this.minimumDistance;
-    }
-
-    /**
-     * @return maximumDistance
-     */
-    public final Length getMaximumDistance()
-    {
-        return this.maximumDistance;
-    }
-
-    /**
-     * @return lane.
-     */
-    public Lane getLane()
-    {
-        return this.lane;
+        return this.path;
     }
 
     /** {@inheritDoc} */
@@ -277,6 +239,42 @@ public class StraightModel extends AbstractOTSModel implements UNITS
     public Serializable getSourceId()
     {
         return "StraightModel";
+    }
+
+    /**
+     * <p>
+     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 29 jan. 2017 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private static class HeadwayGenerator implements Generator<Duration>
+    {
+        /** Demand level. */
+        private final Frequency demand;
+
+        /** a random stream. */
+        private StreamInterface stream = new MersenneTwister(4L);
+
+        /**
+         * @param demand Frequency; demand
+         */
+        HeadwayGenerator(final Frequency demand)
+        {
+            this.demand = demand;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Duration draw() throws ProbabilityException, ParameterException
+        {
+            return new Duration(-Math.log(this.stream.nextDouble()) / this.demand.si, DurationUnit.SI);
+        }
+
     }
 
 }
