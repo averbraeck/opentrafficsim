@@ -1,4 +1,4 @@
-package org.sim0mq.publisher;
+package org.opentrafficsim.sim0mq.publisher;
 
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;

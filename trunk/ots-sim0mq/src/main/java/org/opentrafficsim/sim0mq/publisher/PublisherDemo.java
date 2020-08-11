@@ -1,4 +1,4 @@
-package org.sim0mq.publisher;
+package org.opentrafficsim.sim0mq.publisher;
 
 import java.io.IOException;
 import java.nio.file.Files;
