@@ -137,7 +137,10 @@ class EventMultiplexer extends EventProducer implements EventListenerInterface
     public void notify(final EventInterface event) throws RemoteException
     {
         TimedEvent<?> timedEvent = (TimedEvent<?>) event;
-        fireTimedEvent(SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED,
+        // boolean b introduced as return type to try to avoid a compilation error with Java 11
+        // could be bug https://bugs.openjdk.java.net/browse/JDK-8206142 which is unsolved...
+        @SuppressWarnings("unused")
+        boolean b = fireTimedEvent(SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED,
                 event.getType().equals(SimulatorInterface.START_EVENT), timedEvent.getTimeStamp());
     }
 
