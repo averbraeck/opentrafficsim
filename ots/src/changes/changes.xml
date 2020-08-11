@@ -14,6 +14,22 @@
         StraightModel in the demos did not use a proper generator with a room checker, and with a large truck fraction
         the model run resulted in car collisions. This has been repaired.
       </action>
+      <action dev="averbraeck" type="fix">
+        Removed the Eclipse project dependencies of ots-aimsun on other projects. 
+      </action>
+      <action dev="averbraeck" type="remove">
+        Removed the ots-sim0mq-road and ots-sim0mq-multimodal projects as they were not used. The ots-sim0mq project also
+        contains all code for road objects such as lanes. 
+      </action>
+      <action dev="averbraeck" type="add">
+        Added a project ots-sim0mq-swing for the swing-dependent components of sim0mq, such as model remote control. 
+      </action>
+      <action dev="averbraeck" type="update">
+        Moved the swing-dependent components of sim0mq, such as model remote control to ots-sim0mq-swing. 
+      </action>
+      <action dev="averbraeck" type="update">
+        Adapted the site web pages to the new ots-sim0mq structure. 
+      </action>
     </release>
 
     <release version="1.04.01" date="2020-02-10" description="New version of djutils, dsol - TimedEvent">

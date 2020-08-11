@@ -1,4 +1,4 @@
-package org.sim0mq.publisher;
+package org.opentrafficsim.sim0mq.publisher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -55,7 +55,8 @@ public class PublisherTest implements OTSModelInterface
     private static final long serialVersionUID = 20200505L;
 
     /** Storage for the last result submitted to the ReturnWrapper. */
-    private Object[] lastResult = null;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Object[] lastResult = null;
 
     /**
      * Test the Publisher class.
@@ -76,7 +77,7 @@ public class PublisherTest implements OTSModelInterface
             @Override
             public void encodeReplyAndTransmit(final Boolean ackNack, final Object[] payload)
             {
-                lastResult = payload;
+                PublisherTest.this.lastResult = payload;
             }
         };
         OTSSimulatorInterface simulator = new OTSSimulator("test simulator for PublisherTest");
@@ -98,7 +99,7 @@ public class PublisherTest implements OTSModelInterface
         assertEquals("result should contain one elements", 1, subscriptionHandler.length);
         System.out.println(subscriptionHandler[0]);
         assertTrue("Result should contain a String", subscriptionHandler[0] instanceof SubscriptionHandler);
-        lastResult = null;
+        this.lastResult = null;
         assertNull("request for non existent transceiver should return null",
                 publisher.get(new Object[] { "No such transceiver" }, storeLastResult));
         checkLastResult("No transceiver with name \"No such transceiver\"");
@@ -115,11 +116,10 @@ public class PublisherTest implements OTSModelInterface
      */
     public void checkLastResult(final String expectedText)
     {
-        assertNotNull("returnWrapper has stored something", lastResult);
-        assertTrue("Stored result is an Object array", lastResult instanceof Object[]);
-        assertEquals("returnWrapper has stored one object error message", 1, ((Object[]) lastResult).length);
-        assertEquals("Stored result is expected string", expectedText, lastResult[0]);
-        lastResult = null;
+        assertNotNull("returnWrapper has stored something", this.lastResult);
+        assertEquals("returnWrapper has stored one object error message", 1, this.lastResult.length);
+        assertEquals("Stored result is expected string", expectedText, this.lastResult[0]);
+        this.lastResult = null;
     }
 
     @Override

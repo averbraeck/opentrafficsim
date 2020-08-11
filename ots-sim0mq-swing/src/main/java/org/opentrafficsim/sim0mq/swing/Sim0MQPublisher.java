@@ -117,7 +117,7 @@ public final class Sim0MQPublisher
     public Sim0MQPublisher(final int port)
     {
         this.zContext = new ZContext(5);
-        ZMQ.Socket socket = zContext.createSocket(SocketType.PAIR);
+        ZMQ.Socket socket = this.zContext.createSocket(SocketType.PAIR);
         socket.bind("tcp://*:" + port);
         pollingLoop(socket, socket);
     }
@@ -134,10 +134,10 @@ public final class Sim0MQPublisher
         resultOutputQueue.setHWM(100000);
         AtomicInteger packetsSent = new AtomicInteger(0);
         Map<Long, ZMQ.Socket> socketMap = new HashMap<>();
-        ZMQ.Socket resultInputQueue = zContext.createSocket(SocketType.PULL);
+        ZMQ.Socket resultInputQueue = this.zContext.createSocket(SocketType.PULL);
         resultInputQueue.bind("inproc://simulationEvents");
         // Poll the two input sockets using ZMQ poller
-        ZMQ.Poller poller = zContext.createPoller(2);
+        ZMQ.Poller poller = this.zContext.createPoller(2);
         // TODO ensure that this also handles a closed control socket gracefully
         poller.register(resultInputQueue, ZMQ.Poller.POLLIN);
         poller.register(controlSocket, ZMQ.Poller.POLLIN);
@@ -201,12 +201,12 @@ public final class Sim0MQPublisher
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             map.put("generation", new MersenneTwister(seed));
             animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, map);
-            this.publisher = new Publisher(network);
+            this.publisher = new Publisher(this.network);
             this.animationPanel = new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
                     animator, this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
-            new OTSSimulationApplication<Sim0MQOTSModel>(model, animationPanel);
+            new OTSSimulationApplication<Sim0MQOTSModel>(this.model, this.animationPanel);
             DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGTUColorer());
-            JFrame frame = (JFrame) animationPanel.getParent().getParent().getParent();
+            JFrame frame = (JFrame) this.animationPanel.getParent().getParent().getParent();
             frame.setExtendedState(Frame.NORMAL);
             frame.setSize(new Dimension(1100, 1000));
             frame.setBounds(0, 25, 1100, 1000);
@@ -224,7 +224,7 @@ public final class Sim0MQPublisher
                     {
                         JPanel wrapper = new JPanel(new BorderLayout());
                         wrapper.add(new JScrollPane(controllerDisplayPanel));
-                        TabbedContentPane tabbedPane = animationPanel.getTabbedPane();
+                        TabbedContentPane tabbedPane = this.animationPanel.getTabbedPane();
                         tabbedPane.addTab(tabbedPane.getTabCount() - 1, trafCOD.getId(), wrapper);
                     }
                 }
@@ -237,7 +237,7 @@ public final class Sim0MQPublisher
             {
                 e.printStackTrace();
             }
-            animationPanel.actionPerformed(new ActionEvent(this, 0, "ZoomAll"));
+            this.animationPanel.actionPerformed(new ActionEvent(this, 0, "ZoomAll"));
         }
         catch (Exception e)
         {
@@ -270,8 +270,8 @@ public final class Sim0MQPublisher
                 if (parts.length == 2)
                 {
                     // This is a command for the embedded Publisher
-                    ReturnWrapperImpl returnWrapper = new ReturnWrapperImpl(zContext,
-                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0 },
+                    ReturnWrapperImpl returnWrapper = new ReturnWrapperImpl(this.zContext,
+                            new Object[] {"SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0},
                             socketMap);
                     if (null == this.publisher)
                     {
@@ -280,7 +280,7 @@ public final class Sim0MQPublisher
                         return true;
                     }
                     Object[] payload = Arrays.copyOfRange(message, 8, message.length);
-                    publisher.executeCommand(parts[0], parts[1], payload, returnWrapper);
+                    this.publisher.executeCommand(parts[0], parts[1], payload, returnWrapper);
                     return true;
                 }
                 else
@@ -293,7 +293,7 @@ public final class Sim0MQPublisher
                             {
                                 if (null != this.animationPanel)
                                 {
-                                    for (Container container = animationPanel; container != null; container =
+                                    for (Container container = this.animationPanel; container != null; container =
                                             container.getParent())
                                     {
                                         if (container instanceof JFrame)
@@ -321,7 +321,8 @@ public final class Sim0MQPublisher
                             break;
 
                         case "DIE":
-                            for (Container container = animationPanel; container != null; container = container.getParent())
+                            for (Container container = this.animationPanel; container != null; container =
+                                    container.getParent())
                             {
                                 // System.out.println("container is " + container);
                                 if (container instanceof JFrame)
@@ -356,8 +357,8 @@ public final class Sim0MQPublisher
                                     ackNack = false;
                                     break;
                                 }
-                                ReturnWrapper returnWrapper = new ReturnWrapperImpl(zContext, new Object[] { "SIM01", true,
-                                        message[2], message[3], message[4], message[5], message[6], 0 }, socketMap);
+                                ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext, new Object[] {"SIM01", true,
+                                        message[2], message[3], message[4], message[5], message[6], 0}, socketMap);
                                 returnWrapper.ack(resultMessage);
                                 simulator.runUpTo((Time) message[8]);
                                 int count = 0;
@@ -410,8 +411,8 @@ public final class Sim0MQPublisher
                             break;
                     }
                 }
-                ReturnWrapper returnWrapper = new ReturnWrapperImpl(zContext,
-                        new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 }, socketMap);
+                ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext,
+                        new Object[] {"SIM01", true, message[2], message[3], message[4], message[5], message[6], 0}, socketMap);
                 if (ackNack)
                 {
                     returnWrapper.ack(resultMessage);

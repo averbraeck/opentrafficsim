@@ -29,8 +29,7 @@
       <item name="ots-parser-vissim" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-vissim/index.html" />
       <item name="ots-sim0mq" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq/index.html" />
       <item name="ots-sim0mq-kpi" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-kpi/index.html" />
-      <item name="ots-sim0mq-road" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-road/index.html" />
-      <item name="ots-sim0mq-multimodal" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-multimodal/index.html" />
+      <item name="ots-sim0mq-swing" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-swing/index.html" />
       <item name="ots-draw" href="http://opentrafficsim.org/docs/${project.version}/ots-draw/index.html" />
       <item name="ots-swing" href="http://opentrafficsim.org/docs/${project.version}/ots-swing/index.html" />
       <item name="ots-web" href="http://opentrafficsim.org/docs/${project.version}/ots-web/index.html" />

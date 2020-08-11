@@ -23,7 +23,7 @@ import org.djutils.serialization.serializers.Serializer;
 public class EventSerializer<E extends Event> implements Serializer<Event>
 {
     /** The type of event that this EventSerializer handles. */
-    final EventType eventType;
+    private final EventType eventType;
 
     /**
      * Construct a new EventSerializer for the specified <code>EventType</code>.
@@ -45,7 +45,7 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
         MetaData metaData = this.eventType.getMetaData();
         for (int index = 0; index < metaData.size(); index++)
         {
-            
+            // TODO: There has to be sme content here?
         }
         return result;
     }

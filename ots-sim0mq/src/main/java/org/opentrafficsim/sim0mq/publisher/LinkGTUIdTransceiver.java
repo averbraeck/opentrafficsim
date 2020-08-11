@@ -73,7 +73,7 @@ public class LinkGTUIdTransceiver extends AbstractTransceiver
     @Override
     public String toString()
     {
-        return "LinkGTUIdTransceiver [network=" + network + ", super=" + super.toString() + "]";
+        return "LinkGTUIdTransceiver [network=" + this.network + ", super=" + super.toString() + "]";
     }
 
 }
