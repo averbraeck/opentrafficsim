@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Time</title>
+<script src="/js/jquery-3.3.1.js"></script>
+<!-- 
+
+----------------- JAVASCRIPT --------------
+
+ -->
+<script>
+var alertShown = false;
+var queryString;
+
+function postTime() {
+  var content = {
+    "message" : "getTime"
+  };
+  jQuery.post({
+    url : "time.html" + queryString,
+    type : 'POST',
+    dataType : 'text',
+    data : content,
+    success : function(ret) {
+      document.getElementById("time").innerHTML = ret; 
+      setTimeout(postTime, 200);
+    },
+    error : function(data, status, er) {
+      if (!alertShown) {
+        alert("error: " + data + " status: " + status + " er:" + er);
+        alertShown = true;
+      }
+      console.log("error: " + data + " status: " + status + " er:" + er);
+    }
+  });
+};
+
+function init() {
+  queryString = window.parent.location.search;
+  postTime();
+}
+</script>
+<!-- 
+
+----------------- HTML --------------
+
+ -->
+</head>
+<body bgcolor="#BBBBBB" onload="init()">
+  <p style="font-family: verdana; font-size: 16px">
+    <b><span id="time">00:00:00.000</span></b>
+  </p>
+</body>
+</html>

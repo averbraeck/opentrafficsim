@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Home/Grid</title>
+<script src="/js/jquery-3.3.1.js"></script>
+<!-- 
+
+----------------- JAVASCRIPT --------------
+
+ -->
+<script>
+var alertShown = false;
+var queryString;
+
+function sendAjaxButton(button) {
+  var content = {
+    "message" : button
+  };
+  jQuery.post({
+    url : "homegrid.html" + queryString,
+    type : 'POST',
+    dataType : 'text',
+    data : content,
+    success :  function(data) {
+      // ok
+    },
+    error : function(data, status, er) {
+      if (!alertShown) {
+        alert("error: " + data + " status: " + status + " er:" + er);
+        alertShown = true;
+      }
+      console.log("error: " + data + " status: " + status + " er:" + er);
+    }
+  });
+};
+
+function init() {
+  queryString = window.parent.location.search;
+}
+</script>
+<!-- 
+
+----------------- HTML --------------
+
+ -->
+</head>
+<body bgcolor="#BBBBBB" onload="init();">
+  <table style="width: 150px; margin: 0; border: 0px; border-spacing: 0px; padding: 0px;">
+    <tr height="36px">
+      <td width="48px" align="center" valign="middle" bgcolor="#EEEEEE" title="Zoom whole image" onclick="sendAjaxButton('zoomAll')">
+        <img src="/images/Expand.png">
+      </td>
+      <td width="2px">&nbsp;</td>
+      <td width="48px" align="center" valign="middle" bgcolor="#EEEEEE" title="Home extent" onclick="sendAjaxButton('home')">
+        <img src="/images/Home.png">
+      </td>
+      <td width="2px">&nbsp;</td>
+      <td width="48px" align="center" valign="middle" bgcolor="#EEEEEE" title="Toggle grid" onclick="sendAjaxButton('toggleGrid')">
+        <img src="/images/Grid.png">
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
