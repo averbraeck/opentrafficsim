@@ -1,0 +1,2035 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<OTS xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opentrafficsim.org/ots https://www.opentrafficsim.org/docs/xsd/1.03.00/ots.xsd">
+ <DEFINITIONS>
+  <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutypes.xml">
+   <xi:fallback>
+    <xi:include href="../xsd/1.03.00/defaults/default_gtutypes.xml">
+     <xi:fallback>
+      <xi:include href="xsd/1.03.00/defaults/default_gtutypes.xml"/>
+     </xi:fallback>
+    </xi:include>
+   </xi:fallback>
+  </xi:include>
+  <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_linktypes.xml">
+   <xi:fallback>
+    <xi:include href="../xsd/1.03.00/defaults/default_linktypes.xml">
+     <xi:fallback>
+      <xi:include href="xsd/1.03.00/defaults/default_linktypes.xml"/>
+     </xi:fallback>
+    </xi:include>
+   </xi:fallback>
+  </xi:include>
+  <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_lanetypes.xml">
+   <xi:fallback>
+    <xi:include href="../xsd/1.03.00/defaults/default_lanetypes.xml">
+     <xi:fallback>
+      <xi:include href="xsd/1.03.00/defaults/default_lanetypes.xml"/>
+     </xi:fallback>
+    </xi:include>
+   </xi:fallback>
+  </xi:include>
+  <xi:include href="https://opentrafficsim.org/docs/xsd/1.03.00/defaults/default_gtutemplates.xml">
+   <xi:fallback>
+    <xi:include href="../xsd/1.03.00/defaults/default_gtutemplates.xml">
+     <xi:fallback>
+      <xi:include href="xsd/1.03.00/defaults/default_gtutemplates.xml"/>
+     </xi:fallback>
+    </xi:include>
+   </xi:fallback>
+  </xi:include>
+  <LANETYPES>
+   <LANETYPE ID="URBANLANE">
+    <COMPATIBILITY DIRECTION="FORWARD" GTUTYPE="ROAD_USER"/>
+   </LANETYPE>
+   <LANETYPE ID="ZEBRALANE">
+    <COMPATIBILITY DIRECTION="BOTH" GTUTYPE="PEDESTRIAN"/>
+   </LANETYPE>
+  </LANETYPES>
+  <GTUTYPES>
+   <GTUTYPE ID="Car.53" PARENT="ROAD_USER"/>
+   <GTUTYPE ID="Truck.56" PARENT="ROAD_USER"/>
+  </GTUTYPES>
+  <GTUTEMPLATES>
+   <GTUTEMPLATE ID="Car.53" DEFAULT="false" GTUTYPE="Car.53">
+    <LENGTHDIST LENGTHUNIT="m">
+     <UNIFORM MIN="3.50" MAX="4.50"/>
+    </LENGTHDIST>
+    <WIDTHDIST LENGTHUNIT="m">
+     <CONSTANT C="2.00"/>
+    </WIDTHDIST>
+    <MAXSPEEDDIST SPEEDUNIT="km/h">
+     <UNIFORM MIN="80.00" MAX="150.00"/>
+    </MAXSPEEDDIST>
+   </GTUTEMPLATE>
+   <GTUTEMPLATE ID="Truck.56" DEFAULT="false" GTUTYPE="Truck.56">
+    <LENGTHDIST LENGTHUNIT="m">
+     <UNIFORM MIN="6.00" MAX="10.00"/>
+    </LENGTHDIST>
+    <WIDTHDIST LENGTHUNIT="m">
+     <UNIFORM MIN="2.00" MAX="2.80"/>
+    </WIDTHDIST>
+    <MAXSPEEDDIST SPEEDUNIT="km/h">
+     <UNIFORM MIN="70.00" MAX="100.00"/>
+    </MAXSPEEDDIST>
+   </GTUTEMPLATE>
+  </GTUTEMPLATES>
+  <LINKTYPES>
+   <LINKTYPE ID="CONNECTORROADTYPE">
+    <COMPATIBILITY DIRECTION="FORWARD" GTUTYPE="ROAD_USER"/>
+    <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="50.00 km/h"/>
+   </LINKTYPE>
+   <LINKTYPE ID="ZEBRALINKTYPE">
+    <COMPATIBILITY DIRECTION="BOTH" GTUTYPE="PEDESTRIAN"/>
+    <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="0.00 km/h"/>
+   </LINKTYPE>
+   <LINKTYPE ID="184">
+    <COMPATIBILITY DIRECTION="FORWARD" GTUTYPE="ROAD_USER"/>
+    <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="50.00 km/h"/>
+   </LINKTYPE>
+   <LINKTYPE ID="194">
+    <COMPATIBILITY DIRECTION="FORWARD" GTUTYPE="ROAD_USER"/>
+    <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="50.00 km/h"/>
+   </LINKTYPE>
+   <LINKTYPE ID="190">
+    <COMPATIBILITY DIRECTION="FORWARD" GTUTYPE="ROAD_USER"/>
+    <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="50.00 km/h"/>
+   </LINKTYPE>
+  </LINKTYPES>
+  <ROADLAYOUTS>
+   <ROADLAYOUT ID="CONNECTINGLANELAYOUT" LINKTYPE="CONNECTORROADTYPE">
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSET>0m</CENTEROFFSET>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+   </ROADLAYOUT>
+  </ROADLAYOUTS>
+ </DEFINITIONS>
+ <NETWORK>
+  <!--destination node of section 925 has 0 entries in the priorityMap-->
+  <!--node 925_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--destination node of section 927 has 0 entries in the priorityMap-->
+  <!--node 927_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 2-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 2-->
+  <!--destination node of section 928 has 0 entries in the priorityMap-->
+  <!--origin node of section 928 has 0 entries in the priorityMap-->
+  <!--node 928_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 1 stopLines-->
+  <!--stop line 0 has mark 0-->
+  <!--warning indicator 1-->
+  <!--section 929 first lane is a lateral exit with initial offset -44.20 and final offset 0.00-->
+  <!--section 929 discontinuity 0 at 0.00-->
+  <!--section 929 discontinuity 1 at 35.21-->
+  <!--section 929 discontinuity 2 at 79.41-->
+  <!--destination node of section 929 has 0 entries in the priorityMap-->
+  <!--origin node of section 929 has 0 entries in the priorityMap-->
+  <!--node 929_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 1-->
+  <!--destination node of section 932 has 0 entries in the priorityMap-->
+  <!--node 932_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--destination node of section 933 has 0 entries in the priorityMap-->
+  <!--origin node of section 933 has 0 entries in the priorityMap-->
+  <!--node 933_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 1-->
+  <!--destination node of section 934 has 0 entries in the priorityMap-->
+  <!--origin node of section 934 has 0 entries in the priorityMap-->
+  <!--node 934_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--section 935 first lane is a lateral entry with initial offset 0.00 and final offset 30.70-->
+  <!--section 935 discontinuity 0 at 0.00-->
+  <!--section 935 discontinuity 1 at 30.70-->
+  <!--section 935 discontinuity 2 at 71.70-->
+  <!--destination node of section 935 has 0 entries in the priorityMap-->
+  <!--origin node of section 935 has 0 entries in the priorityMap-->
+  <!--node 935_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 1-->
+  <!--destination node of section 939 has 0 entries in the priorityMap-->
+  <!--node 939_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--destination node of section 941 has 0 entries in the priorityMap-->
+  <!--node 941_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--section 942 first lane is a lateral exit with initial offset -28.80 and final offset 0.00-->
+  <!--section 942 discontinuity 0 at 0.00-->
+  <!--section 942 discontinuity 1 at 47.98-->
+  <!--section 942 discontinuity 2 at 76.78-->
+  <!--destination node of section 942 has 0 entries in the priorityMap-->
+  <!--origin node of section 942 has 0 entries in the priorityMap-->
+  <!--node 942_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 1-->
+  <!--destination node of section 944 has 0 entries in the priorityMap-->
+  <!--node 944_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 1-->
+  <!--destination node of section 1020 has 0 entries in the priorityMap-->
+  <!--origin node of section 1020 has 0 entries in the priorityMap-->
+  <!--node 1020_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--destination node of section 1021 has 0 entries in the priorityMap-->
+  <!--origin node of section 1021 has 0 entries in the priorityMap-->
+  <!--node 1021_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--destination node of section 1022 has 0 entries in the priorityMap-->
+  <!--origin node of section 1022 has 0 entries in the priorityMap-->
+  <!--node 1022_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--destination node of section 1023 has 0 entries in the priorityMap-->
+  <!--origin node of section 1023 has 0 entries in the priorityMap-->
+  <!--node 1023_B userDefinedPriorities 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--turning has 0 stopLines-->
+  <!--warning indicator 0-->
+  <!--The master plan appears to have 1 schedules-->
+  <!--  location of control plan item: ""-->
+  <!--  plan appears to have 1 junctions-->
+  <!--    control plan name "Control AM" type is fixed control-->
+  <!--    point of junction (key 959) has name "" at 426367.65,4581237.89, cycle 90.0s-->
+  <!--      control phase from 0.0 duration 40.0 yellow 3.0 (3 signals)-->
+  <!--        signal name Signal 2 number 1106-->
+  <!--          turning from section 928 lanes 1..2-->
+  <!--        signal name Signal 3 number 1107-->
+  <!--          turning from section 928 lanes 0..0-->
+  <!--        signal name Signal 1 number 1105-->
+  <!--          turning from section 934 lanes 0..2-->
+  <!--          turning from section 934 lanes 2..2-->
+  <!--      control phase from 40.0 duration 6.0 yellow 3.0 (1 signals)-->
+  <!--        signal name Signal 3 number 1107-->
+  <!--          turning from section 928 lanes 0..0-->
+  <!--      control phase from 46.0 duration 14.0 yellow 3.0 (1 signals)-->
+  <!--        signal name Signal 5 number 1111-->
+  <!--          pedestrian crossing on link 933_0 at the beginning 1 at the end 0-->
+  <!--          pedestrian crossing on link 934_0 at the beginning 0 at the end 1-->
+  <!--      control phase from 60.0 duration 6.0 yellow 3.0 (2 signals)-->
+  <!--        signal name Signal 5 number 1111-->
+  <!--          pedestrian crossing on link 933_0 at the beginning 1 at the end 0-->
+  <!--          pedestrian crossing on link 934_0 at the beginning 0 at the end 1-->
+  <!--        signal name Signal 4 number 1108-->
+  <!--          turning from section 932 lanes 0..1-->
+  <!--          turning from section 932 lanes 1..1-->
+  <!--      control phase from 66.0 duration 18.0 yellow 3.0 (1 signals)-->
+  <!--        signal name Signal 4 number 1108-->
+  <!--          turning from section 932 lanes 0..1-->
+  <!--          turning from section 932 lanes 1..1-->
+  <!--      control phase from 84.0 duration 6.0 yellow 3.0 (0 signals)-->
+  <NODE ID="Diagonal" DIRECTION="0 deg(E)" COORDINATE="(426479.76,4581605.24)"/>
+  <NODE ID="Mara�on" DIRECTION="0 deg(E)" COORDINATE="(426125.05,4581421.04)"/>
+  <NODE ID="Reig" DIRECTION="0 deg(E)" COORDINATE="(426211.55,4581178.34)"/>
+  <NODE ID="Travessera" DIRECTION="0 deg(E)" COORDINATE="(426536.39,4581091.84)"/>
+  <NODE ID="CampNou" DIRECTION="0 deg(E)" COORDINATE="(426558.17,4581267.33)"/>
+  <NODE ID="N925_A" DIRECTION="130.74 deg(E)" COORDINATE="(426531.026,4581108.528)"/>
+  <NODE ID="N925_B" DIRECTION="133.62 deg(E)" COORDINATE="(426473.349,4581173.337)"/>
+  <NODE ID="N926_A" DIRECTION="44.29 deg(E)" COORDINATE="(426468.721,4581186.818)"/>
+  <NODE ID="N926_B" DIRECTION="44.29 deg(E)" COORDINATE="(426532.290,4581248.837)"/>
+  <NODE ID="N927_A" DIRECTION="-135.71 deg(E)" COORDINATE="(426529.961,4581250.925)"/>
+  <NODE ID="N927_B" DIRECTION="-135.71 deg(E)" COORDINATE="(426466.392,4581188.906)"/>
+  <NODE ID="N928_A" DIRECTION="147.21 deg(E)" COORDINATE="(426454.456,4581188.679)"/>
+  <NODE ID="N928_B" DIRECTION="141.51 deg(E)" COORDINATE="(426392.128,4581231.161)"/>
+  <NODE ID="N929_A" DIRECTION="-36.49 deg(E)" COORDINATE="(426382.060,4581224.099)"/>
+  <NODE ID="N929_B" DIRECTION="-33.29 deg(E)" COORDINATE="(426447.490,4581179.136)"/>
+  <NODE ID="N929_D1" DIRECTION="-33.45 deg(E)" COORDINATE="(426410.611,4581203.498)"/>
+  <NODE ID="N930_A" DIRECTION="-43.85 deg(E)" COORDINATE="(426466.000,4581166.263)"/>
+  <NODE ID="N930_B" DIRECTION="-49.24 deg(E)" COORDINATE="(426523.522,4581101.918)"/>
+  <NODE ID="N931_A" DIRECTION="-158.30 deg(E)" COORDINATE="(426349.019,4581236.037)"/>
+  <NODE ID="N931_B" DIRECTION="-158.30 deg(E)" COORDINATE="(426228.625,4581188.127)"/>
+  <NODE ID="N932_A" DIRECTION="21.35 deg(E)" COORDINATE="(426231.881,4581180.530)"/>
+  <NODE ID="N932_B" DIRECTION="21.35 deg(E)" COORDINATE="(426355.067,4581228.672)"/>
+  <NODE ID="N933_A" DIRECTION="121.68 deg(E)" COORDINATE="(426370.407,4581257.082)"/>
+  <NODE ID="N933_B" DIRECTION="98.78 deg(E)" COORDINATE="(426333.939,4581372.345)"/>
+  <NODE ID="N934_A" DIRECTION="-81.06 deg(E)" COORDINATE="(426320.327,4581369.491)"/>
+  <NODE ID="N934_B" DIRECTION="-61.91 deg(E)" COORDINATE="(426357.229,4581250.260)"/>
+  <NODE ID="N935_A" DIRECTION="52.53 deg(E)" COORDINATE="(426347.051,4581413.104)"/>
+  <NODE ID="N935_B" DIRECTION="17.63 deg(E)" COORDINATE="(426405.630,4581451.326)"/>
+  <NODE ID="N935_D1" DIRECTION="23.80 deg(E)" COORDINATE="(426368.357,4581434.885)"/>
+  <NODE ID="N936_A" DIRECTION="-2.85 deg(E)" COORDINATE="(426434.157,4581454.185)"/>
+  <NODE ID="N936_B" DIRECTION="52.24 deg(E)" COORDINATE="(426552.148,4581518.219)"/>
+  <NODE ID="N939_A" DIRECTION="-128.12 deg(E)" COORDINATE="(426546.769,4581522.274)"/>
+  <NODE ID="N939_B" DIRECTION="176.97 deg(E)" COORDINATE="(426434.438,4581460.643)"/>
+  <NODE ID="N940_A" DIRECTION="108.47 deg(E)" COORDINATE="(426416.242,4581472.806)"/>
+  <NODE ID="N940_B" DIRECTION="108.47 deg(E)" COORDINATE="(426389.520,4581552.795)"/>
+  <NODE ID="N941_A" DIRECTION="-71.53 deg(E)" COORDINATE="(426386.424,4581551.527)"/>
+  <NODE ID="N941_B" DIRECTION="-71.53 deg(E)" COORDINATE="(426413.146,4581471.539)"/>
+  <NODE ID="N942_A" DIRECTION="-161.12 deg(E)" COORDINATE="(426403.875,4581454.905)"/>
+  <NODE ID="N942_B" DIRECTION="-161.12 deg(E)" COORDINATE="(426331.222,4581430.061)"/>
+  <NODE ID="N942_D1" DIRECTION="-161.12 deg(E)" COORDINATE="(426358.472,4581439.379)"/>
+  <NODE ID="N943_A" DIRECTION="-159.07 deg(E)" COORDINATE="(426285.962,4581406.184)"/>
+  <NODE ID="N943_B" DIRECTION="172.01 deg(E)" COORDINATE="(426157.642,4581417.334)"/>
+  <NODE ID="N944_A" DIRECTION="-7.91 deg(E)" COORDINATE="(426156.212,4581409.640)"/>
+  <NODE ID="N944_B" DIRECTION="-12.30 deg(E)" COORDINATE="(426286.075,4581393.810)"/>
+  <NODE ID="N1020_A" DIRECTION="-53.04 deg(E)" COORDINATE="(426295.336,4581393.734)"/>
+  <NODE ID="N1020_B" DIRECTION="-16.73 deg(E)" COORDINATE="(426314.050,4581379.380)"/>
+  <NODE ID="N1021_A" DIRECTION="43.11 deg(E)" COORDINATE="(426332.333,4581384.796)"/>
+  <NODE ID="N1021_B" DIRECTION="95.94 deg(E)" COORDINATE="(426340.454,4581405.131)"/>
+  <NODE ID="N1022_A" DIRECTION="123.71 deg(E)" COORDINATE="(426337.982,4581412.299)"/>
+  <NODE ID="N1022_B" DIRECTION="140.96 deg(E)" COORDINATE="(426331.036,4581420.060)"/>
+  <NODE ID="N1023_A" DIRECTION="177.41 deg(E)" COORDINATE="(426322.495,4581425.379)"/>
+  <NODE ID="N1023_B" DIRECTION="-124.41 deg(E)" COORDINATE="(426295.564,4581409.296)"/>
+  <NODE ID="RHSA933" DIRECTION="31.68 deg(E)" COORDINATE="(426372.924,4581261.573)"/>
+  <NODE ID="LHSA933" DIRECTION="31.68 deg(E)" COORDINATE="(426365.265,4581256.846)"/>
+  <NODE ID="RHSB934" DIRECTION="28.09 deg(E)" COORDINATE="(426360.022,4581254.585)"/>
+  <NODE ID="LHSB934" DIRECTION="28.09 deg(E)" COORDINATE="(426352.081,4581250.347)"/>
+  <CONNECTOR ID="connector_from_936_B_to_Diagonal" NODEEND="Diagonal" DEMANDWEIGHT="0.900" NODESTART="N936_B"/>
+  <CONNECTOR ID="connector_from_940_B_to_Diagonal" NODEEND="Diagonal" DEMANDWEIGHT="0.100" NODESTART="N940_B"/>
+  <CONNECTOR ID="connector_from_Diagonal_to_939_A" NODEEND="N939_A" DEMANDWEIGHT="0.900" NODESTART="Diagonal"/>
+  <CONNECTOR ID="connector_from_Diagonal_to_941_A" NODEEND="N941_A" DEMANDWEIGHT="0.100" NODESTART="Diagonal"/>
+  <CONNECTOR ID="connector_from_Mara�on_to_944_A" NODEEND="N944_A" DEMANDWEIGHT="1.000" NODESTART="Mara�on"/>
+  <CONNECTOR ID="connector_from_943_B_to_Mara�on" NODEEND="Mara�on" DEMANDWEIGHT="1.000" NODESTART="N943_B"/>
+  <CONNECTOR ID="connector_from_931_B_to_Reig" NODEEND="Reig" DEMANDWEIGHT="1.000" NODESTART="N931_B"/>
+  <CONNECTOR ID="connector_from_Reig_to_932_A" NODEEND="N932_A" DEMANDWEIGHT="1.000" NODESTART="Reig"/>
+  <CONNECTOR ID="connector_from_Travessera_to_925_A" NODEEND="N925_A" DEMANDWEIGHT="1.000" NODESTART="Travessera"/>
+  <CONNECTOR ID="connector_from_930_B_to_Travessera" NODEEND="Travessera" DEMANDWEIGHT="1.000" NODESTART="N930_B"/>
+  <CONNECTOR ID="connector_from_CampNou_to_927_A" NODEEND="N927_A" DEMANDWEIGHT="1.000" NODESTART="CampNou"/>
+  <CONNECTOR ID="connector_from_926_B_to_CampNou" NODEEND="CampNou" DEMANDWEIGHT="1.000" NODESTART="N926_B"/>
+  <LINK ID="1020_J21" NODEEND="N934_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N1020_B" OFFSETSTART="-1.50m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.000, lateral position at end -3.000-->
+     <CENTEROFFSETSTART>-3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="32.68 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -0.000, lateral position at end 0.000-->
+     <CENTEROFFSETSTART>-0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="32.68 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.000, lateral position at end 3.000-->
+     <CENTEROFFSETSTART>3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="32.68 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1020_J22" NODEEND="N1021_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N1020_B" OFFSETSTART="3.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD4-->
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.500, lateral position at end -4.500-->
+     <CENTEROFFSETSTART>-1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="45.19 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD3-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.500, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>-1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="45.19 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="45.19 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end 4.500-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="45.19 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1020_Z" NODEEND="N1020_B" TYPE="184" NODESTART="N1020_A">
+   <!--lane range of this sub section is 0-3 of 0-3-->
+   <POLYLINE>
+    <COORDINATE>(426296.166,4581392.631)</COORDINATE>
+    <COORDINATE>(426297.052,4581391.548)</COORDINATE>
+    <COORDINATE>(426297.988,4581390.488)</COORDINATE>
+    <COORDINATE>(426298.965,4581389.454)</COORDINATE>
+    <COORDINATE>(426299.978,4581388.449)</COORDINATE>
+    <COORDINATE>(426301.020,4581387.478)</COORDINATE>
+    <COORDINATE>(426302.083,4581386.543)</COORDINATE>
+    <COORDINATE>(426303.162,4581385.648)</COORDINATE>
+    <COORDINATE>(426304.248,4581384.796)</COORDINATE>
+    <COORDINATE>(426305.336,4581383.991)</COORDINATE>
+    <COORDINATE>(426306.418,4581383.235)</COORDINATE>
+    <COORDINATE>(426307.488,4581382.532)</COORDINATE>
+    <COORDINATE>(426308.538,4581381.886)</COORDINATE>
+    <COORDINATE>(426309.562,4581381.299)</COORDINATE>
+    <COORDINATE>(426310.553,4581380.776)</COORDINATE>
+    <COORDINATE>(426311.504,4581380.319)</COORDINATE>
+    <COORDINATE>(426312.409,4581379.931)</COORDINATE>
+    <COORDINATE>(426313.260,4581379.617)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1021_J23" NODEEND="N935_A" OFFSETEND="0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N1021_B" OFFSETSTART="-3.05m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.526, lateral position at end -3.000-->
+     <CENTEROFFSETSTART>-1.526m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="35.14 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.526, lateral position at end 0.000-->
+     <CENTEROFFSETSTART>1.526m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="35.14 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.526, lateral position at end 3.000-->
+     <CENTEROFFSETSTART>1.526m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="35.14 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1021_J24" NODEEND="N1022_A" OFFSETEND="0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N1021_B" OFFSETSTART="1.53m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD4-->
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.051, lateral position at end -4.500-->
+     <CENTEROFFSETSTART>-3.051m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="32.63 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD3-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.051, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>-3.051m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="32.63 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="32.63 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.051, lateral position at end 4.500-->
+     <CENTEROFFSETSTART>3.051m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="32.63 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1021_Z" NODEEND="N1021_B" TYPE="184" NODESTART="N1021_A">
+   <!--lane range of this sub section is 0-3 of 0-3-->
+   <POLYLINE>
+    <COORDINATE>(426333.184,4581385.593)</COORDINATE>
+    <COORDINATE>(426334.000,4581386.468)</COORDINATE>
+    <COORDINATE>(426334.777,4581387.411)</COORDINATE>
+    <COORDINATE>(426335.514,4581388.416)</COORDINATE>
+    <COORDINATE>(426336.210,4581389.474)</COORDINATE>
+    <COORDINATE>(426336.861,4581390.575)</COORDINATE>
+    <COORDINATE>(426337.467,4581391.713)</COORDINATE>
+    <COORDINATE>(426338.025,4581392.878)</COORDINATE>
+    <COORDINATE>(426338.533,4581394.063)</COORDINATE>
+    <COORDINATE>(426338.989,4581395.258)</COORDINATE>
+    <COORDINATE>(426339.392,4581396.456)</COORDINATE>
+    <COORDINATE>(426339.740,4581397.648)</COORDINATE>
+    <COORDINATE>(426340.030,4581398.826)</COORDINATE>
+    <COORDINATE>(426340.260,4581399.982)</COORDINATE>
+    <COORDINATE>(426340.429,4581401.107)</COORDINATE>
+    <COORDINATE>(426340.535,4581402.192)</COORDINATE>
+    <COORDINATE>(426340.576,4581403.230)</COORDINATE>
+    <COORDINATE>(426340.549,4581404.213)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1022_J25" NODEEND="N1023_A" OFFSETEND="0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N1022_B" OFFSETSTART="-0.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD4-->
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -4.500, lateral position at end -4.500-->
+     <CENTEROFFSETSTART>-4.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="39.80 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD3-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.500, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>-1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="39.80 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="39.80 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 4.500, lateral position at end 4.500-->
+     <CENTEROFFSETSTART>4.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="39.80 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1022_Z" NODEEND="N1022_B" TYPE="184" NODESTART="N1022_A">
+   <!--lane range of this sub section is 0-3 of 0-3-->
+   <POLYLINE>
+    <COORDINATE>(426336.995,4581413.778)</COORDINATE>
+    <COORDINATE>(426335.931,4581415.177)</COORDINATE>
+    <COORDINATE>(426334.436,4581416.899)</COORDINATE>
+    <COORDINATE>(426332.906,4581418.436)</COORDINATE>
+    <COORDINATE>(426331.401,4581419.764)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1023_J26" NODEEND="N1020_A" OFFSETEND="0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N1023_B" OFFSETSTART="1.50m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD4-->
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.000, lateral position at end -4.500-->
+     <CENTEROFFSETSTART>-3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="37.54 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD3-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.000, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>-3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="37.54 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="37.54 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.000, lateral position at end 4.500-->
+     <CENTEROFFSETSTART>3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="37.54 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1023_J27" NODEEND="N943_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N1023_B" OFFSETSTART="-3.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.500, lateral position at end -3.000-->
+     <CENTEROFFSETSTART>-1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="39.13 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end 0.000-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="39.13 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end 3.000-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="39.13 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="1023_Z" NODEEND="N1023_B" TYPE="184" NODESTART="N1023_A">
+   <!--lane range of this sub section is 0-3 of 0-3-->
+   <POLYLINE>
+    <COORDINATE>(426320.792,4581425.456)</COORDINATE>
+    <COORDINATE>(426319.108,4581425.399)</COORDINATE>
+    <COORDINATE>(426317.445,4581425.213)</COORDINATE>
+    <COORDINATE>(426315.806,4581424.904)</COORDINATE>
+    <COORDINATE>(426314.193,4581424.478)</COORDINATE>
+    <COORDINATE>(426312.607,4581423.940)</COORDINATE>
+    <COORDINATE>(426311.052,4581423.295)</COORDINATE>
+    <COORDINATE>(426309.529,4581422.550)</COORDINATE>
+    <COORDINATE>(426308.042,4581421.709)</COORDINATE>
+    <COORDINATE>(426306.591,4581420.779)</COORDINATE>
+    <COORDINATE>(426305.179,4581419.765)</COORDINATE>
+    <COORDINATE>(426303.808,4581418.672)</COORDINATE>
+    <COORDINATE>(426302.482,4581417.506)</COORDINATE>
+    <COORDINATE>(426301.201,4581416.274)</COORDINATE>
+    <COORDINATE>(426299.968,4581414.979)</COORDINATE>
+    <COORDINATE>(426298.786,4581413.629)</COORDINATE>
+    <COORDINATE>(426297.657,4581412.227)</COORDINATE>
+    <COORDINATE>(426296.582,4581410.781)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="925_J1" NODEEND="N928_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N925_B" OFFSETSTART="0.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.000, lateral position at end -3.000-->
+     <CENTEROFFSETSTART>-3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.000, lateral position at end 3.000-->
+     <CENTEROFFSETSTART>3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="925_J2" NODEEND="N926_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N925_B" OFFSETSTART="-3.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD1-->
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSET>0m</CENTEROFFSET>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="25.86 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="925_Z" NODEEND="N925_B" TYPE="184" NODESTART="N925_A">
+   <!--lane range of this sub section is 0-2 of 0-2-->
+   <POLYLINE>
+    <COORDINATE>(426504.663,4581139.132)</COORDINATE>
+    <COORDINATE>(426496.573,4581148.373)</COORDINATE>
+    <COORDINATE>(426492.140,4581153.329)</COORDINATE>
+    <COORDINATE>(426488.005,4581157.850)</COORDINATE>
+    <COORDINATE>(426481.478,4581164.807)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="926_Z" NODEEND="N926_B" TYPE="194" NODESTART="N926_A">
+   <!--lane range of this sub section is 0-0 of 0-0-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="927_J3" NODEEND="N928_A" OFFSETEND="-3.00m" TYPE="CONNECTORROADTYPE" NODESTART="N927_B" OFFSETSTART="-0.00m" PRIORITY="STOP">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD1-->
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSET>0m</CENTEROFFSET>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="29.44 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="927_J4" NODEEND="N930_A" OFFSETEND="3.00m" TYPE="CONNECTORROADTYPE" NODESTART="N927_B" OFFSETSTART="-0.00m" PRIORITY="STOP">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD1-->
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSET>0m</CENTEROFFSET>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="39.31 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="927_Z" NODEEND="N927_B" TYPE="194" NODESTART="N927_A">
+   <!--lane range of this sub section is 0-0 of 0-0-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="928_J5" NODEEND="N933_A" OFFSETEND="0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N928_B" OFFSETSTART="-1.53m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.532, lateral position at end -3.000-->
+     <CENTEROFFSETSTART>-1.532m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.532, lateral position at end 0.000-->
+     <CENTEROFFSETSTART>1.532m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.532, lateral position at end 3.000-->
+     <CENTEROFFSETSTART>1.532m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="928_J6" NODEEND="N931_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N928_B" OFFSETSTART="3.06m" PRIORITY="YIELD">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD2-->
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end -1.599-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.599m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 1.599-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.599m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="928_Z" NODEEND="N928_B" TYPE="184" NODESTART="N928_A">
+   <!--lane range of this sub section is 0-2 of 0-2-->
+   <POLYLINE>
+    <COORDINATE>(426425.824,4581207.123)</COORDINATE>
+    <COORDINATE>(426418.344,4581212.008)</COORDINATE>
+    <COORDINATE>(426412.480,4581215.913)</COORDINATE>
+    <COORDINATE>(426407.795,4581219.137)</COORDINATE>
+    <COORDINATE>(426403.853,4581221.976)</COORDINATE>
+    <COORDINATE>(426400.219,4581224.729)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 2" POSITION="END-0.00m" LANE="FORWARD2"/>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 2" POSITION="END-0.00m" LANE="FORWARD3"/>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 3" POSITION="END-0.00m" LANE="FORWARD1"/>
+   <!--Not adding another copy of 928_Z.FORWARD1.Signal 3-->
+  </LINK>
+  <LINK ID="929_0" NODEEND="N929_D1" OFFSETEND="-1.50 m" TYPE="184" NODESTART="N929_A" OFFSETSTART="-1.50 m">
+   <!--lane range of this sub section is 1-3 of 0-3-->
+   <POLYLINE>
+    <COORDINATE>(426394.705,4581214.746)</COORDINATE>
+    <COORDINATE>(426402.180,4581209.344)</COORDINATE>
+    <COORDINATE>(426407.065,4581205.920)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="929_J7" NODEEND="N930_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N929_B" OFFSETSTART="-1.50m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.000, lateral position at end -3.000-->
+     <CENTEROFFSETSTART>-3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.000, lateral position at end 3.000-->
+     <CENTEROFFSETSTART>3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="929_J8" NODEEND="N926_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N929_B" OFFSETSTART="4.50m" PRIORITY="YIELD">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD1-->
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSET>0m</CENTEROFFSET>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="40.70 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="929_Z" NODEEND="N929_B" TYPE="184" NODESTART="N929_D1">
+   <!--lane range of this sub section is 0-3 of 0-3-->
+   <POLYLINE>
+    <COORDINATE>(426412.407,4581202.272)</COORDINATE>
+    <COORDINATE>(426422.276,4581195.689)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="930_Z" NODEEND="N930_B" TYPE="184" NODESTART="N930_A">
+   <!--lane range of this sub section is 0-2 of 0-2-->
+   <POLYLINE>
+    <COORDINATE>(426468.716,4581163.654)</COORDINATE>
+    <COORDINATE>(426471.815,4581160.527)</COORDINATE>
+    <COORDINATE>(426475.457,4581156.698)</COORDINATE>
+    <COORDINATE>(426479.803,4581151.981)</COORDINATE>
+    <COORDINATE>(426485.016,4581146.193)</COORDINATE>
+    <COORDINATE>(426494.813,4581135.095)</COORDINATE>
+    <COORDINATE>(426507.467,4581120.545)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="931_Z" NODEEND="N931_B" TYPE="190" NODESTART="N931_A">
+   <!--lane range of this sub section is 0-1 of 0-1-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="932_J10" NODEEND="N929_A" OFFSETEND="-1.57m" TYPE="CONNECTORROADTYPE" NODESTART="N932_B" OFFSETSTART="-1.53m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end -3.141-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.141m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end -0.000-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 3.141-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.141m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="932_J9" NODEEND="N933_A" OFFSETEND="0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N932_B" OFFSETSTART="0.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.533, lateral position at end -3.000-->
+     <CENTEROFFSETSTART>-1.533m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="47.51 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.533, lateral position at end 0.000-->
+     <CENTEROFFSETSTART>-1.533m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="47.51 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.533, lateral position at end 3.000-->
+     <CENTEROFFSETSTART>1.533m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="47.51 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="932_Z" NODEEND="N932_B" TYPE="190" NODESTART="N932_A">
+   <!--lane range of this sub section is 0-1 of 0-1-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 4" POSITION="END-0.00m" LANE="FORWARD1"/>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 4" POSITION="END-0.00m" LANE="FORWARD2"/>
+   <!--Not adding another copy of 932_Z.FORWARD2.Signal 4-->
+   <!--Not adding another copy of 932_Z.FORWARD1.Signal 4-->
+   <!--Not adding another copy of 932_Z.FORWARD2.Signal 4-->
+   <!--Not adding another copy of 932_Z.FORWARD2.Signal 4-->
+  </LINK>
+  <LINK ID="933_J11" NODEEND="N1021_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N933_B" OFFSETSTART="-0.00m" PRIORITY="YIELD">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD4-->
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.000, lateral position at end -4.500-->
+     <CENTEROFFSETSTART>-3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="29.93 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD3-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="29.93 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.000, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="29.93 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.000, lateral position at end 4.500-->
+     <CENTEROFFSETSTART>3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="29.93 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="933_Z" NODEEND="N933_B" TYPE="184" NODESTART="N933_A">
+   <!--lane range of this sub section is 0-2 of 0-2-->
+   <POLYLINE>
+    <COORDINATE>(426367.699,4581261.470)</COORDINATE>
+    <COORDINATE>(426365.154,4581265.738)</COORDINATE>
+    <COORDINATE>(426362.765,4581269.893)</COORDINATE>
+    <COORDINATE>(426360.526,4581273.945)</COORDINATE>
+    <COORDINATE>(426358.432,4581277.901)</COORDINATE>
+    <COORDINATE>(426356.476,4581281.771)</COORDINATE>
+    <COORDINATE>(426354.651,4581285.561)</COORDINATE>
+    <COORDINATE>(426352.953,4581289.281)</COORDINATE>
+    <COORDINATE>(426351.374,4581292.939)</COORDINATE>
+    <COORDINATE>(426349.908,4581296.543)</COORDINATE>
+    <COORDINATE>(426348.549,4581300.102)</COORDINATE>
+    <COORDINATE>(426347.291,4581303.624)</COORDINATE>
+    <COORDINATE>(426346.128,4581307.117)</COORDINATE>
+    <COORDINATE>(426345.054,4581310.590)</COORDINATE>
+    <COORDINATE>(426344.062,4581314.050)</COORDINATE>
+    <COORDINATE>(426343.146,4581317.507)</COORDINATE>
+    <COORDINATE>(426342.300,4581320.969)</COORDINATE>
+    <COORDINATE>(426341.518,4581324.443)</COORDINATE>
+    <COORDINATE>(426340.794,4581327.939)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="934_J12" NODEEND="N929_A" OFFSETEND="-1.57m" TYPE="CONNECTORROADTYPE" NODESTART="N934_B" OFFSETSTART="0.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.000, lateral position at end -3.141-->
+     <CENTEROFFSETSTART>-3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.141m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end -0.000-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.000, lateral position at end 3.141-->
+     <CENTEROFFSETSTART>3.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.141m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="934_J13" NODEEND="N931_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N934_B" OFFSETSTART="-3.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD2-->
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end -1.599-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.599m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="31.94 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 1.599-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.599m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="31.94 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="934_Z" NODEEND="N934_B" TYPE="184" NODESTART="N934_A">
+   <!--lane range of this sub section is 0-2 of 0-2-->
+   <POLYLINE>
+    <COORDINATE>(426323.833,4581347.207)</COORDINATE>
+    <COORDINATE>(426325.170,4581339.111)</COORDINATE>
+    <COORDINATE>(426326.367,4581332.365)</COORDINATE>
+    <COORDINATE>(426326.945,4581329.339)</COORDINATE>
+    <COORDINATE>(426327.527,4581326.460)</COORDINATE>
+    <COORDINATE>(426328.126,4581323.664)</COORDINATE>
+    <COORDINATE>(426329.424,4581318.064)</COORDINATE>
+    <COORDINATE>(426330.943,4581312.030)</COORDINATE>
+    <COORDINATE>(426335.057,4581296.619)</COORDINATE>
+    <COORDINATE>(426338.983,4581286.772)</COORDINATE>
+    <COORDINATE>(426340.591,4581282.921)</COORDINATE>
+    <COORDINATE>(426342.167,4581279.351)</COORDINATE>
+    <COORDINATE>(426343.869,4581275.739)</COORDINATE>
+    <COORDINATE>(426345.850,4581271.760)</COORDINATE>
+    <COORDINATE>(426349.686,4581264.394)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 1" POSITION="END-5.00m" LANE="FORWARD1"/>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 1" POSITION="END-5.00m" LANE="FORWARD2"/>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 1" POSITION="END-5.00m" LANE="FORWARD3"/>
+   <!--Not adding another copy of 934_Z.FORWARD3.Signal 1-->
+  </LINK>
+  <LINK ID="935_0" NODEEND="N935_D1" TYPE="184" NODESTART="N935_A">
+   <!--lane range of this sub section is 0-2 of 0-2-->
+   <POLYLINE>
+    <COORDINATE>(426352.178,4581419.794)</COORDINATE>
+    <COORDINATE>(426353.595,4581421.588)</COORDINATE>
+    <COORDINATE>(426354.910,4581423.204)</COORDINATE>
+    <COORDINATE>(426356.151,4581424.667)</COORDINATE>
+    <COORDINATE>(426357.343,4581426.001)</COORDINATE>
+    <COORDINATE>(426358.514,4581427.229)</COORDINATE>
+    <COORDINATE>(426359.690,4581428.376)</COORDINATE>
+    <COORDINATE>(426360.899,4581429.466)</COORDINATE>
+    <COORDINATE>(426362.167,4581430.524)</COORDINATE>
+    <COORDINATE>(426363.520,4581431.572)</COORDINATE>
+    <COORDINATE>(426364.986,4581432.636)</COORDINATE>
+    <COORDINATE>(426366.591,4581433.740)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="935_J14" NODEEND="N936_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N935_B" OFFSETSTART="-1.50m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD2-->
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.500, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>-1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="935_J15" NODEEND="N940_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N935_B" OFFSETSTART="-0.00m" PRIORITY="YIELD">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD1-->
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSET>0m</CENTEROFFSET>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="42.79 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="935_Z" NODEEND="N935_B" OFFSETEND="-1.50 m" TYPE="184" NODESTART="N935_D1" OFFSETSTART="-1.50 m">
+   <!--lane range of this sub section is 1-2 of 0-2-->
+   <POLYLINE>
+    <COORDINATE>(426370.327,4581436.162)</COORDINATE>
+    <COORDINATE>(426377.643,4581440.696)</COORDINATE>
+    <COORDINATE>(426379.871,4581442.124)</COORDINATE>
+    <COORDINATE>(426381.241,4581442.912)</COORDINATE>
+    <COORDINATE>(426382.748,4581443.654)</COORDINATE>
+    <COORDINATE>(426384.588,4581444.425)</COORDINATE>
+    <COORDINATE>(426386.956,4581445.301)</COORDINATE>
+    <COORDINATE>(426391.928,4581446.970)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="936_Z" NODEEND="N936_B" TYPE="184" NODESTART="N936_A">
+   <!--lane range of this sub section is 0-1 of 0-1-->
+   <POLYLINE>
+    <COORDINATE>(426443.508,4581453.719)</COORDINATE>
+    <COORDINATE>(426452.163,4581453.589)</COORDINATE>
+    <COORDINATE>(426460.161,4581453.783)</COORDINATE>
+    <COORDINATE>(426467.543,4581454.289)</COORDINATE>
+    <COORDINATE>(426474.349,4581455.096)</COORDINATE>
+    <COORDINATE>(426480.618,4581456.192)</COORDINATE>
+    <COORDINATE>(426486.390,4581457.566)</COORDINATE>
+    <COORDINATE>(426491.705,4581459.206)</COORDINATE>
+    <COORDINATE>(426496.602,4581461.099)</COORDINATE>
+    <COORDINATE>(426501.123,4581463.235)</COORDINATE>
+    <COORDINATE>(426505.306,4581465.602)</COORDINATE>
+    <COORDINATE>(426509.192,4581468.188)</COORDINATE>
+    <COORDINATE>(426512.820,4581470.982)</COORDINATE>
+    <COORDINATE>(426516.230,4581473.971)</COORDINATE>
+    <COORDINATE>(426519.462,4581477.144)</COORDINATE>
+    <COORDINATE>(426522.556,4581480.490)</COORDINATE>
+    <COORDINATE>(426525.551,4581483.996)</COORDINATE>
+    <COORDINATE>(426528.488,4581487.652)</COORDINATE>
+    <COORDINATE>(426531.407,4581491.445)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="939_J16" NODEEND="N942_A" OFFSETEND="-1.50m" TYPE="CONNECTORROADTYPE" NODESTART="N939_B" OFFSETSTART="-0.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD2-->
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.500, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>-1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="939_J17" NODEEND="N940_A" OFFSETEND="-0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N939_B" OFFSETSTART="-1.50m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD1-->
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 0.000-->
+     <CENTEROFFSET>0m</CENTEROFFSET>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="45.26 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="939_Z" NODEEND="N939_B" TYPE="184" NODESTART="N939_A">
+   <!--lane range of this sub section is 0-1 of 0-1-->
+   <POLYLINE>
+    <COORDINATE>(426527.036,4581497.127)</COORDINATE>
+    <COORDINATE>(426523.520,4581492.915)</COORDINATE>
+    <COORDINATE>(426520.111,4581488.948)</COORDINATE>
+    <COORDINATE>(426516.763,4581485.228)</COORDINATE>
+    <COORDINATE>(426513.429,4581481.758)</COORDINATE>
+    <COORDINATE>(426510.066,4581478.538)</COORDINATE>
+    <COORDINATE>(426506.628,4581475.570)</COORDINATE>
+    <COORDINATE>(426503.068,4581472.856)</COORDINATE>
+    <COORDINATE>(426499.343,4581470.397)</COORDINATE>
+    <COORDINATE>(426495.406,4581468.194)</COORDINATE>
+    <COORDINATE>(426491.213,4581466.251)</COORDINATE>
+    <COORDINATE>(426486.717,4581464.567)</COORDINATE>
+    <COORDINATE>(426481.875,4581463.145)</COORDINATE>
+    <COORDINATE>(426476.639,4581461.985)</COORDINATE>
+    <COORDINATE>(426470.965,4581461.091)</COORDINATE>
+    <COORDINATE>(426464.808,4581460.463)</COORDINATE>
+    <COORDINATE>(426458.122,4581460.102)</COORDINATE>
+    <COORDINATE>(426450.862,4581460.011)</COORDINATE>
+    <COORDINATE>(426442.982,4581460.190)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="940_Z" NODEEND="N940_B" TYPE="194" NODESTART="N940_A">
+   <!--lane range of this sub section is 0-0 of 0-0-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="941_J18" NODEEND="N942_A" OFFSETEND="-1.50m" TYPE="CONNECTORROADTYPE" NODESTART="N941_B" OFFSETSTART="0.00m">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD2-->
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="37.28 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="37.28 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="941_Z" NODEEND="N941_B" TYPE="194" NODESTART="N941_A">
+   <!--lane range of this sub section is 0-0 of 0-0-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="942_0" NODEEND="N942_D1" OFFSETEND="-1.50 m" TYPE="184" NODESTART="N942_A" OFFSETSTART="-1.50 m">
+   <!--lane range of this sub section is 1-2 of 0-2-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="942_J19" NODEEND="N1023_A" OFFSETEND="0.00m" TYPE="CONNECTORROADTYPE" NODESTART="N942_B" OFFSETSTART="0.00m" PRIORITY="YIELD">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD4-->
+    <LANE ID="FORWARD4" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -3.218, lateral position at end -4.500-->
+     <CENTEROFFSETSTART>-3.218m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="30.46 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD3-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 0.000, lateral position at end -1.500-->
+     <CENTEROFFSETSTART>0.000m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="30.46 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.218, lateral position at end 1.500-->
+     <CENTEROFFSETSTART>3.218m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>1.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="30.46 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 3.218, lateral position at end 4.500-->
+     <CENTEROFFSETSTART>3.218m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>4.500m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="30.46 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="942_Z" NODEEND="N942_B" TYPE="184" NODESTART="N942_D1">
+   <!--lane range of this sub section is 0-2 of 0-2-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="943_Z" NODEEND="N943_B" TYPE="184" NODESTART="N943_A">
+   <!--lane range of this sub section is 0-2 of 0-2-->
+   <POLYLINE>
+    <COORDINATE>(426281.939,4581404.645)</COORDINATE>
+    <COORDINATE>(426280.152,4581404.014)</COORDINATE>
+    <COORDINATE>(426278.448,4581403.477)</COORDINATE>
+    <COORDINATE>(426276.779,4581403.034)</COORDINATE>
+    <COORDINATE>(426275.093,4581402.687)</COORDINATE>
+    <COORDINATE>(426273.341,4581402.436)</COORDINATE>
+    <COORDINATE>(426271.474,4581402.282)</COORDINATE>
+    <COORDINATE>(426269.441,4581402.227)</COORDINATE>
+    <COORDINATE>(426267.193,4581402.272)</COORDINATE>
+    <COORDINATE>(426264.681,4581402.417)</COORDINATE>
+    <COORDINATE>(426261.853,4581402.663)</COORDINATE>
+    <COORDINATE>(426258.661,4581403.012)</COORDINATE>
+    <COORDINATE>(426255.055,4581403.464)</COORDINATE>
+    <COORDINATE>(426250.985,4581404.020)</COORDINATE>
+    <COORDINATE>(426241.254,4581405.450)</COORDINATE>
+    <COORDINATE>(426229.069,4581407.310)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="944_J20" NODEEND="N1020_A" OFFSETEND="-1.50m" TYPE="CONNECTORROADTYPE" NODESTART="N944_B" OFFSETSTART="-0.00m" PRIORITY="YIELD">
+   <BEZIER SHAPE="1"/>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <!--Adding lane; changing name to FORWARD3-->
+    <LANE ID="FORWARD3" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start -1.500, lateral position at end -3.000-->
+     <CENTEROFFSETSTART>-1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="24.42 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD2-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end -0.000-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>-0.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="24.42 km/h"/>
+    </LANE>
+    <!--Adding lane; changing name to FORWARD1-->
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <!--lateral position at start 1.500, lateral position at end 3.000-->
+     <CENTEROFFSETSTART>1.500m</CENTEROFFSETSTART>
+     <CENTEROFFSETEND>3.000m</CENTEROFFSETEND>
+     <WIDTH>3.000m</WIDTH>
+     <SPEEDLIMIT GTUTYPE="ROAD_USER" LEGALSPEEDLIMIT="24.42 km/h"/>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="944_Z" NODEEND="N944_B" TYPE="184" NODESTART="N944_A">
+   <!--lane range of this sub section is 0-1 of 0-1-->
+   <POLYLINE>
+    <COORDINATE>(426256.171,4581395.751)</COORDINATE>
+    <COORDINATE>(426257.896,4581395.544)</COORDINATE>
+    <COORDINATE>(426259.648,4581395.375)</COORDINATE>
+    <COORDINATE>(426263.198,4581395.129)</COORDINATE>
+    <COORDINATE>(426268.531,4581394.925)</COORDINATE>
+    <COORDINATE>(426276.930,4581394.727)</COORDINATE>
+    <COORDINATE>(426279.942,4581394.594)</COORDINATE>
+    <COORDINATE>(426281.344,4581394.497)</COORDINATE>
+    <COORDINATE>(426282.665,4581394.375)</COORDINATE>
+    <COORDINATE>(426283.899,4581394.223)</COORDINATE>
+    <COORDINATE>(426285.038,4581394.036)</COORDINATE>
+   </POLYLINE>
+   <ROADLAYOUT>
+    <STRIPE TYPE="SOLID"/>
+    <LANE ID="FORWARD2" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="DASHED"/>
+    <LANE ID="FORWARD1" LANETYPE="URBANLANE" DESIGNDIRECTION="true">
+     <WIDTH>3.000m</WIDTH>
+    </LANE>
+    <STRIPE TYPE="SOLID"/>
+   </ROADLAYOUT>
+  </LINK>
+  <LINK ID="ZEBRA_A933" NODEEND="LHSA933" TYPE="ZEBRALINKTYPE" NODESTART="RHSA933">
+   <!--Creating zebra link ZEBRA_A933-->
+   <!--points of section 933: 426370.407,4581257.08 426367.699,4581261.47 426365.154,4581265.74 426362.765,4581269.89 426360.526,4581273.95 426358.432,4581277.90 426356.476,4581281.77 426354.651,4581285.56 426352.953,4581289.28 426351.374,4581292.94 426349.908,4581296.54 426348.549,4581300.10 426347.291,4581303.62 426346.128,4581307.12 426345.054,4581310.59 426344.062,4581314.05 426343.146,4581317.51 426342.300,4581320.97 426341.518,4581324.44 426340.794,4581327.94 426333.939,4581372.34 -->
+   <!--Pedestrian crossing centered at 426369.094,4581259.210, traffic heading 121.684-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <LANE ID="ZEBRA" LANETYPE="ZEBRALANE" DESIGNDIRECTION="true">
+     <WIDTH>5.000m</WIDTH>
+    </LANE>
+   </ROADLAYOUT>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 5_A" POSITION="0m" LANE="ZEBRA"/>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 5_B" POSITION="END-0m" LANE="ZEBRA"/>
+  </LINK>
+  <LINK ID="ZEBRA_B934" NODEEND="LHSB934" TYPE="ZEBRALINKTYPE" NODESTART="RHSB934">
+   <!--Creating zebra link ZEBRA_B934-->
+   <!--points of section 934: 426320.327,4581369.49 426323.833,4581347.21 426325.170,4581339.11 426326.367,4581332.37 426326.945,4581329.34 426327.527,4581326.46 426328.126,4581323.66 426329.424,4581318.06 426330.943,4581312.03 426335.057,4581296.62 426338.983,4581286.77 426340.591,4581282.92 426342.167,4581279.35 426343.869,4581275.74 426345.850,4581271.76 426349.686,4581264.39 426357.229,4581250.26 -->
+   <!--Pedestrian crossing centered at 426356.052,4581252.466, traffic heading 118.087-->
+   <STRAIGHT/>
+   <ROADLAYOUT>
+    <LANE ID="ZEBRA" LANETYPE="ZEBRALANE" DESIGNDIRECTION="true">
+     <WIDTH>5.000m</WIDTH>
+    </LANE>
+   </ROADLAYOUT>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 5_A" POSITION="0m" LANE="ZEBRA"/>
+   <TRAFFICLIGHT CLASS="org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight" ID="Signal 5_B" POSITION="END-0m" LANE="ZEBRA"/>
+  </LINK>
+ </NETWORK>
+ <NETWORKDEMAND>
+  <OD ID="Traffic Demand - Mat" GLOBALFACTOR="1.000" GLOBALINTERPOLATION="STEPWISE">
+   <CATEGORY ID="Car.53" GTUTYPE="Car.53"/>
+   <CATEGORY ID="Truck.56" GTUTYPE="Truck.56"/>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="Diagonal" CATEGORY="Car.53">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="Mara�on" CATEGORY="Car.53">
+    <LEVEL TIME="0s">332.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">332.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="Reig" CATEGORY="Car.53">
+    <LEVEL TIME="0s">190.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">190.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="Travessera" CATEGORY="Car.53">
+    <LEVEL TIME="0s">570.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">570.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="CampNou" CATEGORY="Car.53">
+    <LEVEL TIME="0s">19.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">19.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="Diagonal" CATEGORY="Car.53">
+    <LEVEL TIME="0s">332.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">332.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="Mara�on" CATEGORY="Car.53">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="Reig" CATEGORY="Car.53">
+    <LEVEL TIME="0s">47.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">47.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="Travessera" CATEGORY="Car.53">
+    <LEVEL TIME="0s">285.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">285.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="CampNou" CATEGORY="Car.53">
+    <LEVEL TIME="0s">14.25veh/h</LEVEL>
+    <LEVEL TIME="3600s">14.25veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="Diagonal" CATEGORY="Car.53">
+    <LEVEL TIME="0s">237.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">237.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="Mara�on" CATEGORY="Car.53">
+    <LEVEL TIME="0s">23.75veh/h</LEVEL>
+    <LEVEL TIME="3600s">23.75veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="Reig" CATEGORY="Car.53">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="Travessera" CATEGORY="Car.53">
+    <LEVEL TIME="0s">95.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">95.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="CampNou" CATEGORY="Car.53">
+    <LEVEL TIME="0s">4.75veh/h</LEVEL>
+    <LEVEL TIME="3600s">4.75veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="Diagonal" CATEGORY="Car.53">
+    <LEVEL TIME="0s">380.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">380.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="Mara�on" CATEGORY="Car.53">
+    <LEVEL TIME="0s">380.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">380.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="Reig" CATEGORY="Car.53">
+    <LEVEL TIME="0s">142.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">142.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="Travessera" CATEGORY="Car.53">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="CampNou" CATEGORY="Car.53">
+    <LEVEL TIME="0s">28.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">28.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="Diagonal" CATEGORY="Car.53">
+    <LEVEL TIME="0s">23.75veh/h</LEVEL>
+    <LEVEL TIME="3600s">23.75veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="Mara�on" CATEGORY="Car.53">
+    <LEVEL TIME="0s">19.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">19.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="Reig" CATEGORY="Car.53">
+    <LEVEL TIME="0s">14.25veh/h</LEVEL>
+    <LEVEL TIME="3600s">14.25veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="Travessera" CATEGORY="Car.53">
+    <LEVEL TIME="0s">28.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">28.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="CampNou" CATEGORY="Car.53">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="Diagonal" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="Mara�on" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">17.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">17.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="Reig" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">10.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">10.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="Travessera" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">30.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">30.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Diagonal" ORIGIN="CampNou" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">1.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">1.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="Diagonal" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">17.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">17.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="Mara�on" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="Reig" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">2.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">2.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="Travessera" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">15.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">15.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Mara�on" ORIGIN="CampNou" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">0.75veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.75veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="Diagonal" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">12.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">12.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="Mara�on" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">1.25veh/h</LEVEL>
+    <LEVEL TIME="3600s">1.25veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="Reig" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="Travessera" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">5.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">5.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Reig" ORIGIN="CampNou" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">0.25veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.25veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="Diagonal" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">20.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">20.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="Mara�on" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">20.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">20.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="Reig" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">7.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">7.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="Travessera" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="Travessera" ORIGIN="CampNou" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">1.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">1.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="Diagonal" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">1.25veh/h</LEVEL>
+    <LEVEL TIME="3600s">1.25veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="Mara�on" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">1.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">1.00veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="Reig" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">0.75veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.75veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="Travessera" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">1.50veh/h</LEVEL>
+    <LEVEL TIME="3600s">1.50veh/h</LEVEL>
+   </DEMAND>
+   <DEMAND DESTINATION="CampNou" ORIGIN="CampNou" CATEGORY="Truck.56">
+    <LEVEL TIME="0s">0.00veh/h</LEVEL>
+    <LEVEL TIME="3600s">0.00veh/h</LEVEL>
+   </DEMAND>
+  </OD>
+ </NETWORKDEMAND>
+ <CONTROL>
+  <FIXEDTIME CYCLETIME="90.00s" ID="SC1">
+   <SIGNALGROUP ID="SG1">
+    <TRAFFICLIGHT LINK="928_Z" TRAFFICLIGHTID="Signal 2" LANE="FORWARD2"/>
+    <TRAFFICLIGHT LINK="928_Z" TRAFFICLIGHTID="Signal 2" LANE="FORWARD3"/>
+    <TRAFFICLIGHT LINK="928_Z" TRAFFICLIGHTID="Signal 3" LANE="FORWARD1"/>
+    <TRAFFICLIGHT LINK="934_Z" TRAFFICLIGHTID="Signal 1" LANE="FORWARD1"/>
+    <TRAFFICLIGHT LINK="934_Z" TRAFFICLIGHTID="Signal 1" LANE="FORWARD2"/>
+    <TRAFFICLIGHT LINK="934_Z" TRAFFICLIGHTID="Signal 1" LANE="FORWARD3"/>
+   </SIGNALGROUP>
+   <SIGNALGROUP ID="SG2">
+    <TRAFFICLIGHT LINK="928_Z" TRAFFICLIGHTID="Signal 3" LANE="FORWARD1"/>
+   </SIGNALGROUP>
+   <SIGNALGROUP ID="SG3">
+    <TRAFFICLIGHT LINK="ZEBRA_A933" TRAFFICLIGHTID="Signal 5_A" LANE="ZEBRA"/>
+    <TRAFFICLIGHT LINK="ZEBRA_A933" TRAFFICLIGHTID="Signal 5_B" LANE="ZEBRA"/>
+    <TRAFFICLIGHT LINK="ZEBRA_B934" TRAFFICLIGHTID="Signal 5_A" LANE="ZEBRA"/>
+    <TRAFFICLIGHT LINK="ZEBRA_B934" TRAFFICLIGHTID="Signal 5_B" LANE="ZEBRA"/>
+   </SIGNALGROUP>
+   <SIGNALGROUP ID="SG4">
+    <TRAFFICLIGHT LINK="932_Z" TRAFFICLIGHTID="Signal 4" LANE="FORWARD1"/>
+    <TRAFFICLIGHT LINK="932_Z" TRAFFICLIGHTID="Signal 4" LANE="FORWARD2"/>
+   </SIGNALGROUP>
+   <SIGNALGROUP ID="SG5">
+    <TRAFFICLIGHT LINK="932_Z" TRAFFICLIGHTID="Signal 4" LANE="FORWARD1"/>
+    <TRAFFICLIGHT LINK="932_Z" TRAFFICLIGHTID="Signal 4" LANE="FORWARD2"/>
+   </SIGNALGROUP>
+   <CYCLE SIGNALGROUPID="SG1" GREEN="40.00s" YELLOW="3.0s" OFFSET="0.0s"/>
+   <CYCLE SIGNALGROUPID="SG2" GREEN="6.00s" YELLOW="3.0s" OFFSET="40.0s"/>
+   <CYCLE SIGNALGROUPID="SG3" GREEN="14.00s" YELLOW="3.0s" OFFSET="46.0s"/>
+   <CYCLE SIGNALGROUPID="SG4" GREEN="6.00s" YELLOW="3.0s" OFFSET="60.0s"/>
+   <CYCLE SIGNALGROUPID="SG5" GREEN="18.00s" YELLOW="3.0s" OFFSET="66.0s"/>
+  </FIXEDTIME>
+ </CONTROL>
+ <MODEL/>
+ <SCENARIO/>
+ <RUN>
+  <RUNLENGTH>3600s</RUNLENGTH>
+  <NUMBERREPLICATIONS>1</NUMBERREPLICATIONS>
+  <RANDOMSTREAMS>
+   <RANDOMSTREAM ID="default">
+    <REPLICATION ID="1" SEED="6024"/>
+   </RANDOMSTREAM>
+   <RANDOMSTREAM ID="generation">
+    <REPLICATION ID="1" SEED="6025"/>
+   </RANDOMSTREAM>
+  </RANDOMSTREAMS>
+ </RUN>
+ <!--Not creating another zebra link ZEBRA_A933-->
+ <!--Not creating another zebra link ZEBRA_B934-->
+</OTS>
