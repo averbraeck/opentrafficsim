@@ -426,7 +426,8 @@
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
 
-          <detectJavaApiLink>true</detectJavaApiLink>
+          <detectJavaApiLink>false</detectJavaApiLink>
+          <failOnError>false</failOnError>
 
         </configuration>
 
@@ -716,6 +717,7 @@
           <maxmemory>1g</maxmemory>
 
           <detectJavaApiLink>false</detectJavaApiLink>
+          <failOnError>false</failOnError>
 
         </configuration>
 
