@@ -696,7 +696,12 @@ public class ContourDataSource<G extends GtuDataInterface>
                     List<TrajectoryGroup<?>> trajectories = new ArrayList<>();
                     for (Section<KpiLaneDirection> section : getPath().getSections())
                     {
-                        trajectories.add(this.samplerData.getTrajectoryGroup(section.getSource(series)));
+                        TrajectoryGroup<?> trajectoryGroup = this.samplerData.getTrajectoryGroup(section.getSource(series));
+                        if (null == trajectoryGroup)
+                        {
+                            CategoryLogger.always().error("trajectoryGroup {} is null", series);
+                        }
+                        trajectories.add(trajectoryGroup);
                     }
 
                     // filter groups (lanes) that overlap with section i

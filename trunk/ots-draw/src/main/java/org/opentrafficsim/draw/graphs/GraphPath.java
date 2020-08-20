@@ -192,6 +192,33 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         return new ImmutableArrayList<>(this.sections, Immutable.WRAP);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "GraphPath [sections=" + this.sections + ", startDistances=" + this.startDistances + ", totalLength="
+            + this.totalLength + ", speedLimit=" + this.speedLimit + "]";
+    }
+
+    /**
+     * Start recording along path.
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
+     */
+    public static void initRecording(final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path)
+    {
+        System.out.println("entered initRecording");
+        for (Section<KpiLaneDirection> section : path.getSections())
+        {
+            for (KpiLaneDirection kpiLaneDirection : section)
+            {
+                // System.out.println("Registering space time region for " + kpiLaneDirection);
+                sampler.registerSpaceTimeRegion(new SpaceTimeRegion(kpiLaneDirection, Length.ZERO,
+                        kpiLaneDirection.getLaneData().getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
+            }
+        }
+    }
+
     /**
      * Interface for sections.
      * <p>
@@ -205,7 +232,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <S> underlying type
      */
-    public static interface Section<S> extends Iterable<S>
+    public interface Section<S> extends Iterable<S>
     {
         /**
          * Returns the section length.
@@ -225,31 +252,6 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
          * @return S; underlying object of the series
          */
         S getSource(int series);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
-    {
-        return "GraphPath [sections=" + this.sections + ", startDistances=" + this.startDistances + ", totalLength="
-            + this.totalLength + ", speedLimit=" + this.speedLimit + "]";
-    }
-
-    /**
-     * Start recording along path.
-     * @param sampler Sampler&lt;?&gt;; sampler
-     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
-     */
-    public static void initRecording(final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path)
-    {
-        for (Section<KpiLaneDirection> section : path.getSections())
-        {
-            for (KpiLaneDirection kpiLaneDirection : section)
-            {
-                sampler.registerSpaceTimeRegion(new SpaceTimeRegion(kpiLaneDirection, Length.ZERO,
-                        kpiLaneDirection.getLaneData().getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
-            }
-        }
     }
 
 }

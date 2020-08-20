@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.djutils.logger.CategoryLogger;
 
 /**
- * The GrapghUpdater can be used to repeatedly offer a value that is automatically processed in order of offering in a parallel
+ * The GraphUpdater can be used to repeatedly offer a value that is automatically processed in order of offering in a parallel
  * Thread.
  * <p>
  * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
