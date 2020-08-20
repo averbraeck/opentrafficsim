@@ -202,6 +202,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     {
         if (isAutorun())
         {
+            // TODO: wait until simulation control buttons are enabled (indicating that the tabs have been added)
             this.simulator = new OTSSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
@@ -254,6 +255,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             };
             addTabs(this.simulator, app);
             app.setExitOnClose(true);
+            animationPanel.getOtsControlPanel().enableSimulationControlButtons(true);
         }
     }
 

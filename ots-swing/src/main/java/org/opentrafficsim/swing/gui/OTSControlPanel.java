@@ -105,6 +105,9 @@ public class OTSControlPanel extends JPanel
 
     /** The currently registered stop at event. */
     private SimEvent<SimTimeDoubleUnit> stopAtEvent = null;
+    
+    /** The current enabled state of the buttons. */
+    private boolean buttonsEnabled = false;
 
     /** Has the window close handler been registered? */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -182,6 +185,16 @@ public class OTSControlPanel extends JPanel
         this.simulator.addListener(this, SimulatorInterface.START_EVENT);
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
         this.simulator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
+    }
+    
+    /**
+     * Change the enabled/disabled state of the various simulation control buttons.
+     * @param newState boolean; true if the buttons should become enabled; false if the buttons should become disabled
+     */
+    public void enableSimulationControlButtons(final boolean newState)
+    {
+        this.buttonsEnabled = newState;
+        fixButtons();
     }
 
     /**
@@ -513,11 +526,11 @@ public class OTSControlPanel extends JPanel
             final String actionCommand = button.getActionCommand();
             if (actionCommand.equals("Step"))
             {
-                button.setEnabled(moreWorkToDo);
+                button.setEnabled(moreWorkToDo && this.buttonsEnabled);
             }
             else if (actionCommand.equals("RunPause"))
             {
-                button.setEnabled(moreWorkToDo);
+                button.setEnabled(moreWorkToDo && this.buttonsEnabled);
                 if (this.simulator.isStartingOrRunning())
                 {
                     button.setToolTipText("Pause the simulation");
@@ -528,11 +541,11 @@ public class OTSControlPanel extends JPanel
                     button.setToolTipText("Run the simulation at the indicated speed");
                     button.setIcon(loadIcon("/Play.png"));
                 }
-                button.setEnabled(moreWorkToDo);
+                button.setEnabled(moreWorkToDo && this.buttonsEnabled);
             }
             else if (actionCommand.equals("NextTime"))
             {
-                button.setEnabled(moreWorkToDo);
+                button.setEnabled(moreWorkToDo && this.buttonsEnabled);
             }
 //            else if (actionCommand.equals("Reset"))
 //            {
