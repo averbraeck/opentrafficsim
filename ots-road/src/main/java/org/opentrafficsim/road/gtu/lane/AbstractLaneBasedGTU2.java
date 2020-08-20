@@ -1050,7 +1050,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 if (when.si == this.cachePositionsTime && plan == this.cacheOperationalPlan)
                 {
                     Length l = this.cachedPositions.get(lane, relativePosition);
-                    if (l != null)
+                    if (l != null && (!Double.isNaN(l.si)))
                     {
                         CACHED_POSITION++;
                         // PK verify the result; uncomment if you don't trust the cache
@@ -1146,6 +1146,12 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                         // this can occur as the GTU was generated with the rear upstream of the lane, or due to rounding errors
                         // use different fraction projection fallback
                         f = lane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.ENDPOINT);
+                        if (Double.isNaN(f))
+                        {
+                            CategoryLogger.always().error("GTU {} at location {} cannot project itself onto {}; p is {}", this,
+                                    getLocation(), lane.getCenterLine(), p);
+                            plan.getLocation(when, relativePosition);
+                        }
                         loc = lane.getLength().si * f;
 
                         // if (CACHING)
@@ -1210,6 +1216,14 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                         new DirectedLanePosition(refLane, position(refLane, getReference()), this.getDirection(refLane));
                 this.referencePositionTime = getSimulator().getSimulatorTime().si;
                 return this.cachedReferencePosition;
+            }
+            CategoryLogger.always().error("The reference point of GTU {} is not on any of the lanes on which it is registered",
+                    this);
+            for (CrossSection crossSection : this.crossSections)
+            {
+                Lane lane = crossSection.getLanes().get(this.referenceLaneIndex);
+                double fraction = fractionalPosition(lane, getReference());
+                CategoryLogger.always().error("\tGTU is on lane \"{}\" at fraction {}", lane, fraction);
             }
             throw new GTUException(
                     "The reference point of GTU " + this + " is not on any of the lanes on which it is registered");
