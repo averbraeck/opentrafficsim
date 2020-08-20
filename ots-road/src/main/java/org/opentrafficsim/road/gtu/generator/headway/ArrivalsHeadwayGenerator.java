@@ -161,6 +161,13 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         throw new RuntimeException("Exception while determining headway from Arrivals.");
     }
 
+    @Override
+    public String toString()
+    {
+        return "ArrivalsHeadwayGenerator [arrivals=" + arrivals + ", simulator=" + simulator + ", stream=" + stream
+                + ", distribution=" + distribution + ", first=" + first + "]";
+    }
+
     /**
      * Headway distribution.
      * <p>
