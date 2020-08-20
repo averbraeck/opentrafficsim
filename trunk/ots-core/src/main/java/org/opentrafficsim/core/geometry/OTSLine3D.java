@@ -981,6 +981,16 @@ public class OTSLine3D implements Locatable, Serializable
         int n2 = this.lengthIndexedLine.length - 2;
         double len = positionSI - getLengthSI();
         double fraction = len / (this.lengthIndexedLine[n1] - this.lengthIndexedLine[n2]);
+        while (Double.isInfinite(fraction))
+        {
+            if (--n2 < 0)
+            {
+                CategoryLogger.always().error("lengthIndexedLine of {} is invalid", this);
+                OTSPoint3D p = this.points[n1];
+                return new DirectedPoint(p.x, p.y, p.z, 0.0, 0.0, 0.0); // Bogus direction
+            }
+            fraction = len / (this.lengthIndexedLine[n1] - this.lengthIndexedLine[n2]);
+        }
         OTSPoint3D p1 = this.points[n2];
         OTSPoint3D p2 = this.points[n1];
         return new DirectedPoint(p2.x + fraction * (p2.x - p1.x), p2.y + fraction * (p2.y - p1.y),
