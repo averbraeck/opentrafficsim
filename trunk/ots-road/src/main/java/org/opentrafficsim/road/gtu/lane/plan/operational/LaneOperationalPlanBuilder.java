@@ -22,7 +22,9 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
@@ -292,6 +294,24 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      */
     public static OTSLine3D createPathAlongCenterLine(final LaneBasedGTU gtu, final Length distance) throws OTSGeometryException
     {
+        // if (gtu.getId().equals("1669") && gtu.getSimulator().getSimulatorTime().si >= 2508.9)
+        // {
+        // System.out.println("processing gtu " + gtu);
+        // try
+        // {
+        // for (Lane l : gtu.fractionalPositions(RelativePosition.REFERENCE_POSITION).keySet())
+        // {
+        // System.out.println("fractional position on lane " + l + ": "
+        // + gtu.fractionalPositions(RelativePosition.REFERENCE_POSITION).get(l));
+        // }
+        // System.out.println("reference position is " + gtu.getReferencePosition());
+        // System.out.println("operational plan path is " + gtu.getOperationalPlan().getPath());
+        // }
+        // catch (GTUException e)
+        // {
+        // e.printStackTrace();
+        // }
+        // }
         OTSLine3D path = null;
         try
         {
@@ -319,13 +339,22 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                     path = ref.getLane().getCenterLine().extractFractional(0.0, 1.0).reverse();
                 }
             }
+            // if (gtu.getId().equals("1669") && gtu.getSimulator().getSimulatorTime().si >= 2508.9)
+            // {
+            // System.out.println("First part of path is " + path);
+            // }
             LaneDirection prevFrom = null;
             LaneDirection from = ref.getLaneDirection();
             int n = 1;
+            boolean alternativeTried = false;
             while (path == null || path.getLength().si < distance.si + n * Lane.MARGIN.si)
             {
                 n++;
                 prevFrom = from;
+                if (null == from)
+                {
+                    CategoryLogger.always().warn("About to die: GTU {} has null from value", gtu.getId());
+                }
                 from = from.getNextLaneDirection(gtu);
                 if (from == null)
                 {
@@ -344,7 +373,55 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                             return new OTSLine3D(points);
                         }
                     }
+                    if (!alternativeTried)
+                    {
+                        for (Lane l : gtu.fractionalPositions(RelativePosition.REFERENCE_POSITION).keySet())
+                        {
+                            if (ref.getLane().equals(l))
+                            {
+                                continue;
+                            }
+                            CategoryLogger.always().warn("GTU {} dead end on {}; but reference position is on {}; trying that",
+                                    gtu.getId(), ref, l);
+                            // Figure out the driving direction and position on Lane l
+                            // For now assume that lane l and ref are lanes on the same parent link. If not, chaos may occur
+                            if (!l.getParentLink().equals(ref.getLane().getParentLink()))
+                            {
+                                CategoryLogger.always()
+                                        .error("Assumption that l and ref.getLane are on same Link does not hold");
+                            }
+                            from = new LaneDirection(l, ref.getGtuDirection());
+                            if (ref.getGtuDirection().isPlus() && f < 1.0)
+                            {
+                                if (f >= 0.0)
+                                {
+                                    path = l.getCenterLine().extractFractional(f, 1.0);
+                                }
+                                else
+                                {
+                                    path = l.getCenterLine().extractFractional(0.0, 1.0);
+                                }
+                            }
+                            else if (ref.getGtuDirection().isMinus() && f > 0.0)
+                            {
+                                if (f <= 1.0)
+                                {
+                                    path = l.getCenterLine().extractFractional(0.0, f).reverse();
+                                }
+                                else
+                                {
+                                    path = l.getCenterLine().extractFractional(0.0, 1.0).reverse();
+                                }
+                            }
+                            alternativeTried = true;
+                        }
+                        if (null != from)
+                        {
+                            continue;
+                        }
+                    }
                     CategoryLogger.always().error("GTU {} has nowhere to go and no sink sensor either", gtu);
+                    gtu.getReferencePosition();
                     gtu.destroy();
                     return path;
                 }
