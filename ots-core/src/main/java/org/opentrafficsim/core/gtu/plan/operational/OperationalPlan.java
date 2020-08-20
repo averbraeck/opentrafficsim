@@ -964,7 +964,7 @@ public class OperationalPlan implements Serializable
                 }
             }
             CategoryLogger.always().error("AccelerationSegment " + this + " timeAtDistance( " + distance + ") failed");
-            return null; // No valid solution
+            return new Duration(Double.NaN, DurationUnit.SI); // No valid solution; let the caller deal with that
         }
 
         /** {@inheritDoc} */
