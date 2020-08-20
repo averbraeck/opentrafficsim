@@ -55,6 +55,13 @@ public class SimpleColumn<T> implements Column<T>
     public Class<T> getValueType()
     {
         return this.valueType;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "SimpleColumn [id=" + id + ", description=" + description + ", valueType=" + valueType + "]";
     } 
 
 }

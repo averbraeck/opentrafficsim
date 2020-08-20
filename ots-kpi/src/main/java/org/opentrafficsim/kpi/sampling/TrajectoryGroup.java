@@ -80,6 +80,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
      */
     public final synchronized void addTrajectory(final Trajectory<G> trajectory)
     {
+        // System.out.println("Adding trajectory " + trajectory + " to " + this.toString());
         this.trajectories.add(trajectory);
     }
 
@@ -284,7 +285,8 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     public final String toString()
     {
         return "TrajectoryGroup [startTime=" + this.startTime + ", minLength=" + this.startPosition + ", maxLength="
-                + this.endPosition + ", laneDirection=" + this.laneDirection + "]";
+                + this.endPosition + ", laneDirection=" + this.laneDirection + ", collected "
+                + (this.trajectories == null ? "null" : this.trajectories.size()) + " trajectories]";
     }
 
     /** {@inheritDoc} */
