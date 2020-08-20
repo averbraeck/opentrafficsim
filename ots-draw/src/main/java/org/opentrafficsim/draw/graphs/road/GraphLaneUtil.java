@@ -103,6 +103,14 @@ public final class GraphLaneUtil
                 {
                     return kpiLaneDirection;
                 }
+                
+                /** {@inheritDoc} */
+                @Override
+                public String toString()
+                {
+                    return String.format("(Anonymous) Section[length=%s, speedLimit=%s, source=%s]", length, speed,
+                            kpiLaneDirection);
+                }
             });
             set.add(lane);
             ImmutableMap<Lane, GTUDirectionality> map = lane.getLane().downstreamLanes(lane.getDirection(), null);
