@@ -72,23 +72,23 @@
     <djunits.version>4.01.06</djunits.version>
     <djutils.version>1.05.04</djutils.version>
     <dsol.version>3.04.10</dsol.version>
-    <sim0mq.version>2.00.03</sim0mq.version>
+    <sim0mq.version>2.00.04</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>
-    <geotools.version>20.2</geotools.version>
-    <jts.version>1.16.0</jts.version>
-    <osmosis.version>0.46</osmosis.version>
+    <geotools.version>20.5</geotools.version>
+    <jts.version>1.17.0</jts.version>
+    <osmosis.version>0.48.2</osmosis.version>
     <jfreechart.version>1.5.0</jfreechart.version>
-    <xml-apis.version>1.4.01</xml-apis.version>
-    <apache.poi.version>4.0.0</apache.poi.version>
-    <jgrapht.version>1.2.0</jgrapht.version>
+    <xml-apis.version>2.0.2</xml-apis.version>
+    <apache.poi.version>4.1.2</apache.poi.version>
+    <jgrapht.version>1.5.0</jgrapht.version>
     <multislider.version>1.0</multislider.version>
-    <ojalgo.version>46.1.0</ojalgo.version>
-    <osm.version>0.46</osm.version>
-    <xstream.version>1.4.10</xstream.version>
+    <ojalgo.version>48.2.0</ojalgo.version>
+    <osm.version>0.48.2</osm.version>
+    <xstream.version>1.4.12</xstream.version>
     <!-- powermock.version>2.0.7</powermock.version -->
-    <mockito.version>3.3.3</mockito.version>
-    <protobuf.version>3.4.0</protobuf.version>
+    <mockito.version>3.5.2</mockito.version>
+    <protobuf.version>3.13.0</protobuf.version>
     <jaxb.version>2.3.1</jaxb.version>
 
     <maven.compiler.version>3.8.1</maven.compiler.version>
@@ -1398,7 +1398,7 @@
       </snapshots>
       <id>osgeo</id>
       <name>osgeo</name>
-      <url>https://download.osgeo.org/webdav/geotools/</url>
+      <url>https://repo.osgeo.org/repository/release/</url>
     </repository>
 
     <repository>
