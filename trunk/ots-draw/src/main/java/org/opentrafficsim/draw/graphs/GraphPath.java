@@ -207,12 +207,10 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      */
     public static void initRecording(final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path)
     {
-        System.out.println("entered initRecording");
         for (Section<KpiLaneDirection> section : path.getSections())
         {
             for (KpiLaneDirection kpiLaneDirection : section)
             {
-                // System.out.println("Registering space time region for " + kpiLaneDirection);
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion(kpiLaneDirection, Length.ZERO,
                         kpiLaneDirection.getLaneData().getLength(), Time.ZERO, Time.instantiateSI(Double.MAX_VALUE)));
             }
