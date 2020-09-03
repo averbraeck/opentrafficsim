@@ -140,6 +140,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                     simulator, busModel, DEFAULT_COLORER, busModel.getNetwork());
             BusStreetDemo app = new BusStreetDemo("Bus street demo", animationPanel, busModel);
             app.setExitOnClose(exitOnClose);
+            animationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {

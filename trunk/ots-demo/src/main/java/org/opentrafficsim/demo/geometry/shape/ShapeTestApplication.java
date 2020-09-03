@@ -84,6 +84,7 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
                 new TimedEvent(Replication.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
 
         new ShapeTestApplication("Network Transmission Model", panel);
+        animationPanel.enableSimulationControlButtons();
     }
 
 }

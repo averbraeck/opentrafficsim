@@ -75,6 +75,7 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
                 CrossingTrafficLightsSwing app =
                         new CrossingTrafficLightsSwing("CrossingTrafficLights", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
+                animationPanel.enableSimulationControlButtons();
             }
             else
             {

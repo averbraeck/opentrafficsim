@@ -92,6 +92,7 @@ public class TestXMLParserEindhoven extends OTSSimulationApplication<TestXMLMode
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new TestXMLParserEindhoven(xmlModel, animationPanel);
+                    animationPanel.enableSimulationControlButtons();
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {

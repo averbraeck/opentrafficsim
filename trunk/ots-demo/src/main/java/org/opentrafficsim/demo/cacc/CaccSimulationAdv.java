@@ -295,9 +295,9 @@ public class CaccSimulationAdv extends AbstractSimulationScript
     private double startSpacing;
 
     /**
-     * @param properties
-     * @throws CliException 
-     * @throws NoSuchFieldException 
+     * @param properties x
+     * @throws CliException x 
+     * @throws NoSuchFieldException x 
      */
     protected CaccSimulationAdv(final String[] properties) throws NoSuchFieldException, CliException
     {
@@ -310,9 +310,9 @@ public class CaccSimulationAdv extends AbstractSimulationScript
     /**
      * Main method that creates and starts a simulation.
      * @param args String[]; command line arguments
-     * @throws Exception 
-     * @throws CliException 
-     * @throws NoSuchFieldException 
+     * @throws Exception x
+     * @throws CliException x
+     * @throws NoSuchFieldException x 
      */
     public static void main(final String[] args) throws NoSuchFieldException, CliException, Exception
     {

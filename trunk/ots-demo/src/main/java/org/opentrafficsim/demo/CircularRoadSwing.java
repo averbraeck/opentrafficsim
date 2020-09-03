@@ -273,6 +273,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
+                animationPanel.enableSimulationControlButtons();
                 // simulator.setSpeedFactor(Double.MAX_VALUE, true);
                 // simulator.setSpeedFactor(1000.0, true);
                 // for (Component component : app.getComponents())

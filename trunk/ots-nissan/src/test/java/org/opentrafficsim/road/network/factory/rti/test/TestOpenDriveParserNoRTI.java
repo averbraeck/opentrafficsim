@@ -171,8 +171,8 @@ public class TestOpenDriveParserNoRTI extends OTSSimulationApplication<OTSModelI
         {
             this.rtiCars = new ArrayList<>();
 
-            // URL url = URLResource.getResource("/NASAames.xodr");
-            URL url = URLResource.getResource("/testod.xodr");
+            URL url = URLResource.getResource("/NASAames.xodr");
+            // URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
             OpenDriveNetworkLaneParserOld nlp = new OpenDriveNetworkLaneParserOld(this.simulator);
             this.network = null;

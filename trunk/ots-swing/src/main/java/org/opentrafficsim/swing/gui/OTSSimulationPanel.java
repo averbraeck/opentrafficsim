@@ -152,6 +152,24 @@ public class OTSSimulationPanel extends JPanel
         return this.otsModel;
     }
 
+    /**
+     * Enable the simulation or animation buttons in the GUI. This method HAS TO BE CALLED in order for the buttons to be
+     * enabled, because the initial state is DISABLED. Typically, this is done after all tabs, statistics, and other user
+     * interface and model components have been constructed and initialized.
+     */
+    public void enableSimulationControlButtons()
+    {
+        getOtsControlPanel().setSimulationControlButtons(true);
+    }
+
+    /**
+     * Disable the simulation or animation buttons in the GUI.
+     */
+    public void disableSimulationControlButtons()
+    {
+        getOtsControlPanel().setSimulationControlButtons(false);
+    }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
