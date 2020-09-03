@@ -42,6 +42,7 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -196,6 +197,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
         TestOpenDriveModel(final OTSSimulatorInterface simulator)
         {
             super(simulator);
+            this.network = new OTSRoadNetwork("TestOpenDriveParser", true, simulator);
             this.stream = new MersenneTwister(1);
             this.initialSpeedDist = new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 0.0), SpeedUnit.SI);
             this.iatDist = new ContinuousDistDoubleScalar.Rel<>(new DistExponential(this.stream, 30.0), DurationUnit.SECOND);

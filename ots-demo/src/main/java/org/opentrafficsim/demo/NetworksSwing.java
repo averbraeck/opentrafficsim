@@ -106,6 +106,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
                     600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 NetworksSwing app = new NetworksSwing("Networks", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
+                animationPanel.enableSimulationControlButtons();
             }
             else
             {

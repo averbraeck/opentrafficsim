@@ -83,6 +83,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
                 new TimedEvent(Replication.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
 
         new TestGeometry("TestGeometry", panel);
+        animationPanel.enableSimulationControlButtons();
     }
 
 }

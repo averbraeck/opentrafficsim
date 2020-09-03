@@ -91,6 +91,7 @@ public class TestXMLParserN201 extends OTSSimulationApplication<TestXMLModelN201
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new TestXMLParserN201(xmlModel, animationPanel);
+                    animationPanel.enableSimulationControlButtons();
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {

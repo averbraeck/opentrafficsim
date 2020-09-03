@@ -96,6 +96,7 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
                     600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 StraightSwing app = new StraightSwing("Straight", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
+                animationPanel.enableSimulationControlButtons();
             }
             else
             {

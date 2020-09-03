@@ -99,6 +99,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularLaneSwing app = new CircularLaneSwing("Circular Lane", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
+                animationPanel.enableSimulationControlButtons();
             }
             else
             {

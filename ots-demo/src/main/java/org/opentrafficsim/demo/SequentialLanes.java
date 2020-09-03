@@ -138,6 +138,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                     600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 SequentialLanes app = new SequentialLanes("SequentialLanes", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
+                animationPanel.enableSimulationControlButtons();
             }
             else
             {

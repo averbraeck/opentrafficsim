@@ -191,7 +191,7 @@ public class OTSControlPanel extends JPanel
      * Change the enabled/disabled state of the various simulation control buttons.
      * @param newState boolean; true if the buttons should become enabled; false if the buttons should become disabled
      */
-    public void enableSimulationControlButtons(final boolean newState)
+    public void setSimulationControlButtons(final boolean newState)
     {
         this.buttonsEnabled = newState;
         fixButtons();

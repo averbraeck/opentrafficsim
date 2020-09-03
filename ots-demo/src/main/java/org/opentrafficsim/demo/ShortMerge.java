@@ -190,6 +190,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
                     simulator, otsModel, new LmrsSwitchableColorer(), otsModel.getNetwork());
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
             app.setExitOnClose(exitOnClose);
+            animationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | IndexOutOfBoundsException
                 | DSOLException exception)

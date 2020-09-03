@@ -441,420 +441,426 @@ public class RoadTag implements Serializable
             if (centerLane.widthTags.size() != 0)
                 System.err.println("error in show center stripe!");
 
-            Stripe centerStripe = new Stripe(currentLink, centerOffset, centerOffset, laneWidth);
             try
             {
-                Renderable2D<Stripe> animation = new StripeAnimation(centerStripe, simulator, StripeAnimation.TYPE.SOLID);
-                openDriveNetworkLaneParser.animationMap.put(centerStripe, animation);
-            }
-            catch (RemoteException exception)
-            {
-                exception.printStackTrace();
-            }
-
-            lastLane = centerStripe;
-
-            // show left lanes
-            int leftLaneSize = currentLaneSec.leftLaneTags.size();
-            // Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin();
-            // Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd();
-
-            for (int leftLaneIndex = 1; leftLaneIndex <= leftLaneSize; leftLaneIndex++)
-            {
-                LaneTag leftLane = currentLaneSec.leftLaneTags.get(leftLaneIndex);
-
-                List<CrossSectionSlice> crossSectionSlices = new ArrayList<CrossSectionSlice>();
-                if (leftLane.widthTags.size() == 1)
+                Stripe centerStripe = new Stripe(currentLink, centerOffset, centerOffset, laneWidth);
+                try
                 {
-                    leftLane.widthTags.get(0).sOffst =
-                            leftLane.widthTags.get(0).a.plus(leftLane.widthTags.get(0).b.times(ds.doubleValue()))
-                                    .plus(leftLane.widthTags.get(0).c.times(Math.pow(ds.doubleValue(), 2)))
-                                    .plus(leftLane.widthTags.get(0).d.times(Math.pow(ds.doubleValue(), 3)));
-
-                    Length laneWidth_start = leftLane.widthTags.get(0).a;
-                    Length laneWidth_end = leftLane.widthTags.get(0).sOffst;
-
-                    Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin().plus(lastLane.getBeginWidth().times(0.5))
-                            .plus(laneWidth_start.times(0.5));
-                    Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().times(0.5))
-                            .plus(laneWidth_end.times(0.5));
-
-                    Length length = currentLink.getLength();
-
-                    CrossSectionSlice startSlice =
-                            new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
-                    CrossSectionSlice endSlice = new CrossSectionSlice(length, leftOffset_end, laneWidth_end);
-                    crossSectionSlices.add(startSlice);
-                    crossSectionSlices.add(endSlice);
-
+                    Renderable2D<Stripe> animation = new StripeAnimation(centerStripe, simulator, StripeAnimation.TYPE.SOLID);
+                    openDriveNetworkLaneParser.animationMap.put(centerStripe, animation);
                 }
-                else
+                catch (RemoteException exception)
                 {
-                    // if(roadTag.id.equals("54048"))
-                    // System.out.println();
-                    Length lengthofLane = leftLane.widthTags.get(leftLane.widthTags.size() - 1).sOffst;
-                    for (WidthTag widthTag : leftLane.widthTags)
+                    exception.printStackTrace();
+                }
+
+                lastLane = centerStripe;
+
+                // show left lanes
+                int leftLaneSize = currentLaneSec.leftLaneTags.size();
+                // Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin();
+                // Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd();
+
+                for (int leftLaneIndex = 1; leftLaneIndex <= leftLaneSize; leftLaneIndex++)
+                {
+                    LaneTag leftLane = currentLaneSec.leftLaneTags.get(leftLaneIndex);
+
+                    List<CrossSectionSlice> crossSectionSlices = new ArrayList<CrossSectionSlice>();
+                    if (leftLane.widthTags.size() == 1)
                     {
-                        Length relativeLength = widthTag.sOffst;
-                        double factor = relativeLength.divide(lengthofLane).doubleValue();
+                        leftLane.widthTags.get(0).sOffst =
+                                leftLane.widthTags.get(0).a.plus(leftLane.widthTags.get(0).b.times(ds.doubleValue()))
+                                        .plus(leftLane.widthTags.get(0).c.times(Math.pow(ds.doubleValue(), 2)))
+                                        .plus(leftLane.widthTags.get(0).d.times(Math.pow(ds.doubleValue(), 3)));
 
-                        if (factor < 0.98)
+                        Length laneWidth_start = leftLane.widthTags.get(0).a;
+                        Length laneWidth_end = leftLane.widthTags.get(0).sOffst;
+
+                        Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin()
+                                .plus(lastLane.getBeginWidth().times(0.5)).plus(laneWidth_start.times(0.5));
+                        Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().times(0.5))
+                                .plus(laneWidth_end.times(0.5));
+
+                        Length length = currentLink.getLength();
+
+                        CrossSectionSlice startSlice =
+                                new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
+                        CrossSectionSlice endSlice = new CrossSectionSlice(length, leftOffset_end, laneWidth_end);
+                        crossSectionSlices.add(startSlice);
+                        crossSectionSlices.add(endSlice);
+
+                    }
+                    else
+                    {
+                        // if(roadTag.id.equals("54048"))
+                        // System.out.println();
+                        Length lengthofLane = leftLane.widthTags.get(leftLane.widthTags.size() - 1).sOffst;
+                        for (WidthTag widthTag : leftLane.widthTags)
                         {
-                            Length width = widthTag.a.plus(widthTag.b.times(relativeLength.doubleValue()))
-                                    .plus(widthTag.c.times(Math.pow(relativeLength.doubleValue(), 2)))
-                                    .plus(widthTag.d.times(Math.pow(relativeLength.doubleValue(), 3)));
+                            Length relativeLength = widthTag.sOffst;
+                            double factor = relativeLength.divide(lengthofLane).doubleValue();
 
-                            Length offSet = lastLane.getLateralCenterPosition(factor).plus(lastLane.getWidth(factor).times(0.5))
-                                    .plus(width.times(0.5));
+                            if (factor < 0.98)
+                            {
+                                Length width = widthTag.a.plus(widthTag.b.times(relativeLength.doubleValue()))
+                                        .plus(widthTag.c.times(Math.pow(relativeLength.doubleValue(), 2)))
+                                        .plus(widthTag.d.times(Math.pow(relativeLength.doubleValue(), 3)));
 
-                            relativeLength = currentLink.getLength().times(factor);
+                                Length offSet = lastLane.getLateralCenterPosition(factor)
+                                        .plus(lastLane.getWidth(factor).times(0.5)).plus(width.times(0.5));
 
-                            CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
-                            crossSectionSlices.add(slice);
-                        }
-                        else
-                        {
-                            CrossSectionSlice lastSlice = crossSectionSlices.get(crossSectionSlices.size() - 1);
-                            Length width = lastSlice.getWidth();
-                            Length offSet = lastSlice.getDesignLineOffset();
-                            relativeLength = currentLink.getLength();
+                                relativeLength = currentLink.getLength().times(factor);
 
-                            CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
-                            crossSectionSlices.add(slice);
-                            break;
+                                CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
+                                crossSectionSlices.add(slice);
+                            }
+                            else
+                            {
+                                CrossSectionSlice lastSlice = crossSectionSlices.get(crossSectionSlices.size() - 1);
+                                Length width = lastSlice.getWidth();
+                                Length offSet = lastSlice.getDesignLineOffset();
+                                relativeLength = currentLink.getLength();
+
+                                CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
+                                crossSectionSlices.add(slice);
+                                break;
+                            }
                         }
                     }
-                }
 
-                Speed speed = null;
-                if (leftLane.speedTags.size() > 0)
-                    speed = leftLane.speedTags.get(0).max;
-                if (speed == null)
-                {
-                    // System.err.println("speed.max == null for " + leftLane.id.toString());
-                    speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
-                }
-
-                Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
-                speedLimit.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), speed);
-
-                if (leftLane.type.equals("driving"))
-                {
-                    LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_MINUS;
-                    Color color = Color.gray;
-
-                    /*
-                     * Lane lane = new Lane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
-                     * laneWidth_start, laneWidth_end, LANETYPE_ALL, directionality, speedLimit, overtakingConditions);
-                     */
-
-                    try
+                    Speed speed = null;
+                    if (leftLane.speedTags.size() > 0)
+                        speed = leftLane.speedTags.get(0).max;
+                    if (speed == null)
                     {
-                        Lane lane = new Lane(currentLink, leftLane.id.toString(), crossSectionSlices,
-                                openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit);
-                        currentLaneSec.lanes.put(leftLane.id, lane);
-                        lastLane = lane;
+                        // System.err.println("speed.max == null for " + leftLane.id.toString());
+                        speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
+                    }
+
+                    Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
+                    speedLimit.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), speed);
+
+                    if (leftLane.type.equals("driving"))
+                    {
+                        LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_MINUS;
+                        Color color = Color.gray;
+
+                        /*
+                         * Lane lane = new Lane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
+                         * laneWidth_start, laneWidth_end, LANETYPE_ALL, directionality, speedLimit, overtakingConditions);
+                         */
 
                         try
                         {
-                            Renderable2D animation = new LaneAnimationOD(lane, simulator, color);
-                            openDriveNetworkLaneParser.animationMap.put(lane, animation);
+                            Lane lane = new Lane(currentLink, leftLane.id.toString(), crossSectionSlices,
+                                    openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit);
+                            currentLaneSec.lanes.put(leftLane.id, lane);
+                            lastLane = lane;
+
+                            try
+                            {
+                                Renderable2D animation = new LaneAnimationOD(lane, simulator, color);
+                                openDriveNetworkLaneParser.animationMap.put(lane, animation);
+                            }
+                            catch (RemoteException exception)
+                            {
+                                Renderable2D animation =
+                                        new org.opentrafficsim.draw.network.LinkAnimation(currentLink, simulator, 0.01f);
+                                openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
+                                exception.printStackTrace();
+                            }
+
                         }
-                        catch (RemoteException exception)
+                        catch (Exception e)
                         {
-                            Renderable2D animation =
-                                    new org.opentrafficsim.draw.network.LinkAnimation(currentLink, simulator, 0.01f);
-                            openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
-                            exception.printStackTrace();
+                            // XXX Temporary!
+                            System.err.println(e.getMessage());
                         }
-
                     }
-                    catch (Exception e)
+                    else if (leftLane.type.equals("sidewalk"))
                     {
-                        // XXX Temporary!
-                        System.err.println(e.getMessage());
-                    }
-                }
-                else if (leftLane.type.equals("sidewalk"))
-                {
-                    Color color = Color.darkGray;
-                    /*
-                     * Lane lane = new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
-                     * laneWidth_start, laneWidth_end);
-                     */
-                    Lane lane = new NoTrafficLane(currentLink, leftLane.id.toString(), crossSectionSlices);
-
-                    currentLaneSec.lanes.put(leftLane.id, lane);
-
-                    lastLane = lane;
-
-                    try
-                    {
-                        Renderable2D animation = new LaneAnimation(lane, simulator, color);
-                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                }
-                else if (leftLane.type.equals("border"))
-                {
-                    Stripe solidLine = new Stripe(currentLink, crossSectionSlices, Permeable.BOTH);
-
-                    lastLane = solidLine;
-
-                    try
-                    {
-                        Renderable2D animation = new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
-                        openDriveNetworkLaneParser.animationMap.put(solidLine, animation);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                }
-                else if (leftLane.type.equals("shoulder"))
-                {
-                    Color color = Color.green;
-                    Shoulder shoulder = new Shoulder(currentLink, leftLane.id.toString(), crossSectionSlices);
-                    lastLane = shoulder;
-
-                    try
-                    {
-                        Renderable2D animation = new ShoulderAnimation(shoulder, simulator, color);
-                        openDriveNetworkLaneParser.animationMap.put(shoulder, animation);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                }
-                else
-
-                {
-                    /*
-                     * Stripe solidLine = new Stripe(currentLink, leftOffset, laneWidth); try { new StripeAnimation(solidLine,
-                     * simulator, StripeAnimation.TYPE.SOLID); } catch (RemoteException exception) {
-                     * exception.printStackTrace(); }
-                     */
-
-                    Color color = Color.green;
-
-                    try
-                    {
+                        Color color = Color.darkGray;
+                        /*
+                         * Lane lane = new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
+                         * laneWidth_start, laneWidth_end);
+                         */
                         Lane lane = new NoTrafficLane(currentLink, leftLane.id.toString(), crossSectionSlices);
 
                         currentLaneSec.lanes.put(leftLane.id, lane);
 
                         lastLane = lane;
-                        Renderable2D animation = new LaneAnimation(lane, simulator, color);
-                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
-                    }
-                    catch (Exception exception)
-                    {
-                        Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
-                        openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
-                        // XXX: exception.printStackTrace();
-                        System.err.println(exception.getMessage());
-                    }
-                }
 
-            }
-
-            lastLane = centerStripe;
-
-            // show right lanes
-            int rightLaneSize = currentLaneSec.rightLaneTags.size();
-            // Length rightOffset_start = new Length(0.0, LengthUnit.METER);
-            // Length rightOffset_end = new Length(0.0, LengthUnit.METER);
-
-            for (int rightLaneIndex = 1; rightLaneIndex <= rightLaneSize; rightLaneIndex++)
-            {
-                LaneTag rightLane = currentLaneSec.rightLaneTags.get(-rightLaneIndex);
-
-                List<CrossSectionSlice> crossSectionSlices = new ArrayList<CrossSectionSlice>();
-                if (rightLane.widthTags.size() == 1)
-                {
-                    rightLane.widthTags.get(0).sOffst =
-                            rightLane.widthTags.get(0).a.plus(rightLane.widthTags.get(0).b.times(ds.doubleValue()))
-                                    .plus(rightLane.widthTags.get(0).c.times(Math.pow(ds.doubleValue(), 2)))
-                                    .plus(rightLane.widthTags.get(0).d.times(Math.pow(ds.doubleValue(), 3)));
-
-                    Length laneWidth_start = rightLane.widthTags.get(0).a;
-                    Length laneWidth_end = rightLane.widthTags.get(0).sOffst;
-
-                    Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin().minus(lastLane.getBeginWidth().times(0.5))
-                            .minus(laneWidth_start.times(0.5));
-                    Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().times(0.5))
-                            .minus(laneWidth_end.times(0.5));
-
-                    Length length = currentLink.getLength();
-
-                    CrossSectionSlice startSlice =
-                            new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
-                    CrossSectionSlice endSlice = new CrossSectionSlice(length, leftOffset_end, laneWidth_end);
-                    crossSectionSlices.add(startSlice);
-                    crossSectionSlices.add(endSlice);
-
-                }
-                else
-                {
-                    // if(roadTag.id.equals("54072"))
-                    // System.out.println();
-                    Length lengthofLane = rightLane.widthTags.get(rightLane.widthTags.size() - 1).sOffst;
-                    for (WidthTag widthTag : rightLane.widthTags)
-                    {
-                        Length relativeLength = widthTag.sOffst;
-                        double factor = relativeLength.divide(lengthofLane).doubleValue();
-
-                        if (factor < 0.98)
+                        try
                         {
-                            Length width = widthTag.a.plus(widthTag.b.times(relativeLength.doubleValue()))
-                                    .plus(widthTag.c.times(Math.pow(relativeLength.doubleValue(), 2)))
-                                    .plus(widthTag.d.times(Math.pow(relativeLength.doubleValue(), 3)));
-
-                            Length offSet = lastLane.getLateralCenterPosition(factor)
-                                    .minus(lastLane.getWidth(factor).times(0.5)).minus(width.times(0.5));
-
-                            relativeLength = currentLink.getLength().times(factor);
-
-                            CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
-                            crossSectionSlices.add(slice);
+                            Renderable2D animation = new LaneAnimation(lane, simulator, color);
+                            openDriveNetworkLaneParser.animationMap.put(lane, animation);
                         }
-                        else
+                        catch (RemoteException exception)
                         {
-                            CrossSectionSlice lastSlice = crossSectionSlices.get(crossSectionSlices.size() - 1);
-                            Length width = lastSlice.getWidth();
-                            Length offSet = lastSlice.getDesignLineOffset();
-                            relativeLength = currentLink.getLength();
-
-                            CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
-                            crossSectionSlices.add(slice);
-                            break;
+                            exception.printStackTrace();
                         }
+                    }
+                    else if (leftLane.type.equals("border"))
+                    {
+                        Stripe solidLine = new Stripe(currentLink, crossSectionSlices, Permeable.BOTH);
+
+                        lastLane = solidLine;
+
+                        try
+                        {
+                            Renderable2D animation = new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
+                            openDriveNetworkLaneParser.animationMap.put(solidLine, animation);
+                        }
+                        catch (RemoteException exception)
+                        {
+                            exception.printStackTrace();
+                        }
+                    }
+                    else if (leftLane.type.equals("shoulder"))
+                    {
+                        Color color = Color.green;
+                        Shoulder shoulder = new Shoulder(currentLink, leftLane.id.toString(), crossSectionSlices);
+                        lastLane = shoulder;
+
+                        try
+                        {
+                            Renderable2D animation = new ShoulderAnimation(shoulder, simulator, color);
+                            openDriveNetworkLaneParser.animationMap.put(shoulder, animation);
+                        }
+                        catch (RemoteException exception)
+                        {
+                            exception.printStackTrace();
+                        }
+                    }
+                    else
+
+                    {
+                        /*
+                         * Stripe solidLine = new Stripe(currentLink, leftOffset, laneWidth); try { new
+                         * StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID); } catch (RemoteException
+                         * exception) { exception.printStackTrace(); }
+                         */
+
+                        Color color = Color.green;
+
+                        try
+                        {
+                            Lane lane = new NoTrafficLane(currentLink, leftLane.id.toString(), crossSectionSlices);
+
+                            currentLaneSec.lanes.put(leftLane.id, lane);
+
+                            lastLane = lane;
+                            Renderable2D animation = new LaneAnimation(lane, simulator, color);
+                            openDriveNetworkLaneParser.animationMap.put(lane, animation);
+                        }
+                        catch (Exception exception)
+                        {
+                            Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
+                            openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
+                            // XXX: exception.printStackTrace();
+                            System.err.println(exception.getMessage());
+                        }
+                    }
+
+                }
+
+                lastLane = centerStripe;
+
+                // show right lanes
+                int rightLaneSize = currentLaneSec.rightLaneTags.size();
+                // Length rightOffset_start = new Length(0.0, LengthUnit.METER);
+                // Length rightOffset_end = new Length(0.0, LengthUnit.METER);
+
+                for (int rightLaneIndex = 1; rightLaneIndex <= rightLaneSize; rightLaneIndex++)
+                {
+                    LaneTag rightLane = currentLaneSec.rightLaneTags.get(-rightLaneIndex);
+
+                    List<CrossSectionSlice> crossSectionSlices = new ArrayList<CrossSectionSlice>();
+                    if (rightLane.widthTags.size() == 1)
+                    {
+                        rightLane.widthTags.get(0).sOffst =
+                                rightLane.widthTags.get(0).a.plus(rightLane.widthTags.get(0).b.times(ds.doubleValue()))
+                                        .plus(rightLane.widthTags.get(0).c.times(Math.pow(ds.doubleValue(), 2)))
+                                        .plus(rightLane.widthTags.get(0).d.times(Math.pow(ds.doubleValue(), 3)));
+
+                        Length laneWidth_start = rightLane.widthTags.get(0).a;
+                        Length laneWidth_end = rightLane.widthTags.get(0).sOffst;
+
+                        Length leftOffset_start = lastLane.getDesignLineOffsetAtBegin()
+                                .minus(lastLane.getBeginWidth().times(0.5)).minus(laneWidth_start.times(0.5));
+                        Length leftOffset_end = lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().times(0.5))
+                                .minus(laneWidth_end.times(0.5));
+
+                        Length length = currentLink.getLength();
+
+                        CrossSectionSlice startSlice =
+                                new CrossSectionSlice(new Length(0.0, LengthUnit.METER), leftOffset_start, laneWidth_start);
+                        CrossSectionSlice endSlice = new CrossSectionSlice(length, leftOffset_end, laneWidth_end);
+                        crossSectionSlices.add(startSlice);
+                        crossSectionSlices.add(endSlice);
 
                     }
-                }
-
-                Speed speed = null;
-                if (rightLane.speedTags.size() > 0)
-                    speed = rightLane.speedTags.get(0).max;
-                if (speed == null)
-                {
-                    // System.err.println("speed.max == null for " + rightLane.id.toString());
-                    speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
-                }
-
-                Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
-                speedLimit.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), speed);
-
-                if (rightLane.type.equals("driving"))
-                {
-                    LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_PLUS;
-                    // if(roadTag.link.getEndNode().getLinksOut().size() == 0)
-                    // direction = LongitudinalDirectionality.BACKWARD;
-                    Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
-                    directionality.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), direction);
-                    Color color = Color.gray;
-
-                    try
+                    else
                     {
-                        // if(roadTag.id.equals("385351")||roadTag.id.equals("385359"))
+                        // if(roadTag.id.equals("54072"))
                         // System.out.println();
+                        Length lengthofLane = rightLane.widthTags.get(rightLane.widthTags.size() - 1).sOffst;
+                        for (WidthTag widthTag : rightLane.widthTags)
+                        {
+                            Length relativeLength = widthTag.sOffst;
+                            double factor = relativeLength.divide(lengthofLane).doubleValue();
 
-                        Lane lane = new Lane(currentLink, rightLane.id.toString(), crossSectionSlices,
-                                openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit);
+                            if (factor < 0.98)
+                            {
+                                Length width = widthTag.a.plus(widthTag.b.times(relativeLength.doubleValue()))
+                                        .plus(widthTag.c.times(Math.pow(relativeLength.doubleValue(), 2)))
+                                        .plus(widthTag.d.times(Math.pow(relativeLength.doubleValue(), 3)));
 
-                        currentLaneSec.lanes.put(rightLane.id, lane);
+                                Length offSet = lastLane.getLateralCenterPosition(factor)
+                                        .minus(lastLane.getWidth(factor).times(0.5)).minus(width.times(0.5));
 
-                        lastLane = lane;
+                                relativeLength = currentLink.getLength().times(factor);
 
-                        Renderable2D animation = new LaneAnimationOD(lane, simulator, color);
-                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
+                                CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
+                                crossSectionSlices.add(slice);
+                            }
+                            else
+                            {
+                                CrossSectionSlice lastSlice = crossSectionSlices.get(crossSectionSlices.size() - 1);
+                                Length width = lastSlice.getWidth();
+                                Length offSet = lastSlice.getDesignLineOffset();
+                                relativeLength = currentLink.getLength();
+
+                                CrossSectionSlice slice = new CrossSectionSlice(relativeLength, offSet, width);
+                                crossSectionSlices.add(slice);
+                                break;
+                            }
+
+                        }
                     }
-                    catch (Exception exception)
-                    {
-                        Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
-                        openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
-                        // XXX: exception.printStackTrace();
-                        System.err.println(exception.getMessage());
-                    }
-                }
-                else if (rightLane.type.equals("sidewalk"))
-                {
-                    Color color = Color.darkGray;
-                    Lane lane = new NoTrafficLane(currentLink, rightLane.id.toString(), crossSectionSlices);
 
-                    currentLaneSec.lanes.put(rightLane.id, lane);
+                    Speed speed = null;
+                    if (rightLane.speedTags.size() > 0)
+                        speed = rightLane.speedTags.get(0).max;
+                    if (speed == null)
+                    {
+                        // System.err.println("speed.max == null for " + rightLane.id.toString());
+                        speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
+                    }
 
-                    lastLane = lane;
+                    Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
+                    speedLimit.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), speed);
 
-                    try
+                    if (rightLane.type.equals("driving"))
                     {
-                        Renderable2D animation = new LaneAnimation(lane, simulator, color);
-                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                }
-                else if (rightLane.type.equals("border"))
-                {
-                    Stripe solidLine = new Stripe(currentLink, crossSectionSlices, Permeable.BOTH);
+                        LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_PLUS;
+                        // if(roadTag.link.getEndNode().getLinksOut().size() == 0)
+                        // direction = LongitudinalDirectionality.BACKWARD;
+                        Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
+                        directionality.put(openDriveNetworkLaneParser.network.getGtuType(GTUType.DEFAULTS.VEHICLE), direction);
+                        Color color = Color.gray;
 
-                    lastLane = solidLine;
-                    try
-                    {
-                        Renderable2D animation = new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
-                        openDriveNetworkLaneParser.animationMap.put(solidLine, animation);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                }
-                else if (rightLane.type.equals("shoulder"))
-                {
-                    Color color = Color.green;
-                    Shoulder shoulder = new Shoulder(currentLink, rightLane.id.toString(), crossSectionSlices);
-                    lastLane = shoulder;
+                        try
+                        {
+                            // if(roadTag.id.equals("385351")||roadTag.id.equals("385359"))
+                            // System.out.println();
 
-                    try
-                    {
-                        Renderable2D animation = new ShoulderAnimation(shoulder, simulator, color);
-                        openDriveNetworkLaneParser.animationMap.put(shoulder, animation);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                }
-                else
-                {
-                    Color color = Color.green;
+                            Lane lane = new Lane(currentLink, rightLane.id.toString(), crossSectionSlices,
+                                    openDriveNetworkLaneParser.network.getLaneType(LaneType.DEFAULTS.FREEWAY), speedLimit);
 
-                    try
+                            currentLaneSec.lanes.put(rightLane.id, lane);
+
+                            lastLane = lane;
+
+                            Renderable2D animation = new LaneAnimationOD(lane, simulator, color);
+                            openDriveNetworkLaneParser.animationMap.put(lane, animation);
+                        }
+                        catch (Exception exception)
+                        {
+                            Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
+                            openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
+                            // XXX: exception.printStackTrace();
+                            System.err.println(exception.getMessage());
+                        }
+                    }
+                    else if (rightLane.type.equals("sidewalk"))
                     {
+                        Color color = Color.darkGray;
                         Lane lane = new NoTrafficLane(currentLink, rightLane.id.toString(), crossSectionSlices);
 
                         currentLaneSec.lanes.put(rightLane.id, lane);
+
                         lastLane = lane;
-                        Renderable2D animation = new LaneAnimation(lane, simulator, color);
-                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
+
+                        try
+                        {
+                            Renderable2D animation = new LaneAnimation(lane, simulator, color);
+                            openDriveNetworkLaneParser.animationMap.put(lane, animation);
+                        }
+                        catch (RemoteException exception)
+                        {
+                            exception.printStackTrace();
+                        }
                     }
-                    catch (Exception exception)
+                    else if (rightLane.type.equals("border"))
                     {
-                        Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
-                        openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
-                        // XXX: exception.printStackTrace();
-                        System.err.println(exception.getMessage());
+                        Stripe solidLine = new Stripe(currentLink, crossSectionSlices, Permeable.BOTH);
+
+                        lastLane = solidLine;
+                        try
+                        {
+                            Renderable2D animation = new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
+                            openDriveNetworkLaneParser.animationMap.put(solidLine, animation);
+                        }
+                        catch (RemoteException exception)
+                        {
+                            exception.printStackTrace();
+                        }
                     }
+                    else if (rightLane.type.equals("shoulder"))
+                    {
+                        Color color = Color.green;
+                        Shoulder shoulder = new Shoulder(currentLink, rightLane.id.toString(), crossSectionSlices);
+                        lastLane = shoulder;
+
+                        try
+                        {
+                            Renderable2D animation = new ShoulderAnimation(shoulder, simulator, color);
+                            openDriveNetworkLaneParser.animationMap.put(shoulder, animation);
+                        }
+                        catch (RemoteException exception)
+                        {
+                            exception.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        Color color = Color.green;
+
+                        try
+                        {
+                            Lane lane = new NoTrafficLane(currentLink, rightLane.id.toString(), crossSectionSlices);
+
+                            currentLaneSec.lanes.put(rightLane.id, lane);
+                            lastLane = lane;
+                            Renderable2D animation = new LaneAnimation(lane, simulator, color);
+                            openDriveNetworkLaneParser.animationMap.put(lane, animation);
+                        }
+                        catch (Exception exception)
+                        {
+                            Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
+                            openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
+                            // XXX: exception.printStackTrace();
+                            System.err.println(exception.getMessage());
+                        }
+                    }
+
                 }
-
             }
-
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -86,6 +86,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
                             junctionModel, new DefaultSwitchableGTUColorer(), junctionModel.getNetwork());
             TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
+            animationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {

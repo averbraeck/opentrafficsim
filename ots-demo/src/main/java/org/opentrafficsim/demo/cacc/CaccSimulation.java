@@ -223,9 +223,9 @@ public class CaccSimulation extends AbstractSimulationScript implements Checkabl
     private double startSpacing;
     
     /**
-     * @param properties
-     * @throws CliException 
-     * @throws NoSuchFieldException 
+     * @param properties x
+     * @throws CliException x 
+     * @throws NoSuchFieldException x 
      */
     protected CaccSimulation(final String[] properties) throws NoSuchFieldException, CliException
     {

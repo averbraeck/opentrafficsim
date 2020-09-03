@@ -255,7 +255,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             };
             addTabs(this.simulator, app);
             app.setExitOnClose(true);
-            animationPanel.getOtsControlPanel().enableSimulationControlButtons(true);
+            animationPanel.enableSimulationControlButtons();
         }
     }
 

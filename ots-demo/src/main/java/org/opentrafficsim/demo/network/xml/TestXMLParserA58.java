@@ -91,6 +91,7 @@ public class TestXMLParserA58 extends OTSSimulationApplication<TestXMLModelA58>
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
                             new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new TestXMLParserA58(xmlModel, animationPanel);
+                    animationPanel.enableSimulationControlButtons();
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {

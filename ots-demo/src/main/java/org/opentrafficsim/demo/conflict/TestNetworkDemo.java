@@ -83,6 +83,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
                             networkModel, new DefaultSwitchableGTUColorer(), networkModel.getNetwork());
             TestNetworkDemo app = new TestNetworkDemo("Network test demo", animationPanel, networkModel);
             app.setExitOnClose(exitOnClose);
+            animationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {

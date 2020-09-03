@@ -131,6 +131,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                     600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 FundamentalDiagrams app = new FundamentalDiagrams("FundamentalDiagrams", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
+                animationPanel.enableSimulationControlButtons();
             }
             else
             {

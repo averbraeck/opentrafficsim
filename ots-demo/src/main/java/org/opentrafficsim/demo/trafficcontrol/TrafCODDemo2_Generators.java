@@ -107,6 +107,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
             TrafCODDemo2_Generators app =
                     new TrafCODDemo2_Generators("TrafCOD demo complex crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
+            animationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {

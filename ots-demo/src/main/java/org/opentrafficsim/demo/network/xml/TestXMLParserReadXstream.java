@@ -78,6 +78,7 @@ public class TestXMLParserReadXstream extends OTSSimulationApplication<OTSModelI
                             new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
                                     xmlModel, new DefaultSwitchableGTUColorer(), xmlModel.getNetwork());
                     new TestXMLParserReadXstream(xmlModel, animationPanel);
+                    animationPanel.enableSimulationControlButtons();
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
                 {

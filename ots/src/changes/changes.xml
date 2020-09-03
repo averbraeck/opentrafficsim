@@ -6,6 +6,16 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
 
+    <release version="1.04.03" date="2020-XX-XX" description="Enable Control Panel buttons">
+      <action>
+        The OTSSimulationPanel and OTSAnimationPanel have a method to enable and disable the control buttons to start/stop
+        a simulation / animation. By default, the buttons are now DISABLED to allow for set-up and initialization to complete
+        before the user can interact with the simulation through the user interface. Therefore, ALL simulations have to 
+        call simulationPanel or animationPanel.enableSimulationControlButtons() to enable the buttons. The AbstractSimulationScript
+        already activates the buttons at the end of the start() method.
+      </action>
+    </release>
+    
     <release version="1.04.02" date="2020-08-11" description="New version of djutils, dsol">
       <action dev="averbraeck" type="update">
         DJUTILS and DSOL have been updated to the latest versions. 

@@ -112,6 +112,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
                     new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
             TrafCODDemo1 app = new TrafCODDemo1("TrafCOD demo simple crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
+            animationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | DSOLException exception)
         {
