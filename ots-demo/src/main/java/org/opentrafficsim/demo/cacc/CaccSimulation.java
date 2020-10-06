@@ -838,9 +838,6 @@ public class CaccSimulation extends AbstractSimulationScript implements Checkabl
             }
         }, LaneBasedGTUGenerator.GTU_GENERATED_EVENT);
 
-        // add animation to network objects
-        DefaultAnimationFactory.animateNetwork(network, sim, getGtuColorer());
-
         /** Sampler for statistics. */
         this.sampler =
                 RoadSampler.build(network).registerExtendedDataType(this.ttc).registerFilterDataType(this.metaGtu).create();
