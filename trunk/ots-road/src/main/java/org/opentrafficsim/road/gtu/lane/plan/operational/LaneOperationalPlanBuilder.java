@@ -373,6 +373,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                             return new OTSLine3D(points);
                         }
                     }
+                    // START CLEVER
+                    /*-
                     if (!alternativeTried)
                     {
                         for (Lane l : gtu.fractionalPositions(RelativePosition.REFERENCE_POSITION).keySet())
@@ -420,8 +422,10 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                             continue;
                         }
                     }
+                    */
+                    // END CLEVER
                     CategoryLogger.always().error("GTU {} has nowhere to go and no sink sensor either", gtu);
-                    gtu.getReferencePosition();
+                    // gtu.getReferencePosition(); // CLEVER
                     gtu.destroy();
                     return path;
                 }
