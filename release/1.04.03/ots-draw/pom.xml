@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>1.04.03</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-draw</artifactId>
+  <name>OTS drawing classes using Swing</name>
+  <description>OTS drawing classes that are used for ots-swing and ots-web</description>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-introspection</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-road</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-animation</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+    </dependency>
+
+  </dependencies>
+
+</project>
