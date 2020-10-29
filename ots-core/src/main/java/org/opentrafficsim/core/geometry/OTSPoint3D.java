@@ -218,19 +218,19 @@ public class OTSPoint3D implements Locatable, Serializable
         double l2p2x = line2P2.x - l1p1x;
         double l2p2y = line2P2.y - l1p1y;
         double denominator = (l2p2y - l2p1y) * l1p2x - (l2p2x - l2p1x) * l1p2y;
-        if (denominator == 0f)
+        if (denominator == 0.0)
         {
             return null; // lines are parallel (they might even be on top of each other, but we don't check that)
         }
         double uA = ((l2p2x - l2p1x) * (-l2p1y) - (l2p2y - l2p1y) * (-l2p1x)) / denominator;
         // System.out.println("uA is " + uA);
-        if ((uA < 0f) || (uA > 1f))
+        if ((uA < 0.0) || (uA > 1.0))
         {
             return null; // intersection outside line 1
         }
         double uB = (l1p2y * l2p1x - l1p2x * l2p1y) / denominator;
         // System.out.println("uB is " + uB);
-        if (uB < 0 || uB > 1)
+        if (uB < 0.0 || uB > 1.0)
         {
             return null; // intersection outside line 2
         }
