@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>1.04.03</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-imb</artifactId>
+  <name>Open Traffic Sim link to IMB</name>
+  <description>Open Traffic Sim connector to TNO's IMB bus from Urban Strategy</description>
+
+  <properties>
+    <!-- Don't make javadoc crash on the HTML tags for the IMB table such as STYLE, or missing comments in the nl.tno package  -->
+    <doclint>accessibility,reference,syntax</doclint>
+    <!-- turn off checkstyle  -->
+    <checkstyle.skip>true</checkstyle.skip>
+  </properties>
+  
+  
+  <dependencies>
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-base</artifactId>
+    </dependency>   
+  </dependencies>
+
+  <contributors>
+    <contributor>
+      <name>Walter Lohman</name>
+      <organization>TNO</organization>
+      <email>walter.lohman@tno.nl</email>
+      <organizationUrl>www.tno.nl</organizationUrl>
+    </contributor>
+    <contributor>
+      <name>Ralph Klerkx</name>
+      <organization>TNO</organization>
+      <email>ralph klerkx@tno.nl</email>
+      <organizationUrl>www.tno.nl</organizationUrl>
+    </contributor>
+  </contributors>
+</project>
