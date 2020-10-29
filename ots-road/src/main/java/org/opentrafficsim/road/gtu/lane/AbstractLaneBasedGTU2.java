@@ -502,6 +502,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     @SuppressWarnings("checkstyle:designforextension")
     protected synchronized void finalizeLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
     {
+        if (getId().equals("140"))
+        {
+            System.err.println("140 finalizing lane change");
+        }
         List<CrossSection> newLanes = new ArrayList<>();
         Lane fromLane = null;
         Length fromPosition = null;
@@ -509,6 +513,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         for (CrossSection crossSection : this.crossSections)
         {
             Lane lane = crossSection.getLanes().get(this.referenceLaneIndex);
+            if (getId().equals("140"))
+            {
+                System.err.println("  140 finalizing lane change lane " + lane);
+            }
             if (lane != null)
             {
                 Length pos = position(lane, RelativePosition.REFERENCE_POSITION);
@@ -553,6 +561,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     @Override
     public void setFinalizeLaneChangeEvent(final SimEventInterface<SimTimeDoubleUnit> event)
     {
+        if (getId().equals("140"))
+        {
+            System.err.println("setFinalizeLaneChangeEvent for 140");
+        }
         this.finalizeLaneChangeEvent = event;
     }
 
@@ -576,6 +588,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     protected synchronized boolean move(final DirectedPoint fromLocation)
             throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
     {
+        if (getId().equals("140"))
+        {
+            // System.err.println(getSimulator().getSimulatorTime());
+        }
         if (this.isDestroyed())
         {
             return false;
@@ -779,6 +795,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
      */
     private void forceLaneChangeFinalization() throws GTUException, OperationalPlanException, SimRuntimeException
     {
+        if (getId().equals("140"))
+        {
+            System.err.println("forceLineChangeFinalization for 140");
+        }
         if (this.finalizeLaneChangeEvent != null)
         {
             // a lane change should be finalized at this time, but the event is later in the queue, force it now
@@ -786,6 +806,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             finalizeLaneChange(this.referenceLaneIndex == 0 ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT);
             getSimulator().cancelEvent(tmp);
             enterCrossSection();
+            if (getId().equals("140"))
+            {
+                System.err.println("  forceLineChangeFinalization -> enterCrossSection() for 140");
+            }
         }
         // or a sink sensor should delete us
     }
@@ -830,6 +854,11 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 {
                     pos = position(lane, getRear());
                     this.pendingLeaveTrigger = getSimulator().scheduleEventNow(this, this, "leaveCrossSection", null);
+                    if (getId().equals("140"))
+                    {
+                        System.err.println("140 scheduled to leave lane " + lane);
+                    }
+
                     getSimulator().getLogger().always().info("Forcing leave for GTU {} on lane {}", getId(), lane.getFullId());
                 }
             }
@@ -855,10 +884,15 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
      */
     protected synchronized void leaveCrossSection() throws GTUException, OperationalPlanException, SimRuntimeException
     {
+
         List<Lane> lanes = this.crossSections.get(0).getLanes();
         for (int i = 0; i < lanes.size(); i++)
         {
             Lane lane = lanes.get(i);
+            if (getId().equals("140"))
+            {
+                System.err.println("  140 left lane " + lane);
+            }
             if (lane != null)
             {
                 lane.removeGTU(this, i == lanes.size() - 1, position(lane, getReference()));

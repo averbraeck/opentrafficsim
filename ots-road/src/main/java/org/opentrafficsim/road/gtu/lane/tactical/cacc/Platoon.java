@@ -151,7 +151,7 @@ public class Platoon
     }
 
     /**
-     * Returns true when a lane change is in progress
+     * Returns true when a lane change is in progress.
      * @return boolean; whether a lane change is currently in progress
      */
     public boolean laneChangeInProgress()
@@ -160,12 +160,12 @@ public class Platoon
     }
 
     /**
-     * Number of gtus that have changed lanes
+     * Number of gtus that have changed lanes.
      * @return int; number of gtus changed lanes currently
      */
     public int numberOfChanged()
     {
-        return changedGtus.size();
+        return this.changedGtus.size();
     }
 
 }

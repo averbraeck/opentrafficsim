@@ -46,7 +46,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class OTSLine3D implements Locatable, Serializable
+public class OTSLine3D implements Locatable, Serializable // XXX: DJ
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -58,13 +58,13 @@ public class OTSLine3D implements Locatable, Serializable
     private double[] lengthIndexedLine = null;
 
     /** The cached length; will be calculated at time of construction. */
-    private Length length;
+    private Length length; // XXX: DJ uses double
 
     /** The cached centroid; will be calculated when needed for the first time. */
     private OTSPoint3D centroid = null;
 
     /** The cached bounds; will be calculated when needed for the first time. */
-    private Bounds bounds = null;
+    private Bounds bounds = null; // XXX: DJ
 
     /** The cached helper points for fractional projection; will be calculated when needed for the first time. */
     private OTSPoint3D[] fractionalHelperCenters = null;
@@ -82,7 +82,7 @@ public class OTSLine3D implements Locatable, Serializable
     private static final double FRAC_PROJ_PRECISION = 2e-5 /* PK too fine 1e-6 */;
 
     /** Radius at each vertex. */
-    private Length[] vertexRadii;
+    private Length[] vertexRadii; // XXX: DJ
 
     /** Bounding of this OTSLine3D. */
     private Envelope envelope;
@@ -122,7 +122,7 @@ public class OTSLine3D implements Locatable, Serializable
             this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + pts[i - 1].distanceSI(pts[i]);
         }
         this.points = pts;
-        this.length = Length.instantiateSI(this.lengthIndexedLine[this.lengthIndexedLine.length - 1]);
+        this.length = Length.instantiateSI(this.lengthIndexedLine[this.lengthIndexedLine.length - 1]); // XXX: DJ double
     }
 
     /** Which offsetLine method to use... */
@@ -253,7 +253,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param useHorizontalDistance boolean; if true; the horizontal distance is used; if false; the 3D distance is used
      * @return OTSLine3D; a new OTSLine3D containing all the remaining points
      */
-    public final OTSLine3D noiseFilterRamerDouglasPeucker(final double epsilon, final boolean useHorizontalDistance)
+    public final OTSLine3D noiseFilterRamerDouglasPeucker(final double epsilon, final boolean useHorizontalDistance) // XXX: DJ
     {
         try
         {
@@ -305,7 +305,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws OTSGeometryException when this method fails to create the offset line
      */
-    public final OTSLine3D offsetLine(final double offsetAtStart, final double offsetAtEnd) throws OTSGeometryException
+    public final OTSLine3D offsetLine(final double offsetAtStart, final double offsetAtEnd) throws OTSGeometryException // XXX: DJ
     {
         // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is "
         // + offsetAtStart + " at end is " + offsetAtEnd + "\n#", referenceLine, "\n "));
@@ -377,7 +377,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws OTSGeometryException when this method fails to create the offset line
      */
-    public final OTSLine3D offsetLine(final double[] relativeFractions, final double[] offsets) throws OTSGeometryException
+    public final OTSLine3D offsetLine(final double[] relativeFractions, final double[] offsets) throws OTSGeometryException // XXX: DJ
     {
         Throw.whenNull(relativeFractions, "relativeFraction may not be null");
         Throw.whenNull(offsets, "offsets may not be null");
@@ -595,7 +595,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return OTSLine3D; the selected sub-section
      * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; length
      */
-    public final OTSLine3D extract(final Length start, final Length end) throws OTSGeometryException
+    public final OTSLine3D extract(final Length start, final Length end) throws OTSGeometryException // XXX: DJ
     {
         return extract(start.si, end.si);
     }
@@ -695,7 +695,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param coordinates Coordinate[]; the coordinates
      * @return OTSPoint3D[]
      */
-    private static OTSPoint3D[] coordinatesToOTSPoint3D(final Coordinate[] coordinates)
+    private static OTSPoint3D[] coordinatesToOTSPoint3D(final Coordinate[] coordinates) // XXX: DJ
     {
         OTSPoint3D[] result = new OTSPoint3D[coordinates.length];
         for (int i = 0; i < coordinates.length; i++)
@@ -752,7 +752,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
-    public OTSLine3D(final Coordinate[] coordinates) throws OTSGeometryException
+    public OTSLine3D(final Coordinate[] coordinates) throws OTSGeometryException // XXX: DJ
     {
         this(coordinatesToOTSPoint3D(coordinates));
     }
@@ -763,7 +763,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @throws OTSGeometryException when the provided LineString does not constitute a valid line (too few points or identical
      *             adjacent points)
      */
-    public OTSLine3D(final LineString lineString) throws OTSGeometryException
+    public OTSLine3D(final LineString lineString) throws OTSGeometryException // XXX: DJ
     {
         this(lineString.getCoordinates());
     }
@@ -774,7 +774,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @throws OTSGeometryException when the provided Geometry do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
-    public OTSLine3D(final Geometry geometry) throws OTSGeometryException
+    public OTSLine3D(final Geometry geometry) throws OTSGeometryException // XXX: DJ
     {
         this(geometry.getCoordinates());
     }
@@ -823,7 +823,7 @@ public class OTSLine3D implements Locatable, Serializable
      * Construct a Coordinate array and fill it with the points of this OTSLine3D.
      * @return an array of Coordinates corresponding to this OTSLine
      */
-    public final Coordinate[] getCoordinates()
+    public final Coordinate[] getCoordinates() // XXX: DJ
     {
         Coordinate[] result = new Coordinate[size()];
         for (int i = 0; i < size(); i++)
@@ -837,7 +837,7 @@ public class OTSLine3D implements Locatable, Serializable
      * Construct a LineString from this OTSLine3D.
      * @return a LineString corresponding to this OTSLine
      */
-    public final LineString getLineString()
+    public final LineString getLineString() // XXX: DJ
     {
         GeometryFactory factory = new GeometryFactory();
         Coordinate[] coordinates = getCoordinates();
@@ -902,7 +902,7 @@ public class OTSLine3D implements Locatable, Serializable
      * expressed in meters.)
      * @return the length of the line
      */
-    public final Length getLength()
+    public final Length getLength() // XXX: DJ
     {
         return this.length;
     }
@@ -938,7 +938,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param position Length; the position on the line for which to calculate the point on, before, of after the line
      * @return a directed point
      */
-    public final DirectedPoint getLocationExtended(final Length position)
+    public final DirectedPoint getLocationExtended(final Length position) // XXX: DJ
     {
         return getLocationExtendedSI(position.getSI());
     }
@@ -950,7 +950,7 @@ public class OTSLine3D implements Locatable, Serializable
      *            units
      * @return a directed point
      */
-    public final synchronized DirectedPoint getLocationExtendedSI(final double positionSI)
+    public final synchronized DirectedPoint getLocationExtendedSI(final double positionSI)  // XXX: DJ name + super(p)
     {
         makeLengthIndexedLine();
         if (positionSI >= 0.0 && positionSI <= getLengthSI())
@@ -1046,7 +1046,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return a directed point
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final DirectedPoint getLocation(final Length position) throws OTSGeometryException
+    public final DirectedPoint getLocation(final Length position) throws OTSGeometryException // XXX: DJ
     {
         return getLocationSI(position.getSI());
     }
@@ -1096,7 +1096,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return a directed point
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final synchronized DirectedPoint getLocationSI(final double positionSI) throws OTSGeometryException
+    public final synchronized DirectedPoint getLocationSI(final double positionSI) throws OTSGeometryException // XXX: DJ without SI
     {
         makeLengthIndexedLine();
         if (positionSI < 0.0 || positionSI > getLengthSI())
@@ -1338,7 +1338,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return fractional position along this line of the fractional projection on that line of a point
      */
     public final synchronized double projectFractional(final Direction start, final Direction end, final double x,
-            final double y, final FractionalFallback fallback)
+            final double y, final FractionalFallback fallback) // XXX: DJ
     {
 
         // prepare
@@ -1446,7 +1446,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public enum FractionalFallback
+    public enum FractionalFallback // XXX: DJ
     {
         /** Orthogonal projection. */
         ORTHOGONAL
@@ -1505,7 +1505,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param start Direction; direction in first point
      * @param end Direction; direction in last point
      */
-    private synchronized void determineFractionalHelpers(final Direction start, final Direction end)
+    private synchronized void determineFractionalHelpers(final Direction start, final Direction end) // XXX: DJ
     {
 
         final int n = this.points.length - 1;
@@ -1616,7 +1616,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @param segment int; segment number
      * @return parallel line to the left of a segment at a distance of 1
      */
-    private synchronized OTSLine3D unitOffsetSegment(final int segment)
+    private synchronized OTSLine3D unitOffsetSegment(final int segment) // XXX: DJ
     {
 
         // double angle = Math.atan2(this.points[segment + 1].y - this.points[segment].y,
@@ -1665,7 +1665,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return Length; radius; the local radius; or si field set to Double.NaN if line is totally straight
      * @throws OTSGeometryException fraction out of bounds
      */
-    public synchronized Length getProjectedRadius(final double fraction) throws OTSGeometryException
+    public synchronized Length getProjectedRadius(final double fraction) throws OTSGeometryException // XXX: DJ
     {
         Throw.when(fraction < 0.0 || fraction > 1.0, OTSGeometryException.class, "Fraction %f is out of bounds [0.0 ... 1.0]",
                 fraction);
@@ -1707,7 +1707,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return Length; radius at the vertex
      * @throws OTSGeometryException if the index is out of bounds
      */
-    public synchronized Length getProjectedVertexRadius(final int index) throws OTSGeometryException
+    public synchronized Length getProjectedVertexRadius(final int index) throws OTSGeometryException // XXX: DJ
     {
         Throw.when(index < 1 || index > size() - 2, OTSGeometryException.class, "Index %d is out of bounds [1 ... size() - 2].",
                 index);
@@ -1757,7 +1757,7 @@ public class OTSLine3D implements Locatable, Serializable
      * @return double; length fraction at the vertex
      * @throws OTSGeometryException if the index is out of bounds
      */
-    public synchronized double getVertexFraction(final int index) throws OTSGeometryException
+    public synchronized double getVertexFraction(final int index) throws OTSGeometryException // XXX: DJ
     {
         Throw.when(index < 0 || index > size() - 1, OTSGeometryException.class, "Index %d is out of bounds [0 %d].", index,
                 size() - 1);
@@ -1811,7 +1811,7 @@ public class OTSLine3D implements Locatable, Serializable
      * Get the bounding rectangle of this OTSLine3D.
      * @return Rectangle2D; the bounding rectangle of this OTSLine3D
      */
-    public final synchronized Envelope getEnvelope()
+    public final synchronized Envelope getEnvelope() // XXX: DJ uses BoundingRectangle
     {
         if (this.envelope == null)
         {
@@ -1823,7 +1823,7 @@ public class OTSLine3D implements Locatable, Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public synchronized DirectedPoint getLocation()
+    public synchronized DirectedPoint getLocation() // XXX: DJ
     {
         if (this.centroid == null)
         {
@@ -1835,7 +1835,7 @@ public class OTSLine3D implements Locatable, Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public synchronized Bounds getBounds()
+    public synchronized Bounds getBounds() // XXX: DJ
     {
         if (this.bounds == null)
         {
@@ -1898,7 +1898,7 @@ public class OTSLine3D implements Locatable, Serializable
      * Convert the 2D projection of this OTSLine3D to Peter's plot format.
      * @return Peter's format plot output
      */
-    public final String toPlot()
+    public final String toPlot() // XXX: DJ
     {
         StringBuffer result = new StringBuffer();
         for (OTSPoint3D p : this.points)

@@ -10,7 +10,7 @@
 
   <body>
 
-   <menu name="MODULES">
+   <menu name="MODULES v1">
       <item name="ots" href="http://opentrafficsim.org/docs/${project.version}/index.html" />
       <item name="ots-base" href="http://opentrafficsim.org/docs/${project.version}/ots-base/index.html" />
       <item name="ots-core" href="http://opentrafficsim.org/docs/${project.version}/ots-core/index.html" />
