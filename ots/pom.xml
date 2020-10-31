@@ -97,14 +97,15 @@
     <maven.install.version>3.0.0-M1</maven.install.version>
     <maven.source.version>3.2.1</maven.source.version>
     <maven.javadoc.version>3.2.0</maven.javadoc.version>
+    <maven.resources.version>3.2.0</maven.resources.version>
     <maven.checkstyle.version>3.1.1</maven.checkstyle.version>
     <checkstyle.version>8.35</checkstyle.version>
     <maven.surefire.version>3.0.0-M5</maven.surefire.version>
     <maven.surefire-report.version>3.0.0-M5</maven.surefire-report.version>
     <maven.failsafe.version>3.0.0-M5</maven.failsafe.version>
-    <maven.jacoco.version>0.8.5</maven.jacoco.version>
-    <maven.spotbugs.version>3.1.12.2</maven.spotbugs.version>
-    <spotbugs.version>4.0.4</spotbugs.version>
+    <maven.jacoco.version>0.8.6</maven.jacoco.version>
+    <maven.spotbugs.version>4.1.4</maven.spotbugs.version>
+    <spotbugs.version>4.1.4</spotbugs.version>
     <maven.project-info-reports.version>3.1.0</maven.project-info-reports.version>
     <maven.jxr.version>3.0.0</maven.jxr.version>
     <maven.taglist.version>2.4</maven.taglist.version>
@@ -114,6 +115,7 @@
     <wagon.ssh.version>3.4.1</wagon.ssh.version>
     <wagon.ftp.version>3.4.1</wagon.ftp.version>
     <maven-jaxb2.version>0.14.0</maven-jaxb2.version>
+
   </properties>
 
   
@@ -166,7 +168,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>${maven.resources.version}</version>
         <configuration>
           <encoding>${project.encoding}</encoding>
         </configuration>
@@ -290,9 +292,8 @@
         <version>${maven.javadoc.version}</version>
 
         <configuration>
-          <source>8</source>
           <links>
-            <!-- link>https://docs.oracle.com/en/java/javase/8/docs/api/</link -->
+            <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
             <link>http://www.jfree.org/jcommon/api/</link>
             <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
             <link>https://junit.org/junit4/javadoc/4.12/</link>
@@ -457,7 +458,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-           <version>${checkstyle.version}</version>
+            <version>${checkstyle.version}</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -581,8 +582,7 @@
 
         <configuration>
           <links>
-            <source>8</source>
-            <!--link>https://docs.oracle.com/javase/8/docs/api/</link -->
+            <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
             <link>http://www.jfree.org/jcommon/api/</link>
             <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
             <link>https://junit.org/junit4/javadoc/4.12/</link>
@@ -718,6 +718,7 @@
           <maxmemory>1g</maxmemory>
 
           <detectJavaApiLink>false</detectJavaApiLink>
+          <detectLinks>true</detectLinks>
           <failOnError>false</failOnError>
 
         </configuration>
