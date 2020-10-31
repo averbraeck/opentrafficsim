@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>OTS SuperDemo</title>
+<script src="/js/jquery-3.3.1.js"></script>
+
+<script>
+  function generateUUID() { // Public Domain/MIT
+    var d = new Date().getTime();
+    if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+      d += performance.now(); //use high-precision timer if available
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  function setSessionId(modelName) {
+    $("a").each(function() {
+      if (this.href.includes(modelName)) {
+        var n = this.href.indexOf("sessionId=");
+        this.href = this.href.substr(0, n) + "sessionId=" + generateUUID();
+      }
+    });
+  }
+</script>
+
+</head>
+
+<!-- This page is stateless and defers all stateful information to the parameters.html / model.html page -->
+
+<body>
+  <h1>OTS Demo Model launch page</h1>
+  <p>You can run the following demos:</p>
+  <ul>
+    <li><a href="parameters.html?model=CircularRoad&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('CircularRoad')">
+        Model of a two-lane circular road with overtaking.</a></li>
+    <li><a href="parameters.html?model=TJunctionDemo&sessionId=SESSION_ID" target="_blank" onclick="setSessionId('TJunctionDemo')">
+        TJunction with complex crossing traffic using perception, no traffic lights.</a></li>
+  </ul>
+</body>
+</html>
