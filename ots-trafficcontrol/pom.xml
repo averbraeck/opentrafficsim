@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>opentrafficsim</groupId>
 		<artifactId>ots</artifactId>
-		<version>1.04.04-SNAPSHOT</version>
+		<version>1.04.04</version>
 		<relativePath>../ots/pom.xml</relativePath>
 	</parent>
 
