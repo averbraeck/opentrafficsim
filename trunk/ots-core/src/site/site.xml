@@ -24,10 +24,6 @@
       <item name="ots-trafficcontrol" href="http://opentrafficsim.org/docs/${project.version}/ots-trafficcontrol/index.html" />
       <item name="ots-xsd" href="http://opentrafficsim.org/docs/${project.version}/ots-xsd/index.html" />
       <item name="ots-parser-xml" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-xml/index.html" />
-      <item name="ots-parser-opendrive" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-opendrive/index.html" />
-      <item name="ots-parser-osm" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-osm/index.html" />
-      <item name="ots-parser-shape" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-shape/index.html" />
-      <item name="ots-parser-vissim" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-vissim/index.html" />
       <item name="ots-sim0mq" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq/index.html" />
       <item name="ots-sim0mq-kpi" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-kpi/index.html" />
       <item name="ots-sim0mq-swing" href="http://opentrafficsim.org/docs/${project.version}/ots-sim0mq-swing/index.html" />
