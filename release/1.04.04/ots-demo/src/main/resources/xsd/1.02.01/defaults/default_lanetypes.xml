@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LANETYPES xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
+
+<!--
+        GTUCompatibility<LaneType> noTrafficCompatibility = new GTUCompatibility<>((LaneType) null);
+        NONE = new LaneType("NONE", null, noTrafficCompatibility);
+        GTUCompatibility<LaneType> roadCompatibility = new GTUCompatibility<>((LaneType) null);
+        roadCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
+        TWO_WAY_LANE = new LaneType("TWO_WAY_LANE", null, roadCompatibility);
+        RURAL_ROAD_LANE = new LaneType("RURAL_ROAD", TWO_WAY_LANE, new GTUCompatibility<>(roadCompatibility));
+        URBAN_ROAD_LANE = new LaneType("URBAN_ROAD", TWO_WAY_LANE, new GTUCompatibility<>(roadCompatibility));
+        RESIDENTIAL_ROAD_LANE = new LaneType("RESIDENTIAL_ROAD", TWO_WAY_LANE, new GTUCompatibility<>(roadCompatibility));
+        GTUCompatibility<LaneType> oneWayLaneCompatibility = new GTUCompatibility<>(roadCompatibility);
+        oneWayLaneCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
+        oneWayLaneCompatibility.addAllowedGTUType(GTUType.PEDESTRIAN, LongitudinalDirectionality.DIR_BOTH);
+        ONE_WAY_LANE = new LaneType("ONE_WAY_LANE", oneWayLaneCompatibility);
+        GTUCompatibility<LaneType> highwayLaneCompatibility = new GTUCompatibility<>(oneWayLaneCompatibility)
+                .addAllowedGTUType(GTUType.PEDESTRIAN, LongitudinalDirectionality.DIR_NONE);
+        FREEWAY = new LaneType("FREEWAY", highwayLaneCompatibility);
+        HIGHWAY = new LaneType("HIGHWAY", highwayLaneCompatibility);
+        GTUCompatibility<LaneType> busLaneCompatibility = new GTUCompatibility<>(roadCompatibility);
+        busLaneCompatibility.addAllowedGTUType(GTUType.BUS, LongitudinalDirectionality.DIR_BOTH);
+        busLaneCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_NONE);
+        BUS_LANE = new LaneType("BUS_LANE", busLaneCompatibility);
+        GTUCompatibility<LaneType> mopedAndBicycleLaneCompatibility = new GTUCompatibility<>(roadCompatibility);
+        mopedAndBicycleLaneCompatibility.addAllowedGTUType(GTUType.BICYCLE, LongitudinalDirectionality.DIR_BOTH);
+        mopedAndBicycleLaneCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_NONE);
+        MOPED_PATH = new LaneType("MOPED_PATH", mopedAndBicycleLaneCompatibility);
+        GTUCompatibility<LaneType> bicycleOnlyCompatibility = new GTUCompatibility<>(mopedAndBicycleLaneCompatibility);
+        bicycleOnlyCompatibility.addAllowedGTUType(GTUType.MOPED, LongitudinalDirectionality.DIR_NONE);
+        BICYCLE_PATH = new LaneType("BICYCLE_PATH", bicycleOnlyCompatibility);
+        GTUCompatibility<LaneType> pedestriansOnly = new GTUCompatibility<>(roadCompatibility);
+        pedestriansOnly.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_NONE);
+        FOOTPATH = new LaneType("FOOTPATH", pedestriansOnly);
+ -->
+
+  <LANETYPE ID="NONE" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="NONE" DIRECTION="NONE"/>
+  </LANETYPE>
+  
+  <LANETYPE ID="TWO_WAY_LANE" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+  </LANETYPE>
+
+  <LANETYPE ID="RURAL_ROAD" PARENT="TWO_WAY_LANE" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+  </LANETYPE>
+
+  <LANETYPE ID="URBAN_ROAD" PARENT="TWO_WAY_LANE" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+  </LANETYPE>
+
+  <LANETYPE ID="RESIDENTIAL_ROAD" PARENT="TWO_WAY_LANE" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+  </LANETYPE>
+
+  <LANETYPE ID="ONE_WAY_LANE" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+    <COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="BOTH" />
+  </LANETYPE>
+
+  <LANETYPE ID="FREEWAY" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+    <COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="NONE" />
+  </LANETYPE>
+
+  <LANETYPE ID="HIGHWAY" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="FORWARD" />
+    <COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="NONE" />
+  </LANETYPE>
+
+  <LANETYPE ID="BUS_LANE" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="NONE" />
+    <COMPATIBILITY GTUTYPE="BUS" DIRECTION="FORWARD" />
+  </LANETYPE>
+
+  <LANETYPE ID="MOPED_PATH" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="NONE" />
+    <COMPATIBILITY GTUTYPE="BICYCLE" DIRECTION="FORWARD" />
+    <!-- a MOPED is a special BICYCLE -->
+  </LANETYPE>
+
+  <LANETYPE ID="BICYCLE_PATH" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="NONE" />
+    <COMPATIBILITY GTUTYPE="BICYCLE" DIRECTION="FORWARD" />
+    <COMPATIBILITY GTUTYPE="MOPED" DIRECTION="NONE" />
+  </LANETYPE>
+
+  <LANETYPE ID="FOOTPATH" DEFAULT="true">
+    <COMPATIBILITY GTUTYPE="ROAD_USER" DIRECTION="NONE" />
+    <COMPATIBILITY GTUTYPE="PEDESTRIAN" DIRECTION="BOTH" />
+  </LANETYPE>
+
+</LANETYPES>
