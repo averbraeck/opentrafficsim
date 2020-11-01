@@ -6,7 +6,19 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
 
-    <release version="1.04.03" date="2020-XX-XX" description="Enable Control Panel buttons">
+    <release version="1.04.04" date="2020-11-01" description="Moved demos and research projects to OTS-RESEARCH">
+      <action>
+        Large XML-demos moved to project ots-demo-xml on OTS-RESEARCH svn site.
+      </action>
+      <action>
+        CACC code moved to project ots-cacc on OTS-RESEARCH svn site.
+      </action>
+      <action>
+        Research projects ots-nissan, ots-opendrive, ots-vissim, various ots-parsers moved to OTS-RESEARCH svn site.
+      </action>
+    </release>
+    
+    <release version="1.04.03" date="2020-10-22" description="Enable Control Panel buttons">
       <action>
         The OTSSimulationPanel and OTSAnimationPanel have a method to enable and disable the control buttons to start/stop
         a simulation / animation. By default, the buttons are now DISABLED to allow for set-up and initialization to complete
