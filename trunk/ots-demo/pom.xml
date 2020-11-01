@@ -27,10 +27,6 @@
     </dependency>
     <dependency>
       <groupId>opentrafficsim</groupId>
-      <artifactId>ots-parser-osm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>opentrafficsim</groupId>
       <artifactId>ots-swing</artifactId>
     </dependency>
     <dependency>
