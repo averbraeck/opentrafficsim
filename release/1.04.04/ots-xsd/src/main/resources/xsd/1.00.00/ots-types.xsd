@@ -1,0 +1,295 @@
+<xsd:schema targetNamespace="http://www.opentrafficsim.org/ots" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" elementFormDefault="qualified">
+
+  <!-- ================================================================================================== -->
+  <!-- ================================================= TYPES ========================================== -->
+  <!-- ================================================================================================== -->
+
+  <xsd:simpleType name="CLASSNAMETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([A-Za-z_0-9$]+\.)*[A-Za-z_0-9$]+"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="SPEEDTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ACCELERATIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*(km/h\^2|m/s\^2|mi/h\^2|ft/s\^2)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="POSITIVELENGTHTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="PERLENGTHTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <!-- Allows patterns like BEGIN | END | END-10m | 25m | 50% -->
+  <xsd:simpleType name="LENGTHBEGINENDTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="BEGIN|END|END\-(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft))|(\
+){0}(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)|(\
+){0}((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="FRACTIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LENGTHTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="TIMETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DURATIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="FREQUENCYTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="VEHICLEINTENSITYTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*veh"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="VEHICLEFREQUENCYTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*veh\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="COORDINATETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*(\s*,\s*[+-]?\d+\.?\d*)?\s*\)">
+      </xsd:pattern>
+      <xsd:whiteSpace value="collapse" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="COORDINATENOSPACETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*(,[+-]?\d+\.?\d*)?\)">
+      </xsd:pattern>
+      <xsd:whiteSpace value="collapse" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="COORDINATELISTTYPE">
+    <xsd:list itemType="COORDINATENOSPACETYPE" />
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LEFTRIGHTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="L|LEFT|R|RIGHT|CLOCKWISE|COUNTERCLOCKWISE"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ANGLETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(deg|rad)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DIRECTIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(deg|rad)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DISTANCECOSTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="TIMECOSTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LANEKEEPINGTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="KEEPLEFT|KEEPRIGHT|KEEPLANE"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="PRIORITYTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="PRIORITY|NONE|TURN_ON_RED|YIELD|STOP|ALL_STOP|BUS_STOP"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="OVERTAKINGTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="LEFTONLY|RIGHTONLY|NONE|BOTH|SAMELANELEFT|SAMELANERIGHT|SAMELANEBOTH|(\
+{0})LEFTALWAYS\s+RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
+{0})RIGHTALWAYS\s+LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
+{0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
+{0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
+{0})\s*RIGHTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)|(\
+{0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
+{0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
+{0})\s*LEFTSPEED\(\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)\)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="GTUPOSITIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="FRONT|REAR|REFERENCE"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="STRIPETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="SOLID|DASHED|BLOCKED|DOUBLE|LEFTONLY|RIGHTONLY"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DRIVINGDIRECTIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="FORWARD|BACKWARD|BOTH"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="INTERPOLATIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="STEPWISE|LINEAR"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="COLORTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})WHITE|LIGHT_GRAY|GRAY|DARK_GRAY|BLACK|RED|PINK|ORANGE|YELLOW|GREEN|MAGENTA|CYAN|BLUE(\
+{0})|\#[(0-9)|(A-F)]{6}(\
+{0})|RGB\(0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\s*\,\s*(\
+{0})0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\s*\,\s*(\
+{0})0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="GTUCOLORERTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="ID|VELOCITY|ACCELERATION|LANECHANGEURGE|SWITCHABLE"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="TACTICALPLANNERTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="CONTDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LENGTHDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="SPEEDDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(km/h|m/s|mi/h|ft/s)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="TIMEDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(NORM|NORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|BETA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|GAMMA\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|PEARSON5\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|PEARSON6\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+\.?\d*\s*,\s*\d+\.?\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

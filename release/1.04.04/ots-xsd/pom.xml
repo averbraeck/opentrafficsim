@@ -1,0 +1,123 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>1.04.04</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-xsd</artifactId>
+  <name>OTS XSD schema definitions</name>
+  <description>OTS XSD schema definitions for XML files</description>
+
+  <properties>
+    <xsd.version>1.04.01</xsd.version>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>${wagon.maven.version}</version>
+        <executions>
+          <execution>
+            <id>upload-schema-version</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/src/main/resources/xsd</fromDir>
+              <includes>**/*</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
+              <toDir>xsd</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>${maven-jaxb2.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <schemaDirectory>src/main/resources/xsd/${xsd.version}</schemaDirectory>
+          <generateDirectory>src/main/java</generateDirectory>
+          <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
+          <markGenerated>true</markGenerated>
+          <cleanPackageDirectories>true</cleanPackageDirectories>
+          <!--  Next one appears to fix Peter's mojo problem  -->
+          <scanDependenciesForBindings>false</scanDependenciesForBindings>
+          <strict>false</strict>
+          <specVersion>2.3</specVersion>
+          <verbose>true</verbose>
+          <extension>true</extension>
+          <bindingDirectory>src/main/resources/xsd/${xsd.version}</bindingDirectory>
+          <bindingIncludes>
+            <bindingInclude>bindings.xml</bindingInclude>
+          </bindingIncludes>
+          <schemaIncludes>
+            <schemaInclude>*.xsd</schemaInclude>
+          </schemaIncludes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>java3d</groupId>
+      <artifactId>vecmath</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>java3d</groupId>
+      <artifactId>j3d-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.djunits</groupId>
+      <artifactId>djunits</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+    </dependency>
+
+  <dependency>
+    <groupId>org.glassfish.jaxb</groupId>
+    <artifactId>jaxb-runtime</artifactId>
+  </dependency>
+
+    <!-- dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-core</artifactId>
+    </dependency>
+  
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+    </dependency -->
+      
+  </dependencies>
+
+</project>
