@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -40,6 +41,7 @@ public class OTSRoadNode extends OTSNode
             throws NetworkException
     {
         super(network, id, point);
+        Throw.whenNull(direction, "direction cannot be null");
         this.direction = direction;
     }
 
