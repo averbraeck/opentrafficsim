@@ -68,7 +68,7 @@ public class SubscriptionHandler
      *            change event type for the data
      * @param elementSubscriptionHandler SubscriptionHandler; SubscriptionHandler for events produced by the underlying elements
      */
-    SubscriptionHandler(final String id, final TransceiverInterface listTransceiver,
+    public SubscriptionHandler(final String id, final TransceiverInterface listTransceiver,
             final LookupEventProducerInterface eventProducerForAddRemoveOrChange, final TimedEventType addedEventType,
             final TimedEventType removedEventType, final TimedEventType changeEventType,
             final SubscriptionHandler elementSubscriptionHandler)
@@ -403,11 +403,19 @@ public class SubscriptionHandler
             }
 
             case GET_ADDRESS_META_DATA:
+                if (null == this.listTransceiver)
+                {
+                    returnWrapper.nack("The " + this.id + " SubscriptionHandler does not support immediate replies");
+                }
                 sendResult(extractObjectDescriptorClassNames(this.listTransceiver.getAddressFields().getObjectDescriptors()),
                         returnWrapper);
                 break;
 
             case GET_RESULT_META_DATA:
+                if (null == this.listTransceiver)
+                {
+                    returnWrapper.nack("The " + this.id + " SubscriptionHandler does not support immediate replies");
+                }
                 sendResult(extractObjectDescriptorClassNames(this.listTransceiver.getResultFields().getObjectDescriptors()),
                         returnWrapper);
                 break;
@@ -511,29 +519,6 @@ public class SubscriptionHandler
                 + this.addedEventType + ", removedEventType=" + this.removedEventType + ", changeEventType="
                 + this.changeEventType + ", elementSubscriptionHandler=" + this.elementSubscriptionHandler + "]";
     }
-
-}
-
-/**
- * Object that can find the EventProducerInterface object for an address.
- */
-interface LookupEventProducerInterface
-{
-    /**
-     * Find the EventProducerInterface with the given address.
-     * @param address Object[]; the address
-     * @param returnWrapper ReturnWrapper; to be used to send back complaints about bad addresses, etc.
-     * @return EventProducerInterface; can be null in case the address is (no longer) valid
-     * @throws SerializationException when an error occurs while serializing an error response
-     * @throws Sim0MQException when an error occurs while serializing an error response
-     */
-    EventProducerInterface lookup(Object[] address, ReturnWrapper returnWrapper) throws Sim0MQException, SerializationException;
-
-    /**
-     * Return a MetaData object that can be used to verify the correctness of an address for the <code>lookup</code> method.
-     * @return MetaData; to be used to verify the correctness of an address for the <code>lookup</code> method
-     */
-    MetaData getAddressMetaData();
 
 }
 
