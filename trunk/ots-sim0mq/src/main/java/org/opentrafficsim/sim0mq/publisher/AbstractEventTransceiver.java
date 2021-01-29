@@ -48,10 +48,12 @@ public abstract class AbstractEventTransceiver extends AbstractTransceiver
             switch (od.getObjectClass().getName())
             {
                 case "java.lang.String":
+                case "java.lang.Double":
                 case "org.djunits.value.vdouble.scalar.Acceleration":
                 case "org.djunits.value.vdouble.scalar.Direction":
                 case "org.djunits.value.vdouble.scalar.Length":
                 case "org.djunits.value.vdouble.scalar.Speed":
+                case "org.djunits.value.vdouble.scalar.Time":
                 case "org.djunits.value.vdouble.vector.PositionVector":
                     resultList.add(od);
                     break;

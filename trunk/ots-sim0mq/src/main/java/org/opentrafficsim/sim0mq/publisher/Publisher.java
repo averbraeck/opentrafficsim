@@ -2,6 +2,7 @@ package org.opentrafficsim.sim0mq.publisher;
 
 import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.djunits.Throw;
@@ -50,23 +51,50 @@ public class Publisher extends AbstractTransceiver
     @SuppressWarnings("checkstyle:visibilitymodifier")
     final Map<String, SubscriptionHandler> subscriptionHandlerMap = new LinkedHashMap<>();
 
+    /** Handlers for data not handled directly by this Publisher. */
+    private final Map<String, IncomingDataHandler> incomingDataHandlers = new LinkedHashMap<>();
+
     /** The OTS network. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     final OTSNetwork network;
 
     /**
-     * Construct a Publisher for an OTS network.
+     * Construct a Publisher for an OTS network with no additional subscription handlers.
      * @param network OTSNetwork; the OTS network
      * @throws RemoteException ...
      */
     public Publisher(final OTSNetwork network) throws RemoteException
     {
+        this(network, null, null);
+    }
+
+    /**
+     * Construct a Publisher for an OTS network.
+     * @param network OTSNetwork; the OTS network
+     * @param additionalSubscriptionHandlers List&lt;SubscriptionHandler&gt;; list of additional subscription handlers to
+     *            register (may be null)
+     * @param incomingDataHandlers List&lt;IncomingDataHandler&gt;; handlers for data not handled directly by the Publisher (may
+     *            be null).
+     * @throws RemoteException ...
+     */
+    public Publisher(final OTSNetwork network, final List<SubscriptionHandler> additionalSubscriptionHandlers,
+            final List<IncomingDataHandler> incomingDataHandlers) throws RemoteException
+    {
         super("Publisher for " + Throw.whenNull(network, "Network may not be null").getId(),
                 new MetaData("Publisher for " + network.getId(), "Publisher",
-                        new ObjectDescriptor[] {new ObjectDescriptor("Name of subscription handler", "String", String.class)}),
-                new MetaData("Subscription handlers", "Subscription handlers",
-                        new ObjectDescriptor[] {new ObjectDescriptor("Name of subscription handler", "String", String.class)}));
+                        new ObjectDescriptor[] {
+                                new ObjectDescriptor("Name of subscription handler", "String", String.class) }),
+                new MetaData("Subscription handlers", "Subscription handlers", new ObjectDescriptor[] {
+                        new ObjectDescriptor("Name of subscription handler", "String", String.class) }));
         this.network = network;
+
+        if (incomingDataHandlers != null)
+        {
+            for (IncomingDataHandler incomingDataHandler : incomingDataHandlers)
+            {
+                this.incomingDataHandlers.put(incomingDataHandler.getKey(), incomingDataHandler);
+            }
+        }
 
         GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
         GTUTransceiver gtuTransceiver = new GTUTransceiver(network, gtuIdTransceiver);
@@ -92,7 +120,7 @@ public class Publisher extends AbstractTransceiver
                     }
 
                     private final MetaData metaData = new MetaData("GTU Id", "GTU Id",
-                            new ObjectDescriptor[] {new ObjectDescriptor("GTU ID", "GTU Id", String.class)});
+                            new ObjectDescriptor[] { new ObjectDescriptor("GTU ID", "GTU Id", String.class) });
 
                     @Override
                     public MetaData getAddressMetaData()
@@ -180,7 +208,7 @@ public class Publisher extends AbstractTransceiver
                     }
 
                     private final MetaData metaData = new MetaData("Node Id", "Node Id",
-                            new ObjectDescriptor[] {new ObjectDescriptor("Node ID", "Node Id", String.class)});
+                            new ObjectDescriptor[] { new ObjectDescriptor("Node ID", "Node Id", String.class) });
 
                     @Override
                     public MetaData getAddressMetaData()
@@ -228,6 +256,14 @@ public class Publisher extends AbstractTransceiver
                 stt.getLookupEventProducerInterface(), null, null, SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED, null);
         addSubscriptionHandler(simulatorStateSubscriptionHandler);
 
+        if (additionalSubscriptionHandlers != null)
+        {
+            for (SubscriptionHandler sh : additionalSubscriptionHandlers)
+            {
+                addSubscriptionHandler(sh);
+            }
+        }
+
         addSubscriptionHandler(new SubscriptionHandler("", this, null, null, null, null, null)); // The meta transceiver
     }
 
@@ -264,7 +300,7 @@ public class Publisher extends AbstractTransceiver
         public MetaData getAddressMetaData()
         {
             return new MetaData("Link id", "Name of a link in the network",
-                    new ObjectDescriptor[] {new ObjectDescriptor("Link id", "Name of a link in the network", String.class)});
+                    new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Name of a link in the network", String.class) });
         }
     };
 
@@ -295,7 +331,7 @@ public class Publisher extends AbstractTransceiver
             returnWrapper.nack("No transceiver with name \"" + address[0] + "\"");
             return null;
         }
-        return new Object[] {subscriptionHandler};
+        return new Object[] { subscriptionHandler };
     }
 
     /** Returned by the getIdSource method. */
@@ -316,7 +352,7 @@ public class Publisher extends AbstractTransceiver
         /** Result of getResultFields. */
         private MetaData resultMetaData =
                 new MetaData("Transceiver names available in Publisher", "String array", new ObjectDescriptor[] {
-                        new ObjectDescriptor("Transceiver names available in Publisher", "String array", String[].class)});
+                        new ObjectDescriptor("Transceiver names available in Publisher", "String array", String[].class) });
 
         @Override
         public MetaData getResultFields()
@@ -397,6 +433,16 @@ public class Publisher extends AbstractTransceiver
         executeCommand(subscriptionHandlerName,
                 Throw.whenNull(SubscriptionHandler.lookupCommand(commandString), "Invalid command (%s)", commandString),
                 address, returnWrapper);
+    }
+    
+    /**
+     * Find the IncomingDataHandler for a particular key.
+     * @param key String; the key of the IncomingDataHandler
+     * @return IncomingDataHandler; or null if there is no IncomingDataHandler for the key
+     */
+    public IncomingDataHandler lookupIncomingDataHandler(final String key)
+    {
+        return this.incomingDataHandlers.get(key);
     }
 
 }
