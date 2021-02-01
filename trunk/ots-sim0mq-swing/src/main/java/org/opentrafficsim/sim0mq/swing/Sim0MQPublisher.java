@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,12 +47,15 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
+import org.opentrafficsim.sim0mq.publisher.IncomingDataHandler;
 import org.opentrafficsim.sim0mq.publisher.Publisher;
 import org.opentrafficsim.sim0mq.publisher.ReturnWrapper;
 import org.opentrafficsim.sim0mq.publisher.ReturnWrapperImpl;
+import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.script.AbstractSimulationScript;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 import org.sim0mq.Sim0MQException;
@@ -120,6 +124,46 @@ public final class Sim0MQPublisher
         ZMQ.Socket socket = this.zContext.createSocket(SocketType.PAIR);
         socket.bind("tcp://*:" + port);
         pollingLoop(socket, socket);
+    }
+
+    /**
+     * Create a new Sim0MQPublisher that uses TCP transport.
+     * @param port int; port number to bind to
+     * @param preloadedSimulation AbstractSimulationScript; a fully loaded (but not started) simulation
+     * @param additionalSubscriptionHandlers List&lt;SubscriptionHandler&gt;; list of additional subscription handlers (may be
+     *            null)
+     * @param incomingDataHandlers List&lt;IncomfingDataHandler&gt;; list of additional handlers for incoming data that is not
+     *            handled by the standard Sim0MQPublisher (may be null)
+     * @throws RemoteException when construction of the Publisher failed
+     */
+    public Sim0MQPublisher(final int port, final AbstractSimulationScript preloadedSimulation,
+            final List<SubscriptionHandler> additionalSubscriptionHandlers,
+            final List<IncomingDataHandler> incomingDataHandlers) throws RemoteException
+    {
+        this.zContext = new ZContext(5);
+        ZMQ.Socket socket = this.zContext.createSocket(SocketType.PAIR);
+        socket.bind("tcp://*:" + port);
+        this.network = preloadedSimulation.getNetwork();
+        this.model = new Sim0MQOTSModel("Remotely controlled OTS model", this.network, null);
+        this.publisher = new Publisher(this.network, additionalSubscriptionHandlers, incomingDataHandlers);
+        ((OTSAnimator) preloadedSimulation.getSimulator()).setSpeedFactor(Double.MAX_VALUE, true);
+        ((OTSAnimator) preloadedSimulation.getSimulator()).setSpeedFactor(1000.0, true);
+        pollingLoop(socket, socket);
+        System.exit(0);
+    }
+
+    /**
+     * Create a new Sim0MQPublisher that uses TCP transport.
+     * @param port int; port number to bind to
+     * @param preloadedSimulation AbstractSimulationScript; a fully loaded (but not started) simulation
+     * @param additionalSubscriptionHandlers List&lt;SubscriptionHandler&gt;; list of additional subscription handlers (may be
+     *            null)
+     * @throws RemoteException when construction of the Publisher failed
+     */
+    public Sim0MQPublisher(final int port, final AbstractSimulationScript preloadedSimulation,
+            final List<SubscriptionHandler> additionalSubscriptionHandlers) throws RemoteException
+    {
+        this(port, preloadedSimulation, additionalSubscriptionHandlers, null);
     }
 
     /**
@@ -271,7 +315,7 @@ public final class Sim0MQPublisher
                 {
                     // This is a command for the embedded Publisher
                     ReturnWrapperImpl returnWrapper = new ReturnWrapperImpl(this.zContext,
-                            new Object[] {"SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0},
+                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0 },
                             socketMap);
                     if (null == this.publisher)
                     {
@@ -357,8 +401,8 @@ public final class Sim0MQPublisher
                                     ackNack = false;
                                     break;
                                 }
-                                ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext, new Object[] {"SIM01", true,
-                                        message[2], message[3], message[4], message[5], message[6], 0}, socketMap);
+                                ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext, new Object[] { "SIM01", true,
+                                        message[2], message[3], message[4], message[5], message[6], 0 }, socketMap);
                                 returnWrapper.ack(resultMessage);
                                 simulator.runUpTo((Time) message[8]);
                                 int count = 0;
@@ -406,20 +450,33 @@ public final class Sim0MQPublisher
                             break;
 
                         default:
-                            resultMessage = "Don't know how to handle message:\n" + Sim0MQMessage.print(message);
-                            ackNack = false;
+                            IncomingDataHandler incomingDataHandler = publisher.lookupIncomingDataHandler(command);
+                            if (incomingDataHandler != null)
+                            {
+                                resultMessage = incomingDataHandler.handleIncomingData(message);
+                                ackNack = resultMessage == null;
+                            }
+                            else
+                            {
+                                resultMessage = "Don't know how to handle message:\n" + Sim0MQMessage.print(message);
+                                ackNack = false;
+                            }
                             break;
                     }
                 }
-                ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext,
-                        new Object[] {"SIM01", true, message[2], message[3], message[4], message[5], message[6], 0}, socketMap);
-                if (ackNack)
+                if (resultMessage != null)
                 {
-                    returnWrapper.ack(resultMessage);
-                }
-                else
-                {
-                    returnWrapper.nack(resultMessage);
+                    ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext,
+                            new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 },
+                            socketMap);
+                    if (ackNack)
+                    {
+                        returnWrapper.ack(resultMessage);
+                    }
+                    else
+                    {
+                        returnWrapper.nack(resultMessage);
+                    }
                 }
             }
             else
