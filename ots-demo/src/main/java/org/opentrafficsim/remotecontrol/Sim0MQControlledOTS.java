@@ -469,6 +469,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             break;
 
                         default:
+                            
                             System.out.println("Don't know how to handle message:");
                             System.out.println(Sim0MQMessage.print(message));
                             result = "Unimplemented command " + command;
