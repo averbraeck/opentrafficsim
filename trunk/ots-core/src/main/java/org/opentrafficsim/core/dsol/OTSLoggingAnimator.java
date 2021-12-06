@@ -103,7 +103,7 @@ public class OTSLoggingAnimator extends OTSAnimator
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:methodlength"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:methodlength" })
     public void run()
     {
         synchronized (this)
@@ -255,8 +255,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                 {
                     if (nextEvent.getAbsoluteExecutionTime().ne(this.simulatorTime))
                     {
-                        fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, nextEvent.getAbsoluteExecutionTime(),
-                                nextEvent.getAbsoluteExecutionTime().get());
+                        fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, nextEvent.getAbsoluteExecutionTime().get());
                     }
                     this.simulatorTime.set(nextEvent.getAbsoluteExecutionTime().get());
 
@@ -294,7 +293,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                 }
             }
         }
-        fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime.get());
+        fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, this.simulatorTime.get());
 
         synchronized (this)
         {

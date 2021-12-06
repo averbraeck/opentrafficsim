@@ -425,7 +425,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
 
             }
         }
-        this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime.get());
+        this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, /*this.simulatorTime,*/ this.simulatorTime.get());
 
         updateAnimation();
         animationThread.stopAnimation();
