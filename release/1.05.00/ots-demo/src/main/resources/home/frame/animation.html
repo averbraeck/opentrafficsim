@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Animation</title>
+<link rel="stylesheet" href="/css/jquery-ui-base.css">
+<script src="/js/jquery-3.3.1.js"></script>
+<script src="/js/jquery-ui.js"></script>
+<!-- 
+
+----------------- JAVASCRIPT --------------
+
+ -->
+<script>
+  // the animation timer that can be cancelled when the simulator time stops
+  var animationTimer;
+  var INTERVAL = 40; // 20 Hz
+  var alertShown = false;
+  var queryString;
+
+  function postAnimate() {
+    var content = {
+      "message" : "animate"
+    };
+    jQuery.post({
+      url : "animation.html" + queryString,
+      type : 'POST',
+      dataType : 'text',
+      data : content,
+      success : function(data) {
+        var time = Date.now();
+        animate(data);
+        var delta = Math.max(1, INTERVAL - (Date.now() - time));
+        animationTimer = setTimeout(postAnimate, delta);
+      },
+      error : function(data, status, er) {
+        if (!alertShown) {
+          alert("error: " + data + " status: " + status + " er:" + er);
+          alertShown = true;
+        }
+        console.log("error: " + data + " status: " + status + " er:" + er);
+      }
+    });
+  };
+
+  function postIntrospect(message) {
+    var content = {
+      "message" : message
+    };
+    jQuery.post({
+      url : "animation.html" + queryString,
+      type : 'POST',
+      dataType : 'text',
+      data : content,
+      success : function(ret) {
+        introspect(ret);
+      },
+      error : function(data, status, er) {
+        if (!alertShown) {
+          alert("error: " + data + " status: " + status + " er:" + er);
+          alertShown = true;
+        }
+        console.log("error: " + data + " status: " + status + " er:" + er);
+      }
+    });
+  };
+
+  function post(message) {
+    console.log("post " + message);
+    var content = {
+      "message" : message
+    };
+    jQuery.post({
+      url : "animation.html" + queryString,
+      type : 'POST',
+      dataType : 'text',
+      data : content,
+      success : function(ret) {
+        console.log(ret);
+      },
+      error : function(data, status, er) {
+        if (!alertShown) {
+          alert("error: " + data + " status: " + status + " er:" + er);
+          alertShown = true;
+        }
+        console.log("error: " + data + " status: " + status + " er:" + er);
+      }
+    });
+  };
+
+  function init() {
+    queryString = window.parent.parent.location.search;
+    initCanvas();
+    postAnimate();
+  };
+
+  // var canvasDiv;
+  var canvasArr; // dubble buffering
+  var contextArr; // double buffering
+  var canvasId = 0;
+
+  var lastData; // the last received data for redraw in case of zooming
+
+  var sansFont = "Calibri, Helvetica, Arial, sans-serif"; // the sans font
+  var serifFont = "Georgia, Times, 'Times New Roman', serif"; // the serif font
+  var monoFont = "Courier, 'Courier New', monospace"; // the monospaced font
+
+  function initCanvas() {
+    canvas0 = document.getElementById('animationCanvas0');
+    canvas0.setAttribute('width', window.innerWidth);
+    canvas0.setAttribute('height', window.innerHeight);
+    context0 = canvas0.getContext("2d");
+    canvas0.style.visibility = 'visible';
+
+    canvas1 = document.getElementById('animationCanvas1');
+    canvas1.setAttribute('width', window.innerWidth);
+    canvas1.setAttribute('height', window.innerHeight);
+    context1 = canvas1.getContext("2d");
+    canvas1.style.visibility = 'hidden';
+
+    canvasArr = [ canvas0, canvas1 ];
+    contextArr = [ context0, context1 ];
+
+    // zoom and drag
+    addEventListeners();
+
+    // post the size
+    post("windowSize|" + window.innerWidth + "|" + window.innerHeight)
+  };
+
+  function animate(data) {
+    // save the data
+    lastData = data;
+
+    // double buffering
+    canvas = canvasArr[1 - canvasId];
+    context = contextArr[1 - canvasId];
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    $(data).children().each(function() {
+      var tagName = this.tagName;
+      var val = $(this).text();
+      // console.log(tagName + "=>" + val);
+
+      /* 0=command, 1=transform.m11(h-scale), 2=transform.m12(h-skew), 3=transform.m21(v-skew), 4=transform.m22(v-scale),
+       * 5=transform.dx(h-translate), 6=transform.dy(v-translate), 7=color.r, 8=color.g, 9=color.b, 10=color.alpha, 
+       * 11=color.transparency, 12=params... */
+      if (tagName.toUpperCase() === "TRANSFORMFILL") {
+        var parts = val.split(",");
+        context.save();
+        setTransform(context, parts);
+        setFillColor(context, parts);
+        context.lineWidth = 0;
+
+        if (parts[0] === "fillOval") {
+          context.beginPath();
+          context.arc(parts[12], parts[13], parts[14], 0, 2 * Math.PI, false);
+          context.fill();
+        }
+
+        if (parts[0] === "fillRect") {
+          context.beginPath();
+          context.rect(parts[12], parts[13], parts[14], parts[15]);
+          context.fill();
+        }
+
+        if (parts[0] === "clearRect") {
+          context.clearRect(parts[12], parts[13], parts[14], parts[15]);
+        }
+
+        if (parts[0] === "drawLine") {
+          context.beginPath();
+          context.moveTo(parts[12], parts[13]);
+          context.lineTo(parts[14], parts[15]);
+          context.stroke();
+        }
+        context.restore();
+      }
+
+      /* 0=command, 1=transform.m11(h-scale), 2=transform.m12(h-skew), 3=transform.m21(v-skew), 4=transform.m22(v-scale),
+       * 5=transform.dx(h-translate), 6=transform.dy(v-translate), 7=linecolor.r, 8=linecolor.g, 9=linecolor.b, 
+       * 10=linecolor.alpha, 11=linecolor.transparency, 12=line-width, 13=params... */
+      if (tagName.toUpperCase() === "TRANSFORMDRAW") {
+        var parts = val.split(",");
+
+        if (parts[0] === "drawOval") {
+          context.save();
+          context.lineWidth = parts[12];
+          setTransform(context, parts);
+          setStrokeColor(context, parts);
+          context.beginPath();
+          context.arc(parts[13], parts[14], parts[15], 0, 2 * Math.PI, false);
+          context.stroke();
+          context.restore();
+        }
+
+        if (parts[0] === "drawRect") {
+          context.save();
+          context.lineWidth = parts[12];
+          setTransform(context, parts);
+          setStrokeColor(context, parts);
+          context.beginPath();
+          context.rect(parts[13], parts[14], parts[15], parts[16]);
+          context.stroke();
+          context.restore();
+        }
+
+        if (parts[0] === "drawLine") {
+          context.save();
+          context.lineWidth = parts[12];
+          setTransform(context, parts);
+          setStrokeColor(context, parts);
+          context.beginPath();
+          context.moveTo(parts[13], parts[14]);
+          context.lineTo(parts[15], parts[16]);
+          context.stroke();
+          context.restore();
+        }
+      }
+
+      /* 0=FILL/DRAW, 1=transform.m11(h-scale), 2=transform.m12(h-skew), 3=transform.m21(v-skew), 4=transform.m22(v-scale),
+       * 5=transform.dx(h-translate), 6=transform.dy(v-translate), 7=fillcolor.r, 8=fillcolor.g, 9=fillcolor.b, 
+       * 10=fillcolor.alpha, 11=fillcolor.transparency, 12[FILL]=winding_rule[WIND_EVEN_ODD/WIND_NON_ZERO] /
+       * 12[LINE]=lineWidth, 13=COMMAND[CLOSE(0 coords)/CUBICTO(3 coords)/LINETO(1 coord)/MOVETO(1 coord)/QUADTO(2 coords)], 
+       * 14=coords.x, 15=coords.y, ..., COMMAND, coords.x, coord.y, ... */
+      if (tagName.toUpperCase() === "TRANSFORMPATH") {
+        var parts = val.split(",");
+        context.save();
+
+        setTransform(context, parts);
+        if (parts[0] === "FILL") {
+          setFillColor(context, parts);
+          context.lineWidth = 0;
+        }
+        else {
+          setStrokeColor(context, parts);
+          context.lineWidth = parts[12];
+        }
+        
+        context.beginPath();
+		var index = 13;
+		while (index < parts.length) {
+		  if (parts[index] === "CLOSE") {
+		    context.closePath();
+		    index += 1;
+		  }
+		  else if (parts[index] === "MOVETO") {
+		    context.moveTo(parts[index+1], parts[index+2]);
+		    index += 3;
+		  }
+		  else if (parts[index] === "LINETO") {
+		    context.lineTo(parts[index+1], parts[index+2]);
+		    index += 3;
+		  }
+		  else if (parts[index] === "QUADTO") {
+		    context.quadraticCurveTo(parts[index+1], parts[index+2], parts[index+3], parts[index+4]);
+		    index += 5;
+		  }
+		  else if (parts[index] === "CUBICTO") {
+		    context.bezierCurveTo(parts[index+1], parts[index+2], parts[index+3], parts[index+4], parts[index+5], parts[index+6]);
+		    index += 7;
+		  }
+		  else {
+		    console.log("Unknown command in TRANSFORMPATH: " + parts[index]);
+		    index++;
+		  }
+		}
+        if (parts[0] === "FILL")
+          context.fill();
+        else
+          context.stroke();
+        
+        context.restore();
+      }
+
+      // test in http://jsfiddle.net/Ldkn3m62/
+      /* 0=command, 1=transform.m11(h-scale), 2=transform.m12(h-skew), 3=transform.m21(v-skew), 4=transform.m22(v-scale),
+       * 5=transform.dx(h-translate), 6=transform.dy(v-translate), 7=color.r, 8=color.g, 9=color.b, 10=color.alpha, 
+       * 11=color.transparency, 12=fontname, 13=fontsize, 14=fontstyle(normal/italic/bold), 15=x, 16=y, 17=text */
+      if (tagName.toUpperCase() === "TRANSFORMTEXT") {
+        var parts = val.split(",");
+        if (parts[0] === "drawString") {
+          context.save();
+          setFillColor(context, parts);
+          setTransform(context, parts);
+          if (parts[12] === "serif")
+            context.font = parts[13] + 'pt ' + serifFont;
+          else if (parts[12] === "sans-serif")
+            context.font = parts[13] + 'pt ' + sansFont;
+          else
+            context.font = parts[13] + 'pt ' + monoFont;
+          context.fillText(parts[17], parts[15], parts[16]);
+          context.restore();
+        }
+      }
+
+    });
+
+    // double buffering
+    canvasArr[canvasId].style.visibility = 'hidden';
+    canvasId = 1 - canvasId;
+    canvasArr[canvasId].style.visibility = 'visible';
+  };
+
+  function setTransform(context, arr) {
+    context.setTransform(arr[1], arr[2], arr[3], arr[4], arr[5], arr[6]);
+  };
+
+  function setFillColor(context, arr) {
+    // TODO see why alpha value arr[10] as 4th argument does not work in IE/Edge
+    context.fillStyle = "rgb(" + arr[7] + "," + arr[8] + "," + arr[9] + ")";
+  };
+
+  function setStrokeColor(context, arr) {
+    // TODO see why alpha value arr[10] as 4th argument does not work in IE/Edge
+    context.strokeStyle = "rgb(" + arr[7] + "," + arr[8] + "," + arr[9] + ")";
+  };
+
+  // =============================== ZOOM AND PAN ======================================
+
+  var dragStartX, dragStartY, dragged;
+
+  function handleKey(e) {
+    console.log("keydown " + e.code);
+    if (e.code === "ArrowUp") {
+      post("arrowUp");
+    }
+    if (e.code === "ArrowDown") {
+      post("arrowDown");
+    }
+    if (e.code === "ArrowLeft") {
+      post("arrowLeft");
+    }
+    if (e.code === "ArrowRight") {
+      post("arrowRight");
+    }
+    if (e.code === "Equal") {
+      post("zoomIn");
+    }
+    if (e.code === "Plus") {
+      post("zoomIn");
+    }
+    if (e.code === "Minus") {
+      post("zoomOut");
+    }
+  };
+
+  // prevent normal behavior for right click
+  window.oncontextmenu = function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  };
+
+  function addEventListeners() {
+    console.log("ADDEVENTLISTENERS");
+
+    document.addEventListener('keydown', handleKey);
+
+    canvasArr[0].addEventListener('mousedown', function(evt) {
+      if (evt.button == 0) {
+        dragged = true;
+        dragStartX = lastX;
+        dragStartY = lastY;
+      } else if (evt.button == 2) {
+        postIntrospect("introspect|" + lastX + "|" + lastY);
+      }
+    }, false);
+
+    canvasArr[1].addEventListener('mousedown', function(evt) {
+      if (evt.button == 0) {
+        dragged = true;
+        dragStartX = lastX;
+        dragStartY = lastY;
+      } else if (evt.button == 2) {
+        postIntrospect("introspect|" + lastX + "|" + lastY);
+      }
+    }, false);
+
+    canvasArr[0].addEventListener('mousemove', function(evt) {
+      lastX = evt.offsetX || (evt.pageX - canvasArr[0].offsetLeft);
+      lastY = evt.offsetY || (evt.pageY - canvasArr[0].offsetTop);
+    }, false);
+
+    canvasArr[1].addEventListener('mousemove', function(evt) {
+      lastX = evt.offsetX || (evt.pageX - canvasArr[0].offsetLeft);
+      lastY = evt.offsetY || (evt.pageY - canvasArr[0].offsetTop);
+    }, false);
+
+    canvasArr[0].addEventListener('mouseup', function(evt) {
+      if (evt.button == 0) {
+        if (dragged) {
+          if (lastX != dragStartX || lastY != dragStartY) {
+            var dx = lastX - dragStartX;
+            var dy = lastY - dragStartY;
+            post("pan|" + dx + "|" + dy);          
+          }
+          dragged = false;
+        }
+      } 
+    }, false);
+
+    canvasArr[1].addEventListener('mouseup', function(evt) {
+      if (evt.button == 0) {
+        if (dragged) {
+          if (lastX != dragStartX || lastY != dragStartY) {
+            var dx = lastX - dragStartX;
+            var dy = lastY - dragStartY;
+            post("pan|" + dx + "|" + dy);          
+          }
+          dragged = false;
+        }
+      } 
+    }, false);
+    
+    canvasArr[0].addEventListener('DOMMouseScroll',handleScroll,false);
+    canvasArr[0].addEventListener('mousewheel',handleScroll,false);
+    canvasArr[1].addEventListener('DOMMouseScroll',handleScroll,false);
+    canvasArr[1].addEventListener('mousewheel',handleScroll,false);
+  };
+
+  var scaleFactor = 1.1;
+
+  var zoom = function(clicks) {
+    if (clicks > 0)
+      post("zoomIn|" + lastX + "|" + lastY);
+    else
+      post("zoomOut|" + lastX + "|" + lastY);
+  };
+
+  var handleScroll = function(evt) {
+    var delta = evt.wheelDelta ? evt.wheelDelta / 40 : evt.detail ? -evt.detail : 0;
+    if (delta)
+      zoom(delta);
+    return evt.preventDefault() && false;
+  };
+  
+  // =============================== INTROSPECTION ======================================
+    
+  function introspect(content) {
+    if (!content.toUpperCase().startsWith("<NONE")) {
+      $(content).children().each(function() {
+        var field = $(this).find("FIELD").text();
+        var value = $(this).find("VALUE").text();
+        $( "#introspection tbody" ).append( "<tr>" + "<td>" + field + "</td>" + "<td>" + value + "</td>" + "</tr>" );
+      });
+      $( "#introspection-widget" ).dialog( "open" );
+    }
+  }
+  
+  $( function() {
+    $( "#introspection-widget" ).dialog({
+      autoOpen: false,
+      open: function() {
+        if ($(this).parent().height() > $(window).height()) {
+            $(this).height($(window).height()*0.7); // 70% high
+        }
+        $(this).dialog({position: "center"});
+      },
+      close: function( event, ui ) { closeIntrospectionDialog(); },
+      modal: true,
+      width: 600
+    });
+  });
+
+  function closeIntrospectionDialog() {
+    $("#introspection").find("tr:gt(0)").remove();
+  };
+  
+</script>
+
+<style type="text/css">
+#introspection {
+  font-family: sans-serif;
+  font-size: 9pt;
+  overflow-y: scroll;
+}
+table {
+  border: 1px solid gray;
+  border-collapse: collapse;
+}
+th {
+  border: 1px solid gray;
+}
+td {
+  border: 1px solid gray;
+  vertical-align: top;
+}
+</style>
+
+</head>
+<body id="animationBody" bgcolor="#888888" onload="init()" style="margin: 0; border: 0px; border-spacing: 0px; padding: 0px; overflow: hidden;">
+  <canvas id="animationCanvas0" width="100%" height="100%"
+    style="top: 0; left: 0; position: absolute; margin: 0; border: 0px; border-spacing: 0px; padding: 0px; overflow: hidden;">
+  </canvas>
+  <canvas id="animationCanvas1" width="100%" height="100%"
+    style="top: 0; left: 0; position: absolute; margin: 0; border: 0px; border-spacing: 0px; padding: 0px; overflow: hidden;">
+  </canvas>
+  
+  <div id="introspection-widget" class="ui-widget">
+  <table id="introspection" class="ui-widget ui-widget-content">
+    <thead>
+      <tr class="ui-widget-header ">
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
