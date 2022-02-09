@@ -35,7 +35,7 @@ import org.opentrafficsim.draw.core.ColorPaintScale;
  * set as this is tightly related to the interpolation, and ii) only paint scales of type {@code ColorPaintScale} can be used,
  * as the interpolation obtains pixel colors from it.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 okt. 2018 <br>

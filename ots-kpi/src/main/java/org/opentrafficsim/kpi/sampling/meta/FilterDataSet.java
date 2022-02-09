@@ -14,7 +14,7 @@ import org.djutils.immutablecollections.ImmutableIterator;
  * Collection of object sets, one object set per meta data type included. This defines constraints to which meta data has to
  * comply, e.g. having any of the objects in the set, or covered all in the set, etc., depending on the meta data type.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 25, 2016 <br>

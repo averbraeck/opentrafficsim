@@ -57,7 +57,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
  * decisions based on headway (GTU following model) and lane change (Lane Change model), and will generate an operational plan
  * for the GTU. It can ask the strategic planner for assistance on the route to take when the network splits.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,

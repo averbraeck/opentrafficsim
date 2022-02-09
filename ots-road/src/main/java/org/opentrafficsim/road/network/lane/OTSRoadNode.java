@@ -12,7 +12,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 /**
  * The Node is a point with an id and a direction. It is used in the network to connect Links.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2019-04-25 17:00:14 +0200 (Thu, 25 Apr 2019) $, @version $Revision: 5424 $, by $Author: pknoppers $,

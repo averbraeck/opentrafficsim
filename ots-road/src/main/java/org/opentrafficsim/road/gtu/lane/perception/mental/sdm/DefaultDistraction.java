@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
  * Set of default distractions as derived by the research of Manuel Lindorfer. These only describe the statistics. Actual
  * {@code Distraction}s are linked to the simulation. {@code DistractionFactory} can be used to create those.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 29 jun. 2018 <br>

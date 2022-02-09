@@ -6,7 +6,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 /**
  * The egoistic drive changes lane when this yields is personal advantage (totally ignoring any disadvantage to others).
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 1375 $, $LastChangedDate: 2015-09-03 03:32:20 +0200 (Thu, 03 Sep 2015) $, by $Author: averbraeck $,

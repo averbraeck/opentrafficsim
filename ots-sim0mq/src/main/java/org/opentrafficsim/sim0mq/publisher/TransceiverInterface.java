@@ -12,7 +12,7 @@ import org.sim0mq.Sim0MQException;
  * Transceivers with machine interpretable description of address and result types. A transceiver converts DSOL events to Sim0MQ
  * messages and Sim0MQ messages to DJUTILS event (un-)subscriptions, or DSOL events.
  * <p>
- * Copyright (c) 2020-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2020-02-13 11:08:16 +0100 (Thu, 13 Feb 2020) $, @version $Revision: 6383 $, by $Author: pknoppers $,
