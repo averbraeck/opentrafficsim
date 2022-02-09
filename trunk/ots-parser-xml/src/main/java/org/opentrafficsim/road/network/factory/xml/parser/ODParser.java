@@ -57,7 +57,6 @@ import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOD;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
-import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -75,6 +74,7 @@ import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.LANEBIASES.LANEB
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.MARKOV.STATE;
 import org.opentrafficsim.xml.generated.ODOPTIONS.ODOPTIONSITEM.MODEL;
 
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -110,7 +110,7 @@ public final class ODParser
     public static List<LaneBasedGTUGenerator> parseDemand(final OTSRoadNetwork otsNetwork,
             final List<NETWORKDEMAND> demands, final Map<String, GTUTEMPLATE> gtuTemplates,
             final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
-            final Map<String, StreamInformation> streamMap)
+            final StreamInformation streamMap)
             throws XmlParserException
     {
         List<LaneBasedGTUGenerator> generators = new ArrayList<>();

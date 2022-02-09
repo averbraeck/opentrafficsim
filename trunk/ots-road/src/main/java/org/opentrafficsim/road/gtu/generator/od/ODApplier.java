@@ -141,10 +141,10 @@ public final class ODApplier
         boolean markovian = od.getCategorization().entails(GTUType.class);
 
         // TODO clean up stream acquiring code after task OTS-315 has been completed
-        StreamInterface stream = simulator.getReplication().getStream("generation");
+        StreamInterface stream = simulator.getModel().getStream("generation");
         if (stream == null)
         {
-            stream = simulator.getReplication().getStream("default");
+            stream = simulator.getModel().getStream("default");
             if (stream == null)
             {
                 System.out.println(

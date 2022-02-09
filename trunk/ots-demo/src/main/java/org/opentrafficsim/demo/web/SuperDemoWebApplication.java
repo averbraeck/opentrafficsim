@@ -44,7 +44,6 @@ import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import picocli.CommandLine.Option;
 
 /**
@@ -269,9 +268,9 @@ public class SuperDemoWebApplication implements Checkable
             status = "running";
         }
         else if (this.simulator.getSimulatorTime() != null && this.simulator.getReplication() != null
-                && this.simulator.getReplication().getTreatment() != null)
+                && this.simulator.getReplication() != null)
         {
-            if (this.simulator.getSimulatorTime().ge(this.simulator.getReplication().getTreatment().getEndTime()))
+            if (this.simulator.getSimulatorTime().ge(this.simulator.getReplication().getEndTime()))
             {
                 status = "ended";
             }
@@ -417,9 +416,8 @@ public class SuperDemoWebApplication implements Checkable
         String error = "";
         try
         {
-            OTSReplication replication =
-                    OTSReplication.create("rep1", Time.ZERO, this.warmupDuration, this.runDuration, this.model);
-            this.simulator.initialize(replication, ReplicationMode.TERMINATING);
+            OTSReplication replication = new OTSReplication("rep1", Time.ZERO, this.warmupDuration, this.runDuration);
+            this.simulator.initialize(this.model, replication);
             // TODO: different... this.simulator.scheduleEventAbs(100.0, this, this, "terminate", null);
 
             this.simulator.start();

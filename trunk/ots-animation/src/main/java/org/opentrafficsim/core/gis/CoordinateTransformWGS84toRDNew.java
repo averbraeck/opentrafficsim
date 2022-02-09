@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 import org.djutils.logger.CategoryLogger;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
 
 /**
  * Convert coordinates from WGS84 to the Dutch RD system. The coordinate transform can be offered to the gisbeans package when

@@ -14,7 +14,6 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
-import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.xml.generated.COMPATIBILITY;
 import org.opentrafficsim.xml.generated.DEFINITIONS;
@@ -30,6 +29,8 @@ import org.opentrafficsim.xml.generated.PARAMETERTYPE;
 import org.opentrafficsim.xml.generated.ROADLAYOUT;
 import org.opentrafficsim.xml.generated.ROADLAYOUTS;
 import org.opentrafficsim.xml.generated.SPEEDLIMIT;
+
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 
 /**
  * DefinitionParser parses the XML nodes of the DEFINITIONS tag: GTUTYPE, GTUTEMPLATE, LINKTYPE, LANETYPE and ROADLAYOUT. <br>
@@ -54,19 +55,19 @@ public final class DefinitionsParser
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param roadLayoutMap temporary storage for the road layouts
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
-     * @param streamMap map with stream information
+     * @param streamInformation map with stream information 
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @throws XmlParserException on parsing error
      */
     public static void parseDefinitions(final OTSRoadNetwork otsNetwork, final DEFINITIONS definitions,
             final boolean overwriteDefaults, final Map<String, ROADLAYOUT> roadLayoutMap,
-            final Map<String, GTUTEMPLATE> gtuTemplates, Map<String, StreamInformation> streamMap,
-            Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
+            final Map<String, GTUTEMPLATE> gtuTemplates, final StreamInformation streamInformation,
+            final Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap) throws XmlParserException
     {
         parseGtuTypes(definitions, otsNetwork, overwriteDefaults);
         parseLinkTypes(definitions, otsNetwork, overwriteDefaults, linkTypeSpeedLimitMap);
         parseLaneTypes(definitions, otsNetwork, overwriteDefaults);
-        parseGtuTemplates(definitions, otsNetwork, overwriteDefaults, gtuTemplates, streamMap);
+        parseGtuTemplates(definitions, otsNetwork, overwriteDefaults, gtuTemplates, streamInformation);
         parseRoadLayouts(definitions, otsNetwork, roadLayoutMap);
     }
 
@@ -224,11 +225,12 @@ public final class DefinitionsParser
      * @param otsNetwork the network
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param gtuTemplates the templates to be used in the OD/Generators
-     * @param streamMap map with stream information
+     * @param streamInformation map with stream information
      * @throws XmlParserException on parsing error
      */
     public static void parseGtuTemplates(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
-            final boolean overwriteDefaults, Map<String, GTUTEMPLATE> gtuTemplates, Map<String, StreamInformation> streamMap)
+            final boolean overwriteDefaults, final Map<String, GTUTEMPLATE> gtuTemplates,
+            final StreamInformation streamInformation)
             throws XmlParserException
     {
         for (GTUTEMPLATES templateTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),

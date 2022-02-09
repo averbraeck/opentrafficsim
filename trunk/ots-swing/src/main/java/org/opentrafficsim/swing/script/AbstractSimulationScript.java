@@ -33,9 +33,11 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import picocli.CommandLine.Command;
@@ -206,7 +208,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             this.simulator = new OTSSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
-            this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
+            this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
             double tReport = 60.0;
             Time t = this.simulator.getSimulatorTime();
             while (t.si < this.simulationTime.si)
@@ -263,7 +265,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(Replication.END_REPLICATION_EVENT))
+        if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT))
         {
             // try
             // {
@@ -276,7 +278,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             onSimulationEnd();
             // solve bug that event is fired twice
             AbstractSimulationScript.this.simulator.removeListener(AbstractSimulationScript.this,
-                    Replication.END_REPLICATION_EVENT);
+                    ReplicationInterface.END_REPLICATION_EVENT);
         }
     }
 
@@ -402,14 +404,14 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             streams.put("generation", stream);
             stream = new MersenneTwister(getSeed() + 1);
             streams.put("default", stream);
-            AbstractSimulationScript.this.simulator.getReplication().setStreams(streams);
+            AbstractSimulationScript.this.simulator.getModel().getStreams().putAll(streams);
             AbstractSimulationScript.this.network =
                     Try.assign(() -> AbstractSimulationScript.this.setupSimulation(AbstractSimulationScript.this.simulator),
                             RuntimeException.class, "Exception while setting up simulation.");
             try
             {
                 AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
-                        Replication.END_REPLICATION_EVENT);
+                        ReplicationInterface.END_REPLICATION_EVENT);
             }
             catch (RemoteException exception)
             {
@@ -442,7 +444,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<OutputStatistic<?>> getOutputStatistics()
+        public List<StatisticsInterface<Time, Duration, SimTimeDoubleUnit>> getOutputStatistics()
         {
             return null;
         }
@@ -462,6 +464,22 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         {
             return AbstractSimulationScript.this.description;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public void setStreamInformation(final StreamInformation streamInformation)
+        {
+            // TODO
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public StreamInformation getStreamInformation()
+        {
+            // TODO
+            return null;
+        }
+        
     }
 
 }

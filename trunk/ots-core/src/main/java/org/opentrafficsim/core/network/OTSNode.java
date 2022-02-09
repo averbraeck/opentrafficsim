@@ -6,18 +6,15 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
@@ -44,7 +41,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** The point. */
     private final OTSPoint3D point;
-    
+
     /** Heading. */
     private final double heading;
 
@@ -53,7 +50,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** The cached immutable set of links to return. */
     private ImmutableSet<Link> cachedLinks = null;
-    
+
     /**
      * Map with connections per GTU type. When this map is null, the all connections that are possible for the GTU type will be
      * included, with the exception of the U-turn. When exceptions are taken into account, the map has to be completely filled
@@ -73,7 +70,7 @@ public class OTSNode implements Node, Locatable, Serializable
     {
         this(network, id, point, Double.NaN);
     }
-    
+
     /**
      * Construction of a Node.
      * @param network Network; the network.
@@ -369,7 +366,7 @@ public class OTSNode implements Node, Locatable, Serializable
     {
         return this.point.getDirectedPoint();
     }
-    
+
     /** Margin around node in m when computing bounding sphere. */
     public static final double BOUNDINGRADIUS = 10.0;
 
@@ -378,7 +375,7 @@ public class OTSNode implements Node, Locatable, Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public Bounds getBounds()
     {
-        return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), BOUNDINGRADIUS);
+        return new Bounds(-BOUNDINGRADIUS, BOUNDINGRADIUS, -BOUNDINGRADIUS, BOUNDINGRADIUS, -BOUNDINGRADIUS, BOUNDINGRADIUS);
     }
 
     /** {@inheritDoc} */
@@ -429,8 +426,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone1(final Network newNetwork)
-            throws NetworkException
+    public OTSNode clone1(final Network newNetwork) throws NetworkException
     {
         return new OTSNode(newNetwork, this.id, this.point);
     }
@@ -443,8 +439,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone2(final Network newNetwork)
-            throws NetworkException
+    public OTSNode clone2(final Network newNetwork) throws NetworkException
     {
         OTSNode clone = (OTSNode) newNetwork.getNode(this.id);
         if (this.connections != null)

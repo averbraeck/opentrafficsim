@@ -5,13 +5,12 @@ package org.opentrafficsim.water;
 
 import java.io.Serializable;
 
-import javax.vecmath.Point3d;
-
+import org.djutils.draw.point.Point3d;
 import org.locationtech.jts.geom.Coordinate;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * A located object can report its location.

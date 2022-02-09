@@ -2,15 +2,13 @@ package org.opentrafficsim.water.network;
 
 import java.io.Serializable;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Location along a waterway.
@@ -81,7 +79,7 @@ public class WaterwayLocation implements Locatable, Serializable
     @Override
     public final Bounds getBounds()
     {
-        return new BoundingSphere();
+        return new Bounds();
     }
 
     /** {@inheritDoc} */

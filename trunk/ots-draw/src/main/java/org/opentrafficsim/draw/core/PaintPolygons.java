@@ -7,7 +7,7 @@ import java.awt.geom.Path2D;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Paint a (series of) filled polygon(s) defined as a Path2D.Double

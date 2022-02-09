@@ -2,18 +2,16 @@ package org.opentrafficsim.draw.lane;
 
 import java.rmi.RemoteException;
 
-import javax.media.j3d.BoundingBox;
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.point.Point3d;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * LaneStructureLocatable.java. <br>
@@ -43,7 +41,7 @@ public class LaneStructureLocatable implements Locatable
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation()
     {
         LaneStructureRecord rt = this.rollingLaneStructure.getRootRecord();
         if (rt == null)
@@ -69,7 +67,7 @@ public class LaneStructureLocatable implements Locatable
     {
         Point3d p1 = new Point3d(-1000000, -1000000, 0.0);
         Point3d p2 = new Point3d(1000000, 1000000, 0.0);
-        return new BoundingBox(p1, p2);
+        return new Bounds(p1, p2);
     }
 
     /**

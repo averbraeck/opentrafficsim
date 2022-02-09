@@ -18,14 +18,13 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.math.Solver;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * An Operational plan describes a path through the world with a speed profile that a GTU intends to follow. The OperationalPlan
@@ -436,7 +435,7 @@ public class OperationalPlan implements Serializable
         // + distanceTraveledInSegment + "\t " + this.path.getLengthSI() + "\t" + deltaT.si + "\t"
         // + System.nanoTime());
         // }
-        DirectedPoint p = new DirectedPoint();
+        DirectedPoint p;
         try
         {
             p = this.path.getLocationFraction(fraction, 0.01);
@@ -444,9 +443,9 @@ public class OperationalPlan implements Serializable
         catch (OTSGeometryException exception)
         {
             this.gtu.getSimulator().getLogger().always().error("OperationalPlan.getLocation(): " + exception.getMessage());
-            p = this.path.getLocationFractionExtended(fraction);
+            DirectedPoint q = this.path.getLocationFractionExtended(fraction);
+            p = new DirectedPoint(q.x, q.y, q.z + 0.001);
         }
-        p.setZ(p.getZ() + 0.001);
         return p;
     }
 

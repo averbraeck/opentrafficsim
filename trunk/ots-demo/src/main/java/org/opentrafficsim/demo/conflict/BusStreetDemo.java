@@ -173,7 +173,8 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         {
             Map<String, StreamInterface> streams = new LinkedHashMap<>();
             streams.put("generation", new MersenneTwister(100L));
-            this.simulator.getReplication().setStreams(streams);
+            getStreamInformation().addStream("generation", streams.get("generation"));
+            
             try
             {
                 URL xmlURL = URLResource.getResource("/conflict/BusStreet.xml");
@@ -304,7 +305,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         public Duration draw() throws ProbabilityException, ParameterException
         {
             return new Duration(
-                    -Math.log(this.simulator.getReplication().getStream("generation").nextDouble()) / this.demand.si,
+                    -Math.log(this.simulator.getModel().getStream("generation").nextDouble()) / this.demand.si,
                     DurationUnit.SI);
         }
 
@@ -433,9 +434,9 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         @Override
         public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
         {
-            double r = this.simulator.getReplication().getStream("generation").nextDouble();
+            double r = this.simulator.getModel().getStream("generation").nextDouble();
             int classNum = r < this.probabilities[0] ? 0 : r < this.probabilities[0] + this.probabilities[1] ? 1 : 2;
-            r = this.simulator.getReplication().getStream("generation").nextDouble();
+            r = this.simulator.getModel().getStream("generation").nextDouble();
             GTUType gtuType;
             Length length;
             Length width;

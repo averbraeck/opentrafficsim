@@ -10,14 +10,13 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Construct a DSOL DEVSRealTimeClock the easy way.
+ * Construct a DSOL DEVSRealTimeAnimator the easy way.
  * <p>
  * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -27,7 +26,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTSAnimatorInterface, Serializable
+public class OTSAnimator extends DEVSRealTimeAnimator.TimeDoubleUnit implements OTSAnimatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150511L;
@@ -46,14 +45,24 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings({"hiding", "checkstyle:hiddenfield"})
+    public void initialize(final OTSModelInterface model, final OTSReplication replication) throws SimRuntimeException
+    {
+        setPauseOnError(true);
+        setAnimationDelay(20); // 50 Hz animation update
+        super.initialize(model, replication);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model) throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
         OTSReplication newReplication =
-                OTSReplication.create("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, model);
-        super.initialize(newReplication, ReplicationMode.TERMINATING);
+                new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        super.initialize(model, newReplication);
     }
 
     /**
@@ -74,9 +83,9 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
         OTSReplication newReplication =
-                OTSReplication.create("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, model);
-        newReplication.getStreams().putAll(streams);
-        super.initialize(newReplication, ReplicationMode.TERMINATING);
+                new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        model.getStreams().putAll(streams);
+        super.initialize(model, newReplication);
     }
 
     /** {@inheritDoc} */
@@ -86,8 +95,8 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication = OTSReplication.create("rep" + replicationnr, startTime, warmupPeriod, runLength, model);
-        super.initialize(newReplication, ReplicationMode.TERMINATING);
+        OTSReplication newReplication = new OTSReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
+        super.initialize(model, newReplication);
     }
 
     /** {@inheritDoc} */

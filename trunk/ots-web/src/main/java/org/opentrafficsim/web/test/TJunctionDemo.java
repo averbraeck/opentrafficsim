@@ -1,9 +1,8 @@
 package org.opentrafficsim.web.test;
 
-import java.awt.geom.Rectangle2D;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.bounds.Bounds2d;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -27,14 +26,14 @@ public class TJunctionDemo extends OTSWebServer
     /**
      * Create a T-Junction demo.
      * @param title String; the tile for the model
-     * @param simulator DEVSRealTimeClock.TimeDouble; the simulator
+     * @param simulator DEVSRealTimeAnimator.TimeDouble; the simulator
      * @param model the model
      * @throws Exception on jetty error
      */
     public TJunctionDemo(final String title, final OTSSimulatorInterface simulator, final OTSModelInterface model)
             throws Exception
     {
-        super(title, simulator, new Rectangle2D.Double(-200, -200, 400, 400));
+        super(title, simulator, new Bounds2d(-200, 200, -200, 200));
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
                 new DefaultSwitchableGTUColorer());
     }

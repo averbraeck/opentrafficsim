@@ -225,7 +225,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
         // Generator
         // inter-arrival time generator
-        StreamInterface stream = sim.getReplication().getStream("generation");
+        StreamInterface stream = sim.getModel().getStream("generation");
         Generator<Duration> interarrivelTimeGenerator = new Generator<Duration>()
         {
             @Override

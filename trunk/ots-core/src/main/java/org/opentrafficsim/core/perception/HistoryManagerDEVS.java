@@ -9,7 +9,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Try;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
@@ -51,7 +51,7 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
         this.history = history;
         this.cleanUpInterval = cleanUpInterval;
         cleanUpHistory(); // start clean-up event chain
-        Try.execute(() -> this.simulator.addListener(this, Replication.END_REPLICATION_EVENT),
+        Try.execute(() -> this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT),
                 "Unable to add listener.");
     }
 
@@ -85,7 +85,7 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(Replication.END_REPLICATION_EVENT))
+        if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT))
         {
             endOfSimulation();
         }

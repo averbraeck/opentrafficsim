@@ -237,13 +237,14 @@ public class SdmSimulation extends AbstractSimulationScript
     {
         super("SDM simulation", "Simulations using the Stochastic Distraction Model");
         // set GTU colorers to use
-        setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue")).addColorer(
-            new SynchronizationColorer()).addColorer(new DistractionColorer(DefaultDistraction.ANSWERING_CELL_PHONE,
-                DefaultDistraction.CONVERSING, DefaultDistraction.MANIPULATING_AUDIO_CONTROLS,
-                DefaultDistraction.EXTERNAL_DISTRACTION)).addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
-            .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2))).addColorer(
-                new DesiredHeadwayColorer(Duration.instantiateSI(0.56), Duration.instantiateSI(2.4))).addColorer(
-                    new TaskSaturationColorer()).build());
+        setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+                .addColorer(new SynchronizationColorer())
+                .addColorer(new DistractionColorer(DefaultDistraction.ANSWERING_CELL_PHONE, DefaultDistraction.CONVERSING,
+                        DefaultDistraction.MANIPULATING_AUDIO_CONTROLS, DefaultDistraction.EXTERNAL_DISTRACTION))
+                .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
+                .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.56), Duration.instantiateSI(2.4)))
+                .addColorer(new TaskSaturationColorer()).build());
         try
         {
             CliUtil.changeOptionDefault(this, "warmupTime", "300s");
@@ -280,7 +281,7 @@ public class SdmSimulation extends AbstractSimulationScript
     {
         super.check();
         Throw.when(this.truckFraction < 0.0 || this.truckFraction > 1.0, IllegalArgumentException.class,
-            "Truck fraction %f is below 0.0 or above 1.0.");
+                "Truck fraction %f is below 0.0 or above 1.0.");
     }
 
     /** {@inheritDoc} */
@@ -288,8 +289,8 @@ public class SdmSimulation extends AbstractSimulationScript
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         // manager of historic information to allow a reaction time
-        sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim, AdaptationSituationalAwareness.TR_MAX
-            .getDefaultValue(), Duration.instantiateSI(10.0)));
+        sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim,
+                AdaptationSituationalAwareness.TR_MAX.getDefaultValue(), Duration.instantiateSI(10.0)));
 
         // Network
         this.network = new OTSRoadNetwork("SDM", true, getSimulator());
@@ -311,16 +312,17 @@ public class SdmSimulation extends AbstractSimulationScript
         LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
         List<Lane> allLanes = new ArrayList<>();
-        allLanes.addAll(new LaneFactory(this.network, nodeA, nodeD, type, sim, policy).leftToRight(2.0, laneWidth, laneType,
-            speedLimit).addLanes(Permeable.BOTH).getLanes());
-        allLanes.addAll(new LaneFactory(this.network, nodeB, nodeC, type, sim, policy).leftToRight(0.0, laneWidth, laneType,
-            speedLimit).addLanes(Permeable.BOTH).getLanes());
-        allLanes.addAll(new LaneFactory(this.network, nodeC, nodeD, type, sim, policy).leftToRight(0.0, laneWidth, laneType,
-            speedLimit).addLanes(Permeable.BOTH).getLanes());
-        allLanes.addAll(new LaneFactory(this.network, nodeD, nodeE, type, sim, policy).leftToRight(2.0, laneWidth, laneType,
-            speedLimit).addLanes(Permeable.BOTH, Permeable.BOTH, Permeable.BOTH).getLanes());
-        List<Lane> lanesEF = new LaneFactory(this.network, nodeE, nodeF, type, sim, policy).leftToRight(1.0, laneWidth,
-            laneType, speedLimit).addLanes(Permeable.BOTH, Permeable.BOTH).getLanes();
+        allLanes.addAll(new LaneFactory(this.network, nodeA, nodeD, type, sim, policy)
+                .leftToRight(2.0, laneWidth, laneType, speedLimit).addLanes(Permeable.BOTH).getLanes());
+        allLanes.addAll(new LaneFactory(this.network, nodeB, nodeC, type, sim, policy)
+                .leftToRight(0.0, laneWidth, laneType, speedLimit).addLanes(Permeable.BOTH).getLanes());
+        allLanes.addAll(new LaneFactory(this.network, nodeC, nodeD, type, sim, policy)
+                .leftToRight(0.0, laneWidth, laneType, speedLimit).addLanes(Permeable.BOTH).getLanes());
+        allLanes.addAll(
+                new LaneFactory(this.network, nodeD, nodeE, type, sim, policy).leftToRight(2.0, laneWidth, laneType, speedLimit)
+                        .addLanes(Permeable.BOTH, Permeable.BOTH, Permeable.BOTH).getLanes());
+        List<Lane> lanesEF = new LaneFactory(this.network, nodeE, nodeF, type, sim, policy)
+                .leftToRight(1.0, laneWidth, laneType, speedLimit).addLanes(Permeable.BOTH, Permeable.BOTH).getLanes();
         allLanes.addAll(lanesEF);
         for (Lane lane : lanesEF)
         {
@@ -333,10 +335,10 @@ public class SdmSimulation extends AbstractSimulationScript
         origins.add(nodeB);
         List<OTSNode> destinations = new ArrayList<>();
         destinations.add(nodeF);
-        double wut = sim.getReplication().getTreatment().getWarmupPeriod().si;
-        double rl = sim.getReplication().getTreatment().getRunLength().si;
+        double wut = sim.getReplication().getWarmupPeriod().si;
+        double rl = sim.getReplication().getRunLength().si;
         TimeVector timeVector = DoubleVector.instantiate(new double[] {0.0, wut, wut + (rl - wut) * 0.5, rl}, TimeUnit.DEFAULT,
-            StorageType.DENSE);
+                StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR;
         Categorization categorization = new Categorization("GTU categorization", GTUType.class);
         ODMatrix odMatrix = new ODMatrix("OD", origins, destinations, categorization, timeVector, interpolation);
@@ -354,16 +356,16 @@ public class SdmSimulation extends AbstractSimulationScript
         odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] {f2 * right1, f2 * right1, f2 * right2, 0.0}));
         odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] {f1 * right1, f1 * right1, f1 * right2, 0.0}));
         ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.instantiateSI(200)).set(ODOptions.GTU_TYPE,
-            new DefaultGTUCharacteristicsGeneratorOD(new SdmStrategicalPlannerFactory(this.network, sim.getReplication()
-                .getStream("generation"), this)));
+                new DefaultGTUCharacteristicsGeneratorOD(
+                        new SdmStrategicalPlannerFactory(this.network, sim.getModel().getStream("generation"), this)));
         ODApplier.applyOD(this.network, odMatrix, odOptions);
 
         // setup the SDM
-        DistractionFactory distFactory = new DistractionFactory(sim.getReplication().getStream("default"));
+        DistractionFactory distFactory = new DistractionFactory(sim.getModel().getStream("default"));
         for (String distraction : this.distractions)
         {
             DefaultDistraction dist = DefaultDistraction.values()[Integer.parseInt(distraction) - 1];
-            distFactory.addDistraction(dist, getTaskSupplier(dist, sim.getReplication().getStream("default")));
+            distFactory.addDistraction(dist, getTaskSupplier(dist, sim.getModel().getStream("default")));
         }
         new StochasticDistractionModel(this.multitasking, distFactory.build(), sim, this.network);
 
@@ -397,37 +399,37 @@ public class SdmSimulation extends AbstractSimulationScript
         try
         {
             TablePanel charts = new TablePanel(2, 2);
-            GraphPath<KpiLaneDirection> path1 = GraphLaneUtil.createPath("Left road, left lane", new LaneDirection(
-                (Lane) ((CrossSectionLink) this.network.getLink("AD")).getCrossSectionElement("Lane 1"),
-                GTUDirectionality.DIR_PLUS));
-            GraphPath<KpiLaneDirection> path2 = GraphLaneUtil.createPath("Left road, right lane", new LaneDirection(
-                (Lane) ((CrossSectionLink) this.network.getLink("AD")).getCrossSectionElement("Lane 2"),
-                GTUDirectionality.DIR_PLUS));
-            GraphPath<KpiLaneDirection> path3 = GraphLaneUtil.createPath("Right road, left lane", new LaneDirection(
-                (Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 1"),
-                GTUDirectionality.DIR_PLUS));
-            GraphPath<KpiLaneDirection> path4 = GraphLaneUtil.createPath("Right road, right lane", new LaneDirection(
-                (Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 2"),
-                GTUDirectionality.DIR_PLUS));
+            GraphPath<KpiLaneDirection> path1 = GraphLaneUtil.createPath("Left road, left lane",
+                    new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("AD")).getCrossSectionElement("Lane 1"),
+                            GTUDirectionality.DIR_PLUS));
+            GraphPath<KpiLaneDirection> path2 = GraphLaneUtil.createPath("Left road, right lane",
+                    new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("AD")).getCrossSectionElement("Lane 2"),
+                            GTUDirectionality.DIR_PLUS));
+            GraphPath<KpiLaneDirection> path3 = GraphLaneUtil.createPath("Right road, left lane",
+                    new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 1"),
+                            GTUDirectionality.DIR_PLUS));
+            GraphPath<KpiLaneDirection> path4 = GraphLaneUtil.createPath("Right road, right lane",
+                    new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 2"),
+                            GTUDirectionality.DIR_PLUS));
             GraphPath.initRecording(this.sampler, path1);
             GraphPath.initRecording(this.sampler, path2);
             GraphPath.initRecording(this.sampler, path3);
             GraphPath.initRecording(this.sampler, path4);
             SwingPlot plot = null;
-            plot = new SwingContourPlot(new ContourPlotSpeed("Left road, left lane", sim, new ContourDataSource<>(this.sampler
-                .getSamplerData(), path1)));
+            plot = new SwingContourPlot(new ContourPlotSpeed("Left road, left lane", sim,
+                    new ContourDataSource<>(this.sampler.getSamplerData(), path1)));
             charts.setCell(plot.getContentPane(), 0, 0);
-            plot = new SwingContourPlot(new ContourPlotSpeed("Left road, right lane", sim, new ContourDataSource<>(this.sampler
-                .getSamplerData(), path2)));
+            plot = new SwingContourPlot(new ContourPlotSpeed("Left road, right lane", sim,
+                    new ContourDataSource<>(this.sampler.getSamplerData(), path2)));
             charts.setCell(plot.getContentPane(), 1, 0);
-            plot = new SwingContourPlot(new ContourPlotSpeed("Right road, left lane", sim, new ContourDataSource<>(this.sampler
-                .getSamplerData(), path3)));
+            plot = new SwingContourPlot(new ContourPlotSpeed("Right road, left lane", sim,
+                    new ContourDataSource<>(this.sampler.getSamplerData(), path3)));
             charts.setCell(plot.getContentPane(), 0, 1);
-            plot = new SwingContourPlot(new ContourPlotSpeed("Right road, right lane", sim, new ContourDataSource<>(this.sampler
-                .getSamplerData(), path4)));
+            plot = new SwingContourPlot(new ContourPlotSpeed("Right road, right lane", sim,
+                    new ContourDataSource<>(this.sampler.getSamplerData(), path4)));
             charts.setCell(plot.getContentPane(), 1, 1);
             animation.getAnimationPanel().getTabbedPane().addTab(animation.getAnimationPanel().getTabbedPane().getTabCount(),
-                "statistics ", charts);
+                    "statistics ", charts);
         }
         catch (NetworkException exception)
         {
@@ -466,7 +468,7 @@ public class SdmSimulation extends AbstractSimulationScript
                     public Task getTask(final LaneBasedGTU gtu)
                     {
                         return new ExponentialTask(distraction.getId(), SdmSimulation.this.phoneInit,
-                            SdmSimulation.this.phoneFinal, SdmSimulation.this.phoneTau, gtu.getSimulator());
+                                SdmSimulation.this.phoneFinal, SdmSimulation.this.phoneTau, gtu.getSimulator());
                     }
                 };
             }
@@ -480,8 +482,8 @@ public class SdmSimulation extends AbstractSimulationScript
             }
             case EXTERNAL_DISTRACTION:
             {
-                return new TaskSupplier.Constant(distraction.getId(), SdmSimulation.this.externalBase
-                    + SdmSimulation.this.externalVar * stream.nextDouble());
+                return new TaskSupplier.Constant(distraction.getId(),
+                        SdmSimulation.this.externalBase + SdmSimulation.this.externalVar * stream.nextDouble());
             }
             default:
                 throw new IllegalArgumentException("Distraction " + distraction + " is not recognized.");
@@ -504,9 +506,9 @@ public class SdmSimulation extends AbstractSimulationScript
             double[] speedSum = new double[60];
             for (SpaceTimeRegion region : this.regions)
             {
-                TrajectoryGroup<?> trajectoryGroup = this.sampler.getSamplerData().getTrajectoryGroup(region.getLaneDirection())
-                    .getTrajectoryGroup(region.getStartPosition(), region.getEndPosition(), region.getStartTime(), region
-                        .getEndTime());
+                TrajectoryGroup<?> trajectoryGroup =
+                        this.sampler.getSamplerData().getTrajectoryGroup(region.getLaneDirection()).getTrajectoryGroup(
+                                region.getStartPosition(), region.getEndPosition(), region.getStartTime(), region.getEndTime());
                 for (Trajectory<?> trajectory : trajectoryGroup)
                 {
                     try
@@ -527,8 +529,8 @@ public class SdmSimulation extends AbstractSimulationScript
                             }
                         }
                         if (region.getLaneDirection().getLaneData().getLinkData().getId().equals("DE") && trajectory.size() > 1
-                            && trajectory.getX(0) < preDetectorPosition.si && trajectory.getX(trajectory.size()
-                                - 1) > preDetectorPosition.si)
+                                && trajectory.getX(0) < preDetectorPosition.si
+                                && trajectory.getX(trajectory.size() - 1) > preDetectorPosition.si)
                         {
                             double t = trajectory.getTimeAtPosition(postDetectorPosition).si - region.getStartTime().si;
                             double v = trajectory.getSpeedAtPosition(postDetectorPosition).si;
@@ -536,8 +538,8 @@ public class SdmSimulation extends AbstractSimulationScript
                             speedSum[(int) (t / 60.0)] += v;
                         }
                         if (region.getLaneDirection().getLaneData().getLinkData().getId().equals("EF") && trajectory.size() > 1
-                            && trajectory.getX(0) < postDetectorPosition.si && trajectory.getX(trajectory.size()
-                                - 1) > postDetectorPosition.si)
+                                && trajectory.getX(0) < postDetectorPosition.si
+                                && trajectory.getX(trajectory.size() - 1) > postDetectorPosition.si)
                         {
                             double t = trajectory.getTimeAtPosition(postDetectorPosition).si - region.getStartTime().si;
                             counts[(int) (t / 60.0)]++;
@@ -546,7 +548,7 @@ public class SdmSimulation extends AbstractSimulationScript
                     catch (SamplingException exception)
                     {
                         throw new RuntimeException(
-                            "Unexpected exception: TimeToCollission not available or index out of bounds.", exception);
+                                "Unexpected exception: TimeToCollission not available or index out of bounds.", exception);
                     }
                 }
             }
@@ -576,8 +578,8 @@ public class SdmSimulation extends AbstractSimulationScript
             BufferedWriter bw;
             try
             {
-                bw = new BufferedWriter(new OutputStreamWriter(Writer.createOutputStream(this.outputFile,
-                    CompressionType.ZIP)));
+                bw = new BufferedWriter(
+                        new OutputStreamWriter(Writer.createOutputStream(this.outputFile, CompressionType.ZIP)));
                 bw.write(String.format("total time spent [s]: %.0f", tts));
                 bw.newLine();
                 bw.write(String.format("maximum flow [veh/h]: %.3f", qMax));

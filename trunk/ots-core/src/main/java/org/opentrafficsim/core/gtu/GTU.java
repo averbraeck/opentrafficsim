@@ -19,6 +19,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -51,6 +52,10 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     /** @return the id of the GTU */
     @Override
     String getId();
+
+    /** {@inheritDoc} */
+    @Override
+    DirectedPoint getLocation();
 
     /** @return the context to which the GTU belongs */
     PerceivableContext getPerceivableContext();
@@ -152,7 +157,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * @param time Time; time to obtain the tactical planner at
      * @return TacticalPlanner; the tactical planner that can generate an operational plan at the given time
      */
-    default TacticalPlanner<?, ?> getTacticalPlanner(Time time)
+    default TacticalPlanner<?, ?> getTacticalPlanner(final Time time)
     {
         return getStrategicalPlanner(time).getTacticalPlanner(time);
     }

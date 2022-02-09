@@ -59,6 +59,8 @@ import org.junit.Test;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Test the various distribution classes.
@@ -116,7 +118,8 @@ public class DistributionsTest
                 ElectricalInductanceUnit.SI, EquivalentDoseUnit.SI, IlluminanceUnit.SI, LuminousFluxUnit.SI,
                 LuminousIntensityUnit.SI, MagneticFluxDensityUnit.SI, MagneticFluxUnit.SI /*, JunkUnit.SI */};
 
-        DistContinuous distCont = new DistContinuous(null)
+        StreamInterface stream = new MersenneTwister(1L);
+        DistContinuous distCont = new DistContinuous(stream)
         {
 
             /** */
@@ -129,7 +132,7 @@ public class DistributionsTest
             }
 
             @Override
-            public double probDensity(final double observation)
+            public double getProbabilityDensity(final double observation)
             {
                 return 0;
             }
@@ -145,7 +148,7 @@ public class DistributionsTest
             checkFloatRelContUnit(distCont, unit);
         }
 
-        DistDiscrete distDisc = new DistDiscrete(null)
+        DistDiscrete distDisc = new DistDiscrete(stream)
         {
 
             /** */
@@ -158,7 +161,7 @@ public class DistributionsTest
             }
 
             @Override
-            public double probability(final int observation)
+            public double probability(final long observation)
             {
                 return 0;
             }

@@ -125,7 +125,7 @@ import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import picocli.CommandLine.Option;
 
 /**
@@ -262,7 +262,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         setGtuColorer(colorer);
 
         // parameters
-        StreamInterface stream = sim.getReplication().getStream("generation");
+        StreamInterface stream = sim.getModel().getStream("generation");
         this.parameterFactory.addParameter(ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120.0, 12.0 / 1200));
 
         OTSRoadNode nodeA = new OTSRoadNode(network, "A", new OTSPoint3D(0, 0), Direction.ZERO);

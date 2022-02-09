@@ -13,8 +13,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.swing.gui.Console;
-import nl.tudelft.simulation.dsol.swing.gui.StatusBar;
+import nl.tudelft.simulation.dsol.swing.gui.ConsoleOutput;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 
 /**
@@ -37,7 +36,7 @@ public class OTSSimulationPanel extends JPanel
     private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The console to log messages. */
-    private final Console console = new Console();
+    private final ConsoleOutput console = new ConsoleOutput();
 
     /** The control panel to control start/stop, speed of the simulation. */
     private final OTSControlPanel otsControlPanel;
@@ -53,9 +52,6 @@ public class OTSSimulationPanel extends JPanel
 
     /** The tabbed pane that contains the different (default) screens. */
     private final TabbedContentPane tabbedPane = new AppearanceControlTabbedContentPane(SwingConstants.BOTTOM);
-
-    /** The status bar at the bottom to indicate wall clock time and simulation time. */
-    private final StatusBar statusBar = null;
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
@@ -120,14 +116,6 @@ public class OTSSimulationPanel extends JPanel
     }
 
     /**
-     * @return statusBar.
-     */
-    public final StatusBar getStatusBar()
-    {
-        return this.statusBar;
-    }
-
-    /**
      * Return the OTSControlPanel of this OTSSimulationPanel.
      * @return OTSControlPanel; the OTS control panel
      */
@@ -139,7 +127,7 @@ public class OTSSimulationPanel extends JPanel
     /**
      * @return console
      */
-    public final Console getConsole()
+    public final ConsoleOutput getConsole()
     {
         return this.console;
     }

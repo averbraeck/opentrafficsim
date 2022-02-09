@@ -33,7 +33,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -174,7 +173,7 @@ public class ContourPlotTest implements UNITS
         Mockito.when(this.mockedSimulator.getSimulatorTime()).thenReturn(Time.ZERO);
         OTSModelInterface model = Mockito.mock(OTSModelInterface.class);
         OTSReplication replication =
-                OTSReplication.create("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
+                new OTSReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0));
         Mockito.when(this.mockedSimulator.getReplication()).thenReturn(replication);
     }
 

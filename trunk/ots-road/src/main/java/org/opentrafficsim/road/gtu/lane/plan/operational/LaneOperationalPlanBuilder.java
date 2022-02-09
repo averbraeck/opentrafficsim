@@ -42,7 +42,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Builder for several often used operational plans. E.g., decelerate to come to a full stop at the end of a shape; accelerate

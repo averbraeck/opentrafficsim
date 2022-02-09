@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.vecmath.Point3d;
-
 import org.djutils.event.EventProducer;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashMap;
@@ -24,6 +22,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -31,8 +30,6 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.core.perception.PerceivableContext;
-
-import nl.tudelft.simulation.language.d3.BoundingBox;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
@@ -1077,41 +1074,33 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         double maxX = -Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
         boolean content = false;
-        Point3d p3dL = new Point3d();
-        Point3d p3dU = new Point3d();
         try
         {
             for (Node node : this.nodeMap.values())
             {
-                BoundingBox b = new BoundingBox(node.getBounds());
-                b.getLower(p3dL);
-                b.getUpper(p3dU);
-                minX = Math.min(minX, node.getLocation().x + Math.min(p3dL.x, p3dU.x));
-                minY = Math.min(minY, node.getLocation().y + Math.min(p3dL.y, p3dU.y));
-                maxX = Math.max(maxX, node.getLocation().x + Math.max(p3dL.x, p3dU.x));
-                maxY = Math.max(maxY, node.getLocation().y + Math.max(p3dL.y, p3dU.y));
+                Bounds b = node.getBounds();
+                minX = Math.min(minX, node.getLocation().getX() + b.getMinX());
+                minY = Math.min(minY, node.getLocation().getY() + b.getMinY());
+                maxX = Math.max(maxX, node.getLocation().getX() + b.getMaxX());
+                maxY = Math.max(maxY, node.getLocation().getY() + b.getMaxY());
                 content = true;
             }
             for (Link link : this.linkMap.values())
             {
-                BoundingBox b = new BoundingBox(link.getBounds());
-                b.getLower(p3dL);
-                b.getUpper(p3dU);
-                minX = Math.min(minX, link.getLocation().x + Math.min(p3dL.x, p3dU.x));
-                minY = Math.min(minY, link.getLocation().y + Math.min(p3dL.y, p3dU.y));
-                maxX = Math.max(maxX, link.getLocation().x + Math.max(p3dL.x, p3dU.x));
-                maxY = Math.max(maxY, link.getLocation().y + Math.max(p3dL.y, p3dU.y));
+                Bounds b = link.getBounds();
+                minX = Math.min(minX, link.getLocation().getX() + b.getMinX());
+                minY = Math.min(minY, link.getLocation().getY() + b.getMinY());
+                maxX = Math.max(maxX, link.getLocation().getX() + b.getMaxX());
+                maxY = Math.max(maxY, link.getLocation().getY() + b.getMaxY());
                 content = true;
             }
             for (ObjectInterface object : this.objectMap.values())
             {
-                BoundingBox b = new BoundingBox(object.getBounds());
-                b.getLower(p3dL);
-                b.getUpper(p3dU);
-                minX = Math.min(minX, object.getLocation().x + Math.min(p3dL.x, p3dU.x));
-                minY = Math.min(minY, object.getLocation().y + Math.min(p3dL.y, p3dU.y));
-                maxX = Math.max(maxX, object.getLocation().x + Math.max(p3dL.x, p3dU.x));
-                maxY = Math.max(maxY, object.getLocation().y + Math.max(p3dL.y, p3dU.y));
+                Bounds b = new Bounds(object.getBounds());
+                minX = Math.min(minX, object.getLocation().getX() + b.getMinX());
+                minY = Math.min(minY, object.getLocation().getY() + b.getMinY());
+                maxX = Math.max(maxX, object.getLocation().getX() + b.getMaxX());
+                maxY = Math.max(maxY, object.getLocation().getY() + b.getMaxY());
                 content = true;
             }
         }

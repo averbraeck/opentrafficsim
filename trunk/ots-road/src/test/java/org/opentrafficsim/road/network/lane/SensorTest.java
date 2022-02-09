@@ -115,7 +115,7 @@ public class SensorTest implements UNITS
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
-        simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));
+        simulator.runUpTo(new SimTimeDoubleUnit(new Time(1, TimeUnit.BASE_SECOND)));
         if (!simulator.isStartingOrRunning())
         {
             simulator.start();

@@ -46,7 +46,7 @@ public class SinkAnimation extends AbstractLineAnimation<SinkSensor> implements 
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(Color.YELLOW);
         super.paint(graphics, observer);

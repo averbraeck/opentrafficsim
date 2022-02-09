@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventProducerInterface;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -30,4 +31,8 @@ public interface ObjectInterface extends Locatable, Identifiable, EventProducerI
 
     /** @return the full id that makes the id unique in the network. */
     String getFullId();
+    
+    @Override
+    Bounds getBounds();
+    
 }

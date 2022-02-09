@@ -35,7 +35,7 @@ import org.opentrafficsim.core.perception.PerceivableContext;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Implements the basic functionalities of any GTU: the ability to move on 3D-space according to a plan.

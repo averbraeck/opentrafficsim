@@ -97,7 +97,6 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
-import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.xml.generated.CARFOLLOWINGMODELHEADWAYSPEEDTYPE;
 import org.opentrafficsim.xml.generated.CARFOLLOWINGMODELHEADWAYSPEEDTYPE.DESIREDHEADWAYMODEL;
 import org.opentrafficsim.xml.generated.CARFOLLOWINGMODELTYPE;
@@ -131,6 +130,7 @@ import org.opentrafficsim.xml.generated.PERCEPTIONTYPE.HEADWAYGTUTYPE.PERCEIVED;
 import org.opentrafficsim.xml.generated.PERCEPTIONTYPE.MENTAL.FULLER;
 import org.opentrafficsim.xml.generated.PERCEPTIONTYPE.MENTAL.FULLER.BEHAVIORALADAPTATION;
 
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
@@ -170,7 +170,7 @@ public class ModelParser
     @SuppressWarnings("unchecked")
     public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, K> Map<String, ParameterFactory> parseParameters(
             final OTSRoadNetwork otsNetwork, final List<MODELTYPE> models, final InputParameters inputParameters,
-            final Map<String, ParameterType<?>> parameterTypes, final Map<String, StreamInformation> streamMap)
+            final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamMap)
             throws XmlParserException
     {
         Map<String, ParameterFactory> map = new LinkedHashMap<>();
@@ -345,7 +345,7 @@ public class ModelParser
      * @param models List&lt;MODEL&gt;; models
      * @param inputParameters InputParameters; input parameters
      * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
-     * @param streamMap Map&lt;String, StreamInformation&gt;; stream information
+     * @param streamInformation Map&lt;String, StreamInformation&gt;; stream information
      * @param parameterFactories Map&lt;String, ParameterFactory&gt;; parameter factories
      * @param <U> a unit
      * @param <T> a scalar type
@@ -356,7 +356,7 @@ public class ModelParser
     public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>,
             K> Map<String, LaneBasedStrategicalPlannerFactory<?>> parseModel(final OTSRoadNetwork otsNetwork,
                     final List<MODELTYPE> models, final InputParameters inputParameters,
-                    final Map<String, ParameterType<?>> parameterTypes, final Map<String, StreamInformation> streamMap,
+                    final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamInformation,
                     final Map<String, ParameterFactory> parameterFactories) throws XmlParserException
     {
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
@@ -383,7 +383,8 @@ public class ModelParser
                 // default
                 try
                 {
-                    tacticalPlannerFactory = new LMRSFactory(new IDMPlusFactory(streamMap.get("generation").getStream()),
+                    tacticalPlannerFactory = new LMRSFactory(
+                            new IDMPlusFactory(streamInformation.getStream("generation")),
                             new DefaultLMRSPerceptionFactory());
                 }
                 catch (GTUException exception)

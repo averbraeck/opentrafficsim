@@ -51,7 +51,7 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         Conflict conflict = this.getSource();
 //        if ((!conflict.getLane().toString().equals("Lane FORWARD1 of 6077_J8854"))

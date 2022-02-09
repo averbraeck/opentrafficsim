@@ -1,8 +1,7 @@
 package nl.tudelft.simulation.dsol.web.animation.D2;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,42 +12,38 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.media.j3d.BoundingBox;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point4i;
-
+import org.djutils.draw.bounds.Bounds;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.Point;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 
-import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DComparator;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
-import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
+import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2D;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.web.animation.HTMLGraphics2D;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
 /**
  * The AnimationPanel to display animated (Locatable) objects. Added the possibility to witch layers on and off. By default all
- * layers will be drawn, so no changes to existing software need to be made.<br>
- * copyright (c) 2002-2018 <a href="https://simulation.tudelft.nl">Delft University of Technology </a>, the Netherlands. <br>
- * See for project information <a href="https://simulation.tudelft.nl">www.simulation.tudelft.nl </a>.
+ * layers will be drawn, so no changes to existing software need to be made.
  * <p>
- * Copyright (c) 2002-2020 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://simulation.tudelft.nl/" target="_blank"> https://simulation.tudelft.nl</a>. The DSOL
- * project is distributed under a three-clause BSD-style license, which can be found at
- * <a href="https://simulation.tudelft.nl/dsol/3.0/license.html" target="_blank">
- * https://simulation.tudelft.nl/dsol/3.0/license.html</a>.
+ * Copyright (c) 2003-2021 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/v2/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="http://www.peter-jacobs.com">Peter Jacobs </a>
+ * @author <a href="https://www.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerInterface
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+
     /** the elements of this panel. */
     private SortedSet<Renderable2DInterface<? extends Locatable>> elements =
             new TreeSet<Renderable2DInterface<? extends Locatable>>(new Renderable2DComparator());
@@ -69,7 +64,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
     private ContextInterface context = null;
 
     /** a line that helps the user to see where s/he is dragging. */
-    private Point4i dragLine = new Point4i();
+    private int[] dragLine = new int[4];
 
     /** enable drag line. */
     private boolean dragLineEnabled = false;
@@ -87,7 +82,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
     private Map<Class<? extends Locatable>, ToggleButtonInfo> toggleButtonMap = new LinkedHashMap<>();
 
     /** Set of GIS layer names to toggle GIS layers . */
-    private Map<String, MapInterface> toggleGISMap = new LinkedHashMap<>();
+    private Map<String, GisMapInterface> toggleGISMap = new LinkedHashMap<>();
 
     /** Set of GIS layer names to toggle buttons. */
     private Map<String, ToggleButtonInfo> toggleGISButtonMap = new LinkedHashMap<>();
@@ -98,20 +93,21 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
     /** The switchableGTUColorer used to color the GTUs. */
     private GTUColorer gtuColorer = null;
 
+    /** the margin factor 'around' the extent. */
+    public static final double EXTENT_MARGIN_FACTOR = 0.05;
+
     /**
      * constructs a new AnimationPanel.
-     * @param extent Rectangle2D; the extent of the panel
-     * @param size Dimension; the size of the panel.
+     * @param homeExtent Bounds2d; the extent of the panel
      * @param simulator SimulatorInterface&lt;?,?,?&gt;; the simulator of which we want to know the events for animation
      * @throws RemoteException on network error for one of the listeners
      */
-    public HTMLAnimationPanel(final Rectangle2D extent, final Dimension size, final SimulatorInterface<?, ?, ?> simulator)
-            throws RemoteException
+    public HTMLAnimationPanel(final Bounds2d homeExtent, final SimulatorInterface<?, ?, ?> simulator) throws RemoteException
     {
-        super(extent, size);
+        super(homeExtent);
         super.showGrid = true;
         this.simulator = simulator;
-        simulator.addListener(this, Replication.START_REPLICATION_EVENT);
+        simulator.addListener(this, ReplicationInterface.START_REPLICATION_EVENT);
     }
 
     /** {@inheritDoc} */
@@ -135,9 +131,16 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
         // draw the animation elements.
         for (Renderable2DInterface<? extends Locatable> element : this.elementList)
         {
-            if (isShowElement(element))
+            // destroy has been called?
+            if (element.getSource() == null)
             {
-                element.paint(g2, this.getExtent(), this.getSize(), this);
+                objectRemoved(element);
+            }
+            else if (isShowElement(element))
+            {
+                AffineTransform at = (AffineTransform) g2.getTransform().clone();
+                element.paintComponent(g2, this.getExtent(), this.getSize(), this.renderableScale, this);
+                g2.setTransform(at);
             }
         }
 
@@ -145,7 +148,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
         if (this.dragLineEnabled)
         {
             g2.setColor(Color.BLACK);
-            g2.drawLine(this.dragLine.w, this.dragLine.x, this.dragLine.y, this.dragLine.z);
+            g2.drawLine(this.dragLine[0], this.dragLine[1], this.dragLine[2], this.dragLine[3]);
             this.dragLineEnabled = false;
         }
     }
@@ -157,7 +160,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
      */
     public boolean isShowElement(final Renderable2DInterface<? extends Locatable> element)
     {
-        return isShowClass(element.getSource().getClass());
+        return element.getSource() == null ? false : isShowClass(element.getSource().getClass());
     }
 
     /**
@@ -216,8 +219,8 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
             objectRemoved((Renderable2DInterface<? extends Locatable>) ((Object[]) event.getContent())[2]);
         }
 
-        else if //(this.simulator.getSourceId().equals(event.getSourceId()) &&
-                (event.getType().equals(Replication.START_REPLICATION_EVENT))
+        else if // (this.simulator.getSourceId().equals(event.getSourceId()) &&
+        (event.getType().equals(ReplicationInterface.START_REPLICATION_EVENT))
         {
             synchronized (this.elementList)
             {
@@ -276,28 +279,31 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
 
     /**
      * Calculate the full extent based on the current positions of the objects.
-     * @return the full extent of the animation.
+     * @return Bounds2d; the full extent of the animation.
      */
-    public synchronized Rectangle2D fullExtent()
+    public synchronized Bounds2d fullExtent()
     {
         double minX = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
-        Point3d p3dL = new Point3d();
-        Point3d p3dU = new Point3d();
         try
         {
             for (Renderable2DInterface<? extends Locatable> renderable : this.elementList)
             {
-                DirectedPoint l = renderable.getSource().getLocation();
-                BoundingBox b = new BoundingBox(renderable.getSource().getBounds());
-                b.getLower(p3dL);
-                b.getUpper(p3dU);
-                minX = Math.min(minX, l.x + Math.min(p3dL.x, p3dU.x));
-                minY = Math.min(minY, l.y + Math.min(p3dL.y, p3dU.y));
-                maxX = Math.max(maxX, l.x + Math.max(p3dL.x, p3dU.x));
-                maxY = Math.max(maxY, l.y + Math.max(p3dL.y, p3dU.y));
+                if (renderable.getSource() == null)
+                {
+                    continue;
+                }
+                Point<?> l = renderable.getSource().getLocation();
+                if (l != null)
+                {
+                    Bounds<?, ?, ?> b = renderable.getSource().getBounds();
+                    minX = Math.min(minX, l.getX() + b.getMinX());
+                    minY = Math.min(minY, l.getY() + b.getMinY());
+                    maxX = Math.max(maxX, l.getX() + b.getMaxX());
+                    maxY = Math.max(maxY, l.getY() + b.getMaxY());
+                }
             }
         }
         catch (Exception e)
@@ -305,12 +311,12 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
             // ignore
         }
 
-        minX = minX - 0.05 * Math.abs(minX);
-        minY = minY - 0.05 * Math.abs(minY);
-        maxX = maxX + 0.05 * Math.abs(maxX);
-        maxY = maxY + 0.05 * Math.abs(maxY);
+        minX -= EXTENT_MARGIN_FACTOR * Math.abs(maxX - minX);
+        minY -= EXTENT_MARGIN_FACTOR * Math.abs(maxY - minY);
+        maxX += EXTENT_MARGIN_FACTOR * Math.abs(maxX - minX);
+        maxY += EXTENT_MARGIN_FACTOR * Math.abs(maxY - minY);
 
-        return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
+        return new Bounds2d(minX, maxX, minY, maxY);
     }
 
     /**
@@ -318,7 +324,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
      */
     public synchronized void zoomAll()
     {
-        this.extent = Renderable2DInterface.Util.computeVisibleExtent(fullExtent(), this.getSize());
+        setExtent(getRenderableScale().computeVisibleExtent(fullExtent(), this.getSize()));
         this.repaint();
     }
 
@@ -374,7 +380,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
     /**
      * @return returns the dragLine.
      */
-    public final Point4i getDragLine()
+    public final int[] getDragLine()
     {
         return this.dragLine;
     }
@@ -426,7 +432,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
 
     /**
      * Show a Locatable class based on the name.
-     * @param name the name of the class to show
+     * @param name String; the name of the class to show
      */
     public final void showClass(final String name)
     {
@@ -435,7 +441,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
 
     /**
      * Hide a Locatable class based on the name.
-     * @param name the name of the class to hide
+     * @param name String; the name of the class to hide
      */
     public final void hideClass(final String name)
     {
@@ -496,7 +502,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
      */
     public final void showGISLayer(final String layerName)
     {
-        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
             try
@@ -517,7 +523,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
      */
     public final void hideGISLayer(final String layerName)
     {
-        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
             try
@@ -538,7 +544,7 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
      */
     public final void toggleGISLayer(final String layerName)
     {
-        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
             try

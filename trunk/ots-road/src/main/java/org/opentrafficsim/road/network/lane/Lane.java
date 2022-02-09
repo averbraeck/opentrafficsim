@@ -26,8 +26,6 @@ import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.metadata.MetaData;
-import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -1164,7 +1162,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return null;
         }
-        int[] search = lineSearch((int index) -> {
+        int[] search = lineSearch((final int index) -> {
             LaneBasedGTU gtu = list.get(index);
             return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
         }, list.size(), position.si);
@@ -1869,7 +1867,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    protected double getZ()
+    public double getZ()
     {
         return 0.0;
     }

@@ -165,7 +165,7 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -549,7 +549,7 @@ public class LmrsStrategies implements EventListenerInterface
             OTSRoadNetwork net = new OTSRoadNetwork("LMRS strategies", true, getSimulator());
             try
             {
-                LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, Replication.END_REPLICATION_EVENT);
+                LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, ReplicationInterface.END_REPLICATION_EVENT);
             }
             catch (RemoteException exception1)
             {
@@ -561,7 +561,7 @@ public class LmrsStrategies implements EventListenerInterface
             Map<String, StreamInterface> streams = new LinkedHashMap<>();
             StreamInterface stream = new MersenneTwister(LmrsStrategies.this.seed);
             streams.put("generation", stream);
-            getSimulator().getReplication().setStreams(streams);
+            getStreamInformation().addStream("generation", stream);
 
             // Vehicle-driver classes
             // characteristics generator using the input available in this context
@@ -965,7 +965,7 @@ public class LmrsStrategies implements EventListenerInterface
         {
             this.network.getGTU((String) event.getContent()).removeListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
         }
-        else if (event.getType().equals(Replication.END_REPLICATION_EVENT))
+        else if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT))
         {
             CompressionMethod compression = this.autorun ? CompressionMethod.ZIP : CompressionMethod.NONE;
             // write detector data
@@ -1010,7 +1010,7 @@ public class LmrsStrategies implements EventListenerInterface
                     + ".txt");
             }
             // solve bug that event is fired twice
-            LmrsStrategies.this.simulator.removeListener(LmrsStrategies.this, Replication.END_REPLICATION_EVENT);
+            LmrsStrategies.this.simulator.removeListener(LmrsStrategies.this, ReplicationInterface.END_REPLICATION_EVENT);
             // beep
             if (!this.autorun)
             {

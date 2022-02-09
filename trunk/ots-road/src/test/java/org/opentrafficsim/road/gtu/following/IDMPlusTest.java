@@ -43,6 +43,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * <p>
@@ -320,7 +321,7 @@ public class IDMPlusTest implements UNITS
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
             Time simulateUntil = new Time(0.1 * timeStep, TimeUnit.BASE_SECOND);
-            simulator.runUpTo(simulateUntil);
+            simulator.runUpTo(new SimTimeDoubleUnit(simulateUntil));
             while (simulator.isStartingOrRunning())
             {
                 try

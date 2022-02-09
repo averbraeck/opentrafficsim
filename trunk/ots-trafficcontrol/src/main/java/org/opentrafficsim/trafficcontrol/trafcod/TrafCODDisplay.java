@@ -14,7 +14,6 @@ import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.media.j3d.Bounds;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 
@@ -23,14 +22,14 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.djutils.event.ref.ReferenceType;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Display the current state of a TrafCOD machine.

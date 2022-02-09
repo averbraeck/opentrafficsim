@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
@@ -22,7 +23,6 @@ import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord.RecordLink;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * LaneStructureAnimation.java. <br>
@@ -51,14 +51,15 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
 
     /** {@inheritDoc} */
     @Override
-    public void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         if (!this.isDestroyed)
         {
             if (getSource().getGtu().isDestroyed())
             {
                 this.isDestroyed = true;
-                Try.execute(() -> destroy(), "Exception during deletion of LaneStructureAnimation.");
+                Try.execute(() -> destroy(getSource().getGtu().getSimulator()),
+                        "Exception during deletion of LaneStructureAnimation.");
                 return;
             }
             else

@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gis;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
 
 /**
  * <p>

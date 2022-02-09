@@ -6,20 +6,29 @@
 
     <!-- PLEASE MAKE SURE THE LINE LENGTH IN XML - EDITOR - FORMATTING IS SET TO 128 -->
 
+    <release version="1.05.00" date="2022-02-08" description="update to latest versions of dsol, djunits, djutils">
+      <action dev="averbraeck" type="update">
+        This project will not be actively maintained anymore -- code moved to the OTS2 (opentrafficsim2) project.
+      </action>
+      <action dev="averbraeck" type="update">
+        Updated the code to the latest version of dsol, djunits, djutils.
+      </action>
+    </release>
+    
     <release version="1.04.04" date="2020-11-01" description="Moved demos and research projects to OTS-RESEARCH">
-      <action>
+      <action dev="averbraeck" type="update">
         Large XML-demos moved to project ots-demo-xml on OTS-RESEARCH svn site.
       </action>
-      <action>
+      <action dev="averbraeck" type="update">
         CACC code moved to project ots-cacc on OTS-RESEARCH svn site.
       </action>
-      <action>
+      <action dev="averbraeck" type="update">
         Research projects ots-nissan, ots-opendrive, ots-vissim, various ots-parsers moved to OTS-RESEARCH svn site.
       </action>
     </release>
     
     <release version="1.04.03" date="2020-10-22" description="Enable Control Panel buttons">
-      <action>
+      <action dev="averbraeck" type="update">
         The OTSSimulationPanel and OTSAnimationPanel have a method to enable and disable the control buttons to start/stop
         a simulation / animation. By default, the buttons are now DISABLED to allow for set-up and initialization to complete
         before the user can interact with the simulation through the user interface. Therefore, ALL simulations have to 

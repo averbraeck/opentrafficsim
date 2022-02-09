@@ -254,6 +254,12 @@ public class DrawTest
         {
             // Do nothing
         }
+        /** {@inheritDoc} */
+        @Override
+        public long getOriginalSeed()
+        {
+            return 1;
+        }
 
     }
 

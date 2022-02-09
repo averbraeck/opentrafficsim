@@ -7,9 +7,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 
-import nl.tudelft.simulation.dsol.experiment.Experiment;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.Treatment;
+import nl.tudelft.simulation.dsol.experiment.SingleReplication;
 
 /**
  * <p>
@@ -20,22 +18,11 @@ import nl.tudelft.simulation.dsol.experiment.Treatment;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInterface>
+public class OTSReplication extends SingleReplication.TimeDoubleUnit
 {
 
     /** History manager. */
     private HistoryManager historyManager;
-
-    /**
-     * @param id String; the id of the Replication.
-     * @param experiment Experiment.TimeDoubleUnit&lt;OTSSimulatorInterface&gt;; Experiment
-     * @throws NamingException when the context for the replication cannot be created
-     */
-    public OTSReplication(final String id, final Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment)
-            throws NamingException
-    {
-        super(id, experiment);
-    }
 
     /**
      * Create a new OTSReplication.
@@ -43,20 +30,12 @@ public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInter
      * @param startTime Time; the start time of the new OTSReplication
      * @param warmupPeriod Duration; the warmup period of the new OTSReplication
      * @param runLength Duration; the run length of the new OTSReplication
-     * @param model OTSModelInterface; the model
-     * @return the created replication
      * @throws NamingException when the context for the replication cannot be created
      */
-    public static OTSReplication create(final String id, final Time startTime, final Duration warmupPeriod,
-            final Duration runLength, final OTSModelInterface model) throws NamingException
+    public OTSReplication(final String id, final Time startTime, final Duration warmupPeriod, final Duration runLength)
+            throws NamingException
     {
-        Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment = new Experiment.TimeDoubleUnit<>();
-        experiment.setModel(model);
-        Treatment.TimeDoubleUnit treatment =
-                new Treatment.TimeDoubleUnit(experiment, "Treatment for " + id, startTime, warmupPeriod, runLength);
-        experiment.setTreatment(treatment);
-        return new OTSReplication(id, experiment);
-
+        super(id, startTime, warmupPeriod, runLength);
     }
 
     /**

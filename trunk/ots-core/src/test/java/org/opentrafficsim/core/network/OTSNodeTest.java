@@ -8,19 +8,14 @@ import static org.junit.Assert.fail;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockSimulator;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the OTSNode class.
@@ -120,13 +115,6 @@ public class OTSNodeTest
         node5.removeLink(link5);
         assertFalse("node 5 no longer has direct connection to node 1",
                 node5.isDirectionallyConnectedTo(network.getGtuType(GTUType.DEFAULTS.VEHICLE), node1));
-        Point3d pt = new Point3d();
-        Bounds b = node1.getBounds();
-        BoundingSphere bs = (BoundingSphere) b;
-        bs.getCenter(pt);
-        assertEquals("center of bounding sphere of node 1 is origin", 0,
-                new OTSPoint3D(0, 0, 0).distance(new OTSPoint3D(pt)).si, 0.001);
-        assertEquals("radius of bounding sphere of node 1 is 10m", 10, bs.getRadius(), 00001);
     }
 
     /**

@@ -25,6 +25,11 @@
       <artifactId>dsol-animation</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-animation-gis</artifactId>
+    </dependency>
+
   </dependencies>
   
 </project>

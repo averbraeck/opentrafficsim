@@ -3,7 +3,7 @@
  */
 package org.opentrafficsim.water;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Base abstract class for a named, located object.

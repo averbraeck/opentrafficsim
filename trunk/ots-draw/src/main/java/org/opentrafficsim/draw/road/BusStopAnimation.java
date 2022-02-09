@@ -53,7 +53,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(Color.white);
         super.paint(graphics, observer);
@@ -61,10 +61,10 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException, RemoteException
+    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
     {
-        super.destroy();
-        this.text.destroy();
+        super.destroy(simulator);
+        this.text.destroy(simulator);
     }
 
     /** {@inheritDoc} */

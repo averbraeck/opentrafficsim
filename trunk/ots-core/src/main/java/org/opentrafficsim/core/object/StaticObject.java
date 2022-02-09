@@ -2,18 +2,16 @@ package org.opentrafficsim.core.object;
 
 import java.io.Serializable;
 
-import javax.media.j3d.Bounds;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * A static object with a height that a GTU might have to avoid, or which can cause occlusion for perception. All objects are

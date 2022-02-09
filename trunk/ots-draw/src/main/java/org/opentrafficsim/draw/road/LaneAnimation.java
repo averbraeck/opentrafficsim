@@ -6,9 +6,10 @@ import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.PaintLine;
@@ -22,7 +23,6 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface.TimeDoubleUnit;
 import nl.tudelft.simulation.language.d2.Angle;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -83,10 +83,10 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException, RemoteException
+    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
     {
-        super.destroy();
-        this.text.destroy();
+        super.destroy(simulator);
+        this.text.destroy(simulator);
     }
 
     /** {@inheritDoc} */
@@ -124,7 +124,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
         }
 
         @Override
-        public final DirectedPoint getLocation() throws RemoteException
+        public final DirectedPoint getLocation()
         {
             DirectedPoint dp = this.centerLine.getLocation();
             return new DirectedPoint(dp.x, dp.y, dp.z + 0.1);
@@ -142,7 +142,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
          */
         public OTSLine3D getCenterLine()
         {
-            return centerLine;
+            return this.centerLine;
         }
 
     }
@@ -181,9 +181,9 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
         }
 
         @Override
-        public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+        public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
-            PaintLine.paintLine(graphics, COLOR, 0.1, getSource().getLocation(), ((CenterLine) getSource()).getCenterLine());
+            PaintLine.paintLine(graphics, COLOR, 0.1, getSource().getLocation(), getSource().getCenterLine());
         }
 
     }
@@ -227,7 +227,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public DirectedPoint getLocation() throws RemoteException
+        public DirectedPoint getLocation()
         {
             // draw always on top.
             DirectedPoint p = ((Lane) getSource()).getCenterLine().getLocationFractionExtended(0.5);

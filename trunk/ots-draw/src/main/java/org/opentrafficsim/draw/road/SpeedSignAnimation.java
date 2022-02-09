@@ -55,7 +55,7 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D g, final ImageObserver arg1) throws RemoteException
+    public final void paint(final Graphics2D g, final ImageObserver arg1)
     {
         Ellipse2D ellipse = new Ellipse2D.Double(-RADIUS, -RADIUS, 2 * RADIUS, 2 * RADIUS);
         g.setColor(Color.RED);

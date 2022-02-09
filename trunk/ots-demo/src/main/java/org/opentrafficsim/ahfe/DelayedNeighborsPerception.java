@@ -116,7 +116,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         this.anticipation = anticipation;
         try
         {
-            this.norm = new DistNormal(perception.getGtu().getSimulator().getReplication().getStream("perception"));
+            this.norm = new DistNormal(perception.getGtu().getSimulator().getModel().getStream("perception"));
             perception.getGtu().addListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
         }
         catch (GTUException | RemoteException exception)

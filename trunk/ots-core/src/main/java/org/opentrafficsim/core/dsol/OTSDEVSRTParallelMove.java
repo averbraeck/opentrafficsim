@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, SimTimeDoubleUnit>
+public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, SimTimeDoubleUnit>
 {
     /** */
     private static final long serialVersionUID = 20140909L;
@@ -86,7 +86,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
     @Override
     public final String toString()
     {
-        return "DEVSRealTimeClock.TimeDoubleUnit [time=" + getSimulatorTime() + "]";
+        return "DEVSRealTimeAnimator.TimeDoubleUnit [time=" + getSimulatorTime() + "]";
     }
 
     // TODO: update the run() method of OTSDEVSRTParallelMove and adapt to the latest parent class version in DSOL 3.03.07
@@ -106,7 +106,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                                                                         // wall clock
 
         while (this.isStartingOrRunning() && !this.eventList.isEmpty()
-                && this.getSimulatorTime().le(this.replication.getTreatment().getEndTime()))
+                && this.getSimulatorTime().le(this.replication.getEndTime()))
         {
             // check if speedFactor has changed. If yes: re-baseline.
             if (factor != getSpeedFactor())

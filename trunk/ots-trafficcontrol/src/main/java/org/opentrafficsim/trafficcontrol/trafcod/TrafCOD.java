@@ -440,7 +440,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         Network network = null;
         try
         {
-            network = ((OTSModelInterface) this.simulator.getReplication().getExperiment().getModel()).getNetwork();
+            network = ((OTSModelInterface) this.simulator.getModel()).getNetwork();
         }
         catch (ClassCastException e)
         {

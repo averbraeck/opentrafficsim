@@ -131,7 +131,7 @@ public class NoTrafficLane extends Lane
 
     /** {@inheritDoc} */
     @Override
-    protected final double getZ()
+    public final double getZ()
     {
         return -0.00005;
     }

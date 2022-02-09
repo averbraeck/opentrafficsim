@@ -226,7 +226,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             Duration averageHeadway = new Duration(3600.0 / contP, SECOND);
             Duration minimumHeadway = new Duration(3, SECOND);
             this.headwayGenerator =
-                    new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(averageHeadway, minimumHeadway).getSI());
+                    new DistErlang(new MersenneTwister(1234), DoubleScalar.minus(averageHeadway, minimumHeadway).getSI(), 4);
 
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             if (merge)

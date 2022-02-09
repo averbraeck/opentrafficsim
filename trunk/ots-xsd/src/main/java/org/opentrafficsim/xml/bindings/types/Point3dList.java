@@ -2,7 +2,9 @@ package org.opentrafficsim.xml.bindings.types;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Point3d;
+import org.djutils.draw.point.Point3d;
+
+
 
 /**
  * Point3dList.java. <br>

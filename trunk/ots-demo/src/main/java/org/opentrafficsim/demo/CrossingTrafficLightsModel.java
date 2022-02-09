@@ -204,7 +204,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
             Duration averageHeadway = new Duration(3600.0 / contP, SECOND);
             Duration minimumHeadway = new Duration(3, SECOND);
             this.headwayGenerator =
-                    new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(averageHeadway, minimumHeadway).getSI());
+                    new DistErlang(new MersenneTwister(1234), DoubleScalar.minus(averageHeadway, minimumHeadway).getSI(), 4);
 
             for (int i = 0; i < 4; i++)
             {

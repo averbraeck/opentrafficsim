@@ -44,6 +44,7 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -76,12 +77,11 @@ import org.zeromq.ZMQ;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -134,12 +134,12 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         public void run()
         {
             System.err.println("MasterCommunication thread id is " + Thread.currentThread().getId());
-            ZMQ.Socket remoteControllerSocket = zContext.createSocket(SocketType.PAIR);
+            ZMQ.Socket remoteControllerSocket = Sim0MQControlledOTS.this.zContext.createSocket(SocketType.PAIR);
             remoteControllerSocket.setHWM(100000);
-            remoteControllerSocket.bind("tcp://*:" + port);
-            ZMQ.Socket resultQueue = zContext.createSocket(SocketType.PULL);
+            remoteControllerSocket.bind("tcp://*:" + Sim0MQControlledOTS.this.port);
+            ZMQ.Socket resultQueue = Sim0MQControlledOTS.this.zContext.createSocket(SocketType.PULL);
             resultQueue.bind("inproc://results");
-            ZMQ.Socket toCommandLoop = zContext.createSocket(SocketType.PUSH);
+            ZMQ.Socket toCommandLoop = Sim0MQControlledOTS.this.zContext.createSocket(SocketType.PUSH);
             toCommandLoop.setHWM(1000);
             toCommandLoop.connect("inproc://commands");
             /*-
@@ -172,7 +172,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
             }
             */
             ///*-
-            ZMQ.Poller poller = zContext.createPoller(2);
+            ZMQ.Poller poller = Sim0MQControlledOTS.this.zContext.createPoller(2);
             poller.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
             poller.register(resultQueue, ZMQ.Poller.POLLIN);
             while (!Thread.currentThread().isInterrupted())
@@ -297,7 +297,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
 
                 ImmutableMap<String, InvisibleObjectInterface> invisibleObjectMap =
                         this.model.getNetwork().getInvisibleObjectMap();
-                animator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
+                animator.addListener(this, DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT);
                 animator.addListener(this, SimulatorInterface.TIME_CHANGED_EVENT);
                 for (InvisibleObjectInterface ioi : invisibleObjectMap.values())
                 {
@@ -397,7 +397,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             {
                                 OTSSimulatorInterface simulator = this.model.getSimulator();
                                 System.out.println("Simulating up to " + message[8]);
-                                simulator.runUpTo((Time) message[8]);
+                                simulator.runUpTo(new SimTimeDoubleUnit((Time) message[8]));
                                 int count = 0;
                                 while (simulator.isStartingOrRunning())
                                 {
@@ -487,11 +487,6 @@ public class Sim0MQControlledOTS implements EventListenerInterface
             {
                 e.printStackTrace();
                 result = "Could not decode command: " + e.getMessage();
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-                result = "Caught RemoteException: " + e.getMessage();
             }
             // Send reply to master
             try

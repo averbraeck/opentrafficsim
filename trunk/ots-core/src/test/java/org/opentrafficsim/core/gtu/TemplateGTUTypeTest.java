@@ -21,6 +21,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 
 /**
@@ -49,7 +50,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     public final void templateGTUTypeTest()
             throws SimRuntimeException, NamingException, GTUException, ProbabilityException, ParameterException
     {
-        OTSNetwork network = new OTSNetwork("network", true, simulator);
+        OTSNetwork network = new OTSNetwork("network", true, this.simulator);
         GTUType gtuTypeA = new GTUType("type name A", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         GTUType gtuTypeB = new GTUType("type name B", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         Generator<Length> lengthGeneratorA = new Generator<Length>()
@@ -209,6 +210,20 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public String getDescription()
+    {
+        return null;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void setStreamInformation(final StreamInformation streamInformation)
+    {
+        //
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public StreamInformation getStreamInformation()
     {
         return null;
     }

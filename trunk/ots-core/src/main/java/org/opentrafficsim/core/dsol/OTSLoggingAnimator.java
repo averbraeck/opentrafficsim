@@ -9,14 +9,13 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Construct a DSOL DEVSRealTimeClock the easy way.
+ * Construct a DSOL DEVSRealTimeAnimator the easy way.
  * <p>
  * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -52,8 +51,8 @@ public class OTSLoggingAnimator extends OTSAnimator
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
         OTSReplication newReplication =
-                OTSReplication.create("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, model);
-        super.initialize(newReplication, ReplicationMode.TERMINATING);
+                new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        super.initialize(model, newReplication);
     }
 
     /**
@@ -75,9 +74,9 @@ public class OTSLoggingAnimator extends OTSAnimator
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
         OTSReplication newReplication =
-                OTSReplication.create("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, model);
-        newReplication.getStreams().putAll(streams);
-        super.initialize(newReplication, ReplicationMode.TERMINATING);
+                new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        model.getStreams().putAll(streams);
+        super.initialize(model, newReplication);
     }
 
     /** {@inheritDoc} */
@@ -87,8 +86,8 @@ public class OTSLoggingAnimator extends OTSAnimator
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication = OTSReplication.create("rep" + replicationnr, startTime, warmupPeriod, runLength, model);
-        super.initialize(newReplication, ReplicationMode.TERMINATING);
+        OTSReplication newReplication = new OTSReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
+        super.initialize(model, newReplication);
     }
 
     /** {@inheritDoc} */
@@ -128,7 +127,7 @@ public class OTSLoggingAnimator extends OTSAnimator
         double msec1 = simulatorTimeForWallClockMillis(1.0).doubleValue();
 
         while (this.isStartingOrRunning() && !this.eventList.isEmpty()
-                && this.simulatorTime.le(this.replication.getTreatment().getEndSimTime()))
+                && this.simulatorTime.le(this.replication.getEndSimTime()))
         {
             // check if speedFactor has changed. If yes: re-baseline.
             if (currentSpeedFactor != this.getSpeedFactor())

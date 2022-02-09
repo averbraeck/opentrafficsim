@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.media.j3d.BoundingBox;
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.point.Point3d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -37,7 +36,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Helper class for vehicle generation which can draw the next GTU position to try to place a GTU. If the GTU can not be placed,
@@ -122,7 +120,7 @@ public final class GeneratorPositions implements Locatable
             }
         }
         this.location = new DirectedPoint(x / n, y / n, 0);
-        this.bounds = new BoundingBox(new Point3d(xMin, yMin, 0.0), new Point3d(xMax, yMax, 0.0));
+        this.bounds = new Bounds(new Point3d(xMin, yMin, 0.0), new Point3d(xMax, yMax, 0.0));
     }
 
     /**
@@ -254,7 +252,7 @@ public final class GeneratorPositions implements Locatable
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation()
     {
         return this.location;
     }

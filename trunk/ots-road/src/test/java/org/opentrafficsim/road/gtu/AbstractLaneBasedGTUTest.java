@@ -22,7 +22,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -52,6 +51,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * Test the various methods of an AbstractLaneBasedGTU.<br>
@@ -222,7 +222,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 step = 0.1; // Reduce testing time by increasing the step size
             }
             // System.out.println("Simulating until " + stepTime.getSI());
-            simulator.runUpTo(stepTime);
+            simulator.runUpTo(new SimTimeDoubleUnit(stepTime));
             while (simulator.isStartingOrRunning())
             {
                 try
