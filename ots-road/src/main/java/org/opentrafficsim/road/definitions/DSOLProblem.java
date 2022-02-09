@@ -47,7 +47,7 @@ public class DSOLProblem
     public void execute() throws SimRuntimeException, NamingException
     {
         this.simulator = new OTSSimulator("DSOL problem");
-        OTSModelInterface model = new DummyModel(simulator);
+        OTSModelInterface model = new DummyModel(this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
         Time eventTime = this.simulator.getSimulatorTime().plus(new Duration(10, DurationUnit.SECOND));
         SimEvent<SimTimeDoubleUnit> se = new SimEvent<>(new SimTimeDoubleUnit(eventTime),
@@ -71,7 +71,7 @@ public class DSOLProblem
                 break;
             }
             System.out.println("Simulating until " + stepTime.getSI());
-            this.simulator.runUpTo(stepTime);
+            this.simulator.runUpTo(new SimTimeDoubleUnit(stepTime));
             while (this.simulator.isStartingOrRunning())
             {
                 try

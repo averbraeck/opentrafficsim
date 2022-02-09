@@ -238,7 +238,7 @@ public final class Sim0MQPublisher
     private String loadNetwork(final String xml, final Duration simulationDuration, final Duration warmupTime, final Long seed)
     {
         try
-        {
+        { 
             OTSAnimator animator = new OTSAnimator("OTS Animator");
             this.network = new OTSRoadNetwork("OTS model for Sim0MQPublisher", true, animator);
             this.model = new Sim0MQOTSModel("Remotely controlled OTS model", this.network, xml);
@@ -296,6 +296,7 @@ public final class Sim0MQPublisher
      * @param socketMap Map&lt;Long, ZMQ.Socket&gt;; cache of created sockets for returned messages
      * @return boolean; true if another command can be processed after this one; false when no further commands can be processed
      */
+    @SuppressWarnings("checkstyle:methodlength")
     private boolean handleCommand(final byte[] data, final Map<Long, ZMQ.Socket> socketMap)
     {
         boolean result = true;
@@ -315,7 +316,7 @@ public final class Sim0MQPublisher
                 {
                     // This is a command for the embedded Publisher
                     ReturnWrapperImpl returnWrapper = new ReturnWrapperImpl(this.zContext,
-                            new Object[] { "SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0 },
+                            new Object[] {"SIM01", true, message[2], message[3], message[4], parts[0], message[6], 0},
                             socketMap);
                     if (null == this.publisher)
                     {
@@ -388,8 +389,7 @@ public final class Sim0MQPublisher
                                     break;
                                 }
                                 OTSSimulatorInterface simulator = this.network.getSimulator();
-                                if (simulator.getSimulatorTime()
-                                        .ge(simulator.getReplication().getExperiment().getTreatment().getEndTime()))
+                                if (simulator.getSimulatorTime().ge(simulator.getReplication().getEndTime()))
                                 {
                                     resultMessage = "Simulation is already at end of simulation time";
                                     ackNack = false;
@@ -401,10 +401,10 @@ public final class Sim0MQPublisher
                                     ackNack = false;
                                     break;
                                 }
-                                ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext, new Object[] { "SIM01", true,
-                                        message[2], message[3], message[4], message[5], message[6], 0 }, socketMap);
+                                ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext, new Object[] {"SIM01", true,
+                                        message[2], message[3], message[4], message[5], message[6], 0}, socketMap);
                                 returnWrapper.ack(resultMessage);
-                                simulator.runUpTo((Time) message[8]);
+                                simulator.runUpTo(new SimTimeDoubleUnit((Time) message[8]));
                                 int count = 0;
                                 while (this.network.getSimulator().isStartingOrRunning())
                                 {
@@ -450,7 +450,7 @@ public final class Sim0MQPublisher
                             break;
 
                         default:
-                            IncomingDataHandler incomingDataHandler = publisher.lookupIncomingDataHandler(command);
+                            IncomingDataHandler incomingDataHandler = this.publisher.lookupIncomingDataHandler(command);
                             if (incomingDataHandler != null)
                             {
                                 resultMessage = incomingDataHandler.handleIncomingData(message);
@@ -467,7 +467,7 @@ public final class Sim0MQPublisher
                 if (resultMessage != null)
                 {
                     ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext,
-                            new Object[] { "SIM01", true, message[2], message[3], message[4], message[5], message[6], 0 },
+                            new Object[] {"SIM01", true, message[2], message[3], message[4], message[5], message[6], 0},
                             socketMap);
                     if (ackNack)
                     {

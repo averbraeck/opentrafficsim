@@ -9,6 +9,9 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.point.OrientedPoint3d;
+import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
@@ -16,7 +19,6 @@ import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface.TimeDoubleUnit;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Animator that displays generation queues as numbers.
@@ -53,17 +55,24 @@ public class GtuGeneratorQueueAnimation extends TextAnimation
 
     /** {@inheritDoc} */
     @Override
-    public void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        graphics.setColor(Color.BLACK);
-        graphics.setFont(FONT);
-        DirectedPoint p = getSource().getLocation();
-        Map<DirectedPoint, Integer> map = ((GtuGeneratorQueue) getSource()).getQueueLengths();
-        for (DirectedPoint lanePosition : map.keySet())
+        try
         {
-            setText(map.get(lanePosition).toString());
-            setXY((float) (lanePosition.x - p.x), (float) (lanePosition.y - p.y));
-            super.paint(graphics, observer);
+            graphics.setColor(Color.BLACK);
+            graphics.setFont(FONT);
+            OrientedPoint3d p = (OrientedPoint3d) getSource().getLocation();
+            Map<DirectedPoint, Integer> map = ((GtuGeneratorQueue) getSource()).getQueueLengths();
+            for (DirectedPoint lanePosition : map.keySet())
+            {
+                setText(map.get(lanePosition).toString());
+                setXY((float) (lanePosition.x - p.x), (float) (lanePosition.y - p.y));
+                super.paint(graphics, observer);
+            }
+        }
+        catch (RemoteException exception)
+        {
+            CategoryLogger.always().warn(exception);
         }
     }
 

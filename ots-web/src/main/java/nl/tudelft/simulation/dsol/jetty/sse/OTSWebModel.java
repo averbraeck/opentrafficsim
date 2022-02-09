@@ -2,7 +2,6 @@ package nl.tudelft.simulation.dsol.jetty.sse;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -15,7 +14,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.djutils.event.Event;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
@@ -27,9 +27,9 @@ import org.opentrafficsim.web.animation.WebAnimationToggles;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
-import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.web.animation.D2.HTMLAnimationPanel;
 import nl.tudelft.simulation.dsol.web.animation.D2.HTMLGridPanel;
@@ -38,11 +38,11 @@ import nl.tudelft.simulation.introspection.Property;
 import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
 
 /**
- * OTSWebModel.java. <br>
- * <br>
- * Copyright (c) 2003-2018 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * OTSWebModel.java.
+ * <p>
+ * Copyright (c) 2003-2021 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/v2/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public class OTSWebModel implements EventListenerInterface
@@ -70,14 +70,14 @@ public class OTSWebModel implements EventListenerInterface
 
     /**
      * @param title String; the title for the model window
-     * @param simulator SimulatorInterface&lt;?,?,?&gt;; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @throws Exception in case jetty crashes
      */
     public OTSWebModel(final String title, final OTSSimulatorInterface simulator) throws Exception
     {
         this.title = title;
         this.simulator = simulator;
-        Rectangle2D extent = new Rectangle2D.Double(-200, -200, 400, 400);
+        Bounds2d extent = new Bounds2d(-200, 200, -200, 200);
         try
         {
             simulator.addListener(this, SimulatorInterface.START_EVENT);
@@ -90,11 +90,11 @@ public class OTSWebModel implements EventListenerInterface
 
         if (this.simulator instanceof AnimatorInterface)
         {
-            this.animationPanel = new HTMLAnimationPanel(extent, new Dimension(800, 600), this.simulator);
+            this.animationPanel = new HTMLAnimationPanel(extent, this.simulator);
             WebAnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
             // get the already created elements in context(/animation/D2)
-            this.animationPanel.notify(new TimedEvent(Replication.START_REPLICATION_EVENT, this.simulator.getSourceId(), null,
-                    this.simulator.getSimulatorTime()));
+            this.animationPanel.notify(new TimedEvent(ReplicationInterface.START_REPLICATION_EVENT,
+                    this.simulator.getSourceId(), null, this.simulator.getSimulatorTime()));
         }
     }
 
@@ -131,7 +131,7 @@ public class OTSWebModel implements EventListenerInterface
     }
 
     /**
-     * @param killed set killed
+     * @param killed boolean; set killed
      */
     public final void setKilled(final boolean killed)
     {
@@ -198,9 +198,9 @@ public class OTSWebModel implements EventListenerInterface
      */
     protected void setSpeedFactor(final double speedFactor)
     {
-        if (this.simulator instanceof DEVSRealTimeClock)
+        if (this.simulator instanceof DEVSRealTimeAnimator)
         {
-            ((DEVSRealTimeClock<?, ?, ?>) this.simulator).setSpeedFactor(speedFactor);
+            ((DEVSRealTimeAnimator<?, ?, ?>) this.simulator).setSpeedFactor(speedFactor);
         }
     }
 
@@ -220,10 +220,10 @@ public class OTSWebModel implements EventListenerInterface
 
     /**
      * Delegate handle method from the main web server for this particular model.
-     * @param target t
-     * @param baseRequest br
-     * @param request r
-     * @param response re
+     * @param target String; t
+     * @param baseRequest Request; br
+     * @param request HttpServletRequest; r
+     * @param response HttpServletResponse; re
      * @throws IOException on error
      * @throws ServletException on error
      */
@@ -353,11 +353,14 @@ public class OTSWebModel implements EventListenerInterface
                     {
                         int dx = Integer.parseInt(parts[1]);
                         int dy = Integer.parseInt(parts[2]);
-                        double scale =
-                                Renderable2DInterface.Util.getScale(animationPanel.getExtent(), animationPanel.getSize());
-                        Rectangle2D.Double extent = (Rectangle2D.Double) animationPanel.getExtent();
-                        extent.setRect((extent.getMinX() - dx * scale), (extent.getMinY() + dy * scale), extent.getWidth(),
-                                extent.getHeight());
+                        double scaleX = animationPanel.getRenderableScale().getXScale(animationPanel.getExtent(),
+                                animationPanel.getSize());
+                        double scaleY = animationPanel.getRenderableScale().getYScale(animationPanel.getExtent(),
+                                animationPanel.getSize());
+                        Bounds2d extent = animationPanel.getExtent();
+                        animationPanel.setExtent(new Bounds2d(extent.getMinX() - dx * scaleX,
+                                extent.getMinX() - dx * scaleX + extent.getDeltaX(), extent.getMinY() + dy * scaleY,
+                                extent.getMinY() + dy * scaleY + extent.getDeltaY()));
                     }
                     break;
                 }
@@ -371,12 +374,12 @@ public class OTSWebModel implements EventListenerInterface
                         List<Locatable> targets = new ArrayList<Locatable>();
                         try
                         {
-                            Point2D point = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(x, y),
+                            Point2d point = animationPanel.getRenderableScale().getWorldCoordinates(new Point2D.Double(x, y),
                                     animationPanel.getExtent(), animationPanel.getSize());
                             for (Renderable2DInterface<?> renderable : animationPanel.getElements())
                             {
                                 if (animationPanel.isShowElement(renderable)
-                                        && renderable.contains(point, animationPanel.getExtent(), animationPanel.getSize()))
+                                        && renderable.contains(point, animationPanel.getExtent()))
                                 {
                                     if (renderable.getSource() instanceof GTU)
                                     {
@@ -584,7 +587,7 @@ public class OTSWebModel implements EventListenerInterface
 
     /**
      * Return the toggle button info for the toggle panel.
-     * @param panel the HTMLAnimationPanel
+     * @param panel HTMLAnimationPanel; the HTMLAnimationPanel
      * @return the String that can be parsed by the select.html iframe
      */
     private String getToggles(final HTMLAnimationPanel panel)

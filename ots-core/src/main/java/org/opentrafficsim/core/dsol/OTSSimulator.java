@@ -9,7 +9,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
@@ -55,8 +54,15 @@ public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSim
             final OTSModelInterface model, final int replicationNr) throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
-        OTSReplication newReplication = OTSReplication.create("rep" + replicationNr, startTime, warmupPeriod, runLength, model);
-        super.initialize(newReplication, ReplicationMode.TERMINATING);
+        OTSReplication newReplication = new OTSReplication("rep" + replicationNr, startTime, warmupPeriod, runLength);
+        super.initialize(model, newReplication);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void initialize(final OTSModelInterface model, final OTSReplication replication) throws SimRuntimeException
+    {
+        super.initialize(model, replication);
     }
 
     /** {@inheritDoc} */

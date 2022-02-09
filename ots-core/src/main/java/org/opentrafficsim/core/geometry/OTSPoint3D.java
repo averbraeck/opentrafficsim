@@ -5,10 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.Unit;
@@ -18,12 +14,12 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarInterface;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djunits.value.vdouble.vector.base.DoubleVectorInterface;
+import org.djutils.draw.point.Point3d;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * An OTSPoint3D implements a 3D-coordinate for OTS. X, y and z are stored as doubles, but it is assumed that the scale is in SI
@@ -558,7 +554,7 @@ public class OTSPoint3D implements Locatable, Serializable
     @Override
     public final Bounds getBounds()
     {
-        return new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 0.5);
+        return new Bounds();
     }
 
     /**

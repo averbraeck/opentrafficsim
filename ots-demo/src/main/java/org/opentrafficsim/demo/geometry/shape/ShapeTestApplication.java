@@ -20,11 +20,11 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
+import nl.tudelft.simulation.dsol.swing.gui.control.RealTimeControlPanel;
 import nl.tudelft.simulation.language.DSOLException;
 
 /**
@@ -42,9 +42,9 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
      * @param title String; String title of the application window
      * @param panel DSOLPanel&lt;Time,Duration,SimTimeDoubleUnit&gt;; DSOLPanel
      */
-    public ShapeTestApplication(final String title, final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
+    public ShapeTestApplication(final String title, final DSOLPanel panel)
     {
-        super(title, panel);
+        super(panel, title);
     }
 
     /** */
@@ -64,13 +64,13 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
         OTSAnimator simulator = new OTSAnimator("ShapeTestApplication");
         ShapeModel model = new ShapeModel(simulator);
         OTSReplication replication =
-                OTSReplication.create("rep1", Time.ZERO, Duration.ZERO, new Duration(7200.0, SECOND), model);
-        simulator.initialize(replication, ReplicationMode.TERMINATING);
-
-        DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel = new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
+                new OTSReplication("rep1", Time.ZERO, Duration.ZERO, new Duration(7200.0, SECOND));
+        simulator.initialize(model, replication);
 
         Rectangle2D extent = new Rectangle2D.Double(65000.0, 440000.0, 55000.0, 30000.0);
         Dimension size = new Dimension(1024, 768);
+        DSOLPanel panel =
+                new DSOLPanel(new RealTimeControlPanel<Time, Duration, SimTimeDoubleUnit, OTSAnimator>(model, simulator));
         OTSAnimationPanel animationPanel =
                 new OTSAnimationPanel(extent, size, simulator, model, new DefaultSwitchableGTUColorer(), model.getNetwork());
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
@@ -81,7 +81,7 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
         // tell the animation panel to update its statistics
         // TODO should be done automatically in DSOL!
         animationPanel.notify(
-                new TimedEvent(Replication.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
+                new TimedEvent(ReplicationInterface.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
 
         new ShapeTestApplication("Network Transmission Model", panel);
         animationPanel.enableSimulationControlButtons();

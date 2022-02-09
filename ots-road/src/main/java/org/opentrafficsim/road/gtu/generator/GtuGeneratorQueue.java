@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.generator;
 import java.util.Map;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Interface for GTU generators. As generators can be quite distinct and function autonomously, this interface only regards

@@ -49,7 +49,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Lane-based tactical planner that implements car following behavior and rule-based lane change. This tactical planner

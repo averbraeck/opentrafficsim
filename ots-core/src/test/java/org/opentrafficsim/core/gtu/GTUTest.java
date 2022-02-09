@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
@@ -25,6 +24,8 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -39,7 +40,6 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the AbstractGTU class.
@@ -256,9 +256,9 @@ public class GTUTest
         try
         {
             gtu.init(strategicalPlanner, new DirectedPoint(Double.NaN, 20, 30), initialSpeed);
-            fail("null initialSpeed should have thrown a GTUException");
+            fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
-        catch (GTUException ge)
+        catch (IllegalArgumentException ge)
         {
             // Ignore expected exception
         }
@@ -266,9 +266,9 @@ public class GTUTest
         try
         {
             gtu.init(strategicalPlanner, new DirectedPoint(10, Double.NaN, 30), initialSpeed);
-            fail("null initialSpeed should have thrown a GTUException");
+            fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
-        catch (GTUException ge)
+        catch (IllegalArgumentException ge)
         {
             // Ignore expected exception
         }
@@ -276,9 +276,9 @@ public class GTUTest
         try
         {
             gtu.init(strategicalPlanner, new DirectedPoint(10, 20, Double.NaN), initialSpeed);
-            fail("null initialSpeed should have thrown a GTUException");
+            fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
-        catch (GTUException ge)
+        catch (IllegalArgumentException ge)
         {
             // Ignore expected exception
         }

@@ -46,10 +46,9 @@ public class OTSSimulatorTest
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OTSModel model = new OTSModel(simulator);
         simulator.initialize(startTime, warmupDuration, runLength, model);
-        assertEquals("startTime is returned", startTime, simulator.getReplication().getTreatment().getStartTime());
-        assertEquals("warmupDuration is returned", warmupDuration, simulator.getReplication().getTreatment().getWarmupPeriod());
-        assertEquals("model is returned", model, simulator.getReplication().getExperiment().getModel());
-        assertEquals("runLength is returned", runLength, simulator.getReplication().getTreatment().getRunLength());
+        assertEquals("startTime is returned", startTime, simulator.getReplication().getStartTime());
+        assertEquals("warmupDuration is returned", warmupDuration, simulator.getReplication().getWarmupPeriod());
+        assertEquals("runLength is returned", runLength, simulator.getReplication().getRunLength());
         assertTrue("toString returns something descriptive", simulator.toString().startsWith("OTSSimulator"));
         String testArgument = "test argument";
         simulator.scheduleEvent(new Time(400, TimeUnit.BASE_SECOND), (short) 0, this, this, "eventReceiver",

@@ -34,7 +34,7 @@ import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * <p>

@@ -1,26 +1,27 @@
 package org.opentrafficsim.draw.core;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
+import org.djutils.draw.Oriented;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.Point;
+import org.djutils.draw.point.Point2d;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Display a text for another Locatable object.
@@ -173,29 +174,36 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation()
     {
         // draw always on top.
-        DirectedPoint p = this.source.getLocation();
-        return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, p.getRotZ());
+        try
+        {
+            Point<?> p = this.source.getLocation();
+            return new DirectedPoint(p.getX(), p.getY(), Double.MAX_VALUE, 0.0, 0.0,
+                    p instanceof Oriented ? ((Oriented<?>) p).getDirZ() : 0.0);
+        }
+        catch (RemoteException exception)
+        {
+            CategoryLogger.always().warn(exception);
+            return new DirectedPoint(0, 0, 0);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final Bounds getBounds() throws RemoteException
     {
-        return new BoundingBox(0.0, 0.0, 0.0);
+        return new Bounds(0.0, 0.0, 0.0);
     }
 
     /**
      * paint() method so it can be overridden or extended.
      * @param graphics Graphics2D; the graphics object
      * @param observer ImageObserver; the observer
-     * @throws RemoteException on network exception
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         double scale = Math.sqrt(graphics.getTransform().getDeterminant());
         Rectangle2D scaledFontRectangle;
@@ -250,18 +258,11 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /**
      * Destroy the text animation.
+     * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; the simulator
      */
-    public final void destroy()
+    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
     {
-        try
-        {
-            this.animationImpl.destroy();
-        }
-        catch (NamingException | RemoteException exception)
-        {
-            CategoryLogger.always().warn(exception, "Tried to destroy Text for GTU animation of GTU {}",
-                    this.source.toString());
-        }
+        this.animationImpl.destroy(simulator);
     }
 
     /**
@@ -486,7 +487,7 @@ public abstract class TextAnimation implements Locatable, Serializable
 
         /** {@inheritDoc} */
         @Override
-        public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+        public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
             TextAnimation ta = ((TextAnimation) getSource());
             ta.paint(graphics, observer);
@@ -494,7 +495,7 @@ public abstract class TextAnimation implements Locatable, Serializable
 
         /** {@inheritDoc} */
         @Override
-        public boolean contains(final Point2D pointWorldCoordinates, final Rectangle2D extent, final Dimension screen)
+        public boolean contains(final Point2d pointWorldCoordinates, final Bounds2d extent)
         {
             return false;
         }

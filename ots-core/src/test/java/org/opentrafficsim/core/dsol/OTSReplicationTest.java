@@ -18,9 +18,7 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Experiment;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 
 /**
  * Test the OTSReplication class.
@@ -42,27 +40,22 @@ public class OTSReplicationTest
     public void otsReplicationTest() throws NamingException, RemoteException
     {
         String id = "id";
-        Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment = new Experiment.TimeDoubleUnit<>();
-        OTSReplication replication = new OTSReplication(id, experiment);
-        // FIXME: Currently, the id can not be retrieved: assertEquals("id can be retrieved", id, experiment.getId());
-        assertEquals("experiment can be retrieved", experiment, replication.getExperiment());
         Time startTime = new Time(100, TimeUnit.BASE_SECOND);
         Duration warmupPeriod = new Duration(200, DurationUnit.SECOND);
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OTSSimulatorInterface simulator = new OTSSimulator("Simulator for OTSReplicationTest");
         OTSModel model = new OTSModel(simulator);
-        replication = OTSReplication.create(id, startTime, warmupPeriod, runLength, model);
-        assertEquals("startTime can be retrieved", startTime, replication.getExperiment().getTreatment().getStartTime());
+        OTSReplication replication = new OTSReplication(id, startTime, warmupPeriod, runLength);
+        assertEquals("startTime can be retrieved", startTime, replication.getStartTime());
         assertEquals("warmupPeriod can be retrieved", warmupPeriod,
-                replication.getExperiment().getTreatment().getWarmupPeriod());
-        assertEquals("runLength can be retrieved", runLength, replication.getExperiment().getTreatment().getRunLength());
-        assertEquals("model can be retrieved", model, replication.getExperiment().getModel());
-        simulator.initialize(replication, ReplicationMode.TERMINATING);
-        int listenerCount = simulator.numberOfListeners(Replication.END_REPLICATION_EVENT);
+                replication.getWarmupPeriod());
+        assertEquals("runLength can be retrieved", runLength, replication.getRunLength());
+        simulator.initialize(model, replication);
+        int listenerCount = simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT);
         HistoryManagerDEVS hm = (HistoryManagerDEVS) replication.getHistoryManager(simulator);
         assertEquals("history manager knows time of simulator", simulator.getSimulatorTime(), hm.now());
         assertEquals("history manager has subscribed to our simulator", listenerCount + 1,
-                simulator.numberOfListeners(Replication.END_REPLICATION_EVENT));
+                simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT));
         Duration history = new Duration(123, DurationUnit.SECOND);
         Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
         HistoryManager ourHM = new HistoryManagerDEVS(simulator, history, cleanupInterval);

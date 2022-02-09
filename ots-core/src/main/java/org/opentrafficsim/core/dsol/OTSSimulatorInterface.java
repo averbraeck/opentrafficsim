@@ -24,6 +24,14 @@ public interface OTSSimulatorInterface extends DEVSSimulatorInterface.TimeDouble
 {
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
+     * @param model OTSModelInterface; the simulation to execute
+     * @param replication OTSReplication; the replication with the run control parameters
+     * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
+     */
+    void initialize(OTSModelInterface model, OTSReplication replication) throws SimRuntimeException;
+
+    /**
+     * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime Time; the start time of the simulation
      * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)

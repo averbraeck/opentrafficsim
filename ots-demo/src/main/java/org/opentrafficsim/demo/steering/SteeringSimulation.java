@@ -227,7 +227,7 @@ public class SteeringSimulation extends AbstractSimulationScript
 
         // anonymous tactical-planner-factory supplier
         AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs> car = new AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs>(
-                new IDMPlusFactory(sim.getReplication().getStream("generation")), new DefaultLMRSPerceptionFactory())
+                new IDMPlusFactory(sim.getModel().getStream("generation")), new DefaultLMRSPerceptionFactory())
         {
             @Override
             public SteeringLmrs create(final LaneBasedGTU gtu) throws GTUException
@@ -267,9 +267,9 @@ public class SteeringSimulation extends AbstractSimulationScript
         // anonymous vehicle model factory
         // TODO: supply mass and inertia values, possibly randomized, correlated?
         ContinuousDistMass massDistCar =
-                new ContinuousDistMass(new DistUniform(sim.getReplication().getStream("generation"), 600, 1200), MassUnit.SI);
+                new ContinuousDistMass(new DistUniform(sim.getModel().getStream("generation"), 600, 1200), MassUnit.SI);
         ContinuousDistMass massDistTruck =
-                new ContinuousDistMass(new DistUniform(sim.getReplication().getStream("generation"), 2000, 10000), MassUnit.SI);
+                new ContinuousDistMass(new DistUniform(sim.getModel().getStream("generation"), 2000, 10000), MassUnit.SI);
         double momentOfInertiaAboutZ = 100; // no idea...
         VehicleModelFactory vehicleModelGenerator = new VehicleModelFactory()
         {

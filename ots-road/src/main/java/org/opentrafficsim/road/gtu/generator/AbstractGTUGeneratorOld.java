@@ -9,10 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.media.j3d.BoundingBox;
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -21,9 +17,12 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point3d;
 import org.djutils.event.EventProducer;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -49,7 +48,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Common code for LaneBasedGTU generators that may have to postpone putting a GTU on the road due to congestion growing into
@@ -172,15 +170,8 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
         this.routeGenerator = routeGenerator;
         this.network = network;
         DirectedPoint p;
-        try
-        {
-            p = this.getLocation();
-            this.bounds = new BoundingBox(new Point3d(p.x - 1, p.y - 1, 0.0), new Point3d(p.x + 1, p.y + 1, 0.0));
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException("Bounds for generator cannot be determined.");
-        }
+        p = this.getLocation();
+        this.bounds = new Bounds(new Point3d(p.x - 1, p.y - 1, 0.0), new Point3d(p.x + 1, p.y + 1, 0.0));
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
 
         // notify the potential animation of the existence of a GTUGenerator
@@ -591,7 +582,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
 
     /** {@inheritDoc} */
     @Override
-    public DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation()
     {
         try
         {
@@ -615,14 +606,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
     public Map<DirectedPoint, Integer> getQueueLengths()
     {
         Map<DirectedPoint, Integer> map = new LinkedHashMap<>();
-        try
-        {
-            map.put(getLocation(), this.carBuilderList.size());
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException("Locartion for generator queue cannot be determined.");
-        }
+        map.put(getLocation(), this.carBuilderList.size());
         return map;
     }
 

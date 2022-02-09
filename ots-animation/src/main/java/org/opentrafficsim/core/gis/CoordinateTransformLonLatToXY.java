@@ -2,7 +2,7 @@ package org.opentrafficsim.core.gis;
 
 import java.io.Serializable;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
 
 /**
  * Transformation from lat-lon to X-Y in meters. Source: https://en.wikipedia.org/wiki/Geographic_coordinate_system.

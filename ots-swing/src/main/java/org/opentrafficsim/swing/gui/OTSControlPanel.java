@@ -53,11 +53,11 @@ import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -181,10 +181,10 @@ public class OTSControlPanel extends JPanel
         this.add(this.otsSearchPanel, BorderLayout.SOUTH);
         fixButtons();
         installWindowCloseHandler();
-        this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
+        this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
         this.simulator.addListener(this, SimulatorInterface.START_EVENT);
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
-        this.simulator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
+        this.simulator.addListener(this, DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT);
     }
     
     /**
@@ -493,11 +493,11 @@ public class OTSControlPanel extends JPanel
                     {
                         getSimulator().getReplication().getContext().destroySubcontext("statistics");
                     }
-                    if (getSimulator().getReplication().getExperiment().getContext().hasKey("statistics"))
+                    if (getSimulator().getReplication().getContext().hasKey("statistics"))
                     {
-                        getSimulator().getReplication().getExperiment().getContext().destroySubcontext("statistics");
+                        getSimulator().getReplication().getContext().destroySubcontext("statistics");
                     }
-                    getSimulator().getReplication().getExperiment().removeFromContext(); // clean up the context
+                    // TODO: this is implemented completely different in latest DSOL versions
                     getSimulator().cleanUp();
                 }
 
@@ -857,9 +857,9 @@ public class OTSControlPanel extends JPanel
              */
 
             // initial value of simulation speed
-            if (simulator instanceof DEVSRealTimeClock)
+            if (simulator instanceof DEVSRealTimeAnimator)
             {
-                DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator;
+                DEVSRealTimeAnimator<?, ?, ?> clock = (DEVSRealTimeAnimator<?, ?, ?>) simulator;
                 clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(this.slider.getValue()));
             }
 
@@ -870,9 +870,9 @@ public class OTSControlPanel extends JPanel
                 public void stateChanged(final ChangeEvent ce)
                 {
                     JSlider source = (JSlider) ce.getSource();
-                    if (!source.getValueIsAdjusting() && simulator instanceof DEVSRealTimeClock)
+                    if (!source.getValueIsAdjusting() && simulator instanceof DEVSRealTimeAnimator)
                     {
-                        DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator;
+                        DEVSRealTimeAnimator<?, ?, ?> clock = (DEVSRealTimeAnimator<?, ?, ?>) simulator;
                         clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues().get(source.getValue()));
                     }
                 }
@@ -1187,13 +1187,13 @@ public class OTSControlPanel extends JPanel
     @Override
     public final void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(Replication.END_REPLICATION_EVENT)
+        if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT)
                 || event.getType().equals(SimulatorInterface.START_EVENT)
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
-                || event.getType().equals(DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT))
+                || event.getType().equals(DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
         {
             // System.out.println("OTSControlPanel receive event " + event);
-            if (event.getType().equals(DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT))
+            if (event.getType().equals(DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
             {
                 this.timeWarpPanel.setSpeedFactor((Double) event.getContent());
             }

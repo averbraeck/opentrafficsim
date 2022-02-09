@@ -8,7 +8,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djutils.draw.line.PolyLine3d;
+import org.djutils.draw.point.Point3d;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -23,7 +26,6 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d2.Angle;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Draws a Link.
@@ -65,21 +67,28 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        Color color = getSource().getLinkType().isConnector() ? Color.PINK.darker() : Color.BLUE;
-        OTSLine3D designLine = getSource().getDesignLine();
-        PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
-        // Accentuate the end points
         try
         {
-            drawEndPoint(designLine.getFirst(), designLine.get(1), graphics);
-            drawEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2), graphics);
+            Color color = getSource().getLinkType().isConnector() ? Color.PINK.darker() : Color.BLUE;
+            OTSLine3D designLine = getSource().getDesignLine();
+            PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
+            // Accentuate the end points
+            try
+            {
+                drawEndPoint(designLine.getFirst(), designLine.get(1), graphics);
+                drawEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2), graphics);
+            }
+            catch (OTSGeometryException exception)
+            {
+                // Cannot happen
+                CategoryLogger.always().error(exception);
+            }
         }
-        catch (OTSGeometryException exception)
+        catch (RemoteException e)
         {
-            // Cannot happen
-            CategoryLogger.always().error(exception);
+            CategoryLogger.always().warn(e);
         }
     }
 
@@ -101,14 +110,10 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         dy *= this.width / length;
         try
         {
-            OTSLine3D line = new OTSLine3D(new OTSPoint3D(endPoint.x - dy, endPoint.y + dx, endPoint.z),
-                    new OTSPoint3D(endPoint.x + dy, endPoint.y - dx, endPoint.z));
+            PolyLine3d line = new PolyLine3d(new Point3d(endPoint.x - dy, endPoint.y + dx, endPoint.z),
+                    new Point3d(endPoint.x + dy, endPoint.y - dx, endPoint.z));
             PaintLine.paintLine(graphics, getSource().getLinkType().isConnector() ? Color.PINK.darker() : Color.BLUE,
                     this.width / 30, getSource().getLocation(), line);
-        }
-        catch (OTSGeometryException exception)
-        {
-            CategoryLogger.always().error(exception);
         }
         catch (RemoteException exception)
         {
@@ -118,10 +123,10 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException, RemoteException
+    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
     {
-        super.destroy();
-        this.text.destroy();
+        super.destroy(simulator);
+        this.text.destroy(simulator);
     }
 
     /** {@inheritDoc} */
@@ -181,7 +186,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public DirectedPoint getLocation() throws RemoteException
+        public DirectedPoint getLocation()
         {
             // draw always on top, and not upside down.
             DirectedPoint p = ((Link) getSource()).getDesignLine().getLocationFractionExtended(0.5);

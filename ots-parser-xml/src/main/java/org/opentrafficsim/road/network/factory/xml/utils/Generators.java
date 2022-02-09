@@ -26,6 +26,8 @@ import org.opentrafficsim.xml.generated.POSITIONDISTTYPE;
 import org.opentrafficsim.xml.generated.SPEEDDISTTYPE;
 import org.opentrafficsim.xml.generated.TIMEDISTTYPE;
 
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
+
 /**
  * Generators based on distribution tags for typed scalars. <br>
  * <br>
@@ -51,7 +53,7 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Length> makeLengthGenerator(final Map<String, StreamInformation> streamMap,
+    public static Generator<Length> makeLengthGenerator(final StreamInformation streamMap,
             final LENGTHDISTTYPE lengthDist) throws XmlParserException
     {
         try
@@ -88,7 +90,7 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Position> makePositionGenerator(final Map<String, StreamInformation> streamMap,
+    public static Generator<Position> makePositionGenerator(final StreamInformation streamMap,
             final POSITIONDISTTYPE positionDist) throws XmlParserException
     {
         try
@@ -125,7 +127,7 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Duration> makeDurationGenerator(final Map<String, StreamInformation> streamMap,
+    public static Generator<Duration> makeDurationGenerator(final StreamInformation streamMap,
             final DURATIONDISTTYPE durationDist) throws XmlParserException
     {
         try
@@ -162,7 +164,7 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Time> makeTimeGenerator(final Map<String, StreamInformation> streamMap, final TIMEDISTTYPE timeDist)
+    public static Generator<Time> makeTimeGenerator(final StreamInformation streamMap, final TIMEDISTTYPE timeDist)
             throws XmlParserException
     {
         try
@@ -199,7 +201,7 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Speed> makeSpeedGenerator(final Map<String, StreamInformation> streamMap,
+    public static Generator<Speed> makeSpeedGenerator(final StreamInformation streamMap,
             final SPEEDDISTTYPE speedDist) throws XmlParserException
     {
         try
@@ -236,7 +238,7 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Acceleration> makeAccelerationGenerator(final Map<String, StreamInformation> streamMap,
+    public static Generator<Acceleration> makeAccelerationGenerator(final StreamInformation streamMap,
             final ACCELERATIONDISTTYPE accelerationDist) throws XmlParserException
     {
         try
@@ -273,7 +275,7 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Acceleration> makeDecelerationGenerator(final Map<String, StreamInformation> streamMap,
+    public static Generator<Acceleration> makeDecelerationGenerator(final StreamInformation streamMap,
             final ACCELERATIONDISTTYPE decelerationDist) throws XmlParserException
     {
         try

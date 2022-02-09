@@ -70,8 +70,10 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 
 /**
@@ -469,13 +471,6 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public List<OutputStatistic<?>> getOutputStatistics()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String getShortName()
     {
         return null;
@@ -484,6 +479,27 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     /** {@inheritDoc} */
     @Override
     public String getDescription()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<StatisticsInterface<Time, Duration, SimTimeDoubleUnit>> getOutputStatistics()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setStreamInformation(final StreamInformation streamInformation)
+    {
+        //
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public StreamInformation getStreamInformation()
     {
         return null;
     }

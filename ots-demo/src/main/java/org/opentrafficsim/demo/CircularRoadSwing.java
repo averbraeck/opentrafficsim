@@ -3,7 +3,6 @@ package org.opentrafficsim.demo;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Window;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,15 +123,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
                         iteration++;
                         for (GTU gtu : otsModel.getNetwork().getGTUs())
                         {
-                            try
-                            {
-                                gtu.getLocation();
-                                getLocationCalls++;
-                            }
-                            catch (RemoteException e)
-                            {
-                                e.printStackTrace();
-                            }
+                            gtu.getLocation();
+                            getLocationCalls++;
                         }
                         try
                         {
@@ -192,7 +184,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         }
         return false;
     }
-    
+
     /**
      * Click the button that starts the animated simulation.
      * @param component Component; some component that (hopefully) is, or contains the start button
@@ -223,7 +215,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         }
         return false;
     }
-    
+
     /**
      * Start the demo.
      * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
@@ -374,7 +366,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
                 trajectoryChart);
 
-        for (int lane : new int[] { 0, 1 })
+        for (int lane : new int[] {0, 1})
         {
             TablePanel charts = new TablePanel(3, 2);
             path = lane == 0 ? path0 : path1;

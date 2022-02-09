@@ -7,7 +7,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * The Node is a point with an id and a direction. It is used in the network to connect Links.

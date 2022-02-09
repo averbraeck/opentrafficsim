@@ -15,10 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import javax.media.j3d.BoundingBox;
-import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
-import javax.vecmath.Point3d;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.util.UNITS;
@@ -38,6 +35,8 @@ import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -55,7 +54,6 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the Lane class.
@@ -425,7 +423,7 @@ public class LaneTest implements UNITS
         @Override
         public void notify(final EventInterface event) throws RemoteException
         {
-            events.add(event);
+            this.events.add(event);
         }
 
         /**
@@ -494,7 +492,7 @@ public class LaneTest implements UNITS
         @Override
         public String toString()
         {
-            return "MockSensor [mockSensor=" + mockSensor + ", id=" + id + ", position=" + position + "]";
+            return "MockSensor [mockSensor=" + this.mockSensor + ", id=" + this.id + ", position=" + this.position + "]";
         }
 
     }
@@ -549,7 +547,7 @@ public class LaneTest implements UNITS
         @Override
         public String toString()
         {
-            return "MockLaneBasedObject [mockLaneBasedObject=" + mockLaneBasedObject + ", id=" + id + ", position=" + position
+            return "MockLaneBasedObject [mockLaneBasedObject=" + this.mockLaneBasedObject + ", id=" + this.id + ", position=" + this.position
                     + "]";
         }
 
@@ -738,17 +736,13 @@ public class LaneTest implements UNITS
                                     maxX = Math.max(maxX, p.getX());
                                     maxY = Math.max(maxY, p.getY());
                                 }
-                                Point3d bbLow = new Point3d();
-                                ((BoundingBox) bb).getLower(bbLow);
-                                Point3d bbHigh = new Point3d();
-                                ((BoundingBox) bb).getUpper(bbHigh);
                                 // System.out.println(" my bbox is " + minX + "," + minY + " - " + maxX + "," + maxY);
                                 // System.out.println("the bbox is " + (bbLow.x + l.x) + "," + (bbLow.y + l.y) + " - "
                                 // + (bbHigh.x + l.x) + "," + (bbHigh.y + l.y));
-                                double boundsMinX = bbLow.x + l.x;
-                                double boundsMinY = bbLow.y + l.y;
-                                double boundsMaxX = bbHigh.x + l.x;
-                                double boundsMaxY = bbHigh.y + l.y;
+                                double boundsMinX = bb.getMinX() + l.x;
+                                double boundsMinY = bb.getMinY() + l.y;
+                                double boundsMaxX = bb.getMaxX() + l.x;
+                                double boundsMaxY = bb.getMaxY() + l.y;
                                 assertEquals("low x boundary", minX, boundsMinX, 0.1);
                                 assertEquals("low y boundary", minY, boundsMinY, 0.1);
                                 assertEquals("high x boundary", maxX, boundsMaxX, 0.1);

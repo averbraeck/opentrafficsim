@@ -11,9 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -23,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point3d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -30,6 +28,8 @@ import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
@@ -73,8 +73,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
@@ -1390,7 +1388,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     {
         double dx = 0.5 * getLength().doubleValue();
         double dy = 0.5 * getWidth().doubleValue();
-        return new BoundingBox(new Point3d(-dx, -dy, 0.0), new Point3d(dx, dy, 0.0));
+        return new Bounds(new Point3d(-dx, -dy, 0.0), new Point3d(dx, dy, 0.0));
     }
 
     /** {@inheritDoc} */

@@ -1,13 +1,10 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventProducer;
@@ -17,6 +14,8 @@ import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.Bezier;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -27,7 +26,6 @@ import org.opentrafficsim.road.network.RoadNetwork;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Cross section elements are used to compose a CrossSectionLink.
@@ -312,24 +310,17 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             }
             else
             {
-                try
-                {
-                    DirectedPoint refStart = getParentLink().getStartNode().getLocation();
-                    double startRot = refStart.getRotZ();
-                    double startOffset = this.crossSectionSlices.get(0).getDesignLineOffset().si;
-                    OTSPoint3D start = new OTSPoint3D(refStart.x - Math.sin(startRot) * startOffset,
-                            refStart.y + Math.cos(startRot) * startOffset, refStart.z);
-                    DirectedPoint refEnd = getParentLink().getEndNode().getLocation();
-                    double endRot = refEnd.getRotZ();
-                    double endOffset = this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getDesignLineOffset().si;
-                    OTSPoint3D end = new OTSPoint3D(refEnd.x - Math.sin(endRot) * endOffset,
-                            refEnd.y + Math.cos(endRot) * endOffset, refEnd.z);
-                    return new OTSLine3D(start, end);
-                }
-                catch (RemoteException exception)
-                {
-                    throw new OTSGeometryException(exception);
-                }
+                DirectedPoint refStart = getParentLink().getStartNode().getLocation();
+                double startRot = refStart.getRotZ();
+                double startOffset = this.crossSectionSlices.get(0).getDesignLineOffset().si;
+                OTSPoint3D start = new OTSPoint3D(refStart.x - Math.sin(startRot) * startOffset,
+                        refStart.y + Math.cos(startRot) * startOffset, refStart.z);
+                DirectedPoint refEnd = getParentLink().getEndNode().getLocation();
+                double endRot = refEnd.getRotZ();
+                double endOffset = this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getDesignLineOffset().si;
+                OTSPoint3D end = new OTSPoint3D(refEnd.x - Math.sin(endRot) * endOffset,
+                        refEnd.y + Math.cos(endRot) * endOffset, refEnd.z);
+                return new OTSLine3D(start, end);
             }
         }
         else
@@ -527,7 +518,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * Retrieve the Z offset (used to determine what covers what when drawing).
      * @return double; the Z-offset for drawing (what's on top, what's underneath).
      */
-    protected abstract double getZ();
+    @Override
+    public abstract double getZ();
 
     /**
      * Retrieve the center line of this CrossSectionElement.

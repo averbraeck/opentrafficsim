@@ -4,18 +4,17 @@ import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.media.j3d.Bounds;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * A standard implementation of a link between two OTSNodes.

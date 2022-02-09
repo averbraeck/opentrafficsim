@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.point.OrientedPoint3d;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
@@ -12,8 +13,6 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.sim0mq.Sim0MQException;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Transceiver for GTU data.
@@ -84,10 +83,10 @@ public class GTUTransceiver extends AbstractEventTransceiver
             returnWrapper.nack("No GTU found with id \"" + address[0] + "\"");
             return null;
         }
-        DirectedPoint gtuPosition = gtu.getLocation();
+        OrientedPoint3d gtuPosition = (OrientedPoint3d) gtu.getLocation();
         return new Object[] { gtu.getId(), gtu.getGTUType().getId(),
                 new OTSPoint3D(gtuPosition).doubleVector(PositionUnit.METER),
-                new Direction(gtuPosition.getRotZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration() };
+                new Direction(gtuPosition.getDirZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration() };
     }
 
     /** {@inheritDoc} */

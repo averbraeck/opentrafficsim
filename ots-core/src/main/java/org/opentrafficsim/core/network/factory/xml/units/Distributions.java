@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Position;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.DistNormalTrunc;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 
@@ -22,6 +21,7 @@ import nl.tudelft.simulation.jstats.distributions.DistExponential;
 import nl.tudelft.simulation.jstats.distributions.DistGamma;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
+import nl.tudelft.simulation.jstats.distributions.DistNormalTrunc;
 import nl.tudelft.simulation.jstats.distributions.DistPearson5;
 import nl.tudelft.simulation.jstats.distributions.DistPearson6;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
@@ -103,7 +103,7 @@ public final class Distributions
                     return new DistBeta(STREAM, args[0], args[1]);
 
                 case "ERLANG":
-                    return new DistErlang(STREAM, (int) args[0], args[1]);
+                    return new DistErlang(STREAM, (int) args[0], (int) args[1]);
 
                 case "GAMMA":
                     return new DistGamma(STREAM, args[0], args[1]);

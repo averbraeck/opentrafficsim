@@ -7,14 +7,13 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Combines a Lane with its GTUDirectionality.
@@ -214,7 +213,7 @@ public class LaneDirection implements Serializable
         DirectedPoint p = this.lane.getCenterLine().getLocationFraction(fraction);
         if (this.direction.isMinus())
         {
-            p.setRotZ(p.getRotZ() + Math.PI);
+            return new DirectedPoint(p.x, p.y, p.z, p.dirX, p.dirY, p.dirZ + Math.PI);
         }
         return p;
     }

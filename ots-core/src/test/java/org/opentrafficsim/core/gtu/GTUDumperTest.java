@@ -13,7 +13,6 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Set;
 
-import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
@@ -36,6 +35,8 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -44,9 +45,10 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
 
 /**
  * Test the GTUDumper class.
@@ -93,8 +95,8 @@ public class GTUDumperTest implements OTSModelInterface
         // System.out.println("containerDir is " + this.containerDir);
         this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
         this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
-        simulator.scheduleEventAbs(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
+        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
+        this.simulator.scheduleEventAbs(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
         this.simulator.start();
         while (this.simulator.isStartingOrRunning())
         {
@@ -131,10 +133,10 @@ public class GTUDumperTest implements OTSModelInterface
             private static final long serialVersionUID = 1L;
 
             @Override
-            public DirectedPoint getLocation() throws RemoteException
+            public DirectedPoint getLocation()
             {
                 // This GTU travels a circle around 100, 20, elevation 10, radius 20, angular velocity 0.1 radial / second
-                double timeSI = simulator.getSimulatorTime().si;
+                double timeSI = GTUDumperTest.this.simulator.getSimulatorTime().si;
                 double angle = timeSI / 10;
                 return new DirectedPoint(100 + 20 * Math.cos(angle), 20 + 20 * Math.sin(angle), 10, 0, 0, angle + Math.PI / 2);
             }
@@ -255,7 +257,7 @@ public class GTUDumperTest implements OTSModelInterface
             @Override
             public OTSSimulatorInterface getSimulator()
             {
-                return simulator;
+                return GTUDumperTest.this.simulator;
             }
 
             @Override
@@ -359,14 +361,15 @@ public class GTUDumperTest implements OTSModelInterface
             {
                 try
                 {
-                    return new OperationalPlan(this, getLocation(), simulator.getSimulatorTime(), Duration.ZERO)
+                    return new OperationalPlan(this, getLocation(), GTUDumperTest.this.simulator.getSimulatorTime(),
+                            Duration.ZERO)
                     {
 
                         /** ... */
                         private static final long serialVersionUID = 1L;
                     };
                 }
-                catch (RemoteException | OperationalPlanException e)
+                catch (OperationalPlanException e)
                 {
                     e.printStackTrace();
                     throw new SimRuntimeException(e);
@@ -465,7 +468,7 @@ public class GTUDumperTest implements OTSModelInterface
     }
 
     @Override
-    public final List<OutputStatistic<?>> getOutputStatistics()
+    public final List<StatisticsInterface<Time, Duration, SimTimeDoubleUnit>> getOutputStatistics()
     {
         return null;
     }
@@ -488,6 +491,20 @@ public class GTUDumperTest implements OTSModelInterface
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void setStreamInformation(final StreamInformation streamInformation)
+    {
+        //
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public StreamInformation getStreamInformation()
+    {
+        return null;
+    }
+
     /**
      * Test the argument checks of the GTUDumper constructor.
      * @throws NamingException when that happens uncaught; this test has failed
@@ -500,7 +517,7 @@ public class GTUDumperTest implements OTSModelInterface
         this.containerDir = this.testDir.newFolder("subfolder");
         this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
         this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
+        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         try
         {
             new GTUDumper(null, new Duration(300, DurationUnit.SECOND), this.network,
@@ -535,8 +552,7 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network,
-                    null);
+            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network, null);
             fail("null fileNamePrefix should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -565,7 +581,7 @@ public class GTUDumperTest implements OTSModelInterface
         {
             // Ignore expected exception
         }
-        
+
     }
 
 }

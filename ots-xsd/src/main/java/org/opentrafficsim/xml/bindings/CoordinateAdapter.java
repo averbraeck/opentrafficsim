@@ -1,8 +1,9 @@
 package org.opentrafficsim.xml.bindings;
 
-import javax.vecmath.Point3d;
+
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.djutils.draw.point.Point3d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 

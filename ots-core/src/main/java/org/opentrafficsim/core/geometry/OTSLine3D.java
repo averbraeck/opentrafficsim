@@ -12,12 +12,10 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.point.Point3d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 import org.locationtech.jts.geom.Coordinate;
@@ -29,13 +27,11 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Line with OTSPoint3D points, a cached length indexed line, a cached length, and a cached centroid (all calculated on first
  * use).
- * <p>
+ * <p> 
  * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
@@ -305,7 +301,8 @@ public class OTSLine3D implements Locatable, Serializable // XXX: DJ
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws OTSGeometryException when this method fails to create the offset line
      */
-    public final OTSLine3D offsetLine(final double offsetAtStart, final double offsetAtEnd) throws OTSGeometryException // XXX: DJ
+    public final OTSLine3D offsetLine(final double offsetAtStart, final double offsetAtEnd) throws OTSGeometryException // XXX:
+                                                                                                                        // DJ
     {
         // CategoryLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is "
         // + offsetAtStart + " at end is " + offsetAtEnd + "\n#", referenceLine, "\n "));
@@ -377,7 +374,8 @@ public class OTSLine3D implements Locatable, Serializable // XXX: DJ
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws OTSGeometryException when this method fails to create the offset line
      */
-    public final OTSLine3D offsetLine(final double[] relativeFractions, final double[] offsets) throws OTSGeometryException // XXX: DJ
+    public final OTSLine3D offsetLine(final double[] relativeFractions, final double[] offsets) throws OTSGeometryException // XXX:
+                                                                                                                            // DJ
     {
         Throw.whenNull(relativeFractions, "relativeFraction may not be null");
         Throw.whenNull(offsets, "offsets may not be null");
@@ -950,7 +948,7 @@ public class OTSLine3D implements Locatable, Serializable // XXX: DJ
      *            units
      * @return a directed point
      */
-    public final synchronized DirectedPoint getLocationExtendedSI(final double positionSI)  // XXX: DJ name + super(p)
+    public final synchronized DirectedPoint getLocationExtendedSI(final double positionSI) // XXX: DJ name + super(p)
     {
         makeLengthIndexedLine();
         if (positionSI >= 0.0 && positionSI <= getLengthSI())
@@ -1096,7 +1094,8 @@ public class OTSLine3D implements Locatable, Serializable // XXX: DJ
      * @return a directed point
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final synchronized DirectedPoint getLocationSI(final double positionSI) throws OTSGeometryException // XXX: DJ without SI
+    public final synchronized DirectedPoint getLocationSI(final double positionSI) throws OTSGeometryException // XXX: DJ
+                                                                                                               // without SI
     {
         makeLengthIndexedLine();
         if (positionSI < 0.0 || positionSI > getLengthSI())
@@ -1789,7 +1788,7 @@ public class OTSLine3D implements Locatable, Serializable // XXX: DJ
         double deltaX = maxX - minX;
         double deltaY = maxY - minY;
         double deltaZ = maxZ - minZ;
-        this.bounds = new BoundingBox(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0),
+        this.bounds = new Bounds(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0),
                 new Point3d(deltaX / 2, deltaY / 2, deltaZ / 2));
         this.envelope = new Envelope(minX, maxX, minY, maxY);
     }
@@ -1865,7 +1864,7 @@ public class OTSLine3D implements Locatable, Serializable // XXX: DJ
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)

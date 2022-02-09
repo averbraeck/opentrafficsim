@@ -26,7 +26,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * This interface defines a lane based GTU.

@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.media.j3d.Bounds;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
@@ -17,6 +15,8 @@ import org.djutils.event.EventProducer;
 import org.djutils.event.EventProducerInterface;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -32,7 +32,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * This traffic light sensor reports whether it whether any GTUs are within its area. The area is a sub-section of a Lane. This
@@ -531,7 +530,7 @@ public class TrafficLightSensor extends EventProducer
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation()
     {
         return this.path.getLocation();
     }

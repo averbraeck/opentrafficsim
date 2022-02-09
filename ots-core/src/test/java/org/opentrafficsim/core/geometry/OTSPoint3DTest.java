@@ -10,16 +10,13 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Random;
 
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.point.Point3d;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 
 import nl.tudelft.simulation.language.d3.CartesianPoint;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the methods in OTSPoint.
@@ -40,8 +37,8 @@ public class OTSPoint3DTest
     {
         OTSPoint3D previousPoint = null;
         int previousHashCode = 0;
-        double[] values = { Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
-                Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN };
+        double[] values = {Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
+                Double.MAX_VALUE, Double.POSITIVE_INFINITY};
         for (double x : values)
         {
             for (double y : values)
@@ -50,9 +47,9 @@ public class OTSPoint3DTest
                 {
                     OTSPoint3D p = new OTSPoint3D(x, y, z);
                     checkXYZ(p, x, y, z);
-                    checkXYZ(new OTSPoint3D(new double[] { x, y, z }), x, y, z);
+                    checkXYZ(new OTSPoint3D(new double[] {x, y, z}), x, y, z);
                     checkXYZ(new OTSPoint3D(p), x, y, z);
-                    checkXYZ(new OTSPoint3D(new double[] { x, y }), x, y, 0d);
+                    checkXYZ(new OTSPoint3D(new double[] {x, y}), x, y, 0d);
                     checkXYZ(new OTSPoint3D(new Point3d(x, y, z)), x, y, z);
                     checkXYZ(new OTSPoint3D(new CartesianPoint(x, y, z)), x, y, z);
                     checkXYZ(new OTSPoint3D(new DirectedPoint(x, y, z)), x, y, z);
@@ -80,20 +77,6 @@ public class OTSPoint3DTest
                     assertEquals("Distance to q should be " + expectedDistance, expectedDistance, p.distance(q).si,
                             expectedDistance / 99999);
                     Bounds bounds = p.getBounds();
-                    // System.out.println("Bounds of " + p + " is " + bounds);
-                    assertTrue("Point (0,0,0) is within its bounds", bounds.intersect(new Point3d(0, 0, 0)));
-                    assertFalse("Point at distance 1 in any direction is outside its bounds",
-                            bounds.intersect(new Point3d(-1, 0, 0)));
-                    assertFalse("Point at distance 1 in any direction is outside its bounds",
-                            bounds.intersect(new Point3d(1, 0, 0)));
-                    assertFalse("Point at distance 1 in any direction is outside its bounds",
-                            bounds.intersect(new Point3d(0, -1, 0)));
-                    assertFalse("Point at distance 1 in any direction is outside its bounds",
-                            bounds.intersect(new Point3d(0, 1, 0)));
-                    assertFalse("Point at distance 1 in any direction is outside its bounds",
-                            bounds.intersect(new Point3d(0, 0, -1)));
-                    assertFalse("Point at distance 1 in any direction is outside its bounds",
-                            bounds.intersect(new Point3d(0, 0, 1)));
                     DirectedPoint directedPoint = p.getLocation();
                     assertEquals("Location returns a DirectedPoint at the location of p", x, directedPoint.x, Math.ulp(x));
                     assertEquals("Location returns a DirectedPoint at the location of p", y, directedPoint.y, Math.ulp(y));
@@ -141,7 +124,7 @@ public class OTSPoint3DTest
     {
         OTSPoint3D p0 = new OTSPoint3D(123, 234, 345);
         OTSPoint3D p1 = new OTSPoint3D(567, 678, 789);
-        for (double ratio : new double[] { 0, 1, 0.5, 0.1, -10, 10 })
+        for (double ratio : new double[] {0, 1, 0.5, 0.1, -10, 10})
         {
             OTSPoint3D pi = OTSPoint3D.interpolate(ratio, p0, p1);
             assertTrue("result of interpolate is not null", null != pi);
@@ -286,15 +269,15 @@ public class OTSPoint3DTest
     @Test
     public void directionTest()
     {
-        for (OTSPoint3D reference : new OTSPoint3D[] { new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 200, 300),
-                new OTSPoint3D(-50, -80, 20) })
+        for (OTSPoint3D reference : new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 200, 300),
+                new OTSPoint3D(-50, -80, 20)})
         {
-            for (double actualDirectionDegrees : new double[] { 0, 0.1, 10, 30, 89, 90, 91, 150, 179, 181, 269, 271, 359 })
+            for (double actualDirectionDegrees : new double[] {0, 0.1, 10, 30, 89, 90, 91, 150, 179, 181, 269, 271, 359})
             {
                 double actualDirectionRadians = Math.toRadians(actualDirectionDegrees);
-                for (double actualDistance : new double[] { 0.001, 10, 999, 99999 })
+                for (double actualDistance : new double[] {0.001, 10, 999, 99999})
                 {
-                    for (double dZ : new double[] { 0, 123, 98766, -876 })
+                    for (double dZ : new double[] {0, 123, 98766, -876})
                     {
                         OTSPoint3D other = new OTSPoint3D(reference.x + Math.cos(actualDirectionRadians) * actualDistance,
                                 reference.y + Math.sin(actualDirectionRadians) * actualDistance, reference.z + dZ);
@@ -328,15 +311,15 @@ public class OTSPoint3DTest
         List<OTSPoint3D> list = OTSPoint3D.circleCenter(p1, p2, 1);
         assertEquals("Radius exactly right and nice integer coordinates returns list with one point", 1, list.size());
         // Now try it with less neat values (but don't expect to get a list of one point)
-        for (OTSPoint3D reference : new OTSPoint3D[] { new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 200, 300),
-                new OTSPoint3D(-50, -80, 20) })
+        for (OTSPoint3D reference : new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 200, 300),
+                new OTSPoint3D(-50, -80, 20)})
         {
-            for (double actualDirectionDegrees : new double[] { 0, 0.1, 10, 30, 89, 90, 91, 150, 179, 181, 269, 271, 359 })
+            for (double actualDirectionDegrees : new double[] {0, 0.1, 10, 30, 89, 90, 91, 150, 179, 181, 269, 271, 359})
             {
                 double actualDirectionRadians = Math.toRadians(actualDirectionDegrees);
-                for (double horizontalDistance : new double[] { 0.1, 10, 999, 99999 })
+                for (double horizontalDistance : new double[] {0.1, 10, 999, 99999})
                 {
-                    for (double dZ : new double[] { 0, 123, -876 })
+                    for (double dZ : new double[] {0, 123, -876})
                     {
                         OTSPoint3D other = new OTSPoint3D(reference.x + Math.cos(actualDirectionRadians) * horizontalDistance,
                                 reference.y + Math.sin(actualDirectionRadians) * horizontalDistance, reference.z + dZ);

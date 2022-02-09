@@ -43,7 +43,6 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.road.network.factory.xml.utils.StreamInformation;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.xml.generated.ANIMATION;
@@ -62,7 +61,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Experiment;
+import nl.tudelft.simulation.dsol.experiment.ExperimentRunControl;
+import nl.tudelft.simulation.dsol.experiment.StreamSeedInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 
 /**
@@ -134,10 +134,10 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final InputStream xmlStream,
-            final OTSRoadNetwork otsNetwork, final boolean buildConflicts) throws JAXBException, URISyntaxException,
-            NetworkException, OTSGeometryException, XmlParserException, SAXException, ParserConfigurationException,
-            SimRuntimeException, GTUException, MalformedURLException, IOException, TrafficControlException
+    public static ExperimentRunControl.TimeDoubleUnit build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
+            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
+            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
+            MalformedURLException, IOException, TrafficControlException
     {
         return build(parseXML(xmlStream), otsNetwork, buildConflicts);
     }
@@ -201,7 +201,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
+    public static ExperimentRunControl.TimeDoubleUnit build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
             MalformedURLException, IOException, TrafficControlException
@@ -228,7 +228,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static Experiment.TimeDoubleUnit<OTSSimulatorInterface> build(final OTS ots, final OTSRoadNetwork otsNetwork,
+    public static ExperimentRunControl.TimeDoubleUnit build(final OTS ots, final OTSRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
             MalformedURLException, IOException, TrafficControlException
@@ -236,15 +236,15 @@ public final class XmlNetworkLaneParser implements Serializable
         CategoryLogger.setLogCategories(Cat.PARSER);
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
-        Map<String, StreamInformation> streamMap = new LinkedHashMap<>();
-        Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment =
-                RunParser.parseRun(otsNetwork, ots.getRUN(), streamMap, otsNetwork.getSimulator());
+        StreamSeedInformation streamInformation = new StreamSeedInformation();
+        ExperimentRunControl.TimeDoubleUnit runControl =
+                RunParser.parseRun(otsNetwork.getId(), ots.getRUN(), streamInformation, otsNetwork.getSimulator());
 
         Map<String, ROADLAYOUT> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GTUTEMPLATE> gtuTemplates = new LinkedHashMap<>();
         Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
-        DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates, streamMap,
-                linkTypeSpeedLimitMap);
+        DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates,
+                streamInformation, linkTypeSpeedLimitMap);
 
         NETWORK network = ots.getNETWORK();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network);
@@ -261,7 +261,7 @@ public final class XmlNetworkLaneParser implements Serializable
             Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap =
                     GeneratorSinkParser.parseShortestRouteMix(otsNetwork, demand);
             List<LaneBasedGTUGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates,
-                    routeMixMap, shortestRouteMixMap, streamMap);
+                    routeMixMap, shortestRouteMixMap, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
             GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator());
         }
@@ -294,15 +294,15 @@ public final class XmlNetworkLaneParser implements Serializable
         };
         Map<String, ParameterType<?>> parameterTypes = new LinkedHashMap<>();
         Map<String, ParameterFactory> parameterFactories =
-                ModelParser.parseParameters(otsNetwork, models, inputParameters, parameterTypes, streamMap);
+                ModelParser.parseParameters(otsNetwork, models, inputParameters, parameterTypes, streamInformation);
         DefinitionsParser.parseParameterTypes(ots.getDEFINITIONS(), otsNetwork, parameterTypes);
-        Map<String, LaneBasedStrategicalPlannerFactory<?>> factories =
-                ModelParser.parseModel(otsNetwork, models, inputParameters, parameterTypes, streamMap, parameterFactories);
+        Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, models,
+                inputParameters, parameterTypes, streamInformation, parameterFactories);
         Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getSCENARIO(), ots.getNETWORKDEMAND());
         try
         {
-            List<LaneBasedGTUGenerator> generators = ODParser.parseDemand(otsNetwork, demands, gtuTemplates,
-                    factories, modelIdReferrals, streamMap);
+            List<LaneBasedGTUGenerator> generators =
+                    ODParser.parseDemand(otsNetwork, demands, gtuTemplates, factories, modelIdReferrals, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
         catch (Exception e)
@@ -380,7 +380,7 @@ public final class XmlNetworkLaneParser implements Serializable
 
         ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), controls);
 
-        return experiment;
+        return runControl;
     }
 
     /**

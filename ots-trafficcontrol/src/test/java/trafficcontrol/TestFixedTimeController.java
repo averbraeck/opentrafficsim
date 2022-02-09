@@ -31,6 +31,7 @@ import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * Test the fixed time traffic controller class.
@@ -245,7 +246,7 @@ public class TestFixedTimeController
         assertEquals("FTC id", ftcId, ftc.getId());
         assertTrue("toString returns something descriptive", ftc.toString().startsWith("FixedTimeController ["));
 
-        simulator.runUpTo(Time.instantiateSI(1));
+        simulator.runUpTo(new SimTimeDoubleUnit(Time.instantiateSI(1)));
         while (simulator.isStartingOrRunning())
         {
             try
@@ -404,7 +405,7 @@ public class TestFixedTimeController
                                                 args);
                                     }
                                     Time stopTime = Time.instantiateSI(300);
-                                    simulator.runUpTo(stopTime);
+                                    simulator.runUpTo(new SimTimeDoubleUnit(stopTime));
                                     while (simulator.isStartingOrRunning())
                                     {
                                         try

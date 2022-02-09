@@ -5,15 +5,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
@@ -26,7 +26,6 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.introspection.DelegateIntrospection;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -38,7 +37,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 @SuppressWarnings("rawtypes")
-public class NodeAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
+public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
+        implements ClonableRenderable2DInterface<NodeAnimation.ElevatedNode>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;
@@ -79,40 +79,32 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
         graphics.setColor(Color.BLACK);
         graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
-        try
+        double direction = getSource().getLocation().getZ();
+        if (!Double.isNaN(direction))
         {
-            double direction = getSource().getLocation().getZ();
-            if (!Double.isNaN(direction))
-            {
-                GeneralPath arrow = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
-                arrow.moveTo(0.5, -0.5);
-                arrow.lineTo(2, 0);
-                arrow.lineTo(0.5, 0.5);
-                graphics.draw(arrow);
-            }
-        }
-        catch (RemoteException e)
-        {
-            e.printStackTrace();
+            GeneralPath arrow = new GeneralPath(Path2D.WIND_EVEN_ODD, 3);
+            arrow.moveTo(0.5, -0.5);
+            arrow.lineTo(2, 0);
+            arrow.lineTo(0.5, 0.5);
+            graphics.draw(arrow);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException, RemoteException
+    public void destroy(final SimulatorInterface<?, ?, ?> simulator)
     {
-        super.destroy();
-        this.text.destroy();
+        super.destroy(simulator);
+        this.text.destroy(simulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
-            throws NamingException, RemoteException
+    public ClonableRenderable2DInterface<NodeAnimation.ElevatedNode> clone(final ElevatedNode newSource,
+            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object and ElevatedNode
-        return new NodeAnimation((Node) newSource, newSimulator);
+        return new NodeAnimation(newSource.getNode(), newSimulator);
     }
 
     /** {@inheritDoc} */
@@ -140,25 +132,24 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
         public ElevatedNode(final Node node)
         {
             this.node = node;
-            try
-            {
-                DirectedPoint p = node.getLocation();
-                this.location = new DirectedPoint(p.x, p.y, p.z + ZOFFSET, p.getRotX(), p.getRotY(), p.getRotZ());
-                this.bounds = node.getBounds();
-            }
-            catch (RemoteException exception)
-            {
-                CategoryLogger.always().error(exception, "Could not construct elevated node for animation");
-                this.location = new DirectedPoint();
-                this.bounds = new BoundingSphere();
-            }
+            DirectedPoint p = node.getLocation();
+            this.location = new DirectedPoint(p.x, p.y, p.z + ZOFFSET, p.getRotX(), p.getRotY(), p.getRotZ());
+            this.bounds = node.getBounds();
         }
 
         /** {@inheritDoc} */
         @Override
-        public DirectedPoint getLocation() throws RemoteException
+        public DirectedPoint getLocation()
         {
             return this.location;
+        }
+
+        /**
+         * @return node
+         */
+        public Node getNode()
+        {
+            return this.node;
         }
 
         /** {@inheritDoc} */

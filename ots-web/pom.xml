@@ -30,6 +30,10 @@
       <artifactId>dsol-swing</artifactId>
     </dependency>
     <dependency>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-animation-gis</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
       <version>9.4.18.v20190429</version>

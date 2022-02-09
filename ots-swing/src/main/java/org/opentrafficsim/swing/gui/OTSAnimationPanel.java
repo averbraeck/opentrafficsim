@@ -35,6 +35,9 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.Point;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
@@ -46,17 +49,16 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 
-import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
-import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
+import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2D;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.GridPanel;
-import nl.tudelft.simulation.dsol.swing.animation.D2.mouse.InputListener;
+import nl.tudelft.simulation.dsol.swing.animation.D2.InputListener;
 import nl.tudelft.simulation.language.DSOLException;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Animation panel with various controls.
@@ -93,7 +95,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     private Map<Class<? extends Locatable>, JToggleButton> toggleButtons = new LinkedHashMap<>();
 
     /** Set of GIS layer names to toggle GIS layers . */
-    private Map<String, MapInterface> toggleGISMap = new LinkedHashMap<>();
+    private Map<String, GisMapInterface> toggleGISMap = new LinkedHashMap<>();
 
     /** Set of GIS layer names to toggle buttons. */
     private Map<String, JToggleButton> toggleGISButtons = new LinkedHashMap<>();
@@ -157,8 +159,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSAnimator simulator,
-            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network) throws RemoteException,
-            DSOLException
+            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network)
+            throws RemoteException, DSOLException
     {
         super(simulator, otsModel);
 
@@ -220,7 +222,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         setGtuCountText();
 
         // Tell the animation to build the list of animation objects.
-        this.animationPanel.notify(new TimedEvent(Replication.START_REPLICATION_EVENT, simulator.getSourceId(), null,
+        this.animationPanel.notify(new TimedEvent(ReplicationInterface.START_REPLICATION_EVENT, simulator.getSourceId(), null,
                 getSimulator().getSimulatorTime()));
 
         // switch off the X and Y coordinates in a tooltip.
@@ -441,7 +443,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      */
     public final void showGISLayer(final String layerName)
     {
-        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
             try
@@ -463,7 +465,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      */
     public final void hideGISLayer(final String layerName)
     {
-        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
             try
@@ -485,7 +487,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      */
     public final void toggleGISLayer(final String layerName)
     {
-        MapInterface gisMap = this.toggleGISMap.get(layerName);
+        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
             try
@@ -566,7 +568,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     public void createDemoPanel(final DemoPanelPosition position)
     {
         Throw.when(this.demoPanel != null, IllegalStateException.class,
-            "Attempt to create demo panel, but it's already created");
+                "Attempt to create demo panel, but it's already created");
         Throw.whenNull(position, "Position may not be null.");
         Container parent = this.animationPanel.getParent();
         parent.remove(this.animationPanel);
@@ -638,8 +640,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      */
     protected final void updateWorldCoordinate()
     {
-        String worldPoint = "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y=" + FORMATTER
-            .format(this.animationPanel.getWorldCoordinate().getY()) + ")";
+        String worldPoint = "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
+                + FORMATTER.format(this.animationPanel.getWorldCoordinate().getY()) + ")";
         this.coordinateField.setText("Mouse: " + worldPoint);
         int requiredWidth = this.coordinateField.getGraphics().getFontMetrics().stringWidth(this.coordinateField.getText());
         if (this.coordinateField.getPreferredSize().width < requiredWidth)
@@ -885,7 +887,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final SimulatorInterface<?, ?, ?> simulator,
                 final OTSNetwork network) throws RemoteException, DSOLException
         {
-            super(extent, size, simulator);
+            super(new Bounds2d(extent.getMinX(), extent.getMaxX(), extent.getMinY(), extent.getMaxY()), simulator);
             this.network = network;
             MouseListener[] listeners = getMouseListeners();
             for (MouseListener listener : listeners)
@@ -1009,12 +1011,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         protected GTU getSelectedGTU(final Point2D mousePoint)
         {
             List<GTU> targets = new ArrayList<>();
-            Point2D point = Renderable2DInterface.Util.getWorldCoordinates(mousePoint, OTSAnimationPanel.this.animationPanel
-                .getExtent(), OTSAnimationPanel.this.animationPanel.getSize());
-            for (Renderable2DInterface<?> renderable : OTSAnimationPanel.this.animationPanel.getElements())
+            Point2d point = getRenderableScale().getWorldCoordinates(mousePoint, getExtent(), getSize());
+            for (Renderable2DInterface<?> renderable : getElements())
             {
-                if (OTSAnimationPanel.this.animationPanel.isShowElement(renderable) && renderable.contains(point,
-                    OTSAnimationPanel.this.animationPanel.getExtent(), OTSAnimationPanel.this.animationPanel.getSize()))
+                if (isShowElement(renderable) && renderable.contains(point, getExtent()))
                 {
                     if (renderable.getSource() instanceof GTU)
                     {
@@ -1045,19 +1045,20 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 {
                     try
                     {
-                        DirectedPoint point = locatable.getLocation();
+                        Point<?> point = locatable.getLocation();
                         if (point != null) // Center extent around point
                         {
-                            double w = this.extent.getWidth();
-                            double h = this.extent.getHeight();
-                            this.extent = new Rectangle2D.Double(point.getX() - w / 2, point.getY() - h / 2, w, h);
+                            double w = getExtent().getDeltaX();
+                            double h = getExtent().getDeltaY();
+                            setExtent(new Bounds2d(point.getX() - w / 2, point.getX() + w / 2, point.getY() - h / 2,
+                                    point.getY() + h / 2));
                         }
                     }
                     catch (RemoteException exception)
                     {
                         getSimulator().getLogger().always().warn(
-                            "Caught RemoteException trying to locate {} with id {} in network {}.", panKind, panId, network
-                                .getId());
+                                "Caught RemoteException trying to locate {} with id {} in network {}.", panKind, panId,
+                                this.network.getId());
                         return;
                     }
                 }

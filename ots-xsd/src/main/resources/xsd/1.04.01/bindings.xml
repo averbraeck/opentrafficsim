@@ -28,9 +28,9 @@
       adapter="org.opentrafficsim.xml.bindings.SpeedAdapter" />
     <xjc:javaType name="java.lang.Double" xmlType="ots:FRACTIONTYPE"
       adapter="org.opentrafficsim.xml.bindings.FractionAdapter" />
-    <xjc:javaType name="javax.vecmath.Point3d" xmlType="ots:COORDINATETYPE"
+    <xjc:javaType name="org.djutils.draw.point.Point3d" xmlType="ots:COORDINATETYPE"
       adapter="org.opentrafficsim.xml.bindings.CoordinateAdapter" />
-    <xjc:javaType name="javax.vecmath.Point3d" xmlType="ots:COORDINATENOSPACETYPE"
+    <xjc:javaType name="org.djutils.draw.point.Point3d" xmlType="ots:COORDINATENOSPACETYPE"
       adapter="org.opentrafficsim.xml.bindings.CoordinateAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.Point3dList" xmlType="ots:COORDINATELISTTYPE"
       adapter="org.opentrafficsim.xml.bindings.CoordinateListAdapter" />

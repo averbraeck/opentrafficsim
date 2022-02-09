@@ -1,17 +1,17 @@
 package org.opentrafficsim.road.network.lane.object;
 
-import javax.media.j3d.Bounds;
+
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Objects that can be encountered on a Lane like conflict areas, GTUs, traffic lights, stop lines, etc.

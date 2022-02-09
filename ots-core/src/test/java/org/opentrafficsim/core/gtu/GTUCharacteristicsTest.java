@@ -17,6 +17,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 
 /**
@@ -41,7 +42,7 @@ public class GTUCharacteristicsTest implements OTSModelInterface
     @Test
     public final void testGTUCharacteristics() throws SimRuntimeException, NamingException
     {
-        OTSNetwork network = new OTSNetwork("network", true, simulator);
+        OTSNetwork network = new OTSNetwork("network", true, this.simulator);
         // Make two sets of values so we can prove that the constructed GTUCharacteristics sets are really distinct.
         GTUType gtuTypeA = new GTUType("Type A", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         GTUType gtuTypeB = new GTUType("Type B", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
@@ -113,6 +114,20 @@ public class GTUCharacteristicsTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public String getDescription()
+    {
+        return null;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void setStreamInformation(final StreamInformation streamInformation)
+    {
+        //
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public StreamInformation getStreamInformation()
     {
         return null;
     }

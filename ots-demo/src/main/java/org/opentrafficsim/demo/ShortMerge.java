@@ -277,8 +277,9 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             StreamInterface stream = new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1);
             streams.put("headwayGeneration", stream);
             streams.put("gtuClass", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
-            this.getSimulator().getReplication().setStreams(streams);
-
+            getStreamInformation().addStream("headwayGeneration", stream);
+            getStreamInformation().addStream("gtuClass", streams.get("gtuClass"));
+            
             TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
             IdGenerator idGenerator = new IdGenerator("");
 
@@ -499,7 +500,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         public Duration draw() throws ProbabilityException, ParameterException
         {
             return new Duration(
-                    -Math.log(this.simulator.getReplication().getStream("headwayGeneration").nextDouble()) / this.demand.si,
+                    -Math.log(this.simulator.getModel().getStream("headwayGeneration").nextDouble()) / this.demand.si,
                     DurationUnit.SI);
         }
 

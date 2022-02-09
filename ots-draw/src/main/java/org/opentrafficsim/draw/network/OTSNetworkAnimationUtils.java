@@ -139,7 +139,7 @@ public final class OTSNetworkAnimationUtils
             {
                 try
                 {
-                    ao.destroy();
+                    ao.destroy(simulator);
                 }
                 catch (Exception e)
                 {
@@ -179,7 +179,7 @@ public final class OTSNetworkAnimationUtils
                 Locatable locatable = animationObject.getSource();
                 if (clazz.isAssignableFrom(locatable.getClass()))
                 {
-                    animationObject.destroy();
+                    animationObject.destroy(oldSimulator);
                 }
             }
         }

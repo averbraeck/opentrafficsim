@@ -12,7 +12,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.opentrafficsim.core.network.NetworkException;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * <p>

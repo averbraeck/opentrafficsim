@@ -59,7 +59,7 @@ public class StaticObjectAnimation extends Renderable2D<StaticObject> implements
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         if (this.width > 0.0f)
         {

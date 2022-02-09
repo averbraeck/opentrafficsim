@@ -1,6 +1,6 @@
 package org.opentrafficsim.water.role;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * <p>

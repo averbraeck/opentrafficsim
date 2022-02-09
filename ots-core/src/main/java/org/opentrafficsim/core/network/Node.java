@@ -6,6 +6,8 @@ import java.util.Set;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
+import org.opentrafficsim.core.geometry.Bounds;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -81,4 +83,10 @@ public interface Node extends Locatable, Serializable, Identifiable, Drawable
      * @return boolean; whether the node is a centroid, i.e. it <b>only</b> has connector links going in and out
      */
     boolean isCentroid();
+    
+    @Override
+    Bounds getBounds();
+    
+    @Override
+    DirectedPoint getLocation();
 }

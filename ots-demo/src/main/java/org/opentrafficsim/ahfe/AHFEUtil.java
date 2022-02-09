@@ -153,7 +153,9 @@ public final class AHFEUtil
         streams.put("headwayGeneration", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
         streams.put("gtuClass", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
         streams.put("perception", new MersenneTwister(Math.abs(seedGenerator.nextLong()) + 1));
-        simulator.getReplication().setStreams(streams);
+        simulator.getModel().getStreamInformation().addStream("headwayGeneration", streams.get("headwayGeneration"));
+        simulator.getModel().getStreamInformation().addStream("gtuClass", streams.get("gtuClass"));
+        simulator.getModel().getStreamInformation().addStream("perception", streams.get("perception"));
 
         TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
         IdGenerator idGenerator = new IdGenerator("");
@@ -599,7 +601,7 @@ public final class AHFEUtil
             Throw.whenNull(demandVector, "Demand vector may not be null.");
             Throw.whenNull(simulator, "Simulator may not be null.");
             Throw.whenNull(interpolation, "Interpolation may not be null.");
-            Throw.whenNull(simulator.getReplication().getStream(HEADWAY_STREAM),
+            Throw.whenNull(simulator.getModel().getStream(HEADWAY_STREAM),
                     "Could not obtain random stream '" + HEADWAY_STREAM + "'.");
             for (int i = 0; i < timeVector.size() - 1; i++)
             {
@@ -683,7 +685,7 @@ public final class AHFEUtil
             {
                 // after zero-demand, the next headway is a random fraction of a random headway as there is no previous arrival
                 return nextArrival(i + 1, Duration.ZERO,
-                        this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble());
+                        this.simulator.getModel().getStream(HEADWAY_STREAM).nextDouble());
             }
 
             // calculate headway from demand
@@ -697,7 +699,7 @@ public final class AHFEUtil
                 double f = start.si / (this.timeVector.get(i + 1).si - this.timeVector.get(i).si);
                 demand = Frequency.interpolate(this.demandVector.get(i), this.demandVector.get(i + 1), f);
             }
-            double t = -Math.log(this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble()) / demand.si;
+            double t = -Math.log(this.simulator.getModel().getStream(HEADWAY_STREAM).nextDouble()) / demand.si;
 
             // calculate arrival
             Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.DEFAULT);

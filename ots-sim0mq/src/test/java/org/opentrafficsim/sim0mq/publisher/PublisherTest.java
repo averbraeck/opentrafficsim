@@ -16,7 +16,9 @@ import java.util.Scanner;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.serialization.SerializationException;
@@ -36,8 +38,10 @@ import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.sim0mq.Sim0MQException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
 
 /**
  * Unit tests. This requires half of OTS in the imports because it sets up a simulation and runs that for a couple of seconds.
@@ -94,14 +98,14 @@ public class PublisherTest implements OTSModelInterface
             // System.out.println("transceiver: " + o);
         }
         // See if we can obtain the GTUIdTransceiver
-        Object[] subscriptionHandler = publisher.get(new Object[] { "GTUs in network" }, storeLastResult);
+        Object[] subscriptionHandler = publisher.get(new Object[] {"GTUs in network"}, storeLastResult);
         assertNotNull("result of get should not be null", subscriptionHandler);
         assertEquals("result should contain one elements", 1, subscriptionHandler.length);
         System.out.println(subscriptionHandler[0]);
         assertTrue("Result should contain a String", subscriptionHandler[0] instanceof SubscriptionHandler);
         this.lastResult = null;
         assertNull("request for non existent transceiver should return null",
-                publisher.get(new Object[] { "No such transceiver" }, storeLastResult));
+                publisher.get(new Object[] {"No such transceiver"}, storeLastResult));
         checkLastResult("No transceiver with name \"No such transceiver\"");
         assertNull("getIdSource with wrong index returns null", publisher.getIdSource(1, storeLastResult));
         checkLastResult("Address should be 0");
@@ -141,7 +145,7 @@ public class PublisherTest implements OTSModelInterface
     }
 
     @Override
-    public final List<OutputStatistic<?>> getOutputStatistics()
+    public final List<StatisticsInterface<Time, Duration, SimTimeDoubleUnit>> getOutputStatistics()
     {
         return null;
     }
@@ -160,6 +164,20 @@ public class PublisherTest implements OTSModelInterface
 
     @Override
     public final String getDescription()
+    {
+        return null;
+    }
+    
+
+    /** {@inheritDoc} */
+    @Override
+    public void setStreamInformation(final StreamInformation streamInformation)
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public StreamInformation getStreamInformation()
     {
         return null;
     }
@@ -243,11 +261,26 @@ public class PublisherTest implements OTSModelInterface
 
         /** {@inheritDoc} */
         @Override
+        public void setStreamInformation(final StreamInformation streamInformation)
+        {
+            //
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public StreamInformation getStreamInformation()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Serializable getSourceId()
         {
             return "Sim0MQOTSModel";
         }
 
+        
     }
 
     /** The test network. */

@@ -3,8 +3,7 @@
  */
 package org.opentrafficsim.water;
 
-import javax.vecmath.Point3d;
-
+import org.djutils.draw.point.Point3d;
 import org.djutils.event.EventProducer;
 import org.locationtech.jts.geom.Coordinate;
 

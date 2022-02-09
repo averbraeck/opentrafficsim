@@ -21,11 +21,11 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
+import nl.tudelft.simulation.dsol.swing.gui.control.RealTimeControlPanel;
 import nl.tudelft.simulation.language.DSOLException;
 
 /**
@@ -46,9 +46,9 @@ public class TestGeometry extends DSOLApplication implements UNITS
      * @param title String; t
      * @param panel DSOLPanel&lt;Time,Duration,SimTimeDoubleUnit&gt;; p
      */
-    public TestGeometry(final String title, final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
+    public TestGeometry(final String title, final DSOLPanel panel)
     {
-        super(title, panel);
+        super(panel, title);
     }
 
     /**
@@ -64,12 +64,12 @@ public class TestGeometry extends DSOLApplication implements UNITS
     {
         OTSAnimator simulator = new OTSAnimator("TestGeometry");
         OTSModelInterface model = new TestModel(simulator);
-        OTSReplication replication =
-                OTSReplication.create("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, SECOND), model);
-        simulator.initialize(replication, ReplicationMode.TERMINATING);
-        DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel = new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
+        OTSReplication replication = new OTSReplication("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, SECOND));
+        simulator.initialize(model, replication);
+        DSOLPanel panel =
+                new DSOLPanel(new RealTimeControlPanel<Time, Duration, SimTimeDoubleUnit, OTSAnimator>(model, simulator));
 
-        Rectangle2D extent = new Rectangle2D.Double(-50, -50, 300, 100);
+        Rectangle2D extent = new Rectangle2D.Double(-50, -50, 200, 50);
         Dimension size = new Dimension(1024, 768);
         OTSAnimationPanel animationPanel =
                 new OTSAnimationPanel(extent, size, simulator, model, new DefaultSwitchableGTUColorer(), model.getNetwork());
@@ -80,7 +80,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
 
         // tell the animation panel to update its statistics
         animationPanel.notify(
-                new TimedEvent(Replication.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
+                new TimedEvent(ReplicationInterface.START_REPLICATION_EVENT, simulator, null, simulator.getSimulatorTime()));
 
         new TestGeometry("TestGeometry", panel);
         animationPanel.enableSimulationControlButtons();

@@ -9,6 +9,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
+import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -94,6 +95,9 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
      */
     int getGTUCount();
 
+    @Override
+    Bounds getBounds();
+    
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the link. <br>
      * Payload: Object[] {String gtuId, int count_after_addition}

@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
@@ -26,7 +27,6 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d2.Angle;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Draw a car.
@@ -138,23 +138,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         final LaneBasedGTU gtu = getSource();
-        if (gtu.isDestroyed())
-        {
-            if (!this.isDestroyed)
-            {
-                try
-                {
-                    destroy();
-                }
-                catch (Exception e)
-                {
-                    System.err.println("Error while destroying GTU " + gtu.getId());
-                    e.printStackTrace();
-                }
-            }
-            return;
-        }
-
         if (this.rectangle == null)
         {
             // set shapes, this is done in paint() and not the constructor, as the super constructor binds to context causing
@@ -245,11 +228,11 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy() throws NamingException, RemoteException
+    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
     {
+        super.destroy(simulator);
+        this.text.destroy(simulator);
         this.isDestroyed = true;
-        super.destroy();
-        this.text.destroy();
     }
 
     /** {@inheritDoc} */
@@ -345,7 +328,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
         /** {@inheritDoc} */
         @Override
-        public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+        public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
             final LaneBasedIndividualGTU car = (LaneBasedIndividualGTU) getSource();
 
@@ -355,7 +338,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
                 {
                     try
                     {
-                        destroy();
+                        destroy(car.getSimulator());
                     }
                     catch (Exception e)
                     {
@@ -372,7 +355,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public DirectedPoint getLocation() throws RemoteException
+        public DirectedPoint getLocation()
         {
             // draw always on top, and not upside down.
             DirectedPoint p = ((LaneBasedIndividualGTU) getSource()).getLocation();

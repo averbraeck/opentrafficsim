@@ -105,7 +105,7 @@ public class Shoulder extends CrossSectionElement
 
     /** {@inheritDoc} */
     @Override
-    protected final double getZ()
+    public final double getZ()
     {
         return -0.0002;
     }

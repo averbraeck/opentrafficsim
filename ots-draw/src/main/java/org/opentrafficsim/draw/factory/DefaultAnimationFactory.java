@@ -83,8 +83,8 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @param animateNetwork boolean; whether to animate the current network objects
      * @throws OTSDrawingException on drawing error
      */
-    protected DefaultAnimationFactory(final OTSNetwork network, final GTUColorer gtuColorer,
-            final boolean animateNetwork) throws OTSDrawingException
+    protected DefaultAnimationFactory(final OTSNetwork network, final GTUColorer gtuColorer, final boolean animateNetwork)
+            throws OTSDrawingException
     {
         this.simulator = network.getSimulator();
         this.gtuColorer = gtuColorer;
@@ -104,22 +104,22 @@ public class DefaultAnimationFactory implements EventListenerInterface
             {
                 for (Node node : network.getNodeMap().values())
                 {
-                    new NodeAnimation(node, simulator);
+                    new NodeAnimation(node, this.simulator);
                 }
                 for (Link link : network.getLinkMap().values())
                 {
-                    new LinkAnimation(link, simulator, 0.5f);
+                    new LinkAnimation(link, this.simulator, 0.5f);
                     if (link instanceof CrossSectionLink)
                     {
                         for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
                         {
                             if (element instanceof Lane)
                             {
-                                new LaneAnimation((Lane) element, simulator, Color.GRAY.brighter());
+                                new LaneAnimation((Lane) element, this.simulator, Color.GRAY.brighter());
                             }
                             else if (element instanceof Shoulder)
                             {
-                                new ShoulderAnimation((Shoulder) element, simulator, Color.DARK_GRAY);
+                                new ShoulderAnimation((Shoulder) element, this.simulator, Color.DARK_GRAY);
                             }
                             else if (element instanceof Stripe)
                             {
@@ -135,7 +135,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
                                     type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR),
                                             LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY : TYPE.SOLID;
                                 }
-                                new StripeAnimation((Stripe) element, simulator, type);
+                                new StripeAnimation((Stripe) element, this.simulator, type);
                             }
                         }
                     }
@@ -143,7 +143,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
                 for (TrafficLight tl : network.getObjectMap(TrafficLight.class).values())
                 {
-                    new TrafficLightAnimation(tl, simulator);
+                    new TrafficLightAnimation(tl, this.simulator);
                 }
 
             }
@@ -151,7 +151,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
             for (GTU gtu : network.getGTUs())
             {
                 Renderable2D<LaneBasedGTU> gtuAnimation =
-                        new DefaultCarAnimation((LaneBasedGTU) gtu, simulator, this.gtuColorer);
+                        new DefaultCarAnimation((LaneBasedGTU) gtu, this.simulator, this.gtuColorer);
                 this.animatedGTUs.put((LaneBasedGTU) gtu, gtuAnimation);
             }
 
@@ -190,7 +190,8 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * @return the DefaultAnimationFactory
      * @throws OTSDrawingException on drawing error
      */
-    public static DefaultAnimationFactory animateXmlNetwork(final OTSNetwork network, final GTUColorer gtuColorer) throws OTSDrawingException
+    public static DefaultAnimationFactory animateXmlNetwork(final OTSNetwork network, final GTUColorer gtuColorer)
+            throws OTSDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, false);
     }
@@ -212,7 +213,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
                 LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
                 if (this.animatedGTUs.containsKey(gtu))
                 {
-                    this.animatedGTUs.get(gtu).destroy();
+                    this.animatedGTUs.get(gtu).destroy(gtu.getSimulator());
                     this.animatedGTUs.remove(gtu);
                 }
             }
@@ -226,7 +227,8 @@ public class DefaultAnimationFactory implements EventListenerInterface
                 ObjectInterface object = (ObjectInterface) event.getContent();
                 if (this.animatedObjects.containsKey(object))
                 {
-                    this.animatedObjects.get(object).destroy();
+                    // TODO: this.animatedObjects.get(object).destroy(object.getSimulator());
+                    // XXX: this is now a memory leak; we don't expect static animation objects to be removed during the run
                     this.animatedObjects.remove(object);
                 }
             }
@@ -240,7 +242,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
                 // TODO: change the way generators are animated
             }
         }
-        catch (NamingException | SimRuntimeException exception)
+        catch (SimRuntimeException exception)
         {
             CategoryLogger.always().error(exception, "Exception while updating network animation.");
         }
