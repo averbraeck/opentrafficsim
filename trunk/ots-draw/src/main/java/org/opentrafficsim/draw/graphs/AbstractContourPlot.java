@@ -22,7 +22,7 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
  * contour plots along the same path. This abstract class takes care of the interactions between the plot and the data pool. Sub
  * classes only need to specify a few plot specific variables and functionalities.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 4 okt. 2018 <br>

@@ -63,7 +63,7 @@ import nl.tudelft.simulation.language.DSOLException;
 /**
  * Animation panel with various controls.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2018-10-16 12:57:02 +0200 (Tue, 16 Oct 2018) $, @version $Revision: 4703 $, by $Author: wjschakel $,
@@ -853,7 +853,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /**
      * Animation panel that adds autopan functionality.
      * <p>
-     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

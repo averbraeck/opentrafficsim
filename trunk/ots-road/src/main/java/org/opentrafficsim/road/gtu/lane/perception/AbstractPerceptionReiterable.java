@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * iterates over the linked list. If an iterator runs to the end of the linked list, the primary iterator is requested to add an
  * element if it has one.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 20 feb. 2018 <br>
@@ -248,7 +248,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
      * same linked list of {@code SecondaryIteratorEntry}. Whenever an iterator runs to the end of this list, the primary
      * iterator is requested to find the next object, if it has a next object.
      * <p>
-     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -326,7 +326,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     /**
      * Class for {@code primaryIterator()} to return, implemented in subclasses.
      * <p>
-     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -374,7 +374,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     /**
      * Entries that make up a linked list of values for secondary iterators to iterate over.
      * <p>
-     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

@@ -1,7 +1,7 @@
 /**
  * Extensions of the DSOL simulator interfaces and classes for OTS units.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.opentrafficsim.org/"> www.opentrafficsim.org</a>.
  * <p>

@@ -13,7 +13,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
  * An occupancy sensor is a lane-based object that can be triggered by a relative position of the GTU (e.g., front, back) when
  * that relative position passes over the sensor location on the lane.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,

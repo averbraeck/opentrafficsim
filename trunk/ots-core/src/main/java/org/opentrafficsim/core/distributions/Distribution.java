@@ -12,7 +12,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 /**
  * Generic implementation of a set of objects that have a draw method with corresponding probabilities / frequencies.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 1, 2016 <br>
@@ -289,7 +289,7 @@ public class Distribution<O> implements Generator<O>, Serializable
     /**
      * Immutable storage for a frequency (or probability) plus a Generator.
      * <p>
-     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * <p>

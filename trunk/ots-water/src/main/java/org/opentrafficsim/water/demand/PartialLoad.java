@@ -12,7 +12,7 @@ import org.opentrafficsim.water.transfer.Terminal;
  * A number of similar (empty/full, 20/40 ft, same owner) containers that has to travel / travels between an origin terminal and
  * a destination terminal.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * </p>
  * <p>

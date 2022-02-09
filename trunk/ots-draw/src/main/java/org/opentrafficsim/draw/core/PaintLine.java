@@ -16,7 +16,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 /**
  * Paint a line as a Path2D.Double
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2016-01-15 09:03:55 +0100 (Fri, 15 Jan 2016) $, @version $Revision: 1698 $, by $Author: averbraeck $,

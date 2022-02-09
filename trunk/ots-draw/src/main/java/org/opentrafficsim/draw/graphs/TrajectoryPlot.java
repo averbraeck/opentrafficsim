@@ -40,7 +40,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 /**
  * Plot of trajectories along a path.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 13 okt. 2018 <br>
@@ -322,7 +322,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     /**
      * Extension of a line renderer to select a color based on GTU ID, and to overrule an unused shape to save memory.
      * <p>
-     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -436,7 +436,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * Class containing a trajectory with an offset. Takes care of bits that are before and beyond the lane without affecting
      * the trajectory itself.
      * <p>
-     * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

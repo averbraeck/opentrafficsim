@@ -27,7 +27,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 /**
  * Default generator for {@code LaneBasedGTUCharacteristics}.
  * <p>
- * Copyright (c) 2013-2020 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 dec. 2017 <br>
@@ -249,7 +249,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
     /**
      * Factory for {@code DefaultGTUCharacteristicsGeneratorOD}.
      * <p>
-     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

@@ -34,7 +34,7 @@ import nl.tudelft.simulation.naming.context.util.ContextUtil;
  * The AnimationPanel to display animated (Locatable) objects. Added the possibility to witch layers on and off. By default all
  * layers will be drawn, so no changes to existing software need to be made.
  * <p>
- * Copyright (c) 2003-2021 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+ * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/v2/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck">Alexander Verbraeck</a>
