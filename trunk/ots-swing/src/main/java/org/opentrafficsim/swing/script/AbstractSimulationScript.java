@@ -1,11 +1,11 @@
 package org.opentrafficsim.swing.script;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -19,8 +19,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -34,10 +34,6 @@ import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
-import nl.tudelft.simulation.dsol.experiment.StreamInformation;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import picocli.CommandLine.Command;
@@ -380,7 +376,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class ScriptModel implements OTSModelInterface
+    private class ScriptModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20180409L;
@@ -391,6 +387,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         @SuppressWarnings("synthetic-access")
         ScriptModel(final OTSSimulatorInterface simulator)
         {
+            super(simulator);
             AbstractSimulationScript.this.simulator = simulator;
         }
 
@@ -422,14 +419,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public OTSSimulatorInterface getSimulator()
-        {
-            return AbstractSimulationScript.this.simulator;
-        }
-
-        /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
-        @Override
         public OTSRoadNetwork getNetwork()
         {
             return AbstractSimulationScript.this.network;
@@ -437,47 +426,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public InputParameterMap getInputParameterMap()
+        public Serializable getSourceId()
         {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public List<StatisticsInterface<Time, Duration, SimTimeDoubleUnit>> getOutputStatistics()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public String getShortName()
-        {
-            return AbstractSimulationScript.this.name;
-        }
-
-        /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public String getDescription()
-        {
-            return AbstractSimulationScript.this.description;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void setStreamInformation(final StreamInformation streamInformation)
-        {
-            // TODO
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public StreamInformation getStreamInformation()
-        {
-            // TODO
-            return null;
+            return getShortName();
         }
         
     }
