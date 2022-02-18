@@ -58,7 +58,8 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator) throws NullPointerException
     {
         this(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
-                new ConstantGenerator<>(Acceleration.instantiateSI(3.0)), new ConstantGenerator<>(Acceleration.instantiateSI(-8.0)));
+                new ConstantGenerator<>(Acceleration.instantiateSI(3.0)),
+                new ConstantGenerator<>(Acceleration.instantiateSI(-8.0)));
     }
 
     /**
@@ -91,6 +92,18 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
         this.maximumSpeedGenerator = maximumSpeedGenerator;
         this.maxAcceleration = maximumAccelerationGenerator;
         this.maxDeceleration = maximumDecelerationGenerator;
+    }
+
+    /**
+     * Returns the same Characteristics, but pertaining to a different GTU type. This is useful for when the GTU type is used
+     * for other purposes in simulation, where the {@code GTUCharacteristics} should be the same.
+     * @param newGtuType GTUType; the new GTU type.
+     * @return Copy of this {@code TemplateGTUType} linked to the new GTU type.
+     */
+    public TemplateGTUType copyForGtuType(final GTUType newGtuType)
+    {
+        return new TemplateGTUType(newGtuType, this.lengthGenerator, this.widthGenerator, this.maximumSpeedGenerator,
+                this.maxAcceleration, this.maxDeceleration);
     }
 
     /**
