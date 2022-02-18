@@ -251,6 +251,10 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
             }
             if (store && template != null)
             {
+                if (!template.getGTUType().equals(gtuType))
+                {
+                    template = template.copyForGtuType(gtuType);
+                }
                 map.put(gtuType, template);
             }
         }
