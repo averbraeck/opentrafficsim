@@ -261,10 +261,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         // init event
         DirectedLanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] { getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
+                new Object[] {getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
                         OTSPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
                         referencePosition.getLane().getParentLink().getId(), referencePosition.getLane().getId(),
-                        referencePosition.getPosition(), referencePosition.getGtuDirection().name(), getGTUType().getId() },
+                        referencePosition.getPosition(), referencePosition.getGtuDirection().name(), getGTUType().getId()},
                 getSimulator().getSimulatorTime());
 
         // register the GTU on the lanes
@@ -346,8 +346,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 
         // fire event
         this.fireTimedEvent(
-                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection.name(),
-                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition() },
+                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
+                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
                 getSimulator().getSimulatorTime());
 
     }
@@ -540,8 +540,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         // XXX: WRONG: this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
         // XXX: WRONG: getSimulator().getSimulatorTime());
         this.fireTimedEvent(
-                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection.name(),
-                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition() },
+                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
+                        from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
                 getSimulator().getSimulatorTime());
 
         this.finalizeLaneChangeEvent = null;
@@ -612,10 +612,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             }
 
             fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
-                    new Object[] { getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                    new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getParentLink().getId(),
-                            dlp.getLane().getId(), dlp.getPosition(), dlp.getGtuDirection().name() },
+                            dlp.getLane().getId(), dlp.getPosition(), dlp.getGtuDirection().name()},
                     getSimulator().getSimulatorTime());
 
             return false;
@@ -902,8 +902,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 Time time = timeAtLine(sensor.getGeometry(), pos);
                 if (time != null)
                 {
-                    this.sensorEvents
-                            .add(getSimulator().scheduleEventAbs(time, this, sensor, "trigger", new Object[] { this }));
+                    this.sensorEvents.add(getSimulator().scheduleEventAbs(time, this, sensor, "trigger", new Object[] {this}));
                 }
             }
         }
@@ -981,7 +980,9 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 // return time at distance
                 if (cumul < 0.0)
                 {
-                    return getSimulator().getSimulatorTime();
+                    // return getSimulator().getSimulatorTime(); // this was a mistake...
+                    // relative position already crossed the point, e.g. FRONT
+                    return null;
                 }
                 if (cumul <= getOperationalPlan().getTotalLength().si)
                 {
@@ -1030,13 +1031,13 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
 
     /** Caching of time field for last stored position(s). */
     private double cachePositionsTime = Double.NaN;
-    
+
     /** Caching of operation plan for last stored position(s). */
     private OperationalPlan cacheOperationalPlan = null;
 
     /** caching of last stored position(s). */
     private MultiKeyMap<Length> cachedPositions = new MultiKeyMap<>(Lane.class, RelativePosition.class);
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -1333,16 +1334,16 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                    new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
                             referenceLane.getParentLink().getId(), referenceLane.getId(), dlp.getPosition(),
-                            dlp.getGtuDirection().name() },
+                            dlp.getGtuDirection().name()},
                     getSimulator().getSimulatorTime());
         }
         else
         {
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), location, getOdometer(), null, Length.ZERO, null },
+                    new Object[] {getId(), location, getOdometer(), null, Length.ZERO, null},
                     getSimulator().getSimulatorTime());
         }
         cancelAllEvents();
