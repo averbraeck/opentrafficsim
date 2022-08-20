@@ -1,2 +1,3 @@
 /target/
 /src/main/java/org/opentrafficsim/xml/generated/*.java
+/src/main/java/META-INF/sun-jaxb.episode
