@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>opentrafficsim</groupId>
+  <groupId>org.opentrafficsim</groupId>
   <artifactId>ots</artifactId>
   <version>1.05.01-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -498,7 +498,7 @@
         <version>${maven.checkstyle.version}</version>
         <dependencies>
           <dependency>
-            <groupId>opentrafficsim</groupId>
+            <groupId>org.opentrafficsim</groupId>
             <artifactId>ots-build-tools</artifactId>
             <version>${project.version}</version>
           </dependency>
@@ -1105,175 +1105,175 @@
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-base</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-core</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-kpi</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-road</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-trafficcontrol</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-rail</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-water</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-multimodal</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-animation</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-draw</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-swing</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-web</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-sim0mq</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-sim0mq-kpi</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-sim0mq-swing</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-xsd</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-parser-xml</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-xsd-opendrive</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-parser-opendrive</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-parser-osm</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-parser-shape</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-xsd-vissim</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-parser-vissim</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-imb</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-imb-road</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-imb-kpi</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-aimsun</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-aimsun-proto</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>opentrafficsim</groupId>
+        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-aimsun-demo</artifactId>
         <version>${ots.version}</version>
       </dependency>

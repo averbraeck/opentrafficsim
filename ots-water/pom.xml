@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>opentrafficsim</groupId>
+    <groupId>org.opentrafficsim</groupId>
     <artifactId>ots</artifactId>
     <version>1.05.01-SNAPSHOT</version>
     <relativePath>../ots/pom.xml</relativePath>
@@ -16,7 +16,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>opentrafficsim</groupId>
+      <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-core</artifactId>
     </dependency>
 

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>opentrafficsim</groupId>
+    <groupId>org.opentrafficsim</groupId>
     <artifactId>ots</artifactId>
     <version>1.05.01-SNAPSHOT</version>
     <relativePath>../ots/pom.xml</relativePath>
@@ -15,7 +15,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>opentrafficsim</groupId>
+      <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-road</artifactId>
     </dependency>
 
@@ -25,13 +25,13 @@
     </dependency>
 
     <dependency>
-      <groupId>opentrafficsim</groupId>
+      <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-xsd</artifactId>
       <scope>test</scope>
     </dependency>
   
     <dependency>
-      <groupId>opentrafficsim</groupId>
+      <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-parser-xml</artifactId>
       <scope>test</scope>
     </dependency>
