@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -27,7 +26,7 @@
     as the parameter name, and e.g., windows-x86_64 as the value, or any other os classifier 
     as described at https://github.com/trustin/os-maven-plugin 
   -->
-  
+
   <!-- Don't make javadoc crash on the missing HTML tags for generated classes -->
   <properties>
     <doclint>none</doclint>
@@ -38,6 +37,11 @@
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java-util</artifactId>
+      <version>3.21.5</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -46,7 +50,7 @@
       <extension>
         <groupId>kr.motd.maven</groupId>
         <artifactId>os-maven-plugin</artifactId>
-        <version>1.6.0</version>
+        <version>1.7.0</version>
       </extension>
     </extensions>
 
@@ -60,27 +64,27 @@
           <skip>true</skip>
         </configuration>
       </plugin>
-      
+
       <!-- see https://www.xolstice.org/protobuf-maven-plugin/compile-mojo.html -->
       <plugin>
         <groupId>org.xolstice.maven.plugins</groupId>
         <artifactId>protobuf-maven-plugin</artifactId>
-        <version>0.5.1</version>
+        <version>0.6.1</version>
         <extensions>true</extensions>
         <executions>
           <execution>
             <goals>
               <goal>compile</goal>
+              <goal>test-compile</goal>
             </goals>
-            <configuration>
-              <protocArtifact>com.google.protobuf:protoc:3.4.0:exe:${os.detected.classifier}</protocArtifact>
-              <outputDirectory>${basedir}/src/main/java</outputDirectory>
-              <clearOutputDirectory>false</clearOutputDirectory>
-              <checkStaleness>true</checkStaleness>
-              <includeDependenciesInDescriptorSet>true</includeDependenciesInDescriptorSet>
-            </configuration>
           </execution>
         </executions>
+        <configuration>
+          <additionalProtoPathElements>
+            <additionalProtoPathElement>${project.basedir}/src/main/resources</additionalProtoPathElement>
+          </additionalProtoPathElements>
+          <protocArtifact>com.google.protobuf:protoc:3.7.0:exe:${os.detected.classifier}</protocArtifact>
+        </configuration>
       </plugin>
     </plugins>
   </build>

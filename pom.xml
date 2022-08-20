@@ -27,33 +27,33 @@
         </property>
       </activation>
       <modules>
-        <module>../ots-base</module>
-        <module>../ots-core</module>
-        <module>../ots-kpi</module>
-        <module>../ots-road</module>
-        <module>../ots-trafficcontrol</module>
-        <module>../ots-rail</module>
-        <module>../ots-water</module>
-        <module>../ots-multimodal</module>
-        <module>../ots-animation</module>
-        <module>../ots-draw</module>
-        <module>../ots-swing</module>
-        <module>../ots-web</module>
-        <module>../ots-sim0mq</module>
-        <module>../ots-sim0mq-kpi</module>
-        <module>../ots-sim0mq-swing</module>
-        <module>../ots-xsd</module>
-        <module>../ots-parser-xml</module>
-        <module>../ots-demo</module>
-        <module>../ots-xsd-opendrive</module>
-        <module>../ots-parser-opendrive</module>
-        <module>../ots-parser-osm</module>
-        <module>../ots-parser-shape</module>
-        <module>../ots-xsd-vissim</module>
-        <module>../ots-parser-vissim</module>
-        <module>../ots-aimsun</module>
-        <module>../ots-aimsun-proto</module>
-        <module>../ots-aimsun-demo</module>
+        <module>ots-base</module>
+        <module>ots-core</module>
+        <module>ots-kpi</module>
+        <module>ots-road</module>
+        <module>ots-trafficcontrol</module>
+        <module>ots-rail</module>
+        <module>ots-water</module>
+        <module>ots-multimodal</module>
+        <module>ots-animation</module>
+        <module>ots-draw</module>
+        <module>ots-swing</module>
+        <module>ots-web</module>
+        <module>ots-sim0mq</module>
+        <module>ots-sim0mq-kpi</module>
+        <module>ots-sim0mq-swing</module>
+        <module>ots-xsd</module>
+        <module>ots-parser-xml</module>
+        <module>ots-demo</module>
+        <module>ots-xsd-opendrive</module>
+        <module>ots-parser-opendrive</module>
+        <module>ots-parser-osm</module>
+        <module>ots-parser-shape</module>
+        <module>ots-xsd-vissim</module>
+        <module>ots-parser-vissim</module>
+        <module>ots-aimsun</module>
+        <module>ots-aimsun-proto</module>
+        <module>ots-aimsun-demo</module>
       </modules>
     </profile>
   </profiles>
@@ -372,103 +372,103 @@
           <offlineLinks>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-base/apidocs/</url>
-              <location>${project.build.directory}/../../ots-base/target/apidocs</location>
+              <location>${project.build.directory}/../ots-base/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-core/apidocs/</url>
-              <location>${project.build.directory}/../../ots-core/target/apidocs</location>
+              <location>${project.build.directory}/../ots-core/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-road/apidocs/</url>
-              <location>${project.build.directory}/../../ots-road/target/apidocs</location>
+              <location>${project.build.directory}/../ots-road/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-water/apidocs/</url>
-              <location>${project.build.directory}/../../ots-water/target/apidocs</location>
+              <location>${project.build.directory}/../ots-water/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-animation/apidocs/</url>
-              <location>${project.build.directory}/../../ots-animation/target/apidocs</location>
+              <location>${project.build.directory}/../ots-animation/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-draw/apidocs/</url>
-              <location>${project.build.directory}/../../ots-draw/target/apidocs</location>
+              <location>${project.build.directory}/../ots-draw/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-swing/apidocs/</url>
-              <location>${project.build.directory}/../../ots-swing/target/apidocs</location>
+              <location>${project.build.directory}/../ots-swing/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-web/apidocs/</url>
-              <location>${project.build.directory}/../../ots-web/target/apidocs</location>
+              <location>${project.build.directory}/../ots-web/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-demo/apidocs/</url>
-              <location>${project.build.directory}/../../ots-demo/target/apidocs</location>
+              <location>${project.build.directory}/../ots-demo/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-kpi/apidocs/</url>
-              <location>${project.build.directory}/../../ots-kpi/target/apidocs</location>
+              <location>${project.build.directory}/../ots-kpi/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-sim0mq/apidocs/</url>
-              <location>${project.build.directory}/../../ots-sim0mq/target/apidocs</location>
+              <location>${project.build.directory}/../ots-sim0mq/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-sim0mq-kpi/apidocs/</url>
-              <location>${project.build.directory}/../../ots-sim0mq-kpi/target/apidocs</location>
+              <location>${project.build.directory}/../ots-sim0mq-kpi/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-sim0mq-swing/apidocs/</url>
-              <location>${project.build.directory}/../../ots-sim0mq-swing/target/apidocs</location>
+              <location>${project.build.directory}/../ots-sim0mq-swing/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-trafficcontrol/apidocs/</url>
-              <location>${project.build.directory}/../../ots-trafficcontrol/target/apidocs</location>
+              <location>${project.build.directory}/../ots-trafficcontrol/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-aimsun/apidocs/</url>
-              <location>${project.build.directory}/../../ots-aimsun/target/apidocs</location>
+              <location>${project.build.directory}/../ots-aimsun/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-aimsun-proto/apidocs/</url>
-              <location>${project.build.directory}/../../ots-aimsun-proto/target/apidocs</location>
+              <location>${project.build.directory}/../ots-aimsun-proto/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-aimsun-demo/apidocs/</url>
-              <location>${project.build.directory}/../../ots-aimsun-demo/target/apidocs</location>
+              <location>${project.build.directory}/../ots-aimsun-demo/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-xsd/apidocs/</url>
-              <location>${project.build.directory}/../../ots-xsd/target/apidocs</location>
+              <location>${project.build.directory}/../ots-xsd/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-xml/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-xml/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-xml/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-xsd-opendrive/apidocs/</url>
-              <location>${project.build.directory}/../../ots-xsd-opendrive/target/apidocs</location>
+              <location>${project.build.directory}/../ots-xsd-opendrive/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-opendrive/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-opendrive/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-opendrive/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-osm/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-osm/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-osm/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-shape/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-shape/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-shape/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-xsd-vissim/apidocs/</url>
-              <location>${project.build.directory}/../../ots-xsd-vissim/target/apidocs</location>
+              <location>${project.build.directory}/../ots-xsd-vissim/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-vissim/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-vissim/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-vissim/target/apidocs</location>
             </offlineLink>
           </offlineLinks>
 
@@ -661,103 +661,103 @@
           <offlineLinks>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-base/apidocs/</url>
-              <location>${project.build.directory}/../../ots-base/target/apidocs</location>
+              <location>${project.build.directory}/../ots-base/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-core/apidocs/</url>
-              <location>${project.build.directory}/../../ots-core/target/apidocs</location>
+              <location>${project.build.directory}/../ots-core/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-road/apidocs/</url>
-              <location>${project.build.directory}/../../ots-road/target/apidocs</location>
+              <location>${project.build.directory}/../ots-road/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-water/apidocs/</url>
-              <location>${project.build.directory}/../../ots-water/target/apidocs</location>
+              <location>${project.build.directory}/../ots-water/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-animation/apidocs/</url>
-              <location>${project.build.directory}/../../ots-animation/target/apidocs</location>
+              <location>${project.build.directory}/../ots-animation/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-draw/apidocs/</url>
-              <location>${project.build.directory}/../../ots-draw/target/apidocs</location>
+              <location>${project.build.directory}/../ots-draw/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-swing/apidocs/</url>
-              <location>${project.build.directory}/../../ots-swing/target/apidocs</location>
+              <location>${project.build.directory}/../ots-swing/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-web/apidocs/</url>
-              <location>${project.build.directory}/../../ots-web/target/apidocs</location>
+              <location>${project.build.directory}/../ots-web/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-demo/apidocs/</url>
-              <location>${project.build.directory}/../../ots-demo/target/apidocs</location>
+              <location>${project.build.directory}/../ots-demo/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-kpi/apidocs/</url>
-              <location>${project.build.directory}/../../ots-kpi/target/apidocs</location>
+              <location>${project.build.directory}/../ots-kpi/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-sim0mq/apidocs/</url>
-              <location>${project.build.directory}/../../ots-sim0mq/target/apidocs</location>
+              <location>${project.build.directory}/../ots-sim0mq/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-sim0mq-kpi/apidocs/</url>
-              <location>${project.build.directory}/../../ots-sim0mq-kpi/target/apidocs</location>
+              <location>${project.build.directory}/../ots-sim0mq-kpi/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-sim0mq-swing/apidocs/</url>
-              <location>${project.build.directory}/../../ots-sim0mq-swing/target/apidocs</location>
+              <location>${project.build.directory}/../ots-sim0mq-swing/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-trafficcontrol/apidocs/</url>
-              <location>${project.build.directory}/../../ots-trafficcontrol/target/apidocs</location>
+              <location>${project.build.directory}/../ots-trafficcontrol/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-aimsun/apidocs/</url>
-              <location>${project.build.directory}/../../ots-aimsun/target/apidocs</location>
+              <location>${project.build.directory}/../ots-aimsun/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-aimsun-proto/apidocs/</url>
-              <location>${project.build.directory}/../../ots-aimsun-proto/target/apidocs</location>
+              <location>${project.build.directory}/../ots-aimsun-proto/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-aimsun-demo/apidocs/</url>
-              <location>${project.build.directory}/../../ots-aimsun-demo/target/apidocs</location>
+              <location>${project.build.directory}/../ots-aimsun-demo/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-xsd/apidocs/</url>
-              <location>${project.build.directory}/../../ots-xsd/target/apidocs</location>
+              <location>${project.build.directory}/../ots-xsd/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-xml/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-xml/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-xml/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-xsd-opendrive/apidocs/</url>
-              <location>${project.build.directory}/../../ots-xsd-opendrive/target/apidocs</location>
+              <location>${project.build.directory}/../ots-xsd-opendrive/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-opendrive/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-opendrive/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-opendrive/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-osm/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-osm/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-osm/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-shape/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-shape/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-shape/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-xsd-vissim/apidocs/</url>
-              <location>${project.build.directory}/../../ots-xsd-vissim/target/apidocs</location>
+              <location>${project.build.directory}/../ots-xsd-vissim/target/apidocs</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/v1/ots-parser-vissim/apidocs/</url>
-              <location>${project.build.directory}/../../ots-parser-vissim/target/apidocs</location>
+              <location>${project.build.directory}/../ots-parser-vissim/target/apidocs</location>
             </offlineLink>
           </offlineLinks>
 
@@ -925,7 +925,7 @@
         <version>${maven.changes.version}</version>
         <configuration>
           <escapeHTML>false</escapeHTML>
-          <xmlPath>../ots/src/changes/changes.xml</xmlPath>
+          <xmlPath>ots/src/changes/changes.xml</xmlPath>
           <issueManagementSystems>
             <issueManagementSystem>jira</issueManagementSystem>
           </issueManagementSystems>
@@ -1467,14 +1467,14 @@
       <url>https://repo.maven.apache.org/maven2</url>
     </repository>
 
-    <repository>
+    <!--repository>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
       <id>osgeo</id>
       <name>osgeo</name>
       <url>https://repo.osgeo.org/repository/release/</url>
-    </repository>
+    </repository-->
 
     <repository>
       <snapshots>

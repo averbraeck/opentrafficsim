@@ -31,10 +31,6 @@
     </dependency>
     <dependency>
       <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-road</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-swing</artifactId>
     </dependency>
     <dependency>
@@ -55,4 +51,15 @@
     </dependency>
   </dependencies>
 
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>osgeo</id>
+      <name>osgeo</name>
+      <url>https://repo.osgeo.org/repository/release/</url>
+    </repository>
+  </repositories>
+  
 </project>
