@@ -91,29 +91,31 @@
     <protobuf.version>3.19.4</protobuf.version>
     <jaxb.version>2.3.1</jaxb.version>
 
-    <maven.compiler.version>3.8.1</maven.compiler.version>
-    <maven.site.version>3.9.1</maven.site.version>
-    <maven.deploy.version>3.0.0-M1</maven.deploy.version>
-    <maven.install.version>3.0.0-M1</maven.install.version>
+    <maven.compiler.version>3.10.1</maven.compiler.version>
+    <maven.site.version>3.12.1</maven.site.version>
+    <maven.install.version>3.0.1</maven.install.version>
     <maven.source.version>3.2.1</maven.source.version>
-    <maven.javadoc.version>3.2.0</maven.javadoc.version>
-    <maven.resources.version>3.2.0</maven.resources.version>
-    <maven.checkstyle.version>3.1.1</maven.checkstyle.version>
+    <maven.javadoc.version>3.4.1</maven.javadoc.version>
+    <maven.resources.version>3.3.0</maven.resources.version>
+    <maven.checkstyle.version>3.1.2</maven.checkstyle.version>
     <checkstyle.version>8.35</checkstyle.version>
-    <maven.surefire.version>3.0.0-M5</maven.surefire.version>
-    <maven.surefire-report.version>3.0.0-M5</maven.surefire-report.version>
-    <maven.failsafe.version>3.0.0-M5</maven.failsafe.version>
-    <maven.jacoco.version>0.8.6</maven.jacoco.version>
-    <maven.spotbugs.version>4.1.4</maven.spotbugs.version>
-    <spotbugs.version>4.1.4</spotbugs.version>
-    <maven.project-info-reports.version>3.1.0</maven.project-info-reports.version>
-    <maven.jxr.version>3.0.0</maven.jxr.version>
-    <maven.taglist.version>2.4</maven.taglist.version>
-    <maven.pmd.version>3.13.0</maven.pmd.version>
+    <maven.surefire.version>3.0.0-M7</maven.surefire.version>
+    <maven.surefire-report.version>3.0.0-M7</maven.surefire-report.version>
+    <maven.failsafe.version>3.0.0-M7</maven.failsafe.version>
+    <maven.jacoco.version>0.8.8</maven.jacoco.version>
+    <maven.spotbugs.version>4.7.1.1</maven.spotbugs.version>
+    <spotbugs.version>4.7.1</spotbugs.version>
+    <maven.project-info-reports.version>3.4.0</maven.project-info-reports.version>
+    <maven.jxr.version>3.2.0</maven.jxr.version>
+    <maven.taglist.version>3.0.0</maven.taglist.version>
+    <maven.pmd.version>3.17.0</maven.pmd.version>
     <maven.changes.version>2.12.1</maven.changes.version>
+
+    <maven.deploy.version>3.0.0</maven.deploy.version>
     <wagon.maven.version>2.0.0</wagon.maven.version>
     <wagon.ssh.version>3.4.1</wagon.ssh.version>
     <wagon.ftp.version>3.4.1</wagon.ftp.version>
+    
     <maven-jaxb2.version>0.14.0</maven-jaxb2.version>
 
   </properties>
@@ -131,11 +133,26 @@
     <resources>
       <resource>
         <directory>${basedir}/src/main/resources</directory>
+        <targetPath>${project.build.directory}/classes/resources</targetPath>
+        <includes>
+          <include>**/*</include>
+        </includes>
       </resource>
     </resources>
     <testResources>
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
+        <targetPath>${project.build.directory}/test-classes/resources</targetPath>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/main/resources</directory>
+        <targetPath>${project.build.directory}/test-classes/resources</targetPath>
+        <includes>
+          <include>**/*</include>
+        </includes>
       </testResource>
     </testResources>
 
@@ -169,13 +186,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <version>${maven.resources.version}</version>
-        <configuration>
-          <encoding>${project.encoding}</encoding>
-        </configuration>
         <executions>
           <execution>
-            <id>copy-resource-one</id>
-            <phase>generate-sources</phase>
+            <id>default-resources</id>
+            <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
@@ -189,8 +203,8 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-test-resource-one</id>
-            <phase>generate-sources</phase>
+            <id>default-testResources</id>
+            <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
@@ -204,8 +218,8 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-test-resource-two</id>
-            <phase>generate-sources</phase>
+            <id>testResources main</id>
+            <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
