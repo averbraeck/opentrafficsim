@@ -1,0 +1,7 @@
+# Perception
+
+Perception is a fundamental part in OTS. It allows a next-generation of traffic models where perception errors and human factors are _explicitly_ modelled with endogenous processes. The structure of components regarding perception is highly modular, such that perception, human factor and tactical planner models can be used in various combinations. This includes simpler models that use no explicit (altered) perception.
+
+Even with simple implementations, perception is always used as an interface between the modeling environment (network, GTUs, objects) and tactical models. As such it has an additional practical role: providing information in a useable format for tactical models. Note that in OTS this is not trivial, as the modeling environment is itself quite complex as it provides flexibility at many fronts. It terms of code development, perception is therefore more complex than for instance a tactical planner. OTS however supplies ‘categories’ of perception that may be used for a model.
+
+The following sections describe how information may be packaged in headway objects, how perception is partitioned in categories, how mental models are incorporated, how perception in lane-based simulation can use a simpler network abstraction known as a lane-structure, how perception iterables can facilitate perception, and finally the tools in OTS to maintain information over recent history such that reaction times can be applied.

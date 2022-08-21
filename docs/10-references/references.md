@@ -1,0 +1,14 @@
+# References
+
+<table>
+    <tr id="reference-fuller"><td>[1]</td><td>Fuller, R. (2000) “The task-capability interface model of the driving process”, Recherche –Transports – Sécurité 66, pp. 47-57.</td></tr>
+    <tr id="reference-michon"><td>[2]</td><td>Michon, J.A. (1985) “A critical view of driver behavior models: What do we know, what should we do, Human behavior and traffic safety, 1985: pp. 485-520.</td></tr>
+    <tr id="reference-schakel-idm-plus"><td>[3]</td><td>Schakel, W.J., B. van Arem, B. Netten (2010) “Effects of Cooperative Adaptive Cruise Control on Traffic Flow Stability”, Proceedings of the 13th International IEEE Conference on Intelligent Transportation Systems, September 19-22, Madeira Island, Portugal, pp. 759-764.</td></tr>
+    <tr id="reference-schakel-lmrs"><td>[4]</td><td>Schakel, W.J., V.L. Knoop, B. van Arem (2012) “Integrated Lane Change Model with Relaxation and Synchronization”, Transportation Research Record: Journal of the Transportation Research Board, No. 2316, pp. 47-57.</td></tr>
+    <tr id="reference-treiber-idm"><td>[5]</td><td>Treiber, M., A. Hennecke, D. Helbing (2000) “Congested Traffic States in Empirical Observations and Microscopic Simulations”, Physycal Review E, Vol. 62, pp. 1805-1824.</td></tr>
+    <tr id="reference-schakel-social"><td>[6]</td><td>Schakel, W., Knoop, V., Keyvan-Ekbatani, M., &amp; Lint, H. v. (2020). Social interactions and driving strategies in traffic flow. ISTTT24, 2022</td></tr>
+    <tr id="reference-calvert-ar"><td>[7]</td><td>Calvert, S. C., Schakel, W. J., &amp; Van Lint, J. W. C. (2020). A generic multi-scale framework for microscopic traffic simulation part II –Anticipation Reliance as compensation mechanism for potential task overload. Transportation Research Part B: Methodological, 140, 42-63. doi:10.1016/j.trb.2020.07.011</td></tr>
+    <tr id="reference-vanlint-fuller"><td>[8]</td><td>van Lint, J. W. C., &amp; Calvert, S. C. (2018). A generic multi-level framework for microscopic traffic simulation—Theory and an example case in modelling driver distraction. Transportation Research Part B: Methodological, 117, 63-86. doi:10.1016/j.trb.2018.08.009</td></tr>
+    <tr id="reference-vanlint-anticipation"><td>[9]</td><td>Van Lint, H., Calvert, S., Schakel, W., Wang, M., &amp; Verbraeck, A. (2018) Exploring the effects of perception errors and anticipation strategies on traffic accidents - A simulation study. In: Vol. 591. Advances in Intelligent Systems and Computing (pp. 249-261).</td></tr>
+    <tr id="reference-vanlint-hf"><td>[10]</td><td>van Lint, H., Schakel, W., Tamminga, G., Knoppers, P., &amp; Verbraeck, A. (2016). Getting the Human Factor into Traffic Flow Models: New Open-Source Design to Simulate Next Generation of Traffic Operations. Transportation Research Record: Journal of the Transportation Research Board, 2561, pp 25–33. Retrieved from http://dx.doi.org/10.3141/2561-04</td></tr>
+</table>

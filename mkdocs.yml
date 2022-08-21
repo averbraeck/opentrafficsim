@@ -1,0 +1,77 @@
+site_name: OpenTrafficSim v2
+site_url: https://opentrafficsim.org
+site_favicon: images/favicon.png
+copyright: (c) 2014-2022 Delft University of Technology
+
+theme:
+  name: readthedocs
+  navigation_depth: 1
+    
+markdown_extensions:
+  - admonition
+
+extra_css: 
+  - css/custom.css
+  
+extra_javascript:
+  - js/collapse_menu.js
+    
+nav:
+  - Home: index.md
+  - 1. Technical manual:
+    - Preface: 01-technical/preface.md
+    - Current developments: 01-technical/developments.md
+  - 2. Model structure:
+    - GTU - Generalized Travel Unit: 02-model-structure/gtu.md
+    - DSOL - event-based simulation: 02-model-structure/dsol.md
+    - DJUTILS - Delft Java Utils: 02-model-structure/djutils.md
+    - DJUNITS - Delft Java Units: 02-model-structure/djunits.md
+    - Java programming standards: 02-model-structure/java.md
+  - 3. Network:
+    - Link level: 03-network/link-level.md
+    - Lane level: 03-network/lane-level.md
+    - Network directions: 03-network/directions.md
+    - Lane-based objects: 03-network/lane-objects.md
+  - 4. Traffic demand:
+    - Introduction: 04-demand/introduction.md
+    - Origin-destination matrix: 04-demand/od-matrix.md
+    - Split fractions: 04-demand/split-fractions.md
+    - GTU generators: 04-demand/gtu-generators.md
+    - Generation algorithm: 04-demand/generation-algorithm.md
+    - Inter-arrival time generator: 04-demand/iat-generator.md
+    - GTU characteristics generator: 04-demand/gtu-characteristics.md
+    - Positions: 04-demand/positions.md
+    - Room checker: 04-demand/room-checker.md
+    - Traffic from OD matrix: 04-demand/traffic-od.md
+  - 5. Perception:
+    - Introduction: 05-perception/introduction.md
+    - Headway information: 05-perception/headway.md
+    - Categorical perception: 05-perception/categorial.md
+    - Mental models: 05-perception/mental.md
+    - Lane structure: 05-perception/lane-structure.md
+    - Iterables and collectors: 05-perception/iterables-collectors.md
+    - Historical information: 05-perception/historical.md
+  - 6. Behavioral models:
+    - Introduction: 06-behavior/introduction.md
+    - Strategical planner: 06-behavior/strategical-planner.md
+    - Tactical planner: 06-behavior/tactical-planner.md
+    - Lane-change model: 06-behavior/lane-change.md
+    - Parameters: 06-behavior/parameters.md
+  - 7. Simulation output:
+    - Trajectory data: 07-output/trajectory-data.md
+    - Performance indicators: 07-output/indicators.md
+    - Detector data: 07-output/detector-data.md
+    - Custom data: 07-output/custom-data.md
+  - 8. Tutorials:
+    - Tutorial overview: 08-tutorials/index.md
+    - Simulation setup: 08-tutorials/simulation-setup.md
+    - Development: 08-tutorials/development.md
+    - Visualization: 08-tutorials/visualization.md
+  - 9. Troubleshooting:
+    - Common issues with OTS: 09-troubleshooting/troubleshooting.md
+  - 10. References:
+    - Reference list: 10-references/references.md
+  - Appendix A. Conflict areas:
+    - Automatic derivation: 99-appendix-a/conflict-areas.md
+    
+ 

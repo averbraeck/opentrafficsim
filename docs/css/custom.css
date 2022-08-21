@@ -1,0 +1,39 @@
+.wy-nav-content {
+  max-width: 1200px;
+}
+
+.rst-content code {
+  color: black;
+}
+
+img {
+  display: block;
+  margin: auto;
+}
+
+table td, table th {
+  white-space: normal;
+}
+
+.wy-table-responsive table td, .wy-table-responsive table th {
+  white-space: normal;
+}
+
+.wy-menu-vertical a.nav_collapse {
+  display: none;
+}
+
+.wy-menu-vertical a span {
+  color: #55a5d9;
+  display: block;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 110%;
+  white-space: nowrap;
+  position: relative;
+}
+
+.wy-menu-vertical p.caption {
+  padding: 0 0 0 0;
+  font-size: 100%;
+}
