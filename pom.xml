@@ -3,7 +3,7 @@
 
   <groupId>org.opentrafficsim</groupId>
   <artifactId>ots</artifactId>
-  <version>1.05.01-SNAPSHOT</version>
+  <version>1.6.0</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
