@@ -34,11 +34,6 @@
       <groupId>dsol</groupId>
       <artifactId>dsol-animation-gis</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>com.bric</groupId>
-      <artifactId>multislider</artifactId>
-    </dependency>
     
   </dependencies>
 </project>

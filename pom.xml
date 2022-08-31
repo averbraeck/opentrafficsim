@@ -40,17 +40,18 @@
     <jdk.version>11</jdk.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.release>11</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
-    <tinylog.version>1.3.6</tinylog.version>
     <ots.version>${project.version}</ots.version>
+    <tinylog.version>1.3.6</tinylog.version>
     <djunits.version>4.01.07</djunits.version>
     <djutils.version>1.06.30</djutils.version>
     <dsol.version>3.08.00</dsol.version>
     <sim0mq.version>2.00.04</sim0mq.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.2</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <geotools.version>26.2</geotools.version>
     <jts.version>1.17.0</jts.version>
@@ -63,10 +64,10 @@
     <ojalgo.version>50.0.2</ojalgo.version>
     <osm.version>0.48.3</osm.version>
     <xstream.version>1.4.19</xstream.version>
-    <!-- powermock.version>2.0.7</powermock.version -->
     <mockito.version>3.5.2</mockito.version>
     <protobuf.version>3.19.4</protobuf.version>
     <jaxb.version>2.3.1</jaxb.version>
+    <javax.annotation.version>1.3.2</javax.annotation.version>
 
     <maven.compiler.version>3.10.1</maven.compiler.version>
     <maven.site.version>3.12.1</maven.site.version>
@@ -87,878 +88,35 @@
     <maven.taglist.version>3.0.0</maven.taglist.version>
     <maven.pmd.version>3.17.0</maven.pmd.version>
     <maven.changes.version>2.12.1</maven.changes.version>
-
     <maven.deploy.version>3.0.0</maven.deploy.version>
-    <wagon.maven.version>2.0.0</wagon.maven.version>
-    <wagon.ssh.version>3.4.1</wagon.ssh.version>
-    <wagon.ftp.version>3.4.1</wagon.ftp.version>
-    
-    <maven-jaxb2.version>0.14.0</maven-jaxb2.version>
-
+    <nexus-staging.version>1.6.7</nexus-staging.version>
+    <maven.gpg.version>1.5</maven.gpg.version>
+    <flatten.maven.version>1.3.0</flatten.maven.version>
+    <maven-jaxb2.version>0.15.1</maven-jaxb2.version>
   </properties>
-
-  
-  <!-- Build Settings -->
-
-  <build>
-    <directory>target</directory>
-    <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-    <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
-    <outputDirectory>${basedir}/target/classes</outputDirectory>
-    <testOutputDirectory> ${basedir}/target/test-classes</testOutputDirectory>
-
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-        <targetPath>${project.build.directory}/classes/resources</targetPath>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>${basedir}/src/test/resources</directory>
-        <targetPath>${project.build.directory}/test-classes/resources</targetPath>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>${basedir}/src/main/resources</directory>
-        <targetPath>${project.build.directory}/test-classes/resources</targetPath>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-    </testResources>
-
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ssh</artifactId>
-        <version>${wagon.ssh.version}</version>
-      </extension>
-
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ftp</artifactId>
-        <version>${wagon.ftp.version}</version>
-      </extension>
-
-    </extensions>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.compiler.version}</version>
-        <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven.resources.version}</version>
-        <executions>
-          <execution>
-            <id>default-resources</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${basedir}/src/main/resources</directory>
-                </resource>
-              </resources>
-              <outputDirectory>${basedir}/target/classes</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>default-testResources</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${basedir}/src/test/resources</directory>
-                </resource>
-              </resources>
-              <outputDirectory>${basedir}/target/test-classes</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>testResources main</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${basedir}/src/main/resources</directory>
-                </resource>
-              </resources>
-              <outputDirectory>${basedir}/target/test-classes</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>${maven.site.version}</version>
-        <configuration>
-          <chmod>true</chmod>
-          <relativizeDecorationLinks>false</relativizeDecorationLinks>
-          <inputEncoding>UTF-8</inputEncoding>
-          <outputEncoding>UTF-8</outputEncoding>
-          <templateDirectory>src/site</templateDirectory>
-          <template>site.vm</template>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-descriptor</id>
-            <goals>
-              <goal>attach-descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>${maven.deploy.version}</version>
-      </plugin>
-
-      <!-- copy files starting with a period in the jacoco folder to the right site location. Normally, files starting with 
-        tilde, period or underscore are not copied. These files are also not taken into account when trying to the pages in a subfolder 
-        of a Drupal sile, as files and folders starting with a period are filtered with a rewrite rule: 
-          RewriteRule "(^|/)\." - [F] 
-        To undo this rewrite rule, add a .htaccess file in the site folder with as content: 
-          RewriteRule "(^|/)\." - [L] 
-        Potentially, there is also a line with Options +Indexes in the .htaccess file. -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>wagon-maven-plugin</artifactId>
-        <version>${wagon.maven.version}</version>
-        <executions>
-
-          <execution>
-            <id>upload-jacoco-dot-files</id>
-            <phase>site-deploy</phase>
-            <goals>
-              <goal>upload</goal>
-            </goals>
-            <configuration>
-              <fromDir>${basedir}/target/site/jacoco-ut</fromDir>
-              <includes>.*, .resources/*</includes>
-              <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${project.version}/${project.artifactId}</url>
-              <toDir>jacoco-ut</toDir>
-              <serverId>ots-deployment</serverId>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>upload-license</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>upload</goal>
-            </goals>
-            <configuration>
-              <fromDir>${basedir}/src/main/resources</fromDir>
-              <includes>license.html</includes>
-              <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
-              <toDir>${project.version}</toDir>
-              <serverId>ots-deployment</serverId>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>upload-last-site</id>
-            <phase>site-deploy</phase>
-            <goals>
-              <goal>sshexec</goal>
-            </goals>
-            <configuration>
-              <url>scp://opentrafficsim.org/home/web/opentrafficsim.org</url>
-              <serverId>ots-deployment</serverId>
-              <commands>
-                <command>cp -f /home/web/opentrafficsim.org/docs/${project.version}/${project.artifactId}/apidocs/element-list /home/web/opentrafficsim.org/docs/${project.version}/${project.artifactId}/apidocs/package-list | true</command>
-                <command>rm -r -f /home/web/opentrafficsim.org/docs/v1</command>
-                <command>mkdir -p /home/web/opentrafficsim.org/docs/v1</command>
-                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/v1</command>
-              </commands>
-            </configuration>
-          </execution>
-
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>${maven.install.version}</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>${maven.source.version}</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven.javadoc.version}</version>
-
-        <configuration>
-          <links>
-            <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
-            <link>http://www.jfree.org/jcommon/api/</link>
-            <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
-            <link>https://junit.org/junit4/javadoc/4.12/</link>
-            <!-- link>https://xerces.apache.org/xerces2-j/javadocs/api</link -->
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-animation/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</link>
-            <link>https://tinylog.org/v1/javadoc/</link>
-            <link>https://djunits.org/docs/current/apidocs/</link>
-            <link>https://djutils.org/docs/current/djutils/apidocs/</link>
-            <link>https://djutils.org/docs/current/djutils-serialization/apidocs/</link>
-            <link>https://djutils.org/docs/current/djutils-cli/apidocs/</link>
-            <link>http://www.jdom.org/docs/apidocs/</link>
-            <link>https://dst.lbl.gov/ACSSoftware/colt/api/</link>
-            <link>https://sim0mq.org/docs/current/apidocs/</link>
-            <link>http://docs.geotools.org/stable/javadocs/</link>
-            <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.15.1/documentation/</link>
-            <link>http://osm2world.org/docs/javadoc/</link>
-            <link>http://poi.apache.org/apidocs/4.0/</link>
-            <!-- BUG JDK 11 link>https://jgrapht.org/javadoc/</link -->
-            <link>http://javadoc.scijava.org/ojAlgo/</link>
-          </links>
-          <offlineLinks>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-base/apidocs/</url>
-              <location>${project.build.directory}/../ots-base/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-core/apidocs/</url>
-              <location>${project.build.directory}/../ots-core/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-road/apidocs/</url>
-              <location>${project.build.directory}/../ots-road/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-water/apidocs/</url>
-              <location>${project.build.directory}/../ots-water/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-animation/apidocs/</url>
-              <location>${project.build.directory}/../ots-animation/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-draw/apidocs/</url>
-              <location>${project.build.directory}/../ots-draw/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-swing/apidocs/</url>
-              <location>${project.build.directory}/../ots-swing/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-web/apidocs/</url>
-              <location>${project.build.directory}/../ots-web/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-demo/apidocs/</url>
-              <location>${project.build.directory}/../ots-demo/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-kpi/apidocs/</url>
-              <location>${project.build.directory}/../ots-kpi/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-sim0mq/apidocs/</url>
-              <location>${project.build.directory}/../ots-sim0mq/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-sim0mq-kpi/apidocs/</url>
-              <location>${project.build.directory}/../ots-sim0mq-kpi/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-sim0mq-swing/apidocs/</url>
-              <location>${project.build.directory}/../ots-sim0mq-swing/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-trafficcontrol/apidocs/</url>
-              <location>${project.build.directory}/../ots-trafficcontrol/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-aimsun/apidocs/</url>
-              <location>${project.build.directory}/../ots-aimsun/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-aimsun-proto/apidocs/</url>
-              <location>${project.build.directory}/../ots-aimsun-proto/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-aimsun-demo/apidocs/</url>
-              <location>${project.build.directory}/../ots-aimsun-demo/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-xsd/apidocs/</url>
-              <location>${project.build.directory}/../ots-xsd/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-xml/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-xml/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-xsd-opendrive/apidocs/</url>
-              <location>${project.build.directory}/../ots-xsd-opendrive/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-opendrive/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-opendrive/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-osm/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-osm/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-shape/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-shape/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-xsd-vissim/apidocs/</url>
-              <location>${project.build.directory}/../ots-xsd-vissim/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-vissim/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-vissim/target/apidocs</location>
-            </offlineLink>
-          </offlineLinks>
-
-          <minmemory>256m</minmemory>
-          <maxmemory>1g</maxmemory>
-
-          <detectJavaApiLink>false</detectJavaApiLink>
-          <failOnError>false</failOnError>
-
-        </configuration>
-
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-
-      </plugin>
-
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven.checkstyle.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.opentrafficsim</groupId>
-            <artifactId>ots-build-tools</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>${checkstyle.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven.surefire.version}</version>
-        <configuration>
-          <!-- TEMPORARY !!!!! -->
-          <testFailureIgnore>true</testFailureIgnore>
-          <!-- Sets the VM argument line used when unit tests are run. -->
-          <argLine>${surefireArgLine}</argLine>
-          <!-- Skips unit tests if the value of skip.unit.tests property is true -->
-          <skipTests>${skip.unit.tests}</skipTests>
-          <!-- Excludes integration tests when unit tests are run. -->
-          <excludes>
-            <exclude>**/IT*.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${maven.failsafe.version}</version>
-        <executions>
-          <!-- Ensures that both integration-test and verify goals of the Failsafe Maven plugin are executed. -->
-          <execution>
-            <id>integration-tests</id>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-            <configuration>
-	          <!-- TEMPORARY !!!!! -->
-              <testFailureIgnore>true</testFailureIgnore>
-              <!-- Sets the VM argument line used when integration tests are run. -->
-              <argLine>${failsafeArgLine}</argLine>
-              <!-- Skips integration tests if the value of skip.integration.tests property is true -->
-              <skipTests>${skip.integration.tests}</skipTests>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${maven.jacoco.version}</version>
-        <executions>
-
-          <!-- Prepares the property pointing to the JaCoCo runtime agent which is passed as VM argument when Maven the Surefire 
-            plugin is executed. -->
-          <execution>
-            <id>pre-unit-test</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-            <configuration>
-              <!-- Sets the path to the file which contains the execution data. -->
-              <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
-              <!-- Sets the name of the property containing the settings for JaCoCo runtime agent. -->
-              <propertyName>surefireArgLine</propertyName>
-            </configuration>
-          </execution>
-
-          <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run. -->
-          <execution>
-            <id>post-unit-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-            <configuration>
-              <!-- Sets the path to the file which contains the execution data. -->
-              <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
-              <!-- Sets the output directory for the code coverage report. -->
-              <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-            </configuration>
-          </execution>
-
-        </executions>
-      </plugin>
-
-    </plugins>
-
-  </build>
-
-  <reporting>
-    <outputDirectory>${basedir}/target/site</outputDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>${maven.project-info-reports.version}</version>
-        <configuration>
-          <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
-          <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>index</report>
-              <report>summary</report>
-              <report>dependencies</report>
-              <report>team</report>
-              <report>mailing-lists</report>
-              <report>licenses</report>
-              <report>scm</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven.javadoc.version}</version>
-
-        <configuration>
-          <links>
-            <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
-            <link>http://www.jfree.org/jcommon/api/</link>
-            <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
-            <link>https://junit.org/junit4/javadoc/4.12/</link>
-            <!-- link>https://xerces.apache.org/xerces2-j/javadocs/api</link -->
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-animation/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</link>
-            <link>https://tinylog.org/v1/javadoc/</link>
-            <link>https://djunits.org/docs/current/apidocs/</link>
-            <link>https://djutils.org/docs/current/djutils/apidocs/</link>
-            <link>https://djutils.org/docs/current/djutils-serialization/apidocs/</link>
-            <link>https://djutils.org/docs/current/djutils-cli/apidocs/</link>
-            <link>http://www.jdom.org/docs/apidocs/</link>
-            <link>https://dst.lbl.gov/ACSSoftware/colt/api/</link>
-            <link>https://sim0mq.org/docs/current/apidocs/</link>
-            <link>http://docs.geotools.org/stable/javadocs/</link>
-            <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.15.1/documentation/</link>
-            <link>http://osm2world.org/docs/javadoc/</link>
-            <link>http://poi.apache.org/apidocs/4.0/</link>
-            <!-- BUG JDK 11 link>https://jgrapht.org/javadoc/</link -->
-            <link>http://javadoc.scijava.org/ojAlgo/</link>
-          </links>
-          <offlineLinks>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-base/apidocs/</url>
-              <location>${project.build.directory}/../ots-base/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-core/apidocs/</url>
-              <location>${project.build.directory}/../ots-core/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-road/apidocs/</url>
-              <location>${project.build.directory}/../ots-road/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-water/apidocs/</url>
-              <location>${project.build.directory}/../ots-water/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-animation/apidocs/</url>
-              <location>${project.build.directory}/../ots-animation/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-draw/apidocs/</url>
-              <location>${project.build.directory}/../ots-draw/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-swing/apidocs/</url>
-              <location>${project.build.directory}/../ots-swing/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-web/apidocs/</url>
-              <location>${project.build.directory}/../ots-web/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-demo/apidocs/</url>
-              <location>${project.build.directory}/../ots-demo/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-kpi/apidocs/</url>
-              <location>${project.build.directory}/../ots-kpi/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-sim0mq/apidocs/</url>
-              <location>${project.build.directory}/../ots-sim0mq/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-sim0mq-kpi/apidocs/</url>
-              <location>${project.build.directory}/../ots-sim0mq-kpi/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-sim0mq-swing/apidocs/</url>
-              <location>${project.build.directory}/../ots-sim0mq-swing/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-trafficcontrol/apidocs/</url>
-              <location>${project.build.directory}/../ots-trafficcontrol/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-aimsun/apidocs/</url>
-              <location>${project.build.directory}/../ots-aimsun/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-aimsun-proto/apidocs/</url>
-              <location>${project.build.directory}/../ots-aimsun-proto/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-aimsun-demo/apidocs/</url>
-              <location>${project.build.directory}/../ots-aimsun-demo/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-xsd/apidocs/</url>
-              <location>${project.build.directory}/../ots-xsd/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-xml/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-xml/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-xsd-opendrive/apidocs/</url>
-              <location>${project.build.directory}/../ots-xsd-opendrive/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-opendrive/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-opendrive/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-osm/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-osm/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-shape/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-shape/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-xsd-vissim/apidocs/</url>
-              <location>${project.build.directory}/../ots-xsd-vissim/target/apidocs</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/v1/ots-parser-vissim/apidocs/</url>
-              <location>${project.build.directory}/../ots-parser-vissim/target/apidocs</location>
-            </offlineLink>
-          </offlineLinks>
-
-          <minmemory>256m</minmemory>
-          <maxmemory>1g</maxmemory>
-
-          <detectJavaApiLink>false</detectJavaApiLink>
-          <detectLinks>true</detectLinks>
-          <failOnError>false</failOnError>
-
-        </configuration>
-
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>javadoc</report>
-            </reports>
-          </reportSet>
-          <reportSet>
-            <id>test-html</id>
-            <reports>
-              <report>test-javadoc</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>${maven.jxr.version}</version>
-        <configuration>
-          <skipEmptyReport>false</skipEmptyReport>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven.checkstyle.version}</version>
-        <configuration>
-          <configLocation>development/dsol-checks.xml</configLocation>
-          <suppressionsLocation>development/checkstyle_suppressions.xml</suppressionsLocation>
-          <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <configuration>
-              <enableRulesSummary>true</enableRulesSummary>
-            </configuration>
-            <reports>
-              <report>checkstyle</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>${maven.surefire-report.version}</version>
-        <configuration>
-          <argLine>-XX:MaxPermSize=4096m -Xmx4096m</argLine>
-        </configuration>
-      </plugin>
-
-      <!-- Cobertura test coverage report -->
-      <!-- plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-        <version>${maven.cobertura.version}</version>
-      </plugin -->
-
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${maven.jacoco.version}</version>
-        <configuration>
-          <skipEmptyReport>false</skipEmptyReport>
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <inherited>true</inherited>
-            <reports>
-              <report>report</report>
-            </reports>
-            <configuration>
-              <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
-              <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-            </configuration>
-          </reportSet>
-          <!-- Turn this on when JaCoCo Integration tests are run. Otherwise, the unit test report is also not generated. -->
-          <!-- reportSet -->
-          <!-- inherited>true</inherited -->
-          <!-- reports -->
-          <!-- report>report</report -->
-          <!-- /reports -->
-          <!-- configuration -->
-          <!-- dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile -->
-          <!-- outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory -->
-          <!-- /configuration -->
-          <!-- /reportSet -->
-        </reportSets>
-      </plugin>
-
-      <!-- to dos -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>taglist-maven-plugin</artifactId>
-        <version>${maven.taglist.version}</version>
-        <configuration>
-          <tagListOptions>
-            <tagClasses>
-              <tagClass>
-                <displayName>Open issues in the code</displayName>
-                <tags>
-                  <tag>
-                    <matchString>TODO</matchString>
-                    <matchType>exact</matchType>
-                  </tag>
-                  <tag>
-                    <matchString>FIXME</matchString>
-                    <matchType>exact</matchType>
-                  </tag>
-                  <tag>
-                    <matchString>XXX</matchString>
-                    <matchType>exact</matchType>
-                  </tag>
-                </tags>
-              </tagClass>
-            </tagClasses>
-          </tagListOptions>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${maven.spotbugs.version}</version>
-        <configuration>
-          <dependencies>
-            <dependency>
-              <groupId>com.github.spotbugs</groupId>
-              <artifactId>spotbugs</artifactId>
-              <version>${spotbugs.version}</version>
-            </dependency>
-          </dependencies>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${maven.pmd.version}</version>
-        <configuration>
-          <targetJdk>${jdk.version}</targetJdk>
-          <skipEmptyReport>false</skipEmptyReport>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
-        <version>${maven.changes.version}</version>
-        <configuration>
-          <escapeHTML>false</escapeHTML>
-          <xmlPath>ots/src/changes/changes.xml</xmlPath>
-          <issueManagementSystems>
-            <issueManagementSystem>jira</issueManagementSystem>
-          </issueManagementSystems>
-          <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-
-    </plugins>
-  </reporting>
-
 
 
   <!-- dependency versions for all projects -->
 
   <dependencies>
     <dependency>
+      <groupId>org.tinylog</groupId>
+      <artifactId>tinylog</artifactId>
+      <version>${tinylog.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>${javax.annotation.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <version>${powermock.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <version>${powermock.version}</version>
-      <scope>test</scope>
-    </dependency -->
 
     <dependency>
       <groupId>org.mockito</groupId>
@@ -967,14 +125,7 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.tinylog</groupId>
-      <artifactId>tinylog</artifactId>
-      <version>${tinylog.version}</version>
-    </dependency>
-
   </dependencies>
-
 
 
   <!-- Dependencies for the subprojects -->
@@ -1127,24 +278,6 @@
 
       <dependency>
         <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-rail</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-water</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-multimodal</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-animation</artifactId>
         <version>${ots.version}</version>
       </dependency>
@@ -1194,78 +327,6 @@
       <dependency>
         <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-parser-xml</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-xsd-opendrive</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-parser-opendrive</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-parser-osm</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-parser-shape</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-xsd-vissim</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-parser-vissim</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-imb</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-imb-road</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-imb-kpi</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-aimsun</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-aimsun-proto</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-aimsun-demo</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
@@ -1342,18 +403,6 @@
       </dependency>
 
       <dependency>
-        <groupId>com.bric</groupId>
-        <artifactId>multislider</artifactId>
-        <version>${multislider.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.ojalgo</groupId>
-        <artifactId>ojalgo</artifactId>
-        <version>${ojalgo.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.openstreetmap.osmosis</groupId>
         <artifactId>osmosis-core</artifactId>
         <version>${osm.version}</version>
@@ -1400,87 +449,665 @@
         <artifactId>jaxb-runtime</artifactId>
         <version>${jaxb.version}</version>
       </dependency>
-    
-      <!-- dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-core</artifactId>
-        <version>${jaxb.version}</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>${jaxb.version}</version>
-      </dependency -->
 
     </dependencies>
   </dependencyManagement>
 
-  <!-- More Project Information -->
+  
+  <!-- Build Settings -->
 
-  <repositories>
+  <build>
+    <directory>target</directory>
+    <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+    <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+    <outputDirectory>${basedir}/target/classes</outputDirectory>
+    <testOutputDirectory> ${basedir}/target/test-classes</testOutputDirectory>
+
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <targetPath>${project.build.directory}/classes/resources</targetPath>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+        <targetPath>${project.build.directory}/test-classes/resources</targetPath>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/main/resources</directory>
+        <targetPath>${project.build.directory}/test-classes/resources</targetPath>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.version}</version>
+        <configuration>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven.resources.version}</version>
+        <executions>
+          <execution>
+            <id>default-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/src/main/resources</directory>
+                </resource>
+              </resources>
+              <outputDirectory>${basedir}/target/classes/resources</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-testResources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/src/test/resources</directory>
+                </resource>
+              </resources>
+              <outputDirectory>${basedir}/target/test-classes/resources</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>testResources main</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/src/main/resources</directory>
+                </resource>
+              </resources>
+              <outputDirectory>${basedir}/target/test-classes/resources</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>${maven.install.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${maven.source.version}</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven.javadoc.version}</version>
+        <configuration>
+          <links>
+            <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
+            <link>http://www.jfree.org/jcommon/api/</link>
+            <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
+            <link>https://junit.org/junit4/javadoc/4.12/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-base/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-naming/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-interpreter/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-introspection/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-core/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-swing/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-web/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-demo/apidocs/</link>
+            <link>https://tinylog.org/v1/javadoc/</link>
+            <link>https://djunits.org/docs/latest/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-serialization/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-cli/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-draw/apidocs/</link>
+            <link>http://www.jdom.org/docs/apidocs/</link>
+            <link>https://sim0mq.org/docs/latest/apidocs/</link>
+            <link>http://docs.geotools.org/stable/javadocs/</link>
+            <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.15.1/documentation/</link>
+            <link>http://osm2world.org/docs/javadoc/</link>
+            <link>http://poi.apache.org/apidocs/4.0/</link>
+            <!-- BUG JDK 11 link>https://jgrapht.org/javadoc/</link -->
+            <link>http://javadoc.scijava.org/ojAlgo/</link>
+          </links>
+          <minmemory>256m</minmemory>
+          <maxmemory>1g</maxmemory>
+          <show>package</show>
+          <stylesheetfile>${basedir}/config/javadoc/stylesheet.css</stylesheetfile>
+          <detectJavaApiLink>false</detectJavaApiLink>
+          <detectOfflineLinks>true</detectOfflineLinks>
+          <detectLinks>false</detectLinks>
+          <release>${jdk.version}</release>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven.checkstyle.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.version}</version>
+        <configuration>
+          <runOrder>alphabetical</runOrder>
+          <!-- Sets the VM argument line used when unit tests are run. -->
+          <argLine>${surefireArgLine}</argLine>
+          <!-- Skips unit tests if the value of skip.unit.tests property is true -->
+          <skipTests>${skip.unit.tests}</skipTests>
+          <!-- Excludes integration tests when unit tests are run. -->
+          <excludes>
+            <exclude>**/IT*.java</exclude>
+          </excludes>
+          <!-- Make sure every unit test is run as a separate process to avoid static leaks between tests -->
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven.failsafe.version}</version>
+        <executions>
+          <!-- Ensures that both integration-test and verify goals of the Failsafe Maven plugin are executed. -->
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <!-- Sets the VM argument line used when integration tests are run. -->
+              <argLine>${failsafeArgLine}</argLine>
+              <!-- Skips integration tests if the value of skip.integration.tests property is true -->
+              <skipTests>${skip.integration.tests}</skipTests>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${maven.jacoco.version}</version>
+        <executions>
+
+          <!-- Prepares the property pointing to the JaCoCo runtime agent which is passed as VM argument when Maven the Surefire
+            plugin is executed. -->
+          <execution>
+            <id>pre-unit-test</id>
+            <!-- phase>pre-integration-test</phase -->
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <!-- Sets the path to the file which contains the execution data. -->
+              <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+              <!-- Sets the name of the property containing the settings for JaCoCo runtime agent. -->
+              <propertyName>surefireArgLine</propertyName>
+            </configuration>
+          </execution>
+
+          <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run. -->
+          <execution>
+            <id>post-unit-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <!-- Sets the path to the file which contains the execution data. -->
+              <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+              <!-- Sets the output directory for the code coverage report. -->
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>${flatten.maven.version}</version>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>oss</flattenMode>
+          <pomElements>
+            <distributionManagement>remove</distributionManagement>
+            <repositories>remove</repositories>
+          </pomElements>
+        </configuration>
+        <executions>
+          <!-- enable flattening -->
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+          <!-- ensure proper cleanup -->
+          <execution>
+            <id>flatten.clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${maven.site.version}</version>
+        <configuration>
+          <chmod>true</chmod>
+          <relativizeDecorationLinks>false</relativizeDecorationLinks>
+          <inputEncoding>UTF-8</inputEncoding>
+          <outputEncoding>UTF-8</outputEncoding>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-descriptor</id>
+            <goals>
+              <goal>attach-descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>${maven.deploy.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>${maven.taglist.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>${maven.project-info-reports.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>${maven.surefire-report.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${maven.spotbugs.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${maven.pmd.version}</version>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+  <reporting>
+    <outputDirectory>${basedir}/target/site</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>${maven.project-info-reports.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>summary</report>
+              <report>dependencies</report>
+              <report>team</report>
+              <report>mailing-lists</report>
+              <report>licenses</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven.javadoc.version}</version>
+
+        <configuration>
+          <links>
+            <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
+            <link>http://www.jfree.org/jcommon/api/</link>
+            <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
+            <link>https://junit.org/junit4/javadoc/4.12/</link>
+            <!-- link>https://xerces.apache.org/xerces2-j/javadocs/api</link -->
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-base/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-naming/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-interpreter/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-introspection/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-core/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-swing/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-web/apidocs/</link>
+            <link>https://simulation.tudelft.nl/dsol/docs/latest/dsol-demo/apidocs/</link>
+            <link>https://tinylog.org/v1/javadoc/</link>
+            <link>https://djunits.org/docs/latest/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-serialization/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-cli/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-draw/apidocs/</link>
+            <link>http://www.jdom.org/docs/apidocs/</link>
+            <link>https://sim0mq.org/docs/latest/apidocs/</link>
+            <link>http://docs.geotools.org/stable/javadocs/</link>
+            <link>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.15.1/documentation/</link>
+            <link>http://osm2world.org/docs/javadoc/</link>
+            <link>http://poi.apache.org/apidocs/4.0/</link>
+            <!-- BUG JDK 11 link>https://jgrapht.org/javadoc/</link -->
+            <link>http://javadoc.scijava.org/ojAlgo/</link>
+          </links>
+          <minmemory>256m</minmemory>
+          <maxmemory>1g</maxmemory>
+          <show>package</show>
+          <stylesheetfile>${basedir}/config/javadoc/stylesheet.css</stylesheetfile>
+          <detectJavaApiLink>false</detectJavaApiLink>
+          <detectOfflineLinks>true</detectOfflineLinks>
+          <detectLinks>false</detectLinks>
+          <release>${jdk.version}</release>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>test-html</id>
+            <reports>
+              <report>test-javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>${maven.jxr.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven.checkstyle.version}</version>
+        <configuration>
+          <configLocation>/config/dsol-checks.xml</configLocation>
+          <suppressionsLocation>/config/checkstyle_suppressions.xml</suppressionsLocation>
+          <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <configuration>
+              <enableRulesSummary>true</enableRulesSummary>
+            </configuration>
+            <reports>
+              <report>checkstyle</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>${maven.surefire-report.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${maven.jacoco.version}</version>
+        <reportSets>
+          <reportSet>
+            <inherited>true</inherited>
+            <reports>
+              <report>report</report>
+            </reports>
+            <configuration>
+              <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+            </configuration>
+          </reportSet>
+          <!-- Turn this on when JaCoCo Integration tests are run. Otherwise,
+            the unit test report is also not generated. -->
+          <!-- reportSet -->
+          <!-- inherited>true</inherited -->
+          <!-- reports -->
+          <!-- report>report</report -->
+          <!-- /reports -->
+          <!-- configuration -->
+          <!-- dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile -->
+          <!-- outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory -->
+          <!-- /configuration -->
+          <!-- /reportSet -->
+        </reportSets>
+      </plugin>
+
+      <!-- todos -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>${maven.taglist.version}</version>
+        <configuration>
+          <tagListOptions>
+            <tagClasses>
+              <tagClass>
+                <displayName>Open issues in the code</displayName>
+                <tags>
+                  <tag>
+                    <matchString>TODO</matchString>
+                    <matchType>exact</matchType>
+                  </tag>
+                  <tag>
+                    <matchString>FIXME</matchString>
+                    <matchType>exact</matchType>
+                  </tag>
+                  <tag>
+                    <matchString>XXX</matchString>
+                    <matchType>exact</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+            </tagClasses>
+          </tagListOptions>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${maven.spotbugs.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${maven.pmd.version}</version>
+        <configuration>
+          <targetJdk>${jdk.version}</targetJdk>
+          <skipEmptyReport>false</skipEmptyReport>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>${maven.changes.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+    </plugins>
+  </reporting>
+
+
+  <!-- Profiles for deployment -->
+
+  <profiles>
+    <profile>
+
+      <id>release</id>
+
+      <build>
+
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>${nexus-staging.version}</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>${maven.deploy.version}</version>
+            <executions>
+              <execution>
+                <id>default-deploy</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${maven.gpg.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <!-- do not ask for passphrase manually -->
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+
+      </build>
+    </profile>
+  </profiles>
+
+  <!-- Deployment settings -->
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
     <repository>
-      <name>OTS Repository</name>
-      <id>ots</id>
-      <url>https://opentrafficsim.org/maven</url>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
+  </distributionManagement>
 
-    <repository>
-      <name>DSOL Public Repository</name>
-      <id>dsol</id>
-      <url>https://simulation.tudelft.nl/maven</url>
-    </repository>
+  <scm>
+    <connection>scm:git:git://github.com/averbraeck/opentrafficsim2.git</connection>
+    <developerConnection>scm:git:ssh://github.com:averbraeck/opentrafficsim2.git</developerConnection>
+    <url>https://github.com/averbraeck/opentrafficsim2/tree/master</url>
+  </scm>
 
-    <repository>
-      <name>djunits Public Repository</name>
-      <id>djunits</id>
-      <url>https://djunits.org/maven/</url>
-    </repository>
-
-    <repository>
-      <name>djutils Public Repository</name>
-      <id>djutils</id>
-      <url>https://djutils.org/maven</url>
-    </repository>
-
-    <repository>
-      <name>sim0mq Public Repository</name>
-      <id>sim0mq</id>
-      <url>https://sim0mq.org/maven</url>
-    </repository>
-
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>apache</id>
-      <name>apache</name>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </repository>
-
-    <!--repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>osgeo</id>
-      <name>osgeo</name>
-      <url>https://repo.osgeo.org/repository/release/</url>
-    </repository-->
-
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>jboss</id>
-      <name>jboss</name>
-      <url>https://repository.jboss.org/maven2/</url>
-    </repository>
-
-  </repositories>
 
   <licenses>
     <license>
-      <name>BSD-style license</name>
+      <name>BSD-3 style license</name>
       <url>https://opentrafficsim.org/docs/license.html</url>
       <distribution>repo</distribution>
     </license>
@@ -1499,19 +1126,6 @@
         <role>architect</role>
         <role>developer</role>
         <role>maintainance</role>
-      </roles>
-    </developer>
-
-    <developer>
-      <id>hvanlint</id>
-      <name>Hans van Lint</name>
-      <email>a.verbraeck@tudelft.nl</email>
-      <url>https://hansvanlint.weblog.tudelft.nl/</url>
-      <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
-      <timezone>1</timezone>
-      <roles>
-        <role>architect</role>
       </roles>
     </developer>
 
@@ -1550,6 +1164,18 @@
 
   <contributors>
     <contributor>
+      <name>Hans van Lint</name>
+      <email>a.verbraeck@tudelft.nl</email>
+      <url>https://hansvanlint.weblog.tudelft.nl/</url>
+      <organization>Delft University of Technology, the Netherlands</organization>
+      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
+      <timezone>1</timezone>
+      <roles>
+        <role>architect</role>
+      </roles>
+    </contributor>
+
+    <contributor>
       <name>Guus Tamminga</name>
       <email>g.f.tamminga@tudelft.nl</email>
       <url>https://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/drs-guus-tamminga-msc/</url>
@@ -1562,49 +1188,5 @@
       </roles>
     </contributor>
   </contributors>
-  
-
-  <!-- Environment Settings -->
-
-  <issueManagement>
-    <system>jira</system>
-    <url>http://simulation.tudelft.nl:8085/browse/</url>
-  </issueManagement>
-
-
-  <!-- In order for distributionManagement to work, include the following
-    in local settings.xml:
-    <servers>
-      <server>
-        <id>ots-deployment</id>
-        <username>ots</username>
-        <password>(if wanted)</password>
-      </server>
-    </servers>
-  -->
-
-
-  <distributionManagement>
-    <downloadUrl>https://opentrafficsim.org/maven</downloadUrl>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>ots-deployment</id>
-      <name>open traffic sim repository</name>
-      <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/maven</url>
-      <layout>default</layout>
-    </repository>
-    <snapshotRepository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>ots-deployment</id>
-      <name>open traffic sim snapshot repository</name>
-      <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/maven</url>
-      <layout>default</layout>
-    </snapshotRepository>
-    <site>
-      <id>ots-deployment</id>
-      <name>open traffic sim website</name>
-      <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}</url>
-    </site>
-  </distributionManagement>
 
 </project>
