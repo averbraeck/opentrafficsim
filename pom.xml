@@ -17,46 +17,32 @@
 
   <inceptionYear>2014</inceptionYear>
 
-  <profiles>
-    <!-- select profiles with -P option, e.g. "mvn install -P all" -->
-    <profile>
-      <id>all</id>
-      <activation>
-        <property>
-          <name>all</name>
-        </property>
-      </activation>
-      <modules>
-        <module>ots-base</module>
-        <module>ots-core</module>
-        <module>ots-kpi</module>
-        <module>ots-road</module>
-        <module>ots-trafficcontrol</module>
-        <module>ots-rail</module>
-        <module>ots-water</module>
-        <module>ots-multimodal</module>
-        <module>ots-animation</module>
-        <module>ots-draw</module>
-        <module>ots-swing</module>
-        <module>ots-web</module>
-        <module>ots-sim0mq</module>
-        <module>ots-sim0mq-kpi</module>
-        <module>ots-sim0mq-swing</module>
-        <module>ots-xsd</module>
-        <module>ots-parser-xml</module>
-        <module>ots-demo</module>
-        <module>ots-xsd-opendrive</module>
-        <module>ots-parser-opendrive</module>
-        <module>ots-parser-osm</module>
-        <module>ots-parser-shape</module>
-        <module>ots-xsd-vissim</module>
-        <module>ots-parser-vissim</module>
-        <module>ots-aimsun</module>
-        <module>ots-aimsun-proto</module>
-        <module>ots-aimsun-demo</module>
-      </modules>
-    </profile>
-  </profiles>
+  <modules>
+    <module>ots-base</module>
+    <module>ots-core</module>
+    <module>ots-kpi</module>
+    <module>ots-road</module>
+    <module>ots-trafficcontrol</module>
+    <module>ots-rail</module>
+    <module>ots-water</module>
+    <module>ots-multimodal</module>
+    <module>ots-animation</module>
+    <module>ots-draw</module>
+    <module>ots-swing</module>
+    <module>ots-web</module>
+    <module>ots-sim0mq</module>
+    <module>ots-sim0mq-kpi</module>
+    <module>ots-sim0mq-swing</module>
+    <module>ots-xsd</module>
+    <module>ots-parser-xml</module>
+    <module>ots-demo</module>
+    <module>ots-xsd-opendrive</module>
+    <module>ots-parser-opendrive</module>
+    <module>ots-parser-osm</module>
+    <module>ots-parser-shape</module>
+    <module>ots-xsd-vissim</module>
+    <module>ots-parser-vissim</module>
+  </modules>
 
   <properties>
 
