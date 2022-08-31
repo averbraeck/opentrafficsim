@@ -132,17 +132,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>java3d</groupId>
-        <artifactId>vecmath</artifactId>
-        <version>${java3d.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>java3d</groupId>
-        <artifactId>j3d-core</artifactId>
-        <version>${java3d.version}</version>
-      </dependency>
 
       <dependency>
         <groupId>org.djunits</groupId>
