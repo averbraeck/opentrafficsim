@@ -50,7 +50,7 @@
     <djunits.version>5.0.1</djunits.version>
     <djutils.version>2.0.1</djutils.version>
     <dsol.version>3.08.00</dsol.version>
-    <sim0mq.version>2.00.04</sim0mq.version>
+    <sim0mq.version>2.1.0</sim0mq.version>
     <junit.version>4.13.2</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <geotools.version>26.2</geotools.version>
