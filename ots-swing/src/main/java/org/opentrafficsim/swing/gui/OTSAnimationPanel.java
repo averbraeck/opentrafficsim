@@ -45,6 +45,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -54,7 +55,6 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2D;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.GridPanel;
 import nl.tudelft.simulation.dsol.swing.animation.D2.InputListener;
@@ -884,7 +884,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          * @throws RemoteException on remote animation error
          * @throws DSOLException when simulator does not implement AnimatorInterface
          */
-        AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final SimulatorInterface<?, ?, ?> simulator,
+        AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSSimulatorInterface simulator,
                 final OTSNetwork network) throws RemoteException, DSOLException
         {
             super(new Bounds2d(extent.getMinX(), extent.getMaxX(), extent.getMinY(), extent.getMaxY()), simulator);

@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
@@ -25,8 +26,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d2.Angle;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Draw a car.
@@ -81,11 +82,11 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu LaneBasedGTU; the Car to draw
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGTU gtu, final SimulatorInterface.TimeDoubleUnit simulator)
+    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         this(gtu, simulator, null);
@@ -94,13 +95,13 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu LaneBasedGTU; the Car to draw
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @param gtuColorer GTUColorer; the GTUColorer that determines what fill color to use
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGTU gtu, final SimulatorInterface.TimeDoubleUnit simulator,
-            final GTUColorer gtuColorer) throws NamingException, RemoteException
+    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator, final GTUColorer gtuColorer)
+            throws NamingException, RemoteException
     {
         super(gtu, simulator);
         this.hashCode = gtu.hashCode();
@@ -228,10 +229,10 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
+    public void destroy(final Contextualized contextProvider)
     {
-        super.destroy(simulator);
-        this.text.destroy(simulator);
+        super.destroy(contextProvider);
+        this.text.destroy(contextProvider);
         this.isDestroyed = true;
     }
 
@@ -239,7 +240,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public ClonableRenderable2DInterface<LaneBasedGTU> clone(final LaneBasedGTU newSource,
-            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NamingException, RemoteException
+            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
         return new DefaultCarAnimation(newSource, newSimulator, this.gtuColorer);
@@ -295,12 +296,12 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
          * @param dy float; the vertical movement of the text, in meters
          * @param textAlignment TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
+                final TextAlignment textAlignment, final Color color, final OTSSimulatorInterface simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, simulator, TextAnimation.RENDERWHEN1);
@@ -313,14 +314,14 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
          * @param dy float; the vertical movement of the text, in meters
          * @param textAlignment TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @param background TextAnimation.ContrastToBackground; connection to retrieve the current background color
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("parameternumber")
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator,
+                final TextAlignment textAlignment, final Color color, final OTSSimulatorInterface simulator,
                 final TextAnimation.ContrastToBackground background) throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, simulator, background, RENDERWHEN1);
@@ -370,7 +371,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);

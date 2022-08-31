@@ -56,7 +56,7 @@ public class AccelerationBusStop implements AccelerationIncentive
             return;
         }
         BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
-        Time now = gtu.getSimulator().getSimulatorTime();
+        Time now = gtu.getSimulator().getSimulatorAbsTime();
         Iterable<HeadwayBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
         {
             return busStop.getDistance().gt(mergeDistance);

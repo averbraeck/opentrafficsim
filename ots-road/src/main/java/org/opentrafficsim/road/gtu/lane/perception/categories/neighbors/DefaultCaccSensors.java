@@ -39,7 +39,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
         Time t;
         try
         {
-            t = perceivingGtu.getSimulator().getSimulatorTime()
+            t = perceivingGtu.getSimulator().getSimulatorAbsTime()
                     .minus(((ControlTacticalPlanner) perceivingGtu.getTacticalPlanner()).getSettings()
                             .getParameter(LongitudinalControllerPerception.DELAY));
         }

@@ -27,7 +27,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * Super class of all plots. This schedules regular updates, creates menus and deals with listeners. There are a number of
@@ -87,7 +86,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     private Duration updateInterval;
 
     /** Event of next update. */
-    private SimEventInterface<SimTimeDoubleUnit> updateEvent;
+    private SimEventInterface<Duration> updateEvent;
 
     /**
      * Constructor.
@@ -296,7 +295,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     protected void update()
     {
         // TODO: next event may be scheduled in the past if the simulator is running fast during these few calls
-        this.updateTime = this.simulator.getSimulatorTime();
+        this.updateTime = this.simulator.getSimulatorAbsTime();
         increaseTime(this.updateTime.minus(this.delay));
         notifyPlotChange();
         scheduleNextUpdateEvent();
@@ -311,8 +310,8 @@ public abstract class AbstractPlot implements Identifiable, Dataset
         {
             this.updates++;
             // events are scheduled slightly later, so all influencing movements have occurred
-            this.updateEvent = this.simulator.scheduleEventAbs(Time.instantiateSI(this.updateInterval.si * this.updates
-                + this.delay.si), this, this, "update", null);
+            this.updateEvent = this.simulator.scheduleEventAbsTime(
+                    Time.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this, this, "update", null);
         }
         catch (SimRuntimeException exception)
         {

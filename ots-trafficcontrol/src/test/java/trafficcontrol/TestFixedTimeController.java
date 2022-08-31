@@ -31,7 +31,6 @@ import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * Test the fixed time traffic controller class.
@@ -246,7 +245,7 @@ public class TestFixedTimeController
         assertEquals("FTC id", ftcId, ftc.getId());
         assertTrue("toString returns something descriptive", ftc.toString().startsWith("FixedTimeController ["));
 
-        simulator.runUpTo(new SimTimeDoubleUnit(Time.instantiateSI(1)));
+        simulator.runUpTo(Time.instantiateSI(1));
         while (simulator.isStartingOrRunning())
         {
             try
@@ -399,13 +398,13 @@ public class TestFixedTimeController
                                     for (int second = 0; second <= 300; second++)
                                     {
                                         Object[] args = new Object[] {simulator, ftc, Boolean.TRUE};
-                                        simulator.scheduleEventAbs(Time.instantiateSI(second + 0.25), this, this, "checkState",
-                                                args);
-                                        simulator.scheduleEventAbs(Time.instantiateSI(second + 0.75), this, this, "checkState",
-                                                args);
+                                        simulator.scheduleEventAbsTime(Time.instantiateSI(second + 0.25), this, this,
+                                                "checkState", args);
+                                        simulator.scheduleEventAbsTime(Time.instantiateSI(second + 0.75), this, this,
+                                                "checkState", args);
                                     }
                                     Time stopTime = Time.instantiateSI(300);
-                                    simulator.runUpTo(new SimTimeDoubleUnit(stopTime));
+                                    simulator.runUpTo(stopTime);
                                     while (simulator.isStartingOrRunning())
                                     {
                                         try
@@ -417,7 +416,7 @@ public class TestFixedTimeController
                                             exception.printStackTrace();
                                         }
                                     }
-                                    if (simulator.getSimulatorTime().lt(stopTime))
+                                    if (simulator.getSimulatorAbsTime().lt(stopTime))
                                     {
                                         // something went wrong; call checkState with stopSimulatorOnError set to false
                                         checkState(simulator, ftc, Boolean.FALSE);

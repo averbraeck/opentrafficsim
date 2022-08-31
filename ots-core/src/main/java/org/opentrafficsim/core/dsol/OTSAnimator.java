@@ -5,14 +5,13 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.TimeUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
+import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -26,7 +25,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSAnimator extends DEVSRealTimeAnimator.TimeDoubleUnit implements OTSAnimatorInterface, Serializable
+public class OTSAnimator extends DEVSRealTimeAnimator<Duration> implements OTSAnimatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150511L;
@@ -45,10 +44,9 @@ public class OTSAnimator extends DEVSRealTimeAnimator.TimeDoubleUnit implements 
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"hiding", "checkstyle:hiddenfield"})
     public void initialize(final OTSModelInterface model, final OTSReplication replication) throws SimRuntimeException
     {
-        setPauseOnError(true);
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
         super.initialize(model, replication);
     }
@@ -58,10 +56,9 @@ public class OTSAnimator extends DEVSRealTimeAnimator.TimeDoubleUnit implements 
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model) throws SimRuntimeException, NamingException
     {
-        setPauseOnError(true);
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication =
-                new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OTSReplication newReplication = new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
     }
 
@@ -80,10 +77,9 @@ public class OTSAnimator extends DEVSRealTimeAnimator.TimeDoubleUnit implements 
             final OTSModelInterface model, final Map<String, StreamInterface> streams)
             throws SimRuntimeException, NamingException
     {
-        setPauseOnError(true);
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication =
-                new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OTSReplication newReplication = new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
         model.getStreams().putAll(streams);
         super.initialize(model, newReplication);
     }
@@ -93,7 +89,7 @@ public class OTSAnimator extends DEVSRealTimeAnimator.TimeDoubleUnit implements 
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
     {
-        setPauseOnError(true);
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
         OTSReplication newReplication = new OTSReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
@@ -101,14 +97,9 @@ public class OTSAnimator extends DEVSRealTimeAnimator.TimeDoubleUnit implements 
 
     /** {@inheritDoc} */
     @Override
-    public final SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
-            final Object target, final String method, final Object[] args) throws SimRuntimeException
+    protected Duration simulatorTimeForWallClockMillis(final double wallMilliseconds)
     {
-        SimEvent<SimTimeDoubleUnit> result =
-                new SimEvent<>(new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source,
-                        target, method, args);
-        scheduleEvent(result);
-        return result;
+        return new Duration(wallMilliseconds, DurationUnit.MILLISECOND);
     }
 
     /** {@inheritDoc} */

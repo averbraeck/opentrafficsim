@@ -71,7 +71,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
@@ -122,13 +121,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private final Set<Lane> enteredLanes = new LinkedHashSet<>();
 
     /** Pending leave triggers for each lane. */
-    private Map<Lane, List<SimEventInterface<SimTimeDoubleUnit>>> pendingLeaveTriggers = new LinkedHashMap<>();
+    private Map<Lane, List<SimEventInterface<Duration>>> pendingLeaveTriggers = new LinkedHashMap<>();
 
     /** Pending enter triggers for each lane. */
-    private Map<Lane, List<SimEventInterface<SimTimeDoubleUnit>>> pendingEnterTriggers = new LinkedHashMap<>();
+    private Map<Lane, List<SimEventInterface<Duration>>> pendingEnterTriggers = new LinkedHashMap<>();
 
     /** Event to finalize lane change. */
-    private SimEventInterface<SimTimeDoubleUnit> finalizeLaneChangeEvent = null;
+    private SimEventInterface<Duration> finalizeLaneChangeEvent = null;
 
     /** Cached desired speed. */
     private Speed cachedDesiredSpeed;
@@ -212,7 +211,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         DirectedPoint initialLocation = lastPoint;
 
         // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so the first move and events will work
-        Time now = getSimulator().getSimulatorTime();
+        Time now = getSimulator().getSimulatorAbsTime();
         try
         {
             if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
@@ -243,8 +242,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // init event
         DirectedLanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] { getId(), initialLocation, getLength(), getWidth(), referencePosition.getLane(),
-                        referencePosition.getPosition(), referencePosition.getGtuDirection(), getGTUType() },
+                new Object[] {getId(), initialLocation, getLength(), getWidth(), referencePosition.getLane(),
+                        referencePosition.getPosition(), referencePosition.getGtuDirection(), getGTUType()},
                 getSimulator().getSimulatorTime());
 
         // register the GTU on the lanes
@@ -353,19 +352,19 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      */
     protected void addGtuToLane(final Lane lane, final Length position) throws GTUException
     {
-        List<SimEventInterface<SimTimeDoubleUnit>> pending = this.pendingEnterTriggers.get(lane);
+        List<SimEventInterface<Duration>> pending = this.pendingEnterTriggers.get(lane);
         if (null != pending)
         {
-            for (SimEventInterface<SimTimeDoubleUnit> event : pending)
+            for (SimEventInterface<Duration> event : pending)
             {
-                if (event.getAbsoluteExecutionTime().get().ge(getSimulator().getSimulatorTime()))
+                if (event.getAbsoluteExecutionTime().ge(getSimulator().getSimulatorTime()))
                 {
                     boolean result = getSimulator().cancelEvent(event);
-                    if (!result && event.getAbsoluteExecutionTime().get().ne(getSimulator().getSimulatorTime()))
+                    if (!result && event.getAbsoluteExecutionTime().ne(getSimulator().getSimulatorTime()))
                     {
                         System.err.println("addLaneToGtu, trying to remove event: NOTHING REMOVED -- result=" + result
                                 + ", simTime=" + getSimulator().getSimulatorTime() + ", eventTime="
-                                + event.getAbsoluteExecutionTime().get());
+                                + event.getAbsoluteExecutionTime());
                     }
                 }
             }
@@ -421,23 +420,23 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /**
      * Removes and cancels events for the given lane.
      * @param lane Lane; lane
-     * @param triggers Map&lt;Lane, List&lt;SimEventInterface&lt;SimTimeDoubleUnit&gt;&gt;&gt;; map to use
+     * @param triggers Map&lt;Lane, List&lt;SimEventInterface&lt;Duration&gt;&gt;&gt;; map to use
      */
-    private void removePendingEvents(final Lane lane, final Map<Lane, List<SimEventInterface<SimTimeDoubleUnit>>> triggers)
+    private void removePendingEvents(final Lane lane, final Map<Lane, List<SimEventInterface<Duration>>> triggers)
     {
-        List<SimEventInterface<SimTimeDoubleUnit>> pending = triggers.get(lane);
+        List<SimEventInterface<Duration>> pending = triggers.get(lane);
         if (null != pending)
         {
-            for (SimEventInterface<SimTimeDoubleUnit> event : pending)
+            for (SimEventInterface<Duration> event : pending)
             {
-                if (event.getAbsoluteExecutionTime().get().ge(getSimulator().getSimulatorTime()))
+                if (event.getAbsoluteExecutionTime().ge(getSimulator().getSimulatorTime()))
                 {
                     boolean result = getSimulator().cancelEvent(event);
-                    if (!result && event.getAbsoluteExecutionTime().get().ne(getSimulator().getSimulatorTime()))
+                    if (!result && event.getAbsoluteExecutionTime().ne(getSimulator().getSimulatorTime()))
                     {
                         System.err.println("leaveLane, trying to remove event: NOTHING REMOVED -- result=" + result
                                 + ", simTime=" + getSimulator().getSimulatorTime() + ", eventTime="
-                                + event.getAbsoluteExecutionTime().get());
+                                + event.getAbsoluteExecutionTime());
                     }
                 }
             }
@@ -487,7 +486,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         this.cachedPositions.clear();
 
         // fire event
-        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection, from },
+        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
                 getSimulator().getSimulatorTime());
 
     }
@@ -715,13 +714,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             throw new RuntimeException(exception);
         }
-        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection, from },
+        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
                 getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setFinalizeLaneChangeEvent(final SimEventInterface<SimTimeDoubleUnit> event)
+    public void setFinalizeLaneChangeEvent(final SimEventInterface<Duration> event)
     {
         this.finalizeLaneChangeEvent = event;
     }
@@ -755,8 +754,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // for (Lane lane : this.pendingEnterTriggers.keySet())
         // {
         // System.out.println("GTU " + getId() + " is canceling event on lane " + lane.getFullId());
-        // List<SimEventInterface<SimTimeDoubleUnit>> events = this.pendingEnterTriggers.get(lane);
-        // for (SimEventInterface<SimTimeDoubleUnit> event : events)
+        // List<SimEventInterface<Duration>> events = this.pendingEnterTriggers.get(lane);
+        // for (SimEventInterface<Duration> event : events)
         // {
         // // also unregister from lane
         // this.currentLanes.remove(lane);
@@ -804,12 +803,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         this.fractionalLinkPositions.putAll(newLinkFractions);
 
         DirectedLanePosition dlp = getReferencePosition();
-        fireTimedEvent(
-                LaneBasedGTU.LANEBASED_MOVE_EVENT,
-                new Object[] { getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+        fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
+                new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
                         OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                         getTurnIndicatorStatus(), getOdometer(), dlp.getLane().getParentLink().getId(), dlp.getLane().getId(),
-                        dlp.getPosition(), dlp.getGtuDirection().name() },
+                        dlp.getPosition(), dlp.getGtuDirection().name()},
                 getSimulator().getSimulatorTime());
 
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
@@ -877,7 +875,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public final Map<Lane, Length> positions(final RelativePosition relativePosition) throws GTUException
     {
-        return positions(relativePosition, getSimulator().getSimulatorTime());
+        return positions(relativePosition, getSimulator().getSimulatorAbsTime());
     }
 
     /** {@inheritDoc} */
@@ -896,7 +894,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public final Length position(final Lane lane, final RelativePosition relativePosition) throws GTUException
     {
-        return position(lane, relativePosition, getSimulator().getSimulatorTime());
+        return position(lane, relativePosition, getSimulator().getSimulatorAbsTime());
     }
 
     /**
@@ -1389,8 +1387,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     {
                         coveredDistance = plan.getDistanceAlongLane(this, end);
                     }
-                    SimEventInterface<SimTimeDoubleUnit> event = getSimulator().scheduleEventAbs(enterTime, this, this,
-                            "addGtuToLane", new Object[] { nextLane, refPosAtLastTimestep.plus(coveredDistance) });
+                    SimEventInterface<Duration> event = getSimulator().scheduleEventAbsTime(enterTime, this, this,
+                            "addGtuToLane", new Object[] {nextLane, refPosAtLastTimestep.plus(coveredDistance)});
                     addEnterTrigger(nextLane, event);
                 }
             }
@@ -1460,8 +1458,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
             if (exitTime != null && !Double.isNaN(exitTime.si))
             {
-                SimEvent<SimTimeDoubleUnit> event = new SimEvent<>(new SimTimeDoubleUnit(exitTime), this, this, "leaveLane",
-                        new Object[] { lane, new Boolean(false) });
+                SimEvent<Duration> event = new SimEvent<>(new Duration(exitTime.minus(getSimulator().getStartTimeAbs())), this,
+                        this, "leaveLane", new Object[] {lane, Boolean.valueOf(false)});
                 getSimulator().scheduleEvent(event);
                 addTrigger(lane, event);
             }
@@ -1469,8 +1467,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 // This lane was entered when initiating the lane change due to a fractional calculation. Now, the deviative
                 // plan indicates we will never reach this location.
-                SimEvent<SimTimeDoubleUnit> event = new SimEvent<>(getSimulator().getSimTime(), this, this, "leaveLane",
-                        new Object[] { lane, new Boolean(false) });
+                SimEvent<Duration> event = new SimEvent<>(getSimulator().getSimulatorTime(), this, this, "leaveLane",
+                        new Object[] {lane, Boolean.valueOf(false)});
                 getSimulator().scheduleEvent(event);
                 addTrigger(lane, event);
             }
@@ -1483,7 +1481,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition) throws GTUException
     {
-        return fractionalPositions(relativePosition, getSimulator().getSimulatorTime());
+        return fractionalPositions(relativePosition, getSimulator().getSimulatorAbsTime());
     }
 
     /** {@inheritDoc} */
@@ -1516,9 +1514,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final void addTrigger(final Lane lane, final SimEventInterface<SimTimeDoubleUnit> event)
+    public final void addTrigger(final Lane lane, final SimEventInterface<Duration> event)
     {
-        List<SimEventInterface<SimTimeDoubleUnit>> list = this.pendingLeaveTriggers.get(lane);
+        List<SimEventInterface<Duration>> list = this.pendingLeaveTriggers.get(lane);
         if (null == list)
         {
             list = new ArrayList<>();
@@ -1530,11 +1528,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /**
      * Add enter trigger.
      * @param lane Lane; lane
-     * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; event
+     * @param event SimEventInterface&lt;Duration&gt;; event
      */
-    private void addEnterTrigger(final Lane lane, final SimEventInterface<SimTimeDoubleUnit> event)
+    private void addEnterTrigger(final Lane lane, final SimEventInterface<Duration> event)
     {
-        List<SimEventInterface<SimTimeDoubleUnit>> list = this.pendingEnterTriggers.get(lane);
+        List<SimEventInterface<Duration>> list = this.pendingEnterTriggers.get(lane);
         if (null == list)
         {
             list = new ArrayList<>();
@@ -1596,13 +1594,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), location, getOdometer(), referenceLane, dlp.getPosition(), dlp.getGtuDirection() },
+                    new Object[] {getId(), location, getOdometer(), referenceLane, dlp.getPosition(), dlp.getGtuDirection()},
                     getSimulator().getSimulatorTime());
         }
         else
         {
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), location, getOdometer(), null, Length.ZERO, null },
+                    new Object[] {getId(), location, getOdometer(), null, Length.ZERO, null},
                     getSimulator().getSimulatorTime());
         }
         if (this.finalizeLaneChangeEvent != null)
@@ -1647,7 +1645,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public Speed getDesiredSpeed()
     {
-        Time simTime = getSimulator().getSimulatorTime();
+        Time simTime = getSimulator().getSimulatorAbsTime();
         if (this.desiredSpeedTime == null || this.desiredSpeedTime.si < simTime.si)
         {
             InfrastructurePerception infra =
@@ -1675,7 +1673,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public Acceleration getCarFollowingAcceleration()
     {
-        Time simTime = getSimulator().getSimulatorTime();
+        Time simTime = getSimulator().getSimulatorAbsTime();
         if (this.carFollowingAccelerationTime == null || this.carFollowingAccelerationTime.si < simTime.si)
         {
             LanePerception perception = getTacticalPlanner().getPerception();

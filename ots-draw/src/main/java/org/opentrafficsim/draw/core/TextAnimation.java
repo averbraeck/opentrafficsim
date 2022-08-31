@@ -16,12 +16,13 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Display a text for another Locatable object.
@@ -93,7 +94,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param fontSize float; the size of the font; default = 2.0 (meters)
      * @param minFontSize float; minimum font size resulting from scaling
      * @param maxFontSize float; maximum font size resulting from scaling
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param background ContrastToBackground; allows querying the background color and adaptation of the actual color of the
      *            text to ensure contrast
      * @param scaleDependentRendering ScaleDependentRendering; suppress rendering when font scale is too small
@@ -103,7 +104,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
-            final float maxFontSize, final SimulatorInterface.TimeDoubleUnit simulator, final ContrastToBackground background,
+            final float maxFontSize, final OTSSimulatorInterface simulator, final ContrastToBackground background,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
     {
         this.source = source;
@@ -138,7 +139,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param fontSize float; the size of the font; default = 2.0 (meters)
      * @param minFontSize float; minimum font size resulting from scaling
      * @param maxFontSize float; maximum font size resulting from scaling
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param scaleDependentRendering ScaleDependentRendering; render text only when bigger than minimum scale
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
@@ -146,7 +147,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
-            final float maxFontSize, final SimulatorInterface.TimeDoubleUnit simulator,
+            final float maxFontSize, final OTSSimulatorInterface simulator,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
     {
         this(source, text, dx, dy, textAlignment, color, fontSize, minFontSize, maxFontSize, simulator, null,
@@ -160,13 +161,13 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param dy float; the vertical movement of the text, in meters
      * @param textAlignment TextAlignment; where to place the text
      * @param color Color; the color of the text
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param scaleDependentRendering ScaleDependentRendering; render text only when bigger than minimum scale
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
-            final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator,
+            final TextAlignment textAlignment, final Color color, final OTSSimulatorInterface simulator,
             final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
     {
         this(source, text, dx, dy, textAlignment, color, 2.0f, 12.0f, 50f, simulator, scaleDependentRendering);
@@ -258,22 +259,22 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /**
      * Destroy the text animation.
-     * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; the simulator
+     * @param contextProvider Contextualized; the object with a Context
      */
-    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
+    public final void destroy(final Contextualized contextProvider)
     {
-        this.animationImpl.destroy(simulator);
+        this.animationImpl.destroy(contextProvider);
     }
 
     /**
      * Clone the TextAnimation and return a copy for the new source on the new simulator.
      * @param newSource Locatable; the new source to link to the text animation
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator to register the animation on
+     * @param newSimulator OTSSimulatorInterface; the new simulator to register the animation on
      * @return TextAnimation; a copy of this TextAnimation
      * @throws RemoteException when remote animation cannot be reached
      * @throws NamingException when animation name cannot be found or bound in the Context
      */
-    public abstract TextAnimation clone(Locatable newSource, SimulatorInterface.TimeDoubleUnit newSimulator)
+    public abstract TextAnimation clone(Locatable newSource, OTSSimulatorInterface newSimulator)
             throws RemoteException, NamingException;
 
     /**
@@ -475,11 +476,11 @@ public abstract class TextAnimation implements Locatable, Serializable
         /**
          * Construct a new AnimationImpl.
          * @param source Locatable; the source
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        AnimationImpl(final Locatable source, final SimulatorInterface.TimeDoubleUnit simulator)
+        AnimationImpl(final Locatable source, final OTSSimulatorInterface simulator)
                 throws NamingException, RemoteException
         {
             super(source, simulator);

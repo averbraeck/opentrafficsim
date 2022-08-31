@@ -9,8 +9,8 @@
   </parent>
 
   <artifactId>ots-sim0mq</artifactId>
-  <name>Open Traffic Sim Sim0MQ bus linkage</name>
-  <description>Open Traffic Sim Sim0MQ bus linkage</description>
+  <name>OpenTrafficSim Sim0MQ bus linkage</name>
+  <description>OpenTrafficSim Sim0MQ bus linkage</description>
 
   <dependencies>
 

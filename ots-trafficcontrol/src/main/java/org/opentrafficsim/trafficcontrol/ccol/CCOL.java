@@ -13,10 +13,10 @@ import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventTypeInterface;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -28,8 +28,6 @@ import org.opentrafficsim.trafficcontrol.TrafficControlException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 
 /**
  * Communication link with a CCOL traffic control program.
@@ -51,7 +49,7 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
     private final String id;
 
     /** The simulator. */
-    private final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator;
+    private final OTSSimulator simulator;
 
     /** TCP port for incoming connection. */
     private static int port = 4321;
@@ -87,7 +85,7 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
      * @throws SimRuntimeException on failure to schedule the first evaluation event
      */
     public CCOL(final String id, final String controlProgram, final Set<TrafficLight> trafficLights,
-            final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator)
+            final Set<TrafficLightSensor> sensors, final OTSSimulator simulator)
             throws TrafficControlException, SimRuntimeException
     {
         this.id = id;

@@ -29,8 +29,6 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Verify that GTUs register and unregister at the correct times and locations when following a curve.
@@ -107,12 +105,12 @@ public class CurveTest
     }
 
     /**
-     * Print all scheduled events of an DEVSSimulatorInterface.TimeDoubleUnit.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the DEVSSimulatorInterface.TimeDoubleUnit
+     * Print all scheduled events of an OTSSimulatorInterface.
+     * @param simulator OTSSimulatorInterface; the OTSSimulatorInterface
      */
-    public final void printEventList(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public final void printEventList(final OTSSimulatorInterface simulator)
     {
-        for (SimEventInterface<SimTimeDoubleUnit> se : simulator.getEventList())
+        for (SimEventInterface<Duration> se : simulator.getEventList())
         {
             System.out.println("se: " + se);
         }

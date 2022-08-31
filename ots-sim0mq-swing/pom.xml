@@ -9,8 +9,8 @@
   </parent>
 
   <artifactId>ots-sim0mq-swing</artifactId>
-  <name>Open Traffic Sim Sim0MQ Swing remote control</name>
-  <description>Open Traffic Sim Sim0MQ Swing remote control</description>
+  <name>OpenTrafficSim Sim0MQ Swing remote control</name>
+  <description>OpenTrafficSim Sim0MQ Swing remote control</description>
 
   <dependencies>
     <dependency>

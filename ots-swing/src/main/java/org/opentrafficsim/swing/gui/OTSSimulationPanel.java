@@ -10,9 +10,9 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.ConsoleOutput;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 
@@ -33,7 +33,7 @@ public class OTSSimulationPanel extends JPanel
     private static final long serialVersionUID = 20150617L;
 
     /** The simulator. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** The console to log messages. */
     private final ConsoleOutput console = new ConsoleOutput();
@@ -55,11 +55,11 @@ public class OTSSimulationPanel extends JPanel
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator or animator of the model.
+     * @param simulator OTSSimulatorInterface; the simulator or animator of the model.
      * @param otsModel OTSModelInterface; the model with its properties.
      * @throws RemoteException when communications to a remote machine fails
      */
-    public OTSSimulationPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSModelInterface otsModel)
+    public OTSSimulationPanel(final OTSSimulatorInterface simulator, final OTSModelInterface otsModel)
             throws RemoteException
     {
         this.simulator = simulator;
@@ -110,7 +110,7 @@ public class OTSSimulationPanel extends JPanel
     /**
      * @return simulator.
      */
-    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

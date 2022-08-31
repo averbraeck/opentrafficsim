@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.network.Link;
@@ -24,8 +25,8 @@ import org.opentrafficsim.draw.core.TextAnimation.ScaleDependentRendering;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.introspection.DelegateIntrospection;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * <p>
@@ -51,12 +52,12 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
 
     /**
      * @param node Node; n
-     * @param simulator SimulatorInterface.TimeDoubleUnit; s
+     * @param simulator OTSSimulatorInterface; s
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
     @SuppressWarnings("unchecked")
-    public NodeAnimation(final Node node, final SimulatorInterface.TimeDoubleUnit simulator)
+    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         super(new ElevatedNode(node), simulator);
@@ -92,16 +93,16 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
 
     /** {@inheritDoc} */
     @Override
-    public void destroy(final SimulatorInterface<?, ?, ?> simulator)
+    public void destroy(final Contextualized contextProvider)
     {
-        super.destroy(simulator);
-        this.text.destroy(simulator);
+        super.destroy(contextProvider);
+        this.text.destroy(contextProvider);
     }
 
     /** {@inheritDoc} */
     @Override
     public ClonableRenderable2DInterface<NodeAnimation.ElevatedNode> clone(final ElevatedNode newSource,
-            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NamingException, RemoteException
+            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object and ElevatedNode
         return new NodeAnimation(newSource.getNode(), newSimulator);
@@ -193,14 +194,14 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @param scaleDependentRendering ScaleDependendentRendering; size limiter for text animation
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("checkstyle:parameternumber")
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator,
+                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator,
                 final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, simulator, scaleDependentRendering);
@@ -211,7 +212,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator,

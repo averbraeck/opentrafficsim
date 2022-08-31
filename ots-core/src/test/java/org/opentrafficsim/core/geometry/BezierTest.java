@@ -5,8 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import org.opentrafficsim.core.geometry.DirectedPoint;
-
 /**
  * Test the B&eacute;zier class.
  * <p>

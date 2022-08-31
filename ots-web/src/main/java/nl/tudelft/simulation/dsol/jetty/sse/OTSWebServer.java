@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventInterface;
@@ -219,7 +220,7 @@ public abstract class OTSWebServer implements EventListenerInterface
     {
         if (this.simulator instanceof DEVSRealTimeAnimator)
         {
-            ((DEVSRealTimeAnimator<?, ?, ?>) this.simulator).setSpeedFactor(speedFactor);
+            ((DEVSRealTimeAnimator<Duration>) this.simulator).setSpeedFactor(speedFactor);
         }
     }
 

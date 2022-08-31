@@ -47,7 +47,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Common code for LaneBasedGTU generators that may have to postpone putting a GTU on the road due to congestion growing into
@@ -126,7 +125,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
 
     /**
      * @param name String; the name of the generator
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the start of the generation
+     * @param simulator OTSSimulatorInterface; the simulator to schedule the start of the generation
      * @param gtuType GTUType; the type of GTU to generate
      * @param gtuClass Class&lt;?&gt;; the GTU class to instantiate
      * @param initialSpeedDist ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the initial speed of the
@@ -147,7 +146,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTUGeneratorOld(final String name, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+    public AbstractGTUGeneratorOld(final String name, final OTSSimulatorInterface simulator,
             final GTUType gtuType, final Class<?> gtuClass,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
@@ -172,7 +171,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
         DirectedPoint p;
         p = this.getLocation();
         this.bounds = new Bounds(new Point3d(p.x - 1, p.y - 1, 0.0), new Point3d(p.x + 1, p.y + 1, 0.0));
-        simulator.scheduleEventAbs(startTime, this, this, "generate", null);
+        simulator.scheduleEventAbsTime(startTime, this, this, "generate", null);
 
         // notify the potential animation of the existence of a GTUGenerator
         fireTimedEvent(Network.GENERATOR_ADD_EVENT, name, simulator.getSimulatorTime());
@@ -186,7 +185,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
     protected final void generate() throws Exception
     {
         // check if we are after the end time
-        if (getSimulator().getSimulatorTime().gt(this.endTime))
+        if (getSimulator().getSimulatorAbsTime().gt(this.endTime))
         {
             return;
         }
@@ -245,10 +244,10 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
         }
 
         // reschedule next arrival
-        Time nextTime = getSimulator().getSimulatorTime().plus(this.interarrivelTimeDist.draw());
+        Time nextTime = getSimulator().getSimulatorAbsTime().plus(this.interarrivelTimeDist.draw());
         if (nextTime.le(this.endTime))
         {
-            getSimulator().scheduleEventAbs(nextTime, this, this, "generate", null);
+            getSimulator().scheduleEventAbsTime(nextTime, this, this, "generate", null);
         }
     }
 
@@ -442,7 +441,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      */
     private Headway headwayGTUSIForward(final double maxDistanceSI, final Lane generatorLane) throws GTUException
     {
-        Time when = getSimulator().getSimulatorTime();
+        Time when = getSimulator().getSimulatorAbsTime();
         Headway foundMaxGTUDistanceSI = new HeadwayDistance(Double.MAX_VALUE);
         // search for the closest GTU on all current lanes we are registered on.
         Headway closest;

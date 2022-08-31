@@ -88,8 +88,8 @@ public interface HeadwayGtuType
      * @throws GTUException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    default HeadwayGTU createHeadwayGtu(LaneBasedGTU perceivingGtu, LaneBasedGTU perceivedGtu, Length distance,
-            boolean downstream) throws GTUException, ParameterException
+    default HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu, final Length distance,
+            final boolean downstream) throws GTUException, ParameterException
     {
         if (distance.ge0())
         {
@@ -202,7 +202,7 @@ public interface HeadwayGtuType
         public HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length distance, final boolean downstream) throws GTUException, ParameterException
         {
-            Time now = perceivedGtu.getSimulator().getSimulatorTime();
+            Time now = perceivedGtu.getSimulator().getSimulatorAbsTime();
             if (this.updateTime == null || now.si > this.updateTime.si)
             {
                 this.updateTime = now;

@@ -20,8 +20,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface.TimeDoubleUnit;
 
 /**
  * Controller using a cycle time.
@@ -56,10 +54,10 @@ public class CycleTimeLightController implements RampMeteringLightController
     private final List<TrafficLight> trafficLights;
 
     /** Scheduled red event. */
-    private Map<TrafficLight, SimEventInterface<SimTimeDoubleUnit>> redEvents = new LinkedHashMap<>();
+    private Map<TrafficLight, SimEventInterface<Duration>> redEvents = new LinkedHashMap<>();
 
     /** Scheduled green event. */
-    private Map<TrafficLight, SimEventInterface<SimTimeDoubleUnit>> greenEvents = new LinkedHashMap<>();
+    private Map<TrafficLight, SimEventInterface<Duration>> greenEvents = new LinkedHashMap<>();
 
     /**
      * @param simulator OTSSimulatorInterface; simulator
@@ -141,7 +139,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     protected void setGreen(final TrafficLight trafficLight)
     {
         this.greenEvents.remove(trafficLight);
-        this.greenStarts.put(trafficLight, this.simulator.getSimulatorTime());
+        this.greenStarts.put(trafficLight, this.simulator.getSimulatorAbsTime());
         this.simulator.getLogger().always().info("Traffic light set to GREEN");
         trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
     }
@@ -162,8 +160,8 @@ public class CycleTimeLightController implements RampMeteringLightController
          * @param detectedGTUTypes Compatible; GTU types
          * @throws NetworkException when the position on the lane is out of bounds
          */
-        RampMeteringSensor(final TrafficLight trafficLight, final TimeDoubleUnit simulator, final Compatible detectedGTUTypes)
-                throws NetworkException
+        RampMeteringSensor(final TrafficLight trafficLight, final OTSSimulatorInterface simulator,
+                final Compatible detectedGTUTypes) throws NetworkException
         {
             super(trafficLight.getId() + "_sensor", trafficLight.getLane(), trafficLight.getLongitudinalPosition(),
                     RelativePosition.FRONT, simulator, detectedGTUTypes);
@@ -180,7 +178,7 @@ public class CycleTimeLightController implements RampMeteringLightController
                 try
                 {
                     // schedule green
-                    Time minRedTime = CycleTimeLightController.this.simulator.getSimulatorTime().plus(MIN_RED_TIME);
+                    Time minRedTime = CycleTimeLightController.this.simulator.getSimulatorAbsTime().plus(MIN_RED_TIME);
                     Time cycleRedTime = CycleTimeLightController.this.greenStarts.get(this.trafficLight)
                             .plus(CycleTimeLightController.this.cTime);
                     Time green;
@@ -200,8 +198,8 @@ public class CycleTimeLightController implements RampMeteringLightController
                         green = cycleRedTime;
                     }
                     CycleTimeLightController.this.greenEvents.put(this.trafficLight,
-                            CycleTimeLightController.this.simulator.scheduleEventAbs(green, this, CycleTimeLightController.this,
-                                    "setGreen", new Object[] {this.trafficLight}));
+                            CycleTimeLightController.this.simulator.scheduleEventAbsTime(green, this,
+                                    CycleTimeLightController.this, "setGreen", new Object[] {this.trafficLight}));
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -212,8 +210,7 @@ public class CycleTimeLightController implements RampMeteringLightController
 
         /** {@inheritDoc} */
         @Override
-        public AbstractSensor clone(final CrossSectionElement newCSE,
-                final nl.tudelft.simulation.dsol.simulators.SimulatorInterface.TimeDoubleUnit newSimulator)
+        public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
                 throws NetworkException
         {
             return null; // TODO: should be cloned as part of the ramp metering

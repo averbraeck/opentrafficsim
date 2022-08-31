@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -48,10 +48,9 @@ public class OTSLoggingAnimator extends OTSAnimator
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model) throws SimRuntimeException, NamingException
     {
-        setPauseOnError(true);
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication =
-                new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OTSReplication newReplication = new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
     }
 
@@ -71,10 +70,9 @@ public class OTSLoggingAnimator extends OTSAnimator
             final OTSModelInterface model, final Map<String, StreamInterface> streams)
             throws SimRuntimeException, NamingException
     {
-        setPauseOnError(true);
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OTSReplication newReplication =
-                new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OTSReplication newReplication = new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
         model.getStreams().putAll(streams);
         super.initialize(model, newReplication);
     }
@@ -84,7 +82,7 @@ public class OTSLoggingAnimator extends OTSAnimator
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
     {
-        setPauseOnError(true);
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
         OTSReplication newReplication = new OTSReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
@@ -102,7 +100,7 @@ public class OTSLoggingAnimator extends OTSAnimator
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:methodlength" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:methodlength"})
     public void run()
     {
         synchronized (this)
@@ -118,7 +116,7 @@ public class OTSLoggingAnimator extends OTSAnimator
         long wallTime0 = System.currentTimeMillis();
 
         /* Baseline point for the simulator time. */
-        SimTimeDoubleUnit simTime0 = this.simulatorTime.copy();
+        Duration simTime0 = this.simulatorTime;
 
         /* Speed factor is simulation seconds per 1 wallclock second. */
         double currentSpeedFactor = this.getSpeedFactor();
@@ -133,13 +131,13 @@ public class OTSLoggingAnimator extends OTSAnimator
             if (currentSpeedFactor != this.getSpeedFactor())
             {
                 wallTime0 = System.currentTimeMillis();
-                simTime0.set(this.simulatorTime.get());
+                simTime0 = this.simulatorTime;
                 currentSpeedFactor = this.getSpeedFactor();
             }
 
             // check if we are behind; wantedSimTime is the needed current time on the wall-clock
             double wantedSimTime = (System.currentTimeMillis() - wallTime0) * msec1 * currentSpeedFactor;
-            double simTimeSinceBaseline = this.simulatorTime.diff(simTime0).doubleValue();
+            double simTimeSinceBaseline = this.simulatorTime.minus(simTime0).doubleValue();
 
             if (simTimeSinceBaseline < wantedSimTime)
             {
@@ -148,7 +146,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                 {
                     // if no catch-up: re-baseline.
                     wallTime0 = System.currentTimeMillis();
-                    simTime0.set(this.simulatorTime.get());
+                    simTime0 = this.simulatorTime;
                 }
                 else
                 {
@@ -157,15 +155,15 @@ public class OTSLoggingAnimator extends OTSAnimator
                     synchronized (super.semaphore)
                     {
                         Duration delta = simulatorTimeForWallClockMillis((wantedSimTime - simTimeSinceBaseline) / msec1);
-                        SimTimeDoubleUnit absSyncTime = this.simulatorTime.plus(delta);
-                        SimTimeDoubleUnit eventTime = this.eventList.first().getAbsoluteExecutionTime();
+                        Duration absSyncTime = this.simulatorTime.plus(delta);
+                        Duration eventTime = this.eventList.first().getAbsoluteExecutionTime();
                         if (absSyncTime.lt(eventTime))
                         {
-                            this.simulatorTime.set(absSyncTime.get());
+                            this.simulatorTime = absSyncTime;
                         }
                         else
                         {
-                            this.simulatorTime.set(eventTime.get());
+                            this.simulatorTime = eventTime;
                         }
                     }
                 }
@@ -173,9 +171,9 @@ public class OTSLoggingAnimator extends OTSAnimator
 
             // peek at the first event and determine the time difference relative to RT speed; that determines
             // how long we have to wait.
-            SimEventInterface<SimTimeDoubleUnit> nextEvent = this.eventList.first();
+            SimEventInterface<Duration> nextEvent = this.eventList.first();
             double wallMillisNextEventSinceBaseline =
-                    (nextEvent.getAbsoluteExecutionTime().diff(simTime0)).doubleValue() / (msec1 * currentSpeedFactor);
+                    (nextEvent.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * currentSpeedFactor);
 
             // wallMillisNextEventSinceBaseline gives the number of milliseconds on the wall clock since baselining for the
             // expected execution time of the next event on the event list .
@@ -206,9 +204,9 @@ public class OTSLoggingAnimator extends OTSAnimator
                     {
                         // rebaseline
                         wallTime0 = System.currentTimeMillis();
-                        simTime0.set(this.simulatorTime.get());
+                        simTime0 = this.simulatorTime;
                         currentSpeedFactor = this.getSpeedFactor();
-                        wallMillisNextEventSinceBaseline = (nextEvent.getAbsoluteExecutionTime().diff(simTime0)).doubleValue()
+                        wallMillisNextEventSinceBaseline = (nextEvent.getAbsoluteExecutionTime().minus(simTime0)).doubleValue()
                                 / (msec1 * currentSpeedFactor);
                     }
 
@@ -216,7 +214,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                     if (!nextEvent.equals(this.eventList.first())) // event inserted by a thread...
                     {
                         nextEvent = this.eventList.first();
-                        wallMillisNextEventSinceBaseline = (nextEvent.getAbsoluteExecutionTime().diff(simTime0)).doubleValue()
+                        wallMillisNextEventSinceBaseline = (nextEvent.getAbsoluteExecutionTime().minus(simTime0)).doubleValue()
                                 / (msec1 * currentSpeedFactor);
                     }
 
@@ -224,23 +222,23 @@ public class OTSLoggingAnimator extends OTSAnimator
                     // time. Changed 2019-04-30: this is now recalculated based on latest system time after the 'sleep'.
                     synchronized (super.semaphore)
                     {
-                        Time nextEventSimTime = nextEvent.getAbsoluteExecutionTime().get();
+                        Duration nextEventSimTime = nextEvent.getAbsoluteExecutionTime();
                         Duration deltaToWall0inSimTime =
                                 simulatorTimeForWallClockMillis((System.currentTimeMillis() - wallTime0) * currentSpeedFactor);
-                        Time currentWallSimTime = simTime0.plus(deltaToWall0inSimTime).get();
+                        Duration currentWallSimTime = simTime0.plus(deltaToWall0inSimTime);
                         if (nextEventSimTime.compareTo(currentWallSimTime) < 0)
                         {
-                            if (nextEventSimTime.compareTo(this.simulatorTime.get()) > 0) // don't go back in time
+                            if (nextEventSimTime.compareTo(this.simulatorTime) > 0) // don't go back in time
                             {
-                                this.simulatorTime.set(nextEventSimTime);
+                                this.simulatorTime = nextEventSimTime;
                             }
                             wallMillisNextEventSinceBaseline = 0.0; // force breakout of the loop
                         }
                         else
                         {
-                            if (currentWallSimTime.compareTo(this.simulatorTime.get()) > 0) // don't go back in time
+                            if (currentWallSimTime.compareTo(this.simulatorTime) > 0) // don't go back in time
                             {
-                                this.simulatorTime.set(currentWallSimTime);
+                                this.simulatorTime = currentWallSimTime;
                             }
                         }
                     }
@@ -254,9 +252,9 @@ public class OTSLoggingAnimator extends OTSAnimator
                 {
                     if (nextEvent.getAbsoluteExecutionTime().ne(this.simulatorTime))
                     {
-                        fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, nextEvent.getAbsoluteExecutionTime().get());
+                        fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, nextEvent.getAbsoluteExecutionTime());
                     }
-                    this.simulatorTime.set(nextEvent.getAbsoluteExecutionTime().get());
+                    this.simulatorTime = nextEvent.getAbsoluteExecutionTime();
 
                     // carry out all events scheduled on this simulation time, as long as we are still running.
                     while (this.isStartingOrRunning() && !this.eventList.isEmpty()
@@ -271,7 +269,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                         catch (Exception exception)
                         {
                             getLogger().always().error(exception);
-                            if (this.isPauseOnError())
+                            if (this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                             {
                                 try
                                 {
@@ -292,7 +290,7 @@ public class OTSLoggingAnimator extends OTSAnimator
                 }
             }
         }
-        fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, this.simulatorTime.get());
+        fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, this.simulatorTime);
 
         synchronized (this)
         {

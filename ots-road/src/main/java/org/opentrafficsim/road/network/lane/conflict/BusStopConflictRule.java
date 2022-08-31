@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.lane.conflict;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -10,8 +11,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Conflict rule for conflicts where busses enter the lane after a stop.
@@ -28,13 +27,13 @@ public class BusStopConflictRule implements ConflictRule
 {
 
     /** Simulator. */
-    private final SimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /**
      * Constructor.
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      */
-    public BusStopConflictRule(final SimulatorInterface.TimeDoubleUnit simulator)
+    public BusStopConflictRule(final OTSSimulatorInterface simulator)
     {
         this.simulator = simulator;
     }
@@ -73,7 +72,7 @@ public class BusStopConflictRule implements ConflictRule
         {
             while (gtu == null && lane != null)
             {
-                gtu = lane.getGtuBehind(pos, dir, RelativePosition.FRONT, this.simulator.getSimulatorTime());
+                gtu = lane.getGtuBehind(pos, dir, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
                 if (gtu == null)
                 {
                     ImmutableMap<Lane, GTUDirectionality> map =
@@ -114,7 +113,7 @@ public class BusStopConflictRule implements ConflictRule
 
     /** {@inheritDoc} */
     @Override
-    public final ConflictRule clone(final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public final ConflictRule clone(final OTSSimulatorInterface newSimulator)
     {
         return new BusStopConflictRule(newSimulator);
     }

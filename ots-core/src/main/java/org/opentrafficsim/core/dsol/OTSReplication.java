@@ -18,11 +18,13 @@ import nl.tudelft.simulation.dsol.experiment.SingleReplication;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSReplication extends SingleReplication.TimeDoubleUnit
+public class OTSReplication extends SingleReplication<Duration>
 {
-
     /** History manager. */
     private HistoryManager historyManager;
+    
+    /** the (absolute) start time of the replication. */
+    private final Time startTimeAbs;
 
     /**
      * Create a new OTSReplication.
@@ -35,7 +37,8 @@ public class OTSReplication extends SingleReplication.TimeDoubleUnit
     public OTSReplication(final String id, final Time startTime, final Duration warmupPeriod, final Duration runLength)
             throws NamingException
     {
-        super(id, startTime, warmupPeriod, runLength);
+        super(id, Duration.ZERO, warmupPeriod, runLength);
+        this.startTimeAbs = startTime;
     }
 
     /**
@@ -60,6 +63,15 @@ public class OTSReplication extends SingleReplication.TimeDoubleUnit
     public void setHistoryManager(final HistoryManager historyManager)
     {
         this.historyManager = historyManager;
+    }
+
+    /**
+     * Return the absolute start time of the simulation.
+     * @return Time; the absolute start time of the simulation
+     */
+    public Time getStartTimeAbs()
+    {
+        return this.startTimeAbs;
     }
 
     /** */

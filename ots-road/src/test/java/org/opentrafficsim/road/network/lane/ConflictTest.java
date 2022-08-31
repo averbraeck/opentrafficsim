@@ -14,6 +14,7 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -68,7 +69,8 @@ public class ConflictTest implements EventListenerInterface
         Mockito.when(hmd.now()).thenReturn(Time.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
         Mockito.when(simulator.getReplication()).thenReturn(replication);
-        Mockito.when(simulator.getSimulatorTime()).thenReturn(Time.ZERO);
+        Mockito.when(simulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
+        Mockito.when(simulator.getSimulatorTime()).thenReturn(Duration.ZERO);
         OTSRoadNetwork network = new OTSRoadNetwork("Network for conflict test", true, simulator);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.ONE_WAY_LANE);

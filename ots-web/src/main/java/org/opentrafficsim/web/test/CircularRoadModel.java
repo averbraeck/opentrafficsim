@@ -288,10 +288,10 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
 
     /**
      * Stop simulation and throw an Error.
-     * @param theSimulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param theSimulator OTSSimulatorInterface; the simulator
      * @param errorMessage String; the error message
      */
-    public void stopSimulator(final DEVSSimulatorInterface.TimeDoubleUnit theSimulator, final String errorMessage)
+    public void stopSimulator(final OTSSimulatorInterface theSimulator, final String errorMessage)
     {
         System.out.println("Error: " + errorMessage);
         try

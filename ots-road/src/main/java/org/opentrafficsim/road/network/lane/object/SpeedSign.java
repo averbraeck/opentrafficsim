@@ -4,13 +4,12 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Speed sign.
@@ -50,7 +49,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param lane Lane; Lane on/over which the SpeedSign is positioned
      * @param direction LongitudinalDirectionality; driving direction for which the new SpeedSign applies
      * @param longitudinalPosition Length; the longitudinal position along the lane of the new SpeedSign
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param speed Speed; the speed limit shown by the new SpeedSign
      * @param gtuType GTUType; GTU type that should obey the speed sign
      * @param startTimeOfDay Duration; start time-of-day
@@ -59,7 +58,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed,
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed,
             final GTUType gtuType, final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         super(id, lane, direction, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
@@ -77,13 +76,13 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param lane Lane; lane
      * @param direction LongitudinalDirectionality; direction
      * @param longitudinalPosition Length; longitudinal position
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param speed Speed; speed
      * @param gtuType GTUType; GTU type
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed,
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed,
             final GTUType gtuType) throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed, gtuType, Duration.ZERO, ENDOFDAY);
@@ -95,7 +94,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param lane Lane; lane
      * @param direction LongitudinalDirectionality; direction
      * @param longitudinalPosition Length; longitudinal position
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param speed Speed; speed
      * @param startTimeOfDay Duration; start time-of-day
      * @param endTimeOfDay Duration; end time-of-day
@@ -103,7 +102,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed,
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed,
             final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed,
@@ -116,12 +115,12 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param lane Lane; lane
      * @param direction LongitudinalDirectionality; direction
      * @param longitudinalPosition Length; longitudinal position
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param speed Speed; speed
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed)
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed)
             throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed,
@@ -151,7 +150,7 @@ public class SpeedSign extends AbstractLaneBasedObject
     /** {@inheritDoc} */
     @Override
     public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
-            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NetworkException
+            final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         return new SpeedSign(getId(), (Lane) newCSE, getDirection(), getLongitudinalPosition(), newSimulator, this.speed,
                 this.gtuType, this.startTimeOfDay, this.endTimeOfDay);

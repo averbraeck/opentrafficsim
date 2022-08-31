@@ -10,11 +10,11 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.draw.core.PaintPolygons;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -41,14 +41,14 @@ public class StaticObjectAnimation extends Renderable2D<StaticObject> implements
 
     /**
      * @param source StaticObject; Static Object
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param width float; width of the contour line to draw
      * @param color Color; color of the contour line / fill
      * @param fill boolean; fill internal or not
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
-    public StaticObjectAnimation(final StaticObject source, final SimulatorInterface.TimeDoubleUnit simulator,
+    public StaticObjectAnimation(final StaticObject source, final OTSSimulatorInterface simulator,
             final float width, final Color color, final boolean fill) throws NamingException, RemoteException
     {
         super(source, simulator);

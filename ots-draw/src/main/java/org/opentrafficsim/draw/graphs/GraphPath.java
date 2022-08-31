@@ -92,7 +92,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * @param section Section&lt;S&gt;; Section&lt;S&gt; section
      * @return Length; start distance of the section
      */
-    public final Length getStartDistance(final Section<S> section)
+    public Length getStartDistance(final Section<S> section)
     {
         int index = this.sections.indexOf(section);
         Throw.when(index == -1, IllegalArgumentException.class, "Section is not part of the path.");
@@ -103,7 +103,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * Returns the total path length.
      * @return Length; total path length
      */
-    public final Length getTotalLength()
+    public Length getTotalLength()
     {
         return this.totalLength;
     }
@@ -112,7 +112,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * Returns the mean speed over the entire section.
      * @return Speed; mean speed over the entire section
      */
-    public final Speed getSpeedLimit()
+    public Speed getSpeedLimit()
     {
         return this.speedLimit;
     }

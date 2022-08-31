@@ -3,11 +3,10 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Class for exponential demand.
@@ -32,10 +31,10 @@ public class ExponentialTask extends AbstractTask
      * @param initialTaskDemand double; initial level of task demand
      * @param finalTaskDemand double; final level of task demand
      * @param tau Duration; time scale at which task demand changes from the initial to the final value
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      */
     public ExponentialTask(final String id, final double initialTaskDemand, final double finalTaskDemand, final Duration tau,
-            final SimulatorInterface.TimeDoubleUnit simulator)
+            final OTSSimulatorInterface simulator)
     {
         super(id);
         this.initialTaskDemand = initialTaskDemand;

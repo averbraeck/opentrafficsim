@@ -91,7 +91,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
                 // This one is behind; assume our CFM holds also for the GTU behind us
                 AccelerationStep as = gfm.computeAccelerationStep(headway.getSpeed(), referenceGTU.getSpeed(),
                         new Length(-headway.getDistance().si, LengthUnit.SI), speedLimit,
-                        referenceGTU.getSimulator().getSimulatorTime(), stepSize);
+                        referenceGTU.getSimulator().getSimulatorAbsTime(), stepSize);
                 if (null == followerAccelerationStep || as.getAcceleration().lt(followerAccelerationStep.getAcceleration()))
                 {
                     followerAccelerationStep = as;
@@ -150,7 +150,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         final Speed followerMaximumSpeed = gtu.getMaximumSpeed();
         Acceleration newAcceleration =
                 computeAcceleration(followerSpeed, followerMaximumSpeed, leaderOrBlockSpeed, distance, speedLimit, stepSize);
-        Time nextEvaluationTime = gtu.getSimulator().getSimulatorTime().plus(stepSize);
+        Time nextEvaluationTime = gtu.getSimulator().getSimulatorAbsTime().plus(stepSize);
         return new AccelerationStep(newAcceleration, nextEvaluationTime, stepSize);
     }
 

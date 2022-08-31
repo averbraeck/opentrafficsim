@@ -9,13 +9,13 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Link as a connection between two Nodes.
@@ -53,7 +53,7 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
     OTSLine3D getDesignLine();
 
     /** @return the simulator. */
-    SimulatorInterface.TimeDoubleUnit getSimulator();
+    OTSSimulatorInterface getSimulator();
 
     /** @return length of the link. */
     Length getLength();

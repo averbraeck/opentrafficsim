@@ -52,7 +52,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -845,7 +844,7 @@ public final class ODApplier
         private final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root;
 
         /** Simulator. */
-        private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private final OTSSimulatorInterface simulator;
 
         /** Characteristics generator based on OD information. */
         private final GTUCharacteristicsGeneratorOD characteristicsGenerator;
@@ -855,12 +854,12 @@ public final class ODApplier
 
         /**
          * @param root DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; root node with origin
-         * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+         * @param simulator OTSSimulatorInterface; simulator
          * @param characteristicsGenerator GTUCharacteristicsGeneratorOD; characteristics generator based on OD information
          * @param randomStream StreamInterface; stream for random numbers
          */
         GTUCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+                final OTSSimulatorInterface simulator,
                 final GTUCharacteristicsGeneratorOD characteristicsGenerator, final StreamInterface randomStream)
         {
             this.root = root;
@@ -874,7 +873,7 @@ public final class ODApplier
         public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
         {
             // obtain node objects
-            Time time = this.simulator.getSimulatorTime();
+            Time time = this.simulator.getSimulatorAbsTime();
             Node origin = this.root.getObject();
             DemandNode<Node, DemandNode<Category, ?>> destinationNode = this.root.draw(time);
             Node destination = destinationNode.getObject();

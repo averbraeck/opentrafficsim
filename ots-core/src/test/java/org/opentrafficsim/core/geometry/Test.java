@@ -12,8 +12,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.opentrafficsim.core.network.NetworkException;
 
-import org.opentrafficsim.core.geometry.DirectedPoint;
-
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

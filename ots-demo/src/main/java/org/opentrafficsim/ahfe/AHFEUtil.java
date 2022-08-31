@@ -572,7 +572,7 @@ public final class AHFEUtil
         private final FrequencyVector demandVector;
 
         /** Simulator. */
-        private final SimulatorInterface.TimeDoubleUnit simulator;
+        private final OTSSimulatorInterface simulator;
 
         /** Stream name of headway generation. */
         private static final String HEADWAY_STREAM = "headwayGeneration";
@@ -580,10 +580,10 @@ public final class AHFEUtil
         /**
          * @param timeVector TimeVector; a time vector
          * @param demandVector FrequencyVector; the corresponding demand vector
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          */
         HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
-                final SimulatorInterface.TimeDoubleUnit simulator)
+                final OTSSimulatorInterface simulator)
         {
             this(timeVector, demandVector, simulator, Interpolation.STEPWISE);
         }
@@ -591,11 +591,11 @@ public final class AHFEUtil
         /**
          * @param timeVector TimeVector; a time vector
          * @param demandVector FrequencyVector; the corresponding demand vector
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @param interpolation Interpolation; interpolation type
          */
         HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
-                final SimulatorInterface.TimeDoubleUnit simulator, final Interpolation interpolation)
+                final OTSSimulatorInterface simulator, final Interpolation interpolation)
         {
             Throw.whenNull(timeVector, "Time vector may not be null.");
             Throw.whenNull(demandVector, "Demand vector may not be null.");
@@ -631,7 +631,7 @@ public final class AHFEUtil
         @Override
         public final Duration draw() throws ProbabilityException, ParameterException
         {
-            Time time = this.simulator.getSimulatorTime();
+            Time time = this.simulator.getSimulatorAbsTime();
             try
             {
                 Throw.when(time.lt(this.timeVector.get(0)), IllegalArgumentException.class,

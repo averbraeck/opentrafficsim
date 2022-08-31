@@ -8,12 +8,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -110,12 +109,12 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
     /**
      * Clone a RoadMarkerAlong for a new network.
      * @param newCrossSectionLink CrossSectionLink; the new link to which the clone belongs
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
      * @param cse RoadMarkerAlong; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected RoadMarkerAlong(final CrossSectionLink newCrossSectionLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
+    protected RoadMarkerAlong(final CrossSectionLink newCrossSectionLink, final OTSSimulatorInterface newSimulator,
             final RoadMarkerAlong cse) throws NetworkException
     {
         super(newCrossSectionLink, newSimulator, cse);

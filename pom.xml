@@ -49,7 +49,7 @@
     <tinylog.version>1.3.6</tinylog.version>
     <djunits.version>5.0.1</djunits.version>
     <djutils.version>2.0.1</djutils.version>
-    <dsol.version>3.08.00</dsol.version>
+    <dsol.version>4.0.1</dsol.version>
     <sim0mq.version>2.1.0</sim0mq.version>
     <jts.version>1.19.0</jts.version>
     <jfreechart.version>1.5.0</jfreechart.version>
@@ -151,37 +151,37 @@
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-base</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-naming</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-introspection</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-core</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-animation</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-animation-gis</artifactId>
         <version>${dsol.version}</version>
         <exclusions>
@@ -193,13 +193,13 @@
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-animation-gis-esri</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-animation-gis-osm</artifactId>
         <version>${dsol.version}</version>
         <exclusions>
@@ -211,13 +211,13 @@
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-swing</artifactId>
         <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>dsol</groupId>
+        <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-web</artifactId>
         <version>${dsol.version}</version>
       </dependency>

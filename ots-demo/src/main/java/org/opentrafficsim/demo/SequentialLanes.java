@@ -343,7 +343,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 this.headway = new Duration(3600.0 / 1500.0, SECOND);
 
                 // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-                this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
+                this.simulator.scheduleEventAbsTime(Time.ZERO, this, this, "generateCar", null);
             }
             catch (NamingException | NetworkException | OTSGeometryException | ParameterException | InputParameterException
                 | GTUException exception)

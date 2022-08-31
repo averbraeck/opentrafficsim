@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.dsol;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
@@ -14,8 +15,7 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public abstract class AbstractOTSModel extends AbstractDSOLModel.TimeDoubleUnit<OTSSimulatorInterface>
-        implements OTSModelInterface
+public abstract class AbstractOTSModel extends AbstractDSOLModel<Duration, OTSSimulatorInterface> implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -64,7 +64,7 @@ public abstract class AbstractOTSModel extends AbstractDSOLModel.TimeDoubleUnit<
         this.shortName = shortName;
         this.description = description;
     }
-    
+
     /**
      * Create the default initial streams.
      * @return StreamInformation; the default initial streams

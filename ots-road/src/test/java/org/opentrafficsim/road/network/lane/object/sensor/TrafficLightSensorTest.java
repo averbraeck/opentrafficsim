@@ -247,7 +247,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                     }
                 }
                 Time stopTime = new Time(100, TimeUnit.BASE_SECOND);
-                while (simulator.getSimulatorTime().lt(stopTime))
+                while (simulator.getSimulatorAbsTime().lt(stopTime))
                 {
                     // System.out.println("simulation time is now " + simulator);
                     simulator.step();

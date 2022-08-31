@@ -18,6 +18,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
 import org.djutils.event.ref.ReferenceType;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -34,8 +35,6 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Implementation of kpi sampler for OTS.
@@ -55,7 +54,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     private static final long serialVersionUID = 20200228L;
 
     /** Simulator. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Network. */
     private final OTSRoadNetwork network;
@@ -64,7 +63,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     private final Duration samplingInterval;
 
     /** Registration of sampling events of each GTU per lane, if interval based. */
-    private final Map<String, Map<LaneDirection, SimEventInterface<SimTimeDoubleUnit>>> eventPerGtu = new LinkedHashMap<>();
+    private final Map<String, Map<LaneDirection, SimEventInterface<Duration>>> eventPerGtu = new LinkedHashMap<>();
 
     /** List of lane the sampler is listening to for each GTU. Usually 1, could be 2 during a trajectory transition. */
     private final Map<String, Set<LaneDirection>> listenersPerGtu = new LinkedHashMap<>();
@@ -134,7 +133,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     @Override
     public final Time now()
     {
-        return this.simulator.getSimulatorTime();
+        return this.simulator.getSimulatorAbsTime();
     }
 
     /** {@inheritDoc} */
@@ -143,7 +142,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     {
         try
         {
-            this.simulator.scheduleEventAbs(time, this, this, "startRecording", new Object[] { kpiLaneDirection });
+            this.simulator.scheduleEventAbsTime(time, this, this, "startRecording", new Object[] {kpiLaneDirection});
         }
         catch (SimRuntimeException exception)
         {
@@ -157,7 +156,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     {
         try
         {
-            this.simulator.scheduleEventAbs(time, this, this, "stopRecording", new Object[] { kpiLaneDirection });
+            this.simulator.scheduleEventAbsTime(time, this, this, "stopRecording", new Object[] {kpiLaneDirection});
         }
         catch (SimRuntimeException exception)
         {
@@ -180,10 +179,10 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
                 if (sameDirection(kpiLaneDirection.getKpiDirection(), gtu.getDirection(lane)))
                 {
                     // Payload: Object[] {String gtuId, gtu, int count_after_addition}
-                    //notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
-                    //        gtu.getSimulator().getSimulatorTime()));
+                    // notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
+                    // gtu.getSimulator().getSimulatorTime()));
                     // Payload: Object[] {String gtuId, int count_after_addition}
-                    notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), count },
+                    notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] {gtu.getId(), count},
                             gtu.getSimulator().getSimulatorTime()));
                 }
                 count++;
@@ -365,12 +364,12 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      */
     private void scheduleSamplingEvent(final LaneBasedGTU gtu, final LaneDirection laneDirection)
     {
-        SimEventInterface<SimTimeDoubleUnit> simEvent;
+        SimEventInterface<Duration> simEvent;
         try
         {
             // this.simulator.scheduleEvent(simEvent);
             simEvent = this.simulator.scheduleEventRel(this.samplingInterval, this, this, "notifySample",
-                    new Object[] { gtu, laneDirection });
+                    new Object[] {gtu, laneDirection});
         }
         catch (SimRuntimeException exception)
         {
@@ -380,7 +379,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
         String gtuId = gtu.getId();
         if (!this.eventPerGtu.containsKey(gtuId))
         {
-            Map<LaneDirection, SimEventInterface<SimTimeDoubleUnit>> map = new LinkedHashMap<>();
+            Map<LaneDirection, SimEventInterface<Duration>> map = new LinkedHashMap<>();
             this.eventPerGtu.put(gtuId, map);
         }
         this.eventPerGtu.get(gtuId).put(laneDirection, simEvent);

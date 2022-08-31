@@ -15,7 +15,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>dsol</groupId>
+      <groupId>nl.tudelft.simulation</groupId>
       <artifactId>dsol-introspection</artifactId>
     </dependency>
 

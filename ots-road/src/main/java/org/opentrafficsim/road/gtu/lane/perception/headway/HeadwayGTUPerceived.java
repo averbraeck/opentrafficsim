@@ -36,7 +36,7 @@ public class HeadwayGTUPerceived extends HeadwayGTURealCopy
         super(gtu.getId(), gtu.getGTUType(), distance, gtu.getLength(), gtu.getWidth(), speed, acceleration,
                 gtu.getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()), getSpeedLimitInfo(gtu),
                 gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(),
-                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime()));
+                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
     }
 
     /**
@@ -54,7 +54,7 @@ public class HeadwayGTUPerceived extends HeadwayGTURealCopy
         super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, gtu.getLength(), gtu.getWidth(), speed,
                 acceleration, gtu.getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()),
                 getSpeedLimitInfo(gtu), gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(),
-                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime()));
+                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
     }
 
 }

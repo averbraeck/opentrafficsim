@@ -43,7 +43,7 @@ public class IncentiveBusStop implements MandatoryIncentive
         Time now;
         try
         {
-            now = perception.getGtu().getSimulator().getSimulatorTime();
+            now = perception.getGtu().getSimulator().getSimulatorAbsTime();
         }
         catch (GTUException exception)
         {

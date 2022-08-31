@@ -37,10 +37,8 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test sensors and scheduling of trigger.
@@ -70,7 +68,7 @@ public class SensorTest implements UNITS
         // To create Lanes we need Nodes and a LaneType
         OTSRoadNode nodeAFrom = new OTSRoadNode(network, "AFrom", new OTSPoint3D(0, 0, 0), Direction.ZERO);
         OTSRoadNode nodeATo = new OTSRoadNode(network, "ATo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
-        OTSRoadNode nodeBTo = new OTSRoadNode(network, "BTo", new OTSPoint3D(20000, 0, 0), Direction.ZERO); 
+        OTSRoadNode nodeBTo = new OTSRoadNode(network, "BTo", new OTSPoint3D(20000, 0, 0), Direction.ZERO);
         // so car won't run off lane B in 100 s.
         GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
@@ -115,7 +113,7 @@ public class SensorTest implements UNITS
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
-        simulator.runUpTo(new SimTimeDoubleUnit(new Time(1, TimeUnit.BASE_SECOND)));
+        simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));
         if (!simulator.isStartingOrRunning())
         {
             simulator.start();
@@ -132,9 +130,9 @@ public class SensorTest implements UNITS
             }
         }
         // Construction of the car scheduled a car move event at t=0
-        Set<SimEventInterface<SimTimeDoubleUnit>> eventList = simulator.getEventList();
-        SimEventInterface<SimTimeDoubleUnit> triggerEvent = null;
-        for (SimEventInterface<SimTimeDoubleUnit> event : eventList)
+        EventListInterface<Duration> eventList = simulator.getEventList();
+        SimEventInterface<Duration> triggerEvent = null;
+        for (SimEventInterface<Duration> event : eventList)
         {
             System.out.println("Scheduled Event " + event);
             if (event.toString().contains("trigger"))
@@ -169,7 +167,7 @@ class TriggerSensor extends AbstractSensor
      * @throws NetworkException in case position is out of bounds
      */
     TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
-            final String name, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
+            final String name, final OTSSimulatorInterface simulator) throws NetworkException
     {
         super(name, lane, longitudinalPosition, positionType, simulator, Compatible.EVERYTHING);
     }
@@ -183,7 +181,7 @@ class TriggerSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         return null;

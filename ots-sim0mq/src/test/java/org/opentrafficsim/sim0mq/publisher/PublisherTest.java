@@ -18,7 +18,6 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.serialization.SerializationException;
@@ -40,7 +39,6 @@ import org.sim0mq.Sim0MQException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
 
 /**
@@ -145,7 +143,7 @@ public class PublisherTest implements OTSModelInterface
     }
 
     @Override
-    public final List<StatisticsInterface<Time, Duration, SimTimeDoubleUnit>> getOutputStatistics()
+    public final List<StatisticsInterface<Duration>> getOutputStatistics()
     {
         return null;
     }

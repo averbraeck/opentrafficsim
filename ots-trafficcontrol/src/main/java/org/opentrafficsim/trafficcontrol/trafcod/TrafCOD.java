@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEventType;
@@ -46,8 +45,6 @@ import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * TrafCOD evaluator. TrafCOD is a language for writing traffic control programs. A TrafCOD program consists of a set of rules
@@ -883,8 +880,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             if (destination.isOutput())
             {
                 fireTimedEvent(TRAFFIC_LIGHT_CHANGED,
-                        new Object[] { getId(), new Integer(destination.getStream()), destination.getColor() },
-                        getSimulator().getSimulatorTime());
+                        new Object[] {getId(), Integer.valueOf(destination.getStream()), destination.getColor()},
+                        getSimulator().getSimulatorAbsTime());
             }
             if (destination.isConflictGroup() && resultValue != 0)
             {
@@ -899,7 +896,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     conflictGroupList.append(String.format("%02d", stream));
                 }
                 fireTimedEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED,
-                        new Object[] { getId(), this.currentConflictGroup, conflictGroupList.toString() },
+                        new Object[] {getId(), this.currentConflictGroup, conflictGroupList.toString()},
                         getSimulator().getSimulatorTime());
                 // System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
                 // + conflictGroupList.toString());
@@ -1735,7 +1732,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * Retrieve the simulator.
      * @return SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;
      */
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
+    public OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -1891,7 +1888,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     {
         return getId();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Container getDisplayContainer()
@@ -1991,7 +1988,7 @@ class NameAndStream
      * @param locationDescription String; description of the location in the input file
      * @throws TrafficControlException when text is not a valid TrafCOD variable name
      */
-   NameAndStream(final String text, final String locationDescription) throws TrafficControlException
+    NameAndStream(final String text, final String locationDescription) throws TrafficControlException
     {
         int pos = 0;
         while (pos < text.length() && Character.isWhitespace(text.charAt(pos)))
@@ -2163,7 +2160,7 @@ class Variable implements EventListenerInterface
     {
         return this.refCount;
     }
-    
+
     /**
      * @param newNetwork OTSNetwork; the OTS Network in which the clone will exist
      * @param newTrafCOD TrafCOD; the TrafCOD engine that will own the new Variable
@@ -2402,8 +2399,8 @@ class Variable implements EventListenerInterface
             // System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
             // + " due to " + cause.toString());
             trafCODController.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED,
-                    new Object[] { trafCODController.getId(), toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value,
-                            newValue, cause.toString() });
+                    new Object[] {trafCODController.getId(), toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value,
+                            newValue, cause.toString()});
         }
         this.value = newValue;
         return result;

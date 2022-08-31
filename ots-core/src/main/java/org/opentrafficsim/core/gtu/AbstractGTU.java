@@ -20,6 +20,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -34,8 +35,6 @@ import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Implements the basic functionalities of any GTU: the ability to move on 3D-space according to a plan.
@@ -43,8 +42,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Oct 22, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -94,7 +92,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     protected final Historical<OperationalPlan> operationalPlan;
 
     /** The next move event as scheduled on the simulator, can be used for interrupting the current move. */
-    private SimEvent<SimTimeDoubleUnit> nextMoveEvent;
+    private SimEvent<Duration> nextMoveEvent;
 
     /** The model in which this GTU is registered. */
     private PerceivableContext perceivableContext;
@@ -200,11 +198,11 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
         this.strategicalPlanner.set(strategicalPlanner);
         this.tacticalPlanner.set(strategicalPlanner.getTacticalPlanner());
-        Time now = this.simulator.getSimulatorTime();
+        Time now = this.simulator.getSimulatorAbsTime();
 
         DirectedPoint location = getLocation();
-        fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
-                new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getLength(), getWidth() }, now);
+        fireTimedEvent(GTU.INIT_EVENT, new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getLength(), getWidth()}, now);
 
         try
         {
@@ -237,8 +235,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         DirectedPoint location = getLocation();
         fireTimedEvent(GTU.DESTROY_EVENT,
-                new Object[] { getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
-                        new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getOdometer() },
+                new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+                        new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getOdometer()},
                 this.simulator.getSimulatorTime());
 
         // cancel the next move
@@ -273,7 +271,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         try
         {
-            Time now = this.simulator.getSimulatorTime();
+            Time now = this.simulator.getSimulatorAbsTime();
 
             // Add the odometer distance from the currently running operational plan.
             // Because a plan can be interrupted, we explicitly calculate the covered distance till 'now'
@@ -317,7 +315,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                 double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
                 DirectedPoint p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
-                this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(new Time(tNext, TimeUnit.DEFAULT)), this, this,
+                this.nextMoveEvent = new SimEvent<Duration>(
+                        new Duration(tNext - getSimulator().getStartTimeAbs().si, DurationUnit.SI), this, this,
                         "move", new Object[] {p});
                 ALIGN_COUNT++;
             }
@@ -325,14 +324,16 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             {
                 // schedule the next move at the end of the current operational plan
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-                this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(now.plus(newOperationalPlan.getTotalDuration())),
+                this.nextMoveEvent = new SimEvent<>(
+                        now.plus(newOperationalPlan.getTotalDuration())
+                                .minus(getSimulator().getStartTimeAbs()),
                         this, this, "move", new Object[] {newOperationalPlan.getEndLocation()});
             }
             this.simulator.scheduleEvent(this.nextMoveEvent);
             fireTimedEvent(GTU.MOVE_EVENT,
-                    new Object[] { getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
+                    new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
                             new Direction(fromLocation.getZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
-                            getOdometer() },
+                            getOdometer()},
                     this.simulator.getSimulatorTime());
 
             return false;
@@ -444,7 +445,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final Length getOdometer()
     {
-        return getOdometer(this.simulator.getSimulatorTime());
+        return getOdometer(this.simulator.getSimulatorAbsTime());
     }
 
     /** {@inheritDoc} */
@@ -474,7 +475,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         synchronized (this)
         {
-            return getSpeed(this.simulator.getSimulatorTime());
+            return getSpeed(this.simulator.getSimulatorAbsTime());
         }
     }
 
@@ -486,7 +487,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         {
             if (this.cachedSpeedTime != time.si)
             {
-                //Invalidate everything
+                // Invalidate everything
                 this.cachedSpeedTime = Double.NaN;
                 this.cachedSpeed = null;
                 OperationalPlan plan = getOperationalPlan(time);
@@ -527,7 +528,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         synchronized (this)
         {
-            return getAcceleration(this.simulator.getSimulatorTime());
+            return getAcceleration(this.simulator.getSimulatorAbsTime());
         }
     }
 
@@ -624,7 +625,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** Cached location at that time. */
     private DirectedPoint cacheLocation = null;
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -641,7 +642,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             try
             {
                 // cache
-                Time locationTime = this.simulator.getSimulatorTime();
+                Time locationTime = this.simulator.getSimulatorAbsTime();
                 if (null == this.cacheLocationTime || this.cacheLocationTime.si != locationTime.si)
                 {
                     this.cacheLocationTime = null;
@@ -735,14 +736,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final Serializable getSourceId()
     {
-        return this;  // TODO: see where the actual pointer to the GTU is needed
+        return this; // TODO: see where the actual pointer to the GTU is needed
     }
 
     /**
      * Note that destroying the next move event of the GTU can be dangerous!
      * @return nextMoveEvent the next move event of the GTU, e.g. to cancel it from outside.
      */
-    public final SimEvent<SimTimeDoubleUnit> getNextMoveEvent()
+    public final SimEvent<Duration> getNextMoveEvent()
     {
         return this.nextMoveEvent;
     }

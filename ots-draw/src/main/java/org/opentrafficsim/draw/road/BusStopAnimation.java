@@ -10,12 +10,13 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * <p>
@@ -38,11 +39,11 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
 
     /**
      * @param source BusStop; source
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public BusStopAnimation(final BusStop source, final SimulatorInterface.TimeDoubleUnit simulator)
+    public BusStopAnimation(final BusStop source, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         super(source, simulator, .8, new Length(0.5, LengthUnit.SI));
@@ -61,10 +62,10 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
+    public void destroy(final Contextualized contextProvider)
     {
-        super.destroy(simulator);
-        this.text.destroy(simulator);
+        super.destroy(contextProvider);
+        this.text.destroy(contextProvider);
     }
 
     /** {@inheritDoc} */
@@ -99,12 +100,12 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
+                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);
@@ -113,7 +114,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);

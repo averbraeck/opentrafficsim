@@ -140,7 +140,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
         }
 
         // direct perception in first few time steps; build up history
-        Time now = getPerception().getGtu().getSimulator().getSimulatorTime();
+        Time now = getPerception().getGtu().getSimulator().getSimulatorAbsTime();
         if (this.initialTime == null)
         {
             this.initialTime = now;
@@ -162,7 +162,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
             Time scheduledTime = now.plus(this.remainder);
             try
             {
-                getPerception().getGtu().getSimulator().scheduleEventAbs(scheduledTime, this, this, "updateAllDelayed", null);
+                getPerception().getGtu().getSimulator().scheduleEventAbsTime(scheduledTime, this, this, "updateAllDelayed",
+                        null);
             }
             catch (SimRuntimeException exception)
             {

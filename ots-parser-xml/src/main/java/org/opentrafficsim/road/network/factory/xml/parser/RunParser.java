@@ -41,7 +41,7 @@ public final class RunParser
      * @return experiment on the basis of the information in the RUN tag
      * @throws XmlParserException on parsing error
      */
-    public static ExperimentRunControl.TimeDoubleUnit parseRun(final String networkId, final RUN run,
+    public static ExperimentRunControl<Duration> parseRun(final String networkId, final RUN run,
             final StreamSeedInformation streamInformation, final OTSSimulatorInterface simulator) throws XmlParserException
     {
         int numberReplications = run.getNUMBERREPLICATIONS() == null ? 1 : run.getNUMBERREPLICATIONS().intValue();
@@ -85,8 +85,10 @@ public final class RunParser
             }
         }
 
-        ExperimentRunControl.TimeDoubleUnit runControl = new ExperimentRunControl.TimeDoubleUnit("RunControl for " + networkId,
-                startTime, warmupPeriod, runLength, numberReplications);
+        // TODO: do we want a real Time here or a Duration?
+        // If it should be a Time, create an OTSExperimentRunControl that can take a Time as first argument
+        ExperimentRunControl<Duration> runControl = new ExperimentRunControl<>("RunControl for " + networkId,
+                startTime.minus(Time.ZERO), warmupPeriod, runLength, numberReplications);
 
         return runControl;
     }

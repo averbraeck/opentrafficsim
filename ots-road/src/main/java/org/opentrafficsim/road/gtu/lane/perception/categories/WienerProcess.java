@@ -76,12 +76,12 @@ public class WienerProcess extends DistNormal
         if (this.value == null)
         {
             this.value = super.draw();
-            this.prevTime = this.simulator.getSimulatorTime();
+            this.prevTime = this.simulator.getSimulatorAbsTime();
         }
-        else if (this.simulator.getSimulatorTime().gt(this.prevTime))
+        else if (this.simulator.getSimulatorAbsTime().gt(this.prevTime))
         {
             // calculate next value
-            Time now = this.simulator.getSimulatorTime();
+            Time now = this.simulator.getSimulatorAbsTime();
             double dt = now.si - this.prevTime.si;
             if (dt <= this.tau.si)
             {

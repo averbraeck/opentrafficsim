@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -10,9 +11,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * A DestinationSensor is a sensor that deletes a GTU that has the node it will pass after this sensor as its destination.
@@ -38,11 +36,11 @@ public class DestinationSensor extends AbstractSensor
      * @param lane Lane; the lane that triggers the deletion of the GTU.
      * @param position Length; the position of the sensor
      * @param gtuDirectionality GTUDirectionality; GTU directionality
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to enable animation.
+     * @param simulator OTSSimulatorInterface; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public DestinationSensor(final Lane lane, final Length position, final GTUDirectionality gtuDirectionality,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
+            final OTSSimulatorInterface simulator) throws NetworkException
     {
         this(lane, position, gtuDirectionality.isPlus() ? Compatible.PLUS : Compatible.MINUS, simulator);
     }
@@ -51,11 +49,11 @@ public class DestinationSensor extends AbstractSensor
      * @param lane Lane; the lane that triggers the deletion of the GTU.
      * @param position Length; the position of the sensor
      * @param compatible Compatible; compatible GTU type and direction
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to enable animation.
+     * @param simulator OTSSimulatorInterface; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public DestinationSensor(final Lane lane, final Length position, final Compatible compatible,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
+            final OTSSimulatorInterface simulator) throws NetworkException
     {
         super("DESTINATION@" + lane.getFullId(), lane, position, RelativePosition.FRONT, simulator,
                 makeGeometry(lane, position, 1.0), compatible);
@@ -91,14 +89,14 @@ public class DestinationSensor extends AbstractSensor
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DestinationSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public DestinationSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
+        Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         return new DestinationSensor((Lane) newCSE, getLongitudinalPosition(), getDetectedGTUTypes(),
-                (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator);
+                (OTSSimulatorInterface) newSimulator);
     }
 
 }

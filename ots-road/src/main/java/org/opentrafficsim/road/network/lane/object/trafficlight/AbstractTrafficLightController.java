@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 /**
  * Standard fields and methods for traffic light controllers.
@@ -25,7 +25,7 @@ public abstract class AbstractTrafficLightController implements TrafficLightCont
 
     /** the simulator. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    protected final OTSSimulatorInterface simulator;
 
     /** the phases with a number identifying them to create a sorted map. */
     private final SortedMap<Integer, Set<TrafficLight>> phases = new TreeMap<>();
@@ -41,9 +41,9 @@ public abstract class AbstractTrafficLightController implements TrafficLightCont
     /**
      * Create a fixed time controller.
      * @param id String; the controller id
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      */
-    public AbstractTrafficLightController(final String id, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public AbstractTrafficLightController(final String id, final OTSSimulatorInterface simulator)
     {
         this.id = id;
         this.simulator = simulator;

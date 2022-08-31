@@ -4,11 +4,10 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.TimedEventType;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * A sensor is a lane-based object that can be triggered by a relative position of the GTU (e.g., front, back) when that
@@ -35,7 +34,7 @@ public interface SingleSensor extends Sensor, Comparable<SingleSensor>, LaneBase
     void trigger(LaneBasedGTU gtu);
 
     /** @return The simulator. */
-    DEVSSimulatorInterface.TimeDoubleUnit getSimulator();
+    OTSSimulatorInterface getSimulator();
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of a Sensor on a lane. <br>

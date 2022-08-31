@@ -16,7 +16,6 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * Demonstration of problem.
@@ -49,8 +48,8 @@ public class DSOLProblem
         this.simulator = new OTSSimulator("DSOL problem");
         OTSModelInterface model = new DummyModel(this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
-        Time eventTime = this.simulator.getSimulatorTime().plus(new Duration(10, DurationUnit.SECOND));
-        SimEvent<SimTimeDoubleUnit> se = new SimEvent<>(new SimTimeDoubleUnit(eventTime),
+        Time eventTime = this.simulator.getSimulatorAbsTime().plus(new Duration(10, DurationUnit.SECOND));
+        SimEvent<Duration> se = new SimEvent<>(new Duration(eventTime.minus(this.simulator.getStartTimeAbs())),
                 this, this, "move", new Object[] {});
         this.simulator.scheduleEvent(se);
         double step = 0.01d;
@@ -71,7 +70,7 @@ public class DSOLProblem
                 break;
             }
             System.out.println("Simulating until " + stepTime.getSI());
-            this.simulator.runUpTo(new SimTimeDoubleUnit(stepTime));
+            this.simulator.runUpTo(stepTime);
             while (this.simulator.isStartingOrRunning())
             {
                 try

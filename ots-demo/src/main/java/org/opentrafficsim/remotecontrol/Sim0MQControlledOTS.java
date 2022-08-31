@@ -76,7 +76,6 @@ import org.zeromq.ZMQ;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
@@ -397,7 +396,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             {
                                 OTSSimulatorInterface simulator = this.model.getSimulator();
                                 System.out.println("Simulating up to " + message[8]);
-                                simulator.runUpTo(new SimTimeDoubleUnit((Time) message[8]));
+                                simulator.runUpTo((Time) message[8]);
                                 int count = 0;
                                 while (simulator.isStartingOrRunning())
                                 {
@@ -406,7 +405,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                     if (count > 1000) // 10 seconds
                                     {
                                         System.out.println("SIMULATOR DOES NOT STOP. TIME = " + simulator.getSimulatorTime());
-                                        Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt =
+                                        Iterator<SimEventInterface<Duration>> elIt =
                                                 simulator.getEventList().iterator();
                                         while (elIt.hasNext())
                                         {

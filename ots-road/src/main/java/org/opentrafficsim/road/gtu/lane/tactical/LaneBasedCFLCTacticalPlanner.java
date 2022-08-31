@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -49,8 +50,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
-
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Lane-based tactical planner that implements car following and lane change behavior. This lane-based tactical planner makes
@@ -172,7 +171,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     rightLaneTraffic, leftLaneTraffic, speedLimit,
                     new Acceleration(laneIncentives.get(preferred.isRight() ? 2 : 0)), new Acceleration(laneIncentives.get(1)),
                     new Acceleration(laneIncentives.get(preferred.isRight() ? 0 : 2)));
-            Duration duration = lcmr.getGfmr().getValidUntil().minus(getGtu().getSimulator().getSimulatorTime());
+            Duration duration = lcmr.getGfmr().getValidUntil().minus(getGtu().getSimulator().getSimulatorAbsTime());
             if (lcmr.getLaneChangeDirection() != null)
             {
                 laneBasedGTU.changeLaneInstantaneously(lcmr.getLaneChangeDirection());

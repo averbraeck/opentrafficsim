@@ -85,7 +85,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
     public final LaneStructure getLaneStructure() throws ParameterException
     {
 
-        if (this.laneStructure == null || this.updateTime.lt(getGtu().getSimulator().getSimulatorTime()))
+        if (this.laneStructure == null || this.updateTime.lt(getGtu().getSimulator().getSimulatorAbsTime()))
         {
             if (this.laneStructure == null)
             {
@@ -113,7 +113,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
                 exception.printStackTrace();
                 throw new RuntimeException("Error while updating the lane map.", exception);
             }
-            this.updateTime = getGtu().getSimulator().getSimulatorTime();
+            this.updateTime = getGtu().getSimulator().getSimulatorAbsTime();
         }
         return this.laneStructure;
     }

@@ -72,7 +72,6 @@ import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 
@@ -82,8 +81,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version 18 nov. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version 18 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
@@ -288,7 +286,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
         Lane[] lanes = LaneFactory.makeMultiLane(this.network, "Road with two lanes",
                 new OTSRoadNode(this.network, "From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0), Direction.ZERO),
-                new OTSRoadNode(this.network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0), Direction.ZERO), null, 2, 
+                new OTSRoadNode(this.network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0), Direction.ZERO), null, 2,
                 laneType, speedLimit, simulator);
 
         // Create the reference vehicle
@@ -485,7 +483,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public List<StatisticsInterface<Time, Duration, SimTimeDoubleUnit>> getOutputStatistics()
+    public List<StatisticsInterface<Duration>> getOutputStatistics()
     {
         return null;
     }

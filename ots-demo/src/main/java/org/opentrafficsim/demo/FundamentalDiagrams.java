@@ -285,16 +285,16 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 this.headway = new Duration(3600.0 / 1500.0, SECOND);
 
                 // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
-                this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
+                this.simulator.scheduleEventAbsTime(Time.ZERO, this, this, "generateCar", null);
 
                 this.block = new SimpleTrafficLight(this.lane.getId() + "_TL", this.lane, new Length(new Length(4000.0,
                     LengthUnit.METER)), this.simulator);
                 this.block.setTrafficLightColor(TrafficLightColor.GREEN);
 
                 // Create a block at t = 5 minutes
-                this.simulator.scheduleEventAbs(new Time(300, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
+                this.simulator.scheduleEventAbsTime(new Time(300, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
                 // Remove the block at t = 7 minutes
-                this.simulator.scheduleEventAbs(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
+                this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
             }
             catch (SimRuntimeException | NetworkException | GTUException | OTSGeometryException | ParameterException
                 | InputParameterException exception)

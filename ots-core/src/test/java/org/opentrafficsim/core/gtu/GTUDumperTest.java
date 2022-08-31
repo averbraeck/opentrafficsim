@@ -47,7 +47,6 @@ import org.opentrafficsim.core.perception.PerceivableContext;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
 
 /**
@@ -96,7 +95,7 @@ public class GTUDumperTest implements OTSModelInterface
         this.simulator = new OTSSimulator("Simulator for testing GTUDumper class");
         this.network = new OTSNetwork("Network for testing GTUDumper class", true, this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
-        this.simulator.scheduleEventAbs(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
+        this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, this, "createGTU", new Object[] {});
         this.simulator.start();
         while (this.simulator.isStartingOrRunning())
         {
@@ -361,7 +360,7 @@ public class GTUDumperTest implements OTSModelInterface
             {
                 try
                 {
-                    return new OperationalPlan(this, getLocation(), GTUDumperTest.this.simulator.getSimulatorTime(),
+                    return new OperationalPlan(this, getLocation(), GTUDumperTest.this.simulator.getSimulatorAbsTime(),
                             Duration.ZERO)
                     {
 
@@ -468,7 +467,7 @@ public class GTUDumperTest implements OTSModelInterface
     }
 
     @Override
-    public final List<StatisticsInterface<Time, Duration, SimTimeDoubleUnit>> getOutputStatistics()
+    public final List<StatisticsInterface<Duration>> getOutputStatistics()
     {
         return null;
     }

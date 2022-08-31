@@ -51,7 +51,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * Test the various methods of an AbstractLaneBasedGTU.<br>
@@ -162,14 +161,14 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // {
         // // Ignore
         // }
-        for (Lane[] laneGroup : new Lane[][] { lanesGroupA, lanesGroupB })
+        for (Lane[] laneGroup : new Lane[][] {lanesGroupA, lanesGroupB})
         {
             for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
             {
                 Lane lane = laneGroup[laneIndex];
                 boolean expectException = 1 != laneIndex;
-                for (RelativePosition relativePosition : new RelativePosition[] { car.getFront(), car.getReference(),
-                        car.getRear() })
+                for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getReference(),
+                        car.getRear()})
                 {
                     // System.out.println("lane:" + lane + ", expectedException: " + expectException
                     // + ", relativePostion: " + relativePosition);
@@ -222,7 +221,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 step = 0.1; // Reduce testing time by increasing the step size
             }
             // System.out.println("Simulating until " + stepTime.getSI());
-            simulator.runUpTo(new SimTimeDoubleUnit(stepTime));
+            simulator.runUpTo(stepTime);
             while (simulator.isStartingOrRunning())
             {
                 try
@@ -255,7 +254,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
             double expectedLongitudinalSpeed = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
             assertEquals("longitudinal speed is " + expectedLongitudinalSpeed, expectedLongitudinalSpeed,
                     longitudinalSpeed.getSI(), 0.00001);
-            for (RelativePosition relativePosition : new RelativePosition[] { car.getFront(), car.getRear() })
+            for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
             {
                 Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
                 assertEquals("Car should be in two lanes", 2, positions.size());
@@ -269,14 +268,14 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
                         car.fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
             }
-            for (Lane[] laneGroup : new Lane[][] { lanesGroupA, lanesGroupB })
+            for (Lane[] laneGroup : new Lane[][] {lanesGroupA, lanesGroupB})
             {
                 for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
                 {
                     Lane lane = laneGroup[laneIndex];
                     boolean expectException = 1 != laneIndex;
-                    for (RelativePosition relativePosition : new RelativePosition[] { car.getFront(), car.getReference(),
-                            car.getRear() })
+                    for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getReference(),
+                            car.getRear()})
                     {
                         // System.out.println("lane:" + lane + ", expectedException: " + expectException
                         // + ", relativePostion: " + relativePosition);
@@ -353,7 +352,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         Lane[] lanesGroupC = LaneFactory.makeMultiLane(network, "C", nodeCFrom, nodeCTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         // wouter schakel car.enterLane(lanesGroupC[0], new Length(0.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS);
-        for (RelativePosition relativePosition : new RelativePosition[] { car.getFront(), car.getRear() })
+        for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
         {
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
             // wouter schakel assertEquals("Car should be in three lanes", 3, positions.size());
@@ -375,7 +374,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
             // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
         // wouter schakel car.leaveLane(lanesGroupA[1]);
-        for (RelativePosition relativePosition : new RelativePosition[] { car.getFront(), car.getRear() })
+        for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
         {
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
             assertEquals("Car should be in two lanes", 2, positions.size());

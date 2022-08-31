@@ -3,10 +3,9 @@ package org.opentrafficsim.road.network.lane;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -92,12 +91,12 @@ public class Shoulder extends CrossSectionElement
     /**
      * Clone a Shoulder for a new network.
      * @param newParentLink CrossSectionLink; the new link to which the clone belongs
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
      * @param cse Shoulder; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Shoulder(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
+    protected Shoulder(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
             final Shoulder cse) throws NetworkException
     {
         super(newParentLink, newSimulator, cse);
@@ -122,7 +121,7 @@ public class Shoulder extends CrossSectionElement
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Shoulder clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public Shoulder clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         return new Shoulder(newParentLink, newSimulator, this);

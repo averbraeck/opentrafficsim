@@ -13,6 +13,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -22,7 +23,6 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Stochastic Distraction Model by Manuel Lindorfer.
@@ -45,7 +45,7 @@ public class StochasticDistractionModel implements EventListenerInterface
     private final List<Distraction> distractions;
 
     /** Simulator. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Network. */
     private final OTSRoadNetwork network;
@@ -60,11 +60,11 @@ public class StochasticDistractionModel implements EventListenerInterface
      * Constructor. This model will react to GTU's being created in simulation and apply distractions.
      * @param allowMultiTasking boolean; whether to allow multi-tasking
      * @param distractions List&lt;Distraction&gt;; list of distractions
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param network OTSRoadNetwork; network
      */
     public StochasticDistractionModel(final boolean allowMultiTasking, final List<Distraction> distractions,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSRoadNetwork network)
+            final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
     {
         Throw.whenNull(distractions, "List of tasks may not be null.");
         Throw.whenNull(simulator, "Simulator may not be null.");

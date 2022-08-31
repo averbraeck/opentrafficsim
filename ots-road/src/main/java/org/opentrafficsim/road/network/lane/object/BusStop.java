@@ -9,6 +9,7 @@ import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -17,8 +18,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * A bus stop is a location on a lane. The stop has a name, and a set of lines. At a single stop in reality, there may be
@@ -55,11 +54,11 @@ public class BusStop extends AbstractLaneBasedObject
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
      * @param name String; name of stop
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
-            final SimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
+            final OTSSimulatorInterface simulator) throws NetworkException
     {
         super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
                 LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
@@ -191,7 +190,7 @@ public class BusStop extends AbstractLaneBasedObject
     /** {@inheritDoc} */
     @Override
     public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
-            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NetworkException
+            final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         BusStop busStop = new BusStop(getId(), (Lane) newCSE, getLongitudinalPosition(), this.name, newSimulator);
         busStop.setLines(this.lines);

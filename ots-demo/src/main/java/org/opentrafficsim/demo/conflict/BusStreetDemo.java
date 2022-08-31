@@ -80,8 +80,6 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.DSOLException;
@@ -174,7 +172,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             Map<String, StreamInterface> streams = new LinkedHashMap<>();
             streams.put("generation", new MersenneTwister(100L));
             getStreamInformation().addStream("generation", streams.get("generation"));
-            
+
             try
             {
                 URL xmlURL = URLResource.getResource("/conflict/BusStreet.xml");
@@ -288,13 +286,13 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         private final Frequency demand;
 
         /** Simulator. */
-        private final SimulatorInterface.TimeDoubleUnit simulator;
+        private final OTSSimulatorInterface simulator;
 
         /**
          * @param demand Frequency; demand
-         * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+         * @param simulator OTSSimulatorInterface; simulator
          */
-        HeadwayGenerator(final Frequency demand, final SimulatorInterface.TimeDoubleUnit simulator)
+        HeadwayGenerator(final Frequency demand, final OTSSimulatorInterface simulator)
         {
             this.demand = demand;
             this.simulator = simulator;
@@ -304,8 +302,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         @Override
         public Duration draw() throws ProbabilityException, ParameterException
         {
-            return new Duration(
-                    -Math.log(this.simulator.getModel().getStream("generation").nextDouble()) / this.demand.si,
+            return new Duration(-Math.log(this.simulator.getModel().getStream("generation").nextDouble()) / this.demand.si,
                     DurationUnit.SI);
         }
 
@@ -326,7 +323,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
     {
 
         /** Simulator. */
-        private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private final OTSSimulatorInterface simulator;
 
         /** Probabilities. */
         private final double[] probabilities;
@@ -356,11 +353,11 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         private OTSRoadNetwork network;
 
         /**
-         * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+         * @param simulator OTSSimulatorInterface; simulator
          * @param probabilities double[]; probabilities
          * @param network OTSRoadNetwork; network
          */
-        public CharacteristicsGenerator(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final double[] probabilities,
+        public CharacteristicsGenerator(final OTSSimulatorInterface simulator, final double[] probabilities,
                 final OTSRoadNetwork network)
         {
             this.simulator = simulator;
@@ -460,7 +457,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
                     BusSchedule schedule = new BusSchedule("bus1." + this.simulator.getSimulatorTime(), this.busNodes1, "1");
-                    Time now = this.simulator.getSimulatorTime();
+                    Time now = this.simulator.getSimulatorAbsTime();
                     schedule.addBusStop("Cafe Boszicht.1", now.plus(new Duration(70.0, DurationUnit.SI)), this.longDwellTime,
                             true);
                     schedule.addBusStop("Herberg De Deugd", now.plus(new Duration(100.0, DurationUnit.SI)), this.shortDwellTime,
@@ -480,7 +477,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
                     BusSchedule schedule = new BusSchedule("bus2." + this.simulator.getSimulatorTime(), this.busNodes2, "2");
-                    Time now = this.simulator.getSimulatorTime();
+                    Time now = this.simulator.getSimulatorAbsTime();
                     schedule.addBusStop("Cafe Boszicht.2", now.plus(new Duration(80.0, DurationUnit.SI)), this.longDwellTime,
                             true);
                     schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(110.0, DurationUnit.SI)), this.shortDwellTime,

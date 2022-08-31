@@ -2,12 +2,11 @@ package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Distraction following a distance profile.
@@ -33,12 +32,12 @@ public class Distraction extends AbstractLaneBasedObject
      * @param id String; id
      * @param lane Lane; lane
      * @param longitudinalPosition Length; longitudinal position
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param profile DistractionProfile; distraction profile
      * @throws NetworkException on network exception
      */
     public Distraction(final String id, final Lane lane, final Length longitudinalPosition,
-            final SimulatorInterface.TimeDoubleUnit simulator, final DistractionProfile profile) throws NetworkException
+            final OTSSimulatorInterface simulator, final DistractionProfile profile) throws NetworkException
     {
         super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
                 LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
@@ -49,7 +48,7 @@ public class Distraction extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         return new Distraction(getId(), (Lane) newCSE, getLongitudinalPosition(), newSimulator, this.profile);

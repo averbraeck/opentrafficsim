@@ -5,12 +5,11 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Default determination of priority based on link priority, or right-hand traffic. Note that this class is stateful as the
@@ -180,7 +179,7 @@ public class DefaultConflictRule implements ConflictRule
 
     /** {@inheritDoc} */
     @Override
-    public final ConflictRule clone(final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public final ConflictRule clone(final OTSSimulatorInterface newSimulator)
     {
         return new DefaultConflictRule();
     }

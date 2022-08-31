@@ -26,8 +26,6 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-
 /**
  * Augments the AbstractLaneBasedIndividualGTU with a LaneBasedIndividualCarBuilder and animation support
  * <p>
@@ -408,7 +406,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /**
          * @return simulator.
          */
-        public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
+        public final OTSSimulatorInterface getSimulator()
         {
             return this.simulator;
         }

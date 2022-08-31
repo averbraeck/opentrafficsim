@@ -79,9 +79,9 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
         TimeStampedObject<T> stampedObject = (TimeStampedObject<T>) this.cache.get(key);
         try
         {
-            if (stampedObject == null || stampedObject.getTimestamp().lt(getGtu().getSimulator().getSimulatorTime()))
+            if (stampedObject == null || stampedObject.getTimestamp().lt(getGtu().getSimulator().getSimulatorAbsTime()))
             {
-                stampedObject = new TimeStampedObject<>(supplier.get(), getGtu().getSimulator().getSimulatorTime());
+                stampedObject = new TimeStampedObject<>(supplier.get(), getGtu().getSimulator().getSimulatorAbsTime());
             }
             return stampedObject.getObject();
         }

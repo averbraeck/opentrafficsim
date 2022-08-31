@@ -61,7 +61,6 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.SingleReplication;
 import nl.tudelft.simulation.dsol.model.DSOLModel;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -116,7 +115,16 @@ public class ODApplierTest
                 return ODApplierTest.this.time;
             }
         };
-        Mockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
+        Mockito.when(simulatorMock.getSimulatorAbsTime()).then(answerTime);
+        Answer<Duration> answerDuration = new Answer<Duration>()
+        {
+            @Override
+            public Duration answer(final InvocationOnMock invocation) throws Throwable
+            {
+                return ODApplierTest.this.time.minus(Time.ZERO);
+            }
+        };
+        Mockito.when(simulatorMock.getSimulatorTime()).then(answerDuration);
         Mockito.when(simulatorMock.getReplication()).thenReturn(this.replication);
         Mockito.when(simulatorMock.getModel()).thenReturn(this.model);
         return simulatorMock;
@@ -196,7 +204,7 @@ public class ODApplierTest
      * Returns the replication.
      * @return replication
      */
-    final SingleReplication.TimeDoubleUnit getReplication()
+    final SingleReplication<Duration> getReplication()
     {
         return this.replication;
     }
@@ -205,7 +213,7 @@ public class ODApplierTest
      * Returns the simulator.
      * @return simulator
      */
-    final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
+    final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

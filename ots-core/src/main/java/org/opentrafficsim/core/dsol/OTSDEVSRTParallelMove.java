@@ -8,14 +8,13 @@ import java.util.concurrent.Executors;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
+import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -27,7 +26,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, SimTimeDoubleUnit>
+public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Duration>
 {
     /** */
     private static final long serialVersionUID = 20140909L;
@@ -99,7 +98,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
         animationThread.start();
 
         long clockTime0 = System.currentTimeMillis(); // _________ current zero for the wall clock
-        SimTimeDoubleUnit simTime0 = this.simulatorTime; // _______ current zero for the sim clock
+        Duration simTime0 = this.simulatorTime; // _______ current zero for the sim clock
         double factor = getSpeedFactor(); // _____________________ local copy of speed factor to detect change
         double msec1 = simulatorTimeForWallClockMillis(1.0).doubleValue(); // _____ translation factor for 1 msec for sim clock
         Duration rSim = this.simulatorTimeForWallClockMillis(getUpdateMsec() * factor); // sim clock change for 'updateMsec'
@@ -120,7 +119,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
             // check if we are behind; syncTime is the needed current time on the wall-clock
             double syncTime = (System.currentTimeMillis() - clockTime0) * msec1 * factor;
             // delta is the time we might be behind
-            double simTime = this.simulatorTime.diff(simTime0).doubleValue();
+            double simTime = this.simulatorTime.minus(simTime0).doubleValue();
 
             if (syncTime > simTime)
             {
@@ -138,8 +137,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                     synchronized (super.semaphore)
                     {
                         Duration delta = simulatorTimeForWallClockMillis((syncTime - simTime) / msec1);
-                        SimTimeDoubleUnit absSyncTime = this.simulatorTime.plus(delta);
-                        SimTimeDoubleUnit eventTime = this.eventList.first().getAbsoluteExecutionTime();
+                        Duration absSyncTime = this.simulatorTime.plus(delta);
+                        Duration eventTime = this.eventList.first().getAbsoluteExecutionTime();
                         if (absSyncTime.lt(eventTime))
                         {
                             this.simulatorTime = absSyncTime;
@@ -154,8 +153,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
 
             // peek at the first event and determine the time difference relative to RT speed; that determines
             // how long we have to wait.
-            SimEventInterface<SimTimeDoubleUnit> event = this.eventList.first();
-            double simTimeDiffMillis = (event.getAbsoluteExecutionTime().diff(simTime0)).doubleValue() / (msec1 * factor);
+            SimEventInterface<Duration> event = this.eventList.first();
+            double simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
 
             /*
              * simTimeDiff gives the number of milliseconds between the last event and this event. if speed == 1, this is the
@@ -188,7 +187,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                     if (!event.equals(this.eventList.first())) // event inserted by a thread...
                     {
                         event = this.eventList.first();
-                        simTimeDiffMillis = (event.getAbsoluteExecutionTime().diff(simTime0)).doubleValue() / (msec1 * factor);
+                        simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
                     }
                     else
                     {
@@ -198,7 +197,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                         {
                             synchronized (super.semaphore)
                             {
-                                this.simulatorTime.add(rSim);
+                                this.simulatorTime = this.simulatorTime.plus(rSim);
                             }
                         }
                     }
@@ -206,7 +205,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
             }
 
             this.simulatorTime = event.getAbsoluteExecutionTime();
-            this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, this.simulatorTime.get());
+            this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, this.simulatorTime);
 
             if (this.moveThreads <= 1)
             {
@@ -224,7 +223,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                         catch (Exception exception)
                         {
                             getLogger().always().error(exception);
-                            if (this.isPauseOnError())
+                            if (this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                             {
                                 try
                                 {
@@ -250,14 +249,14 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
             {
                 // parallel execution of the move method
                 // first carry out all the non-move events and make a list of move events to be carried out in parallel
-                List<SimEventInterface<SimTimeDoubleUnit>> moveEvents = new ArrayList<>();
+                List<SimEventInterface<Duration>> moveEvents = new ArrayList<>();
                 synchronized (super.semaphore)
                 {
                     while (this.isStartingOrRunning() && !this.eventList.isEmpty()
                             && event.getAbsoluteExecutionTime().eq(this.simulatorTime))
                     {
                         event = this.eventList.removeFirst();
-                        SimEvent<SimTimeDoubleUnit> se = (SimEvent<SimTimeDoubleUnit>) event;
+                        SimEvent<Duration> se = (SimEvent<Duration>) event;
                         if (se.getTarget() instanceof GTU && se.getMethod().equals("move"))
                         {
                             moveEvents.add(event);
@@ -271,7 +270,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                             catch (Exception exception)
                             {
                                 getLogger().always().error(exception);
-                                if (this.isPauseOnError())
+                                if (this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                                 {
                                     try
                                     {
@@ -297,8 +296,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                 this.executor = Executors.newFixedThreadPool(1);
                 for (int i = 0; i < moveEvents.size(); i++)
                 {
-                    SimEvent<SimTimeDoubleUnit> se = (SimEvent<SimTimeDoubleUnit>) moveEvents.get(i);
-                    final SimEventInterface<SimTimeDoubleUnit> moveEvent =
+                    SimEvent<Duration> se = (SimEvent<Duration>) moveEvents.get(i);
+                    final SimEventInterface<Duration> moveEvent =
                             new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "movePrep", se.getArgs());
                     this.executor.execute(new Runnable()
                     {
@@ -312,7 +311,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                             catch (Exception exception)
                             {
                                 getLogger().always().error(exception);
-                                if (OTSDEVSRTParallelMove.this.isPauseOnError())
+                                if (OTSDEVSRTParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                                 {
                                     try
                                     {
@@ -340,8 +339,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                 this.executor = Executors.newFixedThreadPool(1);
                 for (int i = 0; i < moveEvents.size(); i++)
                 {
-                    SimEvent<SimTimeDoubleUnit> se = (SimEvent<SimTimeDoubleUnit>) moveEvents.get(i);
-                    final SimEventInterface<SimTimeDoubleUnit> moveEvent =
+                    SimEvent<Duration> se = (SimEvent<Duration>) moveEvents.get(i);
+                    final SimEventInterface<Duration> moveEvent =
                             new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "moveGenerate", se.getArgs());
                     this.executor.execute(new Runnable()
                     {
@@ -355,7 +354,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                             catch (Exception exception)
                             {
                                 getLogger().always().error(exception);
-                                if (OTSDEVSRTParallelMove.this.isPauseOnError())
+                                if (OTSDEVSRTParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                                 {
                                     try
                                     {
@@ -383,8 +382,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                 this.executor = Executors.newFixedThreadPool(1);
                 for (int i = 0; i < moveEvents.size(); i++)
                 {
-                    SimEvent<SimTimeDoubleUnit> se = (SimEvent<SimTimeDoubleUnit>) moveEvents.get(i);
-                    final SimEventInterface<SimTimeDoubleUnit> moveEvent =
+                    SimEvent<Duration> se = (SimEvent<Duration>) moveEvents.get(i);
+                    final SimEventInterface<Duration> moveEvent =
                             new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "moveFinish", se.getArgs());
                     this.executor.execute(new Runnable()
                     {
@@ -398,7 +397,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
                             catch (Exception exception)
                             {
                                 getLogger().always().error(exception);
-                                if (OTSDEVSRTParallelMove.this.isPauseOnError())
+                                if (OTSDEVSRTParallelMove.this.getErrorStrategy().equals(ErrorStrategy.WARN_AND_PAUSE))
                                 {
                                     try
                                     {
@@ -425,7 +424,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Time, Duration, 
 
             }
         }
-        this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, /*this.simulatorTime,*/ this.simulatorTime.get());
+        this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, null, /* this.simulatorTime, */ this.simulatorTime);
 
         updateAnimation();
         animationThread.stopAnimation();

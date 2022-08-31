@@ -67,7 +67,6 @@ import org.zeromq.ZMQ;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -238,7 +237,7 @@ public final class Sim0MQPublisher
     private String loadNetwork(final String xml, final Duration simulationDuration, final Duration warmupTime, final Long seed)
     {
         try
-        { 
+        {
             OTSAnimator animator = new OTSAnimator("OTS Animator");
             this.network = new OTSRoadNetwork("OTS model for Sim0MQPublisher", true, animator);
             this.model = new Sim0MQOTSModel("Remotely controlled OTS model", this.network, xml);
@@ -404,7 +403,7 @@ public final class Sim0MQPublisher
                                 ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext, new Object[] {"SIM01", true,
                                         message[2], message[3], message[4], message[5], message[6], 0}, socketMap);
                                 returnWrapper.ack(resultMessage);
-                                simulator.runUpTo(new SimTimeDoubleUnit((Time) message[8]));
+                                simulator.runUpTo((Time) message[8]);
                                 int count = 0;
                                 while (this.network.getSimulator().isStartingOrRunning())
                                 {
@@ -415,7 +414,7 @@ public final class Sim0MQPublisher
                                         System.out.println("TIMEOUT - STOPPING SIMULATOR. TIME = "
                                                 + this.network.getSimulator().getSimulatorTime());
                                         this.network.getSimulator().stop();
-                                        Iterator<SimEventInterface<SimTimeDoubleUnit>> elIt =
+                                        Iterator<SimEventInterface<Duration>> elIt =
                                                 this.network.getSimulator().getEventList().iterator();
                                         while (elIt.hasNext())
                                         {

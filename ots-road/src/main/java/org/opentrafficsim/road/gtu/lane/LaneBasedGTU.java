@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -12,6 +13,7 @@ import org.djutils.event.EventType;
 import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -25,8 +27,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * This interface defines a lane based GTU.
@@ -90,7 +90,7 @@ public interface LaneBasedGTU extends GTU
      * Sets event to finalize lane change.
      * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; event
      */
-    void setFinalizeLaneChangeEvent(SimEventInterface<SimTimeDoubleUnit> event);
+    void setFinalizeLaneChangeEvent(SimEventInterface<Duration> event);
 
     /**
      * Get projected length on the lane.
@@ -225,7 +225,7 @@ public interface LaneBasedGTU extends GTU
      * @param lane Lane; the lane on which the event occurs
      * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; SimeEvent&lt;SimTimeDoubleUnit&gt; the event
      */
-    void addTrigger(Lane lane, SimEventInterface<SimTimeDoubleUnit> event);
+    void addTrigger(Lane lane, SimEventInterface<Duration> event);
 
     /**
      * Set distance over which the GTU should not change lane after being created.
@@ -273,7 +273,7 @@ public interface LaneBasedGTU extends GTU
      */
     default boolean isBrakingLightsOn()
     {
-        return isBrakingLightsOn(getSimulator().getSimulatorTime());
+        return isBrakingLightsOn(getSimulator().getSimulatorAbsTime());
     }
 
     /**

@@ -4,14 +4,12 @@ import java.io.Serializable;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
 
 /**
  * Construct a DSOL DEVSSimulator the easy way.
@@ -23,7 +21,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSimulatorInterface, Serializable
+public class OTSSimulator extends DEVSSimulator<Duration> implements OTSSimulatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150510L;
@@ -53,7 +51,7 @@ public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSim
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model, final int replicationNr) throws SimRuntimeException, NamingException
     {
-        setPauseOnError(true);
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         OTSReplication newReplication = new OTSReplication("rep" + replicationNr, startTime, warmupPeriod, runLength);
         super.initialize(model, newReplication);
     }
@@ -67,23 +65,11 @@ public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSim
 
     /** {@inheritDoc} */
     @Override
-    public final SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
-            final Object target, final String method, final Object[] args) throws SimRuntimeException
-    {
-        SimEvent<SimTimeDoubleUnit> result =
-                new SimEvent<>(new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source,
-                        target, method, args);
-        scheduleEvent(result);
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public OTSReplication getReplication()
     {
         return (OTSReplication) super.getReplication();
     }
-
+    
     /** {@inheritDoc} */
     @Override
     public String toString()

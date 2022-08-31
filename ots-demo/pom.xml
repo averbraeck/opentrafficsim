@@ -9,8 +9,8 @@
   </parent>
 
   <artifactId>ots-demo</artifactId>
-  <name>Open Traffic Sim demo classes</name>
-  <description>Demo classes for the Open Traffic Sim project</description>
+  <name>OpenTrafficSim demo classes</name>
+  <description>Demo classes for the OpenTrafficSim project</description>
 
   <dependencies>
     <dependency>

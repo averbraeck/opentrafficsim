@@ -12,13 +12,13 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -45,7 +45,7 @@ public class SplitFraction
     private final StreamInterface random;
 
     /** Simulator. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Map of fractions by GTUType and Link. */
     private final Map<GTUType, Map<Link, Map<Duration, Double>>> fractions = new LinkedHashMap<>();
@@ -55,10 +55,10 @@ public class SplitFraction
      * @param node Node; node
      * @param interpolation Interpolation; interpolation
      * @param random StreamInterface; random stream
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      */
     public SplitFraction(final Node node, final Interpolation interpolation, final StreamInterface random,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            final OTSSimulatorInterface simulator)
     {
         this.node = node;
         this.interpolation = interpolation;

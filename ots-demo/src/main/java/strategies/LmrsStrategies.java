@@ -244,7 +244,7 @@ public class LmrsStrategies implements EventListenerInterface
     private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
 
     /** The simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** The network. */
     private OTSRoadNetwork network;
@@ -411,11 +411,11 @@ public class LmrsStrategies implements EventListenerInterface
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si + 1e-9), lmrsModel);
                 lmrsStrategies.new LmrsStrategiesSimulation(lmrsModel);
                 double tReport = 60.0;
-                Time t = simulator.getSimulatorTime();
+                Time t = simulator.getSimulatorAbsTime();
                 while (t.le(SIMTIME))
                 {
                     simulator.step();
-                    t = simulator.getSimulatorTime();
+                    t = simulator.getSimulatorAbsTime();
                     if (t.si >= tReport)
                     {
                         System.out.println("Simulation time is " + t);

@@ -7,13 +7,13 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
- * History manager that uses an {@code DEVSSimulatorInterface.TimeDoubleUnit}.
+ * History manager that uses an {@code OTSSimulatorInterface}.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -25,9 +25,11 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
  */
 public class HistoryManagerDEVS extends HistoryManager implements EventListenerInterface
 {
+    /** */
+    private static final long serialVersionUID = 1L;
 
     /** Simulator. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Time over which history is guaranteed. */
     private final Duration history;
@@ -40,12 +42,11 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
 
     /**
      * Constructor.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param history Duration; time over which history is guaranteed
      * @param cleanUpInterval Duration; clean-up interval
      */
-    public HistoryManagerDEVS(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Duration history,
-            final Duration cleanUpInterval)
+    public HistoryManagerDEVS(final OTSSimulatorInterface simulator, final Duration history, final Duration cleanUpInterval)
     {
         this.simulator = simulator;
         this.history = history;
@@ -59,7 +60,7 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
     @Override
     public Time now()
     {
-        return this.simulator.getSimulatorTime();
+        return this.simulator.getSimulatorAbsTime();
     }
 
     /**

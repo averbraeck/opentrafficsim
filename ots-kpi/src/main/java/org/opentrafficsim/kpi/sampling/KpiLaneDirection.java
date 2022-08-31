@@ -42,7 +42,7 @@ public class KpiLaneDirection implements Serializable
     /**
      * @return the lane
      */
-    public final LaneDataInterface getLaneData()
+    public LaneDataInterface getLaneData()
     {
         return this.lane;
     }
@@ -50,7 +50,7 @@ public class KpiLaneDirection implements Serializable
     /**
      * @return the direction to drive on this lane
      */
-    public final KpiGtuDirectionality getKpiDirection()
+    public KpiGtuDirectionality getKpiDirection()
     {
         return this.direction;
     }
@@ -61,7 +61,7 @@ public class KpiLaneDirection implements Serializable
      * @param position Length; the position on the lane irrespective of the direction
      * @return position with increasing value in the direction of travel
      */
-    public final Length getPositionInDirection(Length position)
+    public Length getPositionInDirection(final Length position)
     {
         Throw.whenNull(position, "Position may not be null.");
         return this.direction.equals(KpiGtuDirectionality.DIR_PLUS) ? position : this.lane.getLength().minus(position);
@@ -76,7 +76,7 @@ public class KpiLaneDirection implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -87,7 +87,7 @@ public class KpiLaneDirection implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final boolean equals(final Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {

@@ -22,7 +22,6 @@ import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
 import nl.tudelft.simulation.dsol.swing.gui.control.RealTimeControlPanel;
@@ -67,7 +66,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
         OTSReplication replication = new OTSReplication("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, SECOND));
         simulator.initialize(model, replication);
         DSOLPanel panel =
-                new DSOLPanel(new RealTimeControlPanel<Time, Duration, SimTimeDoubleUnit, OTSAnimator>(model, simulator));
+                new DSOLPanel(new RealTimeControlPanel<Duration, OTSAnimator>(model, simulator));
 
         Rectangle2D extent = new Rectangle2D.Double(-50, -50, 200, 50);
         Dimension size = new Dimension(1024, 768);

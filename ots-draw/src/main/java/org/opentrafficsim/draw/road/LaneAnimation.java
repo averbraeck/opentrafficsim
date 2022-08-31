@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -20,9 +21,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface.TimeDoubleUnit;
 import nl.tudelft.simulation.language.d2.Angle;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * <p>
@@ -47,12 +47,12 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
     /**
      * Animate a Lane.
      * @param lane Lane; the lane
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param color Color; Color of the lane.
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public LaneAnimation(final Lane lane, final SimulatorInterface.TimeDoubleUnit simulator, final Color color)
+    public LaneAnimation(final Lane lane, final OTSSimulatorInterface simulator, final Color color)
             throws NamingException, RemoteException
     {
         super(lane, simulator);
@@ -83,16 +83,16 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
+    public void destroy(final Contextualized contextProvider)
     {
-        super.destroy(simulator);
-        this.text.destroy(simulator);
+        super.destroy(contextProvider);
+        this.text.destroy(contextProvider);
     }
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<Lane> clone(final Lane newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public ClonableRenderable2DInterface<Lane> clone(final Lane newSource, final OTSSimulatorInterface newSimulator)
             throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
@@ -162,11 +162,11 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
         /**
          * Construct a new CenterLineAnimation.
          * @param centerLine CemterLine; the center line of a lane
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @throws NamingException when the name of this object is not unique
          * @throws RemoteException when communication with a remote process fails
          */
-        public CenterLineAnimation(final CenterLine centerLine, final SimulatorInterface.TimeDoubleUnit simulator)
+        public CenterLineAnimation(final CenterLine centerLine, final OTSSimulatorInterface simulator)
                 throws NamingException, RemoteException
         {
             super(centerLine, simulator);
@@ -174,7 +174,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
 
         @Override
         public final ClonableRenderable2DInterface<CenterLine> clone(final CenterLine newSource,
-                final TimeDoubleUnit newSimulator) throws NamingException, RemoteException
+                final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
         {
             // TODO Auto-generated method stub
             return null;
@@ -213,12 +213,12 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
+                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);
@@ -242,7 +242,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);

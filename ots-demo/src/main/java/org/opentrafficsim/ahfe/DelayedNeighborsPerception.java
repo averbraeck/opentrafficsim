@@ -149,7 +149,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         Duration dt;
         try
         {
-            time = getPerception().getGtu().getSimulator().getSimulatorTime();
+            time = getPerception().getGtu().getSimulator().getSimulatorAbsTime();
             if (time.equals(this.rearrangeTime))
             {
                 return;

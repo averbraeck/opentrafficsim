@@ -5,8 +5,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -28,7 +28,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
     private final Arrivals arrivals;
 
     /** Simulator. */
-    private final SimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Random stream to draw headway. */
     private final StreamInterface stream;
@@ -41,11 +41,11 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
 
     /**
      * @param arrivals Arrivals; arrivals
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param stream StreamInterface; random stream to draw headway
      * @param distribution HeadwayDistribution; random headway distribution
      */
-    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final SimulatorInterface.TimeDoubleUnit simulator,
+    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OTSSimulatorInterface simulator,
             final StreamInterface stream, final HeadwayDistribution distribution)
     {
         this.arrivals = arrivals;
@@ -90,7 +90,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
     @Override
     public Duration draw() throws ProbabilityException, ParameterException
     {
-        Time now = this.simulator.getSimulatorTime();
+        Time now = this.simulator.getSimulatorAbsTime();
         // initial slice times and frequencies
         Time t1 = now;
         double f1 = this.arrivals.getFrequency(t1, true).si;
@@ -164,8 +164,8 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
     @Override
     public String toString()
     {
-        return "ArrivalsHeadwayGenerator [arrivals=" + arrivals + ", simulator=" + simulator + ", stream=" + stream
-                + ", distribution=" + distribution + ", first=" + first + "]";
+        return "ArrivalsHeadwayGenerator [arrivals=" + this.arrivals + ", simulator=" + this.simulator + ", stream=" + this.stream
+                + ", distribution=" + this.distribution + ", first=" + this.first + "]";
     }
 
     /**

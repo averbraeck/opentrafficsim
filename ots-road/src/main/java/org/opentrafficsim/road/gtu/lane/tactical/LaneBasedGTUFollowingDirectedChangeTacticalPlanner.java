@@ -22,6 +22,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
@@ -49,7 +50,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Lane-based tactical planner that implements car following behavior and rule-based lane change. This tactical planner
@@ -143,7 +143,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     public final void setNoLaneChange(final Duration noLaneChangeDuration)
     {
         Throw.when(noLaneChangeDuration.lt0(), RuntimeException.class, "noLaneChangeDuration should be >= 0");
-        this.earliestNextLaneChangeTime = getGtu().getSimulator().getSimulatorTime().plus(noLaneChangeDuration);
+        this.earliestNextLaneChangeTime = getGtu().getSimulator().getSimulatorAbsTime().plus(noLaneChangeDuration);
     }
 
     /**
@@ -274,7 +274,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             }
 
             // Condition, if we have just changed lane, let's not change immediately again.
-            if (getGtu().getSimulator().getSimulatorTime().lt(this.earliestNextLaneChangeTime))
+            if (getGtu().getSimulator().getSimulatorAbsTime().lt(this.earliestNextLaneChangeTime))
             {
                 return currentLanePlan(laneBasedGTU, startTime, locationAtStartTime, lanePathInfo);
             }
@@ -375,7 +375,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             }
 
             if (this.deadLock != null
-                    && getGtu().getSimulator().getSimulatorTime().minus(this.deadLock).ge(this.deadLockThreshold)
+                    && getGtu().getSimulator().getSimulatorAbsTime().minus(this.deadLock).ge(this.deadLockThreshold)
                     && isDestroyGtuOnFailure())
             {
                 System.err.println("Deleting gtu " + getGtu().getId() + " to prevent dead-lock.");
@@ -595,7 +595,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         gtu.changeLaneInstantaneously(direction);
 
         // stay at a certain number of seconds in the current lane (unless we HAVE to change lanes)
-        this.earliestNextLaneChangeTime = gtu.getSimulator().getSimulatorTime().plus(this.durationInLaneAfterLaneChange);
+        this.earliestNextLaneChangeTime = gtu.getSimulator().getSimulatorAbsTime().plus(this.durationInLaneAfterLaneChange);
 
         // make sure out turn indicator is on!
         gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);
@@ -722,7 +722,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             {
                 if (this.deadLock == null)
                 {
-                    this.deadLock = getGtu().getSimulator().getSimulatorTime();
+                    this.deadLock = getGtu().getSimulator().getSimulatorAbsTime();
                 }
             }
             else

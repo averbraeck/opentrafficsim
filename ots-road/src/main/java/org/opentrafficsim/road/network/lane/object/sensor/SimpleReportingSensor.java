@@ -3,14 +3,12 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Sensor that prints which GTU triggers it.
@@ -36,13 +34,13 @@ public class SimpleReportingSensor extends AbstractSensor
      * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor
      * @param id String; the id of the new SimpleReportingSensor
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to enable animation
+     * @param simulator OTSSimulatorInterface; the simulator to enable animation
      * @param compatible Compatible; object that can decide if a particular GTU type in a particular driving direction will
      *            trigger the new SimpleReportingSensor
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SimpleReportingSensor(final String id, final Lane lane, final Length position,
-            final RelativePosition.TYPE triggerPosition, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final RelativePosition.TYPE triggerPosition, final OTSSimulatorInterface simulator,
             final Compatible compatible) throws NetworkException
     {
         super(id, lane, position, triggerPosition, simulator, compatible);
@@ -58,14 +56,14 @@ public class SimpleReportingSensor extends AbstractSensor
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SimpleReportingSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public SimpleReportingSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
+        Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         return new SimpleReportingSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
-                (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator, getDetectedGTUTypes());
+                (OTSSimulatorInterface) newSimulator, getDetectedGTUTypes());
 
         // the sensor creates its own animation (for now)
     }

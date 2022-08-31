@@ -46,14 +46,14 @@ public class OTSReplicationTest
         OTSSimulatorInterface simulator = new OTSSimulator("Simulator for OTSReplicationTest");
         OTSModel model = new OTSModel(simulator);
         OTSReplication replication = new OTSReplication(id, startTime, warmupPeriod, runLength);
-        assertEquals("startTime can be retrieved", startTime, replication.getStartTime());
+        assertEquals("startTime can be retrieved", startTime, replication.getStartTimeAbs());
         assertEquals("warmupPeriod can be retrieved", warmupPeriod,
                 replication.getWarmupPeriod());
         assertEquals("runLength can be retrieved", runLength, replication.getRunLength());
         simulator.initialize(model, replication);
         int listenerCount = simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT);
         HistoryManagerDEVS hm = (HistoryManagerDEVS) replication.getHistoryManager(simulator);
-        assertEquals("history manager knows time of simulator", simulator.getSimulatorTime(), hm.now());
+        assertEquals("history manager knows time of simulator", simulator.getSimulatorAbsTime(), hm.now());
         assertEquals("history manager has subscribed to our simulator", listenerCount + 1,
                 simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT));
         Duration history = new Duration(123, DurationUnit.SECOND);

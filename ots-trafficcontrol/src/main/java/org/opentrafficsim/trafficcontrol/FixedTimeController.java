@@ -260,7 +260,7 @@ public class FixedTimeController extends AbstractTrafficController
             }
         }
         // Schedule setup at time == 0 (when the network should be fully created and all traffic lights have been constructed)
-        simulator.scheduleEventAbs(Time.ZERO, this, this, "setup", new Object[] { simulator, network });
+        simulator.scheduleEventAbsTime(Time.ZERO, this, this, "setup", new Object[] { simulator, network });
     }
 
     /**
@@ -686,7 +686,7 @@ public class FixedTimeController extends AbstractTrafficController
          */
         public TrafficLightColor getCurrentColor()
         {
-            return currentColor;
+            return this.currentColor;
         }
 
         /** {@inheritDoc} */
@@ -743,7 +743,7 @@ public class FixedTimeController extends AbstractTrafficController
         @Override
         public String toString()
         {
-            return "Flank [offset=" + offset + ", newColor=" + newColor + "]";
+            return "Flank [offset=" + this.offset + ", newColor=" + this.newColor + "]";
         }
 
         /** Cumulative rounding errors are less than this value and traffic light transitions are spaced further apart. */

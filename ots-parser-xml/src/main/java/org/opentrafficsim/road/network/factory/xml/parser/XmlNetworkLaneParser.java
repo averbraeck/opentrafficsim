@@ -21,6 +21,7 @@ import javax.xml.transform.sax.SAXSource;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.io.URLResource;
@@ -134,7 +135,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl.TimeDoubleUnit build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
             MalformedURLException, IOException, TrafficControlException
@@ -201,7 +202,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl.TimeDoubleUnit build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
             MalformedURLException, IOException, TrafficControlException
@@ -228,7 +229,7 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public static ExperimentRunControl.TimeDoubleUnit build(final OTS ots, final OTSRoadNetwork otsNetwork,
+    public static ExperimentRunControl<Duration> build(final OTS ots, final OTSRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
             XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
             MalformedURLException, IOException, TrafficControlException
@@ -237,7 +238,7 @@ public final class XmlNetworkLaneParser implements Serializable
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
         StreamSeedInformation streamInformation = new StreamSeedInformation();
-        ExperimentRunControl.TimeDoubleUnit runControl =
+        ExperimentRunControl<Duration> runControl =
                 RunParser.parseRun(otsNetwork.getId(), ots.getRUN(), streamInformation, otsNetwork.getSimulator());
 
         Map<String, ROADLAYOUT> roadLayoutMap = new LinkedHashMap<>();

@@ -16,13 +16,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.perception.collections.HistoricalHashMap;
 import org.opentrafficsim.core.perception.collections.HistoricalLinkedHashSet;
 import org.opentrafficsim.core.perception.collections.HistoricalLinkedList;
 import org.opentrafficsim.core.perception.collections.HistoricalMap;
 import org.opentrafficsim.core.perception.collections.HistoricalSet;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Test of subclasses of Historical.
@@ -44,7 +43,7 @@ public class HistoricalTest
     private Duration cleanUp = Duration.instantiateSI(10.0);
 
     /** MockUp simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** History manager. */
     private HistoryManagerDEVS historyManager;
@@ -59,9 +58,9 @@ public class HistoricalTest
     /**
      * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
      */
-    private DEVSSimulatorInterface.TimeDoubleUnit createSimulatorMock()
+    private OTSSimulatorInterface createSimulatorMock()
     {
-        DEVSSimulatorInterface.TimeDoubleUnit simulatorMock = Mockito.mock(DEVSSimulatorInterface.TimeDoubleUnit.class);
+        OTSSimulatorInterface simulatorMock = Mockito.mock(OTSSimulatorInterface.class);
         Answer<Time> answerTime = new Answer<Time>()
         {
             @Override
@@ -71,7 +70,7 @@ public class HistoricalTest
             }
 
         };
-        Mockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
+        Mockito.when(simulatorMock.getSimulatorAbsTime()).then(answerTime);
         return simulatorMock;
     }
 

@@ -16,6 +16,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -43,9 +44,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Conflicts deal with traffic on different links/roads that need to consider each other as their paths may be in conflict
@@ -87,7 +85,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     private final GTUDirectionality direction;
 
     /** Simulator for animation and timed events. */
-    private final SimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** GTU type. */
     private final GTUType gtuType;
@@ -158,7 +156,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param geometry OTSLine3D; geometry of conflict
      * @param conflictRule ConflictRule; conflict rule, i.e. determines priority, give way, stop or all-stop
      * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator for animation and timed events
+     * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
      * @param permitted boolean; whether the conflict is permitted in traffic light control
      * @param gtuType GTUType; GTU type
      * @param cloneLock Object; lock object for cloning a pair of conflicts
@@ -167,8 +165,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     @SuppressWarnings("checkstyle:parameternumber")
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final GTUDirectionality direction,
             final OTSLine3D geometry, final ConflictType conflictType, final ConflictRule conflictRule,
-            final SimulatorInterface.TimeDoubleUnit simulator, final GTUType gtuType, final boolean permitted,
-            final Object cloneLock) throws NetworkException
+            final OTSSimulatorInterface simulator, final GTUType gtuType, final boolean permitted, final Object cloneLock)
+            throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, Throw.whenNull(direction, "Direction may not be null.").isPlus()
                 ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS, longitudinalPosition, geometry);
@@ -244,7 +242,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             final HeadwayGtuType headwayGtuType, final Length visibility)
     {
         provideUpstreamVisibility(visibility);
-        Time time = this.getLane().getParentLink().getSimulator().getSimulatorTime();
+        Time time = this.getLane().getParentLink().getSimulator().getSimulatorAbsTime();
         if (this.upstreamTime == null || !time.eq(this.upstreamTime))
         {
             for (LaneBasedGTU gtu : this.upstreamListening)
@@ -294,7 +292,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             final HeadwayGtuType headwayGtuType, final Length visibility)
     {
         provideDownstreamVisibility(visibility);
-        Time time = this.getLane().getParentLink().getSimulator().getSimulatorTime();
+        Time time = this.getLane().getParentLink().getSimulator().getSimulatorAbsTime();
         if (this.downstreamTime == null || !time.eq(this.downstreamTime))
         {
             for (LaneBasedGTU gtu : this.downstreamListening)
@@ -421,9 +419,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             {
                 this.maxMaxTrafficLightDistance = maxDistance;
                 boolean downstream = false;
-                LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight> it =
-                        new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight>(null, TrafficLight.class, this.root,
-                                getLongitudinalPosition(), downstream, maxDistance, RelativePosition.REFERENCE_POSITION, null)
+                LaneBasedObjectIterable<HeadwayTrafficLight,
+                        TrafficLight> it = new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight>(null,
+                                TrafficLight.class, this.root, getLongitudinalPosition(), downstream, maxDistance,
+                                RelativePosition.REFERENCE_POSITION, null)
                         {
                             /** {@inheritDoc} */
                             @Override
@@ -463,7 +462,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param direction2 GTUDirectionality; GTU direction of conflict 2
      * @param geometry2 OTSLine3D; geometry of conflict 2
      * @param gtuType2 GTUType; gtu type of conflict 2
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator for animation and timed events
+     * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -471,8 +470,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
             final GTUDirectionality direction1, final OTSLine3D geometry1, final GTUType gtuType1, final Lane lane2,
             final Length longitudinalPosition2, final Length length2, final GTUDirectionality direction2,
-            final OTSLine3D geometry2, final GTUType gtuType2, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
-            throws NetworkException
+            final OTSLine3D geometry2, final GTUType gtuType2, final OTSSimulatorInterface simulator) throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -502,11 +500,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /** {@inheritDoc} */
     @Override
-    public Conflict clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
-            throws NetworkException
+    public Conflict clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
+        Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         Conflict out = new Conflict((Lane) newCSE, getLongitudinalPosition(), this.length, this.direction, getGeometry(),
                 this.conflictType, this.conflictRule.clone(newSimulator), newSimulator, this.gtuType, this.permitted,
@@ -580,8 +577,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
-                final SimulatorInterface.TimeDoubleUnit newSimulator) throws NetworkException
+        public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
+                throws NetworkException
         {
             // Constructor of Conflict creates these.
             return null;

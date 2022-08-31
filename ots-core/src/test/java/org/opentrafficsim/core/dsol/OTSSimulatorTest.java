@@ -28,7 +28,7 @@ public class OTSSimulatorTest
 {
     /** Store argument of eventReceiver. */
     private String receivedArgument = null;
-    
+
     /**
      * Test the OTSSimulator class.
      * @throws NamingException if that happens uncaught; this test has failed
@@ -46,23 +46,23 @@ public class OTSSimulatorTest
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OTSModel model = new OTSModel(simulator);
         simulator.initialize(startTime, warmupDuration, runLength, model);
-        assertEquals("startTime is returned", startTime, simulator.getReplication().getStartTime());
+        assertEquals("startTime is returned", startTime, simulator.getStartTimeAbs());
         assertEquals("warmupDuration is returned", warmupDuration, simulator.getReplication().getWarmupPeriod());
         assertEquals("runLength is returned", runLength, simulator.getReplication().getRunLength());
         assertTrue("toString returns something descriptive", simulator.toString().startsWith("OTSSimulator"));
         String testArgument = "test argument";
-        simulator.scheduleEvent(new Time(400, TimeUnit.BASE_SECOND), (short) 0, this, this, "eventReceiver",
-                new Object[] { testArgument });
+        simulator.scheduleEventAbsTime(new Time(400, TimeUnit.BASE_SECOND), (short) 0, this, this, "eventReceiver",
+                new Object[] {testArgument});
         simulator.start();
         while (simulator.isStartingOrRunning())
         {
             Thread.sleep(100);
         }
         assertFalse("simulator has stopped", simulator.isStartingOrRunning());
-        assertEquals("simulator time is runLength", runLength, simulator.getSimTime().get().minus(startTime));
+        assertEquals("simulator time is runLength", runLength, simulator.getSimulatorAbsTime().minus(startTime));
         assertEquals("event has been executed", testArgument, this.receivedArgument);
     }
-    
+
     /**
      * Tests that scheduled event gets executed.
      * @param argument String; argument of this method

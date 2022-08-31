@@ -54,7 +54,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * Test the LaneBasedGTU class.
@@ -375,7 +374,7 @@ public class LaneBasedGTUTest implements UNITS
             Model model = new Model(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
             // Run the simulator clock to some non-zero value
-            simulator.runUpTo(new SimTimeDoubleUnit(new Time(60, TimeUnit.BASE_SECOND)));
+            simulator.runUpTo(new Time(60, TimeUnit.BASE_SECOND));
             while (simulator.isStartingOrRunning())
             {
                 try
@@ -411,7 +410,7 @@ public class LaneBasedGTUTest implements UNITS
             car.setParameters(parameters);
             car.init(strategicalPlanner, carPositions, carSpeed);
             // Let the simulator execute the move method of the car
-            simulator.runUpTo(new SimTimeDoubleUnit(new Time(61, TimeUnit.BASE_SECOND)));
+            simulator.runUpTo(new Time(61, TimeUnit.BASE_SECOND));
             while (simulator.isStartingOrRunning())
             {
                 try

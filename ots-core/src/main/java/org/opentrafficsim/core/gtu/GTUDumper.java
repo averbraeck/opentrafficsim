@@ -7,10 +7,10 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * GTUDUmper; create a text file with the locations, directions and speeds of all GTUs at regular intervals.
@@ -32,8 +32,8 @@ public class GTUDumper
     {
         try
         {
-            Time now = this.simulator.getSimulatorTime();
-            String fileName = String.format("%s%08.2f.txt", fileNamePrefix, now.si);
+            Time now = this.simulator.getSimulatorAbsTime();
+            String fileName = String.format("%s%08.2f.txt", this.fileNamePrefix, now.si);
             PrintWriter pw = new PrintWriter(new File(fileName));
             for (GTU gtu : this.network.getGTUs())
             {
@@ -77,7 +77,7 @@ public class GTUDumper
         Throw.whenNull(network, "Network may not be null");
         this.simulator = network.getSimulator();
         Throw.whenNull(firstDumpTime, "firstDumpTime may not be null");
-        Throw.when(firstDumpTime.lt(this.simulator.getSimulatorTime()), RuntimeException.class,
+        Throw.when(firstDumpTime.lt(this.simulator.getSimulatorAbsTime()), RuntimeException.class,
                 "firstDumptTime may not be before current simulator time");
         Throw.whenNull(interval, "interval may not be null");
         Throw.when(interval.le(Duration.ZERO), RuntimeException.class, "Duration must be positive");
@@ -85,14 +85,14 @@ public class GTUDumper
         this.interval = interval;
         this.network = network;
         this.fileNamePrefix = fileNamePrefix;
-        simulator.scheduleEventAbs(firstDumpTime, this, this, "dump", new Object[] {});
+        this.simulator.scheduleEventAbsTime(firstDumpTime, this, this, "dump", new Object[] {});
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString()
     {
-        return "GTUDumper [interval=" + interval + ", network=" + network + ", fileNamePrefix=" + fileNamePrefix + "]";
+        return "GTUDumper [interval=" + this.interval + ", network=" + this.network + ", fileNamePrefix=" + this.fileNamePrefix + "]";
     }
 
 }

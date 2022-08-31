@@ -10,8 +10,8 @@
   </parent>
 
   <artifactId>ots-road</artifactId>
-  <name>Open Traffic Sim road classes</name>
-  <description>Open Traffic Sim road classes</description>
+  <name>OpenTrafficSim road classes</name>
+  <description>OpenTrafficSim road classes</description>
 
   <dependencies>
 

@@ -51,15 +51,13 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeAnimator;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -80,7 +78,7 @@ public class OTSControlPanel extends JPanel
     private static final long serialVersionUID = 20150617L;
 
     /** The simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** The model, needed for its properties. */
     private final OTSModelInterface model;
@@ -99,13 +97,13 @@ public class OTSControlPanel extends JPanel
 
     /** The TimeEdit that lets the user set a time when the simulation will be stopped. */
     private final TimeEdit timeEdit;
-    
+
     /** The OTS search panel. */
     private final OTSSearchPanel otsSearchPanel;
 
     /** The currently registered stop at event. */
-    private SimEvent<SimTimeDoubleUnit> stopAtEvent = null;
-    
+    private SimEvent<Duration> stopAtEvent = null;
+
     /** The current enabled state of the buttons. */
     private boolean buttonsEnabled = false;
 
@@ -118,12 +116,12 @@ public class OTSControlPanel extends JPanel
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param model OTSModelInterface; if non-null, the restart button should work
      * @param otsAnimationPanel OTSAnimationPanel; the OTS animation panel
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
-    public OTSControlPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSModelInterface model,
+    public OTSControlPanel(final OTSSimulatorInterface simulator, final OTSModelInterface model,
             final OTSAnimationPanel otsAnimationPanel) throws RemoteException
     {
         this.simulator = simulator;
@@ -186,7 +184,7 @@ public class OTSControlPanel extends JPanel
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
         this.simulator.addListener(this, DEVSRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT);
     }
-    
+
     /**
      * Change the enabled/disabled state of the various simulation control buttons.
      * @param newState boolean; true if the buttons should become enabled; false if the buttons should become disabled
@@ -198,7 +196,7 @@ public class OTSControlPanel extends JPanel
     }
 
     /**
-     * Provide access to the search panel. 
+     * Provide access to the search panel.
      * @return OTSSearchPanel; the OTS search panel
      */
     public OTSSearchPanel getOtsSearchPanel()
@@ -302,16 +300,15 @@ public class OTSControlPanel extends JPanel
      * @param eventTarget Object; the object that must execute the event
      * @param method String; the name of the method of <code>target</code> that must execute the event
      * @param args Object[]; the arguments of the <code>method</code> that must execute the event
-     * @return SimEvent&lt;SimTimeDoubleUnit&gt;; the event that was scheduled (the caller should save this if a need to cancel
-     *         the event may arise later)
+     * @return SimEvent&lt;Duration&gt;; the event that was scheduled (the caller should save this if a need to cancel the event
+     *         may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    private SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
+    private SimEvent<Duration> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<SimTimeDoubleUnit> simEvent =
-                new SimEvent<>(new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.DEFAULT)), priority, source,
-                        eventTarget, method, args);
+        SimEvent<Duration> simEvent = new SimEvent<>(executionTime.minus(getSimulator().getStartTimeAbs()), priority, source,
+                eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
     }
@@ -547,10 +544,10 @@ public class OTSControlPanel extends JPanel
             {
                 button.setEnabled(moreWorkToDo && this.buttonsEnabled);
             }
-//            else if (actionCommand.equals("Reset"))
-//            {
-//                button.setEnabled(true); // FIXME: should be disabled when the simulator was just reset or initialized
-//            }
+            // else if (actionCommand.equals("Reset"))
+            // {
+            // button.setEnabled(true); // FIXME: should be disabled when the simulator was just reset or initialized
+            // }
             else
             {
                 this.simulator.getLogger().always().error(new Exception("Unknown button?"));
@@ -577,7 +574,7 @@ public class OTSControlPanel extends JPanel
                 exception1.printStackTrace();
             }
             double currentTick = getSimulator().getSimulatorTime().getSI();
-            double nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime().get().getSI();
+            double nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime().getSI();
             // System.out.println("currentTick is " + currentTick);
             // System.out.println("nextTick is " + nextTick);
             if (nextTick > currentTick)
@@ -681,9 +678,9 @@ public class OTSControlPanel extends JPanel
      * @return simulator.
      */
     @SuppressWarnings("unchecked")
-    public final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
-        return (DEVSSimulator<Time, Duration, SimTimeDoubleUnit>) this.simulator;
+        return this.simulator;
     }
 
     /** {@inheritDoc} */
@@ -782,7 +779,7 @@ public class OTSControlPanel extends JPanel
          * @param simulator DEVSSimulatorInterface&lt;?, ?, ?&gt;; the simulator to change the speed of
          */
         TimeWarpPanel(final double minimum, final double maximum, final double initialValue, final int ticksPerDecade,
-                final DEVSSimulatorInterface<?, ?, ?> simulator)
+                final OTSSimulatorInterface simulator)
         {
             if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
             {
@@ -859,7 +856,7 @@ public class OTSControlPanel extends JPanel
             // initial value of simulation speed
             if (simulator instanceof DEVSRealTimeAnimator)
             {
-                DEVSRealTimeAnimator<?, ?, ?> clock = (DEVSRealTimeAnimator<?, ?, ?>) simulator;
+                DEVSRealTimeAnimator<Duration> clock = (DEVSRealTimeAnimator<Duration>) simulator;
                 clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(this.slider.getValue()));
             }
 
@@ -872,7 +869,7 @@ public class OTSControlPanel extends JPanel
                     JSlider source = (JSlider) ce.getSource();
                     if (!source.getValueIsAdjusting() && simulator instanceof DEVSRealTimeAnimator)
                     {
-                        DEVSRealTimeAnimator<?, ?, ?> clock = (DEVSRealTimeAnimator<?, ?, ?>) simulator;
+                        DEVSRealTimeAnimator<Duration> clock = (DEVSRealTimeAnimator<Duration>) simulator;
                         clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues().get(source.getValue()));
                     }
                 }

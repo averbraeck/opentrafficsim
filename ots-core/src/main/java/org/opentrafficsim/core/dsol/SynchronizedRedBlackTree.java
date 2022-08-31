@@ -1,16 +1,12 @@
 package org.opentrafficsim.core.dsol;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTime;
 
 /**
  * A SynchronizedRedBlackTree implementation of the eventlistInterface. This implementation is based on Java's TreeSet.
@@ -23,7 +19,7 @@ import nl.tudelft.simulation.dsol.simtime.SimTime;
  * @param <T> the type of simulation time, e.g. SimTimeCalendarLong or SimTimeDouble or SimTimeDoubleUnit.
  * @since 1.5
  */
-public class SynchronizedRedBlackTree<T extends SimTime<?, ?, T>> implements EventListInterface<T>, Serializable
+public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implements EventListInterface<T>, Serializable
 {
     /** The default serial version UID for serializable classes. */
     private static final long serialVersionUID = 1L;
@@ -40,7 +36,6 @@ public class SynchronizedRedBlackTree<T extends SimTime<?, ?, T>> implements Eve
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public SimEventInterface<T> removeFirst()
     {
         synchronized (this.tree)
@@ -51,26 +46,12 @@ public class SynchronizedRedBlackTree<T extends SimTime<?, ?, T>> implements Eve
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public SimEventInterface<T> removeLast()
-    {
-        synchronized (this.tree)
-        {
-            SimEventInterface<T> last = this.last();
-            this.remove(last);
-            return last;
-        }
-    }
-
     /**
      * we re-implemented the first method. Instead of throwing exceptions if the tree is empty, we return a null value.
      * @see java.util.TreeSet#first()
      * @return the first SimEvent in the tree.
      */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public SimEventInterface<T> first()
     {
         synchronized (this.tree)
@@ -83,68 +64,6 @@ public class SynchronizedRedBlackTree<T extends SimTime<?, ?, T>> implements Eve
             {
                 return null;
             }
-        }
-    }
-
-    /**
-     * we re-implemented the last method. Instead of throwing exceptions if the tree is empty, we return a null value.
-     * @see java.util.TreeSet#last()
-     * @return the last SimEvent in the tree.
-     */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public SimEventInterface<T> last()
-    {
-        synchronized (this.tree)
-        {
-            try
-            {
-                return this.tree.last();
-            }
-            catch (NoSuchElementException noSuchElementException)
-            {
-                return null;
-            }
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Comparator<? super SimEventInterface<T>> comparator()
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.comparator();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SortedSet<SimEventInterface<T>> subSet(final SimEventInterface<T> fromElement, final SimEventInterface<T> toElement)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.subSet(fromElement, toElement);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SortedSet<SimEventInterface<T>> headSet(final SimEventInterface<T> toElement)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.headSet(toElement);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SortedSet<SimEventInterface<T>> tailSet(final SimEventInterface<T> fromElement)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.tailSet(fromElement);
         }
     }
 
@@ -170,7 +89,7 @@ public class SynchronizedRedBlackTree<T extends SimTime<?, ?, T>> implements Eve
 
     /** {@inheritDoc} */
     @Override
-    public boolean contains(final Object o)
+    public boolean contains(final SimEventInterface<T> o)
     {
         synchronized (this.tree)
         {
@@ -190,81 +109,21 @@ public class SynchronizedRedBlackTree<T extends SimTime<?, ?, T>> implements Eve
 
     /** {@inheritDoc} */
     @Override
-    public Object[] toArray()
+    public void add(final SimEventInterface<T> e)
     {
         synchronized (this.tree)
         {
-            return this.tree.toArray();
+            this.tree.add(e);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public <X> X[] toArray(final X[] a)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.toArray(a);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean add(final SimEventInterface<T> e)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.add(e);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean remove(final Object o)
+    public boolean remove(final SimEventInterface<T> o)
     {
         synchronized (this.tree)
         {
             return this.tree.remove(o);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean containsAll(final Collection<?> c)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.containsAll(c);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean addAll(final Collection<? extends SimEventInterface<T>> c)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.addAll(c);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean retainAll(final Collection<?> c)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.retainAll(c);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean removeAll(final Collection<?> c)
-    {
-        synchronized (this.tree)
-        {
-            return this.tree.removeAll(c);
         }
     }
 

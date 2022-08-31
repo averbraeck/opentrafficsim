@@ -35,7 +35,7 @@ public abstract class AbstractGraphSpace<S> implements Iterable<S>
      * @param series int; series
      * @return String; name of the series
      */
-    public final String getName(final int series)
+    public String getName(final int series)
     {
         return this.seriesNames.get(series);
     }
@@ -44,7 +44,7 @@ public abstract class AbstractGraphSpace<S> implements Iterable<S>
      * Returns the number of series.
      * @return int; number of series
      */
-    public final int getNumberOfSeries()
+    public int getNumberOfSeries()
     {
         return this.seriesNames.size();
     }

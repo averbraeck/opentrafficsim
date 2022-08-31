@@ -15,6 +15,7 @@ import org.djutils.event.EventProducer;
 import org.djutils.event.EventProducerInterface;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -31,7 +32,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * This traffic light sensor reports whether it whether any GTUs are within its area. The area is a sub-section of a Lane. This
@@ -95,14 +95,14 @@ public class TrafficLightSensor extends EventProducer
      * @param intermediateLanes List&lt;Lane&gt;; list of intermediate lanes
      * @param entryPosition TYPE; the position on the GTUs that trigger the entry events
      * @param exitPosition TYPE; the position on the GTUs that trigger the exit events
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param compatible Compatible; object that checks that the detector detects a GTU.
      * @throws NetworkException when the network is inconsistent.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TrafficLightSensor(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Compatible compatible) throws NetworkException
+            final OTSSimulatorInterface simulator, final Compatible compatible) throws NetworkException
     {
         Throw.whenNull(id, "id may not be null");
         this.id = id;
@@ -523,7 +523,7 @@ public class TrafficLightSensor extends EventProducer
 
     /** {@inheritDoc} */
     @Override
-    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return this.entryA.getSimulator();
     }

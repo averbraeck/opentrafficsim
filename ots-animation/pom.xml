@@ -21,12 +21,12 @@
     </dependency>
 
     <dependency>
-      <groupId>dsol</groupId>
+      <groupId>nl.tudelft.simulation</groupId>
       <artifactId>dsol-animation</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>dsol</groupId>
+      <groupId>nl.tudelft.simulation</groupId>
       <artifactId>dsol-animation-gis</artifactId>
     </dependency>
 

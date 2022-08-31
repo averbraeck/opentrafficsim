@@ -21,6 +21,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.WeightedMeanAndSum;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -33,7 +34,6 @@ import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -60,7 +60,7 @@ public abstract class Platoons<T>
     private LaneBasedGTUGenerator gen;
 
     /** Simulator. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Position to generate the GTU's at. */
     private final Set<LaneDirection> position;
@@ -94,10 +94,10 @@ public abstract class Platoons<T>
 
     /**
      * Constructor.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param position Set&lt;LaneDirection&gt;; position
      */
-    private Platoons(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Set<LaneDirection> position)
+    private Platoons(final OTSSimulatorInterface simulator, final Set<LaneDirection> position)
     {
         this.simulator = simulator;
         this.position = position;
@@ -106,14 +106,14 @@ public abstract class Platoons<T>
     /**
      * Creates a {@code Platoon&lt;Category&gt;} instance for platoons.
      * @param characteristics GTUCharacteristicsGeneratorOD; characteristics generator
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
      * @param position Set&lt;LaneDirection&gt;; position
      * @return Platoons&lt;Category&gt;; platoons based on OD
      */
     @SuppressWarnings("synthetic-access")
     public static Platoons<Category> ofCategory(final GTUCharacteristicsGeneratorOD characteristics,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final StreamInterface stream,
+            final OTSSimulatorInterface simulator, final StreamInterface stream,
             final Set<LaneDirection> position)
     {
         return new Platoons<Category>(simulator, position)
@@ -139,14 +139,14 @@ public abstract class Platoons<T>
     /**
      * Creates a {@code Platoon&lt;GTUType&gt;} instance for platoons.
      * @param characteristics LaneBasedGTUCharacteristicsGenerator; characteristics generator
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
      * @param position Set&lt;LaneDirection&gt;; position
      * @return Platoons&lt;GTUType&gt;; platoons based on OD
      */
     @SuppressWarnings("synthetic-access")
     public static Platoons<GTUType> ofGtuType(final LaneBasedGTUCharacteristicsGenerator characteristics,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final StreamInterface stream,
+            final OTSSimulatorInterface simulator, final StreamInterface stream,
             final Set<LaneDirection> position)
     {
         return new Platoons<GTUType>(simulator, position)
@@ -283,7 +283,7 @@ public abstract class Platoons<T>
     {
         if (!this.queue.isEmpty())
         {
-            this.simulator.scheduleEventAbs(this.queue.peek().getTime(), this, this, "placeGtu",
+            this.simulator.scheduleEventAbsTime(this.queue.peek().getTime(), this, this, "placeGtu",
                     new Object[] {this.queue.poll()});
         }
     }

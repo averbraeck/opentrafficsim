@@ -206,11 +206,11 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
             this.simulator.addListener(this, ReplicationInterface.END_REPLICATION_EVENT);
             double tReport = 60.0;
-            Time t = this.simulator.getSimulatorTime();
+            Time t = this.simulator.getSimulatorAbsTime();
             while (t.si < this.simulationTime.si)
             {
                 this.simulator.step();
-                t = this.simulator.getSimulatorTime();
+                t = this.simulator.getSimulatorAbsTime();
                 if (t.si >= tReport)
                 {
                     System.out.println("Simulation time is " + t);

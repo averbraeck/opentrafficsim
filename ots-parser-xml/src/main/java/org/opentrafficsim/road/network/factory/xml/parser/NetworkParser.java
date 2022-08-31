@@ -472,7 +472,7 @@ public final class NetworkParser
                 try
                 {
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getCLASS(),
-                            new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
+                            new Class[] {String.class, Lane.class, Length.class, OTSSimulatorInterface.class});
                     trafficLightConstructor.newInstance(new Object[] {trafficLight.getID(), lane, position, simulator});
                 }
                 catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException

@@ -4,9 +4,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * This interface extends the animation objects with an option to clone them for a new source on a new Simulator.
@@ -26,12 +27,12 @@ public interface ClonableRenderable2DInterface<T extends Locatable> extends Rend
     /**
      * Clone the animation object and register it for the new source on the new simulation.
      * @param newSource T; the source
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the simulator
+     * @param newSimulator OTSSimulatorInterface; the simulator
      * @return the generated clone
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException - when remote context cannot be found
      */
-    ClonableRenderable2DInterface<T> clone(T newSource, SimulatorInterface.TimeDoubleUnit newSimulator)
+    ClonableRenderable2DInterface<T> clone(T newSource, OTSSimulatorInterface newSimulator)
             throws NamingException, RemoteException;
 
 }

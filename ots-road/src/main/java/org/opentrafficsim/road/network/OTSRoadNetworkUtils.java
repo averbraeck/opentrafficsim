@@ -16,8 +16,6 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.road.network.lane.LaneType;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 /**
  * OTSRoadNetworkCloner makes a deep clone of a network. <br>
  * <br>
@@ -38,14 +36,14 @@ public final class OTSRoadNetworkUtils
      * Clone the OTSRoadNetwork.
      * @param network OTSRoadNetwork; the network to clone
      * @param newId String; the new id of the network
-     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator for this network
+     * @param oldSimulator OTSSimulatorInterface; the old simulator for this network
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
      * @return a clone of this network
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
     public static OTSRoadNetwork clone(final OTSRoadNetwork network, final String newId,
-            final SimulatorInterface.TimeDoubleUnit oldSimulator, final OTSSimulatorInterface newSimulator)
+            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         OTSRoadNetwork newNetwork = new OTSRoadNetwork(newId, false, newSimulator);
@@ -138,9 +136,9 @@ public final class OTSRoadNetworkUtils
     /**
      * Remove all objects and animation in the road network.
      * @param network OTSRoadNetwork; the network to destroy
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator of the old network
+     * @param simulator OTSSimulatorInterface; the simulator of the old network
      */
-    public static void destroy(final OTSRoadNetwork network, final SimulatorInterface.TimeDoubleUnit simulator)
+    public static void destroy(final OTSRoadNetwork network, final OTSSimulatorInterface simulator)
     {
         OTSRoadNetworkUtils.destroy(network, simulator);
     }

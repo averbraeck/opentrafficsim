@@ -19,12 +19,11 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
@@ -41,8 +40,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Builder for several often used operational plans. E.g., decelerate to come to a full stop at the end of a shape; accelerate
@@ -647,7 +644,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             // rounding...
             time = gtu.getOperationalPlan().getEndTime();
         }
-        SimEventInterface<SimTimeDoubleUnit> event = gtu.getSimulator().scheduleEventAbs(time, (short) 6, gtu, gtu,
+        SimEventInterface<Duration> event = gtu.getSimulator().scheduleEventAbsTime(time, (short) 6, gtu, gtu,
                 "finalizeLaneChange", new Object[] { laneChangeDirection });
         gtu.setFinalizeLaneChangeEvent(event);
     }

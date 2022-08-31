@@ -66,7 +66,6 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * Test the non-GUI part of the ContourPlot class.
@@ -101,7 +100,7 @@ public class ContourPlotTest implements UNITS
 
     OTSSimulatorInterface mockedSimulator = Mockito.mock(OTSSimulatorInterface.class);
 
-    SimEventInterface<SimTimeDoubleUnit> lastScheduledEvent = null;
+    SimEventInterface<Duration> lastScheduledEvent = null;
 
     /**
      * Create a network and a path for the tests.
@@ -158,22 +157,23 @@ public class ContourPlotTest implements UNITS
         Mockito.when(this.mockedPath.getSections()).thenReturn(new ImmutableArrayList<>(sectionList));
         Mockito.when(this.section0.getLength()).thenReturn(Length.valueOf("2000m"));
         Mockito.when(this.section1.getLength()).thenReturn(Length.valueOf("766m"));
-        Mockito.when(this.mockedSimulator.scheduleEventAbs(ArgumentMatchers.any(Time.class), ArgumentMatchers.any(),
+        Mockito.when(this.mockedSimulator.scheduleEventAbsTime(ArgumentMatchers.any(Time.class), ArgumentMatchers.any(),
                 ArgumentMatchers.any(), ArgumentMatchers.anyString(), ArgumentMatchers.isNull()))
-                .thenAnswer(new Answer<SimEventInterface<SimTimeDoubleUnit>>()
+                .thenAnswer(new Answer<SimEventInterface<Duration>>()
                 {
                     @Override
-                    public SimEventInterface<SimTimeDoubleUnit> answer(final InvocationOnMock invocation) throws Throwable
+                    public SimEventInterface<Duration> answer(final InvocationOnMock invocation) throws Throwable
                     {
-                        ContourPlotTest.this.lastScheduledEvent = new SimEvent.TimeDoubleUnit(invocation.getArgument(0),
-                                invocation.getArgument(1), invocation.getArgument(2), "update", null);
+                        ContourPlotTest.this.lastScheduledEvent =
+                                new SimEvent<Duration>(((Time) invocation.getArgument(0)).minus(Time.ZERO),
+                                        invocation.getArgument(1), invocation.getArgument(2), "update", null);
                         return ContourPlotTest.this.lastScheduledEvent;
                     }
                 });
-        Mockito.when(this.mockedSimulator.getSimulatorTime()).thenReturn(Time.ZERO);
+        Mockito.when(this.mockedSimulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
+        Mockito.when(this.mockedSimulator.getSimulatorTime()).thenReturn(Duration.ZERO);
         OTSModelInterface model = Mockito.mock(OTSModelInterface.class);
-        OTSReplication replication =
-                new OTSReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0));
+        OTSReplication replication = new OTSReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0));
         Mockito.when(this.mockedSimulator.getReplication()).thenReturn(replication);
     }
 
@@ -332,23 +332,23 @@ public class ContourPlotTest implements UNITS
             {
                 cp.actionPerformed(new ActionEvent(distanceGranularity, 0, "setSpaceGranularity"));
                 cp.notifyPlotChange();
-                expectedXBins = (int) Math.ceil((AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI()) / timeGranularity) 
+                expectedXBins = (int) Math.ceil((AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI()) / timeGranularity)
                         + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0);
                 xBins = cp.getDataPool().timeAxis.getBinCount();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
                 expectedYBins = (int) Math.ceil(path.get(0).getLength().getSI() / distanceGranularity)
                         + (cp.getDataPool().spaceAxis.isInterpolate() ? 1 : 0);
                 yBins = cp.getDataPool().spaceAxis.getBinCount();
-//                System.out.println(cp.getDataPool().spaceAxis);
-//                System.out.println("path.get(0) is " + path.get(0));
-//                System.out.println("path.get(0).getLength() is " + path.get(0).getLength());
+                // System.out.println(cp.getDataPool().spaceAxis);
+                // System.out.println("path.get(0) is " + path.get(0));
+                // System.out.println("path.get(0).getLength() is " + path.get(0).getLength());
                 assertEquals("Modified yBins should be " + expectedYBins, expectedYBins, yBins);
                 bins = cp.getItemCount(0);
                 assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);
                 for (int item = 0; item < bins; item++)
                 {
                     double x = cp.getXValue(0, item);
-//                    System.out.println("x for item " + item + " is " + x);
+                    // System.out.println("x for item " + item + " is " + x);
                     assertTrue("X should be >= -granularity / 2", x >= -timeGranularity / 2);
                     assertTrue("X should be <= " + initialUpperTimeBoundString,
                             x <= AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI());

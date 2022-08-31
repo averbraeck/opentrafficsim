@@ -656,7 +656,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         }
 
         double maxDistanceSI = maxDistance.si;
-        Time time = getGtu().getSimulator().getSimulatorTime();
+        Time time = getGtu().getSimulator().getSimulatorAbsTime();
 
         // look forward based on the provided lanePathInfo.
         Headway closest = headwayLane(ld, gtuPosFrontSI, 0.0, time, gtu);
@@ -816,7 +816,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     private Headway backwardHeadway(final Length maxDistance) throws GTUException, NetworkException
     {
         Throw.when(maxDistance.ge0(), GTUException.class, "backwardHeadway: maxDistance should be negative");
-        Time time = getGtu().getSimulator().getSimulatorTime();
+        Time time = getGtu().getSimulator().getSimulatorAbsTime();
         double maxDistanceSI = maxDistance.si;
         Headway foundHeadway = new HeadwayDistance(-maxDistanceSI);
         for (Lane lane : getGtu().positions(getGtu().getRear()).keySet())

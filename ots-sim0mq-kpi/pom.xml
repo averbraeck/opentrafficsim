@@ -10,8 +10,8 @@
   </parent>
 
   <artifactId>ots-sim0mq-kpi</artifactId>
-  <name>Open Traffic Sim Sim0MQ KPI module</name>
-  <description>Open Traffic Sim Sim0MQ bus linkage to the KPI module</description>
+  <name>OpenTrafficSim Sim0MQ KPI module</name>
+  <description>OpenTrafficSim Sim0MQ bus linkage to the KPI module</description>
 
   <!-- Don't make javadoc crash on the HTML tags for the Sim0MQ tables such as STYLE  -->
   <properties>

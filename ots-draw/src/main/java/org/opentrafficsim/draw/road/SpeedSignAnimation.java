@@ -12,10 +12,10 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.unit.SpeedUnit;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -42,11 +42,11 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
 
     /**
      * @param source SpeedSign; speed sign
-     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
-    public SpeedSignAnimation(final SpeedSign source, final SimulatorInterface.TimeDoubleUnit simulator)
+    public SpeedSignAnimation(final SpeedSign source, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         super(source, simulator);

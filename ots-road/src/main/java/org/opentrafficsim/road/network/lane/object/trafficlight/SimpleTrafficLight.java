@@ -2,12 +2,10 @@ package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Standard implementation of a traffic light.
@@ -29,11 +27,11 @@ public class SimpleTrafficLight extends AbstractTrafficLight
      * @param id String; traffic light id
      * @param lane Lane; lane where the traffic light is located
      * @param longitudinalPosition Length; position of the traffic light on the lane, in the design direction
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator for animation and timed events
+     * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
      * @throws NetworkException on failure to place the object
      */
     public SimpleTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
+            final OTSSimulatorInterface simulator) throws NetworkException
     {
         super(id, lane, longitudinalPosition, simulator);
     }
@@ -49,14 +47,14 @@ public class SimpleTrafficLight extends AbstractTrafficLight
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "traffic lights can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
+        Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         return new SimpleTrafficLight(getId(), (Lane) newCSE, getLongitudinalPosition(),
-                (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator);
+                (OTSSimulatorInterface) newSimulator);
     }
 
 }

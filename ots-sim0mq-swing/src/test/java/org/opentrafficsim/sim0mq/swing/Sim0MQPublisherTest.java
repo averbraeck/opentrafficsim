@@ -110,7 +110,7 @@ public class Sim0MQPublisherTest
             OTSDrawingException, Sim0MQException, SerializationException, InterruptedException, URISyntaxException
     {
         ZContext zContext = new ZContext(5); // 5 IO threads - how many is reasonable? It actually works with 1 IO thread.
-        networkXML = new String(Files.readAllBytes(Paths.get(URLResource.getResource("/network.xml").toURI())));
+        networkXML = new String(Files.readAllBytes(Paths.get(URLResource.getResource("/resources/network.xml").toURI())));
 
         List<byte[]> receivedMessages = Collections.synchronizedList(new ArrayList<>());
         List<byte[]> synchronizedReceivedMessages = Collections.synchronizedList(receivedMessages);

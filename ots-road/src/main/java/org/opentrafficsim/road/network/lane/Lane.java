@@ -16,6 +16,7 @@ import java.util.TreeMap;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -27,6 +28,7 @@ import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.multikeymap.MultiKeyMap;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -51,8 +53,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
@@ -185,10 +185,10 @@ public class Lane extends CrossSectionElement implements Serializable
      * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
      */
     public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD");
-//    public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD",
-//            new MetaData("GTU added to lane", "GTU added",
-//                    new ObjectDescriptor[] { new ObjectDescriptor("Id of newly added GTU", "GTU id", String.class),
-//                            new ObjectDescriptor("New number of GTUs in lane", "GTU count", Integer.class) }));
+    // public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD",
+    // new MetaData("GTU added to lane", "GTU added",
+    // new ObjectDescriptor[] { new ObjectDescriptor("Id of newly added GTU", "GTU id", String.class),
+    // new ObjectDescriptor("New number of GTUs in lane", "GTU count", Integer.class) }));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
@@ -466,7 +466,8 @@ public class Lane extends CrossSectionElement implements Serializable
             final GTUDirectionality drivingDirection, final boolean legal)
     {
         MultiKeyMap<Set<Lane>> cache = direction.isLeft() ? this.leftNeighbours : this.rightNeighbours;
-        return cache.get(() -> {
+        return cache.get(() ->
+        {
             Set<Lane> lanes = new LinkedHashSet<>(1);
             for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
             {
@@ -615,8 +616,7 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         sensorList.add(sensor);
         this.parentLink.getNetwork().addObject(sensor);
-        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] { sensor.getId(), sensor },
-                sensor.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.SENSOR_ADD_EVENT, new Object[] {sensor.getId(), sensor}, sensor.getSimulator().getSimulatorTime());
     }
 
     /**
@@ -626,7 +626,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void removeSensor(final SingleSensor sensor) throws NetworkException
     {
-        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] { sensor.getId(), sensor },
+        fireTimedEvent(Lane.SENSOR_REMOVE_EVENT, new Object[] {sensor.getId(), sensor},
                 sensor.getSimulator().getSimulatorTime());
         List<SingleSensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().si);
         if (null == sensorList)
@@ -815,8 +815,9 @@ public class Lane extends CrossSectionElement implements Serializable
                             triggerTime = new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()),
                                     TimeUnit.DEFAULT);
                         }
-                        SimEvent<SimTimeDoubleUnit> event = new SimEvent<>(new SimTimeDoubleUnit(triggerTime), this, sensor,
-                                "trigger", new Object[] { gtu });
+                        SimEvent<Duration> event =
+                                new SimEvent<>(new Duration(triggerTime.minus(gtu.getSimulator().getStartTimeAbs())), this,
+                                        sensor, "trigger", new Object[] {gtu});
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -825,9 +826,8 @@ public class Lane extends CrossSectionElement implements Serializable
                     {
                         // TODO this is a hack for when sink sensors aren't perfectly adjacent or the GTU overshoots with nose
                         // due to curvature
-                        SimEvent<SimTimeDoubleUnit> event =
-                                new SimEvent<>(new SimTimeDoubleUnit(gtu.getSimulator().getSimulatorTime()), this, sensor,
-                                        "trigger", new Object[] { gtu });
+                        SimEvent<Duration> event = new SimEvent<>(new Duration(gtu.getSimulator().getSimulatorTime()), this,
+                                sensor, "trigger", new Object[] {gtu});
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -862,7 +862,7 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         laneBasedObjectList.add(laneBasedObject);
         this.parentLink.getNetwork().addObject(laneBasedObject);
-        fireTimedEvent(Lane.OBJECT_ADD_EVENT, new Object[] { laneBasedObject },
+        fireTimedEvent(Lane.OBJECT_ADD_EVENT, new Object[] {laneBasedObject},
                 getParentLink().getSimulator().getSimulatorTime());
     }
 
@@ -873,7 +873,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
-        fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] { laneBasedObject },
+        fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject},
                 getParentLink().getSimulator().getSimulatorTime());
         List<LaneBasedObject> laneBasedObjectList =
                 this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
@@ -1056,8 +1056,8 @@ public class Lane extends CrossSectionElement implements Serializable
             }
         }
         // fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },
-        //         gtu.getSimulator().getSimulatorTime());
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), this.gtuList.size() },
+        // gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size()},
                 gtu.getSimulator().getSimulatorTime());
         getParentLink().addGTU(gtu);
         return index;
@@ -1087,7 +1087,7 @@ public class Lane extends CrossSectionElement implements Serializable
         boolean contained = this.gtuList.remove(gtu);
         if (contained)
         {
-            fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position },
+            fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] {gtu.getId(), gtu, this.gtuList.size(), position},
                     gtu.getSimulator().getSimulatorTime());
         }
         if (removeFromParentLink)
@@ -1162,7 +1162,10 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return null;
         }
-        int[] search = lineSearch((final int index) -> {
+        int[] search = lineSearch((
+                final int index
+        ) ->
+        {
             LaneBasedGTU gtu = list.get(index);
             return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
         }, list.size(), position.si);
@@ -1501,7 +1504,8 @@ public class Lane extends CrossSectionElement implements Serializable
     public final synchronized ImmutableMap<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction,
             final GTUType gtuType)
     {
-        return this.downLanes.get(() -> {
+        return this.downLanes.get(() ->
+        {
             Map<Lane, GTUDirectionality> downMap =
                     new LinkedHashMap<>(direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType)); // safe copy
             Node downNode = direction.isPlus() ? getParentLink().getEndNode() : getParentLink().getStartNode();
@@ -1529,7 +1533,8 @@ public class Lane extends CrossSectionElement implements Serializable
     public final synchronized ImmutableMap<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction,
             final GTUType gtuType)
     {
-        return this.upLanes.get(() -> {
+        return this.upLanes.get(() ->
+        {
             Map<Lane, GTUDirectionality> upMap =
                     new LinkedHashMap<>(direction.isPlus() ? prevLanes(gtuType) : nextLanes(gtuType)); // safe copy
             Node upNode = direction.isPlus() ? getParentLink().getStartNode() : getParentLink().getEndNode();
@@ -1810,7 +1815,10 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int indexOfGtu(final LaneBasedGTU gtu)
     {
-        return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) -> {
+        return Collections.binarySearch(this.gtuList, gtu, (
+                gtu1, gtu2
+        ) ->
+        {
             try
             {
                 return gtu1.position(this, gtu1.getReference()).compareTo(gtu2.position(this, gtu2.getReference()));
@@ -1830,7 +1838,10 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int indexOfGtu(final LaneBasedGTU gtu, final Time time)
     {
-        return Collections.binarySearch(getGtuList(time), gtu, (gtu1, gtu2) -> {
+        return Collections.binarySearch(getGtuList(time), gtu, (
+                gtu1, gtu2
+        ) ->
+        {
             try
             {
                 return Double.compare(gtu1.fractionalPosition(this, gtu1.getReference(), time),
@@ -1899,7 +1910,7 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
     public boolean equals(final Object obj)
     {
@@ -1923,8 +1934,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Lane clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator)
-            throws NetworkException
+    public Lane clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         Lane newLane = new Lane(newParentLink, this);
         // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request

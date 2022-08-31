@@ -71,7 +71,7 @@ public abstract class AbstractPerceptionCategory<G extends GTU, P extends Percep
         {
             throw new GTUException("gtu value has not been initialized for LanePerception when perceiving.");
         }
-        return getGtu().getSimulator().getSimulatorTime();
+        return getGtu().getSimulator().getSimulatorAbsTime();
     }
 
     /**

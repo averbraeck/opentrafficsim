@@ -171,7 +171,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                 // this.network.getLink("WWW"));
                 // Lane lane = (Lane) csLink.getCrossSectionElement("RIGHT");
                 // GTUColorer gtuColorer = null;
-                // setupBlock(lane, (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator,
+                // setupBlock(lane, (OTSSimulatorInterface) this.simulator,
                 // gtuColorer );
 
                 String[] directions = {"E", "S", "W", "N"};

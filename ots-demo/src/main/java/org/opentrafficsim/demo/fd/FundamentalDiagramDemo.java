@@ -731,7 +731,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             this.fdLine);
         
         // recalculate over past data
-        source.recalculate(getSimulator().getSimulatorTime());
+        source.recalculate(getSimulator().getSimulatorAbsTime());
         
         // store graphs so changes to setting may affect the graphs
         this.funamentalDiagrams.clear();

@@ -19,7 +19,6 @@ import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
@@ -43,14 +42,14 @@ public final class OTSNetworkAnimationUtils
      * Clone the OTSNetwork, including animation.
      * @param network OTSNetwork; the network to clone
      * @param newId String; the new id of the network
-     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator for this network
+     * @param oldSimulator OTSSimulatorInterface; the old simulator for this network
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
      * @return a clone of this network
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
     public static OTSNetwork clone(final OTSNetwork network, final String newId,
-            final SimulatorInterface.TimeDoubleUnit oldSimulator, final OTSSimulatorInterface newSimulator)
+            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
             throws NetworkException
     {
         OTSNetwork newNetwork = OTSNetworkUtils.clone(network, newId, newSimulator);
@@ -81,14 +80,14 @@ public final class OTSNetworkAnimationUtils
      * account for cloning by this method.
      * @param oldSource Locatable; the old source object that might have one or more animation objects attached to it
      * @param newSource T; the new source object to attach the cloned animation objects to
-     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator when the old objects can be found
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator where the new simulation objects need to be
+     * @param oldSimulator OTSSimulatorInterface; the old simulator when the old objects can be found
+     * @param newSimulator OTSSimulatorInterface; the new simulator where the new simulation objects need to be
      *            registered
      * @param <T> locatable type
      */
     @SuppressWarnings("checkstyle:designforextension")
     public static <T extends Locatable> void cloneAnimation(final Locatable oldSource, final T newSource,
-            final SimulatorInterface.TimeDoubleUnit oldSimulator, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
     {
         if (!(oldSimulator instanceof AnimatorInterface) || !(newSimulator instanceof AnimatorInterface))
         {
@@ -119,10 +118,10 @@ public final class OTSNetworkAnimationUtils
     /**
      * Remove all objects and animation in the network.
      * @param network OTSNetwork; the network to destroy
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator of the old network
+     * @param simulator OTSSimulatorInterface; the simulator of the old network
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static void destroy(final OTSNetwork network, final SimulatorInterface.TimeDoubleUnit simulator)
+    public static void destroy(final OTSNetwork network, final OTSSimulatorInterface simulator)
     {
         Set<Renderable2DInterface<?>> animationObjects = new LinkedHashSet<>();
         try
@@ -159,10 +158,10 @@ public final class OTSNetworkAnimationUtils
     /**
      * Remove all animation objects of the given class.
      * @param clazz Class&lt;?&gt;; the class to remove the animation objects for
-     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator
+     * @param oldSimulator OTSSimulatorInterface; the old simulator
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static void removeAnimation(final Class<?> clazz, final SimulatorInterface.TimeDoubleUnit oldSimulator)
+    public static void removeAnimation(final Class<?> clazz, final OTSSimulatorInterface oldSimulator)
     {
         if (!(oldSimulator instanceof AnimatorInterface))
         {

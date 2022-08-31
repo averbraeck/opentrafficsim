@@ -4,10 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * Paint a (series of) filled polygon(s) defined as a Path2D.Double

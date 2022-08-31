@@ -10,9 +10,8 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Destination sensor animation.
@@ -34,11 +33,11 @@ public class DestinationAnimation extends AbstractLineAnimation<DestinationSenso
     /**
      * Construct the Destination animation.
      * @param source DestinationSensor; the Car to draw
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public DestinationAnimation(final DestinationSensor source, final SimulatorInterface.TimeDoubleUnit simulator)
+    public DestinationAnimation(final DestinationSensor source, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         super(source, simulator, 0.8, new Length(0.5, LengthUnit.SI));

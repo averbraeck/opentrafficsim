@@ -4,8 +4,6 @@ import java.awt.geom.Line2D;
 
 import org.djutils.exceptions.Throw;
 
-import org.opentrafficsim.core.geometry.DirectedPoint;
-
 /**
  * Generation of B&eacute;zier curves. <br>
  * The class implements the cubic(...) method to generate a cubic B&eacute;zier curve using the following formula: B(t) = (1 -

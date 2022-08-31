@@ -10,13 +10,14 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Sensor animation.
@@ -49,13 +50,13 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
      * Construct a SensorAnimation.
      * @param sensor SingleSensor; the Sensor to draw
      * @param sensorPosition Length; the position of the sensor on the lane to determine the width of the lane at that point
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @param color Color; the display color of the sensor
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
     public SensorAnimation(final SingleSensor sensor, final Length sensorPosition,
-            final SimulatorInterface.TimeDoubleUnit simulator, final Color color) throws NamingException, RemoteException
+            final OTSSimulatorInterface simulator, final Color color) throws NamingException, RemoteException
     {
         super(sensor, simulator, .9, new Length(0.5, LengthUnit.SI));
         this.sensorPosition = sensorPosition;
@@ -83,17 +84,17 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
 
     /** {@inheritDoc} */
     @Override
-    public final void destroy(final SimulatorInterface<?, ?, ?> simulator)
+    public void destroy(final Contextualized contextProvider)
     {
-        super.destroy(simulator);
-        this.text.destroy(simulator);
+        super.destroy(contextProvider);
+        this.text.destroy(contextProvider);
     }
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public ClonableRenderable2DInterface<SingleSensor> clone(final SingleSensor newSource,
-            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NamingException, RemoteException
+            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
         return new SensorAnimation(newSource, this.sensorPosition, newSimulator, this.color);
@@ -131,12 +132,12 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
+                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);
@@ -145,7 +146,7 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
+        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);

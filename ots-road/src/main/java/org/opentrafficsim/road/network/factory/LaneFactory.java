@@ -15,6 +15,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -32,9 +33,6 @@ import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 
 /**
  * <p>
@@ -376,7 +374,7 @@ public final class LaneFactory
      *            the link
      * @param width Length; the width of the new Lane
      * @param speedLimit Speed; the speed limit on the new Lane
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException when creation of center line or contour fails
@@ -384,7 +382,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException, OTSGeometryException
+            final OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), speedLimit);
