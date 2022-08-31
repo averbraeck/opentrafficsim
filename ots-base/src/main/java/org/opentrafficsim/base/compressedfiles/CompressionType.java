@@ -22,9 +22,6 @@ public enum CompressionType
     /** Create or read a gzip-compressed file. */
     GZIP("gz"),
 
-    /** Create or read a bzip2-compressed file. */
-    BZIP2("bz2"),
-
     /** Auto-detect the compression method (only for readers). */
     AUTODETECT(null);
 

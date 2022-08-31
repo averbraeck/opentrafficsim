@@ -12,7 +12,6 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.apache.commons.compress.utils.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -118,17 +117,17 @@ public class CompressedFilesTest
         assertEquals("contents of txt file should match written data", testContent, readContent);
         // Read it back using the Reader
         InputStream inputStream = Reader.createInputStream(fixedFileName, CompressionType.NONE);
-        readContent = new String(IOUtils.toByteArray(inputStream));
+        readContent = new String(inputStream.readAllBytes());
         inputStream.close();
         assertEquals("contents of txt file should match written data", testContent, readContent);
         // Read it back using the Reader using AUTODETECT
         inputStream = Reader.createInputStream(fixedFileName, CompressionType.AUTODETECT);
-        readContent = new String(IOUtils.toByteArray(inputStream));
+        readContent = new String(inputStream.readAllBytes());
         inputStream.close();
         assertEquals("contents of txt file should match written data", testContent, readContent);
         // Read it back using the Reader using the no CompressionType method
         inputStream = Reader.createInputStream(fixedFileName);
-        readContent = new String(IOUtils.toByteArray(inputStream));
+        readContent = new String(inputStream.readAllBytes());
         inputStream.close();
         assertEquals("contents of txt file should match written data", testContent, readContent);
         // Delete the file
@@ -141,29 +140,12 @@ public class CompressedFilesTest
         assertTrue("File with .zip suffix should have been created", new File(fixedFileName).exists());
         inputStream = Reader.createInputStream(fixedFileName, CompressionType.ZIP);
         assertTrue("toString method of zip reader is somewhat descriptive", inputStream.toString().contains("ZipInputStream"));
-        readContent = new String(IOUtils.toByteArray(inputStream));
+        readContent = new String(inputStream.readAllBytes());
         inputStream.close();
         assertEquals("contents of txt file should match written data", testContent, readContent);
         // Read it back using the Reader using AUTODETECT
         inputStream = Reader.createInputStream(fixedFileName, CompressionType.AUTODETECT);
-        readContent = new String(IOUtils.toByteArray(inputStream));
-        inputStream.close();
-        assertEquals("contents of txt file should match written data", testContent, readContent);
-        // Delete the file
-        Files.delete(Paths.get(fixedFileName));
-        testFileName = testDirName + File.separator + "test5";
-        bf = new BufferedWriter(new OutputStreamWriter(Writer.createOutputStream(testFileName, CompressionType.BZIP2)));
-        bf.write(testContent);
-        bf.close();
-        fixedFileName = testFileName + ".bz2";
-        assertTrue("File with .zip suffix should have been created", new File(fixedFileName).exists());
-        inputStream = Reader.createInputStream(fixedFileName, CompressionType.BZIP2);
-        readContent = new String(IOUtils.toByteArray(inputStream));
-        inputStream.close();
-        assertEquals("contents of txt file should match written data", testContent, readContent);
-        // Read it back using the Reader using AUTODETECT
-        inputStream = Reader.createInputStream(fixedFileName, CompressionType.AUTODETECT);
-        readContent = new String(IOUtils.toByteArray(inputStream));
+        readContent = new String(inputStream.readAllBytes());
         inputStream.close();
         assertEquals("contents of txt file should match written data", testContent, readContent);
         // Delete the file
@@ -173,14 +155,14 @@ public class CompressedFilesTest
         bf.write(testContent);
         bf.close();
         fixedFileName = testFileName + ".gz";
-        assertTrue("File with .zip suffix should have been created", new File(fixedFileName).exists());
+        assertTrue("File with .gz suffix should have been created", new File(fixedFileName).exists());
         inputStream = Reader.createInputStream(fixedFileName, CompressionType.GZIP);
-        readContent = new String(IOUtils.toByteArray(inputStream));
+        readContent = new String(inputStream.readAllBytes());
         inputStream.close();
         assertEquals("contents of txt file should match written data", testContent, readContent);
         // Read it back using the Reader using AUTODETECT
         inputStream = Reader.createInputStream(fixedFileName, CompressionType.AUTODETECT);
-        readContent = new String(IOUtils.toByteArray(inputStream));
+        readContent = new String(inputStream.readAllBytes());
         inputStream.close();
         assertEquals("contents of txt file should match written data", testContent, readContent);
         // Delete the file

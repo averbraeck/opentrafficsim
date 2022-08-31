@@ -9,8 +9,6 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-
 /**
  * Reader for compressed files.
  * <p>
@@ -47,10 +45,6 @@ public final class Reader
         {
             case AUTODETECT:
                 throw new IOException("Cannot happen");
-
-            case BZIP2:
-                // BUG create with "true" as second argument: see https://issues.apache.org/jira/browse/COMPRESS-224
-                return new BZip2CompressorInputStream(new FileInputStream(fileName), true);
 
             case GZIP:
                 return new GZIPInputStream(new FileInputStream(fileName));
@@ -108,10 +102,6 @@ public final class Reader
         {
             return CompressionType.GZIP;
         }
-        else if (isBZipCompressed(signature))
-        {
-            return CompressionType.BZIP2;
-        }
         else if (isZipCompressed(signature))
         {
             return CompressionType.ZIP;
@@ -132,18 +122,6 @@ public final class Reader
     public static boolean isGZipCompressed(final byte[] bytes) throws IOException
     {
         return (bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8));
-    }
-
-    /**
-     * Determine if bytes match the BZip2 compression signature.
-     * @param bytes byte[]; at least 10 bytes from the start of the stream to determine compression type.
-     * @return boolean; true if bytes indicates the start of a BZip compressed stream
-     */
-    private static boolean isBZipCompressed(final byte[] bytes)
-    {
-        return bytes[0] == 'B' && bytes[1] == 'Z' && (bytes[2] == 'h' || bytes[2] == '0') && Character.isDigit(bytes[3])
-                && bytes[4] == 0x31 && bytes[5] == 0x41 && bytes[6] == 0x59 && bytes[7] == 0x26 && bytes[8] == 0x53
-                && bytes[9] == 0x59;
     }
 
     /**

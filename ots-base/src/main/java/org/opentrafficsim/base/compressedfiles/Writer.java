@@ -7,8 +7,6 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
-
 /**
  * Writer for compressed files.
  * <p>
@@ -55,9 +53,6 @@ public final class Writer
             case AUTODETECT:
                 // Cannot happen
                 throw new IOException("AUTODETECT not allowed for Writer");
-
-            case BZIP2:
-                return new BZip2CompressorOutputStream(fileOutputStream);
 
             case GZIP:
                 return new GZIPOutputStream(fileOutputStream);
