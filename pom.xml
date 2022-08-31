@@ -51,8 +51,7 @@
     <djutils.version>2.0.1</djutils.version>
     <dsol.version>3.08.00</dsol.version>
     <sim0mq.version>2.1.0</sim0mq.version>
-    <geotools.version>26.2</geotools.version>
-    <jts.version>1.17.0</jts.version>
+    <jts.version>1.19.0</jts.version>
     <osmosis.version>0.48.3</osmosis.version>
     <jfreechart.version>1.5.0</jfreechart.version>
     <xml-apis.version>2.0.2</xml-apis.version>
@@ -326,36 +325,6 @@
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
         <version>${xml-apis.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt-shapefile</artifactId>
-        <version>${geotools.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt-main</artifactId>
-        <version>${geotools.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt-api</artifactId>
-        <version>${geotools.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt-swing</artifactId>
-        <version>${geotools.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt-epsg-hsql</artifactId>
-        <version>${geotools.version}</version>
       </dependency>
 
       <dependency>
