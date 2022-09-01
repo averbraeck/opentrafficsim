@@ -139,13 +139,13 @@ public class SuperDemoWebApplication implements Checkable
         }
         else if (this.modelId.toLowerCase().contains("trafcoddemosimple"))
         {
-            URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
+            URL url = URLResource.getResource("/resources/TrafCODDemo1/TrafCODDemo1.xml");
             String xml = TrafCODDemo2.readStringFromURL(url);
             this.model = new TrafCODDemo1.TrafCODModel(this.simulator, "TrafCODDemo1", "TrafCODDemo1", xml);
         }
         else if (this.modelId.toLowerCase().contains("trafcoddemocomplex"))
         {
-            URL url = URLResource.getResource("/TrafCODDemo2/TrafCODDemo2.xml");
+            URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2.xml");
             String xml = TrafCODDemo2.readStringFromURL(url);
             this.model = new TrafCODDemo2.TrafCODModel(this.simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
         }

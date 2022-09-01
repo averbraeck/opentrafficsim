@@ -119,7 +119,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
         {
             try
             {
-                URL xmlURL = URLResource.getResource("/conflict/TurboRoundabout.xml");
+                URL xmlURL = URLResource.getResource("/resources/conflict/TurboRoundabout.xml");
                 this.network = new OTSRoadNetwork("TurboRoundabout", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, true);
 

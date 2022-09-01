@@ -98,7 +98,7 @@ public class TestDemoServer
             ResourceHandler resourceHandler = new MyResourceHandler();
 
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
-            URL homeFolder = URLResource.getResource("/home");
+            URL homeFolder = URLResource.getResource("/resources/home");
             String webRoot = homeFolder.toExternalForm();
             System.out.println("webRoot is " + webRoot);
 

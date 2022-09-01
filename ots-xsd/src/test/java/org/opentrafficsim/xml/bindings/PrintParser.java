@@ -29,7 +29,7 @@ public class PrintParser
      */
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, URISyntaxException
     {
-        URL res = URLResource.getResource("/");
+        URL res = URLResource.getResource("/resources/");
         if (res == null)
         {
             System.out.println("Cannot find file");

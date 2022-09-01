@@ -98,7 +98,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
         try
         {
             OTSAnimator simulator = new OTSAnimator("TrafCODDemo2_Generators");
-            URL url = URLResource.getResource("/TrafCODDemo2/TrafCODDemo2_Generators.xml");
+            URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2_Generators.xml");
             String xml = readStringFromURL(url);
             final TrafCODModel trafcodModel = new TrafCODModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), trafcodModel);
@@ -172,7 +172,7 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
                         false);
 
                 String controllerName = "TrafCOD_complex";
-                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),
+                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/resources/TrafCODDemo2/Intersection12Dir.tfc"),
                         getSimulator(), this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);

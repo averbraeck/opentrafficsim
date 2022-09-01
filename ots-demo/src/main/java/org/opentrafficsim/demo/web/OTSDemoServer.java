@@ -322,13 +322,13 @@ public class OTSDemoServer implements Checkable
                     }
                     else if (modelId.toLowerCase().contains("trafcoddemosimple"))
                     {
-                        URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
+                        URL url = URLResource.getResource("/resources/TrafCODDemo1/TrafCODDemo1.xml");
                         String xml = TrafCODDemo2.readStringFromURL(url);
                         model = new TrafCODDemo1.TrafCODModel(simulator, "TrafCODDemo1", "TrafCODDemo1", xml);
                     }
                     else if (modelId.toLowerCase().contains("trafcoddemocomplex"))
                     {
-                        URL url = URLResource.getResource("/TrafCODDemo2/TrafCODDemo2.xml");
+                        URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2.xml");
                         String xml = TrafCODDemo2.readStringFromURL(url);
                         model = new TrafCODDemo2.TrafCODModel(simulator, "TrafCODDemo2", "TrafCODDemo2", xml);
                     }

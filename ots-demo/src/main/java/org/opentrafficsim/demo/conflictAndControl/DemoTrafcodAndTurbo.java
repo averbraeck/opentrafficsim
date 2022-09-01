@@ -155,7 +155,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
         {
             try
             {
-                URL xmlURL = URLResource.getResource("/conflictAndControl/TurboRoundaboutAndSignal.xml");
+                URL xmlURL = URLResource.getResource("/resources/conflictAndControl/TurboRoundaboutAndSignal.xml");
                 this.network = new OTSRoadNetwork("TurboRoundaboutAndSignal", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
@@ -249,7 +249,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                     }
                 }
                 String controllerName = "Not so simple TrafCOD controller";
-                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/conflictAndControl/Intersection12Dir.tfc"),
+                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/resources/conflictAndControl/Intersection12Dir.tfc"),
                         this.simulator, this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);

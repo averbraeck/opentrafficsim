@@ -240,7 +240,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
         {
             try
             {
-                URL xmlURL = URLResource.getResource("/lmrs/" + NETWORK + ".xml");
+                URL xmlURL = URLResource.getResource("/resources/lmrs/" + NETWORK + ".xml");
                 this.network = new OTSRoadNetwork("ShortMerge", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
                 addGenerator();

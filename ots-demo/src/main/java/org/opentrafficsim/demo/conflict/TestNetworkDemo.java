@@ -117,7 +117,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
         {
             try
             {
-                URL xmlURL = URLResource.getResource("/conflict/Test-Network-14.xml");
+                URL xmlURL = URLResource.getResource("/resources/conflict/Test-Network-14.xml");
                 this.network = new OTSRoadNetwork("Test-Network-14", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
 

@@ -494,7 +494,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
             this.sampler = RoadSampler.build(this.network).registerExtendedDataType(new TimeToCollision()).create();
             try
             {
-                URL xmlURL = URLResource.getResource("/AHFE/Network.xml");
+                URL xmlURL = URLResource.getResource("/resources/AHFE/Network.xml");
                 this.network = new OTSRoadNetwork("AHFE", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
 
