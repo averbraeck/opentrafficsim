@@ -5,7 +5,6 @@
     <groupId>org.opentrafficsim</groupId>
     <artifactId>ots</artifactId>
     <version>1.6.0</version>
-    <relativePath>../ots/pom.xml</relativePath>
   </parent>
 
   <artifactId>ots-sim0mq-swing</artifactId>

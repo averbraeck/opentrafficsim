@@ -4,7 +4,6 @@
     <groupId>org.opentrafficsim</groupId>
     <artifactId>ots</artifactId>
     <version>1.6.0</version>
-    <relativePath>../ots/pom.xml</relativePath>
   </parent>
 
   <artifactId>ots-xsd</artifactId>
@@ -17,28 +16,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>wagon-maven-plugin</artifactId>
-        <version>${wagon.maven.version}</version>
-        <executions>
-          <execution>
-            <id>upload-schema-version</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>upload</goal>
-            </goals>
-            <configuration>
-              <fromDir>${basedir}/src/main/resources/xsd</fromDir>
-              <includes>**/*</includes>
-              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
-              <toDir>xsd</toDir>
-              <serverId>ots-deployment</serverId>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
         <artifactId>maven-jaxb2-plugin</artifactId>
@@ -98,21 +75,11 @@
       <artifactId>jaxb-api</artifactId>
     </dependency>
 
-  <dependency>
-    <groupId>org.glassfish.jaxb</groupId>
-    <artifactId>jaxb-runtime</artifactId>
-  </dependency>
-
-    <!-- dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-core</artifactId>
-    </dependency>
-  
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-    </dependency -->
-      
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>
