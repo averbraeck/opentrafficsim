@@ -466,7 +466,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         Lane adjLane = adjLanes.iterator().next();
         Length position = adjLane.position(from.getLane().fraction(from.getPosition()));
         GTUDirectionality direction = getDirection(from.getLane());
-        Length planLength = Try.assign(() -> getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorTime()),
+        Length planLength = Try.assign(() -> getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorAbsTime()),
                 "Exception while determining plan length.");
         enterLaneRecursive(new LaneDirection(adjLane, direction), position, newLinkPositionsLC, planLength, lanesToBeRemoved,
                 0);
@@ -783,7 +783,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
         else
         {
-            covered = getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorTime());
+            covered = getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorAbsTime());
         }
 
         // generate the next operational plan and carry it out
@@ -1185,7 +1185,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     public DirectedLanePosition getReferencePosition() throws GTUException
     {
-        if (this.referencePositionTime == getSimulator().getSimulatorTime().si)
+        if (this.referencePositionTime == getSimulator().getSimulatorAbsTime().si)
         {
             return this.cachedReferencePosition;
         }
@@ -1238,7 +1238,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             this.cachedReferencePosition =
                     new DirectedLanePosition(refLane, position(refLane, getReference()), this.getDirection(refLane));
-            this.referencePositionTime = getSimulator().getSimulatorTime().si;
+            this.referencePositionTime = getSimulator().getSimulatorAbsTime().si;
             return this.cachedReferencePosition;
         }
         // for (Lane lane : this.currentLanes.keySet())

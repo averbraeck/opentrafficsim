@@ -691,7 +691,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                             "Time travel? enterTime=" + enterTime + "; simulator time=" + getSimulator().getSimulatorAbsTime());
                     enterTime = getSimulator().getSimulatorAbsTime();
                 }
-                this.pendingEnterTrigger = getSimulator().scheduleEventAbsTime(enterTime, this, this, "enterCrossSection", null);
+                this.pendingEnterTrigger =
+                        getSimulator().scheduleEventAbsTime(enterTime, this, this, "enterCrossSection", null);
             }
         }
     }
@@ -836,10 +837,11 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 if (leaveTime.lt(getSimulator().getSimulatorAbsTime()))
                 {
                     System.err.println(
-                            "Time travel? leaveTime=" + leaveTime + "; simulator time=" + getSimulator().getSimulatorTime());
+                            "Time travel? leaveTime=" + leaveTime + "; simulator time=" + getSimulator().getSimulatorAbsTime());
                     leaveTime = getSimulator().getSimulatorAbsTime();
                 }
-                this.pendingLeaveTrigger = getSimulator().scheduleEventAbsTime(leaveTime, this, this, "leaveCrossSection", null);
+                this.pendingLeaveTrigger =
+                        getSimulator().scheduleEventAbsTime(leaveTime, this, this, "leaveCrossSection", null);
             }
         }
     }
@@ -901,7 +903,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 Time time = timeAtLine(sensor.getGeometry(), pos);
                 if (time != null)
                 {
-                    this.sensorEvents.add(getSimulator().scheduleEventAbsTime(time, this, sensor, "trigger", new Object[] {this}));
+                    this.sensorEvents
+                            .add(getSimulator().scheduleEventAbsTime(time, this, sensor, "trigger", new Object[] {this}));
                 }
             }
         }
@@ -917,7 +920,8 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         if (getOperationalPlan() instanceof LaneBasedOperationalPlan)
         {
             LaneBasedOperationalPlan plan = (LaneBasedOperationalPlan) getOperationalPlan();
-            return plan.getTotalLength().minus(plan.getTraveledDistance(getSimulator().getSimulatorTime())).plus(eventMargin);
+            return plan.getTotalLength().minus(plan.getTraveledDistance(getSimulator().getSimulatorAbsTime()))
+                    .plus(eventMargin);
         }
         return getOperationalPlan().getTotalLength().plus(eventMargin);
     }
@@ -979,7 +983,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 // return time at distance
                 if (cumul < 0.0)
                 {
-                    // return getSimulator().getSimulatorTime(); // this was a mistake...
+                    // return getSimulator().getSimulatorAbsTime(); // this was a mistake...
                     // relative position already crossed the point, e.g. FRONT
                     return null;
                 }
@@ -1195,7 +1199,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
     {
         synchronized (this)
         {
-            if (this.referencePositionTime == getSimulator().getSimulatorTime().si)
+            if (this.referencePositionTime == getSimulator().getSimulatorAbsTime().si)
             {
                 return this.cachedReferencePosition;
             }
@@ -1214,7 +1218,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             {
                 this.cachedReferencePosition =
                         new DirectedLanePosition(refLane, position(refLane, getReference()), this.getDirection(refLane));
-                this.referencePositionTime = getSimulator().getSimulatorTime().si;
+                this.referencePositionTime = getSimulator().getSimulatorAbsTime().si;
                 return this.cachedReferencePosition;
             }
             CategoryLogger.always().error("The reference point of GTU {} is not on any of the lanes on which it is registered",
