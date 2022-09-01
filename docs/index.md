@@ -10,11 +10,8 @@ OpenTrafficSim aims to bring traffic simulation to a new level by
 
 We bring together state of the art simulation techniques, software development techniques and the best people in the traffic, simulation and software fields.
 
-!!! Note
-    Note that this is the manual of OpenTrafficSim version 1. New developments are carried out in OpenTrafficSim version 2, which can be found at [GitHub opentrafficsim2](https://github.com/averbraeck/opentrafficsim2). The manual is at [ReadTheDocs opentrafficsim2](https://opentrafficsim2.readthedocs.io).
-    
 
-### Open source
+## Open source
 
 Everything in OpenTrafficSim shall have a BSD, Apache, MIT, or similar open source license ensuring that
 
@@ -22,19 +19,17 @@ Everything in OpenTrafficSim shall have a BSD, Apache, MIT, or similar open sour
 * OpenTrafficSim may be extended, evolved into anything else for any purpose
 
 
-### Source code
+## Source code
 
-The source code for OTS Version 1 is stored in [GitHub opentrafficsim1](https://github.com/averbraeck/opentrafficsim1).<br>
-The source code for OTS Version 2 is stored in [GitHub opentrafficsim2](https://github.com/averbraeck/opentrafficsim2).
-
-
-### Project information
-
-The project inforrmation and API for all modules of OTS Version 1 is stored in [OTS1 modules](https://opentrafficsim.org/docs/v1/).<br>
-The project inforrmation and API for all modules of OTS Version 2 is stored in [OTS2 modules](https://opentrafficsim.org/docs/v2/).
+The source code for OTS is stored in [GitHub opentrafficsim](https://github.com/averbraeck/opentrafficsim).
 
 
-### Who are we?
+## technical documentation and API
+
+The technical project information and API files for all modules of OTS are stored in [https://opentrafficsim.org/docs/latest](https://opentrafficsim.org/docs/latest).
+
+
+## Who are we?
 
 All current contributors work at the Delft University of Technology in the Netherlands. We are not picky; if you believe you can contribute to this ambitious project, please contact us. The current group of contributors is:
 
