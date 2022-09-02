@@ -54,20 +54,20 @@ After this, the Workspace for the opentrafficsim project opens:
 
 ![](../images/01-technical/install-developer-003.png)
 
-The "perspective" we see is shown with a square icon at the top right. Fr the example in the figure above, it is the "Java Enterprise Edition" perspective. This is fine, but for a Java project like opentrafficsim, the Java perspective might be more appropriate. Choose the square with the "+" at the top right of the screen, and choose the "Java" perspective:
+The "perspective" we see is shown with a square icon at the top right. For the example in the figure above, it is the "Java Enterprise Edition" perspective. This is fine, but for a Java project like opentrafficsim, the Java perspective might be more appropriate. Choose the square with the "+" at the top right of the screen, and choose the "Java" perspective:
 
 <center>![](../images/01-technical/install-developer-004.png)</center>
 
 Of course it is possible that the Eclipse distribution that you chose already shows the Java perspective, In that case, leave it as-is. If you want, you can remove the "enterprise edition" perspective, but you can also leave it. 
 
 
-### Clone the opentrafficsim git from github into your project
+### 3.2. Clone the opentrafficsim git from github into your project
 
 Choose 'File - Import - Git - Projects from Git' from the menu bar:
 
 ![](../images/01-technical/install-developer-005.png)
 
-Go to github, and make sure you are logged in. Go to [https://github.com/averbraeck/opentrafficsim](https://github.com/averbraeck/opentrafficsim) and choose "Code"/ Press the "copy" icon next to Clone - HTTPS:
+Go to github, and make sure you are logged in. Go to [https://github.com/averbraeck/opentrafficsim](https://github.com/averbraeck/opentrafficsim) and choose "Code". Press the "copy" icon next to Clone - HTTPS:
 
 <center>![](../images/01-technical/install-developer-006.png)</center>
 
@@ -79,7 +79,7 @@ The details for cloning will automatically be filled for you. The first time you
 
 ![](../images/01-technical/install-developer-008.png)
 
-Select only the master branch (and/or any other branch yu are interested in) to clone from github and press Next:
+Select only the master branch (and/or any other branch you are interested in) to clone from github and press Next:
 
 ![](../images/01-technical/install-developer-009.png)
 
@@ -91,7 +91,7 @@ Press Next and indicate you want to import the folders as Eclipse projects:
 
 ![](../images/01-technical/install-developer-011.png)
 
-All projects should be shown whe you press Next:
+All projects should be shown when you press Next:
 
 ![](../images/01-technical/install-developer-012.png)
 
@@ -99,7 +99,7 @@ After pressing "Finish", the projects will be imported:
 
 ![](../images/01-technical/install-developer-013.png)
 
-Note that compiling the projects for the first time might take a while. During the compilation, some projects might show an error for a short while, like the ots-animation project in the above image. If errors remain, right click on the "opentraffisim" main project at the top, and select "Maven - Update Project". All errors should be cleared after that (unless you downloaded a version that is in heavy editing -- in that case it is to be expected that sometimes the current version is not 100% stable.
+Note that compiling the projects for the first time might take a while. During the compilation, some projects might show an error for a short while, like the ots-animation project in the above image. If errors remain, right click on the "opentraffisim" main project at the top, and select "Maven - Update Project". All errors should be cleared after that (unless you downloaded a version that is in heavy editing -- in that case it is to be expected that sometimes the current version is not 100% stable).
 
 The "Maven - Update project" menu looks as follows:
 
@@ -114,7 +114,7 @@ If all has been cleared, you can see and edit all files, and push changes to git
 ![](../images/01-technical/install-developer-015.png)
 
 
-### Using git to commit, push and pull changes
+### 3.3. Preparing git to commit, push and pull changes
 
 A simple git staging screen can be opened to help committing changes to the local git, and pushing changes to github. To do this, open the "Git staging" view with "Window - Show View - Other - Git - Git Staging":
 
@@ -124,7 +124,7 @@ You can also open the Git perspective by clicking on the square perspective icon
 
 <center>![](../images/01-technical/install-developer-017.png)</center>
 
-In the Git perspectivem you can for instance see the project's (or a folder's or a file's) history:
+In the Git perspective, you can for instance see the project's (or a folder's or a file's) history:
 
 ![](../images/01-technical/install-developer-018.png)
 
@@ -132,11 +132,24 @@ If you want buttons for push-pull in your toolbar below the menus, choose "Windo
 
 <center>![](../images/01-technical/install-developer-019.png)</center>
 
-Go to the "Action Set Availability" and choose "Git":
+Go to the "Action Set Availability" tab and choose "Git":
 
 <center>![](../images/01-technical/install-developer-020.png)</center>
 
 The icons for, e.g., "Push", "Fetch", "Pull", "Commit" and "Merge" will now be visible in the top menu bar in the Java view:
 
 <center>![](../images/01-technical/install-developer-021.png)</center>
+
+
+## 4. Using git
+
+This is not a git manual. Git has many options, e.g., to develop code in branches that can shield the sometimes messy development for the "master" branch, and the merge the development branch in the end with the master branch (or abandon the development branch). There are many tutorials available how to use git.
+
+Development should be such that users can typically safely check out the master branch and have a reasonably stable set of code. Of course, to ensure a really stable codebase, end users should only clone a release tag, or use a tested and compiled library via Maven.
+
+Typically, before starting working in the master branch, you **Fetch** the changes from github. When you did not make any local changes, this should never lead to conflicts.
+
+After having worked on some code, you can **Commit** the code to your local git. Do this _frequently_, and do it every time when you have worked on a few changes that clearly relate to each other. Document the change with the "Commit Message". If you made multiple changes that deserve their own message, select the files per group that belong together with the "+" icon, and give then their own appropriate commit message. When you want to commit all files that have been changed, press the "++" icon. Code the commit message with one short line at the top (this will be visible in github next to the file and the parent folders), skip a line, and enter further details below (if necessary):
+
+<center>![](../images/01-technical/install-developer-024.png)</center>
 
