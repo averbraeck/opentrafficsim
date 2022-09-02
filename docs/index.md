@@ -24,14 +24,14 @@ Everything in OpenTrafficSim shall have a BSD, Apache, MIT, or similar open sour
 The source code for OTS is stored in [GitHub opentrafficsim](https://github.com/averbraeck/opentrafficsim).
 
 
-## technical documentation and API
+## Technical documentation and API
 
 The technical project information and API files for all modules of OTS are stored in [https://opentrafficsim.org/docs/latest](https://opentrafficsim.org/docs/latest).
 
 
 ## Who are we?
 
-All current contributors work at the Delft University of Technology in the Netherlands. We are not picky; if you believe you can contribute to this ambitious project, please contact us. The current group of contributors is:
+All current contributors work at Delft University of Technology in the Netherlands. We are not picky; if you believe you can contribute to this ambitious project, please contact us. The current group of contributors is:
 
 * Hans van Lint, TU Delft, faculty CEG
 * Alexander Verbraeck, TU Delft, faculty TBM

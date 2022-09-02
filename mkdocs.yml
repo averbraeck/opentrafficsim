@@ -21,6 +21,9 @@ nav:
   - 1. Technical manual:
     - Preface: 01-technical/preface.md
     - Current developments: 01-technical/developments.md
+    - Install ots for developers: 01-technical/installation-developers.md
+    - install ots for modelers: 01-technical/installation-modelers.md
+    - install ots for end users: 01-technical/installation-users.md
   - 2. Model structure:
     - GTU - Generalized Travel Unit: 02-model-structure/gtu.md
     - DSOL - event-based simulation: 02-model-structure/dsol.md
