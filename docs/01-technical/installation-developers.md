@@ -153,3 +153,9 @@ After having worked on some code, you can **Commit** the code to your local git.
 
 <center>![](../images/01-technical/install-developer-024.png)</center>
 
+Press "Commit" to copy the code to the local git. Note: the code is then _not yet_ on github.
+
+When you committed and documented several changes to your local git, and code is stable or documents are consistent, you can use "Push HEAD" in the "Git Staging" screen to push all your changes in one go to github. Doing it this way, you ensure that you only push a finalized set of changes to github and not some intermediate mess. When you push the head, you get a confirmation screen about the changes you made:
+
+    
+
