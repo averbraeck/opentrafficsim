@@ -1,12 +1,9 @@
-# Developments for OTS v2
+# Developments for OTS
 
 This page lists some of the current ideas that are being worked on for the development of OpenTrafficSim.
 
-!!! Note
-    Note that this is the manual of OpenTrafficSim version 1. New developments are carried out in OpenTrafficSim version 2, which can be found at [GitHub opentrafficsim2](https://github.com/averbraeck/opentrafficsim2). The manual is at [ReadTheDocs opentrafficsim2](https://opentrafficsim2.readthedocs.io).
 
-
-## OTS 2.0 – Free GTU movement
+## Free GTU movement
 
 In OTS GTUs and objects are currently coupled to lanes. GTUs coupled to lanes are on the lane, and objects coupled to lanes are functionally related to the lane. For example, a traffic light may in actuality be next to a lane, but is considered at a specific spot on a `Lane`. Especially for GTUs, the book-keeping system is a complex and error-prone system. GTUs plan their own enter-lane and leave-lane events, which are triggered by the nose or tail respectively. But lanes may not be connected perfectly, and as GTUs move between lanes the consistency of these events is troublesome. As a result, events may be triggered multiple times (for example causing data inconsistencies), or a GTU may find itself not referenced on any `Lane`, at which points several algorithms will fail.
 
