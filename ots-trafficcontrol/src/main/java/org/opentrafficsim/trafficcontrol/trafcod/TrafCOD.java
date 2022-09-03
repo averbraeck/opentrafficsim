@@ -2198,7 +2198,7 @@ class Variable implements EventListenerInterface
 
     /**
      * Retrieve the traffic lights controlled by this variable.
-     * @return Set&ltTrafficLight&gt;; the traffic lights controlled by this variable, or null when this variable has no traffic
+     * @return Set&lt;TrafficLight&gt;; the traffic lights controlled by this variable, or null when this variable has no traffic
      *         lights
      */
     public Set<TrafficLight> getTrafficLights()
