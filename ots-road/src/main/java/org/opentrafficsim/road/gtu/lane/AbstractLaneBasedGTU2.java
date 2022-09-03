@@ -204,6 +204,25 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         Throw.when(null == initialLongitudinalPositions, GTUException.class, "InitialLongitudinalPositions is null");
         Throw.when(0 == initialLongitudinalPositions.size(), GTUException.class, "InitialLongitudinalPositions is empty set");
 
+        for (DirectedLanePosition pos : new LinkedHashSet<DirectedLanePosition>(initialLongitudinalPositions)) // copy
+        {
+            double fracFront = (pos.getPosition().si + getFront().getDx().si) / pos.getLane().getLength().si;
+            if (fracFront > 1.0)
+            {
+                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
+                this.destroy();
+                return;
+            }
+            double fracRear = (pos.getPosition().si - getRear().getDx().si) / pos.getLane().getLength().si;
+            if (fracRear < 0.0)
+            {
+                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
+                this.destroy();
+                return;
+            }
+
+        }
+
         DirectedPoint lastPoint = null;
         for (DirectedLanePosition pos : initialLongitudinalPositions)
         {
@@ -234,6 +253,77 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         {
             throw new RuntimeException("Initial operational plan could not be created.", e);
         }
+
+        // XXX: Added code AV 20220903
+        // Check if the gtu has been registered on all lanes where it resides
+        // Could not make the code work, so destroy the vehicles that are residing in multiple lanes...
+        /*-
+        for (DirectedLanePosition pos : new LinkedHashSet<DirectedLanePosition>(initialLongitudinalPositions)) // copy
+        {
+            DirectedLanePosition dlp = null;
+            DirectedLanePosition posRef = pos;
+            double fracFront = (posRef.getPosition().si + getFront().getDx().si) / posRef.getLane().getLength().si;
+            while (fracFront > 1.0) // only take DIR_PLUS into account for now
+            {
+                Map<Lane, GTUDirectionality> nextLanes = posRef.getLane().nextLanes(getGTUType());
+                Throw.when(nextLanes.size() > 1, GTUException.class, "next lane for GTU %s: init has multiple choices", this);
+                Lane nextLane = nextLanes.keySet().iterator().next();
+                boolean alreadyPresent = false;
+                for (DirectedLanePosition pos2 : initialLongitudinalPositions)
+                {
+                    if (pos2.getLane().equals(nextLane))
+                    {
+                        alreadyPresent = true;
+                        dlp = pos2;
+                        break;
+                    }
+                }
+                if (!alreadyPresent)
+                {
+                    // calculate relative position for reference
+                    Length len2 = posRef.getPosition().minus(posRef.getLane().getLength());
+                    dlp = new DirectedLanePosition(nextLane, len2, GTUDirectionality.DIR_PLUS);
+                    initialLongitudinalPositions.add(dlp);
+                }
+                fracFront = 0.0; // TODO: Change this code for a full while loop for multiple lanes
+                posRef = dlp;
+            }
+            
+            dlp = null;
+            posRef = pos;
+            double fracRear = (posRef.getPosition().si - getRear().getDx().si) / posRef.getLane().getLength().si;
+            if (fracRear < 0.0) 
+            {
+                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
+                this.destroy();
+            }
+            while (fracRear < 0.0) // only take DIR_PLUS into account for now
+            {
+                Map<Lane, GTUDirectionality> prevLanes = posRef.getLane().prevLanes(getGTUType());
+                Throw.when(prevLanes.size() > 1, GTUException.class, "prev lane for GTU %s: init has multiple choices", this);
+                Lane prevLane = prevLanes.keySet().iterator().next();
+                boolean alreadyPresent = false;
+                for (DirectedLanePosition pos2 : initialLongitudinalPositions)
+                {
+                    if (pos2.getLane().equals(prevLane))
+                    {
+                        alreadyPresent = true;
+                        dlp = pos2;
+                        break;
+                    }
+                }
+                if (!alreadyPresent)
+                {
+                    // calculate relative position for reference
+                    Length len2 = prevLane.getLength().plus(posRef.getPosition());
+                    dlp = new DirectedLanePosition(prevLane, len2, GTUDirectionality.DIR_PLUS);
+                    initialLongitudinalPositions.add(dlp);
+                }
+                fracRear = 1.0; // TODO: change this code for a full while loop for multiple lanes
+                posRef = dlp;
+            }
+        }
+        */
 
         // register the GTU on the lanes
         List<DirectedLanePosition> inits = new ArrayList<>(); // need to sort them
@@ -277,7 +367,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
         super.init(strategicalPlanner, initialLocation, initialSpeed);
 
         this.referencePositionTime = Double.NaN; // remove cache, it may be invalid as the above init results in a lane change
-
     }
 
     /**
@@ -586,14 +675,27 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
             }
 
             // cancel events, if any
+            // FIXME: If there are still events left, clearly something went wrong?
+            // XXX: Added boolean to indicate whether warnings need to be given when events were found
             cancelAllEvents();
 
             // generate the next operational plan and carry it out
             // in case of an instantaneous lane change, fractionalLinkPositions will be accordingly adjusted to the new lane
-            boolean error = super.move(fromLocation);
-            if (error)
+            try
             {
-                return error;
+                boolean error = super.move(fromLocation);
+                if (error)
+                {
+                    return error;
+                }
+            }
+            catch (Exception exception)
+            {
+                System.err.println(exception.getMessage());
+                System.err.println("  GTU " + this + " DESTROYED AND REMOVED FROM THE SIMULATION");
+                this.destroy();
+                this.cancelAllEvents();
+                return true;
             }
 
             DirectedLanePosition dlp = getReferencePosition();
@@ -828,7 +930,6 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGTU implements LaneB
                 {
                     pos = position(lane, getRear());
                     this.pendingLeaveTrigger = getSimulator().scheduleEventNow(this, this, "leaveCrossSection", null);
-
                     getSimulator().getLogger().always().info("Forcing leave for GTU {} on lane {}", getId(), lane.getFullId());
                 }
             }
