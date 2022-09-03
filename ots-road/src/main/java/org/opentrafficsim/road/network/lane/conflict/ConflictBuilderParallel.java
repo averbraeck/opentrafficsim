@@ -532,8 +532,8 @@ public final class ConflictBuilderParallel
      * @param permitted boolean; conflict permitted by traffic control
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @param leftEdges Map<Lane, OTSLine3D>; cache of left edge lines
-     * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
+     * @param leftEdges Map&lt;Lane, OTSLine3D&gt;; cache of left edge lines
+     * @param rightEdges Map&lt;Lane, OTSLine3D&gt;; cache of right edge lines
      * @throws OTSGeometryException in case of geometry exception
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
@@ -1319,8 +1319,8 @@ public final class ConflictBuilderParallel
          * @param permitted boolean; conflict permitted by traffic control
          * @param simulator OTSSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map<Lane, OTSLine3D>; cache of left edge lines
-         * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
+         * @param leftEdges Map&lt;Lane, OTSLine3D&gt;; cache of left edge lines
+         * @param rightEdges Map&lt;Lane, OTSLine3D&gt;; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecord(final Lane lane1, final GTUDirectionality dir1, final ImmutableMap<Lane, GTUDirectionality> down1,

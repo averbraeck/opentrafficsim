@@ -269,8 +269,8 @@ public final class ConflictBuilder
      * @param permitted boolean; conflict permitted by traffic control
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
-     * @param leftEdges Map<Lane, OTSLine3D>; cache of left edge lines
-     * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
+     * @param leftEdges Map&lt;Lane, OTSLine3D&gt;; cache of left edge lines
+     * @param rightEdges Map&lt;Lane, OTSLine3D&gt;; cache of right edge lines
      * @param intersectionCheck indicate whether we have to do a contour intersection check still
      * @param conflictId String; identification of the conflict (may be null)
      * @throws OTSGeometryException in case of geometry exception
@@ -1485,8 +1485,8 @@ public final class ConflictBuilder
          * @param permitted boolean; conflict permitted by traffic control
          * @param simulator OTSSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map<Lane, OTSLine3D>; cache of left edge lines
-         * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
+         * @param leftEdges Map&lt;Lane, OTSLine3D&gt;; cache of left edge lines
+         * @param rightEdges Map&lt;Lane, OTSLine3D&gt;; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecordSmall(final Lane lane1, final GTUDirectionality dir1,
@@ -1646,8 +1646,8 @@ public final class ConflictBuilder
          * @param gtuType GTUType; gtu type
          * @param simulator OTSSimulatorInterface; simulator
          * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map<Lane, OTSLine3D>; cache of left edge lines
-         * @param rightEdges Map<Lane, OTSLine3D>; cache of right edge lines
+         * @param leftEdges Map&lt;Lane, OTSLine3D&gt;; cache of left edge lines
+         * @param rightEdges Map&lt;Lane, OTSLine3D&gt;; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
         ConflictBuilderRecordBig(final int starti, final List<Lane> lanes, final LaneCombinationList ignoreList,
