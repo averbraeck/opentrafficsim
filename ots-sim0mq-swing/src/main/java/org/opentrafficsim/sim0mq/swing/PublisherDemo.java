@@ -95,6 +95,8 @@ public final class PublisherDemo
             System.out.println("Got expected response to unsupported command");
         }
         
+        // FIXME: This is of course not the intention... 
+        // FIXME: make the network available as a resource...
         String xml = new String(Files
                 .readAllBytes(Paths.get("C:/Users/pknoppers/Java/ots-demo/src/main/resources/TrafCODDemo2/TrafCODDemo2.xml")));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "NEWSIMULATION",
@@ -284,7 +286,7 @@ public final class PublisherDemo
         {
             try
             {
-                new Sim0MQPublisher(zContext, "publisherControl", "publisherOutput");
+                new Sim0MQPublisher(this.zContext, "publisherControl", "publisherOutput");
             }
             catch (SimRuntimeException e)
             {
