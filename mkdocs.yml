@@ -23,7 +23,10 @@ nav:
     - Current developments: 01-technical/developments.md
     - Install ots for developers: 01-technical/installation-developers.md
     - Install ots for modelers: 01-technical/installation-modelers.md
-    - Install ots for end users: 01-technical/installation-users.md
+    - OTS compile information: https://opentrafficsim.org/docs/latest
+    - ots-base Javadoc APIs: https://opentrafficsim.org/docs/1.6.0/ots-base/apidocs
+    - ots-core Javadoc APIs: https://opentrafficsim.org/docs/1.6.0/ots-core/apidocs
+    - ots-road Javadoc APIs: https://opentrafficsim.org/docs/1.6.0/ots-road/apidocs
   - 2. Model structure:
     - GTU - Generalized Travel Unit: 02-model-structure/gtu.md
     - DSOL - event-based simulation: 02-model-structure/dsol.md
