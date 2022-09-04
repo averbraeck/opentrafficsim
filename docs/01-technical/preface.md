@@ -14,6 +14,3 @@ This manual is intended for users of Open Traffic Sim (OTS) as a means to get st
 </pre>
 
 Java classes, methods and property names are formatted as `code`. For methods, (…) indicates ‘with some input’, which may or may not involve multiple equally-named methods with different input.
-
-!!! Note
-    Note that this is the manual of OpenTrafficSim version 1. New developments are carried out in OpenTrafficSim version 2, which can be found at [GitHub opentrafficsim2](https://github.com/averbraeck/opentrafficsim2). The manual is at [ReadTheDocs opentrafficsim2](https://opentrafficsim2.readthedocs.io).
