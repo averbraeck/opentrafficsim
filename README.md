@@ -20,7 +20,7 @@ Everything in OpenTrafficSim shall have a BSD, Apache, MIT, or similar open sour
 
 ### Project information
 
-The project information and API for all modules of OTS Version 1 is stored in [OTS1 modules](https://opentrafficsim.org/docs/latest/).<br>
+The project information, compilation info, dependencies, unit test coverage, and API for all modules of OpenTrafficSim are stored in the [OTS project documentation](https://opentrafficsim.org/docs/latest/).<br>
 
 
 ### Who are we?
@@ -38,4 +38,4 @@ Early contributors to the project were:
 
 ## Where is the manual?
 
-The **technical manual** for OTS can be found at [ReadTheDocs](https://opentrafficsim.readthedocs.io). There are also demo models. A more user-oriented manual are within our future plans.
+The **technical manual** for OTS can be found at [ReadTheDocs](https://opentrafficsim.readthedocs.io) or at [opentrafficsim.org](https://opentrafficsim.org/manual). There are also demo models. A more user-oriented manual are within our future plans.
