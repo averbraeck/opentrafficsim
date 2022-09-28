@@ -233,21 +233,21 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         // Create some LaneTypes
         GtuCompatibility<LaneType> noTrucks = new GtuCompatibility<>((LaneType) null);
         noTrucks.addCompatibleGtuType(passengerCar.getGtuType());
-        LaneType trucksForbidden = new LaneType("No Trucks", network.getLaneType(LaneType.DEFAULTS.FREEWAY), noTrucks, network);
+        LaneType trucksForbidden = new LaneType("No Trucks", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
 
         GtuCompatibility<LaneType> truckOnly = new GtuCompatibility<>((LaneType) null);
         truckOnly.addCompatibleGtuType(truck.getGtuType());
-        LaneType trucksOnly = new LaneType("Trucks Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), truckOnly, network);
+        LaneType trucksOnly = new LaneType("Trucks Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
 
         GtuCompatibility<LaneType> bicyclesOnly = new GtuCompatibility<>((LaneType) null);
         LaneType bicycleLane =
-                new LaneType("Bicycles Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), bicyclesOnly, network);
+                new LaneType("Bicycles Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
 
         GtuCompatibility<LaneType> urban = new GtuCompatibility<>((LaneType) null);
         urban.addCompatibleGtuType(passengerCar.getGtuType());
         urban.addCompatibleGtuType(truck.getGtuType());
         LaneType urbanRoad = new LaneType("Urban road - open to all traffic", network.getLaneType(LaneType.DEFAULTS.FREEWAY),
-                urban, network);
+                network);
 
         // Now we test all combinations
         // TODO assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));

@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -89,17 +88,13 @@ public class LaneType extends GtuCompatibleInfraType<LaneType>
     /**
      * Create a new Lane type with a compatibility set.
      * @param id String; the id of the lane type.
-     * @param compatibility GtuCompatibility&lt;LaneType&gt;; the collection of compatible GtuTypes for this LaneType.
-     *            Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub
-     *            types.
      * @param network RoadNetwork; The network to which the LaneType belongs
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LaneType(final String id, final GtuCompatibility<LaneType> compatibility, final RoadNetwork network)
+    public LaneType(final String id, final RoadNetwork network)
             throws NullPointerException
     {
         super(id);
-        Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
         Throw.whenNull(network, "network cannot be null for LaneType with id = %s", id);
         this.network = network;
         this.network.addLaneType(this);
@@ -109,17 +104,12 @@ public class LaneType extends GtuCompatibleInfraType<LaneType>
      * Create a new Lane type with a compatibility set.
      * @param id String; the id of the lane type.
      * @param parent LaneType; parent type
-     * @param compatibility GtuCompatibility&lt;LaneType&gt;; the collection of compatible GtuTypes for this LaneType.
-     *            Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub
-     *            types.
      * @param network RoadNetwork; The network to which the LaneType belongs
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LaneType(final String id, final LaneType parent, final GtuCompatibility<LaneType> compatibility,
-            final RoadNetwork network) throws NullPointerException
+    public LaneType(final String id, final LaneType parent, final RoadNetwork network) throws NullPointerException
     {
         super(id, parent);
-        Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
         Throw.whenNull(parent, "parent cannot be null for LaneType with id = %s", id);
         this.network = network;
         this.network.addLaneType(this);

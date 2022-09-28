@@ -54,36 +54,35 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
     @Override
     public void addDefaultLaneTypes()
     {
-        GtuCompatibility<LaneType> noTrafficCompatibility = new GtuCompatibility<>((LaneType) null);
-        new LaneType("NONE", noTrafficCompatibility, this);
-        GtuCompatibility<LaneType> roadCompatibility = new GtuCompatibility<>((LaneType) null);
-        roadCompatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        LaneType twoWayLane = new LaneType("TWO_WAY_LANE", roadCompatibility, this);
-        new LaneType("RURAL_ROAD", twoWayLane, new GtuCompatibility<>(roadCompatibility), this);
-        new LaneType("URBAN_ROAD", twoWayLane, new GtuCompatibility<>(roadCompatibility), this);
-        new LaneType("RESIDENTIAL_ROAD", twoWayLane, new GtuCompatibility<>(roadCompatibility), this);
-        GtuCompatibility<LaneType> oneWayLaneCompatibility = new GtuCompatibility<>(roadCompatibility);
-        oneWayLaneCompatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        oneWayLaneCompatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
-        new LaneType("ONE_WAY_LANE", oneWayLaneCompatibility, this);
-        GtuCompatibility<LaneType> highwayLaneCompatibility =
-                new GtuCompatibility<>(oneWayLaneCompatibility).addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
-        new LaneType("FREEWAY", highwayLaneCompatibility, this);
-        new LaneType("HIGHWAY", highwayLaneCompatibility, this);
-        GtuCompatibility<LaneType> busLaneCompatibility = new GtuCompatibility<>(roadCompatibility);
-        busLaneCompatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BUS));
-        busLaneCompatibility.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        new LaneType("BUS_LANE", busLaneCompatibility, this);
-        GtuCompatibility<LaneType> mopedAndBicycleLaneCompatibility = new GtuCompatibility<>(roadCompatibility);
-        mopedAndBicycleLaneCompatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE));
-        mopedAndBicycleLaneCompatibility.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        new LaneType("MOPED_PATH", mopedAndBicycleLaneCompatibility, this);
-        GtuCompatibility<LaneType> bicycleOnlyCompatibility = new GtuCompatibility<>(mopedAndBicycleLaneCompatibility);
-        bicycleOnlyCompatibility.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.MOPED));
-        new LaneType("BICYCLE_PATH", bicycleOnlyCompatibility, this);
-        GtuCompatibility<LaneType> pedestriansOnly = new GtuCompatibility<>(roadCompatibility);
-        pedestriansOnly.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        new LaneType("FOOTPATH", pedestriansOnly, this);
+        new LaneType("NONE", this);
+
+        LaneType road = new LaneType("TWO_WAY_LANE", this);
+        new LaneType("RURAL_ROAD", road, this);
+        new LaneType("URBAN_ROAD", road, this);
+        new LaneType("RESIDENTIAL_ROAD", road, this);
+        road.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
+
+        LaneType oneWayLane = new LaneType("ONE_WAY_LANE", road, this);
+        oneWayLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
+        oneWayLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+
+        LaneType freeway = new LaneType("FREEWAY", oneWayLane, this);
+        freeway.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+        LaneType highway = new LaneType("HIGHWAY", oneWayLane, this);
+        highway.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+
+        LaneType busLane = new LaneType("BUS_LANE", this);
+        busLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BUS)); 
+
+        LaneType mopedAndBicycleLane = new LaneType("MOPED_PATH", this);
+        mopedAndBicycleLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE));
+        mopedAndBicycleLane.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.MOPED));
+
+        LaneType bicycleOnly = new LaneType("BICYCLE_PATH", mopedAndBicycleLane, this);
+        bicycleOnly.addIncompatibleGtuType(getGtuType(GtuType.DEFAULTS.MOPED));
+
+        LaneType pedestriansOnly = new LaneType("FOOTPATH", this);
+        pedestriansOnly.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
     }
 
     /** {@inheritDoc} */

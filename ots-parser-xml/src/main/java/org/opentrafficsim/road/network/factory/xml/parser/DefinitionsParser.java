@@ -201,12 +201,12 @@ public final class DefinitionsParser
                             throw new XmlParserException(
                                     "LaneType " + laneTag.getID() + " parent " + laneTag.getPARENT() + " not found");
                         }
-                        LaneType laneType = new LaneType(laneTag.getID(), parent, compatibility, otsNetwork);
+                        LaneType laneType = new LaneType(laneTag.getID(), parent, otsNetwork);
                         CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                     }
                     else
                     {
-                        LaneType laneType = new LaneType(laneTag.getID(), compatibility, otsNetwork);
+                        LaneType laneType = new LaneType(laneTag.getID(), otsNetwork);
                         CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                     }
                 }

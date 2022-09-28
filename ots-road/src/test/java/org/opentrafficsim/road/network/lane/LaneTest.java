@@ -93,7 +93,7 @@ public class LaneTest implements UNITS
 
         GtuCompatibility<LaneType> GtuCompatibility = new GtuCompatibility<>((LaneType) null);
         GtuCompatibility.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
-        LaneType laneType = new LaneType("One way", network.getLaneType(LaneType.DEFAULTS.FREEWAY), GtuCompatibility, network);
+        LaneType laneType = new LaneType("One way", network.getLaneType(LaneType.DEFAULTS.FREEWAY), network);
         Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
