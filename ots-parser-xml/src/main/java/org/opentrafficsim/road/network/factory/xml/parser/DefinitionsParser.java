@@ -106,7 +106,9 @@ public final class DefinitionsParser
                     }
                 }
                 else
+                {
                     CategoryLogger.filter(Cat.PARSER).trace("Did NOT add GtuType {}", gtuTag.getID());
+                }
             }
         }
     }
@@ -132,7 +134,8 @@ public final class DefinitionsParser
                 if (networkLinkType == null || (networkLinkType != null && !linkTag.isDEFAULT())
                         || (networkLinkType != null && linkTag.isDEFAULT() && overwriteDefaults))
                 {
-                    GtuCompatibility<LinkType> compatibility = new GtuCompatibility<>((LinkType) null);
+                    LinkType parent = otsNetwork.getLinkType(linkTag.getPARENT());
+                    LinkType linkType = new LinkType(linkTag.getID(), parent, otsNetwork);
                     for (COMPATIBILITY compTag : linkTag.getCOMPATIBILITY())
                     {
                         GtuType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
@@ -141,10 +144,8 @@ public final class DefinitionsParser
                             throw new XmlParserException("LinkType " + linkTag.getID() + ".compatibility: GtuType "
                                     + compTag.getGTUTYPE() + " not found");
                         }
-                        compatibility.addCompatibleGtuType(gtuType);
+                        linkType.addCompatibleGtuType(gtuType);
                     }
-                    LinkType parent = otsNetwork.getLinkType(linkTag.getPARENT());
-                    LinkType linkType = new LinkType(linkTag.getID(), parent, otsNetwork);
                     networkLinkType = linkType;
                     CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
                 }
@@ -182,17 +183,7 @@ public final class DefinitionsParser
                 if (networkLaneType == null || (networkLaneType != null && !laneTag.isDEFAULT())
                         || (networkLaneType != null && laneTag.isDEFAULT() && overwriteDefaults))
                 {
-                    GtuCompatibility<LaneType> compatibility = new GtuCompatibility<>((LaneType) null);
-                    for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
-                    {
-                        GtuType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
-                        if (gtuType == null)
-                        {
-                            throw new XmlParserException("LaneType " + laneTag.getID() + ".compatibility: GtuType "
-                                    + compTag.getGTUTYPE() + " not found");
-                        }
-                        compatibility.addCompatibleGtuType(gtuType);
-                    }
+                    LaneType laneType;
                     if (laneTag.getPARENT() != null)
                     {
                         LaneType parent = otsNetwork.getLaneType(laneTag.getPARENT());
@@ -201,17 +192,29 @@ public final class DefinitionsParser
                             throw new XmlParserException(
                                     "LaneType " + laneTag.getID() + " parent " + laneTag.getPARENT() + " not found");
                         }
-                        LaneType laneType = new LaneType(laneTag.getID(), parent, otsNetwork);
+                        laneType = new LaneType(laneTag.getID(), parent, otsNetwork);
                         CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
                     }
                     else
                     {
-                        LaneType laneType = new LaneType(laneTag.getID(), otsNetwork);
+                        laneType = new LaneType(laneTag.getID(), otsNetwork);
                         CategoryLogger.filter(Cat.PARSER).trace("Added LaneType {}", laneType);
+                    }
+                    for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
+                    {
+                        GtuType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
+                        if (gtuType == null)
+                        {
+                            throw new XmlParserException("LaneType " + laneTag.getID() + ".compatibility: GtuType "
+                                    + compTag.getGTUTYPE() + " not found");
+                        }
+                        laneType.addCompatibleGtuType(gtuType);
                     }
                 }
                 else
+                {
                     CategoryLogger.filter(Cat.PARSER).trace("Did NOT add LaneType {}", laneTag.getID());
+                }
             }
         }
     }

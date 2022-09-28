@@ -187,7 +187,7 @@ public class LaneType extends GtuCompatibleInfraType<LaneType>
     public final LongitudinalDirectionality getDirectionality(final GtuType gtuType)
     {
         // TEMP
-        return LongitudinalDirectionality.DIR_BOTH;
+        return LongitudinalDirectionality.DIR_PLUS;
     }
 
     /** {@inheritDoc} */
@@ -207,7 +207,7 @@ public class LaneType extends GtuCompatibleInfraType<LaneType>
     @Deprecated
     public final LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
     {
-        return LongitudinalDirectionality.DIR_BOTH;
+        return LongitudinalDirectionality.DIR_PLUS;
     }
 
 }

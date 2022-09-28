@@ -682,7 +682,7 @@ public final class ConflictBuilder
             f1 = fEnd;
             f2 = fStart;
         }
-        if (f1 == f2)
+        if (Math.abs(f1 - f2) < 1E-8)
         {
             lane.getParentLink().getSimulator().getLogger().always()
                     .debug("f1 (" + f1 + ") equals f2 (" + f2 + "); problematic lane is " + lane.toString());
