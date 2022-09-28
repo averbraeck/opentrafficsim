@@ -100,4 +100,13 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
         this.gtuCompatibility.clearCompatibilityCache();
     }
 
+    /**
+     * Return the GTU compatibility of this infra type.
+     * @return gtuCompatibility GtuCompatibility&lt;I&gt;; the GTU compatibility of this infra type
+     */
+    public GtuCompatibility<I> getGtuCompatibility()
+    {
+        return this.gtuCompatibility;
+    }
+
 }
