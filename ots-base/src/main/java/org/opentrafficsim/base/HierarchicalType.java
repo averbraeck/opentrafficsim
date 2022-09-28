@@ -19,6 +19,8 @@ import org.djutils.exceptions.Throw;
  */
 public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Type<T> implements Identifiable
 {
+    /** */
+    private static final long serialVersionUID = 20220928L;
 
     /** The id of the type to make it identifiable. */
     private final String id;

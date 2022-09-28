@@ -18,6 +18,9 @@ import org.opentrafficsim.core.gtu.GtuType;
 public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>> extends HierarchicalType<I>
         implements Compatibility<GtuType, I>
 {
+    /** */
+    private static final long serialVersionUID = 20220928L;
+
     /** Local cache to delegate compatibility to. */
     private GtuCompatibility<I> gtuCompatibility;
 

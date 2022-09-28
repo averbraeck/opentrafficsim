@@ -1,5 +1,7 @@
 package org.opentrafficsim.base;
 
+import java.io.Serializable;
+
 /**
  * Superclass of all sorts of types, for example GtuType, ParameterType, etc. The only method in this class is
  * <code>isType()</code> which should be used to check whether any type object of unknown type, is a specific type. For example:
@@ -13,8 +15,11 @@ package org.opentrafficsim.base;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <T> Class of type.
  */
-public abstract class Type<T extends Type<T>>
+public abstract class Type<T extends Type<T>> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20220928L;
+
     /**
      * Returns whether this type is the same type as the given type. Use this method to check for any kind of type (e.g.
      * {@code GtuType} , {@code ParameterType}, etc.) whether an instance is a specific instance of the type. For example:
