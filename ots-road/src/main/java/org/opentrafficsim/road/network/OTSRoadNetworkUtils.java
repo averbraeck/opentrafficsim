@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
@@ -114,7 +114,7 @@ public final class OTSRoadNetworkUtils
         {
             if (linkType.getParent() != null)
             {
-                new LinkType(linkType.getId(), linkType.getParent(), new GTUCompatibility<>(linkType.getCompatibility()),
+                new LinkType(linkType.getId(), linkType.getParent(), new GtuCompatibility<>(linkType.getCompatibility()),
                         newNetwork);
             }
         }
@@ -124,7 +124,7 @@ public final class OTSRoadNetworkUtils
         {
             if (laneType.getParent() != null)
             {
-                new LaneType(laneType.getId(), laneType.getParent(), new GTUCompatibility<>(laneType.getCompatibility()),
+                new LaneType(laneType.getId(), laneType.getParent(), new GtuCompatibility<>(laneType.getCompatibility()),
                         newNetwork);
             }
         }

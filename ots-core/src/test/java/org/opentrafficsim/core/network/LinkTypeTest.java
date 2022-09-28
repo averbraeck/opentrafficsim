@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -32,7 +32,7 @@ public class LinkTypeTest
     public final void testLinkType()
     {
         OTSNetwork network = new OTSNetwork("test", true, new OTSSimulator("Simulator for LinkTypeTest"));
-        GTUCompatibility<LinkType> roadCompatibility = new GTUCompatibility<>((LinkType) null)
+        GtuCompatibility<LinkType> roadCompatibility = new GtuCompatibility<>((LinkType) null)
                 .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_BOTH);
         try
         {
@@ -54,7 +54,7 @@ public class LinkTypeTest
         GTUType truckType = new GTUType("Truck", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
         GTUType catamaran = new GTUType("Catamaran", network.getGtuType(GTUType.DEFAULTS.SHIP));
         LinkType roadLinkType = new LinkType("Vehicles", null, roadCompatibility, network);
-        GTUCompatibility<LinkType> waterCompatibility = new GTUCompatibility<>((LinkType) null)
+        GtuCompatibility<LinkType> waterCompatibility = new GtuCompatibility<>((LinkType) null)
                 .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.SHIP), LongitudinalDirectionality.DIR_BOTH);
         LinkType waterwayType = new LinkType("Waterway", null, waterCompatibility, network);
         assertTrue("equals to itself", roadLinkType.equals(roadLinkType));
@@ -87,14 +87,14 @@ public class LinkTypeTest
         // assertTrue("waterWayType2 is a waterway", waterWayType2.isWaterWay());
         // TODO next one fails - what is wrong?
         // assertTrue("roadLinkType is a road", roadLinkType.isRoad());
-        GTUCompatibility<LinkType> poorRoadCompatibility = new GTUCompatibility<>((LinkType) null)
+        GtuCompatibility<LinkType> poorRoadCompatibility = new GtuCompatibility<>((LinkType) null)
                 .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.CAR), LongitudinalDirectionality.DIR_BOTH);
         LinkType poorSurfaceLinkType =
                 new LinkType("PoorSurfaceType", network.getLinkType(LinkType.DEFAULTS.ROAD), poorRoadCompatibility, network);
         assertTrue("poor road is of type ROAD", poorSurfaceLinkType.isOfType(LinkType.DEFAULTS.ROAD));
         assertNull("compatibility of waterway for car is not decidable",
                 waterwayType.isCompatible(carType, GTUDirectionality.DIR_PLUS));
-        GTUCompatibility<LinkType> compatibility = waterwayType.getCompatibility();
+        GtuCompatibility<LinkType> compatibility = waterwayType.getCompatibility();
         assertTrue("compatibility allows SHIP in dir plus",
                 compatibility.isCompatible(network.getGtuType(GTUType.DEFAULTS.SHIP), GTUDirectionality.DIR_PLUS));
         assertTrue("compatibility allows SHIP in dir minus",

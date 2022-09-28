@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -133,7 +133,7 @@ public final class DefinitionsParser
                 if (networkLinkType == null || (networkLinkType != null && !linkTag.isDEFAULT())
                         || (networkLinkType != null && linkTag.isDEFAULT() && overwriteDefaults))
                 {
-                    GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
+                    GtuCompatibility<LinkType> compatibility = new GtuCompatibility<>((LinkType) null);
                     for (COMPATIBILITY compTag : linkTag.getCOMPATIBILITY())
                     {
                         GTUType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());
@@ -184,7 +184,7 @@ public final class DefinitionsParser
                 if (networkLaneType == null || (networkLaneType != null && !laneTag.isDEFAULT())
                         || (networkLaneType != null && laneTag.isDEFAULT() && overwriteDefaults))
                 {
-                    GTUCompatibility<LaneType> compatibility = new GTUCompatibility<>((LaneType) null);
+                    GtuCompatibility<LaneType> compatibility = new GtuCompatibility<>((LaneType) null);
                     for (COMPATIBILITY compTag : laneTag.getCOMPATIBILITY())
                     {
                         GTUType gtuType = otsNetwork.getGtuType(compTag.getGTUTYPE());

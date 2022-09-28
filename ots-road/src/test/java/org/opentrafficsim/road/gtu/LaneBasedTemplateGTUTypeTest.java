@@ -17,7 +17,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -232,19 +232,19 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         });
 
         // Create some LaneTypes
-        GTUCompatibility<LaneType> noTrucks = new GTUCompatibility<>((LaneType) null);
+        GtuCompatibility<LaneType> noTrucks = new GtuCompatibility<>((LaneType) null);
         noTrucks.addAllowedGTUType(passengerCar.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         LaneType trucksForbidden = new LaneType("No Trucks", network.getLaneType(LaneType.DEFAULTS.FREEWAY), noTrucks, network);
 
-        GTUCompatibility<LaneType> truckOnly = new GTUCompatibility<>((LaneType) null);
+        GtuCompatibility<LaneType> truckOnly = new GtuCompatibility<>((LaneType) null);
         truckOnly.addAllowedGTUType(truck.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         LaneType trucksOnly = new LaneType("Trucks Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), truckOnly, network);
 
-        GTUCompatibility<LaneType> bicyclesOnly = new GTUCompatibility<>((LaneType) null);
+        GtuCompatibility<LaneType> bicyclesOnly = new GtuCompatibility<>((LaneType) null);
         LaneType bicycleLane =
                 new LaneType("Bicycles Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), bicyclesOnly, network);
 
-        GTUCompatibility<LaneType> urban = new GTUCompatibility<>((LaneType) null);
+        GtuCompatibility<LaneType> urban = new GtuCompatibility<>((LaneType) null);
         urban.addAllowedGTUType(passengerCar.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         urban.addAllowedGTUType(truck.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         LaneType urbanRoad = new LaneType("Urban road - open to all traffic", network.getLaneType(LaneType.DEFAULTS.FREEWAY),

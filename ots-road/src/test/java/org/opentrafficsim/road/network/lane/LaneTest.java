@@ -31,7 +31,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.mockito.Mockito;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -91,9 +91,9 @@ public class LaneTest implements UNITS
         Length endWidth = new Length(4, METER);
         GTUType gtuTypeCar = network.getGtuType(GTUType.DEFAULTS.CAR);
 
-        GTUCompatibility<LaneType> gtuCompatibility = new GTUCompatibility<>((LaneType) null);
-        gtuCompatibility.addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
-        LaneType laneType = new LaneType("One way", network.getLaneType(LaneType.DEFAULTS.FREEWAY), gtuCompatibility, network);
+        GtuCompatibility<LaneType> GtuCompatibility = new GtuCompatibility<>((LaneType) null);
+        GtuCompatibility.addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+        LaneType laneType = new LaneType("One way", network.getLaneType(LaneType.DEFAULTS.FREEWAY), GtuCompatibility, network);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane

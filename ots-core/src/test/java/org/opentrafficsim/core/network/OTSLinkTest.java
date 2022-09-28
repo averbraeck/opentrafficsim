@@ -11,7 +11,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.junit.Test;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -58,7 +58,7 @@ public class OTSLinkTest implements EventListenerInterface
         OTSNetwork network = new OTSNetwork("OTSLinkTestNetwork", true, MockSimulator.createMock());
         Node startNode = new OTSNode(network, "start", new OTSPoint3D(10, 20, 0));
         Node endNode = new OTSNode(network, "end", new OTSPoint3D(1000, 2000, 10));
-        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<LinkType>((LinkType) null)
+        GtuCompatibility<LinkType> compatibility = new GtuCompatibility<LinkType>((LinkType) null)
                 .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_NONE);
         LinkType linkType = new LinkType("myLinkType", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());

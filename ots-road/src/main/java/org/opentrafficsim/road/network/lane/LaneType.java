@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.compatibility.Compatibility;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -29,7 +29,7 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     private static final long serialVersionUID = 20140821L;
 
     /** The compatibility of GTUs with this lane type. */
-    private final GTUCompatibility<LaneType> compatibility;
+    private final GtuCompatibility<LaneType> compatibility;
 
     /** the network to which the LinkType belongs. */
     private final RoadNetwork network;
@@ -95,19 +95,19 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     /**
      * Create a new Lane type with a compatibility set.
      * @param id String; the id of the lane type.
-     * @param compatibility GTUCompatibility&lt;LaneType&gt;; the collection of compatible GTUTypes for this LaneType.
+     * @param compatibility GtuCompatibility&lt;LaneType&gt;; the collection of compatible GTUTypes for this LaneType.
      *            Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub
      *            types.
      * @param network RoadNetwork; The network to which the LaneType belongs
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LaneType(final String id, final GTUCompatibility<LaneType> compatibility, final RoadNetwork network)
+    public LaneType(final String id, final GtuCompatibility<LaneType> compatibility, final RoadNetwork network)
             throws NullPointerException
     {
         super(id);
         Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
         Throw.whenNull(network, "network cannot be null for LaneType with id = %s", id);
-        this.compatibility = new GTUCompatibility<>(compatibility);
+        this.compatibility = new GtuCompatibility<>(compatibility);
         this.network = network;
         this.network.addLaneType(this);
     }
@@ -116,19 +116,19 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
      * Create a new Lane type with a compatibility set.
      * @param id String; the id of the lane type.
      * @param parent LaneType; parent type
-     * @param compatibility GTUCompatibility&lt;LaneType&gt;; the collection of compatible GTUTypes for this LaneType.
+     * @param compatibility GtuCompatibility&lt;LaneType&gt;; the collection of compatible GTUTypes for this LaneType.
      *            Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub
      *            types.
      * @param network RoadNetwork; The network to which the LaneType belongs
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LaneType(final String id, final LaneType parent, final GTUCompatibility<LaneType> compatibility,
+    public LaneType(final String id, final LaneType parent, final GtuCompatibility<LaneType> compatibility,
             final RoadNetwork network) throws NullPointerException
     {
         super(id, parent);
         Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
         Throw.whenNull(parent, "parent cannot be null for LaneType with id = %s", id);
-        this.compatibility = new GTUCompatibility<>(compatibility);
+        this.compatibility = new GtuCompatibility<>(compatibility);
         this.network = network;
         this.network.addLaneType(this);
     }
@@ -177,7 +177,7 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     /**
      * @return the gtu compatibility for this LaneType
      */
-    public GTUCompatibility<LaneType> getCompatibility()
+    public GtuCompatibility<LaneType> getCompatibility()
     {
         return this.compatibility;
     }

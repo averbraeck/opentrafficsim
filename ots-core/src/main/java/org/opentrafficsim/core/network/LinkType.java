@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.compatibility.Compatibility;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -26,7 +26,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     private static final long serialVersionUID = 20140821L;
 
     /** The compatibility of GTU types with this link type. */
-    private final GTUCompatibility<LinkType> compatibility;
+    private final GtuCompatibility<LinkType> compatibility;
 
     /** Reversed link type. */
     private LinkType reversed = null;
@@ -82,11 +82,11 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      *            is inaccessible to all GTU types). This constructor makes a deep copy of the <code>compatibility</code>.
      * @param network Network; The network to which the LinkType belongs
      */
-    public LinkType(final String id, final LinkType parent, final GTUCompatibility<LinkType> compatibility,
+    public LinkType(final String id, final LinkType parent, final GtuCompatibility<LinkType> compatibility,
             final Network network)
     {
         super(id, parent);
-        this.compatibility = new GTUCompatibility<>(compatibility);
+        this.compatibility = new GtuCompatibility<>(compatibility);
         this.network = network;
         this.network.addLinkType(this);
     }
@@ -118,9 +118,9 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     /**
      * This method won't work correctly in a ReverseLinkType; it should only be used to clone a network; nowhere else.
-     * @return GTUCompatibility&lt;LinkType&gt;; the GTU compatibility for this LinkType
+     * @return GtuCompatibility&lt;LinkType&gt;; the GTU compatibility for this LinkType
      */
-    public GTUCompatibility<LinkType> getCompatibility()
+    public GtuCompatibility<LinkType> getCompatibility()
     {
         return this.compatibility;
     }
@@ -228,7 +228,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         ReversedLinkType(final LinkType original)
         {
             super(original.getId() + "_rev", null == original.getParent() ? null : original.getParent().reverse(),
-                    new GTUCompatibility<>((LinkType) null), original.getNetwork());
+                    new GtuCompatibility<>((LinkType) null), original.getNetwork());
             this.original = original;
         }
 

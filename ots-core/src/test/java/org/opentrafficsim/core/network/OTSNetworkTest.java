@@ -15,7 +15,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.junit.Test;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -760,8 +760,8 @@ public class OTSNetworkTest implements EventListenerInterface
     private List<Node> createRingNodesAndLinks(final OTSNetwork network, final LongitudinalDirectionality ld, final int maxNode)
             throws NetworkException, OTSGeometryException
     {
-        GTUCompatibility<LinkType> compatibility =
-                new GTUCompatibility<>((LinkType) null).addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.ROAD_USER), ld);
+        GtuCompatibility<LinkType> compatibility =
+                new GtuCompatibility<>((LinkType) null).addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.ROAD_USER), ld);
         LinkType linkType = new LinkType("linkType", null, compatibility, network);
         List<Node> nodes = new ArrayList<>();
         double radius = 500;

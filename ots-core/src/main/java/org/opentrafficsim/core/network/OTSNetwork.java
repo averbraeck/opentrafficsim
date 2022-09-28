@@ -20,7 +20,7 @@ import org.djutils.logger.CategoryLogger;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.gtu.GTU;
@@ -884,28 +884,28 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public void addDefaultLinkTypes()
     {
-        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
+        GtuCompatibility<LinkType> compatibility = new GtuCompatibility<>((LinkType) null);
         new LinkType("NONE", null, compatibility, this);
         //
-        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility = new GtuCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_BOTH);
         LinkType road = new LinkType("ROAD", null, compatibility, this);
         //
-        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility = new GtuCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.PEDESTRIAN), LongitudinalDirectionality.DIR_NONE);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.BICYCLE), LongitudinalDirectionality.DIR_NONE);
         new LinkType("FREEWAY", road, compatibility, this);
         //
-        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility = new GtuCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_BOTH);
         new LinkType("WATERWAY", null, compatibility, this);
         //
-        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility = new GtuCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_BOTH);
         new LinkType("RAILWAY", null, compatibility, this);
         //
-        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility = new GtuCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_PLUS);
         compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_PLUS);
