@@ -9,14 +9,14 @@ Select new branch and provide the name. Typically, the branch forks from main, b
  
 names to use are:
 
-* feature-short-explanation for extensions, larger repairs, etc.
-* bug-short-explanation for bug fixes
-* hotfix-short-explanation for an important fix that will be merged with all active branches
+* **feature-short-explanation** for extensions, larger repairs, etc.
+* **bug-short-explanation** for bug fixes
+* **hotfix-short-explanation** for an important fix that will be merged with all active branches
 
 Once the branch is created, it will be shown in GitHub:
  
 
-##2 Pull the branch to Eclipse
+## 2 Pull the branch to Eclipse
 
 In Eclipse, use "Fetch from origin" (either via the toolbar, or via the Team menu on the main project):
  
