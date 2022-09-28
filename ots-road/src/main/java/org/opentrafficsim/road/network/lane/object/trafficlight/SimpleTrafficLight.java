@@ -1,10 +1,8 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -40,18 +38,6 @@ public class SimpleTrafficLight extends AbstractTrafficLight
     public String toString()
     {
         return "SimpleTrafficLight [trafficLightColor=" + getTrafficLightColor() + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
-    {
-        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "traffic lights can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
-                "simulator should be a DEVSSimulator");
-        return new SimpleTrafficLight(getId(), (Lane) newCSE, getLongitudinalPosition(), (OTSSimulatorInterface) newSimulator);
     }
 
 }

@@ -32,7 +32,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -384,14 +383,6 @@ public class Detector extends AbstractSensor
                     accumulate(measurement, gtu, false);
                 }
             }
-
-            /** {@inheritDoc} */
-            @Override
-            public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-                    throws NetworkException
-            {
-                return null; // Detector constructor creates new clone
-            }
         }
         Length position = longitudinalPosition.plus(length);
         Throw.when(position.gt(lane.getLength()), IllegalStateException.class,
@@ -549,15 +540,6 @@ public class Detector extends AbstractSensor
             }
         }
         return map;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
-    {
-        // TODO: implement
-        return null;
     }
 
     /**

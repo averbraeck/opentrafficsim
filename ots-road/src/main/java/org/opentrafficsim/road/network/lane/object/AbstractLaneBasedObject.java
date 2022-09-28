@@ -2,14 +2,11 @@ package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
@@ -173,28 +170,10 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /** {@inheritDoc} */
     @Override
-    public final StaticObject clone(final Network newNetwork, final boolean animation) throws NetworkException
-    {
-        throw new NetworkException("LaneBasedObjects should be cloned with the clone(lane, simulator, animation) method");
-    }
-
-    /** {@inheritDoc} */
-    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "LaneBasedObject[" + getId() + "]";
     }
-
-    /**
-     * Clone the LaneBasedObject for e.g., copying a network.
-     * @param newCSE CrossSectionElement; the new cross section element to which the clone belongs
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @return AbstractLaneBasedObject; a clone of this object
-     * @throws NetworkException in case the cloning fails
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public abstract AbstractLaneBasedObject clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator)
-            throws NetworkException;
 
 }

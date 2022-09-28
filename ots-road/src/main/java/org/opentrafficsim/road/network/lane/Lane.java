@@ -28,7 +28,6 @@ import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.multikeymap.MultiKeyMap;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -44,9 +43,7 @@ import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -420,21 +417,6 @@ public class Lane extends CrossSectionElement implements Serializable
             final LaneType laneType, final Speed speedLimit) throws OTSGeometryException, NetworkException
     {
         this(parentLink, id, crossSectionSlices, laneType, constructDefaultSpeedLimitMap(speedLimit, parentLink.getNetwork()));
-    }
-
-    /**
-     * Clone a Lane for a new network.
-     * @param newParentLink CrossSectionLink; the new link to which the clone belongs
-     * @param cse Lane; the element to clone from
-     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
-     *             or the end node of the link are not registered in the network.
-     */
-    protected Lane(final CrossSectionLink newParentLink, final Lane cse) throws NetworkException
-    {
-        super(newParentLink, newParentLink.getNetwork().getSimulator(), cse);
-        this.laneType = cse.laneType;
-        this.speedLimitMap = new LinkedHashMap<>(cse.speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(newParentLink));
     }
 
     /**
@@ -1927,46 +1909,6 @@ public class Lane extends CrossSectionElement implements Serializable
         else if (!this.laneType.equals(other.laneType))
             return false;
         return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public Lane clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator) throws NetworkException
-    {
-        Lane newLane = new Lane(newParentLink, this);
-        // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request
-
-        SortedMap<Double, List<SingleSensor>> newSensorMap = new TreeMap<>();
-        for (double distance : this.sensors.keySet())
-        {
-            List<SingleSensor> newSensorList = new ArrayList<>();
-            for (SingleSensor sensor : this.sensors.get(distance))
-            {
-                SingleSensor newSensor = ((AbstractSensor) sensor).clone(newLane, newSimulator);
-                newSensorList.add(newSensor);
-            }
-            newSensorMap.put(distance, newSensorList);
-        }
-        newLane.sensors.clear();
-        newLane.sensors.putAll(newSensorMap);
-
-        SortedMap<Double, List<LaneBasedObject>> newLaneBasedObjectMap = new TreeMap<>();
-        for (double distance : this.laneBasedObjects.keySet())
-        {
-            List<LaneBasedObject> newLaneBasedObjectList = new ArrayList<>();
-            for (LaneBasedObject lbo : this.laneBasedObjects.get(distance))
-            {
-                AbstractLaneBasedObject laneBasedObject = (AbstractLaneBasedObject) lbo;
-                LaneBasedObject newLbo = laneBasedObject.clone(newLane, newSimulator);
-                newLaneBasedObjectList.add(newLbo);
-            }
-            newLaneBasedObjectMap.put(distance, newLaneBasedObjectList);
-        }
-        newLane.laneBasedObjects.clear();
-        newLane.laneBasedObjects.putAll(newLaneBasedObjectMap);
-
-        return newLane;
     }
 
     /**

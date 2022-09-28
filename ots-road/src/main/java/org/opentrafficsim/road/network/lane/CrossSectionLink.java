@@ -15,9 +15,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -100,24 +98,6 @@ public class CrossSectionLink extends OTSLink implements Serializable
     {
         super(network, id, startNode, endNode, linkType, designLine);
         this.laneKeepingPolicy = laneKeepingPolicy;
-    }
-
-    /**
-     * Clone a CrossSectionLink for a new network.
-     * @param newNetwork Network; the new network to which the clone belongs
-     * @param link CrossSectionLink; the link to clone from
-     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
-     *             or the end node of the link are not registered in the network.
-     */
-    protected CrossSectionLink(final OTSRoadNetwork newNetwork, final CrossSectionLink link) throws NetworkException
-    {
-        super(newNetwork, link);
-        this.laneKeepingPolicy = link.laneKeepingPolicy;
-        for (CrossSectionElement cse : link.crossSectionElementList)
-        {
-            cse.clone(this, newNetwork.getSimulator());
-            // the CrossSectionElement will add itself to the Link (OTS-237)
-        }
     }
 
     /** {@inheritDoc} */
@@ -310,16 +290,6 @@ public class CrossSectionLink extends OTSLink implements Serializable
         return "CrossSectionLink [name=" + this.getId() + ", nodes=" + getStartNode().getId() + "-" + getEndNode().getId()
                 + ", crossSectionElementList=" + this.crossSectionElementList + ", lanes=" + this.lanes + ", laneKeepingPolicy="
                 + this.laneKeepingPolicy + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public CrossSectionLink clone(final OTSNetwork newNetwork) throws NetworkException
-    {
-        Throw.when(!(newNetwork instanceof RoadNetwork), NetworkException.class,
-                "CrossSectionLink.clone. newNetwork not of the type Roadnetwork");
-        return new CrossSectionLink((OTSRoadNetwork) newNetwork, this);
     }
 
     /**

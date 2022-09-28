@@ -8,7 +8,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -143,15 +142,6 @@ public class SpeedSign extends AbstractLaneBasedObject
     public final Speed getSpeed()
     {
         return this.speed;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
-    {
-        return new SpeedSign(getId(), (Lane) newCSE, getDirection(), getLongitudinalPosition(), newSimulator, this.speed,
-                this.gtuType, this.startTimeOfDay, this.endTimeOfDay);
     }
 
     /** {@inheritDoc} */

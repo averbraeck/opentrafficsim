@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.mock;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.mockito.Mockito;

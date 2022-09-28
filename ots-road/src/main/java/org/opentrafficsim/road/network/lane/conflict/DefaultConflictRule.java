@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
@@ -174,13 +173,6 @@ public class DefaultConflictRule implements ConflictRule
                     "Could not sort out conflict priority from link priorities " + priority1 + " and " + priority2);
         }
         return conflictRules;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final ConflictRule clone(final OTSSimulatorInterface newSimulator)
-    {
-        return new DefaultConflictRule();
     }
 
     /** {@inheritDoc} */

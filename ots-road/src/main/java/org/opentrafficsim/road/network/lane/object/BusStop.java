@@ -14,7 +14,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
@@ -184,16 +183,6 @@ public class BusStop extends AbstractLaneBasedObject
             delim = "/";
         }
         return out + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
-    {
-        BusStop busStop = new BusStop(getId(), (Lane) newCSE, getLongitudinalPosition(), this.name, newSimulator);
-        busStop.setLines(this.lines);
-        return busStop;
     }
 
 }

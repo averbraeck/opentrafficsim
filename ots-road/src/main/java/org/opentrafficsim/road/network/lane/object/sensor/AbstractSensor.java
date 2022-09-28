@@ -13,7 +13,6 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 
@@ -245,11 +244,6 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     {
         return "Sensor[" + getId() + "]";
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public abstract AbstractSensor clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator)
-            throws NetworkException;
 
     /** {@inheritDoc} */
     @Override

@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -9,7 +8,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -83,19 +81,6 @@ public class DestinationSensor extends AbstractSensor
     public final String toString()
     {
         return "DestinationSensor [Lane=" + this.getLane() + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public DestinationSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
-    {
-        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
-                "simulator should be a DEVSSimulator");
-        return new DestinationSensor((Lane) newCSE, getLongitudinalPosition(), getDetectedGtuTypes(),
-                (OTSSimulatorInterface) newSimulator);
     }
 
 }

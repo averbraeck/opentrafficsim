@@ -13,7 +13,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -205,14 +204,6 @@ public class CycleTimeLightController implements RampMeteringLightController
                     throw new RuntimeException(exception);
                 }
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-                throws NetworkException
-        {
-            return null; // TODO: should be cloned as part of the ramp metering
         }
 
     }

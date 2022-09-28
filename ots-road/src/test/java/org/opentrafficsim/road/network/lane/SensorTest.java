@@ -177,14 +177,6 @@ class TriggerSensor extends AbstractSensor
         // TODO check that the sensor is triggered at the right time.
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
-    {
-        return null;
-    }
-
 }
 
 /**

@@ -40,7 +40,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayG
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -493,41 +492,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
-     * Clone of other conflict.
-     */
-    private Conflict otherClone;
-
-    /** {@inheritDoc} */
-    @Override
-    public Conflict clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator) throws NetworkException
-    {
-        Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
-                "simulator should be a DEVSSimulator");
-        Conflict out = new Conflict((Lane) newCSE, getLongitudinalPosition(), this.length, this.direction, getGeometry(),
-                this.conflictType, this.conflictRule.clone(newSimulator), newSimulator, this.gtuType, this.permitted,
-                this.cloneLock);
-        out.init();
-        synchronized (this.cloneLock)
-        {
-            // couple both clones
-            if (this.otherClone == null || this.otherClone.simulator != newSimulator)
-            {
-                // other clone will do it
-                this.otherConflict.otherClone = out;
-            }
-            else
-            {
-                out.otherConflict = this.otherClone;
-                this.otherClone.otherConflict = out;
-            }
-            // reset successful clone of pair, or remove otherClone from other simulator (or was already null)
-            this.otherClone = null;
-        }
-        return out;
-    }
-
-    /**
      * Light-weight lane based object to indicate the end of a conflict. It is used to perceive conflicts when a GTU is on the
      * conflict area, and hence the conflict lane based object is upstream.
      * <p>
@@ -571,15 +535,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         public final Conflict getConflict()
         {
             return this.conflict;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-                throws NetworkException
-        {
-            // Constructor of Conflict creates these.
-            return null;
         }
 
         /** {@inheritDoc} */

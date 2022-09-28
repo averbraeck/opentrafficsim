@@ -5,7 +5,6 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -43,14 +42,6 @@ public class Distraction extends AbstractLaneBasedObject
         this.profile = profile;
 
         init();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
-    {
-        return new Distraction(getId(), (Lane) newCSE, getLongitudinalPosition(), newSimulator, this.profile);
     }
 
     /**

@@ -13,7 +13,6 @@ import org.djutils.exceptions.Try;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -330,26 +329,6 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             }
             return this.getParentLink().getDesignLine().offsetLine(fractions, offsets);
         }
-    }
-
-    /**
-     * Clone a CrossSectionElement for a new network.
-     * @param newCrossSectionLink CrossSectionLink; the new link to which the clone belongs
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @param cse CrossSectionElement; the element to clone from
-     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
-     *             or the end node of the link are not registered in the network.
-     */
-    protected CrossSectionElement(final CrossSectionLink newCrossSectionLink, final OTSSimulatorInterface newSimulator,
-            final CrossSectionElement cse) throws NetworkException
-    {
-        this.id = cse.id;
-        this.parentLink = newCrossSectionLink;
-        this.centerLine = cse.centerLine;
-        this.length = this.centerLine.getLength();
-        this.contour = cse.contour;
-        this.crossSectionSlices = new ArrayList<>(cse.crossSectionSlices);
-        newCrossSectionLink.addCrossSectionElement(this);
     }
 
     /**
@@ -743,15 +722,4 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             return false;
         return true;
     }
-
-    /**
-     * Clone the CrossSectionElement for e.g., copying a network.
-     * @param newParentLink CrossSectionLink; the new link to which the clone belongs
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @return a clone of this object
-     * @throws NetworkException in case the cloning fails
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public abstract CrossSectionElement clone(CrossSectionLink newParentLink, OTSSimulatorInterface newSimulator)
-            throws NetworkException;
 }
