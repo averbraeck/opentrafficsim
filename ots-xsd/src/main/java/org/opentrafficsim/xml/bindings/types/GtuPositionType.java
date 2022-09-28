@@ -8,7 +8,7 @@ package org.opentrafficsim.xml.bindings.types;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public enum GTUPositionType
+public enum GtuPositionType
 {
     /** Front of the GTU. */
     FRONT,

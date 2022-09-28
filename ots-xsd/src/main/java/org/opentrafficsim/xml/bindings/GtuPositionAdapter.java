@@ -3,7 +3,7 @@ package org.opentrafficsim.xml.bindings;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.xml.bindings.types.GTUPositionType;
+import org.opentrafficsim.xml.bindings.types.GtuPositionType;
 
 /**
  * GTUPositionAdapter to convert between XML representations of a reference point on a GTU, coded as FRONT, REAR and REFERENCE,
@@ -14,26 +14,26 @@ import org.opentrafficsim.xml.bindings.types.GTUPositionType;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class GTUPositionAdapter extends XmlAdapter<String, GTUPositionType>
+public class GtuPositionAdapter extends XmlAdapter<String, GtuPositionType>
 {
     /** {@inheritDoc} */
     @Override
-    public GTUPositionType unmarshal(final String field) throws IllegalArgumentException
+    public GtuPositionType unmarshal(final String field) throws IllegalArgumentException
     {
         try
         {
             String clean = field.replaceAll("\\s", "");
             if (clean.equals("FRONT"))
             {
-                return GTUPositionType.FRONT;
+                return GtuPositionType.FRONT;
             }
             if (clean.equals("REAR"))
             {
-                return GTUPositionType.REAR;
+                return GtuPositionType.REAR;
             }
             if (clean.equals("REFERENCE"))
             {
-                return GTUPositionType.REFERENCE;
+                return GtuPositionType.REFERENCE;
             }
         }
         catch (Exception exception)
@@ -47,11 +47,11 @@ public class GTUPositionAdapter extends XmlAdapter<String, GTUPositionType>
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final GTUPositionType gtuPosition) throws IllegalArgumentException
+    public String marshal(final GtuPositionType gtuPosition) throws IllegalArgumentException
     {
-        if (gtuPosition.equals(GTUPositionType.FRONT))
+        if (gtuPosition.equals(GtuPositionType.FRONT))
             return "FRONT";
-        if (gtuPosition.equals(GTUPositionType.REAR))
+        if (gtuPosition.equals(GtuPositionType.REAR))
             return "REAR";
         return "REFERENC";
     }

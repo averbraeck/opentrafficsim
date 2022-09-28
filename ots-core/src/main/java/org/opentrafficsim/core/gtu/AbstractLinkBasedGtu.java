@@ -11,7 +11,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public abstract class AbstractLinkBasedGTU extends AbstractGtu
+public abstract class AbstractLinkBasedGtu extends AbstractGtu
 {
     /** */
     private static final long serialVersionUID = 20151114L;
@@ -26,7 +26,7 @@ public abstract class AbstractLinkBasedGTU extends AbstractGtu
      * @throws GtuException when the construction of the original waiting path fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLinkBasedGTU(final String id, final GtuType gtuType, final OTSNetwork network) throws GtuException
+    public AbstractLinkBasedGtu(final String id, final GtuType gtuType, final OTSNetwork network) throws GtuException
     {
         super(id, gtuType, network.getSimulator(), network);
         this.network = network;
