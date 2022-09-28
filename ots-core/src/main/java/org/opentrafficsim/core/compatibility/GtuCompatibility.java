@@ -110,7 +110,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
     /**
      * Add an compatible GTUType to this GtuCompatibility.
      * @param gtuType GTUType; the GTUType to add to the compatible set of this Compatibility
-     * @return GTYUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
+     * @return GTUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
      */
@@ -125,7 +125,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
     /**
      * Add a incompatible GTUType to this GtuCompatibility.
      * @param gtuType GTUType; the GTUType to add to the incompatible set of this Compatibility
-     * @return GTYUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
+     * @return GTUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
      */
