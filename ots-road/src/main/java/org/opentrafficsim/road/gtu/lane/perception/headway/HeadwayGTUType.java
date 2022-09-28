@@ -7,7 +7,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.perception.GtuTypeAssumptions;
+import org.opentrafficsim.road.gtu.lane.perception.GTUTypeAssumptions;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -34,19 +34,19 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayGtuType extends AbstractHeadwayGTU
+public class HeadwayGTUType extends AbstractHeadwayGTU
 {
     /** */
     private static final long serialVersionUID = 20160527L;
 
-    /** a pointer to centrally kept or GTU specific GtuTypeAssumptions. */
-    private final GtuTypeAssumptions gtuTypeAssumptions;
+    /** a pointer to centrally kept or GTU specific GTUTypeAssumptions. */
+    private final GTUTypeAssumptions gtuTypeAssumptions;
 
     /**
      * Construct a new Headway information object, for a moving GTU ahead of us or behind us.
      * @param id String; the id of the GTU for comparison purposes, can not be null.
      * @param gtuType GtuType; the perceived GTU Type, or null if unknown.
-     * @param gtuTypeAssumptions GtuTypeAssumptions; centrally kept or GTU specific GtuTypeAssumptions
+     * @param gtuTypeAssumptions GTUTypeAssumptions; centrally kept or GTU specific GTUTypeAssumptions
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param width the (perceived) width of the other object; can not be null.
@@ -57,7 +57,7 @@ public class HeadwayGtuType extends AbstractHeadwayGTU
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public HeadwayGtuType(final String id, final GtuType gtuType, final GtuTypeAssumptions gtuTypeAssumptions,
+    public HeadwayGTUType(final String id, final GtuType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
             final Length distance, final Length length, final Length width, final Speed speed, final Acceleration acceleration,
             final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GtuException
     {
@@ -69,14 +69,14 @@ public class HeadwayGtuType extends AbstractHeadwayGTU
      * Construct a new Headway information object, for a non-moving GTU ahead of us or behind us.
      * @param id String; the id of the GTU for comparison purposes, can not be null.
      * @param gtuType GtuType; the perceived GTU Type, or null if unknown.
-     * @param gtuTypeAssumptions GtuTypeAssumptions; centrally kept or GTU specific GtuTypeAssumptions
+     * @param gtuTypeAssumptions GTUTypeAssumptions; centrally kept or GTU specific GTUTypeAssumptions
      * @param distance Length; the distance to the other Gtu; if this constructor is used, distance cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed Speed; desired speed
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayGtuType(final String id, final GtuType gtuType, final GtuTypeAssumptions gtuTypeAssumptions,
+    public HeadwayGTUType(final String id, final GtuType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
             final Length distance, final Length length, final Length width, final Speed desiredSpeed) throws GtuException
     {
         super(id, gtuType, distance, true, length, width, desiredSpeed);
@@ -87,7 +87,7 @@ public class HeadwayGtuType extends AbstractHeadwayGTU
      * Construct a new Headway information object, for a moving GTU parallel with us.
      * @param id String; the id of the GTU for comparison purposes, can not be null.
      * @param gtuType GtuType; the perceived GTU Type, or null if unknown.
-     * @param gtuTypeAssumptions GtuTypeAssumptions; centrally kept or GTU specific GtuTypeAssumptions
+     * @param gtuTypeAssumptions GTUTypeAssumptions; centrally kept or GTU specific GTUTypeAssumptions
      * @param overlapFront the front-front distance to the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other Gtu; if this constructor is used, this value cannot be null.
@@ -99,7 +99,7 @@ public class HeadwayGtuType extends AbstractHeadwayGTU
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public HeadwayGtuType(final String id, final GtuType gtuType, final GtuTypeAssumptions gtuTypeAssumptions,
+    public HeadwayGTUType(final String id, final GtuType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
             final Length overlapFront, final Length overlap, final Length overlapRear, final Length length, final Length width,
             final Speed speed, final Acceleration acceleration, final Speed desiredSpeed) throws GtuException
     {
@@ -111,7 +111,7 @@ public class HeadwayGtuType extends AbstractHeadwayGTU
      * Construct a new Headway information object, for a non-moving GTU parallel with us.
      * @param id String; the id of the GTU for comparison purposes, can not be null.
      * @param gtuType GtuType; the perceived GTU Type, or null if unknown.
-     * @param gtuTypeAssumptions GtuTypeAssumptions; centrally kept or GTU specific GtuTypeAssumptions
+     * @param gtuTypeAssumptions GTUTypeAssumptions; centrally kept or GTU specific GTUTypeAssumptions
      * @param overlapFront the front-front distance to the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other Gtu; if this constructor is used, this value cannot be null.
@@ -120,7 +120,7 @@ public class HeadwayGtuType extends AbstractHeadwayGTU
      * @param desiredSpeed Speed; desired speed
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayGtuType(final String id, final GtuType gtuType, final GtuTypeAssumptions gtuTypeAssumptions,
+    public HeadwayGTUType(final String id, final GtuType gtuType, final GTUTypeAssumptions gtuTypeAssumptions,
             final Length overlapFront, final Length overlap, final Length overlapRear, final Length length, final Length width,
             final Speed desiredSpeed) throws GtuException
     {
@@ -162,7 +162,7 @@ public class HeadwayGtuType extends AbstractHeadwayGTU
     {
         try
         {
-            return new HeadwayGtuType(getId(), getGtuType(), this.gtuTypeAssumptions, headway, getLength(), getWidth(), speed,
+            return new HeadwayGTUType(getId(), getGtuType(), this.gtuTypeAssumptions, headway, getLength(), getWidth(), speed,
                     acceleration, getDesiredSpeed(), getGtuStatus());
         }
         catch (GtuException exception)
@@ -176,7 +176,7 @@ public class HeadwayGtuType extends AbstractHeadwayGTU
     @Override
     public final String toString()
     {
-        return "HeadwayGtuType [gtuTypeAssumptions=" + this.gtuTypeAssumptions + "]";
+        return "HeadwayGTUType [gtuTypeAssumptions=" + this.gtuTypeAssumptions + "]";
     }
 
 }
