@@ -5,7 +5,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * A factory class is used to generate tactical planners as the tactical planner is state-full.
@@ -27,7 +27,7 @@ public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlan
      * @return tactical planner for the given GTU
      * @throws GtuException if the gtu is not suitable in any way for the creation of the tactical planner
      */
-    T create(LaneBasedGTU gtu) throws GtuException;
+    T create(LaneBasedGtu gtu) throws GtuException;
 
     /**
      * Peek to see the desired speed of the next GTU to be generated at the given location. The default implementation returns

@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOD;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Supplies a strategical planner factory within DefaultGTUCharacteristicsGeneratorOD.
+ * Supplies a strategical planner factory within DefaultGtuCharacteristicsGeneratorOD.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -37,7 +37,7 @@ public interface StrategicalPlannerFactorySupplierOD
      * @param destination Node; destination
      * @param category Category; category (GTU type, route, or more)
      * @param randomStream StreamInterface; stream for random numbers
-     * @return LaneBasedGTUCharacteristics
+     * @return LaneBasedGtuCharacteristics
      * @throws GtuException if characteristics could not be generated for the GTUException
      */
     LaneBasedStrategicalPlannerFactory<?> getFactory(Node origin, Node destination, Category category,

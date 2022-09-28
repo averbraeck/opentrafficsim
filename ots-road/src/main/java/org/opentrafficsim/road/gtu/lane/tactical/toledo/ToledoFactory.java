@@ -5,7 +5,7 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 
 /**
@@ -46,7 +46,7 @@ public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
 
     /** {@inheritDoc} */
     @Override
-    public final Toledo create(final LaneBasedGTU gtu) throws GtuException
+    public final Toledo create(final LaneBasedGtu gtu) throws GtuException
     {
         return new Toledo(new ToledoCarFollowing(), gtu);
     }

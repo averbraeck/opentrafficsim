@@ -5,7 +5,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
@@ -130,7 +130,7 @@ public class Distraction
      * @param gtu LaneBasedGtu; gtu
      * @return Task; task for given GTU
      */
-    public final Task getTask(final LaneBasedGTU gtu)
+    public final Task getTask(final LaneBasedGtu gtu)
     {
         return this.taskSupplier.getTask(gtu);
     }

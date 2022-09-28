@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.sampling;
 
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * Gtu representation in road sampler.
@@ -18,12 +18,12 @@ public class GtuData implements GtuDataInterface
 {
 
     /** Gtu. */
-    private final LaneBasedGTU gtu;
+    private final LaneBasedGtu gtu;
 
     /**
      * @param gtu LaneBasedGtu; gtu
      */
-    public GtuData(final LaneBasedGTU gtu)
+    public GtuData(final LaneBasedGtu gtu)
     {
         this.gtu = gtu;
     }
@@ -31,7 +31,7 @@ public class GtuData implements GtuDataInterface
     /**
      * @return gtu.
      */
-    public final LaneBasedGTU getGtu()
+    public final LaneBasedGtu getGtu()
     {
         return this.gtu;
     }

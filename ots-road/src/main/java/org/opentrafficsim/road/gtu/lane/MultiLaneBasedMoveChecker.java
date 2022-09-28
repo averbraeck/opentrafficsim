@@ -57,7 +57,7 @@ public class MultiLaneBasedMoveChecker extends AbstractLaneBasedMoveChecker
 
     /** {@inheritDoc} */
     @Override
-    public void checkMove(final LaneBasedGTU gtu) throws Exception
+    public void checkMove(final LaneBasedGtu gtu) throws Exception
     {
         for (AbstractLaneBasedMoveChecker checker : this.checkers)
         {

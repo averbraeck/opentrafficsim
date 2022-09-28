@@ -40,9 +40,9 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -61,15 +61,15 @@ import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
 import org.opentrafficsim.road.gtu.colorer.IncentiveColorer;
 import org.opentrafficsim.road.gtu.colorer.SocialPressureColorer;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -164,9 +164,9 @@ public class StrategiesDemo extends AbstractSimulationScript
     protected StrategiesDemo()
     {
         super("Strategies demo", "Demo of driving strategies in LMRS.");
-        setGtuColorer(SwitchableGTUColorer.builder().addColorer(new FixedColor(Color.BLUE, "Blue"))
-                .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
-                .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
+        setGtuColorer(SwitchableGtuColorer.builder().addColorer(new FixedColor(Color.BLUE, "Blue"))
+                .addColorer(new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
                 .addActiveColorer(new SocialPressureColorer())
                 .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.5), Duration.instantiateSI(1.6)))
                 .addColorer(new IncentiveColorer(IncentiveSocioSpeed.class)).build());
@@ -335,7 +335,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         this.kmplcListener = new KmplcListener(kmplcLabel, network);
         for (Gtu gtu : network.getGTUs())
         {
-            Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGTU.LANE_CHANGE_EVENT),
+            Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGtu.LANE_CHANGE_EVENT),
                     "Exception while adding lane change listener");
         }
         kmplcLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -381,9 +381,9 @@ public class StrategiesDemo extends AbstractSimulationScript
                     }
                     for (int i = 0; i < l.numberOfGtus(); i++)
                     {
-                        LaneBasedGTU gtu1 = l.getGtu(i);
+                        LaneBasedGtu gtu1 = l.getGtu(i);
                         Length up = Try.assign(() -> gtu1.position(l, gtu1.getFront()), "");
-                        LaneBasedGTU gtu2;
+                        LaneBasedGtu gtu2;
                         Length down;
                         if (i < l.numberOfGtus() - 1)
                         {
@@ -476,7 +476,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         @Override
         public void notify(final EventInterface event) throws RemoteException
         {
-            if (event.getType().equals(LaneBasedGTU.LANE_CHANGE_EVENT))
+            if (event.getType().equals(LaneBasedGtu.LANE_CHANGE_EVENT))
             {
                 double cumul = 0.0;
                 for (Gtu gtu : this.network.getGTUs())
@@ -646,7 +646,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         GtuCharacteristics gtuCharacteristics = Try.assign(() -> GtuType.defaultCharacteristics(gtuType, net, this.stream),
                 "Exception while applying default GTU characteristics.");
 
-        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.gtuIdNum), gtuType, gtuCharacteristics.getLength(),
+        LaneBasedIndividualGtu gtu = new LaneBasedIndividualGtu("" + (++this.gtuIdNum), gtuType, gtuCharacteristics.getLength(),
                 gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getFront(),
                 getSimulator(), net);
         gtu.setMaximumAcceleration(gtuCharacteristics.getMaximumAcceleration());
@@ -676,7 +676,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         if (this.kmplcListener != null)
         {
-            Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGTU.LANE_CHANGE_EVENT),
+            Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGtu.LANE_CHANGE_EVENT),
                     "Exception while adding lane change listener");
         }
     }
@@ -706,12 +706,12 @@ public class StrategiesDemo extends AbstractSimulationScript
     {
         /** {@inheritDoc} */
         @Override
-        public LanePerception generatePerception(final LaneBasedGTU gtu)
+        public LanePerception generatePerception(final LaneBasedGtu gtu)
         {
             LanePerception perception = new CategoricalLanePerception(gtu);
             perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
-            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGTUType.WRAP));
+            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
             perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
             return perception;
         }

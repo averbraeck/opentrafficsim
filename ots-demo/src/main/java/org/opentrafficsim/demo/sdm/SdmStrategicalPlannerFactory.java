@@ -14,7 +14,7 @@ import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
@@ -23,7 +23,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
@@ -162,7 +162,7 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
 
         /** {@inheritDoc} */
         @Override
-        public LanePerception generatePerception(final LaneBasedGTU gtu)
+        public LanePerception generatePerception(final LaneBasedGtu gtu)
         {
             Set<Task> tasks = new LinkedHashSet<>();
             tasks.add(new TaskCarFollowing());
@@ -174,7 +174,7 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
             perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
             perception.addPerceptionCategory(new DirectNeighborsPerception(perception,
-                    new HeadwayGTUType.PerceivedHeadwayGTUType(Estimation.UNDERESTIMATION, Anticipation.CONSTANT_SPEED)));
+                    new HeadwayGtuType.PerceivedHeadwayGtuType(Estimation.UNDERESTIMATION, Anticipation.CONSTANT_SPEED)));
             return perception;
         }
     }

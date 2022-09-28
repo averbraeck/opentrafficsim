@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -36,7 +36,7 @@ import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -67,10 +67,10 @@ public class DefaultAnimationFactory implements EventListenerInterface
     private final OTSSimulatorInterface simulator;
 
     /** GTU colorer. */
-    private final GTUColorer gtuColorer;
+    private final GtuColorer gtuColorer;
 
     /** rendered gtus. */
-    private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<LaneBasedGtu, Renderable2D<LaneBasedGtu>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** rendered static objects. */
     public Map<ObjectInterface, Renderable2D<?>> animatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -79,11 +79,11 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
      * adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
-     * @param gtuColorer GTUColorer; GTU colorer
+     * @param gtuColorer GtuColorer; GTU colorer
      * @param animateNetwork boolean; whether to animate the current network objects
      * @throws OTSDrawingException on drawing error
      */
-    protected DefaultAnimationFactory(final OTSNetwork network, final GTUColorer gtuColorer, final boolean animateNetwork)
+    protected DefaultAnimationFactory(final OTSNetwork network, final GtuColorer gtuColorer, final boolean animateNetwork)
             throws OTSDrawingException
     {
         this.simulator = network.getSimulator();
@@ -150,9 +150,9 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
             for (Gtu gtu : network.getGTUs())
             {
-                Renderable2D<LaneBasedGTU> gtuAnimation =
-                        new DefaultCarAnimation((LaneBasedGTU) gtu, this.simulator, this.gtuColorer);
-                this.animatedGTUs.put((LaneBasedGTU) gtu, gtuAnimation);
+                Renderable2D<LaneBasedGtu> gtuAnimation =
+                        new DefaultCarAnimation((LaneBasedGtu) gtu, this.simulator, this.gtuColorer);
+                this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
             }
 
             for (ObjectInterface object : network.getObjectMap().values())
@@ -172,12 +172,12 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
      * @param simulator OTSSimulatorInterface; the simulator
-     * @param gtuColorer GTUColorer; GTU colorer
+     * @param gtuColorer GtuColorer; GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OTSDrawingException on drawing error
      */
     public static DefaultAnimationFactory animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator,
-            final GTUColorer gtuColorer) throws OTSDrawingException
+            final GtuColorer gtuColorer) throws OTSDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, true);
     }
@@ -186,11 +186,11 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
-     * @param gtuColorer GTUColorer; GTU colorer
+     * @param gtuColorer GtuColorer; GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OTSDrawingException on drawing error
      */
-    public static DefaultAnimationFactory animateXmlNetwork(final OTSNetwork network, final GTUColorer gtuColorer)
+    public static DefaultAnimationFactory animateXmlNetwork(final OTSNetwork network, final GtuColorer gtuColorer)
             throws OTSDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, false);
@@ -205,12 +205,12 @@ public class DefaultAnimationFactory implements EventListenerInterface
             if (event.getType().equals(Network.ANIMATION_GTU_ADD_EVENT))
             {
                 // schedule the addition of the GTU to prevent it from not having an operational plan
-                LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
+                LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
                 this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] {gtu});
             }
             else if (event.getType().equals(Network.ANIMATION_GTU_REMOVE_EVENT))
             {
-                LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
+                LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
                 if (this.animatedGTUs.containsKey(gtu))
                 {
                     this.animatedGTUs.get(gtu).destroy(gtu.getSimulator());
@@ -235,7 +235,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
             else if (event.getType().equals(Network.ANIMATION_GENERATOR_ADD_EVENT))
             {
                 GtuGenerator gtuGenerator = (GtuGenerator) event.getContent();
-                animateGTUGenerator(gtuGenerator);
+                animateGtuGenerator(gtuGenerator);
             }
             else if (event.getType().equals(Network.ANIMATION_GENERATOR_REMOVE_EVENT))
             {
@@ -252,11 +252,11 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Draw the GTU (scheduled method).
      * @param gtu LaneBasedGtu; the GTU to draw
      */
-    protected void animateGTU(final LaneBasedGTU gtu)
+    protected void animateGTU(final LaneBasedGtu gtu)
     {
         try
         {
-            Renderable2D<LaneBasedGTU> gtuAnimation = new DefaultCarAnimation(gtu, this.simulator, this.gtuColorer);
+            Renderable2D<LaneBasedGtu> gtuAnimation = new DefaultCarAnimation(gtu, this.simulator, this.gtuColorer);
             this.animatedGTUs.put(gtu, gtuAnimation);
         }
         catch (RemoteException | NamingException exception)
@@ -322,10 +322,10 @@ public class DefaultAnimationFactory implements EventListenerInterface
     }
 
     /**
-     * Draw the GTUGenerator.
-     * @param gtuGenerator GtuGenerator; the GTUGenerator to draw
+     * Draw the GtuGenerator.
+     * @param gtuGenerator GtuGenerator; the GtuGenerator to draw
      */
-    protected void animateGTUGenerator(final GtuGenerator gtuGenerator)
+    protected void animateGtuGenerator(final GtuGenerator gtuGenerator)
     {
         // TODO: default animation of GTU generator
     }

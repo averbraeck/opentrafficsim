@@ -12,7 +12,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -79,7 +79,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), networkModel);
             OTSAnimationPanel animationPanel =
                     new OTSAnimationPanel(networkModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                            networkModel, new DefaultSwitchableGTUColorer(), networkModel.getNetwork());
+                            networkModel, new DefaultSwitchableGtuColorer(), networkModel.getNetwork());
             TestNetworkDemo app = new TestNetworkDemo("Network test demo", animationPanel, networkModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

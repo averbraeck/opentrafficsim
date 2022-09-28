@@ -21,7 +21,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -30,7 +30,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -98,7 +98,7 @@ public final class LmrsUtil implements LmrsParameters
      * @throws OperationalPlanException operational plan exception
      */
     @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
-    public static SimpleOperationalPlan determinePlan(final LaneBasedGTU gtu, final Time startTime,
+    public static SimpleOperationalPlan determinePlan(final LaneBasedGtu gtu, final Time startTime,
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
             final LanePerception perception, final Iterable<MandatoryIncentive> mandatoryIncentives,
             final Iterable<VoluntaryIncentive> voluntaryIncentives)
@@ -112,7 +112,7 @@ public final class LmrsUtil implements LmrsParameters
         EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
         Speed speed = ego.getSpeed();
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
 
         // regular car-following
         Acceleration a;
@@ -139,7 +139,7 @@ public final class LmrsUtil implements LmrsParameters
             if (lmrsData.isHumanLongitudinalControl())
             {
                 RelativeLane secondLane = laneChange.getSecondLane(gtu);
-                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> secondLeaders = neighbors.getLeaders(secondLane);
+                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> secondLeaders = neighbors.getLeaders(secondLane);
                 Acceleration aSecond = carFollowingModel.followingAcceleration(params, speed, sli, secondLeaders);
                 if (!secondLeaders.isEmpty() && lmrsData.isNewLeader(secondLeaders.first()))
                 {
@@ -331,7 +331,7 @@ public final class LmrsUtil implements LmrsParameters
      * @param leader HeadwayGtu; leader
      * @throws ParameterException if DLC is not present
      */
-    private static void initHeadwayRelaxation(final Parameters params, final HeadwayGTU leader) throws ParameterException
+    private static void initHeadwayRelaxation(final Parameters params, final HeadwayGtu leader) throws ParameterException
     {
         Double dlc = leader.getParameters().getParameterOrNull(DLC);
         if (dlc != null)
@@ -456,7 +456,7 @@ public final class LmrsUtil implements LmrsParameters
             throws ParameterException, OperationalPlanException
     {
         // beyond start distance
-        LaneBasedGTU gtu = Try.assign(() -> perception.getGtu(), "Cannot obtain GTU.");
+        LaneBasedGtu gtu = Try.assign(() -> perception.getGtu(), "Cannot obtain GTU.");
         if (!gtu.laneChangeAllowed())
         {
             return false;
@@ -471,7 +471,7 @@ public final class LmrsUtil implements LmrsParameters
 
         // neighbors and lane change distance (not gap-acceptance)
         NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
         if (!leaders.isEmpty())
         {
             boolean ok = laneChange.checkRoom(gtu, leaders.first());
@@ -523,12 +523,12 @@ public final class LmrsUtil implements LmrsParameters
                 {
                     if (conflict.isMerge() && conflict.getDistance().si < 10.0)
                     {
-                        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> down = conflict.getDownstreamConflictingGTUs();
+                        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> down = conflict.getDownstreamConflictingGTUs();
                         if (!down.isEmpty() && down.first().isParallel())
                         {
                             return false; // GTU on conflict
                         }
-                        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> up = conflict.getUpstreamConflictingGTUs();
+                        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> up = conflict.getUpstreamConflictingGTUs();
                         if (!up.isEmpty() && up.first().isParallel())
                         {
                             return false; // GTU on conflict

@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -16,7 +16,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -43,7 +43,7 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
     /** {@inheritDoc} */
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
-            final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
+            final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GtuException
     {
@@ -52,7 +52,7 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
         Length length = ego.getLength();
         Length width = ego.getWidth();
         Iterable<HeadwayConflict> conflicts = perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
         if (!lane.isCurrent())
         {

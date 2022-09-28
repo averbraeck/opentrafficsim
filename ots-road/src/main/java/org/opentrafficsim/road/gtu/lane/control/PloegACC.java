@@ -5,9 +5,9 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
  * <p>
@@ -36,10 +36,10 @@ public class PloegACC extends LinearACC
 
     /** {@inheritDoc} */
     @Override
-    public Acceleration getFollowingAcceleration(final LaneBasedGTU gtu,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Parameters settings) throws ParameterException
+    public Acceleration getFollowingAcceleration(final LaneBasedGtu gtu,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
     {
-        HeadwayGTU leader = leaders.first();
+        HeadwayGtu leader = leaders.first();
         double es =
                 leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDACC).si - settings.getParameter(X0).si;
         double esd = leader.getSpeed().si - gtu.getSpeed().si - gtu.getAcceleration().si * settings.getParameter(TDACC).si;

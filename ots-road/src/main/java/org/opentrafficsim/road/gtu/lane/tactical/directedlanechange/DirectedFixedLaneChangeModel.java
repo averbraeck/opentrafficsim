@@ -8,11 +8,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 
 /**
  * Dummy lane change model with totally predictable results (used for testing).
@@ -27,14 +27,14 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
-    public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
+    public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
             final LateralDirectionality direction, final Collection<Headway> sameLaneTraffic,
             final Collection<Headway> otherLaneTraffic, final Length maxDistance, final Speed speedLimit,
             final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
             throws GtuException
     {
-        GTUFollowingModelOld gtuFollowingModel =
-                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
+        GtuFollowingModelOld gtuFollowingModel =
+                (GtuFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == direction)
         {
             return new DirectedLaneMovementStep(gtuFollowingModel

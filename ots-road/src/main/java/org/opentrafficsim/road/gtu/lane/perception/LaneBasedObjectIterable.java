@@ -7,7 +7,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
@@ -44,7 +44,7 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
      * @param relativePosition RelativePosition; relative position
      * @param route Route; route of the GTU, may be {@code null}
      */
-    public LaneBasedObjectIterable(final LaneBasedGTU perceivingGtu, final Class<L> clazz, final LaneRecord<?> root,
+    public LaneBasedObjectIterable(final LaneBasedGtu perceivingGtu, final Class<L> clazz, final LaneRecord<?> root,
             final Length initialPosition, final boolean downstream, final Length maxDistance,
             final RelativePosition relativePosition, final Route route)
     {

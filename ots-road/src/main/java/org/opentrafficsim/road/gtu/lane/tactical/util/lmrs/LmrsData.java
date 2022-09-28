@@ -5,9 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 
@@ -74,7 +74,7 @@ public final class LmrsData implements DesireBased, Synchronizable
      * @param gtu HeadwayGtu; gtu to check
      * @return whether the gtu is a new leader
      */
-    boolean isNewLeader(final HeadwayGTU gtu)
+    boolean isNewLeader(final HeadwayGtu gtu)
     {
         this.tempLeaders.add(gtu.getId());
         return !this.leaders.contains(gtu.getId());
@@ -94,7 +94,7 @@ public final class LmrsData implements DesireBased, Synchronizable
      * Remembers the gtu that is synchronized to.
      * @param gtu HeadwayGtu; gtu that is synchronized to
      */
-    void setSyncVehicle(final HeadwayGTU gtu)
+    void setSyncVehicle(final HeadwayGtu gtu)
     {
         this.syncVehicle = gtu == null ? null : gtu.getId();
     }
@@ -104,7 +104,7 @@ public final class LmrsData implements DesireBased, Synchronizable
      * @param gtu HeadwayGtu; gtu to inquiry
      * @return whether the provided gtu is the gtu that is synchronized to
      */
-    boolean isSyncVehicle(final HeadwayGTU gtu)
+    boolean isSyncVehicle(final HeadwayGtu gtu)
     {
         return this.syncVehicle == null ? false : gtu.getId().equals(this.syncVehicle);
     }
@@ -112,16 +112,16 @@ public final class LmrsData implements DesireBased, Synchronizable
     /**
      * Returns the gtu from the set that is the current sync vehicle, or {@code null} of there is no sync vehicle or it is not
      * in the set.
-     * @param adjLeaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leaders in adjacent lane
+     * @param adjLeaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leaders in adjacent lane
      * @return gtu from the set that is the current sync vehicle
      */
-    HeadwayGTU getSyncVehicle(final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> adjLeaders)
+    HeadwayGtu getSyncVehicle(final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> adjLeaders)
     {
         if (this.syncVehicle == null)
         {
             return null;
         }
-        for (HeadwayGTU leader : adjLeaders)
+        for (HeadwayGtu leader : adjLeaders)
         {
             if (leader.getId().equals(this.syncVehicle))
             {

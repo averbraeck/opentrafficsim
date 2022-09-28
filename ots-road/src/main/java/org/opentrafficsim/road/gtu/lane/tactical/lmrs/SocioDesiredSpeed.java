@@ -5,12 +5,12 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.Initialisable;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
@@ -40,7 +40,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
     protected static final ParameterTypeSpeed VGAIN = LmrsParameters.VGAIN;
 
     /** GTU. */
-    private LaneBasedGTU gtu;
+    private LaneBasedGtu gtu;
 
     /** Base model for desired speed. */
     private final DesiredSpeedModel baseModel;
@@ -63,7 +63,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
         {
             return desiredSpeed;
         }
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> followers;
+        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers;
         LanePerception perception = this.gtu.getTacticalPlanner().getPerception();
         NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
         if (neighbors != null)
@@ -73,7 +73,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
             {
                 double sigma = parameters.getParameter(SOCIO);
                 Speed vGain = parameters.getParameter(VGAIN);
-                HeadwayGTU follower = followers.first();
+                HeadwayGtu follower = followers.first();
                 double rhoFollower = follower.getParameters().getParameter(RHO);
                 desiredSpeed = Speed.instantiateSI(desiredSpeed.si + rhoFollower * sigma * vGain.si);
             }
@@ -83,7 +83,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
 
     /** {@inheritDoc} */
     @Override
-    public void init(final LaneBasedGTU laneBasedGtu)
+    public void init(final LaneBasedGtu laneBasedGtu)
     {
         this.gtu = laneBasedGtu;
     }

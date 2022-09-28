@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
@@ -20,7 +20,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class BlockingColorer implements GTUColorer
+public class BlockingColorer implements GtuColorer
 {
 
     /** Blocking color. */

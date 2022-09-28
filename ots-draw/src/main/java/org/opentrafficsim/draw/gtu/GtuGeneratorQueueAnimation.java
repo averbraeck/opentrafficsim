@@ -40,7 +40,7 @@ public class GtuGeneratorQueueAnimation extends TextAnimation
 
     /**
      * Constructor.
-     * @param source GTUGenerator; generator
+     * @param source GtuGenerator; generator
      * @param simulator OTSSimulatorInterface; simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found

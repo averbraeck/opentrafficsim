@@ -29,8 +29,8 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
@@ -167,7 +167,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             StringBuilder state = new StringBuilder();
             for (Gtu gtu : this.network.getGTUs())
             {
-                LaneBasedGTU lbg = (LaneBasedGTU) gtu;
+                LaneBasedGtu lbg = (LaneBasedGtu) gtu;
                 state.append(String.format("%s: %130.130s ", lbg.getId(), lbg.getLocation().toString()));
             }
 
@@ -281,7 +281,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength,
+        LaneBasedIndividualGtu gtu = new LaneBasedIndividualGtu("" + (++this.carsCreated), gtuType, vehicleLength,
                 new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);

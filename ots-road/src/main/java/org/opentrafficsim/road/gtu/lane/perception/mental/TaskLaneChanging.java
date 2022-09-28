@@ -5,7 +5,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
@@ -41,7 +41,7 @@ public class TaskLaneChanging extends TaskHeadwayBased
 
     /** {@inheritDoc} */
     @Override
-    protected Duration getHeadway(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+    protected Duration getHeadway(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException
     {
         NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
@@ -101,7 +101,7 @@ public class TaskLaneChanging extends TaskHeadwayBased
         LateralConsideration DESIRE = new LateralConsideration()
         {
             @Override
-            public double getConsideration(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+            public double getConsideration(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
                     throws ParameterException, GtuException
             {
                 double dLeft = gtu.getParameters().getParameter(LmrsParameters.DLEFT);
@@ -128,7 +128,7 @@ public class TaskLaneChanging extends TaskHeadwayBased
          * @throws ParameterException if a parameter is missing or out of bounds
          * @throws GtuException exceptions pertaining to the GTU
          */
-        double getConsideration(LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
+        double getConsideration(LanePerception perception, LaneBasedGtu gtu, Parameters parameters)
                 throws ParameterException, GtuException;
     }
 

@@ -13,7 +13,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * Combines a Lane with its GTUDirectionality.
@@ -109,7 +109,7 @@ public class LaneDirection implements Serializable
      * @param gtu LaneBasedGtu; gtu
      * @return LaneDirection; next lane and direction, {@code null} if none
      */
-    public final LaneDirection getNextLaneDirection(final LaneBasedGTU gtu)
+    public final LaneDirection getNextLaneDirection(final LaneBasedGtu gtu)
     {
         ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGtuType());
         if (next.isEmpty())
@@ -141,7 +141,7 @@ public class LaneDirection implements Serializable
      * @param gtu LaneBasedGtu; GTU
      * @return set of {@code LaneDirection}'s that can be followed considering the route
      */
-    public Set<LaneDirection> getNextForRoute(final LaneBasedGTU gtu)
+    public Set<LaneDirection> getNextForRoute(final LaneBasedGtu gtu)
     {
         ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGtuType());
         if (next.isEmpty())
@@ -222,7 +222,7 @@ public class LaneDirection implements Serializable
      * @param laneChangeDirection LateralDirectionality; lane change direction
      * @return LaneDirection; adjacent lane and direction, {@code null} if none
      */
-    public final LaneDirection getAdjacentLaneDirection(final LateralDirectionality laneChangeDirection, final LaneBasedGTU gtu)
+    public final LaneDirection getAdjacentLaneDirection(final LateralDirectionality laneChangeDirection, final LaneBasedGtu gtu)
     {
         Set<Lane> adjLanes = this.lane.accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getGtuType(), this.direction);
         if (!adjLanes.isEmpty())

@@ -40,7 +40,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.InputParameters;
 import org.opentrafficsim.core.parameters.ParameterFactory;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -259,7 +259,7 @@ public final class XmlNetworkLaneParser implements Serializable
             Map<String, List<FrequencyAndObject<Route>>> routeMixMap = GeneratorSinkParser.parseRouteMix(otsNetwork, demand);
             Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap =
                     GeneratorSinkParser.parseShortestRouteMix(otsNetwork, demand);
-            List<LaneBasedGTUGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates,
+            List<LaneBasedGtuGenerator> generators = GeneratorSinkParser.parseGenerators(otsNetwork, demand, gtuTemplates,
                     routeMixMap, shortestRouteMixMap, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
             GeneratorSinkParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator());
@@ -300,7 +300,7 @@ public final class XmlNetworkLaneParser implements Serializable
         Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(ots.getSCENARIO(), ots.getNETWORKDEMAND());
         try
         {
-            List<LaneBasedGTUGenerator> generators =
+            List<LaneBasedGtuGenerator> generators =
                     ODParser.parseDemand(otsNetwork, demands, gtuTemplates, factories, modelIdReferrals, streamInformation);
             System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
@@ -352,7 +352,7 @@ public final class XmlNetworkLaneParser implements Serializable
             @Override
             public void notify(final EventInterface event) throws RemoteException
             {
-                LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
+                LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
                 if (gtu.getId().equals("27"))
                 {
                     try
@@ -367,9 +367,9 @@ public final class XmlNetworkLaneParser implements Serializable
                 }
             }
         };
-        for (LaneBasedGTUGenerator generator : generators)
+        for (LaneBasedGtuGenerator generator : generators)
         {
-            generator.addListener(listener, LaneBasedGTUGenerator.GTU_GENERATED_EVENT);
+            generator.addListener(listener, LaneBasedGtuGenerator.GTU_GENERATED_EVENT);
         }*/
 
         List<CONTROL> controls = ots.getCONTROL();

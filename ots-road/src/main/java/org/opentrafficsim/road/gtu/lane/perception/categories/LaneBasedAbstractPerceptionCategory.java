@@ -9,11 +9,11 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
- * Super class for perception categories that use a {@code LaneBasedGTU} and that use lazy evaluation.
+ * Super class for perception categories that use a {@code LaneBasedGtu} and that use lazy evaluation.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,7 +22,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPerceptionCategory<LaneBasedGTU, LanePerception>
+public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
 {
 
     /** */
@@ -97,8 +97,8 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
      * <p>
      * This method will compute the information if required. A simple manner to define a {@code Supplier<T>} is to create a
      * method and invoke it using a lambda expression. For example, suppose we have the method
-     * {@code public List<HeadwayGTU> getLeaders(Lane)} for the tactical planner to use, and
-     * {@code private List<HeadwayGTU> computeLeaders(Lane)} for internal use, then we could use the following line inside
+     * {@code public List<HeadwayGtu> getLeaders(Lane)} for the tactical planner to use, and
+     * {@code private List<HeadwayGtu> computeLeaders(Lane)} for internal use, then we could use the following line inside
      * {@code getLeaders(Lane)}:
      * 
      * <pre>
@@ -152,8 +152,8 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
      * 
      * This method will compute the information if required. A simple manner to define a {@code Supplier<T>} is to create a
      * method and invoke it using a lambda expression. For example, suppose we have the method
-     * {@code public List<HeadwayGTU> getNeighbors(Lane, LongiudinalDirection)} for the tactical planner to use, and
-     * {@code private List<HeadwayGTU> computeNeighbors(Lane, LongiudinalDirection)} for internal use, then we could use the
+     * {@code public List<HeadwayGtu> getNeighbors(Lane, LongiudinalDirection)} for the tactical planner to use, and
+     * {@code private List<HeadwayGtu> computeNeighbors(Lane, LongiudinalDirection)} for internal use, then we could use the
      * following line inside {@code getNeighbors(Lane, LongiudinalDirection)}:
      * 
      * <pre>

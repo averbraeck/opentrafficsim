@@ -9,7 +9,7 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -128,7 +128,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
 
     /** {@inheritDoc} */
     @Override
-    public final LMRS create(final LaneBasedGTU gtu) throws GtuException
+    public final LMRS create(final LaneBasedGtu gtu) throws GtuException
     {
         LMRS lmrs = new LMRS(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
                 this.synchronization, this.cooperation, this.gapAcceptance, this.tailgating);

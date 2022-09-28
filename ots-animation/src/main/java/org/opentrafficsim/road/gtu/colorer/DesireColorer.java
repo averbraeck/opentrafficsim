@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.animation.ColorInterpolator;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 
 /**
  * Super class with default coloring of left and right desire value.
@@ -18,7 +18,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class DesireColorer implements GTUColorer, Serializable
+public abstract class DesireColorer implements GtuColorer, Serializable
 {
 
     /** */

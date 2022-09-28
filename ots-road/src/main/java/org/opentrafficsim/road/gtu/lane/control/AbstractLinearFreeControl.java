@@ -8,11 +8,11 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -44,8 +44,8 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration getDesiredAcceleration(final LaneBasedGTU gtu,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Parameters settings) throws ParameterException
+    public final Acceleration getDesiredAcceleration(final LaneBasedGtu gtu,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
     {
         SpeedLimitInfo speedInfo;
         try
@@ -70,12 +70,12 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
      * Returns the following acceleration of the longitudinal control. This method is only invoked if there is at least 1
      * leader.
      * @param gtu LaneBasedGtu; gtu
-     * @param leaders PerceptionCollectable&lt;HeadwayGTU, LaneBasedGTU&gt;; leaders
+     * @param leaders PerceptionCollectable&lt;HeadwayGtu, LaneBasedGtu&gt;; leaders
      * @param settings Parameters; system settings
      * @return Acceleration; following acceleration of the longitudinal control
      * @throws ParameterException if parameter is not present
      */
-    public abstract Acceleration getFollowingAcceleration(LaneBasedGTU gtu,
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, Parameters settings) throws ParameterException;
+    public abstract Acceleration getFollowingAcceleration(LaneBasedGtu gtu,
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, Parameters settings) throws ParameterException;
 
 }

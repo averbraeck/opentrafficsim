@@ -6,7 +6,7 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
@@ -51,7 +51,7 @@ public class FlankSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    protected final void triggerResponse(final LaneBasedGTU gtu)
+    protected final void triggerResponse(final LaneBasedGtu gtu)
     {
         this.parent.signalDetection(this, gtu);
     }

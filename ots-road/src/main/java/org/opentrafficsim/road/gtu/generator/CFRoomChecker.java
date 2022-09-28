@@ -12,10 +12,10 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.Placement;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -36,7 +36,7 @@ public class CFRoomChecker implements RoomChecker
 
     /** {@inheritDoc} */
     @Override
-    public Placement canPlace(final SortedSet<HeadwayGTU> leaders, final LaneBasedGTUCharacteristics characteristics,
+    public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
             final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GtuException
     {
         Speed speedLimit = null;
@@ -71,7 +71,7 @@ public class CFRoomChecker implements RoomChecker
         // loop leaders and determine most downstream location that would be ok
         Length move = Length.POSITIVE_INFINITY;
         Speed generationSpeed = desiredSpeed;
-        for (HeadwayGTU leader : leaders)
+        for (HeadwayGtu leader : leaders)
         {
             Speed speed = Speed.min(desiredSpeed, leader.getSpeed());
             Length headway =

@@ -7,7 +7,7 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.animation.ColorInterpolator;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 
 /**
@@ -20,7 +20,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class ReactionTimeColorer implements GTUColorer
+public class ReactionTimeColorer implements GtuColorer
 {
 
     /** Full. */

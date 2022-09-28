@@ -10,11 +10,11 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.control.ControlTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.perception.headway.GTUStatus;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
+import org.opentrafficsim.road.gtu.lane.perception.headway.GtuStatus;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
 
 /**
  * Default CACC sensors. This returns all information except desired speed for the first leader and CACC leaders. Remaining
@@ -27,12 +27,12 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DefaultCaccSensors implements HeadwayGTUType
+public class DefaultCaccSensors implements HeadwayGtuType
 {
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+    public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length distance) throws GtuException, ParameterException
     {
         Time t;
@@ -58,32 +58,32 @@ public class DefaultCaccSensors implements HeadwayGTUType
         Speed v = perceivedGtu.getSpeed(t);
         Acceleration a = perceivedGtu.getAcceleration(t);
         Speed desiredSpeed = null;
-        List<GTUStatus> status = new ArrayList<>();
+        List<GtuStatus> status = new ArrayList<>();
         if (perceivedGtu.isBrakingLightsOn(t))
         {
-            status.add(GTUStatus.BRAKING_LIGHTS);
+            status.add(GtuStatus.BRAKING_LIGHTS);
         }
         switch (perceivedGtu.getTurnIndicatorStatus(t))
         {
             case HAZARD:
-                status.add(GTUStatus.EMERGENCY_LIGHTS);
+                status.add(GtuStatus.EMERGENCY_LIGHTS);
                 break;
             case LEFT:
-                status.add(GTUStatus.LEFT_TURNINDICATOR);
+                status.add(GtuStatus.LEFT_TURNINDICATOR);
                 break;
             case RIGHT:
-                status.add(GTUStatus.RIGHT_TURNINDICATOR);
+                status.add(GtuStatus.RIGHT_TURNINDICATOR);
                 break;
             default:
                 break;
         }
-        return new HeadwayGTUSimple(id, gtuType, distance, length, width, v, a, desiredSpeed,
-                status.toArray(new GTUStatus[status.size()]));
+        return new HeadwayGtuSimple(id, gtuType, distance, length, width, v, a, desiredSpeed,
+                status.toArray(new GtuStatus[status.size()]));
     }
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+    public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length distance) throws GtuException, ParameterException
     {
         throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");
@@ -91,7 +91,7 @@ public class DefaultCaccSensors implements HeadwayGTUType
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+    public HeadwayGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
     {
         throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");

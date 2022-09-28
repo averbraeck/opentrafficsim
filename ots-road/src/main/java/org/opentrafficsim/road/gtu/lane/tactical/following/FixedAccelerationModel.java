@@ -24,15 +24,15 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil implements Serializable
+public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150206L;
 
-    /** Acceleration that will be returned in GTUFollowingModelResult by computeAcceleration. */
+    /** Acceleration that will be returned in GtuFollowingModelResult by computeAcceleration. */
     private Acceleration acceleration;
 
-    /** Valid until time that will be returned in GTUFollowingModelResult by computeAcceleration. */
+    /** Valid until time that will be returned in GtuFollowingModelResult by computeAcceleration. */
     private Duration duration;
 
     /**

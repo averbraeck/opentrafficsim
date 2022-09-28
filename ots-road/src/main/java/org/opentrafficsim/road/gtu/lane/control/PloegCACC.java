@@ -4,9 +4,9 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
  * Linear CACC implementation based on derivatives by Jeroen Ploeg.
@@ -35,10 +35,10 @@ public class PloegCACC extends PloegACC
 
     /** {@inheritDoc} */
     @Override
-    public Acceleration getFollowingAcceleration(final LaneBasedGTU gtu,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Parameters settings) throws ParameterException
+    public Acceleration getFollowingAcceleration(final LaneBasedGtu gtu,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
     {
-        HeadwayGTU leader = leaders.first();
+        HeadwayGtu leader = leaders.first();
         if (leader.getAcceleration() == null)
         {
             return super.getFollowingAcceleration(gtu, leaders, settings);

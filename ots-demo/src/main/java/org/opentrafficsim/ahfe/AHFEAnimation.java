@@ -24,7 +24,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.ahfe.AHFEAnimation.AHFEModel;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -511,7 +511,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, new DefaultSwitchableGTUColorer(), this.simulator, getReplication(),
+                AHFEUtil.createDemand(this.network, new DefaultSwitchableGtuColorer(), this.simulator, getReplication(),
                         getAnticipationStrategy(), getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND,
                         getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(), getSpeedError(),
                         getAccelerationError());

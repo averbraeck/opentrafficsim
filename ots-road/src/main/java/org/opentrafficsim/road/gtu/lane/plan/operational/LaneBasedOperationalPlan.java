@@ -15,7 +15,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
@@ -51,7 +51,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
+    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
             final List<Segment> operationalPlanSegmentList, final boolean deviative) throws OperationalPlanException
     {
         super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
@@ -67,7 +67,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @param deviative boolean; whether the path is not along lane center lines
      * @throws OperationalPlanException when construction of a waiting path fails
      */
-    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final DirectedPoint waitPoint, final Time startTime,
+    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final DirectedPoint waitPoint, final Time startTime,
             final Duration duration, final boolean deviative) throws OperationalPlanException
     {
         super(gtu, waitPoint, startTime, duration);
@@ -90,7 +90,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @return Length; total length along the path
      * @throws GtuException if the GTU has not reference position
      */
-    public final Length getTotalLengthAlongLane(final LaneBasedGTU gtu) throws GtuException
+    public final Length getTotalLengthAlongLane(final LaneBasedGtu gtu) throws GtuException
     {
         if (!this.deviative)
         {
@@ -130,7 +130,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @return Length; total length along the path
      * @throws GtuException if the GTU has not reference position
      */
-    public final Length getDistanceAlongLane(final LaneBasedGTU gtu, final DirectedPoint point) throws GtuException
+    public final Length getDistanceAlongLane(final LaneBasedGtu gtu, final DirectedPoint point) throws GtuException
     {
 
         // start lane center lines at current reference lane

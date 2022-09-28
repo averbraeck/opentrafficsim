@@ -36,9 +36,9 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD.Factory;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD.Factory;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
@@ -102,15 +102,15 @@ public final class ODParser
      * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
      * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals
      * @param streamMap Map&lt;String, StreamInformation&gt;; stream map
-     * @return List&lt;LaneBasedGTUGenerator&gt;; generators
+     * @return List&lt;LaneBasedGtuGenerator&gt;; generators
      * @throws XmlParserException if the OD contains an inconsistency or error
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static List<LaneBasedGTUGenerator> parseDemand(final OTSRoadNetwork otsNetwork, final List<NETWORKDEMAND> demands,
+    public static List<LaneBasedGtuGenerator> parseDemand(final OTSRoadNetwork otsNetwork, final List<NETWORKDEMAND> demands,
             final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
             final Map<String, String> modelIdReferrals, final StreamInformation streamMap) throws XmlParserException
     {
-        List<LaneBasedGTUGenerator> generators = new ArrayList<>();
+        List<LaneBasedGtuGenerator> generators = new ArrayList<>();
 
         IdGenerator idGenerator = new IdGenerator("");
 
@@ -410,7 +410,7 @@ public final class ODParser
                     }
                 }
                 // default global option to integrate defined templates
-                Factory factory = new Factory(); // DefaultGTUCharacteristicsGeneratorOD factory
+                Factory factory = new Factory(); // DefaultGtuCharacteristicsGeneratorOD factory
                 factory.setTemplates(templates);
                 odOptions.set(ODOptions.GTU_TYPE, factory.create());
                 // other options
@@ -457,7 +457,7 @@ public final class ODParser
                                     gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
                                 }
                             }
-                            factory = new Factory(); // DefaultGTUCharacteristicsGeneratorOD factory
+                            factory = new Factory(); // DefaultGtuCharacteristicsGeneratorOD factory
                             factory.setTemplates(templates);
                             factory.setFactorySupplier(new StrategicalPlannerFactorySupplierOD()
                             {

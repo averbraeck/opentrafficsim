@@ -31,12 +31,12 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistMass;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
 import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD.TacticalPlannerFactorySupplierOD;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.VehicleModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerFactory;
@@ -226,7 +226,7 @@ public class SteeringSimulation extends AbstractSimulationScript
                 new IDMPlusFactory(sim.getModel().getStream("generation")), new DefaultLMRSPerceptionFactory())
         {
             @Override
-            public SteeringLmrs create(final LaneBasedGTU gtu) throws GtuException
+            public SteeringLmrs create(final LaneBasedGtu gtu) throws GtuException
             {
                 return new SteeringLmrs(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
                         Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, FEEDBACK_CAR);
@@ -278,7 +278,7 @@ public class SteeringSimulation extends AbstractSimulationScript
             }
         };
         // characteristics generator using OD info and default route based strategical level
-        DefaultGTUCharacteristicsGeneratorOD characteristicsGenerator = new DefaultGTUCharacteristicsGeneratorOD.Factory()
+        DefaultGtuCharacteristicsGeneratorOD characteristicsGenerator = new DefaultGtuCharacteristicsGeneratorOD.Factory()
                 .setFactorySupplier(StrategicalPlannerFactorySupplierOD.route(tacticalPlannerFactorySupplierOD))
                 .setVehicleModelGenerator(vehicleModelGenerator).create();
 

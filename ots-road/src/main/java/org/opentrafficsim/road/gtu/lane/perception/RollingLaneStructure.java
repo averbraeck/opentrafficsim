@@ -30,7 +30,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord.RecordLink;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -153,7 +153,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     private final Length upMerge;
 
     /** GTU. */
-    private final LaneBasedGTU containingGtu;
+    private final LaneBasedGtu containingGtu;
 
     /** the animation access. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -169,7 +169,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * @param gtu LaneBasedGtu; GTU
      */
     public RollingLaneStructure(final Length lookAhead, final Length down, final Length up, final Length downSplit,
-            final Length upMerge, final LaneBasedGTU gtu)
+            final Length upMerge, final LaneBasedGtu gtu)
     {
         HistoryManager historyManager = gtu.getSimulator().getReplication().getHistoryManager(gtu.getSimulator());
         this.root = new HistoricalValue<>(historyManager);
@@ -181,7 +181,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
         this.containingGtu = gtu;
         try
         {
-            gtu.addListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
+            gtu.addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
         }
         catch (RemoteException exception)
         {
@@ -1278,7 +1278,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      */
     @Override
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(final Class<T> clazz,
-            final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GtuException
+            final LaneBasedGtu gtu, final RelativePosition.TYPE pos) throws GtuException
     {
         Map<RelativeLane, SortedSet<Entry<T>>> out = new LinkedHashMap<>();
         for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
@@ -1302,7 +1302,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     @Override
     @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(final RelativeLane lane,
-            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GtuException
+            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.TYPE pos) throws GtuException
     {
         LaneStructureRecord record = getFirstRecord(lane);
         SortedSet<Entry<T>> set = new TreeSet<>();
@@ -1359,7 +1359,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      */
     @Override
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjectsOnRoute(final RelativeLane lane,
-            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos, final Route route)
+            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.TYPE pos, final Route route)
             throws GtuException
     {
         SortedSet<Entry<T>> set = getDownstreamObjects(lane, clazz, gtu, pos);
@@ -1449,7 +1449,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      */
     @Override
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(
-            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos, final Route route)
+            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.TYPE pos, final Route route)
             throws GtuException
     {
         Map<RelativeLane, SortedSet<Entry<T>>> out = new LinkedHashMap<>();
@@ -1474,7 +1474,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     @Override
     @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(final RelativeLane lane,
-            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GtuException
+            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.TYPE pos) throws GtuException
     {
         SortedSet<Entry<T>> set = new TreeSet<>();
         LaneStructureRecord record = this.getFirstRecord(lane);
@@ -1548,7 +1548,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * @param gtu LaneBasedGtu; the GTTU for which the lane structure is printed
      * @return a String with information about the RollingLaneStructire
      */
-    public static String print(final RollingLaneStructure ls, final LaneBasedGTU gtu)
+    public static String print(final RollingLaneStructure ls, final LaneBasedGtu gtu)
     {
         StringBuffer s = new StringBuffer();
         s.append(gtu.getSimulator().getSimulatorTime() + " " + gtu.getId() + " LANESTRUCTURE: ");

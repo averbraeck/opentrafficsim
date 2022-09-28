@@ -10,7 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -40,7 +40,7 @@ public class TaskRoadSideDistraction extends AbstractTask
 
     /** {@inheritDoc} */
     @Override
-    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException, GtuException
     {
         Map<RelativeLane, SortedSet<Entry<Distraction>>> map =

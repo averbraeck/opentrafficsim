@@ -34,14 +34,14 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -93,12 +93,12 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /**
      * Instantiated a tactical planner with GTU following and lane change behavior.
-     * @param carFollowingModel GTUFollowingModelOld; Car-following model.
+     * @param carFollowingModel GtuFollowingModelOld; Car-following model.
      * @param laneChangeModel LaneChangeModel; Lane change model.
      * @param gtu LaneBasedGtu; GTU
      */
-    public LaneBasedCFLCTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel,
-            final LaneBasedGTU gtu)
+    public LaneBasedCFLCTacticalPlanner(final GtuFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel,
+            final LaneBasedGtu gtu)
     {
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         this.laneChangeModel = laneChangeModel;
@@ -113,7 +113,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         try
         {
             // define some basic variables
-            LaneBasedGTU laneBasedGTU = getGtu();
+            LaneBasedGtu laneBasedGTU = getGtu();
             LanePerception perception = getPerception();
 
             // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
@@ -127,7 +127,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             Speed speedLimit = simplePerception.getSpeedLimit();
 
             // look at the conditions for headway on the current lane
-            Headway sameLaneLeader = simplePerception.getForwardHeadwayGTU();
+            Headway sameLaneLeader = simplePerception.getForwardHeadwayGtu();
             // TODO how to handle objects on this lane or another lane???
             Headway sameLaneFollower = simplePerception.getBackwardHeadway();
             Collection<Headway> sameLaneTraffic = new ArrayList<>();
@@ -184,13 +184,13 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             if (object instanceof HeadwayTrafficLight)
             {
                 // if it was perceived, it was red, or yellow and judged as requiring to stop
-                a = Acceleration.min(a, ((GTUFollowingModelOld) getCarFollowingModel()).computeAcceleration(getGtu().getSpeed(),
+                a = Acceleration.min(a, ((GtuFollowingModelOld) getCarFollowingModel()).computeAcceleration(getGtu().getSpeed(),
                         getGtu().getMaximumSpeed(), Speed.ZERO, object.getDistance(), speedLimit));
             }
 
             // incorporate dead-end/split
             Length dist = lanePathInfo.getPath().getLength().minus(getGtu().getFront().getDx());
-            a = Acceleration.min(a, ((GTUFollowingModelOld) getCarFollowingModel()).computeAcceleration(getGtu().getSpeed(),
+            a = Acceleration.min(a, ((GtuFollowingModelOld) getCarFollowingModel()).computeAcceleration(getGtu().getSpeed(),
                     getGtu().getMaximumSpeed(), Speed.ZERO, dist, speedLimit));
 
             // build a list of lanes forward, with a maximum headway.
@@ -241,7 +241,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @throws GtuException when the position of the GTU cannot be correctly determined
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
-    private AccelerationVector laneIncentives(final LaneBasedGTU gtu, final AccelerationVector defaultLaneIncentives)
+    private AccelerationVector laneIncentives(final LaneBasedGtu gtu, final AccelerationVector defaultLaneIncentives)
             throws NetworkException, ValueRuntimeException, GtuException, OperationalPlanException
     {
         Length leftSuitability = suitability(gtu, LateralDirectionality.LEFT);
@@ -283,7 +283,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @throws GtuException when the positions of the GTU cannot be determined
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
-    private AccelerationVector checkLaneDrops(final LaneBasedGTU gtu, final AccelerationVector defaultLaneIncentives)
+    private AccelerationVector checkLaneDrops(final LaneBasedGtu gtu, final AccelerationVector defaultLaneIncentives)
             throws NetworkException, ValueRuntimeException, GtuException, OperationalPlanException
     {
         // FIXME: these comparisons to -10 is ridiculous.
@@ -335,7 +335,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @throws GtuException when the positions of the GTU cannot be determined
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
-    private Length laneDrop(final LaneBasedGTU gtu, final LateralDirectionality direction)
+    private Length laneDrop(final LaneBasedGtu gtu, final LateralDirectionality direction)
             throws NetworkException, GtuException, OperationalPlanException
     {
         DirectedLanePosition dlp = gtu.getReferencePosition();
@@ -388,7 +388,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @throws GtuException when position cannot be determined
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
-    private Length suitability(final LaneBasedGTU gtu, final LateralDirectionality direction)
+    private Length suitability(final LaneBasedGtu gtu, final LateralDirectionality direction)
             throws NetworkException, GtuException, OperationalPlanException
     {
         DirectedLanePosition dlp = gtu.getReferencePosition();
@@ -421,7 +421,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @param stopDistance Length; the distance
      * @return double; the acceleration (deceleration) needed to stop at the specified distance in m/s/s
      */
-    private double acceleration(final LaneBasedGTU gtu, final Length stopDistance)
+    private double acceleration(final LaneBasedGtu gtu, final Length stopDistance)
     {
         // What is the deceleration that will bring this GTU to a stop at exactly the suitability distance?
         // Answer: a = -v^2 / 2 / suitabilityDistance
@@ -442,7 +442,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      *         lane.
      * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
      */
-    private Length suitability(final Lane lane, final Length longitudinalPosition, final LaneBasedGTU gtu,
+    private Length suitability(final Lane lane, final Length longitudinalPosition, final LaneBasedGtu gtu,
             final Duration timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();

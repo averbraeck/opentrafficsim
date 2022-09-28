@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -101,7 +101,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final void init(final LaneBasedGTU gtu)
+    public final void init(final LaneBasedGtu gtu)
     {
         if (this.desiredHeadwayModel instanceof Initialisable)
         {

@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
@@ -22,18 +22,18 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
  * @param <H> headway type
  */
 @Deprecated
-public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> implements PerceptionCollectable<H, LaneBasedGTU>
+public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> implements PerceptionCollectable<H, LaneBasedGtu>
 {
 
     /** */
     private static final long serialVersionUID = 20180219L;
 
-    /** Network to obtain LaneBasedGTU. */
+    /** Network to obtain LaneBasedGtu. */
     private final OTSRoadNetwork network;
 
     /**
      * Constructor.
-     * @param otsNetwork OTSRoadNetwork; network to obtain LaneBasedGTU
+     * @param otsNetwork OTSRoadNetwork; network to obtain LaneBasedGtu
      */
     public SortedSetPerceptionIterable(final OTSRoadNetwork otsNetwork)
     {
@@ -42,7 +42,7 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
 
     /** {@inheritDoc} */
     @Override
-    public <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super LaneBasedGTU, I> accumulator,
+    public <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super LaneBasedGtu, I> accumulator,
             final PerceptionFinalizer<C, I> finalizer)
     {
         Intermediate<I> intermediate = new Intermediate<>(identity.get());
@@ -51,7 +51,7 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
         {
             H next = it.next();
             intermediate =
-                    accumulator.accumulate(intermediate, (LaneBasedGTU) this.network.getGTU(next.getId()), next.getDistance());
+                    accumulator.accumulate(intermediate, (LaneBasedGtu) this.network.getGTU(next.getId()), next.getDistance());
             intermediate.step();
         }
         return finalizer.collect(intermediate.getObject());
@@ -59,9 +59,9 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<LaneBasedGTU> underlying()
+    public Iterator<LaneBasedGtu> underlying()
     {
-        return new Iterator<LaneBasedGTU>()
+        return new Iterator<LaneBasedGtu>()
         {
             /** {@inheritDoc} */
             @Override
@@ -72,7 +72,7 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
 
             /** {@inheritDoc} */
             @Override
-            public LaneBasedGTU next()
+            public LaneBasedGtu next()
             {
                 throw new NoSuchElementException();
             }
@@ -82,9 +82,9 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<UnderlyingDistance<LaneBasedGTU>> underlyingWithDistance()
+    public Iterator<UnderlyingDistance<LaneBasedGtu>> underlyingWithDistance()
     {
-        return new Iterator<UnderlyingDistance<LaneBasedGTU>>()
+        return new Iterator<UnderlyingDistance<LaneBasedGtu>>()
         {
             /** {@inheritDoc} */
             @Override
@@ -95,7 +95,7 @@ public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> i
 
             /** {@inheritDoc} */
             @Override
-            public UnderlyingDistance<LaneBasedGTU> next()
+            public UnderlyingDistance<LaneBasedGtu> next()
             {
                 throw new NoSuchElementException();
             }

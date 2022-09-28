@@ -8,9 +8,9 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.animation.ColorInterpolator;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DesiredSpeedColorer implements GTUColorer, Serializable
+public class DesiredSpeedColorer implements GtuColorer, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -36,7 +36,7 @@ public class DesiredSpeedColorer implements GTUColorer, Serializable
     private final Speed maximumSpeed;
 
     /**
-     * Construct a new SpeedGTUColorer.
+     * Construct a new SpeedGtuColorer.
      * @param minimumSpeed Speed; the speed at (and below) which the returned color will be red
      * @param maximumSpeed Speed; the speed at (and above) which the returned color will be green
      */
@@ -60,9 +60,9 @@ public class DesiredSpeedColorer implements GTUColorer, Serializable
     @Override
     public final Color getColor(final Gtu gtu)
     {
-        if (gtu instanceof LaneBasedGTU)
+        if (gtu instanceof LaneBasedGtu)
         {
-            Speed speed = ((LaneBasedGTU) gtu).getDesiredSpeed();
+            Speed speed = ((LaneBasedGtu) gtu).getDesiredSpeed();
             double ratio = (speed.si - this.minimumSpeed.si) / (this.maximumSpeed.si - this.minimumSpeed.si)
                     * (this.legend.size() - 2);
             if (ratio <= 0)

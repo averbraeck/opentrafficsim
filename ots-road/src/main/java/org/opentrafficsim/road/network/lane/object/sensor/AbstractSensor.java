@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
@@ -140,7 +140,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
-    public final void trigger(final LaneBasedGTU gtu)
+    public final void trigger(final LaneBasedGtu gtu)
     {
         fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] {getId(), this, gtu, this.positionType},
                 getSimulator().getSimulatorTime());
@@ -151,7 +151,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * Implementation of the response to a trigger of this sensor by a GTU.
      * @param gtu LaneBasedGtu; the lane based GTU that triggered this sensor.
      */
-    protected abstract void triggerResponse(LaneBasedGTU gtu);
+    protected abstract void triggerResponse(LaneBasedGtu gtu);
 
     /** {@inheritDoc} */
     @Override

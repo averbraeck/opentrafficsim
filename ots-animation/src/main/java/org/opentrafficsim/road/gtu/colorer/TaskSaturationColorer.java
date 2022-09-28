@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.animation.ColorInterpolator;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 
@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TaskSaturationColorer implements GTUColorer
+public class TaskSaturationColorer implements GtuColorer
 {
 
     /** Full. */

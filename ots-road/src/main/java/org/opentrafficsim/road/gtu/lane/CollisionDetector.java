@@ -9,7 +9,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
  * Checks for collisions.
@@ -35,19 +35,19 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker
 
     /** {@inheritDoc} */
     @Override
-    public void checkMove(final LaneBasedGTU gtu) throws Exception
+    public void checkMove(final LaneBasedGtu gtu) throws Exception
     {
         try
         {
             NeighborsPerception neighbors =
                     gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.class);
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
-            Iterator<UnderlyingDistance<LaneBasedGTU>> gtus = leaders.underlyingWithDistance();
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+            Iterator<UnderlyingDistance<LaneBasedGtu>> gtus = leaders.underlyingWithDistance();
             if (!gtus.hasNext())
             {
                 return;
             }
-            UnderlyingDistance<LaneBasedGTU> leader = gtus.next();
+            UnderlyingDistance<LaneBasedGtu> leader = gtus.next();
             if (leader.getDistance().lt0())
             {
                 throw new CollisionException("GTU " + gtu.getId() + " collided with GTU " + leader.getObject().getId());

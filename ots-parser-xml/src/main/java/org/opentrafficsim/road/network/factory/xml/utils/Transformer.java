@@ -9,11 +9,11 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
 import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.xml.bindings.types.GTUPositionType;
+import org.opentrafficsim.xml.bindings.types.GtuPositionType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
 
 /**
@@ -57,7 +57,7 @@ public final class Transformer
      * @param positionType GTUPositionType; the JAXB position to parse
      * @return the corresponding OTS RelativePosition
      */
-    public static RelativePosition.TYPE parseTriggerPosition(final GTUPositionType positionType)
+    public static RelativePosition.TYPE parseTriggerPosition(final GtuPositionType positionType)
     {
         switch (positionType)
         {

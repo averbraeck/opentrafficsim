@@ -10,7 +10,7 @@ import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 
 /**
@@ -31,7 +31,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
      * Constructor.
      * @param gtu LaneBasedGtu; GTU
      */
-    public LaneBasedStrategicalPlannerNone(final LaneBasedGTU gtu)
+    public LaneBasedStrategicalPlannerNone(final LaneBasedGtu gtu)
     {
         super(gtu);
     }

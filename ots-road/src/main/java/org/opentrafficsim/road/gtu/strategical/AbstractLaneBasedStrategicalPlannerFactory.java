@@ -8,7 +8,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.parameters.ParameterFactoryDefault;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 
@@ -135,7 +135,7 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
      * @return T; next tactical planner
      * @throws GtuException on exception during tactical planner creation
      */
-    protected final LaneBasedTacticalPlanner nextTacticalPlanner(final LaneBasedGTU gtu) throws GtuException
+    protected final LaneBasedTacticalPlanner nextTacticalPlanner(final LaneBasedGtu gtu) throws GtuException
     {
         return this.tacticalPlannerFactory.create(gtu);
     }

@@ -19,16 +19,16 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -64,13 +64,13 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     private static final Length MARGIN = Length.instantiateSI(0.001);
 
     /** Headway GTU type that should be used. */
-    private final HeadwayGTUType headwayGtuType;
+    private final HeadwayGtuType headwayGtuType;
 
     /**
      * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGTUType; type of headway gtu to generate
+     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
      */
-    public DirectIntersectionPerception(final LanePerception perception, final HeadwayGTUType headwayGtuType)
+    public DirectIntersectionPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {
         super(perception);
         this.headwayGtuType = headwayGtuType;
@@ -96,7 +96,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             {
                 /** {@inheritDoc} */
                 @Override
-                public HeadwayTrafficLight perceive(final LaneBasedGTU perceivingGtu, final TrafficLight trafficLight,
+                public HeadwayTrafficLight perceive(final LaneBasedGtu perceivingGtu, final TrafficLight trafficLight,
                         final Length distance)
                 {
                     try
@@ -169,7 +169,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 /** {@inheritDoc} */
                 @SuppressWarnings("synthetic-access")
                 @Override
-                public HeadwayConflict perceive(final LaneBasedGTU perceivingGtu, final Conflict conflict,
+                public HeadwayConflict perceive(final LaneBasedGtu perceivingGtu, final Conflict conflict,
                         final Length distance)
                 {
                     Conflict otherConflict = conflict.getOtherConflict();
@@ -203,9 +203,9 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                     HeadwayConflict headwayConflict;
                     try
                     {
-                        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs = otherConflict.getUpstreamGtus(
+                        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> upstreamConflictingGTUs = otherConflict.getUpstreamGtus(
                                 getGtu(), DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
-                        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs =
+                        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> downstreamConflictingGTUs =
                                 otherConflict.getDownstreamGtus(getGtu(), DirectIntersectionPerception.this.headwayGtuType,
                                         conflictingVisibility);
                         // TODO stop lines (current models happen not to use this, but should be possible)

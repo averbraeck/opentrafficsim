@@ -4,7 +4,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
@@ -32,7 +32,7 @@ public interface Task extends Identifiable
      * @throws ParameterException if a parameter is missing or out of bounds
      * @throws GtuException exceptions pertaining to the GTU
      */
-    double calculateTaskDemand(LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
+    double calculateTaskDemand(LanePerception perception, LaneBasedGtu gtu, Parameters parameters)
             throws ParameterException, GtuException;
 
     /**

@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
@@ -82,7 +82,7 @@ public class SteeringLmrs extends AbstractLaneBasedTacticalPlanner
      * @param gapAcceptance GapAcceptance; gap-acceptance
      * @param feedbackTable FeedbackTable; feedback table
      */
-    public SteeringLmrs(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception,
+    public SteeringLmrs(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu, final LanePerception lanePerception,
             final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
             final FeedbackTable feedbackTable)
     {

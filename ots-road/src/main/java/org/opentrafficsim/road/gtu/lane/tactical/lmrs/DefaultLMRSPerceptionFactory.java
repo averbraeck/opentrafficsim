@@ -5,7 +5,7 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
@@ -13,7 +13,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTraffi
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 
 /**
  * Perception factory with EgoPerception, InfrastructurePerception, NeighborsPerception and IntersectionPerception.
@@ -30,14 +30,14 @@ public class DefaultLMRSPerceptionFactory implements PerceptionFactory
 
     /** {@inheritDoc} */
     @Override
-    public LanePerception generatePerception(final LaneBasedGTU gtu)
+    public LanePerception generatePerception(final LaneBasedGtu gtu)
     {
         LanePerception perception = new CategoricalLanePerception(gtu);
         perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
         perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
-        perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGTUType.WRAP));
+        perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
         perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
-        perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGTUType.WRAP));
+        perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGtuType.WRAP));
         return perception;
     }
 

@@ -38,10 +38,10 @@ import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
@@ -165,22 +165,22 @@ public class StraightModel extends AbstractOTSModel implements UNITS
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFctoryTrucks =
                     new LaneBasedStrategicalRoutePlannerFactory(
                             new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
-            LaneBasedTemplateGTUType carTemplate = new LaneBasedTemplateGTUType(car,
+            LaneBasedTemplateGtuType carTemplate = new LaneBasedTemplateGtuType(car,
                     new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
                     speedCar, strategicalPlannerFactoryCars, routeGenerator);
-            LaneBasedTemplateGTUType truckTemplate = new LaneBasedTemplateGTUType(truck,
+            LaneBasedTemplateGtuType truckTemplate = new LaneBasedTemplateGtuType(truck,
                     new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                     speedTruck, strategicalPlannerFctoryTrucks, routeGenerator);
-            Distribution<LaneBasedTemplateGTUType> gtuTypeDistribution = new Distribution<>(this.stream);
+            Distribution<LaneBasedTemplateGtuType> gtuTypeDistribution = new Distribution<>(this.stream);
             gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
             Generator<Duration> headwayGenerator = new HeadwayGenerator(new Frequency(1500.0, PER_HOUR));
             Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions
                     .add(new DirectedLanePosition(this.lane, new Length(5.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
-            LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
-                    new LaneBasedTemplateGTUTypeDistribution(gtuTypeDistribution);
-            new LaneBasedGTUGenerator("Generator", headwayGenerator, characteristicsGenerator,
+            LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
+                    new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
+            new LaneBasedGtuGenerator("Generator", headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, this.stream), this.network, getSimulator(),
                     roomChecker, idGenerator);
             // End generation

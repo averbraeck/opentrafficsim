@@ -39,7 +39,7 @@ import org.djutils.logger.CategoryLogger;
 import org.djutils.logger.LogCategory;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -284,7 +284,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 OTSAnimationPanel animationPanel =
                         new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000), animator,
                                 this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
-                DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGTUColorer());
+                DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGtuColorer());
                 new Sim0MQRemoteControlSwingApplication(this.model, animationPanel);
                 JFrame frame = (JFrame) animationPanel.getParent().getParent().getParent();
                 frame.setExtendedState(Frame.NORMAL);

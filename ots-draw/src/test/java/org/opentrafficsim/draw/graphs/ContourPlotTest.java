@@ -45,10 +45,10 @@ import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.SamplerData;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.SequentialFixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
@@ -761,7 +761,7 @@ public class ContourPlotTest implements UNITS
      * @param initialSpeed Speed; the initial speed
      * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
      *            getLastEvalutionTime())
-     * @param gtuFollowingModel GTUFollowingModel; the GTU following model
+     * @param gtuFollowingModel GtuFollowingModel; the GTU following model
      * @param laneChangeModel LaneChangeModel; the lane change model
      * @param network the network
      * @return Car; the new Car
@@ -771,9 +771,9 @@ public class ContourPlotTest implements UNITS
      * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
      * @throws OTSGeometryException when the initial path is wrong
      */
-    private static LaneBasedIndividualGTU makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
+    private static LaneBasedIndividualGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OTSSimulatorInterface simulator,
-            final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
+            final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException
     {
         Length length = new Length(5.0, METER);
@@ -781,8 +781,8 @@ public class ContourPlotTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
-        LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU(id, gtuType, length, width, maxSpeed, length.times(0.5), simulator, network);
+        LaneBasedIndividualGtu gtu =
+                new LaneBasedIndividualGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);

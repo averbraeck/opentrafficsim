@@ -28,9 +28,9 @@ import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.compressedfiles.CompressionType;
 import org.opentrafficsim.base.compressedfiles.Writer;
-import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -55,10 +55,10 @@ import org.opentrafficsim.road.gtu.colorer.DistractionColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
 import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.colorer.TaskSaturationColorer;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ExponentialTask;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
@@ -236,12 +236,12 @@ public class SdmSimulation extends AbstractSimulationScript
     {
         super("SDM simulation", "Simulations using the Stochastic Distraction Model");
         // set GTU colorers to use
-        setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+        setGtuColorer(SwitchableGtuColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
                 .addColorer(new SynchronizationColorer())
                 .addColorer(new DistractionColorer(DefaultDistraction.ANSWERING_CELL_PHONE, DefaultDistraction.CONVERSING,
                         DefaultDistraction.MANIPULATING_AUDIO_CONTROLS, DefaultDistraction.EXTERNAL_DISTRACTION))
-                .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
-                .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
+                .addColorer(new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
                 .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.56), Duration.instantiateSI(2.4)))
                 .addColorer(new TaskSaturationColorer()).build());
         try
@@ -355,7 +355,7 @@ public class SdmSimulation extends AbstractSimulationScript
         odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] {f2 * right1, f2 * right1, f2 * right2, 0.0}));
         odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] {f1 * right1, f1 * right1, f1 * right2, 0.0}));
         ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.instantiateSI(200)).set(ODOptions.GTU_TYPE,
-                new DefaultGTUCharacteristicsGeneratorOD(
+                new DefaultGtuCharacteristicsGeneratorOD(
                         new SdmStrategicalPlannerFactory(this.network, sim.getModel().getStream("generation"), this)));
         ODApplier.applyOD(this.network, odMatrix, odOptions);
 
@@ -464,7 +464,7 @@ public class SdmSimulation extends AbstractSimulationScript
                     /** {@inheritDoc} */
                     @SuppressWarnings("synthetic-access")
                     @Override
-                    public Task getTask(final LaneBasedGTU gtu)
+                    public Task getTask(final LaneBasedGtu gtu)
                     {
                         return new ExponentialTask(distraction.getId(), SdmSimulation.this.phoneInit,
                                 SdmSimulation.this.phoneFinal, SdmSimulation.this.phoneTau, gtu.getSimulator());

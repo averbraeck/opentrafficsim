@@ -94,8 +94,8 @@ public class Publisher extends AbstractTransceiver
             }
         }
 
-        GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
-        GTUTransceiver gtuTransceiver = new GTUTransceiver(network, gtuIdTransceiver);
+        GtuIdTransceiver gtuIdTransceiver = new GtuIdTransceiver(network);
+        GtuTransceiver gtuTransceiver = new GtuTransceiver(network, gtuIdTransceiver);
         SubscriptionHandler gtuSubscriptionHandler =
                 new SubscriptionHandler("GTU move", gtuTransceiver, new LookupEventProducerInterface()
                 {
@@ -243,12 +243,12 @@ public class Publisher extends AbstractTransceiver
             }
         }, Network.NODE_ADD_EVENT, Network.NODE_REMOVE_EVENT, null, nodeSubscriptionHandler));
         SubscriptionHandler linkGTUIdSubscriptionHandler = new SubscriptionHandler("GTUs on Link",
-                new LinkGTUIdTransceiver(network), this.lookupLink, Link.GTU_ADD_EVENT, Link.GTU_REMOVE_EVENT, null, null);
+                new LinkGtuIdTransceiver(network), this.lookupLink, Link.GTU_ADD_EVENT, Link.GTU_REMOVE_EVENT, null, null);
         addSubscriptionHandler(linkGTUIdSubscriptionHandler);
         addSubscriptionHandler(new SubscriptionHandler("Cross section elements on Link",
                 new CrossSectionElementTransceiver(network), this.lookupLink, CrossSectionLink.LANE_ADD_EVENT,
                 CrossSectionLink.LANE_REMOVE_EVENT, null, linkGTUIdSubscriptionHandler));
-        // addTransceiver(new LaneGTUIdTransceiver(network));
+        // addTransceiver(new LaneGtuIdTransceiver(network));
         SimulatorStateTransceiver stt = new SimulatorStateTransceiver(network.getSimulator());
         SubscriptionHandler simulatorStateSubscriptionHandler = new SubscriptionHandler("Simulator running", stt,
                 stt.getLookupEventProducerInterface(), null, null, SimulatorStateTransceiver.SIMULATOR_STATE_CHANGED, null);

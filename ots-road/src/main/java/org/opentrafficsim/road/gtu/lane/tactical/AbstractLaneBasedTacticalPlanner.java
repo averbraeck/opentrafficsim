@@ -23,7 +23,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
@@ -73,7 +73,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     private final LanePerception lanePerception;
 
     /** GTU. */
-    private final LaneBasedGTU gtu;
+    private final LaneBasedGtu gtu;
 
     /**
      * Instantiates a tactical planner.
@@ -81,7 +81,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @param gtu LaneBasedGtu; GTU
      * @param lanePerception LanePerception; perception
      */
-    public AbstractLaneBasedTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu,
+    public AbstractLaneBasedTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu,
             final LanePerception lanePerception)
     {
         setCarFollowingModel(carFollowingModel);
@@ -91,7 +91,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTU getGtu()
+    public final LaneBasedGtu getGtu()
     {
         return this.gtu;
     }
@@ -105,7 +105,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length maxHeadway)
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGtu gtu, final Length maxHeadway)
             throws GtuException, NetworkException
     {
         DirectedLanePosition dlp = gtu.getReferencePosition();
@@ -126,7 +126,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length maxHeadway, final Lane startLane,
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGtu gtu, final Length maxHeadway, final Lane startLane,
             final Length position, final GTUDirectionality startDirectionality) throws GtuException, NetworkException
     {
         List<LaneDirection> laneListForward = new ArrayList<>();
@@ -299,7 +299,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static NextSplitInfo determineNextSplit(final LaneBasedGTU gtu, final Length maxHeadway)
+    public static NextSplitInfo determineNextSplit(final LaneBasedGtu gtu, final Length maxHeadway)
             throws GtuException, NetworkException
     {
         Node nextSplitNode = null;
@@ -516,7 +516,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    protected static boolean connectsToPath(final LaneBasedGTU gtu, final Length maxHeadway, final Lane startLane,
+    protected static boolean connectsToPath(final LaneBasedGtu gtu, final Length maxHeadway, final Lane startLane,
             final Length startLanePosition, final GTUDirectionality startDirectionality, final Link linkAfterSplit)
             throws GtuException, NetworkException
     {
@@ -544,7 +544,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    protected static boolean noLaneDrop(final LaneBasedGTU gtu, final Length maxHeadway, final Lane startLane,
+    protected static boolean noLaneDrop(final LaneBasedGtu gtu, final Length maxHeadway, final Lane startLane,
             final Length startLanePosition, final GTUDirectionality startDirectionality) throws GtuException, NetworkException
     {
         LanePathInfo lpi = buildLanePathInfo(gtu, maxHeadway, startLane, startLanePosition, startDirectionality);
@@ -563,7 +563,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    protected static List<LinkDirection> buildLinkListForward(final LaneBasedGTU gtu, final Length maxHeadway)
+    protected static List<LinkDirection> buildLinkListForward(final LaneBasedGtu gtu, final Length maxHeadway)
             throws GtuException, NetworkException
     {
         List<LinkDirection> linkList = new ArrayList<>();

@@ -36,9 +36,9 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.DualBound;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
@@ -71,13 +71,13 @@ import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.colorer.TaskColorer;
 import org.opentrafficsim.road.gtu.colorer.TaskSaturationColorer;
 import org.opentrafficsim.road.gtu.colorer.TotalDesireColorer;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
 import org.opentrafficsim.road.gtu.lane.CollisionDetector;
 import org.opentrafficsim.road.gtu.lane.CollisionException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -88,10 +88,10 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType.PerceivedHeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType.PerceivedHeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.TaskHeadwayCollector;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
@@ -300,13 +300,13 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     private AnticipationRelianceScript()
     {
         super("Distraction", "Distraction simulation");
-        setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+        setGtuColorer(SwitchableGtuColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
                 .addColorer(new TaskColorer("car-following")).addColorer(new TaskColorer("lane-changing"))
                 .addColorer(new TaskSaturationColorer()).addColorer(new ReactionTimeColorer(Duration.instantiateSI(1.0)))
-                .addColorer(GtuTypeColorer.DEFAULT).addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(GtuTypeColorer.DEFAULT).addColorer(new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
                 .addColorer(
                         new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
-                .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
+                .addColorer(new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
                 .addColorer(new SynchronizationColorer())
                 .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.56), Duration.instantiateSI(2.4)))
                 .addColorer(new TotalDesireColorer()).addColorer(new IncentiveColorer(IncentiveRoute.class))
@@ -375,7 +375,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), carCategory, rightDemandPatternCar);
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), truckCategory, rightDemandPatternTruck);
         ODOptions odOptions = new ODOptions()
-                .set(ODOptions.GTU_TYPE, new DefaultGTUCharacteristicsGeneratorOD(new DistractionFactorySupplier()))
+                .set(ODOptions.GTU_TYPE, new DefaultGtuCharacteristicsGeneratorOD(new DistractionFactorySupplier()))
                 .set(ODOptions.INSTANT_LC, true);
         ODApplier.applyOD(network, od, odOptions);
 
@@ -592,13 +592,13 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
         /** {@inheritDoc} */
         @Override
-        public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtuCF,
+        public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtuCF,
                 final Parameters parameters) throws ParameterException, GtuException
         {
             try
             {
                 NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
                 Duration headway = leaders.collect(new TaskHeadwayCollector(gtuCF.getSpeed()));
                 return headway == null ? 0.0 : Math.exp(-headway.si / parameters.getParameter(HEXP).si);
             }
@@ -620,7 +620,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
         /** {@inheritDoc} */
         @Override
-        public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtuLC,
+        public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtuLC,
                 final Parameters parameters) throws ParameterException, GtuException
         {
             return Math.max(0.0,
@@ -646,7 +646,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public LanePerception generatePerception(final LaneBasedGTU gtu)
+        public LanePerception generatePerception(final LaneBasedGtu gtu)
         {
             Set<Task> tasksSet = new LinkedHashSet<>();
             if (AnticipationRelianceScript.this.tasks)
@@ -675,7 +675,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
             Estimation est = Try.assign(() -> this.estimation.draw(), "Probability exception while drawing estimation.");
             perception.addPerceptionCategory(
-                    new DirectNeighborsPerception(perception, new PerceivedHeadwayGTUType(est, Anticipation.CONSTANT_SPEED)));
+                    new DirectNeighborsPerception(perception, new PerceivedHeadwayGtuType(est, Anticipation.CONSTANT_SPEED)));
             perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
             return perception;
         }
@@ -707,7 +707,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     {
         /** {@inheritDoc} */
         @Override
-        public void manage(final Set<Task> tasksMan, final LanePerception perception, final LaneBasedGTU gtu,
+        public void manage(final Set<Task> tasksMan, final LanePerception perception, final LaneBasedGtu gtu,
                 final Parameters parameters) throws ParameterException, GtuException
         {
             Task primary = null;

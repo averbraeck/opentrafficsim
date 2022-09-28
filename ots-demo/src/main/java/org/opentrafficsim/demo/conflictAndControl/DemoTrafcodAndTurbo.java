@@ -20,7 +20,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -97,7 +97,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
             OTSAnimationPanel animationPanel =
                     new OTSAnimationPanel(junctionModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                            junctionModel, new DefaultSwitchableGTUColorer(), junctionModel.getNetwork());
+                            junctionModel, new DefaultSwitchableGtuColorer(), junctionModel.getNetwork());
             DemoTrafcodAndTurbo app = new DemoTrafcodAndTurbo("TrafCOD Turbo demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
@@ -167,7 +167,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                 // CrossSectionLink csLink = ((CrossSectionLink)
                 // this.network.getLink("WWW"));
                 // Lane lane = (Lane) csLink.getCrossSectionElement("RIGHT");
-                // GTUColorer gtuColorer = null;
+                // GtuColorer gtuColorer = null;
                 // setupBlock(lane, (OTSSimulatorInterface) this.simulator,
                 // gtuColorer );
 

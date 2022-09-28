@@ -11,7 +11,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
@@ -20,7 +20,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedAbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsUtil.DistanceGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
  * Perception of surrounding traffic on the own road, i.e. without crossing traffic.
@@ -45,27 +45,27 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     protected static final ParameterTypeLength LOOKBACK = ParameterTypes.LOOKBACK;
 
     /** Headway GTU type that should be used. */
-    private final HeadwayGTUType headwayGtuType;
+    private final HeadwayGtuType headwayGtuType;
 
     /** Headway GTU type that should be used to assess gaps. */
-    private final HeadwayGTUType headwayGtuTypeGap;
+    private final HeadwayGtuType headwayGtuTypeGap;
 
     /**
      * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGTUType; type of headway gtu to generate
+     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
      */
-    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGTUType headwayGtuType)
+    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {
         this(perception, headwayGtuType, headwayGtuType);
     }
 
     /**
      * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGTUType; type of headway gtu to generate
-     * @param headwayGtuTypeGap HeadwayGTUType; type of headway gtu to assess gaps
+     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
+     * @param headwayGtuTypeGap HeadwayGtuType; type of headway gtu to assess gaps
      */
-    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGTUType headwayGtuType,
-            final HeadwayGTUType headwayGtuTypeGap)
+    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType,
+            final HeadwayGtuType headwayGtuTypeGap)
     {
         super(perception);
         this.headwayGtuType = headwayGtuType;
@@ -81,7 +81,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** {@inheritDoc} */
     @Override
-    public final SortedSet<HeadwayGTU> getFirstLeaders(final LateralDirectionality lat)
+    public final SortedSet<HeadwayGtu> getFirstLeaders(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
@@ -91,9 +91,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * Computes the first leaders regarding splits.
      * @param lat LateralDirectionality; lateral directionality
-     * @return SortedSet&lt;HeadwayGTU&gt;; first leaders
+     * @return SortedSet&lt;HeadwayGtu&gt;; first leaders
      */
-    private SortedSet<HeadwayGTU> computeFirstLeaders(final LateralDirectionality lat)
+    private SortedSet<HeadwayGtu> computeFirstLeaders(final LateralDirectionality lat)
     {
         try
         {
@@ -111,7 +111,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** {@inheritDoc} */
     @Override
-    public final SortedSet<HeadwayGTU> getFirstFollowers(final LateralDirectionality lat)
+    public final SortedSet<HeadwayGtu> getFirstFollowers(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
@@ -121,9 +121,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * Computes the first followers regarding splits.
      * @param lat LateralDirectionality; lateral directionality
-     * @return SortedSet&lt;HeadwayGTU&gt;; first followers
+     * @return SortedSet&lt;HeadwayGtu&gt;; first followers
      */
-    private SortedSet<HeadwayGTU> computeFirstFollowers(final LateralDirectionality lat)
+    private SortedSet<HeadwayGtu> computeFirstFollowers(final LateralDirectionality lat)
     {
         try
         {
@@ -184,7 +184,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders(final RelativeLane lane)
     {
         Throw.whenNull(lane, "Lane may not be null.");
         return computeIfAbsent("leaders", () -> computeLeaders(lane), lane);
@@ -195,7 +195,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * @param lane RelativeLane; lane
      * @return perception iterable for leaders
      */
-    private PerceptionCollectable<HeadwayGTU, LaneBasedGTU> computeLeaders(final RelativeLane lane)
+    private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane)
     {
         try
         {
@@ -220,7 +220,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getFollowers(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getFollowers(final RelativeLane lane)
     {
         Throw.whenNull(lane, "Lane may not be null.");
         return computeIfAbsent("followers", () -> computeFollowers(lane), lane);
@@ -231,7 +231,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * @param lane RelativeLane; lane
      * @return perception iterable for followers
      */
-    private PerceptionCollectable<HeadwayGTU, LaneBasedGTU> computeFollowers(final RelativeLane lane)
+    private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane)
     {
         try
         {

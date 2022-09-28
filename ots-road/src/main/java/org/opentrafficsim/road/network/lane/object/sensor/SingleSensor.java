@@ -6,7 +6,7 @@ import org.djutils.event.TimedEventType;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
@@ -29,14 +29,14 @@ public interface SingleSensor extends Sensor, Comparable<SingleSensor>, LaneBase
      * <code>sensor.trigger(this);</code>.
      * @param gtu LaneBasedGtu; the GTU for which to carry out the trigger action.
      */
-    void trigger(LaneBasedGTU gtu);
+    void trigger(LaneBasedGtu gtu);
 
     /** @return The simulator. */
     OTSSimulatorInterface getSimulator();
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of a Sensor on a lane. <br>
-     * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE relativePosition}
+     * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGtu gtu, RelativePosition.TYPE relativePosition}
      */
     TimedEventType SENSOR_TRIGGER_EVENT = new TimedEventType("SENSOR.TRIGGER");
 

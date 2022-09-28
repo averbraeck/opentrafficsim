@@ -17,7 +17,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point;
 import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -91,8 +91,8 @@ public class HTMLAnimationPanel extends HTMLGridPanel implements EventListenerIn
     /** List of buttons in the right order. */
     private List<ToggleButtonInfo> toggleButtons = new ArrayList<>();
 
-    /** The switchableGTUColorer used to color the GTUs. */
-    private GTUColorer gtuColorer = null;
+    /** The switchableGtuColorer used to color the GTUs. */
+    private GtuColorer gtuColorer = null;
 
     /** the margin factor 'around' the extent. */
     public static final double EXTENT_MARGIN_FACTOR = 0.05;

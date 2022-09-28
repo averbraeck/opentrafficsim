@@ -9,8 +9,8 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 
 /**
@@ -32,17 +32,17 @@ public class LaneBasedCFLCTacticalPlannerFactory
     private static final long serialVersionUID = 20160811L;
 
     /** The car following model. */
-    private GTUFollowingModelOld carFollowingModel;
+    private GtuFollowingModelOld carFollowingModel;
 
     /** The lane change model. */
     private LaneChangeModel laneChangeModel;
 
     /**
      * Constructor with fixed stateless car-following and lane change model.
-     * @param carFollowingModel GTUFollowingModelOld; car following model
+     * @param carFollowingModel GtuFollowingModelOld; car following model
      * @param laneChangeModel LaneChangeModel; lane change model
      */
-    public LaneBasedCFLCTacticalPlannerFactory(final GTUFollowingModelOld carFollowingModel,
+    public LaneBasedCFLCTacticalPlannerFactory(final GtuFollowingModelOld carFollowingModel,
             final LaneChangeModel laneChangeModel)
     {
         this.carFollowingModel = carFollowingModel;
@@ -51,7 +51,7 @@ public class LaneBasedCFLCTacticalPlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedCFLCTacticalPlanner create(final LaneBasedGTU gtu) throws GtuException
+    public final LaneBasedCFLCTacticalPlanner create(final LaneBasedGtu gtu) throws GtuException
     {
         return new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, this.laneChangeModel, gtu);
     }

@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 
 /**
@@ -18,7 +18,7 @@ public interface LaneBasedStrategicalPlanner extends StrategicalPlanner
 
     /** {@inheritDoc} */
     @Override
-    LaneBasedGTU getGtu();
+    LaneBasedGtu getGtu();
 
     /** {@inheritDoc} */
     @Override

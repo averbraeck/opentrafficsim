@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
- * Extended version of FixedAccelerationModel. The addition is that this GTUFollowingModel stores a series of acceleration and
+ * Extended version of FixedAccelerationModel. The addition is that this GtuFollowingModel stores a series of acceleration and
  * duration values. Mostly used for testing.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -28,7 +28,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelMobil implements Serializable
+public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelMobil implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150206L;

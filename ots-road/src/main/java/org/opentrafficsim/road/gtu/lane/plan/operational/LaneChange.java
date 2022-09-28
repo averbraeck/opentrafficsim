@@ -24,7 +24,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -80,7 +80,7 @@ public class LaneChange implements Serializable
      * Constructor.
      * @param gtu LaneBasedGtu; gtu
      */
-    public LaneChange(final LaneBasedGTU gtu)
+    public LaneChange(final LaneBasedGtu gtu)
     {
         this.minimumLaneChangeDistance = gtu.getLength().times(MIN_LC_LENGTH_FACTOR);
     }
@@ -187,7 +187,7 @@ public class LaneChange implements Serializable
      * @return target lane of lane change
      * @throws OperationalPlanException If no lane change is being performed.
      */
-    public final RelativeLane getSecondLane(final LaneBasedGTU gtu) throws OperationalPlanException
+    public final RelativeLane getSecondLane(final LaneBasedGtu gtu) throws OperationalPlanException
     {
         Throw.when(!isChangingLane(), OperationalPlanException.class,
                 "Target lane is requested, but no lane change is being performed.");
@@ -222,7 +222,7 @@ public class LaneChange implements Serializable
      * @return OTSLine3D; path
      * @throws OTSGeometryException on path or shape error
      */
-    public final OTSLine3D getPath(final Duration timeStep, final LaneBasedGTU gtu, final DirectedLanePosition from,
+    public final OTSLine3D getPath(final Duration timeStep, final LaneBasedGtu gtu, final DirectedLanePosition from,
             final DirectedPoint startPosition, final Length planDistance, final LateralDirectionality laneChangeDirection)
             throws OTSGeometryException
     {
@@ -504,7 +504,7 @@ public class LaneChange implements Serializable
      * @param headway Headway; headway
      * @return boolean; whether the given GTU has sufficient space relative to a {@code Headway}
      */
-    public boolean checkRoom(final LaneBasedGTU gtu, final Headway headway)
+    public boolean checkRoom(final LaneBasedGtu gtu, final Headway headway)
     {
         if (this.desiredLaneChangeDuration == null)
         {

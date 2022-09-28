@@ -16,7 +16,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -63,7 +63,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
      * @param route Route; route of the GTU, may be {@code null}
      */
-    public AbstractPerceptionIterable(final LaneBasedGTU perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
+    public AbstractPerceptionIterable(final LaneBasedGtu perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
             final boolean downstream, final Length maxDistance, final RelativePosition relativePosition, final Route route)
     {
         super(perceivingGtu);

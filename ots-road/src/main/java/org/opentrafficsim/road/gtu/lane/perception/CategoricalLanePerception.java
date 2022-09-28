@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 
 /**
@@ -22,7 +22,7 @@ public class CategoricalLanePerception extends AbstractLanePerception
     /**
      * @param gtu LaneBasedGtu; GTU
      */
-    public CategoricalLanePerception(final LaneBasedGTU gtu)
+    public CategoricalLanePerception(final LaneBasedGtu gtu)
     {
         super(gtu);
     }
@@ -31,7 +31,7 @@ public class CategoricalLanePerception extends AbstractLanePerception
      * @param gtu LaneBasedGtu; GTU
      * @param mental Mental; Mental
      */
-    public CategoricalLanePerception(final LaneBasedGTU gtu, final Mental mental)
+    public CategoricalLanePerception(final LaneBasedGtu gtu, final Mental mental)
     {
         super(gtu, mental);
     }

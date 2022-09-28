@@ -39,12 +39,12 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -212,7 +212,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 Length gtuLength = new Length(17, LengthUnit.METER);
                 Length gtuWidth = new Length(2, LengthUnit.METER);
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
-                LaneBasedGTU gtu = new LaneBasedIndividualGTU("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed,
+                LaneBasedGtu gtu = new LaneBasedIndividualGtu("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed,
                         gtuLength.times(0.5), simulator, network);
                 Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(pos, LengthUnit.METER);
@@ -221,7 +221,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                         gtuPosition.getGtuDirection()));
                 Parameters parameters = DefaultTestParameters.create();
                 LaneChangeModel laneChangeModel = new Egoistic();
-                GTUFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(
+                GtuFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(
                         new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10, DurationUnit.SECOND));
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
@@ -231,7 +231,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 {
                     System.out.println("let op. InitialLongitudinalPositions: " + initialLongitudinalPositions);
                 }
-                ((AbstractLaneBasedGTU) gtu).init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
+                ((AbstractLaneBasedGtu) gtu).init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
                 if (initialPosition.plus(gtuLength.divide(2)).lt(a) || initialPosition.minus(gtuLength.divide(2)).gt(b))
                 {
                     assertEquals("event list is empty", 0, this.loggedEvents.size());

@@ -36,9 +36,9 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
@@ -195,7 +195,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
         // 1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d), laneChangeModel);
-        LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER),
+        LaneBasedIndividualGtu car = new LaneBasedIndividualGtu("ReferenceCar", gtuType, new Length(4, METER),
                 new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), this.simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, car), car);
@@ -203,7 +203,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         car.init(strategicalPlanner, initialLongitudinalPositions, new Speed(100, KM_PER_HOUR));
         car.getTacticalPlanner().getPerception().perceive();
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
-        sameLaneGTUs.add(new HeadwayGTUSimple(car.getId(), car.getGtuType(), Length.ZERO, Length.ZERO, car.getLength(),
+        sameLaneGTUs.add(new HeadwayGtuSimple(car.getId(), car.getGtuType(), Length.ZERO, Length.ZERO, car.getLength(),
                 car.getSpeed(), car.getAcceleration(), null));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
@@ -240,15 +240,15 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
             // new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d),
             // laneChangeModel);
-            LaneBasedIndividualGTU collisionCar =
-                    new LaneBasedIndividualGTU("LaneChangeBlockingCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
+            LaneBasedIndividualGtu collisionCar =
+                    new LaneBasedIndividualGtu("LaneChangeBlockingCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
                             new Speed(150, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, collisionCar), collisionCar);
             collisionCar.setParameters(parameters);
             collisionCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
-            HeadwayGTUSimple collisionHWGTU = new HeadwayGTUSimple(collisionCar.getId(), collisionCar.getGtuType(),
+            HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(collisionCar.getId(), collisionCar.getGtuType(),
                     new Length(pos - reference.getSI(), LengthUnit.SI), collisionCar.getLength(), collisionCar.getWidth(),
                     collisionCar.getSpeed(), collisionCar.getAcceleration(), null);
             preferredLaneGTUs.add(collisionHWGTU);
@@ -278,14 +278,14 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
             // new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d),
             // laneChangeModel);
-            LaneBasedIndividualGTU otherCar = new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, vehicleLength,
+            LaneBasedIndividualGtu otherCar = new LaneBasedIndividualGtu("OtherCarAt" + pos, gtuType, vehicleLength,
                     new Length(2, METER), new Speed(150, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, otherCar), otherCar);
             otherCar.setParameters(parameters);
             otherCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
-            HeadwayGTUSimple collisionHWGTU = new HeadwayGTUSimple(otherCar.getId(), otherCar.getGtuType(),
+            HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(otherCar.getId(), otherCar.getGtuType(),
                     new Length(pos - car.position(lanes[0], car.getReference()).getSI(), LengthUnit.SI), otherCar.getLength(),
                     otherCar.getWidth(), otherCar.getSpeed(), otherCar.getAcceleration(), null);
             preferredLaneGTUs.add(collisionHWGTU);

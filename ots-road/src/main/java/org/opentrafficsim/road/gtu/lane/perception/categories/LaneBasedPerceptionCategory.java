@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
@@ -13,7 +13,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface LaneBasedPerceptionCategory extends PerceptionCategory<LaneBasedGTU, LanePerception>
+public interface LaneBasedPerceptionCategory extends PerceptionCategory<LaneBasedGtu, LanePerception>
 {
     // implements type arguments
 }

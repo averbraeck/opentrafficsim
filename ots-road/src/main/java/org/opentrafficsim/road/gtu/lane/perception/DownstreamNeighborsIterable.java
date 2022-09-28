@@ -7,9 +7,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
  * Iterable to find downstream GTU's.<br>
@@ -39,7 +39,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>
+public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>
 {
 
     /** Margin in case of a left lane. */
@@ -49,7 +49,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
     private static final Length RIGHT = Length.instantiateSI(0.000001);
 
     /** Headway GTU type that should be used. */
-    private final HeadwayGTUType headwayGtuType;
+    private final HeadwayGtuType headwayGtuType;
 
     /** Added GTU's so far. */
     private final Set<String> ids = new LinkedHashSet<>();
@@ -70,12 +70,12 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
      * @param initialPosition Length; position on the root record
      * @param maxDistance Length; maximum distance to search
      * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
-     * @param headwayGtuType HeadwayGTUType; type of HeadwayGTU to return
+     * @param headwayGtuType HeadwayGtuType; type of HeadwayGtu to return
      * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
      * @param ignoreIfUpstream boolean; whether to ignore GTU that are partially upstream of a record
      */
-    public DownstreamNeighborsIterable(final LaneBasedGTU perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
-            final Length maxDistance, final RelativePosition relativePosition, final HeadwayGTUType headwayGtuType,
+    public DownstreamNeighborsIterable(final LaneBasedGtu perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
+            final Length maxDistance, final RelativePosition relativePosition, final HeadwayGtuType headwayGtuType,
             final RelativeLane lane, final boolean ignoreIfUpstream)
     {
         super(perceivingGtu, root, initialPosition, true, maxDistance, relativePosition, null);
@@ -93,7 +93,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
     protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
     {
         int n;
-        LaneBasedGTU next;
+        LaneBasedGtu next;
         Length pos;
         boolean plus = record.getDirection().isPlus();
         if (counter == null)
@@ -144,14 +144,14 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
 
     /** {@inheritDoc} */
     @Override
-    protected Length getDistance(final LaneBasedGTU object, final LaneRecord<?> record, final Length position)
+    protected Length getDistance(final LaneBasedGtu object, final LaneRecord<?> record, final Length position)
     {
         return record.getDistanceToPosition(position).minus(getDx());
     }
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
+    public HeadwayGtu perceive(final LaneBasedGtu perceivingGtu, final LaneBasedGtu object, final Length distance)
             throws GtuException, ParameterException
     {
         return this.headwayGtuType.createDownstreamGtu(perceivingGtu, object, distance);

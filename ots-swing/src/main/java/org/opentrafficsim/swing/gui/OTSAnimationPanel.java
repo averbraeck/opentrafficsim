@@ -42,7 +42,7 @@ import org.djutils.event.EventInterface;
 import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -98,10 +98,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /** Set of GIS layer names to toggle buttons. */
     private Map<String, JToggleButton> toggleGISButtons = new LinkedHashMap<>();
 
-    /** The switchableGTUColorer used to color the GTUs. */
-    private GTUColorer gtuColorer = null;
+    /** The switchableGtuColorer used to color the GTUs. */
+    private GtuColorer gtuColorer = null;
 
-    /** The ColorControlPanel that allows the user to operate the SwitchableGTUColorer. */
+    /** The ColorControlPanel that allows the user to operate the SwitchableGtuColorer. */
     private ColorControlPanel colorControlPanel = null;
 
     /** The coordinates of the cursor. */
@@ -151,13 +151,13 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param size Dimension; the size to be used for the animation.
      * @param simulator OTSAnimator; the simulator or animator of the model.
      * @param otsModel OTSModelInterface; the builder and rebuilder of the simulation, based on properties.
-     * @param gtuColorer GTUColorer; the colorer to use for the GTUs.
+     * @param gtuColorer GtuColorer; the colorer to use for the GTUs.
      * @param network OTSNetwork; network
      * @throws RemoteException when notification of the animation panel fails
      * @throws DSOLException when simulator does not implement AnimatorInterface
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSAnimator simulator,
-            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network)
+            final OTSModelInterface otsModel, final GtuColorer gtuColorer, final OTSNetwork network)
             throws RemoteException, DSOLException
     {
         super(simulator, otsModel);
@@ -657,11 +657,11 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     }
 
     /**
-     * Access the GTUColorer of this animation ControlPanel.
-     * @return GTUColorer the colorer used. If it is a SwitchableGTUColorer, the wrapper with the list will be returned, not the
+     * Access the GtuColorer of this animation ControlPanel.
+     * @return GtuColorer the colorer used. If it is a SwitchableGtuColorer, the wrapper with the list will be returned, not the
      *         actual colorer in use.
      */
-    public final GTUColorer getGTUColorer()
+    public final GtuColorer getGtuColorer()
     {
         return this.gtuColorer;
     }

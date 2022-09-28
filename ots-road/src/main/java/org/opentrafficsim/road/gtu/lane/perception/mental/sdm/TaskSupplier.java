@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.sdm;
 
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ConstantTask;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 
@@ -23,7 +23,7 @@ public interface TaskSupplier
      * @param gtu LaneBasedGtu; gtu
      * @return Task; task for given GTU
      */
-    Task getTask(LaneBasedGTU gtu);
+    Task getTask(LaneBasedGtu gtu);
 
     /**
      * Class that supplies a constant task.
@@ -49,7 +49,7 @@ public interface TaskSupplier
 
         /** {@inheritDoc} */
         @Override
-        public Task getTask(final LaneBasedGTU gtu)
+        public Task getTask(final LaneBasedGtu gtu)
         {
             return new ConstantTask(this.id, this.taskDemand);
         }

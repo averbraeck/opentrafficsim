@@ -23,7 +23,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * Utility for tactical planners to implement more precise (in terms of physics) vehicle control.
@@ -66,7 +66,7 @@ public final class Steering
      * @return actual operational plan
      * @throws ParameterException undefined parameter
      */
-    public static OperationalPlan fromReferencePlan(final LaneBasedGTU gtu, final Parameters params,
+    public static OperationalPlan fromReferencePlan(final LaneBasedGtu gtu, final Parameters params,
             final SteeringState steeringState, final OperationalPlan referencePlan, final FeedbackTable feedbackTable)
             throws ParameterException
     {

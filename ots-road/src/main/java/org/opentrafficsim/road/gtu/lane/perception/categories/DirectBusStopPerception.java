@@ -11,7 +11,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -73,7 +73,7 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
                         {
                             /** {@inheritDoc} */
                             @Override
-                            public HeadwayBusStop perceive(final LaneBasedGTU perceivingGtu, final BusStop busStop,
+                            public HeadwayBusStop perceive(final LaneBasedGtu perceivingGtu, final BusStop busStop,
                                     final Length distance)
                             {
                                 Set<String> conflictIds = new LinkedHashSet<>();

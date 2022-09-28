@@ -28,7 +28,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class IDMPlusOld extends AbstractGTUFollowingModelMobil implements Serializable
+public class IDMPlusOld extends AbstractGtuFollowingModelMobil implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140704L;

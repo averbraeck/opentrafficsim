@@ -17,9 +17,9 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
  * Utilities to perceive neighbors.
@@ -79,7 +79,7 @@ public final class NeighborsUtil
                  *                                             _ _ _ ___________|_______|__ _ _ _ 
                  *                                                     (--------) negative distance
                  */
-                LaneBasedGTU down = record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dxSearch),
+                LaneBasedGtu down = record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dxSearch),
                         record.getDirection(), otherRelativePosition, now);
                 if (down != null)
                 {
@@ -162,7 +162,7 @@ public final class NeighborsUtil
                  * _ _ _ __|_______|___________ _ _ _ 
                  *         (----------------) distance
                  */
-                LaneBasedGTU up = record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dxSearch),
+                LaneBasedGtu up = record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dxSearch),
                         record.getDirection(), otherRelativePosition, now);
                 if (up != null)
                 {
@@ -209,16 +209,16 @@ public final class NeighborsUtil
     }
 
     /**
-     * Translation from a set of {@code DistanceGTU}'s, to a sorted set of {@code HeadwayGTU}'s. This bridges the gap between a
+     * Translation from a set of {@code DistanceGTU}'s, to a sorted set of {@code HeadwayGtu}'s. This bridges the gap between a
      * raw network search, and the perceived result.
      * @param base SortedSet&lt;DistanceGTU&gt;; base set of GTU's at distance
-     * @param headwayGtuType HeadwayGTUType; headway type for perceived GTU's
+     * @param headwayGtuType HeadwayGtuType; headway type for perceived GTU's
      * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @param downstream boolean; whether the GTU's are downstream
-     * @return SortedSet&lt;HeadwayGTU&gt;; set of perceived GTU's
+     * @return SortedSet&lt;HeadwayGtu&gt;; set of perceived GTU's
      */
-    public static SortedSet<HeadwayGTU> perceive(final SortedSet<DistanceGTU> base, final HeadwayGTUType headwayGtuType,
-            final LaneBasedGTU perceivingGtu, final boolean downstream)
+    public static SortedSet<HeadwayGtu> perceive(final SortedSet<DistanceGTU> base, final HeadwayGtuType headwayGtuType,
+            final LaneBasedGtu perceivingGtu, final boolean downstream)
     {
         return new SortedNeighborsSet(base, headwayGtuType, perceivingGtu, downstream);
     }
@@ -238,7 +238,7 @@ public final class NeighborsUtil
     {
 
         /** GTU. */
-        private LaneBasedGTU gtu;
+        private LaneBasedGtu gtu;
 
         /** Distance. */
         private Length distance;
@@ -248,7 +248,7 @@ public final class NeighborsUtil
          * @param gtu LaneBasedGtu; GTU
          * @param distance Length; distance
          */
-        DistanceGTU(final LaneBasedGTU gtu, final Length distance)
+        DistanceGTU(final LaneBasedGtu gtu, final Length distance)
         {
             this.gtu = gtu;
             this.distance = distance;
@@ -258,7 +258,7 @@ public final class NeighborsUtil
          * Returns the GTU.
          * @return LaneBasedGtu; GTU
          */
-        public LaneBasedGTU getGTU()
+        public LaneBasedGtu getGTU()
         {
             return this.gtu;
         }
@@ -281,7 +281,7 @@ public final class NeighborsUtil
     }
 
     /**
-     * Translation from a set of {@code DistanceGTU}'s, to a sorted set of {@code HeadwayGTU}'s. This bridges the gap between a
+     * Translation from a set of {@code DistanceGTU}'s, to a sorted set of {@code HeadwayGtu}'s. This bridges the gap between a
      * raw network search, and the perceived result.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -292,33 +292,33 @@ public final class NeighborsUtil
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class SortedNeighborsSet implements SortedSet<HeadwayGTU>
+    private static class SortedNeighborsSet implements SortedSet<HeadwayGtu>
     {
 
         /** Base set of GTU's at distance. */
         private final SortedSet<DistanceGTU> base;
 
         /** Headway type for perceived GTU's. */
-        private final HeadwayGTUType headwayGtuType;
+        private final HeadwayGtuType headwayGtuType;
 
         /** Perceiving GTU. */
-        private final LaneBasedGTU perceivingGtu;
+        private final LaneBasedGtu perceivingGtu;
 
         /** Whether the GTU's are downstream. */
         private final boolean downstream;
 
         /** Contains all GTU's perceived so far, to prevent re-perception. */
-        private final SortedMap<String, HeadwayGTU> all = new TreeMap<>();
+        private final SortedMap<String, HeadwayGtu> all = new TreeMap<>();
 
         /**
          * Constructor.
          * @param base SortedSet&lt;DistanceGTU&gt;; base set of GTU's at distance
-         * @param headwayGtuType HeadwayGTUType; headway type for perceived GTU's
+         * @param headwayGtuType HeadwayGtuType; headway type for perceived GTU's
          * @param perceivingGtu LaneBasedGtu; perceiving GTU
          * @param downstream boolean; whether the GTU's are downstream
          */
-        SortedNeighborsSet(final SortedSet<DistanceGTU> base, final HeadwayGTUType headwayGtuType,
-                final LaneBasedGTU perceivingGtu, final boolean downstream)
+        SortedNeighborsSet(final SortedSet<DistanceGTU> base, final HeadwayGtuType headwayGtuType,
+                final LaneBasedGtu perceivingGtu, final boolean downstream)
         {
             this.base = base;
             this.headwayGtuType = headwayGtuType;
@@ -345,11 +345,11 @@ public final class NeighborsUtil
          */
         private void getAll()
         {
-            Iterator<HeadwayGTU> it = iterator();
+            Iterator<HeadwayGtu> it = iterator();
             while (it.hasNext())
             {
                 @SuppressWarnings("unused")
-                HeadwayGTU gtu = it.next(); // iterator creates all HeadwayGTU's
+                HeadwayGtu gtu = it.next(); // iterator creates all HeadwayGtu's
             }
         }
 
@@ -363,9 +363,9 @@ public final class NeighborsUtil
 
         /** {@inheritDoc} */
         @Override
-        public Iterator<HeadwayGTU> iterator()
+        public Iterator<HeadwayGtu> iterator()
         {
-            return new Iterator<HeadwayGTU>()
+            return new Iterator<HeadwayGtu>()
             {
                 @SuppressWarnings("synthetic-access")
                 private Iterator<DistanceGTU> it = SortedNeighborsSet.this.base.iterator();
@@ -378,14 +378,14 @@ public final class NeighborsUtil
 
                 @SuppressWarnings("synthetic-access")
                 @Override
-                public HeadwayGTU next()
+                public HeadwayGtu next()
                 {
                     DistanceGTU next = this.it.next();
                     if (next == null)
                     {
                         throw new ConcurrentModificationException();
                     }
-                    HeadwayGTU out = SortedNeighborsSet.this.all.get(next.getGTU().getId());
+                    HeadwayGtu out = SortedNeighborsSet.this.all.get(next.getGTU().getId());
                     if (out == null)
                     {
                         out = Try.assign(() -> SortedNeighborsSet.this.headwayGtuType.createHeadwayGtu(
@@ -416,7 +416,7 @@ public final class NeighborsUtil
 
         /** {@inheritDoc} */
         @Override
-        public boolean add(final HeadwayGTU e)
+        public boolean add(final HeadwayGtu e)
         {
             throw new UnsupportedOperationException();
         }
@@ -438,7 +438,7 @@ public final class NeighborsUtil
 
         /** {@inheritDoc} */
         @Override
-        public boolean addAll(final Collection<? extends HeadwayGTU> c)
+        public boolean addAll(final Collection<? extends HeadwayGtu> c)
         {
             throw new UnsupportedOperationException();
         }
@@ -466,7 +466,7 @@ public final class NeighborsUtil
 
         /** {@inheritDoc} */
         @Override
-        public Comparator<? super HeadwayGTU> comparator()
+        public Comparator<? super HeadwayGtu> comparator()
         {
             return null;
         }
@@ -476,7 +476,7 @@ public final class NeighborsUtil
          * @param element HeadwayGtu; perceived GTU
          * @return DistanceGtu; pertaining to given GTU
          */
-        private DistanceGTU getGTU(final HeadwayGTU element)
+        private DistanceGTU getGTU(final HeadwayGtu element)
         {
             for (DistanceGTU distanceGtu : this.base)
             {
@@ -490,7 +490,7 @@ public final class NeighborsUtil
 
         /** {@inheritDoc} */
         @Override
-        public SortedSet<HeadwayGTU> subSet(final HeadwayGTU fromElement, final HeadwayGTU toElement)
+        public SortedSet<HeadwayGtu> subSet(final HeadwayGtu fromElement, final HeadwayGtu toElement)
         {
             return new SortedNeighborsSet(this.base.subSet(getGTU(fromElement), getGTU(toElement)), this.headwayGtuType,
                     this.perceivingGtu, this.downstream);
@@ -498,7 +498,7 @@ public final class NeighborsUtil
 
         /** {@inheritDoc} */
         @Override
-        public SortedSet<HeadwayGTU> headSet(final HeadwayGTU toElement)
+        public SortedSet<HeadwayGtu> headSet(final HeadwayGtu toElement)
         {
             return new SortedNeighborsSet(this.base.headSet(getGTU(toElement)), this.headwayGtuType, this.perceivingGtu,
                     this.downstream);
@@ -506,7 +506,7 @@ public final class NeighborsUtil
 
         /** {@inheritDoc} */
         @Override
-        public SortedSet<HeadwayGTU> tailSet(final HeadwayGTU fromElement)
+        public SortedSet<HeadwayGtu> tailSet(final HeadwayGtu fromElement)
         {
             return new SortedNeighborsSet(this.base.tailSet(getGTU(fromElement)), this.headwayGtuType, this.perceivingGtu,
                     this.downstream);
@@ -514,14 +514,14 @@ public final class NeighborsUtil
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU first()
+        public HeadwayGtu first()
         {
             return iterator().next();
         }
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU last()
+        public HeadwayGtu last()
         {
             getAll();
             return this.all.get(this.all.lastKey());

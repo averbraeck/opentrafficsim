@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.animation.ColorInterpolator;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 
@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class SocialPressureColorer implements GTUColorer
+public class SocialPressureColorer implements GtuColorer
 {
 
     /** The legend. */

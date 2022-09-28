@@ -502,8 +502,8 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
             new MetaData("GTU animation removed", "GTU animation", new ObjectDescriptor("GTU", "GTU", Gtu.class)));
 
     /**
-     * The timed event type for pub/sub indicating the addition of an GTUGenerator implementing object. <br>
-     * Payload: AbstractGTUGenerator object (not an array, just an Object) <br>
+     * The timed event type for pub/sub indicating the addition of an GtuGenerator implementing object. <br>
+     * Payload: AbstractGtuGenerator object (not an array, just an Object) <br>
      * TODO: there seems to be no specific class or interface for these that can be specified in the ObjectDescriptor
      */
     TimedEventType ANIMATION_GENERATOR_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.GENERATOR.ADD",
@@ -511,8 +511,8 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
                     new ObjectDescriptor("GTU generator animation", "Abstract GTU generator", Serializable.class)));
 
     /**
-     * The timed event type for pub/sub indicating the removal of an GTUGenerator implementing object. <br>
-     * Payload: AbstractGTUGenerator object (not an array, just an Object) <br>
+     * The timed event type for pub/sub indicating the removal of an GtuGenerator implementing object. <br>
+     * Payload: AbstractGtuGenerator object (not an array, just an Object) <br>
      * TODO: there seems to be no specific class or interface for these that can be specified in the ObjectDescriptor
      */
     TimedEventType ANIMATION_GENERATOR_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.GENERATOR.REMOVE",
@@ -616,14 +616,14 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
             new MetaData("GTU removed", "GTU removed", new ObjectDescriptor("GTU id", "GTU id", String.class)));
 
     /**
-     * The timed event type for pub/sub indicating the addition of a GTUGenerator to the network. <br>
+     * The timed event type for pub/sub indicating the addition of a GtuGenerator to the network. <br>
      * Payload: String generatorName (not an array, just a String)
      */
     TimedEventType GENERATOR_ADD_EVENT = new TimedEventType("NETWORK.GENERATOR.ADD", new MetaData("GTU generator added",
             "GTU generator added", new ObjectDescriptor("GTU generator name", "GTU generator name", String.class)));
 
     /**
-     * The timed event type for pub/sub indicating the removal of a GTUGenerator from the network. <br>
+     * The timed event type for pub/sub indicating the removal of a GtuGenerator from the network. <br>
      * Payload: String generatorName (not an array, just a String)
      */
     TimedEventType GENERATOR_REMOVE_EVENT = new TimedEventType("NETWORK.GENERATOR.REMOVE", new MetaData("GTU generator removed",

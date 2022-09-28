@@ -20,7 +20,7 @@ public interface VehicleModel
     VehicleModel NONE = new VehicleModel()
     {
         @Override
-        public Acceleration boundAcceleration(final Acceleration acceleration, final LaneBasedGTU gtu)
+        public Acceleration boundAcceleration(final Acceleration acceleration, final LaneBasedGtu gtu)
         {
             return acceleration;
         }
@@ -37,7 +37,7 @@ public interface VehicleModel
     VehicleModel MINMAX = new VehicleModel()
     {
         @Override
-        public Acceleration boundAcceleration(final Acceleration acceleration, final LaneBasedGTU gtu)
+        public Acceleration boundAcceleration(final Acceleration acceleration, final LaneBasedGtu gtu)
         {
             return acceleration.si > gtu.getMaximumDeceleration().si
                     ? (acceleration.si < gtu.getMaximumAcceleration().si ? acceleration : gtu.getMaximumAcceleration())
@@ -58,7 +58,7 @@ public interface VehicleModel
      * @param gtu LaneBasedGtu; gtu
      * @return Acceleration; possible acceleration
      */
-    Acceleration boundAcceleration(Acceleration acceleration, LaneBasedGTU gtu);
+    Acceleration boundAcceleration(Acceleration acceleration, LaneBasedGtu gtu);
 
     /**
      * GTU mass.
@@ -109,7 +109,7 @@ public interface VehicleModel
 
         /** {@inheritDoc} */
         @Override
-        public Acceleration boundAcceleration(final Acceleration acceleration, final LaneBasedGTU gtu)
+        public Acceleration boundAcceleration(final Acceleration acceleration, final LaneBasedGtu gtu)
         {
             return MINMAX.boundAcceleration(acceleration, gtu);
         }

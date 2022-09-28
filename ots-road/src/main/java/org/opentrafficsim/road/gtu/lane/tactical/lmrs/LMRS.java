@@ -13,7 +13,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
@@ -71,7 +71,7 @@ public class LMRS extends AbstractIncentivesTacticalPlanner implements DesireBas
      * @param gapAcceptance GapAcceptance; gap-acceptance
      * @param tailgating Tailgating; tail gating
      */
-    public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception,
+    public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu, final LanePerception lanePerception,
             final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
             final Tailgating tailgating)
     {

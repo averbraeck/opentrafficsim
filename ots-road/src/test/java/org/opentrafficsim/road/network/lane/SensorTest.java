@@ -26,9 +26,9 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGtuFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -105,10 +105,10 @@ public class SensorTest implements UNITS
 
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(fas, null);
-        LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed,
+        LaneBasedIndividualGtu car = new LaneBasedIndividualGtu(carID, gtuType, carLength, carWidth, maximumSpeed,
                 carLength.times(0.5), simulator, (OTSRoadNetwork) network);
         LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
+                new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));
@@ -172,7 +172,7 @@ class TriggerSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public void triggerResponse(final LaneBasedGTU gtu)
+    public void triggerResponse(final LaneBasedGtu gtu)
     {
         // TODO check that the sensor is triggered at the right time.
     }

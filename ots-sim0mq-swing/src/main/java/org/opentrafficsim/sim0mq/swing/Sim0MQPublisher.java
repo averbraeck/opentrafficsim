@@ -31,7 +31,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.decoderdumper.HexDumper;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -248,7 +248,7 @@ public final class Sim0MQPublisher
             this.animationPanel = new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
                     animator, this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
             new OTSSimulationApplication<Sim0MQOTSModel>(this.model, this.animationPanel);
-            DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGTUColorer());
+            DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGtuColorer());
             JFrame frame = (JFrame) this.animationPanel.getParent().getParent().getParent();
             frame.setExtendedState(Frame.NORMAL);
             frame.setSize(new Dimension(1100, 1000));

@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -67,7 +67,7 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo, final HeadwayGTU leader) throws ParameterException
+            final Speed speed, final SpeedLimitInfo speedLimitInfo, final HeadwayGtu leader) throws ParameterException
     {
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, new PerceptionIterableSet<>(leader));
     }

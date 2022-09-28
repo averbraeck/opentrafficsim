@@ -31,7 +31,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
@@ -92,7 +92,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePosition is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGTU gtu, final Length distance,
+    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGtu gtu, final Length distance,
             final Time startTime, final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
             final Acceleration maxDeceleration) throws OperationalPlanException, OTSGeometryException
     {
@@ -148,7 +148,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGTU gtu, final Length distance,
+    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGtu gtu, final Length distance,
             final Time startTime, final Speed startSpeed, final Speed endSpeed)
             throws OperationalPlanException, OTSGeometryException
     {
@@ -172,7 +172,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildMaximumAccelerationPlan(final LaneBasedGTU gtu, final Length distance,
+    public static LaneBasedOperationalPlan buildMaximumAccelerationPlan(final LaneBasedGtu gtu, final Length distance,
             final Time startTime, final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration,
             final Acceleration deceleration) throws OperationalPlanException, OTSGeometryException
     {
@@ -259,7 +259,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildAccelerationPlan(final LaneBasedGTU gtu, final Time startTime,
+    public static LaneBasedOperationalPlan buildAccelerationPlan(final LaneBasedGtu gtu, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final boolean deviative)
             throws OperationalPlanException, OTSGeometryException
     {
@@ -287,7 +287,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @return OTSLine3D; path along lane center lines
      * @throws OTSGeometryException when any of the OTSLine3D operations fails
      */
-    public static OTSLine3D createPathAlongCenterLine(final LaneBasedGTU gtu, final Length distance) throws OTSGeometryException
+    public static OTSLine3D createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OTSGeometryException
     {
         // if (gtu.getId().equals("1669") && gtu.getSimulator().getSimulatorTime().si >= 2508.9)
         // {
@@ -463,7 +463,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      *             first lane
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGTU gtu,
+    public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGtu gtu,
             final LateralDirectionality laneChangeDirectionality, final DirectedPoint startPosition, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final LaneChange laneChange)
             throws OperationalPlanException, OTSGeometryException
@@ -578,7 +578,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @throws NetworkException network exception
      * @throws OperationalPlanException operational plan exeption
      */
-    public static LaneBasedOperationalPlan buildPlanFromSimplePlan(final LaneBasedGTU gtu, final Time startTime,
+    public static LaneBasedOperationalPlan buildPlanFromSimplePlan(final LaneBasedGtu gtu, final Time startTime,
             final SimpleOperationalPlan simplePlan, final LaneChange laneChange)
             throws ParameterException, GtuException, NetworkException, OperationalPlanException
     {
@@ -633,7 +633,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @param laneChangeDirection LateralDirectionality; lane change direction
      * @throws SimRuntimeException on bad time
      */
-    public static void scheduleLaneChangeFinalization(final LaneBasedGTU gtu, final Length distance,
+    public static void scheduleLaneChangeFinalization(final LaneBasedGtu gtu, final Length distance,
             final LateralDirectionality laneChangeDirection) throws SimRuntimeException
     {
         Time time = gtu.getOperationalPlan().timeAtDistance(distance);
@@ -661,7 +661,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildStopPlan(final LaneBasedGTU gtu, final Length distance, final Time startTime,
+    public static LaneBasedOperationalPlan buildStopPlan(final LaneBasedGtu gtu, final Length distance, final Time startTime,
             final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException, OTSGeometryException
     {
         return buildMaximumAccelerationPlan(gtu, distance, startTime, startSpeed, new Speed(0.0, SpeedUnit.SI),

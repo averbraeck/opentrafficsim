@@ -41,11 +41,11 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListenerInter
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(LaneBasedGTU.LANEBASED_MOVE_EVENT))
+        if (event.getType().equals(LaneBasedGtu.LANEBASED_MOVE_EVENT))
         {
             try
             {
-                checkMove((LaneBasedGTU) event.getSourceId());
+                checkMove((LaneBasedGtu) event.getSourceId());
             }
             catch (Exception ex)
             {
@@ -54,11 +54,11 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListenerInter
         }
         else if (event.getType().equals(Network.GTU_ADD_EVENT))
         {
-            this.network.getGTU((String) event.getContent()).addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+            this.network.getGTU((String) event.getContent()).addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
         }
         else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
         {
-            this.network.getGTU((String) event.getContent()).removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+            this.network.getGTU((String) event.getContent()).removeListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
         }
         else
         {
@@ -71,6 +71,6 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListenerInter
      * @param gtu LaneBasedGtu; GTU.
      * @throws Exception thrown when something is not all right
      */
-    public abstract void checkMove(LaneBasedGTU gtu) throws Exception;
+    public abstract void checkMove(LaneBasedGtu gtu) throws Exception;
 
 }

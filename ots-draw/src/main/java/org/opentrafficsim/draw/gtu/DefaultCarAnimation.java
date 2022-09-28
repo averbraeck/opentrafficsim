@@ -12,17 +12,17 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -38,14 +38,14 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
-        implements ClonableRenderable2DInterface<LaneBasedGTU>, Serializable
+public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu>
+        implements ClonableRenderable2DInterface<LaneBasedGtu>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
 
-    /** The GTUColorer that determines the fill color for the car. */
-    private GTUColorer gtuColorer = new DefaultSwitchableGTUColorer();
+    /** The GtuColorer that determines the fill color for the car. */
+    private GtuColorer gtuColorer = new DefaultSwitchableGtuColorer();
 
     /** the Text object to destroy when the GTU animation is destroyed. */
     private Text text;
@@ -84,7 +84,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator)
+    public DefaultCarAnimation(final LaneBasedGtu gtu, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         this(gtu, simulator, null);
@@ -94,18 +94,18 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu LaneBasedGtu; the Car to draw
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
-     * @param gtuColorer GTUColorer; the GTUColorer that determines what fill color to use
+     * @param gtuColorer GtuColorer; the GtuColorer that determines what fill color to use
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator, final GTUColorer gtuColorer)
+    public DefaultCarAnimation(final LaneBasedGtu gtu, final OTSSimulatorInterface simulator, final GtuColorer gtuColorer)
             throws NamingException, RemoteException
     {
         super(gtu, simulator);
         this.hashCode = gtu.hashCode();
         if (null == gtuColorer)
         {
-            this.gtuColorer = new IDGTUColorer();
+            this.gtuColorer = new IdGtuColorer();
         }
         else
         {
@@ -124,19 +124,19 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     }
 
     /**
-     * Replace the GTUColorer.
-     * @param newGTUColorer GTUColorer; the GTUColorer to use from now on
+     * Replace the GtuColorer.
+     * @param newGtuColorer GtuColorer; the GtuColorer to use from now on
      */
-    public final void setGTUColorer(final GTUColorer newGTUColorer)
+    public final void setGtuColorer(final GtuColorer newGtuColorer)
     {
-        this.gtuColorer = newGTUColorer;
+        this.gtuColorer = newGtuColorer;
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        final LaneBasedGTU gtu = getSource();
+        final LaneBasedGtu gtu = getSource();
         if (this.rectangle == null)
         {
             // set shapes, this is done in paint() and not the constructor, as the super constructor binds to context causing
@@ -237,7 +237,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<LaneBasedGTU> clone(final LaneBasedGTU newSource,
+    public ClonableRenderable2DInterface<LaneBasedGtu> clone(final LaneBasedGtu newSource,
             final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
@@ -327,7 +327,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
-            final LaneBasedIndividualGTU car = (LaneBasedIndividualGTU) getSource();
+            final LaneBasedIndividualGtu car = (LaneBasedIndividualGtu) getSource();
 
             if (car.isDestroyed())
             {
@@ -355,7 +355,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         public DirectedPoint getLocation()
         {
             // draw always on top, and not upside down.
-            DirectedPoint p = ((LaneBasedIndividualGTU) getSource()).getLocation();
+            DirectedPoint p = ((LaneBasedIndividualGtu) getSource()).getLocation();
             double a = Angle.normalizePi(p.getRotZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {

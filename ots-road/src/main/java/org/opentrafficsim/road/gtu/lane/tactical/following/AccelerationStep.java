@@ -31,7 +31,7 @@ public class AccelerationStep implements Serializable
     private final Duration duration;
 
     /**
-     * Create a new GTUFollowingModelResult.
+     * Create a new GtuFollowingModelResult.
      * @param acceleration Acceleration; computed acceleration
      * @param validUntil Time; time when this result expires
      * @param duration Duration; duration of the time step

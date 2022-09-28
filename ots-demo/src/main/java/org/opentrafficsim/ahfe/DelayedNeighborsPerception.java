@@ -25,14 +25,14 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborTriplet;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -84,16 +84,16 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
     private Time rearrangeTime;
 
     /** Set of followers per relative lane. */
-    private final Map<RelativeLane, PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> followers = new LinkedHashMap<>();
+    private final Map<RelativeLane, PerceptionCollectable<HeadwayGtu, LaneBasedGtu>> followers = new LinkedHashMap<>();
 
     /** Set of leaders per relative lane. */
-    private final Map<RelativeLane, PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> leaders = new LinkedHashMap<>();
+    private final Map<RelativeLane, PerceptionCollectable<HeadwayGtu, LaneBasedGtu>> leaders = new LinkedHashMap<>();
 
     /** Set of first followers per lane upstream of merge per lateral direction, i.e. in the left or right lane. */
-    private final Map<LateralDirectionality, SortedSet<HeadwayGTU>> firstFollowers = new LinkedHashMap<>();
+    private final Map<LateralDirectionality, SortedSet<HeadwayGtu>> firstFollowers = new LinkedHashMap<>();
 
     /** Set of first leaders per lane downstream of split per lateral direction, i.e. in the left or right lane. */
-    private final Map<LateralDirectionality, SortedSet<HeadwayGTU>> firstLeaders = new LinkedHashMap<>();
+    private final Map<LateralDirectionality, SortedSet<HeadwayGtu>> firstLeaders = new LinkedHashMap<>();
 
     /** Whether a GTU is alongside per lateral direction, i.e. in the left or right lane. */
     private final Map<LateralDirectionality, Boolean> gtuAlongside = new LinkedHashMap<>();
@@ -116,7 +116,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         try
         {
             this.norm = new DistNormal(perception.getGtu().getSimulator().getModel().getStream("perception"));
-            perception.getGtu().addListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
+            perception.getGtu().addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
         }
         catch (GtuException | RemoteException exception)
         {
@@ -207,12 +207,12 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                     boolean gtuAlongSide = getInfo(NeighborsInfoType.getBooleanType(GTUALONGSIDE), lane).getObject();
 
                     // followers
-                    SortedSet<HeadwayGTU> firstFollowersSet = new TreeSet<>();
+                    SortedSet<HeadwayGtu> firstFollowersSet = new TreeSet<>();
                     this.firstFollowers.put(lane.getLateralDirectionality(), firstFollowersSet);
-                    TimeStampedObject<SortedSet<HeadwayGTU>> delayedFirstFollowers =
+                    TimeStampedObject<SortedSet<HeadwayGtu>> delayedFirstFollowers =
                             getInfo(NeighborsInfoType.getSortedSetType(FIRSTFOLLOWERS), lane);
                     Duration d = time.minus(delayedFirstFollowers.getTimestamp()).plus(ta);
-                    for (HeadwayGTU gtu : delayedFirstFollowers.getObject())
+                    for (HeadwayGtu gtu : delayedFirstFollowers.getObject())
                     {
                         NeighborTriplet info = this.anticipation.anticipate(erroneousTriplet(gtu.getDistance().neg(),
                                 gtu.getSpeed(), gtu.getAcceleration(), getError(gtu.getId(), taue, dt), distanceError,
@@ -228,12 +228,12 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                     }
 
                     // leaders
-                    SortedSet<HeadwayGTU> firstLeaderssSet = new TreeSet<>();
+                    SortedSet<HeadwayGtu> firstLeaderssSet = new TreeSet<>();
                     this.firstLeaders.put(lane.getLateralDirectionality(), firstLeaderssSet);
-                    TimeStampedObject<SortedSet<HeadwayGTU>> delayedFirstLeaders =
+                    TimeStampedObject<SortedSet<HeadwayGtu>> delayedFirstLeaders =
                             getInfo(NeighborsInfoType.getSortedSetType(FIRSTLEADERS), lane);
                     d = time.minus(delayedFirstLeaders.getTimestamp()).plus(ta);
-                    for (HeadwayGTU gtu : delayedFirstLeaders.getObject())
+                    for (HeadwayGtu gtu : delayedFirstLeaders.getObject())
                     {
                         NeighborTriplet info = this.anticipation.anticipate(erroneousTriplet(gtu.getDistance(), gtu.getSpeed(),
                                 gtu.getAcceleration(), getError(gtu.getId(), taue, dt), distanceError, speedError,
@@ -253,22 +253,22 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
 
                 // initiate sets
-                SortedSetPerceptionIterable<HeadwayGTU> followersSet =
+                SortedSetPerceptionIterable<HeadwayGtu> followersSet =
                         new SortedSetPerceptionIterable<>((OTSRoadNetwork) getPerception().getGtu().getReferencePosition()
                                 .getLane().getParentLink().getNetwork());
                 this.followers.put(lane, followersSet);
-                SortedSetPerceptionIterable<HeadwayGTU> leadersSet =
+                SortedSetPerceptionIterable<HeadwayGtu> leadersSet =
                         new SortedSetPerceptionIterable<>((OTSRoadNetwork) getPerception().getGtu().getReferencePosition()
                                 .getLane().getParentLink().getNetwork());
                 this.leaders.put(lane, leadersSet);
 
                 // followers
-                TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> delayedFollowers =
+                TimeStampedObject<PerceptionCollectable<HeadwayGtu, LaneBasedGtu>> delayedFollowers =
                         getInfo(NeighborsInfoType.getIterableType(FOLLOWERS), lane);
                 Duration d = time.minus(delayedFollowers.getTimestamp()).plus(ta);
 
-                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> perc = delayedFollowers.getObject();
-                for (HeadwayGTU gtu : delayedFollowers.getObject())
+                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> perc = delayedFollowers.getObject();
+                for (HeadwayGtu gtu : delayedFollowers.getObject())
                 {
                     NeighborTriplet info = this.anticipation.anticipate(
                             erroneousTriplet(gtu.getDistance().neg(), gtu.getSpeed(), gtu.getAcceleration(),
@@ -286,10 +286,10 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
 
                 // leaders
-                TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> delayedLeaders =
+                TimeStampedObject<PerceptionCollectable<HeadwayGtu, LaneBasedGtu>> delayedLeaders =
                         getInfo(NeighborsInfoType.getIterableType(LEADERS), lane);
                 d = time.minus(delayedLeaders.getTimestamp()).plus(ta);
-                for (HeadwayGTU gtu : delayedLeaders.getObject())
+                for (HeadwayGtu gtu : delayedLeaders.getObject())
                 {
 
                     NeighborTriplet info = this.anticipation.anticipate(
@@ -433,7 +433,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public final SortedSet<HeadwayGTU> getFirstLeaders(final LateralDirectionality lat)
+    public final SortedSet<HeadwayGtu> getFirstLeaders(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         rearrangeNeighbors();
@@ -442,7 +442,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public final SortedSet<HeadwayGTU> getFirstFollowers(final LateralDirectionality lat)
+    public final SortedSet<HeadwayGtu> getFirstFollowers(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         rearrangeNeighbors();
@@ -470,7 +470,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders(final RelativeLane lane)
     {
         rearrangeNeighbors();
         return this.leaders.get(lane);
@@ -478,7 +478,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getFollowers(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getFollowers(final RelativeLane lane)
     {
         rearrangeNeighbors();
         return this.followers.get(lane);

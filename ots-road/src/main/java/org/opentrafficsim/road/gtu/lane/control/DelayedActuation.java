@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * Delays the actuation of acceleration. This is not part of the vehicle model as that is used for both human and automated
@@ -25,7 +25,7 @@ public interface DelayedActuation
     {
         /** {@inheritDoc} */
         @Override
-        public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGTU gtu)
+        public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGtu gtu)
         {
             return desiredAcceleration;
         }
@@ -40,7 +40,7 @@ public interface DelayedActuation
     {
         /** {@inheritDoc} */
         @Override
-        public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGTU gtu)
+        public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGtu gtu)
         {
             // TODO: numerical implementation of tau rule
             return desiredAcceleration.minus(gtu.getAcceleration());
@@ -53,6 +53,6 @@ public interface DelayedActuation
      * @param gtu LaneBasedGtu; gtu
      * @return Acceleration; delayed acceleration
      */
-    Acceleration delayActuation(Acceleration desiredAcceleration, LaneBasedGTU gtu);
+    Acceleration delayActuation(Acceleration desiredAcceleration, LaneBasedGtu gtu);
 
 }

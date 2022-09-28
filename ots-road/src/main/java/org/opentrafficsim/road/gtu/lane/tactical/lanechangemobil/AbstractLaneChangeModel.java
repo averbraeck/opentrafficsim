@@ -16,14 +16,14 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGtuFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -50,7 +50,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
-    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
+    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
             final Collection<Headway> sameLaneGTUs, final Collection<Headway> preferredLaneGTUs,
             final Collection<Headway> nonPreferredLaneGTUs, final Speed speedLimit,
             final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
@@ -75,10 +75,10 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             {
                 throw new NullPointerException(gtu + " returns null for its tactical planner");
             }
-            GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) albtp.getCarFollowingModel();
+            GtuFollowingModelOld gtuFollowingModel = (GtuFollowingModelOld) albtp.getCarFollowingModel();
             if (null == gtuFollowingModel)
             {
-                throw new NullPointerException(gtu + " has null GTUFollowingModel");
+                throw new NullPointerException(gtu + " has null GtuFollowingModel");
             }
             DualAccelerationStep straightAccelerationSteps =
                     gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, headway, speedLimit);
@@ -93,7 +93,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (null != nonPreferredAccelerationSteps && nonPreferredAccelerationSteps.getFollowerAcceleration()
                     .getSI() < -gtu.getParameters().getParameter(B).getSI())
             {
-                nonPreferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
+                nonPreferredAccelerationSteps = AbstractGtuFollowingModelMobil.TOODANGEROUS;
             }
             Acceleration nonPreferredA =
                     null == nonPreferredLane ? null : applyDriverPersonality(nonPreferredAccelerationSteps);
@@ -102,7 +102,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (null != preferredAccelerationSteps && preferredAccelerationSteps.getFollowerAcceleration()
                     .getSI() < -gtu.getParameters().getParameter(B).getSI())
             {
-                preferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
+                preferredAccelerationSteps = AbstractGtuFollowingModelMobil.TOODANGEROUS;
             }
             Acceleration preferredA = null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
             if (null == preferredA)
