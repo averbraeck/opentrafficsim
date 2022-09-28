@@ -1,49 +1,75 @@
 package org.opentrafficsim.core.compatibility;
 
 import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 
 /**
- * Compatibility of infrastructure and traveling units.
+ * Compatibility of infrastructure and users of that infrastructure. Examples are compatibility of a GTUType with a LinkType, or
+ * GTUType with a LaneType, or GTUType with a SensorType. Both infrastructure type and user type are hierarchical, and the
+ * information to make the decision might be higher up in the hierarchy. The outcome depends on whether the infrastructure or
+ * the user hierarchy is traversed first. Example:
+ * 
+ * <pre>
+ * Infrastructure: Road, Highway is-a Road
+ * User:           Vehicle, Car is-a Vehicle, SlowVehicle is-a Vehicle, Bicycle is-a SlowVehicle.
+ * Compatibility:  (Road, Vehicle) = True, (Highway, SlowVehicle) = False
+ * </pre>
+ * 
+ * Suppose we want to know the compatibility between Bicycle and Highway. The compatibility (Highway, Bicycle) is not defined.
+ * <ul>
+ * <li>Infra first: When we examine infrastructure first, we go up the infra hierarchy to Road. (Road, Bicycle) is not given.
+ * Now move up Bicycle. (Road, SlowVehicle) is not provided. Move up. (Road, Vehicle) is provided and True. So, Bicycle is
+ * allowed on Highway</li>
+ * <li>user first: we go up the user hierarchy to SlowVehicle. (Highway, SlowVehicle) is defined and False. So, Bicycle is NOT
+ * allowed on Highway</li>
+ * </ul>
+ * To avoid such problems, a very strict definition of what comes "first" has to be provided. The way this is implemented is as
+ * follows: First, all combinations in the two hierarchies will be searched for explicitly forbidden combinations. If there is a
+ * forbidden combination, compatibility is false. If the compatibility is not explicitly false, the hierarchies will be checked
+ * to look for an explicit compatibility that is true. If there is any, the result is true. If nothing is specified in the
+ * hierarchies (neither true nor false), the compatibility is false.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * <p>
+ * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
- * @param <G> GTU type
+ * @param <U> infrastructure user type
  * @param <I> infrastructure type
  */
-public interface Compatibility<G extends HierarchicalType<G>, I extends HierarchicalType<I>>
+public interface Compatibility<U extends HierarchicalType<U>, I extends HierarchicalType<I>>
 {
     /**
-     * Test if a GTUType can travel over the infrastructure.
-     * @param gtuType G; the type of the GTU
-     * @param directionality GTUDirectionality; the direction of the GTU with respect to the design direction of the
-     *            infrastructure
-     * @return boolean; true if the GTU can travel over the infrastructure in the given direction; false if the GTU can not
-     *         travel over the infrastructure in the given direction; null if the decision should be made by calling
-     *         <code>isCompatible</code> on a higher level in the infrastructure hierarchy
+     * Test if a user type is compatible with the infrastructure type. Examples are compatibility of a GTUType with a LinkType,
+     * or GTUType with a LaneType, or GTUType with a SensorType. Since both GTUType and InfrastructureType are hierarchical
+     * types, it might be that compatibility has to look one or more levels up to determine whether user type and infrastructure
+     * type are compatible. The outcome depends on which hierarchy is examined first. The way this is implemented is as follows:
+     * First, all combinations in the two hierarchies will be searched for explicitly forbidden combinations. If there is a
+     * forbidden combination, compatibility is false. If the compatibility is not explicitly false, the hierarchies will be
+     * checked to look for an explicit compatibility that is true. If there is any, the result is true. If nothing is specified
+     * in the hierarchies (neither true nor false), the compatibility is false.
+     * @param userType U; the type of the infrastructure user
+     * @return boolean; true if the user type is compatible with the infrastructure type
      */
-    Boolean isCompatible(G gtuType, GTUDirectionality directionality);
+    boolean isCompatible(U userType);
 
     /**
-     * Retrieve the allowed driving directions for a GTUType. If there is no match for the specified GTUType in this
-     * infrastructure type, this method will recursively check the parent types of the infrastructure element until either a
-     * match is found or the root parental type of the infrastructure is reached. When the latter happens without finding a
-     * match, what happens next depends on the value of <code>tryParentsOfGTUType</code>. <br>
-     * If <code>tryParentsOfGTUType</code> is false, the value null is returned. If true; the parent of the GTUType is used and
-     * the search is repeated, etc. If none of the parents of the GTUType yields a result, this method returns
-     * <code>LongitudinalDirectionality.DIR_NONE</code>.
-     * @param gtuType G; type of the GTU
-     * @param tryParentsOfGTUType boolean; if true; the parents of the GTUType are tried if no match was found for the given
-     *            GTUType
-     * @return LongitudinalDirectionality; the driving directions for the GTUType, or
-     *         <code>LongitudinalDirectionality.DIR_NONE</code> if neither the GTUType or any of its parents specifies a
-     *         directionality
+     * Return whether the user type is compatible on this infrastructure level.
+     * @param userType U; the type of the infrastructure user
+     * @return Boolean; true if explicitly defined to be compatible on this level; false if explicitly defined to be
+     *         incompatible on this level; null if not defined on this level
      */
-    LongitudinalDirectionality getDirectionality(G gtuType, boolean tryParentsOfGTUType);
+    Boolean isCompatibleOnInfraLevel(U userType);
 
+    /**
+     * Return the infrastructure for which this compatibility has been defined.
+     * @return I; the infrastructure for which this compatibility has been defined
+     */
+    I getInfrastructure();
+    
+    /**
+     * Remove the compatibility cache for this type and all its subtypes. 
+     */
+    void clearCompatibilityCache();
+    
 }
