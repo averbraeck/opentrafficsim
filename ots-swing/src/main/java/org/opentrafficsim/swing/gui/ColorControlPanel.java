@@ -12,8 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 
 /**
  * Let the user select what the colors in the animation mean.
@@ -29,30 +29,30 @@ public class ColorControlPanel extends JPanel implements ActionListener
     private static final long serialVersionUID = 20150527L;
 
     /** The combo box that sets the coloring for the GTUs. */
-    private JComboBox<GTUColorer> comboBoxGTUColor;
+    private JComboBox<GtuColorer> comboBoxGTUColor;
 
-    /** The panel that holds the legend for the currently selected GTUColorer. */
+    /** The panel that holds the legend for the currently selected GtuColorer. */
     private final JPanel legendPanel;
 
-    /** The GTUColorer that is currently active. */
-    private GTUColorer gtuColorer;
+    /** The GtuColorer that is currently active. */
+    private GtuColorer gtuColorer;
 
-    /** The SwitchableGTUColorer that is controlled by this ColorControlPanel, if available. */
-    private final SwitchableGTUColorer switchableGTUColorer;
+    /** The SwitchableGtuColorer that is controlled by this ColorControlPanel, if available. */
+    private final SwitchableGtuColorer switchableGtuColorer;
 
     /**
      * Add a ColorControlPanel to an AnimationPanel. Initially the ColorControlPanel will have no items. Items are added with
      * the <code>addItem</code> method. The first item added automatically becomes the active one.
-     * @param gtuColorer GTUColorer; the switchable GTU colorer that will be controlled by this ColorControlPanel
+     * @param gtuColorer GtuColorer; the switchable GTU colorer that will be controlled by this ColorControlPanel
      */
-    public ColorControlPanel(final GTUColorer gtuColorer)
+    public ColorControlPanel(final GtuColorer gtuColorer)
     {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.legendPanel = new JPanel(new FlowLayout());
 
-        if (gtuColorer instanceof SwitchableGTUColorer)
+        if (gtuColorer instanceof SwitchableGtuColorer)
         {
-            this.switchableGTUColorer = (SwitchableGTUColorer) gtuColorer;
+            this.switchableGtuColorer = (SwitchableGtuColorer) gtuColorer;
 
             /**
              * ComboBox for AppearanceControl.
@@ -82,7 +82,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
             this.add(this.comboBoxGTUColor);
             this.comboBoxGTUColor.addActionListener(this);
 
-            for (GTUColorer colorer : ((SwitchableGTUColorer) gtuColorer).getColorers())
+            for (GtuColorer colorer : ((SwitchableGtuColorer) gtuColorer).getColorers())
             {
                 addItem(colorer);
             }
@@ -90,7 +90,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
         else
         {
             this.gtuColorer = gtuColorer;
-            this.switchableGTUColorer = null;
+            this.switchableGtuColorer = null;
             rebuildLegend();
         }
 
@@ -99,9 +99,9 @@ public class ColorControlPanel extends JPanel implements ActionListener
 
     /**
      * Add one item to this ColorControlPanel. The <cite>getName</cite> method of the
-     * @param colorer GTUColorer; the GTUColorer that will be added
+     * @param colorer GtuColorer; the GtuColorer that will be added
      */
-    public final void addItem(final GTUColorer colorer)
+    public final void addItem(final GtuColorer colorer)
     {
         this.comboBoxGTUColor.addItem(colorer);
         // The first item added automatically becomes the current one and triggers a call to actionPerformed.
@@ -111,15 +111,15 @@ public class ColorControlPanel extends JPanel implements ActionListener
     @Override
     public final void actionPerformed(final ActionEvent e)
     {
-        GTUColorer newColorer = (GTUColorer) this.comboBoxGTUColor.getSelectedItem();
+        GtuColorer newColorer = (GtuColorer) this.comboBoxGTUColor.getSelectedItem();
         if (null != newColorer)
         {
             this.gtuColorer = newColorer;
             rebuildLegend();
 
-            if (this.switchableGTUColorer != null)
+            if (this.switchableGtuColorer != null)
             {
-                this.switchableGTUColorer.setGTUColorer(this.comboBoxGTUColor.getSelectedIndex());
+                this.switchableGtuColorer.setGtuColorer(this.comboBoxGTUColor.getSelectedIndex());
             }
         }
     }
@@ -130,7 +130,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
     private void rebuildLegend()
     {
         this.legendPanel.removeAll();
-        for (GTUColorer.LegendEntry legendEntry : this.gtuColorer.getLegend())
+        for (GtuColorer.LegendEntry legendEntry : this.gtuColorer.getLegend())
         {
             JPanel panel = new JPanel(new BorderLayout());
             /**

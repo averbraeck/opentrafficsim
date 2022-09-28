@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
@@ -26,7 +26,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DefaultDistraction
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DistractionColorer implements GTUColorer, Serializable
+public class DistractionColorer implements GtuColorer, Serializable
 {
 
     /** */
@@ -50,7 +50,7 @@ public class DistractionColorer implements GTUColorer, Serializable
         this.legend.add(new LegendEntry(NONE, "None", "No distraction"));
         for (int i = 0; i < distractions.length; i++)
         {
-            Color c = IDGTUColorer.LEGEND.get(i % 10).getColor();
+            Color c = IdGtuColorer.LEGEND.get(i % 10).getColor();
             this.colors.put(distractions[i].getId(), c);
             this.legend.add(new LegendEntry(c, distractions[i].getDescription(), distractions[i].getDescription()));
         }

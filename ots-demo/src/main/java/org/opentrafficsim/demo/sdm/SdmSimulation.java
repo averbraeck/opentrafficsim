@@ -28,9 +28,9 @@ import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.compressedfiles.CompressionType;
 import org.opentrafficsim.base.compressedfiles.Writer;
-import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -236,12 +236,12 @@ public class SdmSimulation extends AbstractSimulationScript
     {
         super("SDM simulation", "Simulations using the Stochastic Distraction Model");
         // set GTU colorers to use
-        setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+        setGtuColorer(SwitchableGtuColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
                 .addColorer(new SynchronizationColorer())
                 .addColorer(new DistractionColorer(DefaultDistraction.ANSWERING_CELL_PHONE, DefaultDistraction.CONVERSING,
                         DefaultDistraction.MANIPULATING_AUDIO_CONTROLS, DefaultDistraction.EXTERNAL_DISTRACTION))
-                .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
-                .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
+                .addColorer(new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
                 .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.56), Duration.instantiateSI(2.4)))
                 .addColorer(new TaskSaturationColorer()).build());
         try

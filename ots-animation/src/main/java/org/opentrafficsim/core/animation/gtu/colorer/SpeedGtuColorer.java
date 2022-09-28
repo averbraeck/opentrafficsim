@@ -20,7 +20,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SpeedGTUColorer implements GTUColorer, Serializable
+public class SpeedGtuColorer implements GtuColorer, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -32,10 +32,10 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
     private final Speed maximumSpeed;
 
     /**
-     * Construct a new SpeedGTUColorer.
+     * Construct a new SpeedGtuColorer.
      * @param maximumSpeed Speed; the speed at (and above) which the returned color will be green
      */
-    public SpeedGTUColorer(final Speed maximumSpeed)
+    public SpeedGtuColorer(final Speed maximumSpeed)
     {
         this.maximumSpeed = maximumSpeed;
         this.legend = new ArrayList<>(4);

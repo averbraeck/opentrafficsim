@@ -32,8 +32,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
@@ -55,7 +55,7 @@ public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
     private static final long serialVersionUID = 20141216L;
 
     /** Single instance of default colorer, reachable from various places. */
-    public static final GTUColorer DEFAULT_COLORER = new DefaultSwitchableGTUColorer();
+    public static final GtuColorer DEFAULT_COLORER = new DefaultSwitchableGtuColorer();
 
     /** the model. */
     private final T model;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -27,7 +27,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class SplitColorer implements GTUColorer
+public class SplitColorer implements GtuColorer
 {
 
     /** Left color. */

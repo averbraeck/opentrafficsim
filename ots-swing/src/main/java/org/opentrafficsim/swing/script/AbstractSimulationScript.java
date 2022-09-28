@@ -18,7 +18,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulator;
@@ -71,7 +71,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     private OTSRoadNetwork network;
 
     /** GTU colorer. */
-    private GTUColorer gtuColorer = OTSSwingApplication.DEFAULT_COLORER;
+    private GtuColorer gtuColorer = OTSSwingApplication.DEFAULT_COLORER;
 
     /** Seed. */
     @Option(names = "--seed", description = "Seed", defaultValue = "1")
@@ -164,9 +164,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /**
      * Set GTU colorer.
-     * @param colorer GTUColorer; GTU colorer
+     * @param colorer GtuColorer; GTU colorer
      */
-    public final void setGtuColorer(final GTUColorer colorer)
+    public final void setGtuColorer(final GtuColorer colorer)
     {
         this.gtuColorer = colorer;
     }
@@ -175,7 +175,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * Returns the GTU colorer.
      * @return returns the GTU colorer
      */
-    public final GTUColorer getGtuColorer()
+    public final GtuColorer getGtuColorer()
     {
         return this.gtuColorer;
     }

@@ -36,9 +36,9 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.DualBound;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
@@ -300,13 +300,13 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     private AnticipationRelianceScript()
     {
         super("Distraction", "Distraction simulation");
-        setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+        setGtuColorer(SwitchableGtuColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
                 .addColorer(new TaskColorer("car-following")).addColorer(new TaskColorer("lane-changing"))
                 .addColorer(new TaskSaturationColorer()).addColorer(new ReactionTimeColorer(Duration.instantiateSI(1.0)))
-                .addColorer(GtuTypeColorer.DEFAULT).addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(GtuTypeColorer.DEFAULT).addColorer(new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
                 .addColorer(
                         new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
-                .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
+                .addColorer(new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
                 .addColorer(new SynchronizationColorer())
                 .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.56), Duration.instantiateSI(2.4)))
                 .addColorer(new TotalDesireColorer()).addColorer(new IncentiveColorer(IncentiveRoute.class))

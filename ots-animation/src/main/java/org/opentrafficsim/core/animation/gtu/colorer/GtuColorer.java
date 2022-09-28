@@ -16,7 +16,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface GTUColorer extends Colorer<Gtu>
+public interface GtuColorer extends Colorer<Gtu>
 {
     /**
      * Return a list of legend entries (useful to make a legend of the colors used to render the GTUs).

@@ -221,7 +221,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
     protected void animateNetwork() throws OTSDrawingException
     {
         this.defaultAnimationFactory = DefaultAnimationFactory.animateNetwork(getModel().getNetwork(),
-                getModel().getSimulator(), getAnimationPanel().getGTUColorer());
+                getModel().getSimulator(), getAnimationPanel().getGtuColorer());
     }
 
     /**

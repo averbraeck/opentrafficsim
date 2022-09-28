@@ -12,9 +12,9 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -44,8 +44,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     /** */
     private static final long serialVersionUID = 20150000L;
 
-    /** The GTUColorer that determines the fill color for the car. */
-    private GTUColorer gtuColorer = new DefaultSwitchableGTUColorer();
+    /** The GtuColorer that determines the fill color for the car. */
+    private GtuColorer gtuColorer = new DefaultSwitchableGtuColorer();
 
     /** the Text object to destroy when the GTU animation is destroyed. */
     private Text text;
@@ -94,18 +94,18 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu LaneBasedGtu; the Car to draw
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
-     * @param gtuColorer GTUColorer; the GTUColorer that determines what fill color to use
+     * @param gtuColorer GtuColorer; the GtuColorer that determines what fill color to use
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator, final GTUColorer gtuColorer)
+    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator, final GtuColorer gtuColorer)
             throws NamingException, RemoteException
     {
         super(gtu, simulator);
         this.hashCode = gtu.hashCode();
         if (null == gtuColorer)
         {
-            this.gtuColorer = new IDGTUColorer();
+            this.gtuColorer = new IdGtuColorer();
         }
         else
         {
@@ -124,12 +124,12 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     }
 
     /**
-     * Replace the GTUColorer.
-     * @param newGTUColorer GTUColorer; the GTUColorer to use from now on
+     * Replace the GtuColorer.
+     * @param newGtuColorer GtuColorer; the GtuColorer to use from now on
      */
-    public final void setGTUColorer(final GTUColorer newGTUColorer)
+    public final void setGtuColorer(final GtuColorer newGtuColorer)
     {
-        this.gtuColorer = newGTUColorer;
+        this.gtuColorer = newGtuColorer;
     }
 
     /** {@inheritDoc} */

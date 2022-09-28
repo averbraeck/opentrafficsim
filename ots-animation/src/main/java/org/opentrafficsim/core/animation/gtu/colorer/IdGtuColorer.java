@@ -16,13 +16,13 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class IDGTUColorer implements GTUColorer
+public class IdGtuColorer implements GtuColorer
 {
     /** The legend. */
     public static final ArrayList<LegendEntry> LEGEND;
 
     /**
-     * Construct a new IDGTUColorer.
+     * Construct a new IdGtuColorer.
      */
     static
     {

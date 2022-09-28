@@ -29,7 +29,7 @@ import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
@@ -385,7 +385,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             gtuType3rdLaneA.add(new FrequencyAndObject<>(1.0 - 3 * TRUCK_FRACTION, carA));
             gtuType3rdLaneA.add(new FrequencyAndObject<>(3 * TRUCK_FRACTION, truckA));
 
-            GTUColorer colorer = new LmrsSwitchableColorer();
+            GtuColorer colorer = new LmrsSwitchableColorer();
             makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", idGenerator, gtuTypeAllCarA, headwaysA1, colorer,
                     roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             if (NETWORK.equals("shortWeave"))
@@ -426,7 +426,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
          * @param idGenerator IdGenerator; the generator for the ID
          * @param distribution Distribution&lt;LaneBasedTemplateGTUType&gt;; the type generator for the GTU
          * @param headwayGenerator Generator&lt;Duration&gt;; the headway generator for the GTU
-         * @param gtuColorer GTUColorer; the GTU colorer for animation
+         * @param gtuColorer GtuColorer; the GTU colorer for animation
          * @param roomChecker RoomChecker; the checker to see if there is room for the GTU
          * @param bcFactory ParameterFactory; the factory to generate parameters for the GTU
          * @param tacticalFactory LaneBasedTacticalPlannerFactory&lt;?&gt;; the generator for the tactical planner
@@ -439,7 +439,7 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
          */
         private void makeGenerator(final Lane lane, final Speed generationSpeed, final String id, final IdGenerator idGenerator,
                 final Distribution<LaneBasedTemplateGTUType> distribution, final Generator<Duration> headwayGenerator,
-                final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
+                final GtuColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
                 final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime,
                 final StreamInterface stream) throws SimRuntimeException, ProbabilityException, GtuException, ParameterException
         {

@@ -33,7 +33,7 @@ import org.eclipse.jetty.server.session.SessionCache;
 import org.eclipse.jetty.server.session.SessionDataStore;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.resource.Resource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -260,7 +260,7 @@ public class OTSFederatedDemoServer implements Checkable
                         OTSWebModel webModel = new OTSWebModel(model.getShortName(), simulator);
                         OTSFederatedDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), simulator,
-                                new DefaultSwitchableGTUColorer());
+                                new DefaultSwitchableGtuColorer());
                     }
                     catch (Exception exception)
                     {

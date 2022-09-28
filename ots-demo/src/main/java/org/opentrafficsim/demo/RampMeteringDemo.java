@@ -33,11 +33,11 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -253,11 +253,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
         GtuType car = network.getGtuType(GtuType.DEFAULTS.CAR);
         GtuType controlledCar = new GtuType(CONTROLLED_CAR_ID, car);
 
-        GTUColorer[] colorers =
-                new GTUColorer[] {new IDGTUColorer(), new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
-                        new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
+        GtuColorer[] colorers =
+                new GtuColorer[] {new IdGtuColorer(), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
+                        new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
                         new GtuTypeColorer().add(car).add(controlledCar)};
-        SwitchableGTUColorer colorer = new SwitchableGTUColorer(0, colorers);
+        SwitchableGtuColorer colorer = new SwitchableGtuColorer(0, colorers);
         setGtuColorer(colorer);
 
         // parameters

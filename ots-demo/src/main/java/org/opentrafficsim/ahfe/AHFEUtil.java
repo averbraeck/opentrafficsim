@@ -30,7 +30,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
@@ -118,7 +118,7 @@ public final class AHFEUtil
 
     /**
      * @param network OTSRoadNetwork; the network
-     * @param gtuColorer GTUColorer; the GTU colorer
+     * @param gtuColorer GtuColorer; the GTU colorer
      * @param simulator OTSSimulatorInterface; the simulator
      * @param replication int; replication number
      * @param anticipationStrategy String; anticipation strategy
@@ -139,7 +139,7 @@ public final class AHFEUtil
      * @throws SimRuntimeException on sim runtime error
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static void createDemand(final OTSRoadNetwork network, final GTUColorer gtuColorer,
+    public static void createDemand(final OTSRoadNetwork network, final GtuColorer gtuColorer,
             final OTSSimulatorInterface simulator, final int replication, final String anticipationStrategy,
             final Duration reactionTime, final Duration anticipationTime, final double truckFraction, final Time simulationTime,
             final Frequency leftDemand, final Frequency rightDemand, final double leftFraction, final double distanceError,
@@ -341,7 +341,7 @@ public final class AHFEUtil
      * @param network OTSRoadNetwork; the network
      * @param distribution Distribution&lt;LaneBasedTemplateGTUType&gt;; the type generator for the GTU
      * @param headwayGenerator HeadwayGeneratorDemand; the headway generator for the GTU
-     * @param gtuColorer GTUColorer; the GTU colorer for animation
+     * @param gtuColorer GtuColorer; the GTU colorer for animation
      * @param roomChecker RoomChecker; the checker to see if there is room for the GTU
      * @param bcFactory ParameterFactory; the factory to generate parameters for the GTU
      * @param tacticalFactory LaneBasedTacticalPlannerFactory&lt;?&gt;; the generator for the tactical planner
@@ -355,7 +355,7 @@ public final class AHFEUtil
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
             final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSRoadNetwork network,
             final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
-            final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
+            final GtuColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
             throws SimRuntimeException, ProbabilityException, GtuException, ParameterException
     {

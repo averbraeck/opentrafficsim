@@ -18,45 +18,45 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class SwitchableGTUColorer implements GTUColorer, Serializable
+public class SwitchableGtuColorer implements GtuColorer, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
 
-    /** The currently active GTUColorer. */
-    private GTUColorer activeColorer;
+    /** The currently active GtuColorer. */
+    private GtuColorer activeColorer;
 
     /** The list of included colorers. */
-    private List<GTUColorer> colorers = new ArrayList<>();
+    private List<GtuColorer> colorers = new ArrayList<>();
 
     /**
      * Empty constructor for the builder.
      */
-    SwitchableGTUColorer()
+    SwitchableGtuColorer()
     {
         //
     }
 
     /**
-     * Construct a new Switchable GTUColorer based on a list of colorers.
+     * Construct a new Switchable GtuColorer based on a list of colorers.
      * @param activeIndex int; the index of the initially active colorer in the list (0-based).
-     * @param colorers GTUColorer...; the list of GTUColorer. List cannot be empty.
+     * @param colorers GtuColorer...; the list of GtuColorer. List cannot be empty.
      * @throws IndexOutOfBoundsException when activeIndex &lt; 0 or larger than or equal to the number of colorers.
      */
     @SuppressWarnings("checkstyle:redundantthrows")
-    public SwitchableGTUColorer(final int activeIndex, final GTUColorer... colorers) throws IndexOutOfBoundsException
+    public SwitchableGtuColorer(final int activeIndex, final GtuColorer... colorers) throws IndexOutOfBoundsException
     {
         this.colorers.addAll(Arrays.asList(colorers));
-        setGTUColorer(activeIndex);
+        setGtuColorer(activeIndex);
     }
 
     /**
-     * Replace the currently active GTUColorer.
+     * Replace the currently active GtuColorer.
      * @param activeIndex int; the index of the new active colorer in the list (0-based).
      * @throws IndexOutOfBoundsException when activeIndex &lt; 0 or larger than or equal to the number of colorers.
      */
     @SuppressWarnings("checkstyle:redundantthrows")
-    public final void setGTUColorer(final int activeIndex) throws IndexOutOfBoundsException
+    public final void setGtuColorer(final int activeIndex) throws IndexOutOfBoundsException
     {
         this.activeColorer = this.colorers.get(activeIndex);
     }
@@ -85,14 +85,14 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     /**
      * @return the list of colorers.
      */
-    public final List<GTUColorer> getColorers()
+    public final List<GtuColorer> getColorers()
     {
         return this.colorers;
     }
 
     /**
-     * Returns a builder for SwitchableGTUColorer.
-     * @return Builder; builder for SwitchableGTUColorer
+     * Returns a builder for SwitchableGtuColorer.
+     * @return Builder; builder for SwitchableGtuColorer
      */
     public static final Builder builder()
     {
@@ -100,7 +100,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     }
 
     /**
-     * Builder for SwitchableGTUColorer.
+     * Builder for SwitchableGtuColorer.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -113,17 +113,17 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     public static final class Builder
     {
         /** The list of included colorers. */
-        private List<GTUColorer> preColorers = new ArrayList<>();
+        private List<GtuColorer> preColorers = new ArrayList<>();
 
-        /** The currently active GTUColorer. */
-        private GTUColorer preActiveColorer;
+        /** The currently active GtuColorer. */
+        private GtuColorer preActiveColorer;
 
         /**
          * Adds a colorer.
-         * @param colorer GTUColorer; colorer
+         * @param colorer GtuColorer; colorer
          * @return Builder; this builder for method chaining
          */
-        public Builder addColorer(final GTUColorer colorer)
+        public Builder addColorer(final GtuColorer colorer)
         {
             this.preColorers.add(colorer);
             return this;
@@ -131,10 +131,10 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
 
         /**
          * Adds a colorer, make it selected.
-         * @param colorer GTUColorer; colorer
+         * @param colorer GtuColorer; colorer
          * @return Builder; this builder for method chaining
          */
-        public Builder addActiveColorer(final GTUColorer colorer)
+        public Builder addActiveColorer(final GtuColorer colorer)
         {
             this.preColorers.add(colorer);
             this.preActiveColorer = colorer;
@@ -143,13 +143,13 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
 
         /**
          * Builds the colorer.
-         * @return SwitchableGTUColorer; colorer
+         * @return SwitchableGtuColorer; colorer
          */
         @SuppressWarnings("synthetic-access")
-        public GTUColorer build()
+        public GtuColorer build()
         {
             Throw.whenNull(this.preActiveColorer, "No active colorer was defined.");
-            SwitchableGTUColorer colorer = new SwitchableGTUColorer();
+            SwitchableGtuColorer colorer = new SwitchableGtuColorer();
             colorer.colorers = this.preColorers;
             colorer.activeColorer = this.preActiveColorer;
             return colorer;

@@ -19,7 +19,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class AccelerationGTUColorer implements GTUColorer, Serializable
+public class AccelerationGtuColorer implements GtuColorer, Serializable
 {
     /** */
     private static final long serialVersionUID = 201500001L;
@@ -40,12 +40,12 @@ public class AccelerationGTUColorer implements GTUColorer, Serializable
     private static Color[] accelerationColors = {Color.YELLOW, Color.GREEN, Color.BLUE};
 
     /**
-     * Construct a new AccelerationGTUColorer.
+     * Construct a new AccelerationGtuColorer.
      * @param maximumDeceleration Acceleration; the deceleration (negative acceleration) that corresponds to the first (red)
      *            legend entry
      * @param maximumAcceleration Acceleration; the deceleration that corresponds to the last (blue) legend entry
      */
-    public AccelerationGTUColorer(final Acceleration maximumDeceleration, final Acceleration maximumAcceleration)
+    public AccelerationGtuColorer(final Acceleration maximumDeceleration, final Acceleration maximumAcceleration)
     {
         this.maximumDeceleration = maximumDeceleration;
         this.maximumAcceleration = maximumAcceleration;

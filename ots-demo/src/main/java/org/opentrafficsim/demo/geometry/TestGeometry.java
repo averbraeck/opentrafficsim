@@ -10,7 +10,7 @@ import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.TimedEvent;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -69,7 +69,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
         Rectangle2D extent = new Rectangle2D.Double(-50, -50, 200, 50);
         Dimension size = new Dimension(1024, 768);
         OTSAnimationPanel animationPanel =
-                new OTSAnimationPanel(extent, size, simulator, model, new DefaultSwitchableGTUColorer(), model.getNetwork());
+                new OTSAnimationPanel(extent, size, simulator, model, new DefaultSwitchableGtuColorer(), model.getNetwork());
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
 
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), OTSSwingApplication.DEFAULT_COLORER);
