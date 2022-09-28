@@ -57,7 +57,7 @@ import nl.tudelft.simulation.dsol.statistics.StatisticsInterface;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GTUDumperTest implements OTSModelInterface
+public class GtuDumperTest implements OTSModelInterface
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -134,7 +134,7 @@ public class GTUDumperTest implements OTSModelInterface
             public DirectedPoint getLocation()
             {
                 // This GTU travels a circle around 100, 20, elevation 10, radius 20, angular velocity 0.1 radial / second
-                double timeSI = GTUDumperTest.this.simulator.getSimulatorTime().si;
+                double timeSI = GtuDumperTest.this.simulator.getSimulatorTime().si;
                 double angle = timeSI / 10;
                 return new DirectedPoint(100 + 20 * Math.cos(angle), 20 + 20 * Math.sin(angle), 10, 0, 0, angle + Math.PI / 2);
             }
@@ -255,7 +255,7 @@ public class GTUDumperTest implements OTSModelInterface
             @Override
             public OTSSimulatorInterface getSimulator()
             {
-                return GTUDumperTest.this.simulator;
+                return GtuDumperTest.this.simulator;
             }
 
             @Override
@@ -359,7 +359,7 @@ public class GTUDumperTest implements OTSModelInterface
             {
                 try
                 {
-                    return new OperationalPlan(this, getLocation(), GTUDumperTest.this.simulator.getSimulatorAbsTime(),
+                    return new OperationalPlan(this, getLocation(), GtuDumperTest.this.simulator.getSimulatorAbsTime(),
                             Duration.ZERO)
                     {
 

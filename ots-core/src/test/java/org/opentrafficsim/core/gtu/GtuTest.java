@@ -50,7 +50,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GTUTest
+public class GtuTest
 {
     /** GTU that will be returned when the fake strategical planner is asked for the associated GTU with getGTU. */
     public Gtu gtuOfStrategicalPlanner = null;
@@ -128,7 +128,7 @@ public class GTUTest
             @Override
             public Gtu getGtu()
             {
-                return GTUTest.this.gtuOfStrategicalPlanner;
+                return GtuTest.this.gtuOfStrategicalPlanner;
             }
 
             @Override

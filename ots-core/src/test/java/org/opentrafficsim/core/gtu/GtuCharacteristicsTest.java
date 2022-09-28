@@ -28,7 +28,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GTUCharacteristicsTest implements OTSModelInterface
+public class GtuCharacteristicsTest implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 20160311L;

@@ -15,7 +15,7 @@ import org.junit.Test;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GTUDirectionalityTest
+public class GtuDirectionalityTest
 {
 
     /** Test the GTUDirectionality class. */
