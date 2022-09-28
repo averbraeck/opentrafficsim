@@ -25,7 +25,7 @@ import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 
 /**
- * Test the TemplateGtuType class.
+ * Test the TemplateGTUType class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -38,7 +38,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     private static final long serialVersionUID = 20160311L;
 
     /**
-     * Test the TemplateGtuType class.
+     * Test the TemplateGTUType class.
      * @throws NamingException should never happen
      * @throws SimRuntimeException should never happen
      * @throws GtuException should never happen

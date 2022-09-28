@@ -12,7 +12,7 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 
 /**
- * TemplateGtuType stores some of the information that is needed to generate a GTU.
+ * TemplateGTUType stores some of the information that is needed to generate a GTU.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -97,7 +97,7 @@ public class TemplateGtuType implements Serializable, Generator<GtuCharacteristi
      * Returns the same Characteristics, but pertaining to a different GTU type. This is useful for when the GTU type is used
      * for other purposes in simulation, where the {@code GTUCharacteristics} should be the same.
      * @param newGtuType GtuType; the new GTU type.
-     * @return Copy of this {@code TemplateGtuType} linked to the new GTU type.
+     * @return Copy of this {@code TemplateGTUType} linked to the new GTU type.
      */
     public TemplateGtuType copyForGtuType(final GtuType newGtuType)
     {
@@ -138,7 +138,7 @@ public class TemplateGtuType implements Serializable, Generator<GtuCharacteristi
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("TemplateGtuType [%s, %s, %s, %s]", this.gtuType, this.lengthGenerator, this.widthGenerator,
+        return String.format("TemplateGTUType [%s, %s, %s, %s]", this.gtuType, this.lengthGenerator, this.widthGenerator,
                 this.maximumSpeedGenerator);
     }
 
