@@ -13,7 +13,7 @@ import org.junit.Test;
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * <p>
+ * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
@@ -24,6 +24,7 @@ public class HierarchicalTypeTest
     /**
      * Test the basics of the HierarchicalType class.
      */
+    @SuppressWarnings("unlikely-arg-type")
     @Test
     public final void testBasics()
     {
@@ -79,7 +80,6 @@ public class HierarchicalTypeTest
      */
     static class SubType extends HierarchicalType<SubType>
     {
-
         /**
          * Construct a new SubType instance.
          * @param id String; id of the new SubType
@@ -102,12 +102,83 @@ public class HierarchicalTypeTest
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("checkstyle:designforextension")
-        @Override
+            @Override
         public String toString()
         {
             return "SubType [id=" + getId() + ", parent=" + getParent() + "]";
         }
+    }
+    
+    /** XType. */
+    static class XType extends HierarchicalType<XType>
+    {
+        /**
+         * Instantiate hierarchical type. 
+         * @param id String; the id
+         * @param parent the parent or null
+         * @throws NullPointerException when id is null
+         */
+        protected XType(final String id, final XType parent) throws NullPointerException
+        {
+            super(id, parent);
+        }
+    }
 
+    /** YType. */
+    static class YType extends HierarchicalType<YType>
+    {
+        /**
+         * Instantiate hierarchical type. 
+         * @param id String; the id
+         * @param parent the parent or null
+         * @throws NullPointerException when id is null
+         */
+        protected YType(final String id, final YType parent) throws NullPointerException
+        {
+            super(id, parent);
+        }
+    }
+
+    /** ZType. */
+    static class ZType extends HierarchicalType<XType>
+    {
+        /**
+         * Instantiate hierarchical type. 
+         * @param id String; the id
+         * @param parent the parent or null
+         * @throws NullPointerException when id is null
+         */
+        protected ZType(final String id, final XType parent) throws NullPointerException
+        {
+            super(id, parent);
+        }
+    }
+
+    /** Test different hierarchies XType, YType and ZType. */
+    @Test
+    public void testHierarchies()
+    {
+        XType vehicle = new XType("vehicle", null);
+        assertNull(vehicle.getParent());
+        assertEquals(0, vehicle.getChildren().size());
+        XType car = new XType("car", vehicle);
+        assertEquals(vehicle, car.getParent());
+        assertEquals(1, vehicle.getChildren().size());
+        XType truck = new XType("truck", vehicle);
+        assertEquals(2, vehicle.getChildren().size());
+        assertTrue(truck.isType(truck));
+        assertFalse(car.isType(truck));
+        assertFalse(vehicle.isOfType(car));
+        assertTrue(car.isOfType(vehicle));
+        YType road = new YType("road", null);
+        YType highway = new YType("highway", road);
+        assertTrue(highway.isOfType(road));
+        assertFalse(road.isOfType(highway));
+        // this does not compile: YType yt1 = new YType("yt1", vehicle);
+        ZType zt1 = new ZType("zt1", car);
+        assertEquals(car, zt1.getParent());
+        assertTrue(zt1.isOfType(car));
+        assertTrue(zt1.isOfType(vehicle));
+        // Ztype is of course strange. So this does not compile: ZType zt2 = new ZType("zt2", zt1); 
     }
 }
