@@ -247,15 +247,6 @@ public class CCOL extends EventProducer implements ActuatedTrafficController
 
     /** {@inheritDoc} */
     @Override
-    public InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
-            throws NetworkException
-    {
-        // FIXME: implement the clone() for CCOL
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public Serializable getSourceId()
     {
         return "CCOL";

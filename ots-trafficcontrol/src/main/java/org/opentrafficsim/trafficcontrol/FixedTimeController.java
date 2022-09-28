@@ -23,8 +23,6 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
@@ -282,26 +280,6 @@ public class FixedTimeController extends AbstractTrafficController
     public void notify(final EventInterface event) throws RemoteException
     {
         // nothing
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
-            throws NetworkException
-    {
-        Set<SignalGroup> signalGroupsCloned = new LinkedHashSet<>();
-        for (SignalGroup signalGroup : this.signalGroups)
-        {
-            signalGroupsCloned.add(signalGroup.clone());
-        }
-        try
-        {
-            return new FixedTimeController(getId(), newSimulator, newNetwork, this.cycleTime, this.offset, signalGroupsCloned);
-        }
-        catch (SimRuntimeException exception)
-        {
-            throw new RuntimeException("Cloning using a simulator that is not at time 0.");
-        }
     }
 
     /** {@inheritDoc} */
@@ -570,15 +548,6 @@ public class FixedTimeController extends AbstractTrafficController
             {
                 trafficLight.setTrafficLightColor(trafficLightColor);
             }
-        }
-
-        /**
-         * Clones the object for a cloned simulation.
-         */
-        @Override
-        public SignalGroup clone()
-        {
-            return new SignalGroup(getId(), this.trafficLightIds.toSet(), this.offset, this.preGreen, this.green, this.yellow);
         }
 
         /** {@inheritDoc} */

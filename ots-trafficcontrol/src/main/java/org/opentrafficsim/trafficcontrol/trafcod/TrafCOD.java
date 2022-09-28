@@ -31,8 +31,6 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
@@ -1897,59 +1895,6 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
 
     /** {@inheritDoc} */
     @Override
-    public final InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
-            throws NetworkException
-    {
-        try
-        {
-            // TODO figure out how to provide a display for the clone
-            TrafCOD result = new TrafCOD(getId(), this.trafCODRules, newSimulator, this.displayBackground, null);
-            result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED,
-                    new Serializable[] {getId(), TrafficController.BEING_CLONED}, newSimulator.getSimulatorTime());
-            // Clone the variables
-            for (Variable v : this.variablesInDefinitionOrder)
-            {
-                Variable clonedVariable = result.installVariable(v.getName(), v.getStream(), EnumSet.noneOf(Flags.class), null);
-                clonedVariable.setStartSource(v.getStartSource());
-                clonedVariable.setEndSource(v.getEndSource());
-                if (clonedVariable.isDetector())
-                {
-                    String detectorName = clonedVariable.toString(EnumSet.of(PrintFlags.ID));
-                    int detectorNumber = clonedVariable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
-                    TrafficLightSensor clonedSensor = null;
-                    for (ObjectInterface oi : newNetwork.getObjectMap().values())
-                    {
-                        if (oi instanceof TrafficLightSensor)
-                        {
-                            TrafficLightSensor tls = (TrafficLightSensor) oi;
-                            if (tls.getId().endsWith(detectorName))
-                            {
-                                clonedSensor = tls;
-                            }
-                        }
-                    }
-                    if (null == clonedSensor)
-                    {
-                        throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
-                                + detectorNumber + " among the provided sensors");
-                    }
-                    clonedVariable.subscribeToDetector(clonedSensor);
-                }
-                clonedVariable.cloneState(v, newNetwork); // also updates traffic lights
-                String key = variableKey(clonedVariable.getName(), clonedVariable.getStream());
-                result.variables.put(key, clonedVariable);
-            }
-            return result;
-        }
-        catch (TrafficControlException | SimRuntimeException tce)
-        {
-            throw new NetworkException(
-                    "Internal error; caught an unexpected TrafficControlException or SimRunTimeException in clone");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public Serializable getSourceId()
     {
         return null;
@@ -2158,41 +2103,6 @@ class Variable implements EventListenerInterface
     public int getRefCount()
     {
         return this.refCount;
-    }
-
-    /**
-     * @param newNetwork OTSNetwork; the OTS Network in which the clone will exist
-     * @param newTrafCOD TrafCOD; the TrafCOD engine that will own the new Variable
-     * @return Variable; the clone of this variable in the new network
-     * @throws NetworkException when a traffic light or sensor is not present in newNetwork
-     * @throws TrafficControlException when the output for the cloned traffic light cannot be created
-     */
-    final Variable clone(final OTSNetwork newNetwork, final TrafCOD newTrafCOD) throws NetworkException, TrafficControlException
-    {
-        Variable result = new Variable(getName(), getStream(), newTrafCOD);
-        result.flags = EnumSet.copyOf(this.flags);
-        result.value = this.value;
-        result.timerMax10 = this.timerMax10;
-        result.color = this.color;
-        result.refCount = this.refCount;
-        result.updateTime10 = this.updateTime10;
-        result.startSource = this.startSource;
-        result.endSource = this.endSource;
-        for (TrafficLight tl : this.trafficLights)
-        {
-            if (tl instanceof TrafficLightImage)
-            {
-                // Do not clone TrafficLightImage objects; these should (?) be created in the clone operation of TrafCOD.
-                continue;
-            }
-            ObjectInterface clonedTrafficLight = newNetwork.getObjectMap().get(tl.getId());
-            Throw.when(null == clonedTrafficLight, NetworkException.class,
-                    "Cannot find clone of traffic light %s in newNetwork", tl.getId());
-            Throw.when(!(clonedTrafficLight instanceof TrafficLight), NetworkException.class,
-                    "Object %s in newNetwork is not a TrafficLight", clonedTrafficLight);
-            result.addOutput((TrafficLight) clonedTrafficLight);
-        }
-        return result;
     }
 
     /**
