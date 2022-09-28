@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -44,7 +44,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     /**
      * Instantiate a tactical planner with just GTU following behavior and no lane changes.
      * @param carFollowingModel GTUFollowingModelOld; Car-following model.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      */
     public LaneBasedGTUFollowingTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneBasedGTU gtu)
     {
@@ -55,7 +55,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-            throws OperationalPlanException, NetworkException, GTUException, ParameterException
+            throws OperationalPlanException, NetworkException, GtuException, ParameterException
     {
         // ask Perception for the local situation
         LaneBasedGTU laneBasedGTU = getGtu();

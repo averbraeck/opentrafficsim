@@ -16,7 +16,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord;
@@ -187,9 +187,9 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
     /**
      * Enables visualization of this lane structure. This is purely for debugging purposes.
      * @param rollingLaneStructure RollingLaneStructure; the lane structure to visualize
-     * @param gtu GTU; GTU to animate the LaneStructure of
+     * @param gtu Gtu; GTU to animate the LaneStructure of
      */
-    public static final void visualize(final RollingLaneStructure rollingLaneStructure, final GTU gtu)
+    public static final void visualize(final RollingLaneStructure rollingLaneStructure, final Gtu gtu)
     {
         Try.execute(() -> new LaneStructureAnimation(new LaneStructureLocatable(rollingLaneStructure, gtu)),
                 "Could not create animation.");

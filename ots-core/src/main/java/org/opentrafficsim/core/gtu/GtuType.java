@@ -21,7 +21,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 /**
  * A GTU type identifies the type of a GTU. <br>
  * GTU types are used to check whether a particular GTU can travel over a particular part of infrastructure. E.g. a
- * (LaneBased)GTU with GTUType CAR can travel over lanes that have a LaneType that has the GTUType CAR in the compatibility set.
+ * (LaneBased)GTU with GtuType CAR can travel over lanes that have a LaneType that has the GtuType CAR in the compatibility set.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -29,7 +29,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public final class GTUType extends HierarchicalType<GTUType> implements Serializable
+public final class GtuType extends HierarchicalType<GtuType> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141231L;
@@ -122,18 +122,18 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         }
     }
 
-    /** the network to which the GTUType belongs. */
+    /** the network to which the GtuType belongs. */
     private final Network network;
 
     /** Templates for GTU characteristics within a network. */
-    private static final Map<Network, Map<GTUType, TemplateGTUType>> DEFAULT_TEMPLATES = new LinkedHashMap<>();
+    private static final Map<Network, Map<GtuType, TemplateGtuType>> DEFAULT_TEMPLATES = new LinkedHashMap<>();
 
     /**
-     * @param id String; The id of the GTUType to make it identifiable.
-     * @param network Network; The network to which the GTUType belongs
+     * @param id String; The id of the GtuType to make it identifiable.
+     * @param network Network; The network to which the GtuType belongs
      * @throws NullPointerException if the id is null
      */
-    public GTUType(final String id, final Network network) throws NullPointerException
+    public GtuType(final String id, final Network network) throws NullPointerException
     {
         super(id);
         this.network = network;
@@ -141,11 +141,11 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     }
 
     /**
-     * @param id String; The id of the GTUType to make it identifiable.
-     * @param parent GTUType; parent GTU type
+     * @param id String; The id of the GtuType to make it identifiable.
+     * @param parent GtuType; parent GTU type
      * @throws NullPointerException if the id is null
      */
-    public GTUType(final String id, final GTUType parent) throws NullPointerException
+    public GtuType(final String id, final GtuType parent) throws NullPointerException
     {
         super(id, parent);
         this.network = parent.getNetwork();
@@ -181,24 +181,24 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     }
 
     /**
-     * Returns default characteristics for given GTUType.
-     * @param gtuType GTUType; GTUType GTU type
+     * Returns default characteristics for given GtuType.
+     * @param gtuType GtuType; GtuType GTU type
      * @param network Network; the network to use as a key
      * @param randomStream StreamInterface; stream for random numbers
-     * @return default characteristics for given GTUType
-     * @throws GTUException if there are no default characteristics for the GTU type
+     * @return default characteristics for given GtuType
+     * @throws GtuException if there are no default characteristics for the GTU type
      */
-    public static GTUCharacteristics defaultCharacteristics(final GTUType gtuType, final Network network,
-            final StreamInterface randomStream) throws GTUException
+    public static GtuCharacteristics defaultCharacteristics(final GtuType gtuType, final Network network,
+            final StreamInterface randomStream) throws GtuException
     {
-        Map<GTUType, TemplateGTUType> map = DEFAULT_TEMPLATES.get(network);
+        Map<GtuType, TemplateGtuType> map = DEFAULT_TEMPLATES.get(network);
         if (map == null)
         {
             map = new LinkedHashMap<>();
             DEFAULT_TEMPLATES.put(network, map);
         }
-        TemplateGTUType template = null;
-        GTUType type = gtuType;
+        TemplateGtuType template = null;
+        GtuType type = gtuType;
         boolean store = false;
         while (template == null)
         {
@@ -212,44 +212,44 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
                 if (type.equals(network.getGtuType(DEFAULTS.CAR)))
                 {
                     // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(4.19)),
+                    template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(4.19)),
                             new ConstantGenerator<>(Length.instantiateSI(1.7)),
                             new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
                 }
                 else if (type.equals(network.getGtuType(DEFAULTS.TRUCK)))
                 {
                     // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
+                    template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
                             new ConstantGenerator<>(Length.instantiateSI(2.55)),
                             new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
                 }
                 else if (type.equals(network.getGtuType(DEFAULTS.BUS)))
                 {
-                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
+                    template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
                             new ConstantGenerator<>(Length.instantiateSI(2.55)),
                             new ConstantGenerator<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
                 }
                 else if (type.equals(network.getGtuType(DEFAULTS.VAN)))
                 {
-                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
+                    template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
                             new ConstantGenerator<>(Length.instantiateSI(2.4)),
                             new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
                 }
                 else if (type.equals(network.getGtuType(DEFAULTS.EMERGENCY_VEHICLE)))
                 {
-                    template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
+                    template = new TemplateGtuType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
                             new ConstantGenerator<>(Length.instantiateSI(2.55)),
                             new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
                 }
                 else
                 {
                     type = type.getParent();
-                    Throw.whenNull(type, "GTUType %s is not of any types with default characteristics.", gtuType);
+                    Throw.whenNull(type, "GtuType %s is not of any types with default characteristics.", gtuType);
                 }
             }
             if (store && template != null)
             {
-                if (!template.getGTUType().equals(gtuType))
+                if (!template.getGtuType().equals(gtuType))
                 {
                     template = template.copyForGtuType(gtuType);
                 }
@@ -262,12 +262,12 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         }
         catch (ProbabilityException | ParameterException exception)
         {
-            throw new GTUException("GTUType draw failed.", exception);
+            throw new GtuException("GtuType draw failed.", exception);
         }
     }
 
     /**
-     * @return the network to which the GTUType belongs
+     * @return the network to which the GtuType belongs
      */
     public Network getNetwork()
     {
@@ -278,7 +278,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     @Override
     public String toString()
     {
-        return "GTUType: " + this.getId();
+        return "GtuType: " + this.getId();
     }
 
 }

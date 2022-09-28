@@ -7,7 +7,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -74,7 +74,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** {@inheritDoc} */
     @Override
-    public final void updateAll() throws GTUException, NetworkException, ParameterException
+    public final void updateAll() throws GtuException, NetworkException, ParameterException
     {
         // lazy evaluation
     }
@@ -103,7 +103,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                             getGtu().getFront(), RelativePosition.REAR, getTimestamp()),
                     this.headwayGtuTypeGap, getGtu(), true);
         }
-        catch (ParameterException | GTUException | IllegalArgumentException exception)
+        catch (ParameterException | GtuException | IllegalArgumentException exception)
         {
             throw new RuntimeException("Unexpected exception while computing first leaders.", exception);
         }
@@ -133,7 +133,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                             getGtu().getRear(), RelativePosition.FRONT, getTimestamp()),
                     this.headwayGtuTypeGap, getGtu(), false);
         }
-        catch (ParameterException | GTUException | IllegalArgumentException exception)
+        catch (ParameterException | GtuException | IllegalArgumentException exception)
         {
             throw new RuntimeException("Unexpected exception while computing first followers.", exception);
         }
@@ -174,7 +174,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                 return true;
             }
         }
-        catch (ParameterException | GTUException | IllegalArgumentException exception)
+        catch (ParameterException | GtuException | IllegalArgumentException exception)
         {
             throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
         }
@@ -212,7 +212,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                     getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, lane,
                     ignoreIfUpstream);
         }
-        catch (ParameterException | GTUException exception)
+        catch (ParameterException | GtuException exception)
         {
             throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
         }
@@ -248,7 +248,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             return new UpstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
                     getGtu().getParameters().getParameter(LOOKBACK), getGtu().getRear(), this.headwayGtuType, lane);
         }
-        catch (ParameterException | GTUException exception)
+        catch (ParameterException | GtuException exception)
         {
             throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
         }

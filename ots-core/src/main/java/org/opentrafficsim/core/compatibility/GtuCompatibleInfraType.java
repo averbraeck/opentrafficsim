@@ -2,7 +2,7 @@ package org.opentrafficsim.core.compatibility;
 
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.OTSRuntimeException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * GtuCompatibleInfraType is a HierarchicalType that implements the delegation methods for GTU compatibility.
@@ -16,7 +16,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @param <I> The infrastructure type
  */
 public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>> extends HierarchicalType<I>
-        implements Compatibility<GTUType, I>
+        implements Compatibility<GtuType, I>
 {
     /** Local cache to delegate compatibility to. */
     private GtuCompatibility<I> gtuCompatibility;
@@ -43,34 +43,34 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
     }
 
     /**
-     * Add an compatible GTUType to this GtuCompatibility.
-     * @param gtuType GTUType; the GTUType to add to the compatible set of this Compatibility
+     * Add an compatible GtuType to this GtuCompatibility.
+     * @param gtuType GtuType; the GtuType to add to the compatible set of this Compatibility
      * @return GtuCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
      */
-    public final GtuCompatibility<I> addCompatibleGTUType(final GTUType gtuType)
+    public final GtuCompatibility<I> addCompatibleGtuType(final GtuType gtuType)
     {
         // delegate to GtuCompatibility
-        return this.gtuCompatibility.addCompatibleGTUType(gtuType);
+        return this.gtuCompatibility.addCompatibleGtuType(gtuType);
     }
 
     /**
-     * Add a incompatible GTUType to this GtuCompatibility.
-     * @param gtuType GTUType; the GTUType to add to the incompatible set of this Compatibility
+     * Add a incompatible GtuType to this GtuCompatibility.
+     * @param gtuType GtuType; the GtuType to add to the incompatible set of this Compatibility
      * @return GtuCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
      */
-    public final GtuCompatibility<I> addIncompatibleGTUType(final GTUType gtuType)
+    public final GtuCompatibility<I> addIncompatibleGtuType(final GtuType gtuType)
     {
         // delegate to GtuCompatibility
-        return this.gtuCompatibility.addIncompatibleGTUType(gtuType);
+        return this.gtuCompatibility.addIncompatibleGtuType(gtuType);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isCompatible(final GTUType gtuType)
+    public boolean isCompatible(final GtuType gtuType)
     {
         // delegate to GtuCompatibility
         return this.gtuCompatibility.isCompatible(gtuType);
@@ -78,7 +78,7 @@ public abstract class GtuCompatibleInfraType<I extends GtuCompatibleInfraType<I>
 
     /** {@inheritDoc} */
     @Override
-    public Boolean isCompatibleOnInfraLevel(final GTUType gtuType)
+    public Boolean isCompatibleOnInfraLevel(final GtuType gtuType)
     {
         // delegate to GtuCompatibility
         return this.gtuCompatibility.isCompatibleOnInfraLevel(gtuType);

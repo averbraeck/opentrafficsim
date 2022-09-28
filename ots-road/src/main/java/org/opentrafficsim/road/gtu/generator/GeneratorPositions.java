@@ -20,7 +20,7 @@ import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
@@ -239,12 +239,12 @@ public final class GeneratorPositions implements Locatable
     /**
      * Draw a new position to generate a GTU. The link is drawn by giving each link a weight equal to the number of accessible
      * lanes for the GTU type. Next, a lane is drawn using (optionally biased) weights.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param destination Node; destination node
      * @param route Route; route, may be {@code null}
      * @return GeneratorLanePosition; new position to generate a GTU
      */
-    public GeneratorLinkPosition draw(final GTUType gtuType, final Node destination, final Route route)
+    public GeneratorLinkPosition draw(final GtuType gtuType, final Node destination, final Route route)
     {
         return this.position.draw(gtuType, this.stream, destination, route);
     }
@@ -274,10 +274,10 @@ public final class GeneratorPositions implements Locatable
 
     /**
      * Returns the speed limit for the given GTU type, prior to the GTU position being determined.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @return speed limit for the given GTU type, prior to the GTU position being determined
      */
-    public Speed speedLimit(final GTUType gtuType)
+    public Speed speedLimit(final GtuType gtuType)
     {
         Speed speedLimit = null;
         for (GeneratorLanePosition pos : this.allPositions)
@@ -298,7 +298,7 @@ public final class GeneratorPositions implements Locatable
                 }
             }
         }
-        Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GTUType %s.",
+        Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
                 gtuType);
         return speedLimit;
     }
@@ -350,10 +350,10 @@ public final class GeneratorPositions implements Locatable
 
         /**
          * Returns whether this lane is accessible to the GTU type.
-         * @param gtuType GTUType; gtu type
+         * @param gtuType GtuType; gtu type
          * @return boolean; whether this lane is accessible to the GTU type
          */
-        boolean allows(final GTUType gtuType)
+        boolean allows(final GtuType gtuType)
         {
             for (DirectedLanePosition pos : this.position)
             {
@@ -483,10 +483,10 @@ public final class GeneratorPositions implements Locatable
 
         /**
          * Returns the weight for this link. This is either a predefined weight, or the number of lanes for the GTU type.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @return double; weight for this link
          */
-        double getWeight(final GTUType gtuType)
+        double getWeight(final GtuType gtuType)
         {
             if (this.weight < 0.0)
             {
@@ -506,10 +506,10 @@ public final class GeneratorPositions implements Locatable
 
         /**
          * Returns the number of accessible lanes for the GTU type.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @return int; number of accessible lanes for the GTU type
          */
-        int getNumberOfLanes(final GTUType gtuType)
+        int getNumberOfLanes(final GtuType gtuType)
         {
             int numberOfLanes = 0;
             for (GeneratorLanePosition lanePosition : this.positions)
@@ -524,14 +524,14 @@ public final class GeneratorPositions implements Locatable
 
         /**
          * Draws a specific GeneratorLanePosition utilizing lane biases of GTU types.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @param unplaced Map&lt;Integer, Integer&gt;; number of unplaced GTUs per lane. The lane number should match with
          *            {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane. Missing lanes are assumed
          *            to have no queue.
          * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
          * @return GeneratorLanePosition; specific GeneratorLanePosition utilizing lane biases of GTU types
          */
-        GeneratorLanePosition draw(final GTUType gtuType, final Map<Integer, Integer> unplaced, final Speed desiredSpeed)
+        GeneratorLanePosition draw(final GtuType gtuType, final Map<Integer, Integer> unplaced, final Speed desiredSpeed)
         {
             Map<GeneratorLanePosition, Double> map = new LinkedHashMap<>();
             for (int i = 0; i < this.positions.size(); i++)
@@ -539,7 +539,7 @@ public final class GeneratorPositions implements Locatable
                 GeneratorLanePosition lanePosition = this.positions.get(i);
                 if (lanePosition.allows(gtuType))
                 {
-                    GTUType type = gtuType;
+                    GtuType type = gtuType;
                     boolean found = false;
                     while (this.laneBiases != null && !found && type != null)
                     {
@@ -584,10 +584,10 @@ public final class GeneratorPositions implements Locatable
         }
 
         /**
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @return Speed; speed limit
          */
-        public Speed speedLimit(final GTUType gtuType)
+        public Speed speedLimit(final GtuType gtuType)
         {
             Speed speedLimit = null;
             for (GeneratorLanePosition pos : this.positions)
@@ -608,7 +608,7 @@ public final class GeneratorPositions implements Locatable
                     }
                 }
             }
-            Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GTUType %s.",
+            Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
                     gtuType);
             return speedLimit;
         }
@@ -642,16 +642,16 @@ public final class GeneratorPositions implements Locatable
         }
 
         /**
-         * Draws a GeneratorLinkPosition using number of accessible lanes for the GTUType as weight, and a GeneratorLanePosition
+         * Draws a GeneratorLinkPosition using number of accessible lanes for the GtuType as weight, and a GeneratorLanePosition
          * from that.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @param stream StreamInterface; stream for random numbers
          * @param destination Node; destination node
          * @param route Route; route, may be {@code null}
-         * @return GeneratorLanePosition; draws a LinkPosition using number of accessible lanes for the GTUType as weight, and a
+         * @return GeneratorLanePosition; draws a LinkPosition using number of accessible lanes for the GtuType as weight, and a
          *         GeneratorLanePosition from that
          */
-        GeneratorLinkPosition draw(final GTUType gtuType, final StreamInterface stream, final Node destination,
+        GeneratorLinkPosition draw(final GtuType gtuType, final StreamInterface stream, final Node destination,
                 final Route route)
         {
             Map<GeneratorLinkPosition, Double> map = new LinkedHashMap<>();
@@ -715,15 +715,15 @@ public final class GeneratorPositions implements Locatable
     {
 
         /** Biases per GTU type. */
-        private final Map<GTUType, LaneBias> biases = new LinkedHashMap<>();
+        private final Map<GtuType, LaneBias> biases = new LinkedHashMap<>();
 
         /**
          * Adds a GTU bias for randomly drawing a lane.
-         * @param gtuType GTUType; gtu type
+         * @param gtuType GtuType; gtu type
          * @param bias LaneBias; bias
          * @return LaneBiases; lane biases for method chaining
          */
-        public LaneBiases addBias(final GTUType gtuType, final LaneBias bias)
+        public LaneBiases addBias(final GtuType gtuType, final LaneBias bias)
         {
             Throw.whenNull(gtuType, "GTU type may not be null.");
             Throw.whenNull(bias, "Bias may not be null.");
@@ -733,20 +733,20 @@ public final class GeneratorPositions implements Locatable
 
         /**
          * Whether a bias is defined for the given type.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @return whether a bias is defined for the given type
          */
-        public boolean contains(final GTUType gtuType)
+        public boolean contains(final GtuType gtuType)
         {
             return this.biases.containsKey(gtuType);
         }
 
         /**
          * Returns the bias of given GTU type, or {@code Bias.None} if none defined for the GTU type.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @return Bias; bias of the GTU type
          */
-        public LaneBias getBias(final GTUType gtuType)
+        public LaneBias getBias(final GtuType gtuType)
         {
             return this.biases.getOrDefault(gtuType, LaneBias.NONE);
         }
@@ -774,15 +774,15 @@ public final class GeneratorPositions implements Locatable
     public static final class LaneBiasDefaults
     {
         /** Biases per GTU type. */
-        private final EnumMap<GTUType.DEFAULTS, LaneBias> biases = new EnumMap<>(GTUType.DEFAULTS.class);
+        private final EnumMap<GtuType.DEFAULTS, LaneBias> biases = new EnumMap<>(GtuType.DEFAULTS.class);
 
         /**
          * Adds a GTU bias for randomly drawing a lane.
-         * @param gtuEnum GTUType.DEFAULTS; gtu type
+         * @param gtuEnum GtuType.DEFAULTS; gtu type
          * @param bias LaneBias; bias
          * @return LaneBiases; lane biases for method chaining
          */
-        public LaneBiasDefaults addBias(final GTUType.DEFAULTS gtuEnum, final LaneBias bias)
+        public LaneBiasDefaults addBias(final GtuType.DEFAULTS gtuEnum, final LaneBias bias)
         {
             Throw.whenNull(gtuEnum, "GTU type enum may not be null.");
             Throw.whenNull(bias, "Bias may not be null.");
@@ -792,20 +792,20 @@ public final class GeneratorPositions implements Locatable
 
         /**
          * Whether a bias is defined for the given type.
-         * @param gtuEnum GTUType; GTU type enum
+         * @param gtuEnum GtuType; GTU type enum
          * @return whether a bias is defined for the given type
          */
-        public boolean contains(final GTUType.DEFAULTS gtuEnum)
+        public boolean contains(final GtuType.DEFAULTS gtuEnum)
         {
             return this.biases.containsKey(gtuEnum);
         }
 
         /**
          * Returns the bias of given GTU type, or {@code Bias.None} if none defined for the GTU type.
-         * @param gtuEnum GTUType.DEFAULTS; GTU type enum
+         * @param gtuEnum GtuType.DEFAULTS; GTU type enum
          * @return Bias; bias of the GTU type
          */
-        public LaneBias getBias(final GTUType.DEFAULTS gtuEnum)
+        public LaneBias getBias(final GtuType.DEFAULTS gtuEnum)
         {
             return this.biases.getOrDefault(gtuEnum, LaneBias.NONE);
         }

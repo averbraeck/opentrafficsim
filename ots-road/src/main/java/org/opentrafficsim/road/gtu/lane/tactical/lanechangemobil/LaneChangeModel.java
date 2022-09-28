@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
@@ -24,7 +24,7 @@ public interface LaneChangeModel
 {
     /**
      * Compute the acceleration and lane change.
-     * @param gtu LaneBasedGTU; the GTU for which the acceleration and lane change is computed
+     * @param gtu LaneBasedGtu; the GTU for which the acceleration and lane change is computed
      * @param sameLaneTraffic Collection&lt;Headway&gt;; the set of observable GTUs in the current lane (can not be null and may
      *            include the <code>gtu</code>)
      * @param rightLaneTraffic Collection&lt;Headway&gt;; the set of observable GTUs in the adjacent lane where GTUs should
@@ -38,7 +38,7 @@ public interface LaneChangeModel
      * @param nonPreferredLaneRouteIncentive Acceleration; route incentive to merge to the adjacent lane into which GTUs should
      *            merge to overtake other traffic
      * @return LaneMovementStep; the result of the lane change and GTU following model
-     * @throws GTUException when the speed of the GTU can not be determined
+     * @throws GtuException when the speed of the GTU can not be determined
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException if DefaultAlexander perception category is not present.
      */
@@ -46,7 +46,7 @@ public interface LaneChangeModel
     LaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGTU gtu, Collection<Headway> sameLaneTraffic,
             Collection<Headway> rightLaneTraffic, Collection<Headway> leftLaneTraffic, Speed speedLimit,
             Acceleration preferredLaneRouteIncentive, Acceleration laneChangeThreshold,
-            Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException, OperationalPlanException;
+            Acceleration nonPreferredLaneRouteIncentive) throws GtuException, ParameterException, OperationalPlanException;
 
     /**
      * Return the name of this GTU following model.

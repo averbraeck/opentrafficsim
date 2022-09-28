@@ -25,7 +25,7 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.conflictAndControl.DemoTrafcodAndTurbo.TrafCODModel;
@@ -161,7 +161,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                 ((CrossSectionLink) this.network.getLink("NBWA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("WBSA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("SBEA")).setPriority(Priority.PRIORITY);
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 // CrossSectionLink csLink = ((CrossSectionLink)

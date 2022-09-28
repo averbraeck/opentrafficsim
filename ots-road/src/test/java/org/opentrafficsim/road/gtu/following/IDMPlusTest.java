@@ -24,7 +24,7 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -70,7 +70,7 @@ public class IDMPlusTest implements UNITS
         Length s0 = new Length(2, METER);
         GTUFollowingModelOld carFollowingModel = new IDMPlusOld(new Acceleration(1.25, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), s0, new Duration(1, SECOND), 1d);
-        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Lane lane = CarTest.makeLane(network, laneType, simulator);
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
@@ -122,7 +122,7 @@ public class IDMPlusTest implements UNITS
         leaderCar11.setParameters(parametersFAM);
         leaderCar11.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
         leaderCar11.getTacticalPlanner().getPerception().perceive();
-        HeadwayGTUSimple leader = new HeadwayGTUSimple(leaderCar11.getId(), leaderCar11.getGTUType(),
+        HeadwayGTUSimple leader = new HeadwayGTUSimple(leaderCar11.getId(), leaderCar11.getGtuType(),
                 new Length(leaderPosition.getSI() - referenceCar10.getLength().getSI() - initialPosition.getSI(),
                         LengthUnit.SI),
                 leaderCar11.getLength(), leaderCar11.getWidth(), leaderCar11.getSpeed(), leaderCar11.getAcceleration(), null);
@@ -145,7 +145,7 @@ public class IDMPlusTest implements UNITS
         leaderCar12.getTacticalPlanner().getPerception().perceive();
         // Verify that the result is independent of the order of adding in the Collection
         Collection<Headway> leaders = new ArrayList<>();
-        HeadwayGTUSimple leader2 = new HeadwayGTUSimple(leaderCar12.getId(), leaderCar12.getGTUType(),
+        HeadwayGTUSimple leader2 = new HeadwayGTUSimple(leaderCar12.getId(), leaderCar12.getGtuType(),
                 new Length(leaderPosition.getSI() - referenceCar10.getLength().getSI() - initialPosition.getSI(),
                         LengthUnit.SI),
                 leaderCar12.getLength(), leaderCar12.getWidth(), leaderCar12.getSpeed(), leaderCar12.getAcceleration(), null);
@@ -184,7 +184,7 @@ public class IDMPlusTest implements UNITS
         leaderCar21.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
         referenceCar20.getTacticalPlanner().getPerception().perceive();
         leaderCar21.getTacticalPlanner().getPerception().perceive();
-        leader = new HeadwayGTUSimple(leaderCar21.getId(), leaderCar21.getGTUType(),
+        leader = new HeadwayGTUSimple(leaderCar21.getId(), leaderCar21.getGtuType(),
                 new Length(leaderPosition.getSI() - referenceCar20.getLength().getSI() - initialPosition.getSI(),
                         LengthUnit.SI),
                 leaderCar21.getLength(), leaderCar21.getWidth(), leaderCar21.getSpeed(), leaderCar21.getAcceleration(), null);
@@ -210,7 +210,7 @@ public class IDMPlusTest implements UNITS
             leaderCar22.setParameters(parametersFAM);
             leaderCar22.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
             leaderCar22.getTacticalPlanner().getPerception().perceive();
-            leader = new HeadwayGTUSimple(leaderCar22.getId(), leaderCar22.getGTUType(),
+            leader = new HeadwayGTUSimple(leaderCar22.getId(), leaderCar22.getGtuType(),
                     new Length(leaderPosition.getSI() - referenceCar20.getLength().getSI() - initialPosition.getSI(),
                             LengthUnit.SI),
                     leaderCar22.getLength(), leaderCar22.getWidth(), leaderCar22.getSpeed(), leaderCar22.getAcceleration(),
@@ -268,7 +268,7 @@ public class IDMPlusTest implements UNITS
             leaderCar31.setParameters(parametersFAM);
             leaderCar31.init(strategicalPlannerFAM, leaderPositions, leaderSpeed);
             leaderCar31.getTacticalPlanner().getPerception().perceive();
-            leader = new HeadwayGTUSimple(leaderCar31.getId(), leaderCar31.getGTUType(),
+            leader = new HeadwayGTUSimple(leaderCar31.getId(), leaderCar31.getGtuType(),
                     new Length(leaderPosition.getSI() - referenceCar30.getLength().getSI() - initialPosition.getSI(),
                             LengthUnit.SI),
                     leaderCar31.getLength(), leaderCar31.getWidth(), leaderCar31.getSpeed(), leaderCar31.getAcceleration(),

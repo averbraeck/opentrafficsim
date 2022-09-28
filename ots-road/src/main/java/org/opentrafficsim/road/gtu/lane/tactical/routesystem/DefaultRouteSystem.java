@@ -13,8 +13,8 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableMap.ImmutableEntry;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -23,7 +23,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * Default route system. This system stores a set for each combination of a {@code Lane}, {@code GTUDirectionality},
- * {@code Route} and {@code GTUType}. The set provides route information over a given distance beyond the end of the lane. If
+ * {@code Route} and {@code GtuType}. The set provides route information over a given distance beyond the end of the lane. If
  * more distance is required, the set is recalculated. If less is required, a subset is returned. Distances in the returned
  * route information are adjusted for the specific position of the GTU.
  * <p>
@@ -39,12 +39,12 @@ public class DefaultRouteSystem implements RouteSystem
 
     /** Cache. */
     private MultiKeyMap<LaneChangeInfoSet> cache =
-            new MultiKeyMap<>(Lane.class, GTUDirectionality.class, Route.class, GTUType.class);
+            new MultiKeyMap<>(Lane.class, GTUDirectionality.class, Route.class, GtuType.class);
 
     /** {@inheritDoc} */
     @Override
     public SortedSet<LaneChangeInfo> getLaneChangeInfo(final DirectedLanePosition position, final Length front,
-            final Route route, final GTUType gtuType, final Length distance)
+            final Route route, final GtuType gtuType, final Length distance)
     {
         /*
          * // obtain set LaneChangeInfoSet set = this.cache.get(() -> determineSet(position, route, gtuType, distance),
@@ -63,13 +63,13 @@ public class DefaultRouteSystem implements RouteSystem
      * @param position DirectedLanePosition; position
      * @param front Length; distance required for the front (relative to reference position)
      * @param route Route; route, may be {@code null}
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param distance Length; distance over which required lane changes are desired to be known
      * @return SortedSet&lt;LaneChangeInfo&gt;; lane change information
-     * @throws GTUException in case of multiple adjacent lanes
+     * @throws GtuException in case of multiple adjacent lanes
      */
     private LaneChangeInfoSet determineSet(final DirectedLanePosition position, final Length front, final Route route,
-            final GTUType gtuType, final Length distance) throws GTUException
+            final GtuType gtuType, final Length distance) throws GtuException
     {
         // the search can stop as soon as all lanes are reachable on a link that starts beyond 'distance' of the end of the lane
 
@@ -227,10 +227,10 @@ public class DefaultRouteSystem implements RouteSystem
          * Returns a set of next lanes along the route. This set may be empty. Note that this does not mean the lane can be
          * considered a dead-end, as the route is considered.
          * @param route Route route;
-         * @param gtuType GTUType; gtuType
+         * @param gtuType GtuType; gtuType
          * @return set of next lanes, which may be empty.
          */
-        public Set<LaneRecord> next(final Route route, final GTUType gtuType)
+        public Set<LaneRecord> next(final Route route, final GtuType gtuType)
         {
             Set<LaneRecord> set = new LinkedHashSet<>();
             ImmutableMap<Lane, GTUDirectionality> lanes = this.lane.downstreamLanes(this.direction, gtuType);
@@ -271,11 +271,11 @@ public class DefaultRouteSystem implements RouteSystem
 
         /**
          * Returns the left adjacent lane, or {@code null} if no such lane.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @return left adjacent lane, or {@code null} if no such lane
-         * @throws GTUException in case of multiple adjacent lanes
+         * @throws GtuException in case of multiple adjacent lanes
          */
-        public LaneRecord left(final GTUType gtuType) throws GTUException
+        public LaneRecord left(final GtuType gtuType) throws GtuException
         {
             if (!this.determinedLeft)
             {
@@ -293,11 +293,11 @@ public class DefaultRouteSystem implements RouteSystem
 
         /**
          * Returns the right adjacent lane, or {@code null} if no such lane.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @return right adjacent lane, or {@code null} if no such lane
-         * @throws GTUException in case of multiple adjacent lanes
+         * @throws GtuException in case of multiple adjacent lanes
          */
-        public LaneRecord right(final GTUType gtuType) throws GTUException
+        public LaneRecord right(final GtuType gtuType) throws GtuException
         {
             if (!this.determinedRight)
             {
@@ -315,15 +315,15 @@ public class DefaultRouteSystem implements RouteSystem
 
         /**
          * Returns the left or right adjacent lane, or {@code null} if no such lane.
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @param lat LateralDirectionality; left or right
          * @return left or right adjacent lane, or {@code null} if no such lane
-         * @throws GTUException in case of multiple adjacent lanes
+         * @throws GtuException in case of multiple adjacent lanes
          */
-        private LaneRecord adjacent(final GTUType gtuType, final LateralDirectionality lat) throws GTUException
+        private LaneRecord adjacent(final GtuType gtuType, final LateralDirectionality lat) throws GtuException
         {
             Set<Lane> set = this.lane.accessibleAdjacentLanesLegal(lat, gtuType, this.direction);
-            Throw.when(set.size() > 1, GTUException.class,
+            Throw.when(set.size() > 1, GtuException.class,
                     "Default route system found multiple adjacent lanes, which is not supported.");
             if (set.size() == 1)
             {
@@ -343,10 +343,10 @@ public class DefaultRouteSystem implements RouteSystem
 
         /**
          * Returns whether there is no available next lane (ignoring the route).
-         * @param gtuType GTUType; GTU type
+         * @param gtuType GtuType; GTU type
          * @return whether there is no available next lane (ignoring the route)
          */
-        public boolean isDeadEnd(final GTUType gtuType)
+        public boolean isDeadEnd(final GtuType gtuType)
         {
             return this.lane.downstreamLanes(this.direction, gtuType).isEmpty();
         }

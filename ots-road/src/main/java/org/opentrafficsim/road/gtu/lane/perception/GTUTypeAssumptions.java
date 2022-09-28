@@ -7,7 +7,7 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.lane.LaneType;
 
@@ -20,26 +20,26 @@ import org.opentrafficsim.road.network.lane.LaneType;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUTypeAssumptions implements Serializable
+public class GtuTypeAssumptions implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160527L;
 
     /** stored car following model of the observed GTU. */
-    private final Map<GTUType, CarFollowingModel> carFollowingModelMap = new LinkedHashMap<>();
+    private final Map<GtuType, CarFollowingModel> carFollowingModelMap = new LinkedHashMap<>();
 
     /** stored parameters of the observed GTU. */
-    private final Map<GTUType, Parameters> parametersMap = new LinkedHashMap<>();
+    private final Map<GtuType, Parameters> parametersMap = new LinkedHashMap<>();
 
     /** stored speed limit info of the observed GTU. */
-    private final Map<GTUType, Map<LaneType, Speed>> laneTypeSpeedMap = new LinkedHashMap<>();
+    private final Map<GtuType, Map<LaneType, Speed>> laneTypeSpeedMap = new LinkedHashMap<>();
 
     /**
-     * Set the car following model for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType GTUType; the GTUType to set the model for
-     * @param carFollowingModel CarFollowingModel; the model to set for the GTUType
+     * Set the car following model for a certain GtuType as an assumption for that GtuType.
+     * @param gtuType GtuType; the GtuType to set the model for
+     * @param carFollowingModel CarFollowingModel; the model to set for the GtuType
      */
-    public final void setCarFollowingModel(final GTUType gtuType, final CarFollowingModel carFollowingModel)
+    public final void setCarFollowingModel(final GtuType gtuType, final CarFollowingModel carFollowingModel)
     {
         Throw.whenNull(gtuType, "gtuType cannot be null");
         Throw.whenNull(carFollowingModel, "carFollowingModel cannot be null");
@@ -47,11 +47,11 @@ public class GTUTypeAssumptions implements Serializable
     }
 
     /**
-     * Set the parameters for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType GTUType; the GTUType to set the model for
-     * @param parameters Parameters; the model to set for the GTUType
+     * Set the parameters for a certain GtuType as an assumption for that GtuType.
+     * @param gtuType GtuType; the GtuType to set the model for
+     * @param parameters Parameters; the model to set for the GtuType
      */
-    public final void setParameters(final GTUType gtuType, final Parameters parameters)
+    public final void setParameters(final GtuType gtuType, final Parameters parameters)
     {
         Throw.whenNull(gtuType, "gtuType cannot be null");
         Throw.whenNull(parameters, "parameters cannot be null");
@@ -59,12 +59,12 @@ public class GTUTypeAssumptions implements Serializable
     }
 
     /**
-     * Set the maximum speed for a certain GTUType on a certain LaneType as an assumption for that GTUType.
-     * @param gtuType GTUType; the GTUType to set the model for
+     * Set the maximum speed for a certain GtuType on a certain LaneType as an assumption for that GtuType.
+     * @param gtuType GtuType; the GtuType to set the model for
      * @param laneType LaneType; the laneType to set the speed for
-     * @param maxSpeed Speed; the maximum speed on the laneType for the given GTUType
+     * @param maxSpeed Speed; the maximum speed on the laneType for the given GtuType
      */
-    public final void setLaneTypeMaxSpeed(final GTUType gtuType, final LaneType laneType, final Speed maxSpeed)
+    public final void setLaneTypeMaxSpeed(final GtuType gtuType, final LaneType laneType, final Speed maxSpeed)
     {
         Throw.whenNull(gtuType, "gtuType cannot be null");
         Throw.whenNull(laneType, "laneType cannot be null");
@@ -79,33 +79,33 @@ public class GTUTypeAssumptions implements Serializable
     }
 
     /**
-     * Return the car following model for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType GTUType; the GTUType to get the model for
-     * @return the car following model for the GTUType, or <b>null</b> when there is no information for the gtuType
+     * Return the car following model for a certain GtuType as an assumption for that GtuType.
+     * @param gtuType GtuType; the GtuType to get the model for
+     * @return the car following model for the GtuType, or <b>null</b> when there is no information for the gtuType
      */
-    public final CarFollowingModel getCarFollowingModel(final GTUType gtuType)
+    public final CarFollowingModel getCarFollowingModel(final GtuType gtuType)
     {
         return this.carFollowingModelMap.get(gtuType);
     }
 
     /**
-     * Return the parameters model for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType GTUType; the GTUType to get the model for
-     * @return the parameters for the GTUType, or <b>null</b> when there is no information for the gtuType
+     * Return the parameters model for a certain GtuType as an assumption for that GtuType.
+     * @param gtuType GtuType; the GtuType to get the model for
+     * @return the parameters for the GtuType, or <b>null</b> when there is no information for the gtuType
      */
-    public final Parameters getParameters(final GTUType gtuType)
+    public final Parameters getParameters(final GtuType gtuType)
     {
         return this.parametersMap.get(gtuType);
     }
 
     /**
-     * Return the maximum speed on a LaneType for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType GTUType; the GTUType to get the maximum speed for
+     * Return the maximum speed on a LaneType for a certain GtuType as an assumption for that GtuType.
+     * @param gtuType GtuType; the GtuType to get the maximum speed for
      * @param laneType LaneType; the LaneType to get the maximum speed for
-     * @return the maximum speed for the GTUType on the LaneType, or <b>null</b> when there is no information for the
+     * @return the maximum speed for the GtuType on the LaneType, or <b>null</b> when there is no information for the
      *         combination of gtuType and laneType
      */
-    public final Speed getLaneTypeMaxSpeed(final GTUType gtuType, final LaneType laneType)
+    public final Speed getLaneTypeMaxSpeed(final GtuType gtuType, final LaneType laneType)
     {
         if (!this.laneTypeSpeedMap.containsKey(gtuType))
         {
@@ -115,12 +115,12 @@ public class GTUTypeAssumptions implements Serializable
     }
 
     /**
-     * Return a safe copy of the maximum speed for all LaneTypes for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType GTUType; the GTUType to get the maximum speed for
-     * @return a map with a safe copy of the maximum speed for the GTUType on all LaneTypes, or <b>null</b> when there is no
+     * Return a safe copy of the maximum speed for all LaneTypes for a certain GtuType as an assumption for that GtuType.
+     * @param gtuType GtuType; the GtuType to get the maximum speed for
+     * @return a map with a safe copy of the maximum speed for the GtuType on all LaneTypes, or <b>null</b> when there is no
      *         information for the gtuType
      */
-    public final Map<LaneType, Speed> getMaxSpeeds(final GTUType gtuType)
+    public final Map<LaneType, Speed> getMaxSpeeds(final GtuType gtuType)
     {
         if (!this.laneTypeSpeedMap.containsKey(gtuType))
         {
@@ -154,7 +154,7 @@ public class GTUTypeAssumptions implements Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        GTUTypeAssumptions other = (GTUTypeAssumptions) obj;
+        GtuTypeAssumptions other = (GtuTypeAssumptions) obj;
         if (this.parametersMap == null)
         {
             if (other.parametersMap != null)
@@ -183,7 +183,7 @@ public class GTUTypeAssumptions implements Serializable
     @Override
     public final String toString()
     {
-        return "GTUTypeAssumptions [carFollowingModelMap=" + this.carFollowingModelMap + ", parametersMap=" + this.parametersMap
+        return "GtuTypeAssumptions [carFollowingModelMap=" + this.carFollowingModelMap + ", parametersMap=" + this.parametersMap
                 + ", laneTypeSpeedMap=" + this.laneTypeSpeedMap + "]";
     }
 

@@ -11,8 +11,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -21,7 +21,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * A LaneStructureRecord contains information about the lanes that can be accessed from this lane by a GTUType. It tells whether
+ * A LaneStructureRecord contains information about the lanes that can be accessed from this lane by a GtuType. It tells whether
  * there is a left and/or right lane by pointing to other LaneStructureRecords, and which successor LaneStructureRecord(s) there
  * are at the end of the lane of this LaneStructureRecord. All information (left, right, next) is calculated relative to the
  * driving direction of the GTU that owns this structure.
@@ -40,7 +40,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /** Cache of allows route information. */
     // TODO clear on network change, with an event listener?
     private static MultiKeyMap<Boolean> allowsRouteCache =
-            new MultiKeyMap<>(Lane.class, Route.class, GTUType.class, Boolean.class);
+            new MultiKeyMap<>(Lane.class, Route.class, GtuType.class, Boolean.class);
 
     /** The lane of the LSR. */
     private final Lane lane;
@@ -262,14 +262,14 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /** {@inheritDoc} */
     @Override
-    public final boolean allowsRoute(final Route route, final GTUType gtuType) throws NetworkException
+    public final boolean allowsRoute(final Route route, final GtuType gtuType) throws NetworkException
     {
         return allowsRoute(route, gtuType, false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean allowsRouteAtEnd(final Route route, final GTUType gtuType) throws NetworkException
+    public final boolean allowsRouteAtEnd(final Route route, final GtuType gtuType) throws NetworkException
     {
         return allowsRoute(route, gtuType, true);
     }
@@ -277,12 +277,12 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * Returns whether (the end of) this lane allows the route to be followed, using caching.
      * @param route Route; the route to follow
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @param end boolean; whether to consider the end (or otherwise the lane itself, i.e. allow lane change from this lane)
      * @return whether the end of this lane allows the route to be followed
      * @throws NetworkException if no destination node
      */
-    private boolean allowsRoute(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
+    private boolean allowsRoute(final Route route, final GtuType gtuType, final boolean end) throws NetworkException
     {
         return allowsRouteCache.get(() -> Try.assign(() -> allowsRoute0(route, gtuType, end), "no destination"), this.lane,
                 route, gtuType, end);
@@ -291,12 +291,12 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * Returns whether (the end of) this lane allows the route to be followed.
      * @param route Route; the route to follow
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @param end boolean; whether to consider the end (or otherwise the lane itself, i.e. allow lane change from this lane)
      * @return whether the end of this lane allows the route to be followed
      * @throws NetworkException if no destination node
      */
-    private boolean allowsRoute0(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
+    private boolean allowsRoute0(final Route route, final GtuType gtuType, final boolean end) throws NetworkException
     {
         // driving without route
         if (route == null)
@@ -421,12 +421,12 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * Returns whether continuing on this lane will allow the route to be followed, while the lane itself is not on the route.
      * @param route Route; the route to follow
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @param original LaneStructureRecord; source record, should be {@code null} to prevent loop recognition on first iteration
      * @return whether continuing on this lane will allow the route to be followed
      * @throws NetworkException if no destination node
      */
-    private boolean leadsToRoute(final Route route, final GTUType gtuType, final LaneStructureRecord original)
+    private boolean leadsToRoute(final Route route, final GtuType gtuType, final LaneStructureRecord original)
             throws NetworkException
     {
         if (original == this)
@@ -460,9 +460,9 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * @param leftRecord RollingLaneStructureRecord; set the left LSR or null if not available. Left and right are relative to
      *            the &lt;b&gt;driving&lt;/b&gt; direction.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      */
-    public final void setLeft(final RollingLaneStructureRecord leftRecord, final GTUType gtuType)
+    public final void setLeft(final RollingLaneStructureRecord leftRecord, final GtuType gtuType)
     {
         this.left = leftRecord;
         this.mayChangeLeft = getLane().accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, this.gtuDirectionality)
@@ -497,9 +497,9 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * @param rightRecord RollingLaneStructureRecord; set the right LSR or null if not available. Left and right are relative to
      *            the &lt;b&gt;driving&lt;/b&gt; direction
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      */
-    public final void setRight(final RollingLaneStructureRecord rightRecord, final GTUType gtuType)
+    public final void setRight(final RollingLaneStructureRecord rightRecord, final GtuType gtuType)
     {
         this.right = rightRecord;
         this.mayChangeRight =
@@ -539,11 +539,11 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * @param next RollingLaneStructureRecord; a next LSRs to add. Next is relative to the driving direction, not to the design
      *            line direction.
-     * @throws GTUException if the records is cut-off at the end
+     * @throws GtuException if the records is cut-off at the end
      */
-    public final void addNext(final RollingLaneStructureRecord next) throws GTUException
+    public final void addNext(final RollingLaneStructureRecord next) throws GtuException
     {
-        Throw.when(this.cutOffEnd != null, GTUException.class,
+        Throw.when(this.cutOffEnd != null, GtuException.class,
                 "Cannot add next records to a record that was cut-off at the end.");
         this.nextList.add(next);
     }
@@ -566,11 +566,11 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * @param prev RollingLaneStructureRecord; a previous LSRs to add. Previous is relative to the driving direction, not to the
      *            design line direction.
-     * @throws GTUException if the records is cut-off at the start
+     * @throws GtuException if the records is cut-off at the start
      */
-    public final void addPrev(final RollingLaneStructureRecord prev) throws GTUException
+    public final void addPrev(final RollingLaneStructureRecord prev) throws GtuException
     {
-        Throw.when(this.cutOffStart != null, GTUException.class,
+        Throw.when(this.cutOffStart != null, GtuException.class,
                 "Cannot add previous records to a record that was cut-off at the start.");
         this.prevList.add(prev);
     }
@@ -578,11 +578,11 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * Sets this record as being cut-off, i.e. there are no next records due to cut-off.
      * @param cutOffEnd Length; where this lane was cut-off (in the driving direction) resulting in no next lanes
-     * @throws GTUException if there are next records
+     * @throws GtuException if there are next records
      */
-    public final void setCutOffEnd(final Length cutOffEnd) throws GTUException
+    public final void setCutOffEnd(final Length cutOffEnd) throws GtuException
     {
-        Throw.when(!this.nextList.isEmpty(), GTUException.class,
+        Throw.when(!this.nextList.isEmpty(), GtuException.class,
                 "Setting lane record with cut-off end, but there are next records.");
         this.cutOffEnd = cutOffEnd;
     }
@@ -590,11 +590,11 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * Sets this record as being cut-off, i.e. there are no previous records due to cut-off.
      * @param cutOffStart Length; where this lane was cut-off (in the driving direction) resulting in no prev lanes
-     * @throws GTUException if there are previous records
+     * @throws GtuException if there are previous records
      */
-    public final void setCutOffStart(final Length cutOffStart) throws GTUException
+    public final void setCutOffStart(final Length cutOffStart) throws GtuException
     {
-        Throw.when(!this.prevList.isEmpty(), GTUException.class,
+        Throw.when(!this.prevList.isEmpty(), GtuException.class,
                 "Setting lane record with cut-off start, but there are previous records.");
         this.cutOffStart = cutOffStart;
     }

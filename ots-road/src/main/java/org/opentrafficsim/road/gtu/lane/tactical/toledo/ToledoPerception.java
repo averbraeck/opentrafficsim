@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -54,9 +54,9 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
     /**
      * Updates the infrastructural lane change info.
      * @param lane RelativeLane; relative lateral lane
-     * @throws GTUException when GTU is not initialized
+     * @throws GtuException when GTU is not initialized
      */
-    public void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GTUException
+    public void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GtuException
     {
         //
     }
@@ -122,10 +122,10 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
     /**
      * Updates the speed limit prospect.
      * @param lane RelativeLane; relative lateral lane
-     * @throws GTUException if the GTU was not initialized
+     * @throws GtuException if the GTU was not initialized
      * @throws ParameterException if a parameter is not defined
      */
-    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GTUException, ParameterException
+    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GtuException, ParameterException
     {
         this.infrastructureCategory.updateSpeedLimitProspect(lane);
     }
@@ -134,11 +134,11 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
      * Updates the distance over which lane changes remains legally possible.
      * @param fromLane RelativeLane; lane from which the lane change possibility is requested
      * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @throws GTUException if the GTU was not initialized
+     * @throws GtuException if the GTU was not initialized
      * @throws ParameterException if a parameter is not defined
      */
     public final void updateLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         this.infrastructureCategory.updateLegalLaneChangePossibility(fromLane, lat);
     }
@@ -147,21 +147,21 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
      * Updates the distance over which lane changes remains physically possible.
      * @param fromLane RelativeLane; lane from which the lane change possibility is requested
      * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @throws GTUException if the GTU was not initialized
+     * @throws GtuException if the GTU was not initialized
      * @throws ParameterException if a parameter is not defined
      */
     public final void updatePhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         this.infrastructureCategory.updatePhysicalLaneChangePossibility(fromLane, lat);
     }
 
     /**
      * Updates a set of relative lanes representing the cross section.
-     * @throws GTUException if the GTU was not initialized
+     * @throws GtuException if the GTU was not initialized
      * @throws ParameterException if a parameter is not defined
      */
-    public final void updateCrossSection() throws GTUException, ParameterException
+    public final void updateCrossSection() throws GtuException, ParameterException
     {
         this.infrastructureCategory.updateCrossSection();
     }
@@ -256,7 +256,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /** {@inheritDoc} */
     @Override
-    public final void updateAll() throws GTUException, NetworkException, ParameterException
+    public final void updateAll() throws GtuException, NetworkException, ParameterException
     {
         this.infrastructureCategory.updateAll();
     }

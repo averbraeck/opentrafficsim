@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental;
 
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
@@ -22,8 +22,8 @@ public interface Mental
      * Apply mental model on perception.
      * @param perception LanePerception; perception
      * @throws ParameterException if a parameter is missing or out of bounds
-     * @throws GTUException exceptions pertaining to the GTU
+     * @throws GtuException exceptions pertaining to the GTU
      */
-    void apply(LanePerception perception) throws ParameterException, GTUException;
+    void apply(LanePerception perception) throws ParameterException, GtuException;
 
 }

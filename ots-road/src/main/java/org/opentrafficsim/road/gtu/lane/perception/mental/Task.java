@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
@@ -26,14 +26,14 @@ public interface Task extends Identifiable
     /**
      * Returns the gross task demand to be managed by a task manager.
      * @param perception LanePerception; perception
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param parameters Parameters; parameters
      * @return double; gross task demand
      * @throws ParameterException if a parameter is missing or out of bounds
-     * @throws GTUException exceptions pertaining to the GTU
+     * @throws GtuException exceptions pertaining to the GTU
      */
     double calculateTaskDemand(LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
-            throws ParameterException, GTUException;
+            throws ParameterException, GtuException;
 
     /**
      * Sets (gross) task demand.

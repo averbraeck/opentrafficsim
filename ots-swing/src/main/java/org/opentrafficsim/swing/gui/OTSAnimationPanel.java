@@ -46,7 +46,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -869,7 +869,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         private final OTSNetwork network;
 
         /** Last GTU that was followed. */
-        private GTU lastGtu;
+        private Gtu lastGtu;
 
         /**
          * Constructor.
@@ -899,7 +899,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 {
                     if (e.isControlDown())
                     {
-                        GTU gtu = getSelectedGTU(e.getPoint());
+                        Gtu gtu = getSelectedGTU(e.getPoint());
                         if (gtu != null)
                         {
                             getOtsControlPanel().getOtsSearchPanel().selectAndTrackObject("GTU", gtu.getId(), true);
@@ -1004,17 +1004,17 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          * @return the selected objects
          */
         @SuppressWarnings("synthetic-access")
-        protected GTU getSelectedGTU(final Point2D mousePoint)
+        protected Gtu getSelectedGTU(final Point2D mousePoint)
         {
-            List<GTU> targets = new ArrayList<>();
+            List<Gtu> targets = new ArrayList<>();
             Point2d point = getRenderableScale().getWorldCoordinates(mousePoint, getExtent(), getSize());
             for (Renderable2DInterface<?> renderable : getElements())
             {
                 if (isShowElement(renderable) && renderable.contains(point, getExtent()))
                 {
-                    if (renderable.getSource() instanceof GTU)
+                    if (renderable.getSource() instanceof Gtu)
                     {
-                        targets.add((GTU) renderable.getSource());
+                        targets.add((Gtu) renderable.getSource());
                     }
                 }
             }

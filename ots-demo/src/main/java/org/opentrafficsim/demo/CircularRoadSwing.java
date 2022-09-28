@@ -16,7 +16,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.DirectedLinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -119,7 +119,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
                     while (simulator.isStartingOrRunning())
                     {
                         iteration++;
-                        for (GTU gtu : otsModel.getNetwork().getGTUs())
+                        for (Gtu gtu : otsModel.getNetwork().getGTUs())
                         {
                             gtu.getLocation();
                             getLocationCalls++;

@@ -10,24 +10,24 @@ package org.opentrafficsim.core.gtu;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface GTUErrorHandler
+public interface GtuErrorHandler
 {
 
     /** Default implementation that throws the exception. */
-    GTUErrorHandler THROW = new GTUErrorHandler()
+    GtuErrorHandler THROW = new GtuErrorHandler()
     {
         @Override
-        public void handle(final GTU gtu, final Exception ex) throws Exception
+        public void handle(final Gtu gtu, final Exception ex) throws Exception
         {
             throw ex;
         }
     };
 
     /** GTU error handler that deletes the GTU upon an exception. */
-    GTUErrorHandler DELETE = new GTUErrorHandler()
+    GtuErrorHandler DELETE = new GtuErrorHandler()
     {
         @Override
-        public void handle(final GTU gtu, final Exception ex) throws Exception
+        public void handle(final Gtu gtu, final Exception ex) throws Exception
         {
             gtu.getSimulator().getLogger().always().info("Deleting GTU {} due to exception.", gtu.getId());
             gtu.destroy();
@@ -36,10 +36,10 @@ public interface GTUErrorHandler
 
     /**
      * Handle exception.
-     * @param gtu GTU; GTU
+     * @param gtu Gtu; GTU
      * @param ex Exception; exception to handle
      * @throws Exception the exception may be thrown
      */
-    void handle(GTU gtu, Exception ex) throws Exception;
+    void handle(Gtu gtu, Exception ex) throws Exception;
 
 }

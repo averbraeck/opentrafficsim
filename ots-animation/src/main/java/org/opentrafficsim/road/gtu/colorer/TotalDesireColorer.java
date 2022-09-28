@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.colorer;
 import java.awt.Color;
 
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 
 /**
@@ -24,7 +24,7 @@ public class TotalDesireColorer extends DesireColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu)
+    public final Color getColor(final Gtu gtu)
     {
         Parameters params = gtu.getParameters();
         Double dLeft = params.getParameterOrNull(LmrsParameters.DLEFT);

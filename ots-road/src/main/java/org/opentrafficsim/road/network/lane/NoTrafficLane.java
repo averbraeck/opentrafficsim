@@ -7,7 +7,7 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -28,24 +28,24 @@ public class NoTrafficLane extends Lane
     /**
      * Return a Map that tells that directionality is NONE for all vehicles.
      * @param network RoadNetwork; the network for which to define the directionality
-     * @return Map&lt;GTUType, LongitudinalDirectionality&gt;; a Map that tells that directionality is NONE for all vehicles
+     * @return Map&lt;GtuType, LongitudinalDirectionality&gt;; a Map that tells that directionality is NONE for all vehicles
      */
-    private static Map<GTUType, LongitudinalDirectionality> directionalityNone(final RoadNetwork network)
+    private static Map<GtuType, LongitudinalDirectionality> directionalityNone(final RoadNetwork network)
     {
-        Map<GTUType, LongitudinalDirectionality> dirNone = new LinkedHashMap<>();
-        dirNone.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_NONE);
+        Map<GtuType, LongitudinalDirectionality> dirNone = new LinkedHashMap<>();
+        dirNone.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_NONE);
         return dirNone;
     }
 
     /**
      * Map that tells that speed is 0.0 for all vehicles.
      * @param network RoadNetwork; the network for which to define the speeds
-     * @return Map&lt;GTUType, Speed&gt;; Map that tells that speed is 0.0 for all vehicles
+     * @return Map&lt;GtuType, Speed&gt;; Map that tells that speed is 0.0 for all vehicles
      */
-    private static Map<GTUType, Speed> speedNull(final RoadNetwork network)
+    private static Map<GtuType, Speed> speedNull(final RoadNetwork network)
     {
-        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Speed.ZERO);
+        Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), Speed.ZERO);
         return speedMap;
     }
 

@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.strategical.route;
 import java.io.Serializable;
 
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -91,7 +91,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
     /** {@inheritDoc} */
     @Override
     public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route, final Node origin,
-            final Node destination) throws GTUException
+            final Node destination) throws GtuException
     {
         LaneBasedStrategicalRoutePlanner strategicalPlanner;
         if (this.routeGenerator == null)
@@ -104,7 +104,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(nextTacticalPlanner(gtu), route, gtu, origin, destination,
                     this.routeGenerator);
         }
-        gtu.setParameters(nextParameters(gtu.getGTUType()));
+        gtu.setParameters(nextParameters(gtu.getGtuType()));
         return strategicalPlanner;
     }
 

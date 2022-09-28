@@ -43,20 +43,20 @@ public class GTUCharacteristicsTest implements OTSModelInterface
     {
         OTSNetwork network = new OTSNetwork("network", true, this.simulator);
         // Make two sets of values so we can prove that the constructed GTUCharacteristics sets are really distinct.
-        GTUType gtuTypeA = new GTUType("Type A", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
-        GTUType gtuTypeB = new GTUType("Type B", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
+        GtuType gtuTypeA = new GtuType("Type A", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType gtuTypeB = new GtuType("Type B", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         Length lengthA = new Length(5, LengthUnit.METER);
         Length lengthB = new Length(10, LengthUnit.METER);
         Length widthA = new Length(2, LengthUnit.METER);
         Length widthB = new Length(2.5, LengthUnit.METER);
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
-        GTUCharacteristics gtucA = new GTUCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA,
+        GtuCharacteristics gtucA = new GtuCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA,
                 Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), lengthA.times(0.5));
-        GTUCharacteristics gtucB = new GTUCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB,
+        GtuCharacteristics gtucB = new GtuCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB,
                 Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), lengthB.times(0.5));
-        assertEquals("gtuTypeA", gtuTypeA, gtucA.getGTUType());
-        assertEquals("gtuTypeB", gtuTypeB, gtucB.getGTUType());
+        assertEquals("gtuTypeA", gtuTypeA, gtucA.getGtuType());
+        assertEquals("gtuTypeB", gtuTypeB, gtucB.getGtuType());
         assertEquals("lengthA", lengthA, gtucA.getLength());
         assertEquals("lengthB", lengthB, gtucB.getLength());
         assertEquals("widthA", widthA, gtucA.getWidth());

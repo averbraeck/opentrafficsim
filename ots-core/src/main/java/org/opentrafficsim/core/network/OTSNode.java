@@ -12,7 +12,7 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -56,7 +56,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * as it replaces the default. The map gives per GTU type a map of incoming links that are connected to outgoing links,
      * which are stored in a Set.
      */
-    private Map<GTUType, Map<Link, Set<Link>>> connections = null;
+    private Map<GtuType, Map<Link, Set<Link>>> connections = null;
 
     /**
      * Construction of a Node.
@@ -139,12 +139,12 @@ public class OTSNode implements Node, Locatable, Serializable
     /**
      * Add a single connection for a GTU type to the connections map. The data structures will be created if it does not exist
      * yet.
-     * @param gtuType GTUType; the GTU type for which this connection is made
+     * @param gtuType GtuType; the GTU type for which this connection is made
      * @param incomingLink Link; the link that connects to this Node
      * @param outgoingLink Link; the link that the GTU can use to depart from this Node when coming from the incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
-    public final void addConnection(final GTUType gtuType, final Link incomingLink, final Link outgoingLink)
+    public final void addConnection(final GtuType gtuType, final Link incomingLink, final Link outgoingLink)
             throws NetworkException
     {
         // ------------------------------------------- check consistency
@@ -198,13 +198,13 @@ public class OTSNode implements Node, Locatable, Serializable
     /**
      * Add a set of connections for a GTU type to the connections map. The data structures will be created if it does not exist
      * yet.
-     * @param gtuType GTUType; the GTU type for which this connection is made
+     * @param gtuType GtuType; the GTU type for which this connection is made
      * @param incomingLink Link; the link that connects to this Node
      * @param outgoingLinks Set&lt;Link&gt;; a set of links that the GTU can use to depart from this Node when coming from the
      *            incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
-    public final void addConnections(final GTUType gtuType, final Link incomingLink, final Set<Link> outgoingLinks)
+    public final void addConnections(final GtuType gtuType, final Link incomingLink, final Set<Link> outgoingLinks)
             throws NetworkException
     {
         // ------------------------------------------- check consistency
@@ -271,7 +271,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Set<Link> nextLinks(final GTUType gtuType, final Link prevLink) throws NetworkException
+    public final Set<Link> nextLinks(final GtuType gtuType, final Link prevLink) throws NetworkException
     {
         // ------------------------------------------- check consistency
         if (!this.links.contains(prevLink))
@@ -323,7 +323,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * {@inheritDoc}
      */
     @Override
-    public final boolean isDirectionallyConnectedTo(final GTUType gtuType, final Node toNode)
+    public final boolean isDirectionallyConnectedTo(final GtuType gtuType, final Node toNode)
     {
         for (Link link : getLinks())
         {
@@ -443,8 +443,8 @@ public class OTSNode implements Node, Locatable, Serializable
         OTSNode clone = (OTSNode) newNetwork.getNode(this.id);
         if (this.connections != null)
         {
-            Map<GTUType, Map<Link, Set<Link>>> newConnections = new LinkedHashMap<>();
-            for (GTUType gtuType : this.connections.keySet())
+            Map<GtuType, Map<Link, Set<Link>>> newConnections = new LinkedHashMap<>();
+            for (GtuType gtuType : this.connections.keySet())
             {
                 Map<Link, Set<Link>> newConnMap = new LinkedHashMap<>();
                 for (Link link : this.connections.get(gtuType).keySet())

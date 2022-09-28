@@ -12,8 +12,8 @@ import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -60,33 +60,33 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
     /**
      * This method returns the directionality of the link for a GTU type. It might be that the link is FORWARD (from start node
      * to end node) for the GTU type CAR, but BOTH for the GTU type BICYCLE (i.e., bicycles can also go from end node to start
-     * node). If there is no entry for the given GTU Type, the values of GTUType.ALL will be returned. If this entry is not
+     * node). If there is no entry for the given GTU Type, the values of GtuType.ALL will be returned. If this entry is not
      * present, LongitudinalDirectionality.NONE will be returned.
-     * @param gtuType GTUType; the GTU type to request the directionality for
+     * @param gtuType GtuType; the GTU type to request the directionality for
      * @return the longitudinal directionality of the link (FORWARD, BACKWARD, BOTH or NONE) for the given GTU type. NONE will
      *         be returned if no directionality is given.
      */
-    LongitudinalDirectionality getDirectionality(GTUType gtuType);
+    LongitudinalDirectionality getDirectionality(GtuType gtuType);
 
     /**
      * Add a GTU to this link (e.g., for statistical purposes, or for a model on macro level). It is safe to add a GTU again. No
      * warning or error will be given. The GTU_ADD_EVENT will only be fired when the GTU was not already on the link.
-     * @param gtu GTU; the GTU to add.
+     * @param gtu Gtu; the GTU to add.
      */
-    void addGTU(GTU gtu);
+    void addGTU(Gtu gtu);
 
     /**
      * Remove a GTU from this link. It is safe to try to remove a GTU again. No warning or error will be given. The
      * GTU_REMOVE_EVENT will only be fired when the GTU was on the link.
-     * @param gtu GTU; the GTU to remove.
+     * @param gtu Gtu; the GTU to remove.
      */
-    void removeGTU(GTU gtu);
+    void removeGTU(Gtu gtu);
 
     /**
      * Provide a safe copy of the set of GTUs.
      * @return Set&lt;GTU&gt;; a safe copy of the set of GTUs
      */
-    Set<GTU> getGTUs();
+    Set<Gtu> getGTUs();
 
     /**
      * Provide the number of GTUs on this link.

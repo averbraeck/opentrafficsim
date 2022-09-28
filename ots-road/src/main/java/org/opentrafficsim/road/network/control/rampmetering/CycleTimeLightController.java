@@ -156,14 +156,14 @@ public class CycleTimeLightController implements RampMeteringLightController
         /**
          * @param trafficLight TrafficLight; traffic light
          * @param simulator TimeDoubleUnit; simulator
-         * @param detectedGTUTypes Compatible; GTU types
+         * @param detectedGtuTypes Compatible; GTU types
          * @throws NetworkException when the position on the lane is out of bounds
          */
         RampMeteringSensor(final TrafficLight trafficLight, final OTSSimulatorInterface simulator,
-                final Compatible detectedGTUTypes) throws NetworkException
+                final Compatible detectedGtuTypes) throws NetworkException
         {
             super(trafficLight.getId() + "_sensor", trafficLight.getLane(), trafficLight.getLongitudinalPosition(),
-                    RelativePosition.FRONT, simulator, detectedGTUTypes);
+                    RelativePosition.FRONT, simulator, detectedGtuTypes);
             this.trafficLight = trafficLight;
         }
 

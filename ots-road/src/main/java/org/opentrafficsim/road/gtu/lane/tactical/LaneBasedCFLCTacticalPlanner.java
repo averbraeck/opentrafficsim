@@ -25,8 +25,8 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -95,7 +95,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * Instantiated a tactical planner with GTU following and lane change behavior.
      * @param carFollowingModel GTUFollowingModelOld; Car-following model.
      * @param laneChangeModel LaneChangeModel; Lane change model.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      */
     public LaneBasedCFLCTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel,
             final LaneBasedGTU gtu)
@@ -108,7 +108,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-            throws OperationalPlanException, NetworkException, GTUException, ParameterException
+            throws OperationalPlanException, NetworkException, GtuException, ParameterException
     {
         try
         {
@@ -225,24 +225,24 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         }
         catch (ValueRuntimeException exception)
         {
-            throw new GTUException(exception);
+            throw new GtuException(exception);
         }
     }
 
     /**
      * TODO: move laneIncentives to LanePerception? Figure out if the default lane incentives are OK, or override them with
      * values that should keep this GTU on the intended route.
-     * @param gtu LaneBasedGTU; the GTU for which to calculate the incentives
+     * @param gtu LaneBasedGtu; the GTU for which to calculate the incentives
      * @param defaultLaneIncentives AccelerationVector; the three lane incentives for the next left adjacent lane, the current
      *            lane and the next right adjacent lane
      * @return AccelerationVector; the (possibly adjusted) lane incentives
      * @throws NetworkException on network inconsistency
      * @throws ValueRuntimeException cannot happen
-     * @throws GTUException when the position of the GTU cannot be correctly determined
+     * @throws GtuException when the position of the GTU cannot be correctly determined
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     private AccelerationVector laneIncentives(final LaneBasedGTU gtu, final AccelerationVector defaultLaneIncentives)
-            throws NetworkException, ValueRuntimeException, GTUException, OperationalPlanException
+            throws NetworkException, ValueRuntimeException, GtuException, OperationalPlanException
     {
         Length leftSuitability = suitability(gtu, LateralDirectionality.LEFT);
         Length currentSuitability = suitability(gtu, null);
@@ -274,17 +274,17 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * Figure out if the default lane incentives are OK, or override them with values that should keep this GTU from running out
      * of road at an upcoming lane drop.
-     * @param gtu LaneBasedGTU; the GTU for which to check the lane drops
+     * @param gtu LaneBasedGtu; the GTU for which to check the lane drops
      * @param defaultLaneIncentives AccelerationVector; DoubleVector.Rel.Dense&lt;AccelerationUnit&gt; the three lane incentives
      *            for the next left adjacent lane, the current lane and the next right adjacent lane
      * @return DoubleVector.Rel.Dense&lt;AccelerationUnit&gt;; the (possibly adjusted) lane incentives
      * @throws NetworkException on network inconsistency
      * @throws ValueRuntimeException cannot happen
-     * @throws GTUException when the positions of the GTU cannot be determined
+     * @throws GtuException when the positions of the GTU cannot be determined
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     private AccelerationVector checkLaneDrops(final LaneBasedGTU gtu, final AccelerationVector defaultLaneIncentives)
-            throws NetworkException, ValueRuntimeException, GTUException, OperationalPlanException
+            throws NetworkException, ValueRuntimeException, GtuException, OperationalPlanException
     {
         // FIXME: these comparisons to -10 is ridiculous.
         Length leftSuitability = Double.isNaN(defaultLaneIncentives.get(0).si) || defaultLaneIncentives.get(0).si < -10
@@ -324,7 +324,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /**
      * Return the distance until the next lane drop in the specified (nearby) lane.
-     * @param gtu LaneBasedGTU; the GTU to determine the next lane drop for
+     * @param gtu LaneBasedGtu; the GTU to determine the next lane drop for
      * @param direction LateralDirectionality; one of the values <cite>LateralDirectionality.LEFT</cite> (use the left-adjacent
      *            lane), or <cite>LateralDirectionality.RIGHT</cite> (use the right-adjacent lane), or <cite>null</cite> (use
      *            the current lane)
@@ -332,11 +332,11 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      *         LaneBasedRouteNavigator.NOLANECHANGENEEDED if this lane can be followed until the next split junction or until
      *         beyond the TIMEHORIZON
      * @throws NetworkException on network inconsistency
-     * @throws GTUException when the positions of the GTU cannot be determined
+     * @throws GtuException when the positions of the GTU cannot be determined
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     private Length laneDrop(final LaneBasedGTU gtu, final LateralDirectionality direction)
-            throws NetworkException, GTUException, OperationalPlanException
+            throws NetworkException, GtuException, OperationalPlanException
     {
         DirectedLanePosition dlp = gtu.getReferencePosition();
         Lane lane = dlp.getLane();
@@ -351,7 +351,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             return GETOFFTHISLANENOW;
         }
         double remainingLength = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit(gtu.getGTUType()).getSI();
+        double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit(gtu.getGtuType()).getSI();
         while (remainingTimeSI >= 0)
         {
             for (SingleSensor s : lane.getSensors())
@@ -361,7 +361,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     return NOLANECHANGENEEDED;
                 }
             }
-            int branching = lane.nextLanes(gtu.getGTUType()).size();
+            int branching = lane.nextLanes(gtu.getGtuType()).size();
             if (branching == 0)
             {
                 return new Length(remainingLength, LengthUnit.SI);
@@ -370,8 +370,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             {
                 return NOLANECHANGENEEDED;
             }
-            lane = lane.nextLanes(gtu.getGTUType()).keySet().iterator().next();
-            remainingTimeSI -= lane.getLength().getSI() / lane.getSpeedLimit(gtu.getGTUType()).getSI();
+            lane = lane.nextLanes(gtu.getGtuType()).keySet().iterator().next();
+            remainingTimeSI -= lane.getLength().getSI() / lane.getSpeedLimit(gtu.getGtuType()).getSI();
             remainingLength += lane.getLength().getSI();
         }
         return NOLANECHANGENEEDED;
@@ -380,16 +380,16 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * TODO: move suitability to LanePerception? Return the suitability for the current lane, left adjacent lane or right
      * adjacent lane.
-     * @param gtu LaneBasedGTU; the GTU for which to calculate the incentives
+     * @param gtu LaneBasedGtu; the GTU for which to calculate the incentives
      * @param direction LateralDirectionality; one of the values <cite>null</cite>, <cite>LateralDirectionality.LEFT</cite>, or
      *            <cite>LateralDirectionality.RIGHT</cite>
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the suitability of the lane for reaching the (next) destination
      * @throws NetworkException on network inconsistency
-     * @throws GTUException when position cannot be determined
+     * @throws GtuException when position cannot be determined
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     private Length suitability(final LaneBasedGTU gtu, final LateralDirectionality direction)
-            throws NetworkException, GTUException, OperationalPlanException
+            throws NetworkException, GtuException, OperationalPlanException
     {
         DirectedLanePosition dlp = gtu.getReferencePosition();
         Lane lane = dlp.getLane();
@@ -417,7 +417,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /**
      * Compute deceleration needed to stop at a specified distance.
-     * @param gtu LaneBasedGTU; the GTU for which to calculate the acceleration to come to a full stop at the distance
+     * @param gtu LaneBasedGtu; the GTU for which to calculate the acceleration to come to a full stop at the distance
      * @param stopDistance Length; the distance
      * @return double; the acceleration (deceleration) needed to stop at the specified distance in m/s/s
      */
@@ -436,7 +436,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * TODO this code assumes GTUDirectionality.DIR_PLUS on all lanes of interest
      * @param lane Lane; the lane to consider
      * @param longitudinalPosition Length; the longitudinal position in the lane
-     * @param gtu LaneBasedGTU; the GTU (used to check lane compatibility of lanes, and current lane the GTU is on)
+     * @param gtu LaneBasedGtu; the GTU (used to check lane compatibility of lanes, and current lane the GTU is on)
      * @param timeHorizon Duration; the maximum time that a driver may want to look ahead
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; a value that indicates within what distance the GTU should try to vacate this
      *         lane.
@@ -446,7 +446,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             final Duration timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getGTUType()).getSI();
+        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getGtuType()).getSI();
         // Find the first upcoming Node where there is a branch
         Node nextNode = lane.getParentLink().getEndNode();
         Link lastLink = lane.getParentLink();
@@ -459,7 +459,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             {
                 return NOLANECHANGENEEDED; // It is not yet time to worry; this lane will do as well as any other
             }
-            int laneCount = countCompatibleLanes(linkBeforeBranch, gtu.getGTUType(), GTUDirectionality.DIR_PLUS);
+            int laneCount = countCompatibleLanes(linkBeforeBranch, gtu.getGtuType(), GTUDirectionality.DIR_PLUS);
             if (0 == laneCount)
             {
                 throw new NetworkException("No compatible Lanes on Link " + linkBeforeBranch);
@@ -481,7 +481,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             }
             else
             { // Look beyond this nextNode
-                Link nextLink = gtu.getStrategicalPlanner().nextLinkDirection(nextNode, lastLink, gtu.getGTUType()).getLink();
+                Link nextLink = gtu.getStrategicalPlanner().nextLinkDirection(nextNode, lastLink, gtu.getGtuType()).getLink();
                 if (nextLink instanceof CrossSectionLink)
                 {
                     GTUDirectionality drivingDirection =
@@ -491,18 +491,18 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     remainingDistance += nextLink.getLength().getSI();
                     linkBeforeBranch = (CrossSectionLink) nextLink;
                     // Figure out the new currentLane
-                    if (currentLane.nextLanes(gtu.getGTUType()).size() == 0)
+                    if (currentLane.nextLanes(gtu.getGtuType()).size() == 0)
                     {
                         // Lane drop; our lane disappears. This is a compulsory lane change; which is not controlled
                         // by the Route. Perform the forced lane change.
                         if (currentLane
-                                .accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getGTUType(), drivingDirection)
+                                .accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getGtuType(), drivingDirection)
                                 .size() > 0)
                         {
                             for (Lane adjacentLane : currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT,
-                                    gtu.getGTUType(), drivingDirection))
+                                    gtu.getGtuType(), drivingDirection))
                             {
-                                if (adjacentLane.nextLanes(gtu.getGTUType()).size() > 0)
+                                if (adjacentLane.nextLanes(gtu.getGtuType()).size() > 0)
                                 {
                                     currentLane = adjacentLane;
                                     break;
@@ -512,9 +512,9 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                             }
                         }
                         for (Lane adjacentLane : currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT,
-                                gtu.getGTUType(), drivingDirection))
+                                gtu.getGtuType(), drivingDirection))
                         {
-                            if (adjacentLane.nextLanes(gtu.getGTUType()).size() > 0)
+                            if (adjacentLane.nextLanes(gtu.getGtuType()).size() > 0)
                             {
                                 currentLane = adjacentLane;
                                 break;
@@ -522,23 +522,23 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                             // If there are several adjacent lanes that have non empty nextLanes, we simple take the
                             // first in the set
                         }
-                        if (currentLane.nextLanes(gtu.getGTUType()).size() == 0)
+                        if (currentLane.nextLanes(gtu.getGtuType()).size() == 0)
                         {
                             throw new NetworkException(
                                     "Lane ends and there is not a compatible adjacent lane that does " + "not end");
                         }
                     }
                     // Any compulsory lane change(s) have been performed and there is guaranteed a compatible next lane.
-                    for (Lane nextLane : currentLane.nextLanes(gtu.getGTUType()).keySet())
+                    for (Lane nextLane : currentLane.nextLanes(gtu.getGtuType()).keySet())
                     {
-                        if (nextLane.getLaneType().getDirectionality(gtu.getGTUType()).getDirectionalities()
+                        if (nextLane.getLaneType().getDirectionality(gtu.getGtuType()).getDirectionalities()
                                 .contains(drivingDirection))
                         {
-                            currentLane = currentLane.nextLanes(gtu.getGTUType()).keySet().iterator().next();
+                            currentLane = currentLane.nextLanes(gtu.getGtuType()).keySet().iterator().next();
                             break;
                         }
                     }
-                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit(gtu.getGTUType()).getSI();
+                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit(gtu.getGtuType()).getSI();
                 }
                 else
                 {
@@ -557,7 +557,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         // Which continuing link is the one we need?
         Map<Lane, Length> suitabilityOfLanesBeforeBranch = new LinkedHashMap<>();
         Link linkAfterBranch =
-                gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink, gtu.getGTUType()).getLink();
+                gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink, gtu.getGtuType()).getLink();
         GTUDirectionality drivingDirectionOnNextLane =
                 linkAfterBranch.getStartNode().equals(nextSplitNode) ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
         for (CrossSectionElement cse : linkBeforeBranch.getCrossSectionElementList())
@@ -565,13 +565,13 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             if (cse instanceof Lane)
             {
                 Lane l = (Lane) cse;
-                if (l.getLaneType().getDirectionality(gtu.getGTUType()).getDirectionalities()
+                if (l.getLaneType().getDirectionality(gtu.getGtuType()).getDirectionalities()
                         .contains(GTUDirectionality.DIR_PLUS))
                 {
-                    for (Lane connectingLane : l.nextLanes(gtu.getGTUType()).keySet())
+                    for (Lane connectingLane : l.nextLanes(gtu.getGtuType()).keySet())
                     {
                         if (connectingLane.getParentLink() == linkAfterBranch
-                                && connectingLane.getLaneType().isCompatible(gtu.getGTUType(), drivingDirectionOnNextLane))
+                                && connectingLane.getLaneType().isCompatible(gtu.getGtuType(), drivingDirectionOnNextLane))
                         {
                             Length currentValue = suitabilityOfLanesBeforeBranch.get(l);
                             // Use recursion to find out HOW suitable this continuation lane is, but don't revert back
@@ -600,13 +600,13 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             return currentLaneSuitability; // Following the current lane will keep us on the Route
         }
         // Performing one or more lane changes (left or right) is required.
-        int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtu.getGTUType(), GTUDirectionality.DIR_PLUS);
+        int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtu.getGtuType(), GTUDirectionality.DIR_PLUS);
         Length leftSuitability =
                 computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch, totalLanes,
-                        LateralDirectionality.LEFT, gtu.getGTUType(), GTUDirectionality.DIR_PLUS);
+                        LateralDirectionality.LEFT, gtu.getGtuType(), GTUDirectionality.DIR_PLUS);
         Length rightSuitability =
                 computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch, totalLanes,
-                        LateralDirectionality.RIGHT, gtu.getGTUType(), GTUDirectionality.DIR_PLUS);
+                        LateralDirectionality.RIGHT, gtu.getGtuType(), GTUDirectionality.DIR_PLUS);
         if (leftSuitability.ge(rightSuitability))
         {
             return leftSuitability;
@@ -632,13 +632,13 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @param suitabilities Map&lt;Lane, Length&gt;; the set of suitable lanes and their suitability
      * @param totalLanes int; total number of lanes compatible with the GTU type
      * @param direction LateralDirectionality; the direction of the lane changes to attempt
-     * @param gtuType GTUType; the type of the GTU
+     * @param gtuType GtuType; the type of the GTU
      * @param drivingDirection GTUDirectionality; the driving direction of the GTU
      * @return double; the suitability of the <cite>startLane</cite> for following the Route
      */
     protected final Length computeSuitabilityWithLaneChanges(final Lane startLane, final double remainingDistance,
             final Map<Lane, Length> suitabilities, final int totalLanes, final LateralDirectionality direction,
-            final GTUType gtuType, final GTUDirectionality drivingDirection)
+            final GtuType gtuType, final GTUDirectionality drivingDirection)
     {
         /*-
          * The time per required lane change seems more relevant than distance per required lane change.
@@ -673,11 +673,11 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * Determine how many lanes on a CrossSectionLink are compatible with a particular GTU type.<br>
      * TODO: this method should probably be moved into the CrossSectionLink class
      * @param link CrossSectionLink; the link
-     * @param gtuType GTUType; the GTU type
+     * @param gtuType GtuType; the GTU type
      * @param drivingDirection GTUDirectionality; the driving direction on the link
      * @return integer; the number of lanes on the link that are compatible with the GTU type
      */
-    protected final int countCompatibleLanes(final CrossSectionLink link, final GTUType gtuType,
+    protected final int countCompatibleLanes(final CrossSectionLink link, final GtuType gtuType,
             final GTUDirectionality drivingDirection)
     {
         int result = 0;

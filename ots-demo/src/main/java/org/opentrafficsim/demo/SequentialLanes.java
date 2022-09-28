@@ -28,8 +28,8 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.SequentialLanes.SequentialModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -344,7 +344,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 this.simulator.scheduleEventAbsTime(Time.ZERO, this, this, "generateCar", null);
             }
             catch (NamingException | NetworkException | OTSGeometryException | ParameterException | InputParameterException
-                    | GTUException exception)
+                    | GtuException exception)
             {
                 exception.printStackTrace();
             }
@@ -383,7 +383,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 boolean generateTruck = this.stream.nextDouble() > this.carProbability;
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
-                        this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
+                        this.network.getGtuType(GtuType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
                         new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
                 gtu.setNoLaneChangeDistance(Length.ZERO);
@@ -402,7 +402,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 gtu.init(strategicalPlanner, initialPositions, initialSpeed);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
-            catch (SimRuntimeException | NetworkException | GTUException | OTSGeometryException exception)
+            catch (SimRuntimeException | NetworkException | GtuException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }

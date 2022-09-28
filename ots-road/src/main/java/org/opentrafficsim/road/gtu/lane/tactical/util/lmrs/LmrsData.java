@@ -71,7 +71,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Checks if the given leader is a new leader.
-     * @param gtu HeadwayGTU; gtu to check
+     * @param gtu HeadwayGtu; gtu to check
      * @return whether the gtu is a new leader
      */
     boolean isNewLeader(final HeadwayGTU gtu)
@@ -92,7 +92,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Remembers the gtu that is synchronized to.
-     * @param gtu HeadwayGTU; gtu that is synchronized to
+     * @param gtu HeadwayGtu; gtu that is synchronized to
      */
     void setSyncVehicle(final HeadwayGTU gtu)
     {
@@ -101,7 +101,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Returns whether the provided gtu is the gtu that is synchronized to.
-     * @param gtu HeadwayGTU; gtu to inquiry
+     * @param gtu HeadwayGtu; gtu to inquiry
      * @return whether the provided gtu is the gtu that is synchronized to
      */
     boolean isSyncVehicle(final HeadwayGTU gtu)

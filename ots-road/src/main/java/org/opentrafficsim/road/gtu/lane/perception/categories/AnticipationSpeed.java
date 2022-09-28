@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
@@ -112,11 +112,11 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
 
     /**
      * Anticipate a single leader by possibly lowering the anticipation speed.
-     * @param gtu GTU; GTU
+     * @param gtu Gtu; GTU
      * @param distance Length; distance to GTU
      * @return possibly lowered anticipation speed
      */
-    final double anticipateSingle(final GTU gtu, final Length distance)
+    final double anticipateSingle(final Gtu gtu, final Length distance)
     {
         Speed speed = gtu.getSpeed();
         double v = speed == null ? 0.0 : speed.si;

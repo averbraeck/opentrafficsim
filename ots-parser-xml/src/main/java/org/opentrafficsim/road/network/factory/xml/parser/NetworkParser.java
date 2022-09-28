@@ -21,8 +21,8 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -331,11 +331,11 @@ public final class NetworkParser
      * @throws OTSGeometryException when the design line is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws GTUException when construction of the Strategical Planner failed
+     * @throws GtuException when construction of the Strategical Planner failed
      */
     static void applyRoadLayout(final OTSRoadNetwork otsNetwork, final NETWORK network, final OTSSimulatorInterface simulator,
-            final Map<String, ROADLAYOUT> roadLayoutMap, final Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap)
-            throws NetworkException, OTSGeometryException, XmlParserException, SimRuntimeException, GTUException
+            final Map<String, ROADLAYOUT> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap)
+            throws NetworkException, OTSGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
         for (LINK xmlLink : ParseUtil.getObjectsOfType(network.getIncludeOrNODEOrCONNECTOR(), LINK.class))
         {
@@ -415,7 +415,7 @@ public final class NetworkParser
                     boolean direction = laneTag.isDESIGNDIRECTION();
                     LaneType laneType = otsNetwork.getLaneType(laneTag.getLANETYPE());
                     // TODO: Use the DESIGNDIRECTION
-                    Map<GTUType, Speed> speedLimitMap = new LinkedHashMap<>();
+                    Map<GtuType, Speed> speedLimitMap = new LinkedHashMap<>();
                     LinkType linkType = csl.getLinkType();
                     if (!linkTypeSpeedLimitMap.containsKey(linkType))
                     {
@@ -424,12 +424,12 @@ public final class NetworkParser
                     speedLimitMap.putAll(linkTypeSpeedLimitMap.get(linkType));
                     for (SPEEDLIMIT speedLimitTag : roadLayoutTag.getSPEEDLIMIT())
                     {
-                        GTUType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
+                        GtuType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
                         speedLimitMap.put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
                     }
                     for (SPEEDLIMIT speedLimitTag : laneTag.getSPEEDLIMIT())
                     {
-                        GTUType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
+                        GtuType gtuType = otsNetwork.getGtuType(speedLimitTag.getGTUTYPE());
                         speedLimitMap.put(gtuType, speedLimitTag.getLEGALSPEEDLIMIT());
                     }
                     Lane lane = new Lane(csl, laneTag.getID(), cseData.centerOffsetStart, cseData.centerOffsetEnd,
@@ -717,13 +717,13 @@ public final class NetworkParser
             case BLOCKED:
                 Stripe blockedLine = new Stripe(csl, startOffset, endOffset, stripeTag.getDRAWINGWIDTH() != null
                         ? stripeTag.getDRAWINGWIDTH() : new Length(40.0, LengthUnit.CENTIMETER), fixGradualLateralOffset);
-                blockedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.BOTH);
+                blockedLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.BOTH);
                 cseList.add(blockedLine);
                 break;
 
             case DASHED:
                 Stripe dashedLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
-                dashedLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.BOTH);
+                dashedLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.BOTH);
                 cseList.add(dashedLine);
                 break;
 
@@ -734,13 +734,13 @@ public final class NetworkParser
 
             case LEFTONLY:
                 Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
-                leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.LEFT);
+                leftOnlyLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.LEFT);
                 cseList.add(leftOnlyLine);
                 break;
 
             case RIGHTONLY:
                 Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, width, fixGradualLateralOffset);
-                rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GTUType.DEFAULTS.ROAD_USER), Permeable.RIGHT);
+                rightOnlyLine.addPermeability(csl.getNetwork().getGtuType(GtuType.DEFAULTS.ROAD_USER), Permeable.RIGHT);
                 cseList.add(rightOnlyLine);
                 break;
 

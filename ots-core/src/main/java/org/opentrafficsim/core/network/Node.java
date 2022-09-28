@@ -9,7 +9,7 @@ import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -59,23 +59,23 @@ public interface Node extends Locatable, Serializable, Identifiable, Drawable
 
     /**
      * Determine the links connecting from the previous link via this Node for the given GTU type.
-     * @param gtuType GTUType; the GTU type to determine the next links for
+     * @param gtuType GtuType; the GTU type to determine the next links for
      * @param prevLink Link; the incoming link to the Node
      * @return a set of links connecting from the previous link via this Node for the given GTU type
      * @throws NetworkException if the incoming link is not connected to this node for the given GTU type
      */
-    Set<Link> nextLinks(GTUType gtuType, Link prevLink) throws NetworkException;
+    Set<Link> nextLinks(GtuType gtuType, Link prevLink) throws NetworkException;
 
     /**
-     * Check if the current node is linked to the given Node in the specified direction for the given GTUType. This can mean
+     * Check if the current node is linked to the given Node in the specified direction for the given GtuType. This can mean
      * there is a Link from this node to toNode, and the LongitudinalDirectionality for the Link between this node and toNode is
      * FORWARD or BOTH; or there is a Link from toNode to this node, and the LongitudinalDirectionality for the Link between
-     * toNode and this node is BACKWARD or BOTH for the provided GTUType.
-     * @param gtuType GTUType; the GTU type to check the connection for.
+     * toNode and this node is BACKWARD or BOTH for the provided GtuType.
+     * @param gtuType GtuType; the GTU type to check the connection for.
      * @param toNode Node; the to node
      * @return whether two nodes are linked in the specified direction.
      */
-    boolean isDirectionallyConnectedTo(GTUType gtuType, Node toNode);
+    boolean isDirectionallyConnectedTo(GtuType gtuType, Node toNode);
 
     /**
      * Checks whether the node has only connector links going in and/or out, and no other links.

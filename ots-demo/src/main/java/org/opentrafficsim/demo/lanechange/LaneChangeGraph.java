@@ -44,8 +44,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.DefaultsFactory;
@@ -128,7 +128,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     /**
      * Main entry point; now Swing thread safe (I hope).
      * @param args String[]; the command line arguments (not used)
-     * @throws GTUException on error during GTU construction
+     * @throws GtuException on error during GTU construction
      * @throws SimRuntimeException on ???
      * @throws NetworkException on network inconsistency
      * @throws NamingException on ???
@@ -136,7 +136,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException x
      */
-    public static void main(final String[] args) throws NamingException, NetworkException, SimRuntimeException, GTUException,
+    public static void main(final String[] args) throws NamingException, NetworkException, SimRuntimeException, GtuException,
             OTSGeometryException, ParameterException, OperationalPlanException
     {
         try
@@ -150,7 +150,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                     {
                         buildGUI(args);
                     }
-                    catch (NamingException | NetworkException | SimRuntimeException | GTUException exception)
+                    catch (NamingException | NetworkException | SimRuntimeException | GtuException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -222,9 +222,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws NamingException on ???
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException on ???
-     * @throws GTUException on error during GTU construction
+     * @throws GtuException on error during GTU construction
      */
-    public static void buildGUI(final String[] args) throws NamingException, NetworkException, SimRuntimeException, GTUException
+    public static void buildGUI(final String[] args) throws NamingException, NetworkException, SimRuntimeException, GtuException
     {
         JPanel mainPanel = new JPanel(new BorderLayout());
         lcs = new LaneChangeGraph("Lane change graphs", mainPanel);
@@ -261,14 +261,14 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws NamingException on ???
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException on ???
-     * @throws GTUException on error during GTU construction
+     * @throws GtuException on error during GTU construction
      * @throws OTSGeometryException x
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException x
      */
     private Length findDecisionPoint(final Length minHeadway, final Length maxHeadway, final Speed referenceSpeed,
             final Speed speedDifference, final LaneChangeModel laneChangeModel, final boolean mergeRight)
-            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
+            throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException,
             ParameterException, OperationalPlanException
     {
         Length high = maxHeadway;
@@ -280,7 +280,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), this);
 
         // Set up the network
-        GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = this.network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
@@ -307,7 +307,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         referenceCar.init(strategicalPlanner, initialLongitudinalPositions, referenceSpeed);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
         sameLaneGTUs.add(
-                new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO, referenceCar.getLength(),
+                new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGtuType(), Length.ZERO, referenceCar.getLength(),
                         referenceCar.getWidth(), referenceCar.getSpeed(), referenceCar.getAcceleration(), null));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
@@ -350,7 +350,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     }
 
     /**
-     * @param referenceCar LaneBasedIndividualGTU; the reference GTU
+     * @param referenceCar LaneBasedIndividualGtu; the reference GTU
      * @param sameLaneGTUs Collection&lt;Headway&gt;; the set of GTUs in the same lane as the
      *            &lt;cite&gt;referenceCar&lt;/cite&gt;
      * @param speedLimit Speed; the speed limit
@@ -363,7 +363,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws NamingException on ???
      * @throws SimRuntimeException on ???
      * @throws NetworkException on network inconsistency
-     * @throws GTUException on error during GTU construction
+     * @throws GtuException on error during GTU construction
      * @throws OTSGeometryException when the initial position is outside the lane's center line
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException x
@@ -371,13 +371,13 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     private LaneMovementStep computeLaneChange(final LaneBasedIndividualGTU referenceCar,
             final Collection<Headway> sameLaneGTUs, final Speed speedLimit, final LaneChangeModel laneChangeModel,
             final Length otherCarPosition, final Lane otherCarLane, final Speed deltaV, final boolean mergeRight)
-            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
+            throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException,
             ParameterException, OperationalPlanException
     {
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(otherCarLane, otherCarPosition, GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualGTU otherCar =
-                new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), new Length(4, METER), new Length(2, METER),
+                new LaneBasedIndividualGTU("otherCar", referenceCar.getGtuType(), new Length(4, METER), new Length(2, METER),
                         new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), referenceCar.getSimulator(), this.network);
         otherCar.setParameters(DefaultsFactory.getDefaultParameters());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
@@ -388,7 +388,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         Length referenceCarPosition = referenceCar.position(
                 referenceCar.positions(referenceCar.getReference()).keySet().iterator().next(), referenceCar.getReference());
         Headway otherHeadwayGTU =
-                new HeadwayGTUSimple(otherCar.getId(), otherCar.getGTUType(), otherCarPosition.minus(referenceCarPosition),
+                new HeadwayGTUSimple(otherCar.getId(), otherCar.getGtuType(), otherCarPosition.minus(referenceCarPosition),
                         otherCar.getLength(), otherCar.getWidth(), otherCar.getSpeed(), otherCar.getAcceleration(), null);
         if (mergeRight)
         {

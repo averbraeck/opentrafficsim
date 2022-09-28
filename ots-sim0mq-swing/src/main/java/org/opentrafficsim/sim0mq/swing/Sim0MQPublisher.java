@@ -36,8 +36,8 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
@@ -530,12 +530,12 @@ class Sim0MQOTSModel extends AbstractOTSModel
         {
             XmlNetworkLaneParser.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), this.network,
                     false);
-            ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+            ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                     getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)),
                     new LaneCombinationList(), new LaneCombinationList());
         }
         catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException | SAXException
-                | ParserConfigurationException | GTUException | IOException | TrafficControlException exception)
+                | ParserConfigurationException | GtuException | IOException | TrafficControlException exception)
         {
             exception.printStackTrace();
             // Abusing the SimRuntimeException to propagate the message to the main method (the problem could actually be a

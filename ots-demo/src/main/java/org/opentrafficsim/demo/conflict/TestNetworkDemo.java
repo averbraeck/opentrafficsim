@@ -16,7 +16,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.demo.conflict.TestNetworkDemo.TestNetworkModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -138,7 +138,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
                         (CrossSectionLink) this.network.getLink("L_F3a-E3b"));
                 permittedList.addLinkCombination((CrossSectionLink) this.network.getLink("L_E3a-H3a"),
                         (CrossSectionLink) this.network.getLink("L_G3b-F3b"));
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), this.simulator,
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)), ignoreList, permittedList);
                 // new ConflictBuilder.FixedWidthGenerator(new Length(1.0, LengthUnit.SI))
                 // ConflictBuilder.DEFAULT_WIDTH_GENERATOR

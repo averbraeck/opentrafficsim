@@ -11,7 +11,7 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -117,7 +117,7 @@ public class BusStop extends AbstractLaneBasedObject
                     objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition(), dir);
                 }
                 ImmutableMap<Lane, GTUDirectionality> downstreamLanes =
-                        lane.downstreamLanes(dir, lane.getNetwork().getGtuType(GTUType.DEFAULTS.BUS));
+                        lane.downstreamLanes(dir, lane.getNetwork().getGtuType(GtuType.DEFAULTS.BUS));
                 int numLanes = 0;
                 for (Lane nextLane : downstreamLanes.keySet())
                 {

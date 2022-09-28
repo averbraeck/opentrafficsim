@@ -22,8 +22,8 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
@@ -136,7 +136,7 @@ public final class ODApplier
 
         final Categorization categorization = od.getCategorization();
         final boolean laneBased = categorization.entails(Lane.class);
-        boolean markovian = od.getCategorization().entails(GTUType.class);
+        boolean markovian = od.getCategorization().entails(GtuType.class);
 
         // TODO clean up stream acquiring code after task OTS-315 has been completed
         StreamInterface stream = simulator.getModel().getStream("generation");
@@ -176,10 +176,10 @@ public final class ODApplier
                 LinkType linkType = getLinkTypeFromNode(origin);
                 if (markovian)
                 {
-                    MarkovCorrelation<GTUType, Frequency> correlation = odOptions.get(ODOptions.MARKOV, null, origin, linkType);
+                    MarkovCorrelation<GtuType, Frequency> correlation = odOptions.get(ODOptions.MARKOV, null, origin, linkType);
                     if (correlation != null)
                     {
-                        Throw.when(!od.getCategorization().entails(GTUType.class), IllegalArgumentException.class,
+                        Throw.when(!od.getCategorization().entails(GtuType.class), IllegalArgumentException.class,
                                 "Markov correlation can only be used on OD categorization entailing GTU type.");
                         markovChain = new MarkovChain(correlation);
                     }
@@ -214,11 +214,11 @@ public final class ODApplier
                                 markovChain = null;
                                 if (markovian)
                                 {
-                                    MarkovCorrelation<GTUType, Frequency> correlation =
+                                    MarkovCorrelation<GtuType, Frequency> correlation =
                                             odOptions.get(ODOptions.MARKOV, lane, origin, lane.getParentLink().getLinkType());
                                     if (correlation != null)
                                     {
-                                        Throw.when(!od.getCategorization().entails(GTUType.class),
+                                        Throw.when(!od.getCategorization().entails(GtuType.class),
                                                 IllegalArgumentException.class,
                                                 "Markov correlation can only be used on OD categorization entailing GTU type.");
                                         markovChain = new MarkovChain(correlation); // 1 for each generator
@@ -232,7 +232,7 @@ public final class ODApplier
                                 new DemandNode<>(category, od.getDemandPattern(origin, destination, category));
                         if (markovian)
                         {
-                            destinationNode.addLeaf(categoryNode, category.get(GTUType.class));
+                            destinationNode.addLeaf(categoryNode, category.get(GtuType.class));
                         }
                         else
                         {
@@ -259,7 +259,7 @@ public final class ODApplier
                                 ? new DirectedLanePosition(lane, Length.ZERO, GTUDirectionality.DIR_PLUS)
                                 : new DirectedLanePosition(lane, lane.getLength(), GTUDirectionality.DIR_MINUS));
                     }
-                    catch (GTUException ge)
+                    catch (GtuException ge)
                     {
                         throw new RuntimeException(ge);
                     }
@@ -555,7 +555,7 @@ public final class ODApplier
                         ? new DirectedLanePosition(lane, Length.ZERO, GTUDirectionality.DIR_PLUS)
                         : new DirectedLanePosition(lane, lane.getLength(), GTUDirectionality.DIR_MINUS));
             }
-            catch (GTUException ge)
+            catch (GtuException ge)
             {
                 link.getSimulator().getLogger().always().error(ge);
                 throw new RuntimeException(ge);
@@ -600,13 +600,13 @@ public final class ODApplier
         private final DemandPattern demandPattern;
 
         /** Unique GTU types of leaf nodes. */
-        private final List<GTUType> gtuTypes = new ArrayList<>();
+        private final List<GtuType> gtuTypes = new ArrayList<>();
 
         /** Number of leaf nodes for the unique GTU types. */
         private final List<Integer> gtuTypeCounts = new ArrayList<>();
 
         /** GTU type of leaf nodes. */
-        private final Map<K, GTUType> gtuTypesPerChild = new LinkedHashMap<>();
+        private final Map<K, GtuType> gtuTypesPerChild = new LinkedHashMap<>();
 
         /** Markov chain for GTU type selection. */
         private final MarkovChain markov;
@@ -650,12 +650,12 @@ public final class ODApplier
         /**
          * Adds child to a branching node.
          * @param child K; child node
-         * @param gtuType GTUType; gtu type for Markov chain
+         * @param gtuType GtuType; gtu type for Markov chain
          */
-        public void addLeaf(final K child, final GTUType gtuType)
+        public void addLeaf(final K child, final GtuType gtuType)
         {
             Throw.when(this.gtuTypes == null, IllegalStateException.class,
-                    "Adding leaf with GTUType in not possible on a non-Markov node.");
+                    "Adding leaf with GtuType in not possible on a non-Markov node.");
             addChild(child);
             this.gtuTypesPerChild.put(child, gtuType);
             if (!this.gtuTypes.contains(gtuType))
@@ -691,20 +691,20 @@ public final class ODApplier
             else
             {
                 // markov chain draw, the markov chain only selects a GTU type, not a child node
-                GTUType[] gtuTypeArray = new GTUType[this.gtuTypes.size()];
+                GtuType[] gtuTypeArray = new GtuType[this.gtuTypes.size()];
                 gtuTypeArray = this.gtuTypes.toArray(gtuTypeArray);
                 Frequency[] steadyState = new Frequency[this.gtuTypes.size()];
                 Arrays.fill(steadyState, Frequency.ZERO);
                 Map<K, Frequency> frequencies = new LinkedHashMap<>(); // stored, saves us from calculating them twice
                 for (K child : this.children)
                 {
-                    GTUType gtuType = this.gtuTypesPerChild.get(child);
+                    GtuType gtuType = this.gtuTypesPerChild.get(child);
                     int index = this.gtuTypes.indexOf(gtuType);
                     Frequency f = child.getFrequency(time, true); // sliceStart = true is arbitrary
                     frequencies.put(child, f);
                     steadyState[index] = steadyState[index].plus(f);
                 }
-                GTUType nextGtuType = this.markov.draw(gtuTypeArray, steadyState, this.stream);
+                GtuType nextGtuType = this.markov.draw(gtuTypeArray, steadyState, this.stream);
                 // select only child nodes registered to the next GTU type
                 for (K child : this.children)
                 {
@@ -795,28 +795,28 @@ public final class ODApplier
     private static class MarkovChain
     {
         /** Markov correlation for GTU type selection. */
-        private final MarkovCorrelation<GTUType, Frequency> markov;
+        private final MarkovCorrelation<GtuType, Frequency> markov;
 
         /** Previously returned GTU type. */
-        private GTUType previousGtuType = null;
+        private GtuType previousGtuType = null;
 
         /**
          * Constructor.
-         * @param markov MarkovCorrelation&lt;GTUType, Frequency&gt;; Markov correlation for GTU type selection
+         * @param markov MarkovCorrelation&lt;GtuType, Frequency&gt;; Markov correlation for GTU type selection
          */
-        MarkovChain(final MarkovCorrelation<GTUType, Frequency> markov)
+        MarkovChain(final MarkovCorrelation<GtuType, Frequency> markov)
         {
             this.markov = markov;
         }
 
         /**
          * Returns a next GTU type drawn using a Markov chain.
-         * @param gtuTypes GTUType[]; GTUTypes to consider
+         * @param gtuTypes GtuType[]; GtuTypes to consider
          * @param intensities Frequency[]; frequency for each GTU type, i.e. the steady-state
          * @param stream StreamInterface; stream for random numbers
          * @return next GTU type drawn using a Markov chain
          */
-        public GTUType draw(final GTUType[] gtuTypes, final Frequency[] intensities, final StreamInterface stream)
+        public GtuType draw(final GtuType[] gtuTypes, final Frequency[] intensities, final StreamInterface stream)
         {
             this.previousGtuType = this.markov.drawState(this.previousGtuType, gtuTypes, intensities, stream);
             return this.previousGtuType;
@@ -867,7 +867,7 @@ public final class ODApplier
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
+        public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
         {
             // obtain node objects
             Time time = this.simulator.getSimulatorAbsTime();

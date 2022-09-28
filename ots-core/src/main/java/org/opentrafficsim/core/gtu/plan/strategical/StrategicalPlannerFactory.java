@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu.plan.strategical;
 
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 
 /**
  * A factory class is used to generate strategical planners as the strategical planner is state-full.
@@ -33,10 +33,10 @@ public interface StrategicalPlannerFactory<T extends StrategicalPlanner>
 
     /**
      * Creates a new strategical planner for the given GTU. If no default parameters are set, the default values will be used.
-     * @param gtu GTU; GTU
+     * @param gtu Gtu; GTU
      * @return strategical planner for the given GTU
-     * @throws GTUException if the gtu is not suitable in any way for the creation of the strategical planner
+     * @throws GtuException if the gtu is not suitable in any way for the creation of the strategical planner
      */
-    T create(GTU gtu) throws GTUException;
+    T create(Gtu gtu) throws GtuException;
 
 }

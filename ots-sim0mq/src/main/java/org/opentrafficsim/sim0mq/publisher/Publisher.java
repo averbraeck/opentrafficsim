@@ -10,7 +10,7 @@ import org.djutils.event.EventProducerInterface;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -125,7 +125,7 @@ public class Publisher extends AbstractTransceiver
                     {
                         return this.metaData;
                     }
-                }, null, null, GTU.MOVE_EVENT, null);
+                }, null, null, Gtu.MOVE_EVENT, null);
         addSubscriptionHandler(gtuSubscriptionHandler);
         addSubscriptionHandler(new SubscriptionHandler("GTUs in network", gtuIdTransceiver, new LookupEventProducerInterface()
         {

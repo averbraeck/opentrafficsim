@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.sampling;
 
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
 
 /**
@@ -17,12 +17,12 @@ public class GtuTypeData implements GtuTypeDataInterface
 {
 
     /** Gtu type. */
-    private final GTUType gtuType;
+    private final GtuType gtuType;
 
     /**
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      */
-    public GtuTypeData(final GTUType gtuType)
+    public GtuTypeData(final GtuType gtuType)
     {
         this.gtuType = gtuType;
     }

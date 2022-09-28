@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -28,7 +28,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
     private static final long serialVersionUID = 20141025L;
 
     /** Lateral permeability per GTU type and direction. */
-    private final Map<GTUType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
+    private final Map<GtuType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
 
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
@@ -157,13 +157,13 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * =========================
      * </pre>
      * 
-     * <b>Note:</b> GTUType.ALL can be used to set permeability for all types of GTU at once.
+     * <b>Note:</b> GtuType.ALL can be used to set permeability for all types of GTU at once.
      * <p>
-     * @param gtuType GTUType; GTU type to add permeability for.
+     * @param gtuType GtuType; GTU type to add permeability for.
      * @param lateralDirection LateralDirectionality; direction to add (LEFT or RIGHT) compared to the direction of the design
      *            line.
      */
-    public final void addPermeability(final GTUType gtuType, final LateralDirectionality lateralDirection)
+    public final void addPermeability(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
         if (!this.permeabilityMap.containsKey(gtuType))
         {
@@ -173,16 +173,16 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
     }
 
     /**
-     * @param gtuType GTUType; GTU type to look for.
+     * @param gtuType GtuType; GTU type to look for.
      * @param lateralDirection LateralDirectionality; direction to look for (LEFT or RIGHT) compared to the direction of the
      *            design line.
      * @return whether the road marker is permeable for the GTU type.
      */
-    public final boolean isPermeable(final GTUType gtuType, final LateralDirectionality lateralDirection)
+    public final boolean isPermeable(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
-        for (GTUType testGTUType = gtuType; null != testGTUType; testGTUType = testGTUType.getParent())
+        for (GtuType testGtuType = gtuType; null != testGtuType; testGtuType = testGtuType.getParent())
         {
-            Set<LateralDirectionality> directions = this.permeabilityMap.get(testGTUType);
+            Set<LateralDirectionality> directions = this.permeabilityMap.get(testGtuType);
             if (null != directions)
             {
                 return directions.contains(lateralDirection);
@@ -194,7 +194,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
     /**
      * @return permeabilityMap for internal use in (sub)classes.
      */
-    protected final Map<GTUType, Set<LateralDirectionality>> getPermeabilityMap()
+    protected final Map<GtuType, Set<LateralDirectionality>> getPermeabilityMap()
     {
         return this.permeabilityMap;
     }

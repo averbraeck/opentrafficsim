@@ -15,7 +15,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -83,7 +83,7 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Determines a simple representation of an operational plan.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param startTime Time; start time
      * @param carFollowingModel CarFollowingModel; car-following model
      * @param laneChange LaneChange; lane change status
@@ -92,7 +92,7 @@ public final class LmrsUtil implements LmrsParameters
      * @param mandatoryIncentives Iterable&lt;MandatoryIncentive&gt;; set of mandatory lane change incentives
      * @param voluntaryIncentives Iterable&lt;VoluntaryIncentive&gt;; set of voluntary lane change incentives
      * @return simple operational plan
-     * @throws GTUException gtu exception
+     * @throws GtuException gtu exception
      * @throws NetworkException network exception
      * @throws ParameterException parameter exception
      * @throws OperationalPlanException operational plan exception
@@ -102,7 +102,7 @@ public final class LmrsUtil implements LmrsParameters
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
             final LanePerception perception, final Iterable<MandatoryIncentive> mandatoryIncentives,
             final Iterable<VoluntaryIncentive> voluntaryIncentives)
-            throws GTUException, NetworkException, ParameterException, OperationalPlanException
+            throws GtuException, NetworkException, ParameterException, OperationalPlanException
     {
         // obtain objects to get info
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
@@ -328,7 +328,7 @@ public final class LmrsUtil implements LmrsParameters
     /**
      * Sets the headway as a response to a new leader.
      * @param params Parameters; parameters
-     * @param leader HeadwayGTU; leader
+     * @param leader HeadwayGtu; leader
      * @throws ParameterException if DLC is not present
      */
     private static void initHeadwayRelaxation(final Parameters params, final HeadwayGTU leader) throws ParameterException
@@ -367,13 +367,13 @@ public final class LmrsUtil implements LmrsParameters
      * @param desireMap Map&lt;Class&lt;? extends Incentive&gt;,Desire&gt;; map where calculated desires are stored in
      * @return lane change desire for gtu
      * @throws ParameterException if a parameter is not defined
-     * @throws GTUException if there is no mandatory incentive, the model requires at least one
+     * @throws GtuException if there is no mandatory incentive, the model requires at least one
      * @throws OperationalPlanException perception exception
      */
     public static Desire getLaneChangeDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Iterable<MandatoryIncentive> mandatoryIncentives,
             final Iterable<VoluntaryIncentive> voluntaryIncentives, final Map<Class<? extends Incentive>, Desire> desireMap)
-            throws ParameterException, GTUException, OperationalPlanException
+            throws ParameterException, GtuException, OperationalPlanException
     {
 
         double dSync = parameters.getParameter(DSYNC);
@@ -536,7 +536,7 @@ public final class LmrsUtil implements LmrsParameters
                     }
                 }
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 throw new OperationalPlanException(exception);
             }

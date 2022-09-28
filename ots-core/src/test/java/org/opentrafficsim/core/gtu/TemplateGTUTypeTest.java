@@ -25,33 +25,33 @@ import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 
 /**
- * Test the TemplateGTUType class.
+ * Test the TemplateGtuType class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class TemplateGTUTypeTest implements OTSModelInterface
+public class TemplateGtuTypeTest implements OTSModelInterface
 {
     /** */
     private static final long serialVersionUID = 20160311L;
 
     /**
-     * Test the TemplateGTUType class.
+     * Test the TemplateGtuType class.
      * @throws NamingException should never happen
      * @throws SimRuntimeException should never happen
-     * @throws GTUException should never happen
+     * @throws GtuException should never happen
      * @throws ProbabilityException if probabilities are invalid
      * @throws ParameterException in case a parameter problem occurs
      */
     @Test
-    public final void templateGTUTypeTest()
-            throws SimRuntimeException, NamingException, GTUException, ProbabilityException, ParameterException
+    public final void templateGtuTypeTest()
+            throws SimRuntimeException, NamingException, GtuException, ProbabilityException, ParameterException
     {
         OTSNetwork network = new OTSNetwork("network", true, this.simulator);
-        GTUType gtuTypeA = new GTUType("type name A", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
-        GTUType gtuTypeB = new GTUType("type name B", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
+        GtuType gtuTypeA = new GtuType("type name A", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType gtuTypeB = new GtuType("type name B", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         Generator<Length> lengthGeneratorA = new Generator<Length>()
         {
 
@@ -106,14 +106,14 @@ public class TemplateGTUTypeTest implements OTSModelInterface
                 return new Speed(70, SpeedUnit.KM_PER_HOUR);
             }
         };
-        TemplateGTUType templateA = new TemplateGTUType(gtuTypeA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
-        TemplateGTUType templateB = new TemplateGTUType(gtuTypeB, lengthGeneratorB, widthGeneratorB, maximumSpeedGeneratorB);
-        assertEquals("typenameA", gtuTypeA.getId(), templateA.getGTUType().getId());
-        assertEquals("typenameB", gtuTypeB.getId(), templateB.getGTUType().getId());
-        GTUCharacteristics characteristicsA = templateA.draw();
-        GTUCharacteristics characteristicsB = templateB.draw();
-        assertEquals("typenameA", gtuTypeA.getId(), characteristicsA.getGTUType().getId());
-        assertEquals("typenameB", gtuTypeB.getId(), characteristicsB.getGTUType().getId());
+        TemplateGtuType templateA = new TemplateGtuType(gtuTypeA, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
+        TemplateGtuType templateB = new TemplateGtuType(gtuTypeB, lengthGeneratorB, widthGeneratorB, maximumSpeedGeneratorB);
+        assertEquals("typenameA", gtuTypeA.getId(), templateA.getGtuType().getId());
+        assertEquals("typenameB", gtuTypeB.getId(), templateB.getGtuType().getId());
+        GtuCharacteristics characteristicsA = templateA.draw();
+        GtuCharacteristics characteristicsB = templateB.draw();
+        assertEquals("typenameA", gtuTypeA.getId(), characteristicsA.getGtuType().getId());
+        assertEquals("typenameB", gtuTypeB.getId(), characteristicsB.getGtuType().getId());
         assertEquals("lengthA", lengthGeneratorA.draw(), characteristicsA.getLength());
         assertEquals("lengthB", lengthGeneratorB.draw(), characteristicsB.getLength());
         assertEquals("widthA", widthGeneratorA.draw(), characteristicsA.getWidth());
@@ -125,7 +125,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         // Test that the constructor throws the expected Exception when an argument is invalid
         try
         {
-            new TemplateGTUType(null, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
+            new TemplateGtuType(null, lengthGeneratorA, widthGeneratorA, maximumSpeedGeneratorA);
             fail("Previous statement should have thrown a NullPointerException");
         }
         catch (NullPointerException gtue)
@@ -134,7 +134,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(gtuTypeA, null, widthGeneratorA, maximumSpeedGeneratorA);
+            new TemplateGtuType(gtuTypeA, null, widthGeneratorA, maximumSpeedGeneratorA);
             fail("Previous statement should have thrown a NullPointerException");
         }
         catch (NullPointerException gtue)
@@ -143,7 +143,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(gtuTypeA, lengthGeneratorA, null, maximumSpeedGeneratorA);
+            new TemplateGtuType(gtuTypeA, lengthGeneratorA, null, maximumSpeedGeneratorA);
             fail("Previous statement should have thrown a NullPointerException");
         }
         catch (NullPointerException gtue)
@@ -152,7 +152,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(gtuTypeA, lengthGeneratorA, widthGeneratorA, null);
+            new TemplateGtuType(gtuTypeA, lengthGeneratorA, widthGeneratorA, null);
             fail("Previous statement should have thrown a NullPointerException");
         }
         catch (NullPointerException gtue)

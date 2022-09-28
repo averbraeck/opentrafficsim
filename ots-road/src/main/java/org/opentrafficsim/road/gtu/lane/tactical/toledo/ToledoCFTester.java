@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
@@ -32,9 +32,9 @@ public class ToledoCFTester
     /**
      * @param args String[]; arguments for the run (should be empty at the moment)
      * @throws ParameterException when Toledo parameters cannot be found
-     * @throws GTUException when CarFollowingHeadway cannot be calculated
+     * @throws GtuException when CarFollowingHeadway cannot be calculated
      */
-    public static void main(final String[] args) throws ParameterException, GTUException
+    public static void main(final String[] args) throws ParameterException, GtuException
     {
 
         ParameterSet params = new ParameterSet();

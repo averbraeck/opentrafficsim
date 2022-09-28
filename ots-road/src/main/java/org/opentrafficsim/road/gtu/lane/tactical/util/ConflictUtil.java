@@ -26,8 +26,8 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -128,10 +128,10 @@ public final class ConflictUtil
      * @param acceleration Acceleration; current acceleration
      * @param speedLimitInfo SpeedLimitInfo; speed limit info
      * @param conflictPlans ConflictPlans; set of plans for conflict
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param lane RelativeLane; lane
      * @return acceleration appropriate for approaching the conflicts
-     * @throws GTUException in case of an unsupported conflict rule
+     * @throws GtuException in case of an unsupported conflict rule
      * @throws ParameterException if a parameter is not defined or out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -139,7 +139,7 @@ public final class ConflictUtil
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final CarFollowingModel carFollowingModel,
             final Length vehicleLength, final Length vehicleWidth, final Speed speed, final Acceleration acceleration,
             final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGTU gtu,
-            final RelativeLane lane) throws GTUException, ParameterException
+            final RelativeLane lane) throws GtuException, ParameterException
     {
 
         conflictPlans.cleanPlans();
@@ -185,7 +185,7 @@ public final class ConflictUtil
             if (lane.isCurrent())
             {
                 if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule
-                        && gtu.getGTUType().isOfType(GTUType.DEFAULTS.BUS)
+                        && gtu.getGtuType().isOfType(GtuType.DEFAULTS.BUS)
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
@@ -248,7 +248,7 @@ public final class ConflictUtil
                 }
                 default:
                 {
-                    throw new GTUException("Unsupported conflict rule encountered while approaching conflicts.");
+                    throw new GtuException("Unsupported conflict rule encountered while approaching conflicts.");
                 }
             }
 
@@ -734,14 +734,14 @@ public final class ConflictUtil
                 {
                     RoadNetwork network = conflict.getConflictingLink().getNetwork();
                     HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(),
-                            network.getGtuType(GTUType.DEFAULTS.CAR), conflict.getConflictingVisibility(),
+                            network.getGtuType(GtuType.DEFAULTS.CAR), conflict.getConflictingVisibility(),
                             new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), conflict.getConflictingSpeedLimit(),
                             Acceleration.ZERO, Speed.ZERO);
                     List<HeadwayGTU> conflictingVehiclesList = new ArrayList<>();
                     conflictingVehiclesList.add(conflictGtu);
                     conflictingVehicles = conflictingVehiclesList;
                 }
-                catch (GTUException exception)
+                catch (GtuException exception)
                 {
                     throw new RuntimeException("Could not create a virtual conflicting vehicle at visibility range.",
                             exception);
@@ -936,7 +936,7 @@ public final class ConflictUtil
     /**
      * Returns whether the conflicting link is on the route of the given gtu.
      * @param conflictingLink CrossSectionLink; conflicting link
-     * @param gtu HeadwayGTU; gtu
+     * @param gtu HeadwayGtu; gtu
      * @return whether the conflict is on the route of the given gtu
      */
     private static boolean isOnRoute(final CrossSectionLink conflictingLink, final HeadwayGTU gtu)
@@ -1020,7 +1020,7 @@ public final class ConflictUtil
 
         /**
          * Sets the estimated arrival time of a GTU.
-         * @param gtu AbstractHeadwayGTU; GTU
+         * @param gtu AbstractHeadwayGtu; GTU
          * @param time Time; estimated arrival time
          */
         void setArrivalTime(final AbstractHeadwayGTU gtu, final Time time)
@@ -1030,7 +1030,7 @@ public final class ConflictUtil
 
         /**
          * Returns the estimated arrival time of given GTU.
-         * @param gtu AbstractHeadwayGTU; GTU
+         * @param gtu AbstractHeadwayGtu; GTU
          * @return estimated arrival time of given GTU
          */
         Time getArrivalTime(final AbstractHeadwayGTU gtu)

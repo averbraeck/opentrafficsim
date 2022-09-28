@@ -38,8 +38,8 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -54,8 +54,8 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -134,7 +134,7 @@ public final class AHFEUtil
      * @param accelerationError double; acceleration error
      * @throws ValueRuntimeException on value error
      * @throws ParameterException on parameter error
-     * @throws GTUException on gtu error
+     * @throws GtuException on gtu error
      * @throws ProbabilityException on probability error
      * @throws SimRuntimeException on sim runtime error
      */
@@ -144,7 +144,7 @@ public final class AHFEUtil
             final Duration reactionTime, final Duration anticipationTime, final double truckFraction, final Time simulationTime,
             final Frequency leftDemand, final Frequency rightDemand, final double leftFraction, final double distanceError,
             final double speedError, final double accelerationError)
-            throws ValueRuntimeException, ParameterException, GTUException, SimRuntimeException, ProbabilityException
+            throws ValueRuntimeException, ParameterException, GtuException, SimRuntimeException, ProbabilityException
     {
 
         Random seedGenerator = new Random(replication);
@@ -180,14 +180,14 @@ public final class AHFEUtil
         // Length lookAheadStdev = new Length(250.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
         Acceleration b = new Acceleration(2.09, AccelerationUnit.SI);
-        GTUType gtuType = new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR));
+        GtuType gtuType = new GtuType("car", network.getGtuType(GtuType.DEFAULTS.CAR));
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED,
                 new DistNormal(streams.get("gtuClass"), 123.7 / 120, 12.0 / 120));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         // bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev,
         // streams.get("gtuClass"));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
-        gtuType = new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK));
+        gtuType = new GtuType("truck", network.getGtuType(GtuType.DEFAULTS.TRUCK));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         // bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev,
@@ -225,30 +225,30 @@ public final class AHFEUtil
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
                 new ContinuousDistDoubleScalar.Rel<>(new DistNormal(streams.get("gtuClass"), 80, 2.5), SpeedUnit.KM_PER_HOUR);
 
-        LaneBasedTemplateGTUType carLeft =
-                new LaneBasedTemplateGTUType(new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)),
+        LaneBasedTemplateGtuType carLeft =
+                new LaneBasedTemplateGtuType(new GtuType("car", network.getGtuType(GtuType.DEFAULTS.CAR)),
                         new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
                         speedCar, strategicalFactory, fixedRouteGeneratorLeft);
-        LaneBasedTemplateGTUType truckLeft =
-                new LaneBasedTemplateGTUType(new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+        LaneBasedTemplateGtuType truckLeft =
+                new LaneBasedTemplateGtuType(new GtuType("truck", network.getGtuType(GtuType.DEFAULTS.TRUCK)),
                         new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                         speedTruck, strategicalFactory, fixedRouteGeneratorLeft);
-        LaneBasedTemplateGTUType carRight =
-                new LaneBasedTemplateGTUType(new GTUType("car", network.getGtuType(GTUType.DEFAULTS.CAR)),
+        LaneBasedTemplateGtuType carRight =
+                new LaneBasedTemplateGtuType(new GtuType("car", network.getGtuType(GtuType.DEFAULTS.CAR)),
                         new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
                         speedCar, strategicalFactory, fixedRouteGeneratorRight);
-        LaneBasedTemplateGTUType truckRight =
-                new LaneBasedTemplateGTUType(new GTUType("truck", network.getGtuType(GTUType.DEFAULTS.TRUCK)),
+        LaneBasedTemplateGtuType truckRight =
+                new LaneBasedTemplateGtuType(new GtuType("truck", network.getGtuType(GtuType.DEFAULTS.TRUCK)),
                         new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                         speedTruck, strategicalFactory, fixedRouteGeneratorRight);
 
-        // GTUTypeGenerator gtuTypeGeneratorLeft = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
-        // GTUTypeGenerator gtuTypeGeneratorRight = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
+        // GtuTypeGenerator gtuTypeGeneratorLeft = new GtuTypeGenerator(simulator, streams.get("gtuClass"));
+        // GtuTypeGenerator gtuTypeGeneratorRight = new GtuTypeGenerator(simulator, streams.get("gtuClass"));
 
-        Distribution<LaneBasedTemplateGTUType> gtuTypeGeneratorLeftLeft = new Distribution<>(streams.get("gtuClass"));
-        Distribution<LaneBasedTemplateGTUType> gtuTypeGeneratorLeftRight = new Distribution<>(streams.get("gtuClass"));
-        Distribution<LaneBasedTemplateGTUType> gtuTypeGeneratorRightLeft = new Distribution<>(streams.get("gtuClass"));
-        Distribution<LaneBasedTemplateGTUType> gtuTypeGeneratorRightRight = new Distribution<>(streams.get("gtuClass"));
+        Distribution<LaneBasedTemplateGtuType> gtuTypeGeneratorLeftLeft = new Distribution<>(streams.get("gtuClass"));
+        Distribution<LaneBasedTemplateGtuType> gtuTypeGeneratorLeftRight = new Distribution<>(streams.get("gtuClass"));
+        Distribution<LaneBasedTemplateGtuType> gtuTypeGeneratorRightLeft = new Distribution<>(streams.get("gtuClass"));
+        Distribution<LaneBasedTemplateGtuType> gtuTypeGeneratorRightRight = new Distribution<>(streams.get("gtuClass"));
         if (truckFraction < 1 - leftFraction)
         {
             double p = truckFraction / (1 - leftFraction);
@@ -339,7 +339,7 @@ public final class AHFEUtil
      * @param idGenerator IdGenerator; the generator for the ID
      * @param simulator OTSSimulatorInterface; the simulator
      * @param network OTSRoadNetwork; the network
-     * @param distribution Distribution&lt;LaneBasedTemplateGTUType&gt;; the type generator for the GTU
+     * @param distribution Distribution&lt;LaneBasedTemplateGtuType&gt;; the type generator for the GTU
      * @param headwayGenerator HeadwayGeneratorDemand; the headway generator for the GTU
      * @param gtuColorer GTUColorer; the GTU colorer for animation
      * @param roomChecker RoomChecker; the checker to see if there is room for the GTU
@@ -349,21 +349,21 @@ public final class AHFEUtil
      * @param stream StreamInterface; random number stream
      * @throws SimRuntimeException in case of scheduling problems
      * @throws ProbabilityException in case of an illegal probability distribution
-     * @throws GTUException in case the GTU is inconsistent
+     * @throws GtuException in case the GTU is inconsistent
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
             final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSRoadNetwork network,
-            final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
+            final Distribution<LaneBasedTemplateGtuType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
-            throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
+            throws SimRuntimeException, ProbabilityException, GtuException, ParameterException
     {
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
         // TODO DIR_MINUS
         initialLongitudinalPositions
                 .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
-        LaneBasedTemplateGTUTypeDistribution characteristicsGenerator = new LaneBasedTemplateGTUTypeDistribution(distribution);
+        LaneBasedTemplateGtuTypeDistribution characteristicsGenerator = new LaneBasedTemplateGtuTypeDistribution(distribution);
         new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
                 GeneratorPositions.create(initialLongitudinalPositions, stream), network, simulator, roomChecker, idGenerator);
     }
@@ -396,10 +396,10 @@ public final class AHFEUtil
          *            car-following model
          * @param defaultCarFollowingParameters Parameters; default set of parameters for the car-following model
          * @param perceptionFactory PerceptionFactory; perception factory
-         * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
+         * @throws GtuException if the supplied car-following model does not have an accessible empty constructor
          */
         LMRSFactoryAHFE(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-                final Parameters defaultCarFollowingParameters, final PerceptionFactory perceptionFactory) throws GTUException
+                final Parameters defaultCarFollowingParameters, final PerceptionFactory perceptionFactory) throws GtuException
         {
             this.carFollowingModelFactory = carFollowingModelFactory;
             this.defaultCarFollowingParameters = defaultCarFollowingParameters;
@@ -419,14 +419,14 @@ public final class AHFEUtil
 
         /** {@inheritDoc} */
         @Override
-        public final LMRS create(final LaneBasedGTU gtu) throws GTUException
+        public final LMRS create(final LaneBasedGTU gtu) throws GtuException
         {
             LMRS lmrs = new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu,
                     this.perceptionFactory.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
                     GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.addMandatoryIncentive(new IncentiveRoute());
             lmrs.addVoluntaryIncentive(new IncentiveSpeedWithCourtesy());
-            if (gtu.getGTUType().getId().equals("car"))
+            if (gtu.getGtuType().getId().equals("car"))
             {
                 lmrs.addVoluntaryIncentive(new IncentiveKeep());
             }

@@ -41,7 +41,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -89,13 +89,13 @@ public class LaneTest implements UNITS
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
         Length endWidth = new Length(4, METER);
-        GTUType gtuTypeCar = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuTypeCar = network.getGtuType(GtuType.DEFAULTS.CAR);
 
         GtuCompatibility<LaneType> GtuCompatibility = new GtuCompatibility<>((LaneType) null);
-        GtuCompatibility.addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+        GtuCompatibility.addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
         LaneType laneType = new LaneType("One way", network.getLaneType(LaneType.DEFAULTS.FREEWAY), GtuCompatibility, network);
-        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
+        Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
         // FIXME what overtaking conditions do we want to test in this unit test?
         Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap);
@@ -109,9 +109,9 @@ public class LaneTest implements UNITS
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
                 lane.getContour().getLengthSI(), 0.1);
         assertEquals("Directionality should be " + LongitudinalDirectionality.DIR_PLUS, LongitudinalDirectionality.DIR_PLUS,
-                lane.getLaneType().getDirectionality(network.getGtuType(GTUType.DEFAULTS.VEHICLE)));
+                lane.getLaneType().getDirectionality(network.getGtuType(GtuType.DEFAULTS.VEHICLE)));
         assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR),
-                lane.getSpeedLimit(network.getGtuType(GTUType.DEFAULTS.VEHICLE)));
+                lane.getSpeedLimit(network.getGtuType(GtuType.DEFAULTS.VEHICLE)));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // TODO: This test for expectedLateralCenterOffset fails
@@ -231,27 +231,27 @@ public class LaneTest implements UNITS
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
         sensors = lane.getSensors(Length.ZERO, Length.instantiateSI(length / 3),
-                lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
         assertEquals("first third of lane contains 1 sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         sensors = lane.getSensors(Length.instantiateSI(length / 3), Length.instantiateSI(length),
-                lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
         assertEquals("last two-thirds of lane contains 1 sensor", 1, sensors.size());
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE),
+        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE),
                 GTUDirectionality.DIR_PLUS);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
         assertEquals("sensor list contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
-        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE),
+        sensors = lane.getSensors(lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE),
                 GTUDirectionality.DIR_MINUS);
         // NB. The mocked sensor is compatible with all GTU types in all directions.
         assertEquals("sensor list contains two sensors", 2, sensors.size());
         assertTrue("sensor list contains sensor1", sensors.contains(sensor1));
         assertTrue("sensor list contains sensor2", sensors.contains(sensor2));
         SortedMap<Double, List<SingleSensor>> sensorMap = lane.getSensorMap(
-                lane.getParentLink().getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
+                lane.getParentLink().getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), GTUDirectionality.DIR_PLUS);
         assertEquals("sensor map contains two entries", 2, sensorMap.size());
         for (Double d : sensorMap.keySet())
         {
@@ -568,10 +568,10 @@ public class LaneTest implements UNITS
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
-        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
+        Map<GtuType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
+        directionalityMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+        Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
         OTSRoadNode start = new OTSRoadNode(network, "start", from, Direction.ZERO);
         OTSRoadNode end = new OTSRoadNode(network, "end", to, Direction.ZERO);
         OTSPoint3D[] coordinates = new OTSPoint3D[2];
@@ -650,10 +650,10 @@ public class LaneTest implements UNITS
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     OTSRoadNetwork network = new OTSRoadNetwork("contour test network", true, simulator);
                     LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-                    Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-                    directionalityMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
-                    Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-                    speedMap.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
+                    Map<GtuType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
+                    directionalityMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
+                    Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
+                    speedMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(50, KM_PER_HOUR));
                     OTSRoadNode start =
                             new OTSRoadNode(network, "start", new OTSPoint3D(xStart, yStart), Direction.instantiateSI(angle));
                     double linkLength = 1000;

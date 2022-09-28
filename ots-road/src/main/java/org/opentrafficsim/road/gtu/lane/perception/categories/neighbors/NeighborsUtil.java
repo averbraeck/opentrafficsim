@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
@@ -51,12 +51,12 @@ public final class NeighborsUtil
      * @param otherRelativePosition RelativePosition.TYPE; position of other GTU that has to be downstream
      * @param now Time; current time
      * @return set of first leaders per branch
-     * @throws GTUException if the GTU was not initialized
+     * @throws GtuException if the GTU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
      */
     public static SortedSet<DistanceGTU> getFirstDownstreamGTUs(final LaneStructureRecord startRecord,
             final RelativePosition egoRelativePosition, final RelativePosition egoFrontPosition,
-            final RelativePosition.TYPE otherRelativePosition, final Time now) throws GTUException, ParameterException
+            final RelativePosition.TYPE otherRelativePosition, final Time now) throws GtuException, ParameterException
     {
         SortedSet<DistanceGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
@@ -134,12 +134,12 @@ public final class NeighborsUtil
      * @param otherRelativePosition RelativePosition.TYPE; type of position of other GTU that has to be upstream
      * @param now Time; current time
      * @return set of first followers per branch
-     * @throws GTUException if the GTU was not initialized
+     * @throws GtuException if the GTU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
      */
     public static SortedSet<DistanceGTU> getFirstUpstreamGTUs(final LaneStructureRecord startRecord,
             final RelativePosition egoRelativePosition, final RelativePosition egoRearPosition,
-            final RelativePosition.TYPE otherRelativePosition, final Time now) throws GTUException, ParameterException
+            final RelativePosition.TYPE otherRelativePosition, final Time now) throws GtuException, ParameterException
     {
         SortedSet<DistanceGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
@@ -213,7 +213,7 @@ public final class NeighborsUtil
      * raw network search, and the perceived result.
      * @param base SortedSet&lt;DistanceGTU&gt;; base set of GTU's at distance
      * @param headwayGtuType HeadwayGtuType; headway type for perceived GTU's
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @param downstream boolean; whether the GTU's are downstream
      * @return SortedSet&lt;HeadwayGTU&gt;; set of perceived GTU's
      */
@@ -245,7 +245,7 @@ public final class NeighborsUtil
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGTU; GTU
+         * @param gtu LaneBasedGtu; GTU
          * @param distance Length; distance
          */
         DistanceGTU(final LaneBasedGTU gtu, final Length distance)
@@ -256,7 +256,7 @@ public final class NeighborsUtil
 
         /**
          * Returns the GTU.
-         * @return LaneBasedGTU; GTU
+         * @return LaneBasedGtu; GTU
          */
         public LaneBasedGTU getGTU()
         {
@@ -314,7 +314,7 @@ public final class NeighborsUtil
          * Constructor.
          * @param base SortedSet&lt;DistanceGTU&gt;; base set of GTU's at distance
          * @param headwayGtuType HeadwayGtuType; headway type for perceived GTU's
-         * @param perceivingGtu LaneBasedGTU; perceiving GTU
+         * @param perceivingGtu LaneBasedGtu; perceiving GTU
          * @param downstream boolean; whether the GTU's are downstream
          */
         SortedNeighborsSet(final SortedSet<DistanceGTU> base, final HeadwayGtuType headwayGtuType,
@@ -473,8 +473,8 @@ public final class NeighborsUtil
 
         /**
          * Helper method for sub-lists to find distance-GTU from the perceived GTU.
-         * @param element HeadwayGTU; perceived GTU
-         * @return DistanceGTU; pertaining to given GTU
+         * @param element HeadwayGtu; perceived GTU
+         * @return DistanceGtu; pertaining to given GTU
          */
         private DistanceGTU getGTU(final HeadwayGTU element)
         {

@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.animation.ColorInterpolator;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * Colors the reaction time.
@@ -60,7 +60,7 @@ public class ReactionTimeColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU drawable)
+    public Color getColor(final Gtu drawable)
     {
         Duration tr = drawable.getParameters().getParameterOrNull(ParameterTypes.TR);
         if (tr == null)

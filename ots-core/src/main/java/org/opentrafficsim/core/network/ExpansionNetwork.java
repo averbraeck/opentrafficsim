@@ -72,7 +72,7 @@ public abstract class ExpansionNetwork extends OTSNetwork
 
     /**
      * @param id String; the network id.
-     * @param addDefaultTypes add the default GTUTypes and LinkTypes, or not
+     * @param addDefaultTypes add the default GtuTypes and LinkTypes, or not
      * @param simulator OTSSimulatorInterface; the DSOL simulator engine
      */
     public ExpansionNetwork(final String id, final boolean addDefaultTypes, final OTSSimulatorInterface simulator)

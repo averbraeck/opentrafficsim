@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -44,7 +44,7 @@ public class IncentiveBusStop implements MandatoryIncentive
         {
             now = perception.getGtu().getSimulator().getSimulatorAbsTime();
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new RuntimeException("GTU not initialized.", exception);
         }
@@ -58,7 +58,7 @@ public class IncentiveBusStop implements MandatoryIncentive
                     break;
                 }
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 throw new OperationalPlanException("Could not obtain bus schedule.", exception);
             }

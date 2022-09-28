@@ -8,7 +8,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
@@ -49,9 +49,9 @@ public class TTCRoomChecker implements RoomChecker
     /** {@inheritDoc} */
     @Override
     public final Placement canPlace(final SortedSet<HeadwayGTU> leaders, final LaneBasedGTUCharacteristics characteristics,
-            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GTUException
+            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GtuException
     {
-        Speed speedLimit = initialPosition.iterator().next().getLane().getSpeedLimit(characteristics.getGTUType());
+        Speed speedLimit = initialPosition.iterator().next().getLane().getSpeedLimit(characteristics.getGtuType());
         Speed desiredSpeedProxy = Speed.min(characteristics.getMaximumSpeed(), speedLimit);
         if (leaders.isEmpty())
         {
@@ -61,9 +61,9 @@ public class TTCRoomChecker implements RoomChecker
         Speed speed = Speed.min(leader.getSpeed(), desiredSpeedProxy);
         for (DirectedLanePosition dlp : initialPosition)
         {
-            if (dlp.getLane().getLaneType().isCompatible(characteristics.getGTUType(), dlp.getGtuDirection()))
+            if (dlp.getLane().getLaneType().isCompatible(characteristics.getGtuType(), dlp.getGtuDirection()))
             {
-                speed = Speed.min(speed, dlp.getLane().getSpeedLimit(characteristics.getGTUType()));
+                speed = Speed.min(speed, dlp.getLane().getSpeedLimit(characteristics.getGtuType()));
             }
         }
         if ((speed.le(leader.getSpeed()) || leader.getDistance().divide(speed.minus(leader.getSpeed())).gt(this.ttc)) && leader

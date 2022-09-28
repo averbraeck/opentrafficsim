@@ -8,8 +8,8 @@ import java.util.Set;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -56,7 +56,7 @@ public class SplitColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu)
+    public final Color getColor(final Gtu gtu)
     {
         if (!(gtu instanceof LaneBasedGTU))
         {
@@ -69,7 +69,7 @@ public class SplitColorer implements GTUColorer
             refPos = laneGtu.getReferencePosition();
 
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             return UNKNOWN;
         }
@@ -88,11 +88,11 @@ public class SplitColorer implements GTUColorer
             try
             {
                 preLink = linkDir.getLink();
-                nextLinks = linkDir.getNodeTo().nextLinks(gtu.getGTUType(), linkDir.getLink());
+                nextLinks = linkDir.getNodeTo().nextLinks(gtu.getGtuType(), linkDir.getLink());
                 if (!nextLinks.isEmpty())
                 {
                     linkDir = laneGtu.getStrategicalPlanner().nextLinkDirection(preLink, linkDir.getDirection(),
-                            gtu.getGTUType());
+                            gtu.getGtuType());
                 }
             }
             catch (NetworkException exception)

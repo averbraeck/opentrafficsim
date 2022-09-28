@@ -30,7 +30,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -124,8 +124,8 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType, final Length latPos,
             final Length width) throws NamingException, NetworkException, OTSGeometryException
     {
-        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
+        Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), new Speed(100, KM_PER_HOUR));
         // XXX Decide what type of overtaking conditions we want in this test
         Lane result = new Lane(link, id, latPos, latPos, width, width, laneType, speedMap);
         return result;
@@ -167,7 +167,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     @Test
     public final void changeRight() throws Exception
     {
-        GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = this.network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         int laneCount = 2;
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
@@ -203,7 +203,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         car.init(strategicalPlanner, initialLongitudinalPositions, new Speed(100, KM_PER_HOUR));
         car.getTacticalPlanner().getPerception().perceive();
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
-        sameLaneGTUs.add(new HeadwayGTUSimple(car.getId(), car.getGTUType(), Length.ZERO, Length.ZERO, car.getLength(),
+        sameLaneGTUs.add(new HeadwayGTUSimple(car.getId(), car.getGtuType(), Length.ZERO, Length.ZERO, car.getLength(),
                 car.getSpeed(), car.getAcceleration(), null));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
@@ -248,7 +248,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
             collisionCar.setParameters(parameters);
             collisionCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
-            HeadwayGTUSimple collisionHWGTU = new HeadwayGTUSimple(collisionCar.getId(), collisionCar.getGTUType(),
+            HeadwayGTUSimple collisionHWGTU = new HeadwayGTUSimple(collisionCar.getId(), collisionCar.getGtuType(),
                     new Length(pos - reference.getSI(), LengthUnit.SI), collisionCar.getLength(), collisionCar.getWidth(),
                     collisionCar.getSpeed(), collisionCar.getAcceleration(), null);
             preferredLaneGTUs.add(collisionHWGTU);
@@ -285,7 +285,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
             otherCar.setParameters(parameters);
             otherCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
-            HeadwayGTUSimple collisionHWGTU = new HeadwayGTUSimple(otherCar.getId(), otherCar.getGTUType(),
+            HeadwayGTUSimple collisionHWGTU = new HeadwayGTUSimple(otherCar.getId(), otherCar.getGtuType(),
                     new Length(pos - car.position(lanes[0], car.getReference()).getSI(), LengthUnit.SI), otherCar.getLength(),
                     otherCar.getWidth(), otherCar.getSpeed(), otherCar.getAcceleration(), null);
             preferredLaneGTUs.add(collisionHWGTU);

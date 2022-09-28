@@ -20,7 +20,7 @@ public interface LongitudinalControl
 
     /**
      * Calculate acceleration.
-     * @param gtu LaneBasedGTU; controlled GTU
+     * @param gtu LaneBasedGtu; controlled GTU
      * @param settings Parameters; system settings
      * @return Acceleration; level of acceleration, may be {@code null} if the controller is unable to deal with a situation
      */

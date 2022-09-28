@@ -7,14 +7,14 @@ import static org.junit.Assert.assertTrue;
 import org.djutils.exceptions.Try;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.gtu.GTUType.DEFAULTS;
+import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Test the methods and fields in the GTUType class.
+ * Test the methods and fields in the GtuType class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,7 +22,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 15 jan. 2015 <br>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GTUTypeTest
+public class GtuTypeTest
 {
 
     /**
@@ -31,14 +31,14 @@ public class GTUTypeTest
     @Test
     public final void constructorTest()
     {
-        OTSNetwork network = new OTSNetwork("network", true, new OTSSimulator("Simulator for GTUTypeTest"));
-        GTUType t = new GTUType("abc", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
-        assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
-        GTUType t2 = new GTUType("pqr", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
-        assertTrue("Id is stored in the newly created GTUType", "pqr".equals(t2.getId()));
+        OTSNetwork network = new OTSNetwork("network", true, new OTSSimulator("Simulator for GtuTypeTest"));
+        GtuType t = new GtuType("abc", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        assertTrue("Id is stored in the newly created GtuType", "abc".equals(t.getId()));
+        GtuType t2 = new GtuType("pqr", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        assertTrue("Id is stored in the newly created GtuType", "pqr".equals(t2.getId()));
         // prove that the two are really distinct (do not use the same storage for the type string
-        assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
-        assertEquals("parent can be retrieved", network.getGtuType(GTUType.DEFAULTS.VEHICLE), t.getParent());
+        assertTrue("Id is stored in the newly created GtuType", "abc".equals(t.getId()));
+        assertEquals("parent can be retrieved", network.getGtuType(GtuType.DEFAULTS.VEHICLE), t.getParent());
     }
 
     /**
@@ -47,25 +47,25 @@ public class GTUTypeTest
     @Test
     public final void defaultsTest()
     {
-        OTSNetwork network = new OTSNetwork("network", true, new OTSSimulator("Simulator for GTUTypeTest"));
+        OTSNetwork network = new OTSNetwork("network", true, new OTSSimulator("Simulator for GtuTypeTest"));
         StreamInterface randomStream = new MersenneTwister();
-        GTUType car = network.getGtuType(DEFAULTS.CAR);
+        GtuType car = network.getGtuType(DEFAULTS.CAR);
         String message = "Exception while deriving default GTU characteristics";
-        GTUCharacteristics characteristicsCar1 =
-                Try.assign(() -> GTUType.defaultCharacteristics(car, network, randomStream), message);
-        GTUCharacteristics characteristicsCar2 =
-                Try.assign(() -> GTUType.defaultCharacteristics(car, network, randomStream), message);
-        GTUType spaceCar = new GTUType("spaceCar", car);
-        GTUCharacteristics characteristicsSpaceCar1 =
-                Try.assign(() -> GTUType.defaultCharacteristics(spaceCar, network, randomStream), message);
-        GTUCharacteristics characteristicsSpaceCar2 =
-                Try.assign(() -> GTUType.defaultCharacteristics(spaceCar, network, randomStream), message);
-        GTUType truck = network.getGtuType(DEFAULTS.TRUCK);
-        GTUCharacteristics characteristicsTruck =
-                Try.assign(() -> GTUType.defaultCharacteristics(truck, network, randomStream), message);
+        GtuCharacteristics characteristicsCar1 =
+                Try.assign(() -> GtuType.defaultCharacteristics(car, network, randomStream), message);
+        GtuCharacteristics characteristicsCar2 =
+                Try.assign(() -> GtuType.defaultCharacteristics(car, network, randomStream), message);
+        GtuType spaceCar = new GtuType("spaceCar", car);
+        GtuCharacteristics characteristicsSpaceCar1 =
+                Try.assign(() -> GtuType.defaultCharacteristics(spaceCar, network, randomStream), message);
+        GtuCharacteristics characteristicsSpaceCar2 =
+                Try.assign(() -> GtuType.defaultCharacteristics(spaceCar, network, randomStream), message);
+        GtuType truck = network.getGtuType(DEFAULTS.TRUCK);
+        GtuCharacteristics characteristicsTruck =
+                Try.assign(() -> GtuType.defaultCharacteristics(truck, network, randomStream), message);
 
         // Note: we can only compare characteristics that we know are not distributed for the used GTU type CAR.
-        message = "Default characteristics of DEFAULTS and derived GTUType should be equal.";
+        message = "Default characteristics of DEFAULTS and derived GtuType should be equal.";
         assertEquals(message, characteristicsCar1.getLength(), characteristicsCar2.getLength());
         assertEquals(message, characteristicsCar1.getLength(), characteristicsSpaceCar1.getLength());
         assertEquals(message, characteristicsCar1.getLength(), characteristicsSpaceCar2.getLength());
@@ -73,7 +73,7 @@ public class GTUTypeTest
         assertEquals(message, characteristicsCar1.getWidth(), characteristicsSpaceCar1.getWidth());
         assertEquals(message, characteristicsCar1.getWidth(), characteristicsSpaceCar2.getWidth());
 
-        message = "Default characteristics of distinct DEFAULTS GTUType should not be equal.";
+        message = "Default characteristics of distinct DEFAULTS GtuType should not be equal.";
         assertNotEquals(message, characteristicsCar1.getLength(), characteristicsTruck.getLength());
         assertNotEquals(message, characteristicsCar1.getWidth(), characteristicsTruck.getWidth());
     }

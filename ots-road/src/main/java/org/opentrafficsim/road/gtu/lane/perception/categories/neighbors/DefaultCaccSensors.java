@@ -8,8 +8,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.control.ControlTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.perception.headway.GTUStatus;
@@ -33,7 +33,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
     /** {@inheritDoc} */
     @Override
     public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-            final Length distance) throws GTUException, ParameterException
+            final Length distance) throws GtuException, ParameterException
     {
         Time t;
         try
@@ -46,13 +46,13 @@ public class DefaultCaccSensors implements HeadwayGtuType
         {
             if (!(perceivingGtu.getTacticalPlanner() instanceof ControlTacticalPlanner))
             {
-                throw new GTUException("DefaultCaccSensors relies on the tactical planner being a ControlTacticalPlanner",
+                throw new GtuException("DefaultCaccSensors relies on the tactical planner being a ControlTacticalPlanner",
                         exception);
             }
-            throw new GTUException(exception);
+            throw new GtuException(exception);
         }
         String id = perceivedGtu.getId();
-        GTUType gtuType = perceivedGtu.getGTUType();
+        GtuType gtuType = perceivedGtu.getGtuType();
         Length length = perceivedGtu.getLength();
         Length width = perceivedGtu.getWidth();
         Speed v = perceivedGtu.getSpeed(t);
@@ -84,7 +84,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
     /** {@inheritDoc} */
     @Override
     public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-            final Length distance) throws GTUException, ParameterException
+            final Length distance) throws GtuException, ParameterException
     {
         throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");
     }
@@ -92,7 +92,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
     /** {@inheritDoc} */
     @Override
     public HeadwayGTU createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-            final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
+            final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
     {
         throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");
     }

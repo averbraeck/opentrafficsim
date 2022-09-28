@@ -23,7 +23,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -53,7 +53,7 @@ public class XmlOdParserTest
 {
 
     /** GTU types. */
-    private Set<GTUType> gtuTypes = new LinkedHashSet<>();
+    private Set<GtuType> gtuTypes = new LinkedHashSet<>();
 
     /** Simulator. */
     OTSSimulatorInterface simulator = new OTSSimulator("XmlOdParserTest");
@@ -97,29 +97,29 @@ public class XmlOdParserTest
             }
         };
         this.simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
-        this.gtuTypes.add(this.network.getGtuType(GTUType.DEFAULTS.CAR));
-        this.gtuTypes.add(this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
+        this.gtuTypes.add(this.network.getGtuType(GtuType.DEFAULTS.CAR));
+        this.gtuTypes.add(this.network.getGtuType(GtuType.DEFAULTS.TRUCK));
         // TODO verify that Direction.ZERO will not cause problems...
         OTSRoadNode A = new OTSRoadNode(this.network, "A", new OTSPoint3D(0, 0, 0), Direction.ZERO);
         OTSRoadNode B = new OTSRoadNode(this.network, "B", new OTSPoint3D(1, 0, 0), Direction.ZERO);
         OTSRoadNode C = new OTSRoadNode(this.network, "C", new OTSPoint3D(0, 1, 0), Direction.ZERO);
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Route("AB").addNode(A).addNode(B));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("AB").addNode(A).addNode(B));
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                 new Route("AB2").addNode(A).addNode(C).addNode(B));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Route("AC").addNode(A).addNode(C));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("AC").addNode(A).addNode(C));
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                 new Route("AC2").addNode(A).addNode(B).addNode(C));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Route("BC").addNode(B).addNode(C));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("BC").addNode(B).addNode(C));
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                 new Route("BC2").addNode(B).addNode(A).addNode(C));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Route("BA").addNode(B).addNode(A));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("BA").addNode(B).addNode(A));
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                 new Route("BA2").addNode(B).addNode(C).addNode(A));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Route("CA").addNode(C).addNode(A));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("CA").addNode(C).addNode(A));
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                 new Route("CA2").addNode(C).addNode(B).addNode(A));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), new Route("CB").addNode(C).addNode(B));
-        this.network.addRoute(this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), new Route("CB").addNode(C).addNode(B));
+        this.network.addRoute(this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                 new Route("CB2").addNode(C).addNode(A).addNode(B));
         CrossSectionLink AB =
                 new CrossSectionLink(this.network, "AB", A, B, this.network.getLinkType(LinkType.DEFAULTS.FREEWAY),
@@ -232,7 +232,7 @@ public class XmlOdParserTest
         xml.append("  <GLOBALTIME />");
         xml.append("  <CATEGORY NAME=\"BUS\" GTUTYPE=\"BUS\" />");
         xml.append("</OD>");
-        shouldFail(xml.toString(), "Parser should fail if CATEGORY is defined with unavailable GTUType.");
+        shouldFail(xml.toString(), "Parser should fail if CATEGORY is defined with unavailable GtuType.");
 
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\">");

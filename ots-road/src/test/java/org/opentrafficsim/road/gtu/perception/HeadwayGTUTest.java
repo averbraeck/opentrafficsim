@@ -15,8 +15,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.GTUStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
@@ -39,17 +39,17 @@ public class HeadwayGTUTest
 
     /**
      * Test the constructor and the getters.
-     * @throws GTUException when something fails; if uncaught; this test has failed
+     * @throws GtuException when something fails; if uncaught; this test has failed
      */
     @Test
-    public final void constructorTest() throws GTUException
+    public final void constructorTest() throws GtuException
     {
         // Make two headway GTUs with different values to prove that HeadwayGTUs do not share static fields.
         String id1 = "id1";
-        GTUType gtuType1 = new GTUType("type1", this.network.getGtuType(GTUType.DEFAULTS.CAR));
+        GtuType gtuType1 = new GtuType("type1", this.network.getGtuType(GtuType.DEFAULTS.CAR));
         Length distance1 = new Length(123, LengthUnit.METER);
         String id2 = "id2";
-        GTUType gtuType2 = new GTUType("type2", this.network.getGtuType(GTUType.DEFAULTS.CAR));
+        GtuType gtuType2 = new GtuType("type2", this.network.getGtuType(GtuType.DEFAULTS.CAR));
         Length distance2 = new Length(234, LengthUnit.METER);
         HeadwayGTUSimple hg1 = new HeadwayGTUSimple(id1, gtuType1, distance1, Length.ZERO, Length.ZERO, (Speed) null,
                 (Acceleration) null, null);
@@ -99,7 +99,7 @@ public class HeadwayGTUTest
             new HeadwayGTUSimple(null, gtuType1, distance1, Length.ZERO, Length.ZERO, Speed.ZERO);
             fail("null for id should have thrown a GTUException");
         }
-        catch (GTUException e)
+        catch (GtuException e)
         {
             // Ignore expected exception
         }
@@ -108,7 +108,7 @@ public class HeadwayGTUTest
             new HeadwayGTUSimple(id1, gtuType1, null, Length.ZERO, Length.ZERO, Speed.ZERO);
             fail("null for distance should have thrown a GTUException");
         }
-        catch (GTUException e)
+        catch (GtuException e)
         {
             // Ignore expected exception
         }
@@ -120,10 +120,10 @@ public class HeadwayGTUTest
 
     /**
      * Verify all fields in a HeadwayGTU.
-     * @param headwayGTU HeadwayGTU; the HeadwayGTU to check
+     * @param headwayGTU HeadwayGtu; the HeadwayGTU to check
      * @param acceleration Acceleration; the expected return value for getAcceleration
      * @param distance Length; the expected return value for getDistance
-     * @param gtuType GTUType; the expected return value for getGTUType
+     * @param gtuType GtuType; the expected return value for getGtuType
      * @param id String; the expected return value for getId
      * @param objectType Headway.ObjectType; the expected return value for getObjectType
      * @param overlap Length; the expected return value for getOverlap
@@ -140,7 +140,7 @@ public class HeadwayGTUTest
      * @param parallel boolean; the expected return value for isParallel
      */
     private void verifyFields(final HeadwayGTUSimple headwayGTU, final Acceleration acceleration, final Length distance,
-            final GTUType gtuType, final String id, final Headway.ObjectType objectType, final Length overlap,
+            final GtuType gtuType, final String id, final Headway.ObjectType objectType, final Length overlap,
             final Length overlapFront, final Length overlapRear, final Speed speed, final boolean ahead, final boolean behind,
             final boolean breakingLights, final boolean hazardLights, final boolean honk, final boolean leftIndicator,
             final boolean rightIndicator, final boolean parallel)

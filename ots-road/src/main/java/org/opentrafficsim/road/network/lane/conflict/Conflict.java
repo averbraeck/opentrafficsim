@@ -21,8 +21,8 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -87,7 +87,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     private final OTSSimulatorInterface simulator;
 
     /** GTU type. */
-    private final GTUType gtuType;
+    private final GtuType gtuType;
 
     /** Whether the conflict is a permitted conflict in traffic light control. */
     private final boolean permitted;
@@ -157,14 +157,14 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
      * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
      * @param permitted boolean; whether the conflict is permitted in traffic light control
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param cloneLock Object; lock object for cloning a pair of conflicts
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final GTUDirectionality direction,
             final OTSLine3D geometry, final ConflictType conflictType, final ConflictRule conflictRule,
-            final OTSSimulatorInterface simulator, final GTUType gtuType, final boolean permitted, final Object cloneLock)
+            final OTSSimulatorInterface simulator, final GtuType gtuType, final boolean permitted, final Object cloneLock)
             throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, Throw.whenNull(direction, "Direction may not be null.").isPlus()
@@ -232,7 +232,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Provides the upstream GTUs.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @param headwayGtuType HeadwayGtuType; headway GTU type to use
      * @param visibility Length; distance over which GTU's are provided
      * @return PerceptionIterable&lt;HeadwayGtU&gt;; iterable over the upstream GTUs
@@ -258,7 +258,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 @SuppressWarnings("synthetic-access")
                 @Override
                 protected AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry getNext(
-                        final LaneRecord<?> record, final Length position, final Integer counter) throws GTUException
+                        final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
                 {
                     AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry entry =
                             super.getNext(record, position, counter);
@@ -282,7 +282,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Provides the downstream GTUs.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @param headwayGtuType HeadwayGtuType; headway GTU type to use
      * @param visibility Length; distance over which GTU's are provided
      * @return PerceptionIterable&lt;HeadwayGtU&gt;; iterable over the downstream GTUs
@@ -310,7 +310,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                         @SuppressWarnings("synthetic-access")
                         @Override
                         protected AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry getNext(
-                                final LaneRecord<?> record, final Length position, final Integer counter) throws GTUException
+                                final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
                         {
                             AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry entry =
                                     super.getNext(record, position, counter);
@@ -391,7 +391,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /**
      * @return gtuType.
      */
-    public GTUType getGtuType()
+    public GtuType getGtuType()
     {
         return this.gtuType;
     }
@@ -426,7 +426,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             /** {@inheritDoc} */
                             @Override
                             protected HeadwayTrafficLight perceive(final LaneBasedGTU perceivingGtu, final TrafficLight object,
-                                    final Length distance) throws GTUException, ParameterException
+                                    final Length distance) throws GtuException, ParameterException
                             {
                                 return new HeadwayTrafficLight(object, distance);
                             }
@@ -454,22 +454,22 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param length1 Length; {@code Length} of conflict 1
      * @param direction1 GTUDirectionality; GTU direction of conflict 1
      * @param geometry1 OTSLine3D; geometry of conflict 1
-     * @param gtuType1 GTUType; gtu type of conflict 1
+     * @param gtuType1 GtuType; gtu type of conflict 1
      * @param lane2 Lane; lane of conflict 2
      * @param longitudinalPosition2 Length; longitudinal position of conflict 2
      * @param length2 Length; {@code Length} of conflict 2
      * @param direction2 GTUDirectionality; GTU direction of conflict 2
      * @param geometry2 OTSLine3D; geometry of conflict 2
-     * @param gtuType2 GTUType; gtu type of conflict 2
+     * @param gtuType2 GtuType; gtu type of conflict 2
      * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final ConflictRule conflictRule,
             final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
-            final GTUDirectionality direction1, final OTSLine3D geometry1, final GTUType gtuType1, final Lane lane2,
+            final GTUDirectionality direction1, final OTSLine3D geometry1, final GtuType gtuType1, final Lane lane2,
             final Length longitudinalPosition2, final Length length2, final GTUDirectionality direction2,
-            final OTSLine3D geometry2, final GTUType gtuType2, final OTSSimulatorInterface simulator) throws NetworkException
+            final OTSLine3D geometry2, final GtuType gtuType2, final OTSSimulatorInterface simulator) throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -617,14 +617,14 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGTU; gtu
+         * @param gtu LaneBasedGtu; gtu
          * @param overlapFront Length; front overlap
          * @param overlap Length; overlap
          * @param overlapRear Length; rear overlap
-         * @throws GTUException on exception
+         * @throws GtuException on exception
          */
         ConflictGtu(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
-                throws GTUException
+                throws GtuException
         {
             super(gtu, overlapFront, overlap, overlapRear, true);
             this.gtu = gtu;
@@ -632,11 +632,11 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGTU; gtu
+         * @param gtu LaneBasedGtu; gtu
          * @param distance Length; distance
-         * @throws GTUException on exception
+         * @throws GtuException on exception
          */
-        ConflictGtu(final LaneBasedGTU gtu, final Length distance) throws GTUException
+        ConflictGtu(final LaneBasedGTU gtu, final Length distance) throws GtuException
         {
             super(gtu, distance, true);
             this.gtu = gtu;
@@ -666,7 +666,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         public ConflictGtu createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                final Length distance, final boolean downstream) throws GTUException
+                final Length distance, final boolean downstream) throws GtuException
         {
             return new ConflictGtu(perceivedGtu, distance);
         }
@@ -674,7 +674,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                final Length distance) throws GTUException, ParameterException
+                final Length distance) throws GtuException, ParameterException
         {
             return new ConflictGtu(perceivedGtu, distance); // actually do not change it, called by iterable assuming downstream
         }
@@ -682,7 +682,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                final Length distance) throws GTUException, ParameterException
+                final Length distance) throws GtuException, ParameterException
         {
             return new ConflictGtu(perceivedGtu, distance); // actually do not change it, called by iterable assuming upstream
         }
@@ -690,7 +690,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         public ConflictGtu createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
+                final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
         {
             throw new UnsupportedOperationException("ConflictGtuType is a pass-through type, no actual perception is allowed.");
         }
@@ -726,7 +726,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         public HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu, final Length dist,
-                final boolean downstream) throws GTUException, ParameterException
+                final boolean downstream) throws GtuException, ParameterException
         {
             if (dist.ge(getLength()))
             {
@@ -756,7 +756,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                final Length distance) throws GTUException, ParameterException
+                final Length distance) throws GtuException, ParameterException
         {
             throw new UnsupportedOperationException("OverlapHeadway is a pass-through type, no actual perception is allowed.");
         }
@@ -764,7 +764,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                final Length distance) throws GTUException, ParameterException
+                final Length distance) throws GtuException, ParameterException
         {
             throw new UnsupportedOperationException("OverlapHeadway is a pass-through type, no actual perception is allowed.");
         }
@@ -772,7 +772,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         public HeadwayGTU createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
+                final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
         {
             return this.wrappedType.createParallelGtu(perceivingGtu, perceivedGtu, overlapFront, overlap, overlapRear);
         }
@@ -804,7 +804,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         private final Iterator<HeadwayGTU> baseIterator;
 
         /**
-         * @param perceivingGtu LaneBasedGTU; perceiving GTU
+         * @param perceivingGtu LaneBasedGtu; perceiving GTU
          * @param headwayGtuType HeadwayGtuType; HeadwayGTU type
          * @param visibility Length; guaranteed visibility
          * @param downstream boolean; downstream (or upstream) neighbors
@@ -882,7 +882,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         /** {@inheritDoc} */
         @Override
         protected HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
-                throws GTUException, ParameterException
+                throws GtuException, ParameterException
         {
             return this.headwayGtuType.createHeadwayGtu(perceivingGtu, object, distance, this.downstream);
         }

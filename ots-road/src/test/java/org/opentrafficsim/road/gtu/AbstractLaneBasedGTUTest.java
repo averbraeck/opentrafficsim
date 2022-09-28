@@ -29,8 +29,8 @@ import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -81,7 +81,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
         OTSRoadNode nodeAFrom = new OTSRoadNode(network, "AFrom", new OTSPoint3D(0, 0, 0), Direction.ZERO);
         OTSRoadNode nodeATo = new OTSRoadNode(network, "ATo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
-        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
 
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
@@ -138,7 +138,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // .getBehavioralCharacteristics().getGTUFollowingModel());
         assertEquals("Width should be identical to the provided width", carWidth, car.getWidth());
         assertEquals("Length should be identical to the provided length", carLength, car.getLength());
-        assertEquals("GTU type should be identical to the provided one", gtuType, car.getGTUType());
+        assertEquals("GTU type should be identical to the provided one", gtuType, car.getGtuType());
         assertEquals("front in lanesGroupA[1] is positionA", positionA.getSI(),
                 car.position(lanesGroupA[1], car.getReference()).getSI(), 0.0001);
         assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(),
@@ -188,7 +188,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                     0.0001);
                         }
                     }
-                    catch (GTUException ne)
+                    catch (GtuException ne)
                     {
                         if (!expectException)
                         {
@@ -300,7 +300,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                         position.getSI(), 0.0001);
                             }
                         }
-                        catch (GTUException ne)
+                        catch (GtuException ne)
                         {
                             if (!expectException)
                             {
@@ -331,7 +331,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                         fractionalPosition, 0.000001);
                             }
                         }
-                        catch (GTUException ne)
+                        catch (GtuException ne)
                         {
                             if (!expectException)
                             {

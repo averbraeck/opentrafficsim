@@ -15,8 +15,8 @@ import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.Node;
@@ -55,19 +55,19 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     /**
      * Construct a new LaneBasedIndividualGTU.
      * @param id String; the id of the GTU
-     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param front Length; front distance relative to the reference position
      * @param simulator OTSSimulatorInterface; the simulator
      * @param network OTSRoadNetwork; the network that the GTU is initially registered in
-     * @throws GTUException when a parameter is invalid
+     * @throws GtuException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
+    public LaneBasedIndividualGTU(final String id, final GtuType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final Length front, final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
-            throws GTUException
+            throws GtuException
     {
         this(id, gtuType, length, width, maximumSpeed, front, Length.ZERO, simulator, network);
     }
@@ -75,7 +75,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     /**
      * Construct a new LaneBasedIndividualGTU.
      * @param id String; the id of the GTU
-     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
@@ -83,12 +83,12 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param centerOfGravity Length; distance from the center of gravity to the reference position
      * @param simulator OTSSimulatorInterface; the simulator
      * @param network OTSRoadNetwork; the network that the GTU is initially registered in
-     * @throws GTUException when a parameter is invalid
+     * @throws GtuException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
+    public LaneBasedIndividualGTU(final String id, final GtuType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final Length front, final Length centerOfGravity, final OTSSimulatorInterface simulator,
-            final OTSRoadNetwork network) throws GTUException
+            final OTSRoadNetwork network) throws GtuException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
@@ -191,7 +191,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         private String id = null;
 
         /** The type of GTU, e.g. TruckType, CarType, BusType. */
-        private GTUType gtuType = null;
+        private GtuType gtuType = null;
 
         /** The initial positions of the car on one or more lanes. */
         private Set<DirectedLanePosition> initialLongitudinalPositions = null;
@@ -234,10 +234,10 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param gtuType GTUType; set gtuType
+         * @param gtuType GtuType; set gtuType
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setGtuType(final GTUType gtuType)
+        public final LaneBasedIndividualCarBuilder setGtuType(final GtuType gtuType)
         {
             this.gtuType = gtuType;
             return this;
@@ -355,7 +355,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /**
          * @return gtuType.
          */
-        public final GTUType getGtuType()
+        public final GtuType getGtuType()
         {
             return this.gtuType;
         }
@@ -441,7 +441,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
                     || null == this.simulator || null == this.network)
             {
                 // TODO Should throw a more specific Exception type
-                throw new GTUException("factory settings incomplete");
+                throw new GtuException("factory settings incomplete");
             }
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(this.id, this.gtuType, this.length, this.width,
                     this.maximumSpeed, this.front, this.simulator, this.network);

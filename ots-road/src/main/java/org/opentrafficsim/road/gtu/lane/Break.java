@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.perception.Perception;
 
 /**
@@ -49,12 +49,12 @@ public final class Break
     /**
      * Sets a break condition to true which is triggered by {@code onSub()} at a lower level where context is insufficient to
      * determine the break condition.
-     * @param gtu GTU; GTU
+     * @param gtu Gtu; GTU
      * @param id String; GTU id to break on
      * @param time double; time to break at (or after)
      * @param additionalCondition boolean; additional condition
      */
-    public static void onSuper(final GTU gtu, final String id, final double time, final boolean additionalCondition)
+    public static void onSuper(final Gtu gtu, final String id, final double time, final boolean additionalCondition)
     {
         superCondition = gtu.getId().equals(id) && gtu.getSimulator().getSimulatorTime().si >= time && additionalCondition;
     }
@@ -141,23 +141,23 @@ public final class Break
     }
 
     /**
-     * @param gtu GTU; GTU
+     * @param gtu Gtu; GTU
      * @param id String; GTU id to break on
      * @param time String; time to break at (or after), in format ss, mm:ss or hh:mm:ss
      * @param additionalCondition boolean; additional condition
      */
-    public static void on(final GTU gtu, final String id, final String time, final boolean additionalCondition)
+    public static void on(final Gtu gtu, final String id, final String time, final boolean additionalCondition)
     {
         on(gtu, id, timeFromString(time), additionalCondition);
     }
 
     /**
-     * @param gtu GTU; GTU
+     * @param gtu Gtu; GTU
      * @param id String; GTU id to break on
      * @param time double; time to break at (or after)
      * @param additionalCondition boolean; additional condition
      */
-    public static void on(final GTU gtu, final String id, final double time, final boolean additionalCondition)
+    public static void on(final Gtu gtu, final String id, final double time, final boolean additionalCondition)
     {
         if (gtu.getId().equals(id) && gtu.getSimulator().getSimulatorTime().si >= time && additionalCondition)
         {

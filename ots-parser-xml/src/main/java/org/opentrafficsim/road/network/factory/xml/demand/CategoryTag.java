@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
@@ -34,7 +34,7 @@ public class CategoryTag implements Serializable
     private static final long serialVersionUID = 20180525L;
 
     /** GTU type. */
-    private GTUType gtuType;
+    private GtuType gtuType;
 
     /** Route. */
     private Route route;
@@ -67,14 +67,14 @@ public class CategoryTag implements Serializable
             String name = nameNode.getNodeValue().trim();
 
             Node gtuTypeNode = attributes.getNamedItem("GTUTYPE");
-            Throw.when(categorizationClasses.contains(GTUType.class) && gtuTypeNode == null, XmlParserException.class,
+            Throw.when(categorizationClasses.contains(GtuType.class) && gtuTypeNode == null, XmlParserException.class,
                     "Missing GTUTYPE attribute in CATEGORY %s.", name);
             Throw.when(
-                    !categorizationClasses.isEmpty() && !categorizationClasses.contains(GTUType.class) && gtuTypeNode != null,
+                    !categorizationClasses.isEmpty() && !categorizationClasses.contains(GtuType.class) && gtuTypeNode != null,
                     XmlParserException.class, "Missing GTUTYPE attribute in a CATEGORY prior to %s.", name);
             if (gtuTypeNode != null)
             {
-                tag.gtuType = parser.getGTUType(gtuTypeNode.getNodeValue().trim());
+                tag.gtuType = parser.getGtuType(gtuTypeNode.getNodeValue().trim());
             }
 
             Node routeNode = attributes.getNamedItem("ROUTE");
@@ -131,7 +131,7 @@ public class CategoryTag implements Serializable
             {
                 if (tag.gtuType != null)
                 {
-                    categorizationClasses.add(GTUType.class);
+                    categorizationClasses.add(GtuType.class);
                 }
                 if (tag.route != null)
                 {

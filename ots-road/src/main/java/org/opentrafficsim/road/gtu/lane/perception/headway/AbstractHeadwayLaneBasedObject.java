@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -32,10 +32,10 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param lane Lane; the lane.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayLaneBasedObject(final ObjectType objectType, final String id, final Length overlapFront,
-            final Length overlap, final Length overlapRear, final Length length, final Lane lane) throws GTUException
+            final Length overlap, final Length overlapRear, final Length length, final Lane lane) throws GtuException
     {
         super(objectType, id, overlapFront, overlap, overlapRear, length);
         this.lane = lane;
@@ -49,10 +49,10 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @param lane Lane; the lane.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayLaneBasedObject(final ObjectType objectType, final String id, final Length overlapFront,
-            final Length overlap, final Length overlapRear, final Lane lane) throws GTUException
+            final Length overlap, final Length overlapRear, final Lane lane) throws GtuException
     {
         super(objectType, id, overlapFront, overlap, overlapRear);
         this.lane = lane;
@@ -65,10 +65,10 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param lane Lane; the lane.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayLaneBasedObject(final ObjectType objectType, final String id, final Length distance,
-            final Length length, final Lane lane) throws GTUException
+            final Length length, final Lane lane) throws GtuException
     {
         super(objectType, id, distance, length);
         this.lane = lane;
@@ -80,10 +80,10 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
      * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param lane Lane; the lane.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayLaneBasedObject(final ObjectType objectType, final String id, final Length distance, final Lane lane)
-            throws GTUException
+            throws GtuException
     {
         super(objectType, id, distance);
         this.lane = lane;

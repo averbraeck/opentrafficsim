@@ -7,7 +7,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -54,7 +54,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGTU, 
             try
             {
                 Set<Lane> leftLanes = from.getLane().accessibleAdjacentLanesPhysical(LateralDirectionality.LEFT,
-                        getGtu().getGTUType(), from.getDirection());
+                        getGtu().getGtuType(), from.getDirection());
                 if (!Collections.disjoint(getGtu().positions(getGtu().getReference()).keySet(), leftLanes))
                 {
                     forceSide = LateralDirectionality.LEFT;
@@ -62,14 +62,14 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGTU, 
                 else
                 {
                     Set<Lane> rightLanes = from.getLane().accessibleAdjacentLanesPhysical(LateralDirectionality.RIGHT,
-                            getGtu().getGTUType(), from.getDirection());
+                            getGtu().getGtuType(), from.getDirection());
                     if (!Collections.disjoint(getGtu().positions(getGtu().getReference()).keySet(), rightLanes))
                     {
                         forceSide = LateralDirectionality.RIGHT;
                     }
                 }
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 throw new RuntimeException("Exception obtaining reference position.", exception);
             }

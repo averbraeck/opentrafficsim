@@ -12,7 +12,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -162,7 +162,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // Merge to the adjacent nonPreferred lane; i.e. start an overtaking procedure
             return new LaneMovementStep(nonPreferredAccelerationSteps.getLeaderAccelerationStep(), nonPreferred);
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new RuntimeException(exception);
         }

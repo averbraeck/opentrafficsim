@@ -67,7 +67,7 @@ public abstract class TaskHeadwayBased extends AbstractTask
     /**
      * Returns a collector for the task demand.
      * @param perception LanePerception; perception
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param parameters Parameters; parameters
      * @return Duration; headway, {@code null} of none.
      * @throws ParameterException on invalid parameter

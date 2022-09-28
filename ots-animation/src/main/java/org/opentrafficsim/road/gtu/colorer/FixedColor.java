@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * Fixed color colorer.
@@ -52,7 +52,7 @@ public class FixedColor implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public Color getColor(final Gtu gtu)
     {
         return this.color;
     }

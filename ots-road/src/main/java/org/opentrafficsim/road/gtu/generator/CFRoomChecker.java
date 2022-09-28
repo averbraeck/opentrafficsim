@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
@@ -37,14 +37,14 @@ public class CFRoomChecker implements RoomChecker
     /** {@inheritDoc} */
     @Override
     public Placement canPlace(final SortedSet<HeadwayGTU> leaders, final LaneBasedGTUCharacteristics characteristics,
-            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GTUException
+            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GtuException
     {
         Speed speedLimit = null;
         for (DirectedLanePosition lane : initialPosition)
         {
             try
             {
-                Speed limit = lane.getLane().getSpeedLimit(characteristics.getGTUType());
+                Speed limit = lane.getLane().getSpeedLimit(characteristics.getGtuType());
                 if (speedLimit == null || limit.gt(speedLimit))
                 {
                     speedLimit = limit;
@@ -55,9 +55,9 @@ public class CFRoomChecker implements RoomChecker
                 // ignore
             }
         }
-        Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GTUType %s.",
-                characteristics.getGTUType());
-        Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(characteristics.getGTUType(),
+        Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
+                characteristics.getGtuType());
+        Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(characteristics.getGtuType(),
                 speedLimit, characteristics.getMaximumSpeed());
         desiredSpeed = desiredSpeed != null ? desiredSpeed : speedLimit; // speed limit def.
         if (leaders.isEmpty())
@@ -66,7 +66,7 @@ public class CFRoomChecker implements RoomChecker
             return new Placement(desiredSpeed, initialPosition);
         }
         Length desiredHeadway =
-                characteristics.getStrategicalPlannerFactory().peekDesiredHeadway(characteristics.getGTUType(), desiredSpeed);
+                characteristics.getStrategicalPlannerFactory().peekDesiredHeadway(characteristics.getGtuType(), desiredSpeed);
         desiredHeadway = desiredHeadway != null ? desiredHeadway : desiredSpeed.times(Duration.instantiateSI(1.0)); // 1s def.
         // loop leaders and determine most downstream location that would be ok
         Length move = Length.POSITIVE_INFINITY;
@@ -75,7 +75,7 @@ public class CFRoomChecker implements RoomChecker
         {
             Speed speed = Speed.min(desiredSpeed, leader.getSpeed());
             Length headway =
-                    characteristics.getStrategicalPlannerFactory().peekDesiredHeadway(characteristics.getGTUType(), speed);
+                    characteristics.getStrategicalPlannerFactory().peekDesiredHeadway(characteristics.getGtuType(), speed);
             headway = headway != null ? headway : speed.times(Duration.instantiateSI(1.0)); // 1s def.
             double f = this.headwayFactor(desiredSpeed, desiredHeadway, speed, headway, leader.getLength());
             headway = headway.times(f);
@@ -109,7 +109,7 @@ public class CFRoomChecker implements RoomChecker
                 Length canMove = dir.isPlus() ? lane.getLength().minus(position) : position;
                 while (canMove.lt(move))
                 {
-                    ImmutableMap<Lane, GTUDirectionality> down = lane.downstreamLanes(dir, characteristics.getGTUType());
+                    ImmutableMap<Lane, GTUDirectionality> down = lane.downstreamLanes(dir, characteristics.getGtuType());
                     if (down.size() != 1)
                     {
                         // split or dead-end, fall back to original position

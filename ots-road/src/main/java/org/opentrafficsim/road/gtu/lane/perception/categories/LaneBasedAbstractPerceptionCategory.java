@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.TimeStampedObject;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -84,7 +84,7 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
             }
             return stampedObject.getObject();
         }
-        catch (GTUException ex)
+        catch (GtuException ex)
         {
             throw new RuntimeException("Could not obtain time from GTU.");
         }

@@ -20,8 +20,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -166,7 +166,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * @param up Length; upstream distance over which the structure is made, should include a margin for reaction time
      * @param downSplit Length; downstream distance at splits (links not on route) included in the structure
      * @param upMerge Length; upstream distance at downstream merges (links not on route) included in the structure
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      */
     public RollingLaneStructure(final Length lookAhead, final Length down, final Length up, final Length downSplit,
             final Length upMerge, final LaneBasedGTU gtu)
@@ -193,11 +193,11 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * Updates the underlying structure shifting the root position to the input.
      * @param pos DirectedLanePosition; current position of the GTU
      * @param route Route; current route of the GTU
-     * @param gtuType GTUType; GTU type
-     * @throws GTUException on a problem while updating the structure
+     * @param gtuType GtuType; GTU type
+     * @throws GtuException on a problem while updating the structure
      */
     @Override
-    public final void update(final DirectedLanePosition pos, final Route route, final GTUType gtuType) throws GTUException
+    public final void update(final DirectedLanePosition pos, final Route route, final GtuType gtuType) throws GtuException
     {
 
         /*
@@ -528,11 +528,11 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
 
     /**
      * On a new build, this method is used to create the upstream map.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param fractionalPosition double; fractional position on reference link
-     * @throws GTUException on exception
+     * @throws GtuException on exception
      */
-    private void expandUpstreamEdge(final GTUType gtuType, final double fractionalPosition) throws GTUException
+    private void expandUpstreamEdge(final GtuType gtuType, final double fractionalPosition) throws GtuException
     {
         this.ignoreSet.clear();
         for (LaneStructureRecord record : this.upstreamEdge)
@@ -605,12 +605,12 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * input set.
      * @param edge Set&lt;RollingLaneStructureRecord&gt;; input set
      * @param recordLink RecordLink; link to add between lateral records, depends on upstream or downstream search
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param fractionalPosition double; fractional position on reference link
      * @return Set&lt;LaneStructureRecord&gt;; output set with all laterally found lanes
      */
     private Set<RollingLaneStructureRecord> expandLateral(final Set<RollingLaneStructureRecord> edge,
-            final RecordLink recordLink, final GTUType gtuType, final double fractionalPosition)
+            final RecordLink recordLink, final GtuType gtuType, final double fractionalPosition)
     {
         Set<RollingLaneStructureRecord> nextSet = new LinkedHashSet<>();
         Set<Lane> laneSet = new LinkedHashSet<>(); // set to check that an adjacent lane is not another lane already in the set
@@ -750,9 +750,9 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
 
     /**
      * This method makes sure that not all history is maintained forever, and the upstream edge moves with the GTU.
-     * @throws GTUException on exception
+     * @throws GtuException on exception
      */
-    private void retreatUpstreamEdge() throws GTUException
+    private void retreatUpstreamEdge() throws GtuException
     {
         boolean moved = true;
         Set<RollingLaneStructureRecord> nexts = new LinkedHashSet<>();
@@ -828,9 +828,9 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * @param record RollingLaneStructureRecord; newly found adjacent record after moving the upstream edge downstream
      * @return boolean; whether a record was added to the edge, note that no record is added of the record is fully downstream
      *         of the upstream view distance
-     * @throws GTUException on exception
+     * @throws GtuException on exception
      */
-    private boolean findUpstreamEdge(final RollingLaneStructureRecord record) throws GTUException
+    private boolean findUpstreamEdge(final RollingLaneStructureRecord record) throws GtuException
     {
         Length cutOff = this.up.minus(record.getStartDistance());
         boolean moved = false;
@@ -861,13 +861,13 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
 
     /**
      * Main downstream search for the map. Can be used at initial build and to update.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param fractionalPosition double; fractional position on reference link
      * @param route Route; route of the GTU
-     * @throws GTUException on exception
+     * @throws GtuException on exception
      */
-    private void expandDownstreamEdge(final GTUType gtuType, final double fractionalPosition, final Route route)
-            throws GTUException
+    private void expandDownstreamEdge(final GtuType gtuType, final double fractionalPosition, final Route route)
+            throws GtuException
     {
         this.ignoreSet.clear();
         for (LaneStructureRecord record : this.downstreamEdge)
@@ -980,13 +980,13 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     /**
      * Expand the map to include a limited section downstream of a split, regarding links not on the route.
      * @param set Set&lt;RollingLaneStructureRecord&gt;; set of lanes that have been laterally found
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param fractionalPosition double; fractional position on reference link
      * @param route Route; route
-     * @throws GTUException on exception
+     * @throws GtuException on exception
      */
-    private void expandDownstreamSplit(final Set<RollingLaneStructureRecord> set, final GTUType gtuType,
-            final double fractionalPosition, final Route route) throws GTUException
+    private void expandDownstreamSplit(final Set<RollingLaneStructureRecord> set, final GtuType gtuType,
+            final double fractionalPosition, final Route route) throws GtuException
     {
         Map<RollingLaneStructureRecord, Length> prevs = new LinkedHashMap<>();
         Map<RollingLaneStructureRecord, Length> nexts = new LinkedHashMap<>();
@@ -1036,13 +1036,13 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     /**
      * Expand the map to include a limited section upstream of a merge that is downstream, regarding links not on the route.
      * @param set Set&lt;RollingLaneStructureRecord&gt;; set of lanes that have been laterally found
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param fractionalPosition double; fractional position on reference link
      * @param route Route; route of the GTU
-     * @throws GTUException on exception
+     * @throws GtuException on exception
      */
-    private void expandUpstreamMerge(final Set<RollingLaneStructureRecord> set, final GTUType gtuType,
-            final double fractionalPosition, final Route route) throws GTUException
+    private void expandUpstreamMerge(final Set<RollingLaneStructureRecord> set, final GtuType gtuType,
+            final double fractionalPosition, final Route route) throws GtuException
     {
         Map<RollingLaneStructureRecord, Length> prevs = new LinkedHashMap<>();
         Map<RollingLaneStructureRecord, Length> nexts = new LinkedHashMap<>();
@@ -1102,10 +1102,10 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     /**
      * Helper method of various other methods that laterally couples lanes that have been longitudinally found.
      * @param record RollingLaneStructureRecord; longitudinally found lane
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param nextSet Set&lt;RollingLaneStructureRecord&gt;; set of records on current build edge
      */
-    private void connectLaterally(final RollingLaneStructureRecord record, final GTUType gtuType,
+    private void connectLaterally(final RollingLaneStructureRecord record, final GtuType gtuType,
             final Set<RollingLaneStructureRecord> nextSet)
     {
         for (RollingLaneStructureRecord other : nextSet)
@@ -1270,15 +1270,15 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
      * relative position, or as far as the lane map goes.
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return Sorted set of objects of requested type per lane
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     @Override
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(final Class<T> clazz,
-            final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
+            final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GtuException
     {
         Map<RelativeLane, SortedSet<Entry<T>>> out = new LinkedHashMap<>();
         for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
@@ -1293,16 +1293,16 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * downstream from the relative position, or as far as the lane map goes.
      * @param lane RelativeLane; lane
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return Sorted set of objects of requested type
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     @Override
     @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(final RelativeLane lane,
-            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
+            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GtuException
     {
         LaneStructureRecord record = getFirstRecord(lane);
         SortedSet<Entry<T>> set = new TreeSet<>();
@@ -1350,17 +1350,17 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * downstream from the relative position, or as far as the lane map goes. Objects on links not on the route are ignored.
      * @param lane RelativeLane; lane
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @param route Route; the route
      * @return Sorted set of objects of requested type
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     @Override
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjectsOnRoute(final RelativeLane lane,
             final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos, final Route route)
-            throws GTUException
+            throws GtuException
     {
         SortedSet<Entry<T>> set = getDownstreamObjects(lane, clazz, gtu, pos);
         if (route != null)
@@ -1440,17 +1440,17 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
      * relative position, or as far as the lane map goes. Objects on links not on the route are ignored.
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @param route Route; the route
      * @return Sorted set of objects of requested type per lane
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     @Override
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(
             final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos, final Route route)
-            throws GTUException
+            throws GtuException
     {
         Map<RelativeLane, SortedSet<Entry<T>>> out = new LinkedHashMap<>();
         for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
@@ -1465,16 +1465,16 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      * map goes. Distances to upstream objects are given as positive values.
      * @param lane RelativeLane; lane
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return Sorted set of objects of requested type
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     @Override
     @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(final RelativeLane lane,
-            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
+            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GtuException
     {
         SortedSet<Entry<T>> set = new TreeSet<>();
         LaneStructureRecord record = this.getFirstRecord(lane);
@@ -1545,7 +1545,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     /**
      * Print the lane structure as a number of lines in a String.
      * @param ls RollingLaneStructure; the lane structure to print
-     * @param gtu LaneBasedGTU; the GTTU for which the lane structure is printed
+     * @param gtu LaneBasedGtu; the GTTU for which the lane structure is printed
      * @return a String with information about the RollingLaneStructire
      */
     public static String print(final RollingLaneStructure ls, final LaneBasedGTU gtu)

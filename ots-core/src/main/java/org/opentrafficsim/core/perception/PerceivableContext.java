@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.definitions.Definitions;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * The Model package guarantees that objects that are used in an OTS study such as GTUs are retrievable. In a spatial model, for
@@ -30,33 +30,33 @@ public interface PerceivableContext extends Definitions, Identifiable
      * Get an overview of the GTUs in the model. The set returned is a defensive copy.
      * @return a set of GTUs as registered in the current model.
      */
-    Set<GTU> getGTUs();
+    Set<Gtu> getGTUs();
 
     /**
      * Get a GTU in the model.
      * @param gtuId String; the id of the GTU
      * @return a GTU as registered in the current model, or null when the id could not be found.
      */
-    GTU getGTU(String gtuId);
+    Gtu getGTU(String gtuId);
 
     /**
      * Add a GTU to the network.
-     * @param gtu GTU; the GTU to add
+     * @param gtu Gtu; the GTU to add
      */
-    void addGTU(GTU gtu);
+    void addGTU(Gtu gtu);
 
     /**
      * Remove a GTU from the network.
-     * @param gtu GTU; the GTU to remove
+     * @param gtu Gtu; the GTU to remove
      */
-    void removeGTU(GTU gtu);
+    void removeGTU(Gtu gtu);
 
     /**
      * Test whether a GTU is registered in the network.
-     * @param gtu GTU; the GTU to search for
+     * @param gtu Gtu; the GTU to search for
      * @return whether the network contains this GTU
      */
-    boolean containsGTU(GTU gtu);
+    boolean containsGTU(Gtu gtu);
 
     /**
      * Test whether a GTU ID is registered in the network.

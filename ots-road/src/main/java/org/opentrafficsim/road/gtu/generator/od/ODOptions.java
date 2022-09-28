@@ -6,8 +6,8 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GTUErrorHandler;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuErrorHandler;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
@@ -47,7 +47,7 @@ public class ODOptions
     public static final Option<RoomChecker> ROOM_CHECKER = new Option<>("room checker", new CFBARoomChecker());
 
     /** Markov chain for GTU type option. */
-    public static final Option<MarkovCorrelation<GTUType, Frequency>> MARKOV = new Option<>("markov", null);
+    public static final Option<MarkovCorrelation<GtuType, Frequency>> MARKOV = new Option<>("markov", null);
 
     /** Initial distance over which lane changes shouldn't be performed option. */
     public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", null);
@@ -56,7 +56,7 @@ public class ODOptions
     public static final Option<Boolean> INSTANT_LC = new Option<>("instant lc", false);
 
     /** Error handler when GTU exceptions occur. */
-    public static final Option<GTUErrorHandler> ERROR_HANDLER = new Option<>("error handler", GTUErrorHandler.THROW);
+    public static final Option<GtuErrorHandler> ERROR_HANDLER = new Option<>("error handler", GtuErrorHandler.THROW);
 
     /** Options overall. */
     private OptionSet<Void> options = new OptionSet<>();
@@ -84,8 +84,8 @@ public class ODOptions
         if (laneBiases == null)
         {
             laneBiases = new Option<>("lane bias",
-                    new LaneBiases().addBias(network.getGtuType(GTUType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT)
-                            .addBias(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LaneBias.WEAK_LEFT));
+                    new LaneBiases().addBias(network.getGtuType(GtuType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT)
+                            .addBias(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LaneBias.WEAK_LEFT));
             LANE_BIAS_CACHE.put(network, laneBiases);
         }
         return laneBiases;

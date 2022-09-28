@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
@@ -65,7 +65,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
 
     /**
      * Constructor.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @param root LaneRecord&lt;?&gt;; root record
      * @param initialPosition Length; position on the root record
      * @param maxDistance Length; maximum distance to search
@@ -90,7 +90,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
 
     /** {@inheritDoc} */
     @Override
-    protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GTUException
+    protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
     {
         int n;
         LaneBasedGTU next;
@@ -152,7 +152,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
     /** {@inheritDoc} */
     @Override
     public HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         return this.headwayGtuType.createDownstreamGtu(perceivingGtu, object, distance);
     }

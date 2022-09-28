@@ -26,14 +26,14 @@ public interface InputParameters
     <T> Set<T> getObjects(Class<T> clazz);
 
     /**
-     * Returns all defined parameters for the given object. For example a specific {@code GTUType}.
+     * Returns all defined parameters for the given object. For example a specific {@code GtuType}.
      * @param object Object; the object
      * @return all defined parameters for the given object
      */
     Map<String, InputParameter<?, ?>> getInputParameters(Object object);
 
     /**
-     * Returns a specific defined parameter for the given object. For example parameter "a" for a specific {@code GTUType}.
+     * Returns a specific defined parameter for the given object. For example parameter "a" for a specific {@code GtuType}.
      * @param object Object; the object
      * @param id String; parameter id
      * @return specific defined parameter for the given object

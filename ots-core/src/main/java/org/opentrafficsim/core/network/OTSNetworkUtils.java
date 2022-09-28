@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 
@@ -59,14 +59,14 @@ public final class OTSNetworkUtils
         }
 
         // clone the graphs that had been created for the old network
-        for (GTUType gtuType : network.getLinkGraphs().keySet())
+        for (GtuType gtuType : network.getLinkGraphs().keySet())
         {
             newNetwork.buildGraph(gtuType);
         }
 
         // clone the routes
-        Map<GTUType, Map<String, Route>> newRouteMap = new LinkedHashMap<>();
-        for (GTUType gtuType : network.getRouteMap().keySet())
+        Map<GtuType, Map<String, Route>> newRouteMap = new LinkedHashMap<>();
+        for (GtuType gtuType : network.getRouteMap().keySet())
         {
             Map<String, Route> newRoutes = new LinkedHashMap<>();
             for (Route route : network.getRouteMap().get(gtuType).values())
@@ -86,19 +86,19 @@ public final class OTSNetworkUtils
 
         // TODO clone the visible objects
 
-        // clone the GTUTypes
-        for (GTUType gtuType : network.getGtuTypes().values())
+        // clone the GtuTypes
+        for (GtuType gtuType : network.getGtuTypes().values())
         {
             if (gtuType.getParent() == null)
             {
-                new GTUType(gtuType.getId(), newNetwork);
+                new GtuType(gtuType.getId(), newNetwork);
             }
         }
-        for (GTUType gtuType : network.getGtuTypes().values())
+        for (GtuType gtuType : network.getGtuTypes().values())
         {
             if (gtuType.getParent() != null)
             {
-                new GTUType(gtuType.getId(), gtuType.getParent());
+                new GtuType(gtuType.getId(), gtuType.getParent());
             }
         }
 
@@ -121,7 +121,7 @@ public final class OTSNetworkUtils
      */
     public static void destroy(final OTSNetwork network)
     {
-        for (GTU gtu : network.getGTUs())
+        for (Gtu gtu : network.getGTUs())
         {
             gtu.destroy();
         }

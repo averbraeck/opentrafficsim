@@ -69,7 +69,7 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
     /**
      * Returns the following acceleration of the longitudinal control. This method is only invoked if there is at least 1
      * leader.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param leaders PerceptionCollectable&lt;HeadwayGTU, LaneBasedGTU&gt;; leaders
      * @param settings Parameters; system settings
      * @return Acceleration; following acceleration of the longitudinal control

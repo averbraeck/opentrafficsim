@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -60,7 +60,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTUFollowingDirectedChangeTacticalPlanner create(final LaneBasedGTU gtu) throws GTUException
+    public final LaneBasedGTUFollowingDirectedChangeTacticalPlanner create(final LaneBasedGTU gtu) throws GtuException
     {
         if (this.carFollowingModel != null)
         {

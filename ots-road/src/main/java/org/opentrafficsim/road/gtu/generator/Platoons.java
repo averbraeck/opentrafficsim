@@ -23,8 +23,8 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
@@ -50,7 +50,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
- * @param <T> type of demand category, typically a Category in an ODMatrix or a GTUType
+ * @param <T> type of demand category, typically a Category in an ODMatrix or a GtuType
  */
 public abstract class Platoons<T>
 {
@@ -125,7 +125,7 @@ public abstract class Platoons<T>
             /** {@inheritDoc} */
             @Override
             protected void placeGtu(final PlatoonGtu<Category> platoonGtu) throws SimRuntimeException, NamingException,
-                    GTUException, NetworkException, OTSGeometryException, ProbabilityException, ParameterException
+                    GtuException, NetworkException, OTSGeometryException, ProbabilityException, ParameterException
             {
                 getGenerator().queueGtu(this.characteristicsOD.draw(platoonGtu.getOrigin(), platoonGtu.getDestination(),
                         platoonGtu.getCategory(), this.strm), getPosition());
@@ -135,26 +135,26 @@ public abstract class Platoons<T>
     }
 
     /**
-     * Creates a {@code Platoon&lt;GTUType&gt;} instance for platoons.
+     * Creates a {@code Platoon&lt;GtuType&gt;} instance for platoons.
      * @param characteristics LaneBasedGTUCharacteristicsGenerator; characteristics generator
      * @param simulator OTSSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
      * @param position Set&lt;LaneDirection&gt;; position
-     * @return Platoons&lt;GTUType&gt;; platoons based on OD
+     * @return Platoons&lt;GtuType&gt;; platoons based on OD
      */
     @SuppressWarnings("synthetic-access")
-    public static Platoons<GTUType> ofGtuType(final LaneBasedGTUCharacteristicsGenerator characteristics,
+    public static Platoons<GtuType> ofGtuType(final LaneBasedGTUCharacteristicsGenerator characteristics,
             final OTSSimulatorInterface simulator, final StreamInterface stream, final Set<LaneDirection> position)
     {
-        return new Platoons<GTUType>(simulator, position)
+        return new Platoons<GtuType>(simulator, position)
         {
             /** Characteristics generator. */
             private final LaneBasedGTUCharacteristicsGenerator chrctrstcs = characteristics;
 
             /** {@inheritDoc} */
             @Override
-            protected void placeGtu(final PlatoonGtu<GTUType> platoonGtu) throws SimRuntimeException, NamingException,
-                    GTUException, NetworkException, OTSGeometryException, ProbabilityException, ParameterException
+            protected void placeGtu(final PlatoonGtu<GtuType> platoonGtu) throws SimRuntimeException, NamingException,
+                    GtuException, NetworkException, OTSGeometryException, ProbabilityException, ParameterException
             {
                 // we actually do nothing with the platoonGtu here
                 getGenerator().queueGtu(this.chrctrstcs.draw(), getPosition());
@@ -360,13 +360,13 @@ public abstract class Platoons<T>
      * @param platoonGtu PlatoonGtu&lt;T&gt;; info of GTU to generate
      * @throws SimRuntimeException on exception
      * @throws NamingException on exception
-     * @throws GTUException on exception
+     * @throws GtuException on exception
      * @throws NetworkException on exception
      * @throws OTSGeometryException on exception
      * @throws ParameterException on exception
      * @throws ProbabilityException on exception
      */
-    protected abstract void placeGtu(PlatoonGtu<T> platoonGtu) throws SimRuntimeException, NamingException, GTUException,
+    protected abstract void placeGtu(PlatoonGtu<T> platoonGtu) throws SimRuntimeException, NamingException, GtuException,
             NetworkException, OTSGeometryException, ProbabilityException, ParameterException;
 
     /**
@@ -379,7 +379,7 @@ public abstract class Platoons<T>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
-     * @param <K> type of demand category, typically a Category in an ODMatrix or a GTUType
+     * @param <K> type of demand category, typically a Category in an ODMatrix or a GtuType
      */
     private static class PlatoonGtu<K> implements Comparable<PlatoonGtu<K>>
     {

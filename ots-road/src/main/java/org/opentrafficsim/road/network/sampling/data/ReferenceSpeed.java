@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.sampling.data;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -39,11 +39,11 @@ public class ReferenceSpeed extends ExtendedDataTypeSpeed<GtuData>
         LaneBasedGTU gtuObj = gtu.getGtu();
         try
         {
-            double v1 = gtuObj.getReferencePosition().getLane().getSpeedLimit(gtuObj.getGTUType()).si;
+            double v1 = gtuObj.getReferencePosition().getLane().getSpeedLimit(gtuObj.getGtuType()).si;
             double v2 = gtuObj.getMaximumSpeed().si;
             return new FloatSpeed(v1 < v2 ? v1 : v2, SpeedUnit.SI);
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             // GTU was destroyed and is without a reference location
             return new FloatSpeed(Double.NaN, SpeedUnit.SI);

@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerFactory;
@@ -67,10 +67,10 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
      * @param carFollowingModelFactory CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; factory of the car-following
      *            model
      * @param perceptionFactory PerceptionFactory; perception factory
-     * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
+     * @throws GtuException if the supplied car-following model does not have an accessible empty constructor
      */
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-            final PerceptionFactory perceptionFactory) throws GTUException
+            final PerceptionFactory perceptionFactory) throws GtuException
     {
         super(carFollowingModelFactory, perceptionFactory);
         this.synchronization = Synchronization.PASSIVE;
@@ -128,7 +128,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
 
     /** {@inheritDoc} */
     @Override
-    public final LMRS create(final LaneBasedGTU gtu) throws GTUException
+    public final LMRS create(final LaneBasedGTU gtu) throws GtuException
     {
         LMRS lmrs = new LMRS(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
                 this.synchronization, this.cooperation, this.gapAcceptance, this.tailgating);

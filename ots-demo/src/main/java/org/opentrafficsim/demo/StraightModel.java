@@ -30,8 +30,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
@@ -40,8 +40,8 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
@@ -152,8 +152,8 @@ public class StraightModel extends AbstractOTSModel implements UNITS
             IdGenerator idGenerator = new IdGenerator("");
             ParameterSet params = new ParameterSet();
             params.setDefaultParameter(AbstractIDM.DELTA);
-            GTUType car = new GTUType("car", this.network.getGtuType(GTUType.DEFAULTS.CAR));
-            GTUType truck = new GTUType("truck", this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
+            GtuType car = new GtuType("car", this.network.getGtuType(GtuType.DEFAULTS.CAR));
+            GtuType truck = new GtuType("truck", this.network.getGtuType(GtuType.DEFAULTS.TRUCK));
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 90.0, 110.0), SpeedUnit.KM_PER_HOUR);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
@@ -165,21 +165,21 @@ public class StraightModel extends AbstractOTSModel implements UNITS
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFctoryTrucks =
                     new LaneBasedStrategicalRoutePlannerFactory(
                             new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
-            LaneBasedTemplateGTUType carTemplate = new LaneBasedTemplateGTUType(car,
+            LaneBasedTemplateGtuType carTemplate = new LaneBasedTemplateGtuType(car,
                     new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
                     speedCar, strategicalPlannerFactoryCars, routeGenerator);
-            LaneBasedTemplateGTUType truckTemplate = new LaneBasedTemplateGTUType(truck,
+            LaneBasedTemplateGtuType truckTemplate = new LaneBasedTemplateGtuType(truck,
                     new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                     speedTruck, strategicalPlannerFctoryTrucks, routeGenerator);
-            Distribution<LaneBasedTemplateGTUType> gtuTypeDistribution = new Distribution<>(this.stream);
+            Distribution<LaneBasedTemplateGtuType> gtuTypeDistribution = new Distribution<>(this.stream);
             gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
             Generator<Duration> headwayGenerator = new HeadwayGenerator(new Frequency(1500.0, PER_HOUR));
             Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions
                     .add(new DirectedLanePosition(this.lane, new Length(5.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
-            LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
-                    new LaneBasedTemplateGTUTypeDistribution(gtuTypeDistribution);
+            LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
+                    new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
             new LaneBasedGTUGenerator("Generator", headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, this.stream), this.network, getSimulator(),
                     roomChecker, idGenerator);
@@ -193,7 +193,7 @@ public class StraightModel extends AbstractOTSModel implements UNITS
             // Remove the block at t = 7 minutes
             this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
         }
-        catch (SimRuntimeException | NetworkException | OTSGeometryException | InputParameterException | GTUException
+        catch (SimRuntimeException | NetworkException | OTSGeometryException | InputParameterException | GtuException
                 | ParameterException | ProbabilityException exception)
         {
             exception.printStackTrace();

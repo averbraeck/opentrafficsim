@@ -7,7 +7,7 @@ import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.compatibility.Compatibility;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.road.network.RoadNetwork;
 
@@ -23,7 +23,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class LaneType extends HierarchicalType<LaneType> implements Serializable, Compatibility<GTUType, LaneType>
+public class LaneType extends HierarchicalType<LaneType> implements Serializable, Compatibility<GtuType, LaneType>
 {
     /** */
     private static final long serialVersionUID = 20140821L;
@@ -95,7 +95,7 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     /**
      * Create a new Lane type with a compatibility set.
      * @param id String; the id of the lane type.
-     * @param compatibility GtuCompatibility&lt;LaneType&gt;; the collection of compatible GTUTypes for this LaneType.
+     * @param compatibility GtuCompatibility&lt;LaneType&gt;; the collection of compatible GtuTypes for this LaneType.
      *            Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub
      *            types.
      * @param network RoadNetwork; The network to which the LaneType belongs
@@ -116,7 +116,7 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
      * Create a new Lane type with a compatibility set.
      * @param id String; the id of the lane type.
      * @param parent LaneType; parent type
-     * @param compatibility GtuCompatibility&lt;LaneType&gt;; the collection of compatible GTUTypes for this LaneType.
+     * @param compatibility GtuCompatibility&lt;LaneType&gt;; the collection of compatible GtuTypes for this LaneType.
      *            Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub
      *            types.
      * @param network RoadNetwork; The network to which the LaneType belongs
@@ -192,25 +192,25 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
 
     /**
      * Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub types.
-     * @param gtuType GTUType; GTU type to look for compatibility.
+     * @param gtuType GtuType; GTU type to look for compatibility.
      * @param direction GTUDirectionality; the direction that the GTU is moving (with respect to the direction of the design
      *            line of the Link)
      * @return boolean; true if this LaneType permits GTU type in the given direction
      */
     @Override
-    public final Boolean isCompatible(final GTUType gtuType, final GTUDirectionality direction)
+    public final Boolean isCompatible(final GtuType gtuType, final GTUDirectionality direction)
     {
         // OTS-338
-        // return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GTUType.ALL);
+        // return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GtuType.ALL);
         return getDirectionality(gtuType).permits(direction);
     }
 
     /**
      * Get the permitted driving directions for a given GTU type on this Lane.
-     * @param gtuType GTUType; the GTU type
+     * @param gtuType GtuType; the GTU type
      * @return LongitudinalDirectionality; the permitted directions of the GTU type on this Lane
      */
-    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
+    public final LongitudinalDirectionality getDirectionality(final GtuType gtuType)
     {
         LongitudinalDirectionality result = this.compatibility.getDirectionality(gtuType, true);
         if (null == this.compatibility)
@@ -222,10 +222,10 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
 
     /**
      * Add GTU type to compatibility.
-     * @param gtuType GTUType; the GTU type to add
+     * @param gtuType GtuType; the GTU type to add
      * @param direction LongitudinalDirectionality; permitted direction of movement
      */
-    public final void addGtuCompatability(final GTUType gtuType, final LongitudinalDirectionality direction)
+    public final void addGtuCompatability(final GtuType gtuType, final LongitudinalDirectionality direction)
     {
         if (null == this.compatibility)
         {
@@ -233,7 +233,7 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
         }
         else
         {
-            this.compatibility.addAllowedGTUType(gtuType, direction);
+            this.compatibility.addAllowedGtuType(gtuType, direction);
         }
     }
 
@@ -290,9 +290,9 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
+    public final LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
     {
-        LongitudinalDirectionality result = this.compatibility.getDirectionality(gtuType, tryParentsOfGTUType);
+        LongitudinalDirectionality result = this.compatibility.getDirectionality(gtuType, tryParentsOfGtuType);
         if (null == this.compatibility)
         {
             return result.invert();

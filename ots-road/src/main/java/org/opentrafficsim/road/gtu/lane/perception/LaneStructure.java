@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -29,10 +29,10 @@ public interface LaneStructure
      * Updates the underlying structure shifting the root position to the input.
      * @param pos DirectedLanePosition; current position of the GTU
      * @param route Route; current route of the GTU
-     * @param gtuType GTUType; GTU type
-     * @throws GTUException on a problem while updating the structure
+     * @param gtuType GtuType; GTU type
+     * @throws GtuException on a problem while updating the structure
      */
-    void update(DirectedLanePosition pos, Route route, GTUType gtuType) throws GTUException;
+    void update(DirectedLanePosition pos, Route route, GtuType gtuType) throws GtuException;
 
     /**
      * Returns the root record.
@@ -58,42 +58,42 @@ public interface LaneStructure
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
      * relative position, or as far as the lane structure goes.
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return Map; sorted set of objects of requested type per lane
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(Class<T> clazz, LaneBasedGTU gtu,
-            RelativePosition.TYPE pos) throws GTUException;
+            RelativePosition.TYPE pos) throws GtuException;
 
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
      * downstream from the relative position, or as far as the lane structure goes.
      * @param lane RelativeLane; lane
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return SortedSet; sorted set of objects of requested type
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(RelativeLane lane, Class<T> clazz, LaneBasedGTU gtu,
-            RelativePosition.TYPE pos) throws GTUException;
+            RelativePosition.TYPE pos) throws GtuException;
 
     /**
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
      * relative position, or as far as the lane structure goes. Objects on links not on the route are ignored.
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @param route Route; the route
      * @return SortedSet; sorted set of objects of requested type per lane
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(Class<T> clazz,
-            LaneBasedGTU gtu, RelativePosition.TYPE pos, Route route) throws GTUException;
+            LaneBasedGTU gtu, RelativePosition.TYPE pos, Route route) throws GtuException;
 
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
@@ -101,29 +101,29 @@ public interface LaneStructure
      * ignored.
      * @param lane RelativeLane; lane
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @param route Route; the route
      * @return SortedSet; sorted set of objects of requested type
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjectsOnRoute(RelativeLane lane, Class<T> clazz,
-            LaneBasedGTU gtu, RelativePosition.TYPE pos, Route route) throws GTUException;
+            LaneBasedGTU gtu, RelativePosition.TYPE pos, Route route) throws GtuException;
 
     /**
      * Retrieve objects on a lane of a specific type. Returns upstream objects from the relative position for as far as the lane
      * structure goes. Distances to upstream objects are given as positive values.
      * @param lane RelativeLane; lane
      * @param clazz Class&lt;T&gt;; class of objects to find
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return SortedSet; sorted set of objects of requested type
-     * @throws GTUException if lane is not in current set
+     * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(RelativeLane lane, Class<T> clazz, LaneBasedGTU gtu,
-            RelativePosition.TYPE pos) throws GTUException;
+            RelativePosition.TYPE pos) throws GtuException;
 
     /**
      * Wrapper to hold lane-based object and it's distance.

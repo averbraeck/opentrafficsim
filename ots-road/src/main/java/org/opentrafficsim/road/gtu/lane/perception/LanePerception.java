@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
@@ -21,7 +21,7 @@ public interface LanePerception extends Perception<LaneBasedGTU>
 
     /** {@inheritDoc} */
     @Override
-    LaneBasedGTU getGtu() throws GTUException;
+    LaneBasedGTU getGtu() throws GtuException;
 
     /**
      * @return lane structure to perform perception

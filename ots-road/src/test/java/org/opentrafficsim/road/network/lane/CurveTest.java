@@ -17,8 +17,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -49,16 +49,16 @@ public class CurveTest
      * @throws NamingException on error
      * @throws SimRuntimeException on error
      * @throws NetworkException on error
-     * @throws GTUException on error
+     * @throws GtuException on error
      */
     @Test
     public final void curveTest()
-            throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
+            throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GtuException
     {
         final int laneCount = 1;
         OTSSimulatorInterface simulator = CarTest.makeSimulator();
         OTSRoadNetwork network = new OTSRoadNetwork("curve test network", true, simulator);
-        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         OTSRoadNode origin = new OTSRoadNode(network, "origin", new OTSPoint3D(10, 10, 0), Direction.ZERO);

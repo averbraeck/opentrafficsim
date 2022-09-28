@@ -8,7 +8,7 @@ import java.util.SortedSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -41,7 +41,7 @@ public class TaskRoadSideDistraction extends AbstractTask
     /** {@inheritDoc} */
     @Override
     public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
-            throws ParameterException, GTUException
+            throws ParameterException, GtuException
     {
         Map<RelativeLane, SortedSet<Entry<Distraction>>> map =
                 perception.getLaneStructure().getDownstreamObjects(Distraction.class, gtu, RelativePosition.FRONT);

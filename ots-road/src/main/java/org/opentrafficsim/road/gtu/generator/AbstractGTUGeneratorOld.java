@@ -25,8 +25,8 @@ import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -70,7 +70,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
     private final String name;
 
     /** The type of GTU to generate. */
-    private final GTUType gtuType;
+    private final GtuType gtuType;
 
     /** The GTU class to instantiate. */
     private final Class<?> gtuClass;
@@ -124,7 +124,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
     /**
      * @param name String; the name of the generator
      * @param simulator OTSSimulatorInterface; the simulator to schedule the start of the generation
-     * @param gtuType GTUType; the type of GTU to generate
+     * @param gtuType GtuType; the type of GTU to generate
      * @param gtuClass Class&lt;?&gt;; the GTU class to instantiate
      * @param initialSpeedDist ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the initial speed of the
      *            GTU
@@ -144,7 +144,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTUGeneratorOld(final String name, final OTSSimulatorInterface simulator, final GTUType gtuType,
+    public AbstractGTUGeneratorOld(final String name, final OTSSimulatorInterface simulator, final GtuType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
@@ -237,7 +237,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
         }
         else
         {
-            throw new GTUException("GTU class " + getGtuClass().getName() + ": cannot instantiate, no builder.");
+            throw new GtuException("GTU class " + getGtuClass().getName() + ": cannot instantiate, no builder.");
         }
 
         // reschedule next arrival
@@ -254,9 +254,9 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      * @param carBuilder LaneBasedIndividualCarBuilder; the car to be generated
      * @return true if car can be safely built, false otherwise.
      * @throws NetworkException when the speed limit of the lane is not known
-     * @throws GTUException if GTU does not have a position on the lane where it is registered
+     * @throws GtuException if GTU does not have a position on the lane where it is registered
      */
-    protected final boolean enoughSpace(final LaneBasedIndividualCarBuilder carBuilder) throws NetworkException, GTUException
+    protected final boolean enoughSpace(final LaneBasedIndividualCarBuilder carBuilder) throws NetworkException, GtuException
     {
         DirectedLanePosition directedLanePosition = carBuilder.getInitialLongitudinalPositions().iterator().next();
         Lane generatorLane = directedLanePosition.getLane();
@@ -318,10 +318,10 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      * @param when Time; the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
-     * @throws GTUException when there is a problem with the geometry of the network
+     * @throws GtuException when there is a problem with the geometry of the network
      */
     private Headway headwayRecursiveForwardSI(final Lane theLane, final double lanePositionSI, final double cumDistanceSI,
-            final double maxDistanceSI, final Time when) throws GTUException
+            final double maxDistanceSI, final Time when) throws GtuException
     {
         // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS WRONG.
         LaneBasedGTU otherGTU = theLane.getGtuAhead(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
@@ -331,7 +331,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getRear(), when).getSI() - lanePositionSI;
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
-                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
+                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGtuType(), new Length(distanceM, LengthUnit.SI),
                         otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
@@ -378,10 +378,10 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      * @param when Time; the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
-     * @throws GTUException when there is a problem with the geometry of the network
+     * @throws GtuException when there is a problem with the geometry of the network
      */
     private Headway headwayRecursiveBackwardSI(final Lane theLane, final double lanePositionSI, final double cumDistanceSI,
-            final double maxDistanceSI, final Time when) throws GTUException
+            final double maxDistanceSI, final Time when) throws GtuException
     {
         // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS WRONG.
         LaneBasedGTU otherGTU = theLane.getGtuBehind(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
@@ -391,7 +391,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getFront(), when).getSI() - lanePositionSI;
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
-                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
+                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGtuType(), new Length(distanceM, LengthUnit.SI),
                         otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
@@ -434,9 +434,9 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      * @param generatorLane Lane; the lane on which the the search for a leader starts
      * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU with a
      *         distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI meters
-     * @throws GTUException when there is a problem with the geometry of the network
+     * @throws GtuException when there is a problem with the geometry of the network
      */
-    private Headway headwayGTUSIForward(final double maxDistanceSI, final Lane generatorLane) throws GTUException
+    private Headway headwayGTUSIForward(final double maxDistanceSI, final Lane generatorLane) throws GtuException
     {
         Time when = getSimulator().getSimulatorAbsTime();
         Headway foundMaxGTUDistanceSI = new HeadwayDistance(Double.MAX_VALUE);
@@ -461,10 +461,10 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      * Check the available headway for GTU that is about to be constructed.
      * @param maxDistance Length; the maximum distance to look for a leader
      * @param generatorLane Lane; the lane on which the GTU is generated
-     * @return HeadwayGTU; the available headway and the GTU at that headway
-     * @throws GTUException on network inconsistency
+     * @return HeadwayGtu; the available headway and the GTU at that headway
+     * @throws GtuException on network inconsistency
      */
-    public final Headway headway(final Length maxDistance, final Lane generatorLane) throws GTUException
+    public final Headway headway(final Length maxDistance, final Lane generatorLane) throws GtuException
     {
         return headwayGTUSIForward(maxDistance.getSI(), generatorLane);
     }
@@ -515,7 +515,7 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
     /**
      * @return gtuType.
      */
-    public final GTUType getGtuType()
+    public final GtuType getGtuType()
     {
         return this.gtuType;
     }

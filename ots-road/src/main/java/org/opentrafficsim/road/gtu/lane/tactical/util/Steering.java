@@ -18,7 +18,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -58,7 +58,7 @@ public final class Steering
 
     /**
      * Translates a reference trajectory in to steering angles and a resulting trajectory.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param params Parameters; parameters
      * @param steeringState SteeringState; steering state between operational plans
      * @param referencePlan OperationalPlan; operational reference plan
@@ -141,7 +141,7 @@ public final class Steering
 
     /**
      * Translates reference points in to steering angles and a resulting trajectory.
-     * @param gtu GTU; GTU
+     * @param gtu Gtu; GTU
      * @param params Parameters; parameters
      * @param steeringState SteeringState; steering state between operational plans
      * @param points Set&lt;DirectedPoint&gt;; reference points
@@ -149,7 +149,7 @@ public final class Steering
      * @return operational plan
      * @throws ParameterException undefined parameter
      */
-    public static OperationalPlan fromReferencePoints(final GTU gtu, final Parameters params, final SteeringState steeringState,
+    public static OperationalPlan fromReferencePoints(final Gtu gtu, final Parameters params, final SteeringState steeringState,
             final Set<DirectedPoint> points, final List<Segment> segments) throws ParameterException
     {
         // TODO: implement steering control based on reference points

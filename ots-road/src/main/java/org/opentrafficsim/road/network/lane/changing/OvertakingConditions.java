@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * This class implements the overtaking conditions. Examples are:
@@ -294,30 +294,30 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUTypes;
+        private final Collection<GtuType> overtakingGtuTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUTypes;
+        private final Collection<GtuType> overtakenGtuTypes;
 
         /**
          * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}.
-         * @param overtakingGTUTypes Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR,
+         * @param overtakingGtuTypes Collection&lt;GtuType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR,
          *            TRUCK.
-         * @param overtakenGTUTYpes Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param overtakenGTUTYpes Collection&lt;GtuType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
          */
-        public LeftSet(final Collection<GTUType> overtakingGTUTypes, final Collection<GTUType> overtakenGTUTYpes)
+        public LeftSet(final Collection<GtuType> overtakingGtuTypes, final Collection<GtuType> overtakenGTUTYpes)
         {
-            this.overtakingGTUTypes = overtakingGTUTypes;
-            this.overtakenGTUTypes = overtakenGTUTYpes;
+            this.overtakingGtuTypes = overtakingGtuTypes;
+            this.overtakenGtuTypes = overtakenGTUTYpes;
         }
 
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
-            return "LeftSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes=" + this.overtakenGTUTypes
+            return "LeftSet [overtakingGtuTypes=" + this.overtakingGtuTypes + ", overtakenGtuTypes=" + this.overtakenGtuTypes
                     + "]";
         }
     }
@@ -341,29 +341,29 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUTypes;
+        private final Collection<GtuType> overtakingGtuTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUTypes;
+        private final Collection<GtuType> overtakenGtuTypes;
 
         /**
          * Provide a collection of GTUs that can overtake another collection of GTUs on the right, but not vice versa. Example:
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}.
-         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param overtakingGTUs Collection&lt;GtuType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GtuType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
          */
-        public RightSet(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
+        public RightSet(final Collection<GtuType> overtakingGTUs, final Collection<GtuType> overtakenGTUs)
         {
-            this.overtakingGTUTypes = overtakingGTUs;
-            this.overtakenGTUTypes = overtakenGTUs;
+            this.overtakingGtuTypes = overtakingGTUs;
+            this.overtakenGtuTypes = overtakenGTUs;
         }
 
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
-            return "RightSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes=" + this.overtakenGTUTypes
+            return "RightSet [overtakingGtuTypes=" + this.overtakingGtuTypes + ", overtakenGtuTypes=" + this.overtakenGtuTypes
                     + "]";
         }
     }
@@ -387,10 +387,10 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUTypes;
+        private final Collection<GtuType> overtakingGtuTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUTypes;
+        private final Collection<GtuType> overtakenGtuTypes;
 
         /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed rightOvertakingSpeedMax;
@@ -400,15 +400,15 @@ public interface OvertakingConditions
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}. In addition, overtaking on the other side is allowed under a
          * given driving speed.
-         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param overtakingGTUs Collection&lt;GtuType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GtuType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
          * @param rightOvertakingSpeedMax Speed; the speed under which overtaking on the "wrong" side is allowed
          */
-        public LeftSetRightSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
+        public LeftSetRightSpeed(final Collection<GtuType> overtakingGTUs, final Collection<GtuType> overtakenGTUs,
                 final Speed rightOvertakingSpeedMax)
         {
-            this.overtakingGTUTypes = overtakingGTUs;
-            this.overtakenGTUTypes = overtakenGTUs;
+            this.overtakingGtuTypes = overtakingGTUs;
+            this.overtakenGtuTypes = overtakenGTUs;
             this.rightOvertakingSpeedMax = rightOvertakingSpeedMax;
         }
 
@@ -416,8 +416,8 @@ public interface OvertakingConditions
         @Override
         public final String toString()
         {
-            return "LeftSetRightSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
-                    + this.overtakenGTUTypes + ", rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
+            return "LeftSetRightSpeed [overtakingGtuTypes=" + this.overtakingGtuTypes + ", overtakenGtuTypes="
+                    + this.overtakenGtuTypes + ", rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
         }
     }
 
@@ -440,31 +440,31 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUTypes;
+        private final Collection<GtuType> overtakingGtuTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUTypes;
+        private final Collection<GtuType> overtakenGtuTypes;
 
         /**
          * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}. In addition, overtaking on the other side is allowed when
          * there is a traffic jam.
-         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param overtakingGTUs Collection&lt;GtuType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GtuType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
          */
-        public LeftSetRightJam(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
+        public LeftSetRightJam(final Collection<GtuType> overtakingGTUs, final Collection<GtuType> overtakenGTUs)
         {
-            this.overtakingGTUTypes = overtakingGTUs;
-            this.overtakenGTUTypes = overtakenGTUs;
+            this.overtakingGtuTypes = overtakingGTUs;
+            this.overtakenGtuTypes = overtakenGTUs;
         }
 
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
-            return "LeftSetRightSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
-                    + this.overtakenGTUTypes + "]";
+            return "LeftSetRightSpeed [overtakingGtuTypes=" + this.overtakingGtuTypes + ", overtakenGtuTypes="
+                    + this.overtakenGtuTypes + "]";
         }
     }
 
@@ -487,10 +487,10 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUTypes;
+        private final Collection<GtuType> overtakingGtuTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUTypes;
+        private final Collection<GtuType> overtakenGtuTypes;
 
         /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed leftOvertakingSpeedMax;
@@ -500,15 +500,15 @@ public interface OvertakingConditions
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}. In addition, overtaking on the other side is allowed under a
          * given driving speed.
-         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param overtakingGTUs Collection&lt;GtuType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GtuType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
          * @param leftOvertakingSpeedMax Speed; the speed under which overtaking on the "wrong" side is allowed
          */
-        public RightSetLeftSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
+        public RightSetLeftSpeed(final Collection<GtuType> overtakingGTUs, final Collection<GtuType> overtakenGTUs,
                 final Speed leftOvertakingSpeedMax)
         {
-            this.overtakingGTUTypes = overtakingGTUs;
-            this.overtakenGTUTypes = overtakenGTUs;
+            this.overtakingGtuTypes = overtakingGTUs;
+            this.overtakenGtuTypes = overtakenGTUs;
             this.leftOvertakingSpeedMax = leftOvertakingSpeedMax;
         }
 
@@ -516,8 +516,8 @@ public interface OvertakingConditions
         @Override
         public final String toString()
         {
-            return "RightSetLeftSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
-                    + this.overtakenGTUTypes + ", leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
+            return "RightSetLeftSpeed [overtakingGtuTypes=" + this.overtakingGtuTypes + ", overtakenGtuTypes="
+                    + this.overtakenGtuTypes + ", leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
         }
     }
 
@@ -540,31 +540,31 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUTypes;
+        private final Collection<GtuType> overtakingGtuTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUTypes;
+        private final Collection<GtuType> overtakenGtuTypes;
 
         /**
          * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}. In addition, overtaking on the other side is allowed when
          * there is a traffic jam.
-         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param overtakingGTUs Collection&lt;GtuType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GtuType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
          */
-        public RightSetLeftJam(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
+        public RightSetLeftJam(final Collection<GtuType> overtakingGTUs, final Collection<GtuType> overtakenGTUs)
         {
-            this.overtakingGTUTypes = overtakingGTUs;
-            this.overtakenGTUTypes = overtakenGTUs;
+            this.overtakingGtuTypes = overtakingGTUs;
+            this.overtakenGtuTypes = overtakenGTUs;
         }
 
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
-            return "RightSetLeftJam [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
-                    + this.overtakenGTUTypes + "]";
+            return "RightSetLeftJam [overtakingGtuTypes=" + this.overtakingGtuTypes + ", overtakenGtuTypes="
+                    + this.overtakenGtuTypes + "]";
         }
     }
 

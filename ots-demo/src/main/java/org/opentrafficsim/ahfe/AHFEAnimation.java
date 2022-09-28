@@ -28,7 +28,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.AbstractGTU;
+import org.opentrafficsim.core.gtu.AbstractGtu;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
@@ -95,7 +95,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
     @SuppressWarnings("checkstyle:methodlength")
     public static void main(final String[] args) throws SimRuntimeException
     {
-        AbstractGTU.ALIGNED = false;
+        AbstractGtu.ALIGNED = false;
         long t1 = System.currentTimeMillis();
         boolean autorun = false;
         int replication = 1;

@@ -22,7 +22,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.TimedEvent;
 import org.eclipse.jetty.server.Request;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.web.animation.WebAnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -382,7 +382,7 @@ public class OTSWebModel implements EventListenerInterface
                                 if (animationPanel.isShowElement(renderable)
                                         && renderable.contains(point, animationPanel.getExtent()))
                                 {
-                                    if (renderable.getSource() instanceof GTU)
+                                    if (renderable.getSource() instanceof Gtu)
                                     {
                                         targets.add(renderable.getSource());
                                     }

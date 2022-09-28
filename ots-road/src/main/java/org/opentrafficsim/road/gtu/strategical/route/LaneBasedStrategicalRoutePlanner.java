@@ -10,8 +10,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -64,11 +64,11 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * Constructor for a strategical planner without route. This can only be used if the network does not have splits, or split
      * fractions are used.
      * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
-     * @param gtu LaneBasedGTU; GTU
-     * @throws GTUException if fixed tactical planner == null
+     * @param gtu LaneBasedGtu; GTU
+     * @throws GtuException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu)
-            throws GTUException
+            throws GtuException
     {
         this(fixedTacticalPlanner, null, gtu, null, null, RouteGeneratorOD.NULL);
     }
@@ -77,13 +77,13 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * Constructor for a strategical planner with route.
      * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
      * @param route Route; the route to drive
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param origin Node; origin node
      * @param destination Node; destination node
-     * @throws GTUException if fixed tactical planner == null
+     * @throws GtuException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final Route route,
-            final LaneBasedGTU gtu, final Node origin, final Node destination) throws GTUException
+            final LaneBasedGTU gtu, final Node origin, final Node destination) throws GtuException
     {
         this(fixedTacticalPlanner, route, gtu, origin, destination, RouteGeneratorOD.NULL);
     }
@@ -91,14 +91,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /**
      * Constructor for a strategical planner with route generator.
      * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param origin Node; origin node
      * @param destination Node; destination node
      * @param routeGenerator RouteGeneratorOD; route generator
-     * @throws GTUException if fixed tactical planner == null
+     * @throws GtuException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu,
-            final Node origin, final Node destination, final RouteGeneratorOD routeGenerator) throws GTUException
+            final Node origin, final Node destination, final RouteGeneratorOD routeGenerator) throws GtuException
     {
         this(fixedTacticalPlanner, null, gtu, origin, destination, routeGenerator);
     }
@@ -108,22 +108,22 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * derived.
      * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
      * @param route Route; the route to drive
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param origin Node; origin node
      * @param destination Node; destination node
      * @param routeGenerator RouteGeneratorOD; route generator
-     * @throws GTUException if fixed tactical planner == null
+     * @throws GtuException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final Route route,
             final LaneBasedGTU gtu, final Node origin, final Node destination, final RouteGeneratorOD routeGenerator)
-            throws GTUException
+            throws GtuException
     {
         super(gtu);
         this.route = route;
         this.origin = origin;
         this.destination = destination;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
-        Throw.when(fixedTacticalPlanner == null, GTUException.class,
+        Throw.when(fixedTacticalPlanner == null, GtuException.class,
                 "Fixed Tactical Planner for a Strategical planner is null");
         this.routeGenerator = routeGenerator;
     }
@@ -144,7 +144,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public final Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+    public final Node nextNode(final Link link, final GTUDirectionality direction, final GtuType gtuType)
             throws NetworkException
     {
         assureRoute(gtuType);
@@ -154,7 +154,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public final LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+    public final LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GtuType gtuType)
             throws NetworkException
     {
         assureRoute(gtuType);
@@ -176,7 +176,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public final Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
+    public final Node nextNode(final Node node, final Link previousLink, final GtuType gtuType) throws NetworkException
     {
         assureRoute(gtuType);
         LinkDirection linkDirection = nextLinkDirection(node, previousLink, gtuType);
@@ -185,7 +185,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public final LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
+    public final LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GtuType gtuType)
             throws NetworkException
     {
         assureRoute(gtuType);
@@ -322,7 +322,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     @Override
     public final Route getRoute()
     {
-        assureRoute(getGtu().getGTUType());
+        assureRoute(getGtu().getGtuType());
         if (this.route == null && this.destination != null)
         {
             try
@@ -332,14 +332,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 Node from = pos.getGtuDirection().isPlus() ? link.getStartNode() : link.getEndNode();
                 if (this.routeGenerator != null)
                 {
-                    this.route = this.routeGenerator.getRoute(from, this.destination, getGtu().getGTUType());
+                    this.route = this.routeGenerator.getRoute(from, this.destination, getGtu().getGtuType());
                 }
                 if (this.route == null)
                 {
-                    this.route = link.getNetwork().getShortestRouteBetween(getGtu().getGTUType(), from, this.destination);
+                    this.route = link.getNetwork().getShortestRouteBetween(getGtu().getGtuType(), from, this.destination);
                 }
             }
-            catch (GTUException | NetworkException exception)
+            catch (GtuException | NetworkException exception)
             {
                 throw new RuntimeException("Route could not be determined.", exception);
             }
@@ -349,9 +349,9 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /**
      * Assures a route is available if a route is already present, or a destination and route supplier are provided.
-     * @param gtuType GTUType; the type of the GTU for which a route must be assured
+     * @param gtuType GtuType; the type of the GTU for which a route must be assured
      */
-    private void assureRoute(final GTUType gtuType)
+    private void assureRoute(final GtuType gtuType)
     {
         if (this.route == null && this.destination != null && !this.routeGenerator.equals(RouteGeneratorOD.NULL))
         {

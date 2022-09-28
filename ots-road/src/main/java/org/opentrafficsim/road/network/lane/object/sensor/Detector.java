@@ -27,7 +27,7 @@ import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -65,9 +65,9 @@ public class Detector extends AbstractSensor
     {
         /** {@inheritDoc} */
         @Override
-        public boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+        public boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
         {
-            return gtuType.isOfType(gtuType.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE));
+            return gtuType.isOfType(gtuType.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE));
         }
     };
 
@@ -424,7 +424,7 @@ public class Detector extends AbstractSensor
     /**
      * Accumulates a measurement.
      * @param measurement DetectorMeasurement&lt;C, ?&gt;; measurement to accumulate
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param front boolean; triggered by front entering (or rear leaving when false)
      * @param <C> accumulated type
      */
@@ -765,7 +765,7 @@ public class Detector extends AbstractSensor
          * Returns an accumulated value for when the front reaches the detector. GTU's may trigger an exit without having
          * triggered an entry due to a lane change. Reversely, GTU's may not trigger an exit while they did trigger an entry.
          * @param cumulative C; accumulated value
-         * @param gtu LaneBasedGTU; gtu
+         * @param gtu LaneBasedGtu; gtu
          * @param loopDetector Detector; loop detector
          * @return C; accumulated value
          */
@@ -775,7 +775,7 @@ public class Detector extends AbstractSensor
          * Returns an accumulated value for when the rear leaves the detector. GTU's may trigger an exit without having
          * triggered an entry due to a lane change. Reversely, GTU's may not trigger an exit while they did trigger an entry.
          * @param cumulative C; accumulated value
-         * @param gtu LaneBasedGTU; gtu
+         * @param gtu LaneBasedGtu; gtu
          * @param loopDetector Detector; loop detector
          * @return C; accumulated value
          */

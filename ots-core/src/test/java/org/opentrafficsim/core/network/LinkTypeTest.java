@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * Test constructor and methods of the LinkType class.
@@ -33,7 +33,7 @@ public class LinkTypeTest
     {
         OTSNetwork network = new OTSNetwork("test", true, new OTSSimulator("Simulator for LinkTypeTest"));
         GtuCompatibility<LinkType> roadCompatibility = new GtuCompatibility<>((LinkType) null)
-                .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_BOTH);
+                .addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_BOTH);
         try
         {
             new LinkType("name", null, null, network);
@@ -50,12 +50,12 @@ public class LinkTypeTest
         {
             // Ignore expected exception
         }
-        GTUType carType = new GTUType("Car", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
-        GTUType truckType = new GTUType("Truck", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
-        GTUType catamaran = new GTUType("Catamaran", network.getGtuType(GTUType.DEFAULTS.SHIP));
+        GtuType carType = new GtuType("Car", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType truckType = new GtuType("Truck", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType catamaran = new GtuType("Catamaran", network.getGtuType(GtuType.DEFAULTS.SHIP));
         LinkType roadLinkType = new LinkType("Vehicles", null, roadCompatibility, network);
         GtuCompatibility<LinkType> waterCompatibility = new GtuCompatibility<>((LinkType) null)
-                .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.SHIP), LongitudinalDirectionality.DIR_BOTH);
+                .addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.SHIP), LongitudinalDirectionality.DIR_BOTH);
         LinkType waterwayType = new LinkType("Waterway", null, waterCompatibility, network);
         assertTrue("equals to itself", roadLinkType.equals(roadLinkType));
         assertFalse("not equal to the other", roadLinkType.equals(waterwayType));
@@ -88,7 +88,7 @@ public class LinkTypeTest
         // TODO next one fails - what is wrong?
         // assertTrue("roadLinkType is a road", roadLinkType.isRoad());
         GtuCompatibility<LinkType> poorRoadCompatibility = new GtuCompatibility<>((LinkType) null)
-                .addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.CAR), LongitudinalDirectionality.DIR_BOTH);
+                .addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.CAR), LongitudinalDirectionality.DIR_BOTH);
         LinkType poorSurfaceLinkType =
                 new LinkType("PoorSurfaceType", network.getLinkType(LinkType.DEFAULTS.ROAD), poorRoadCompatibility, network);
         assertTrue("poor road is of type ROAD", poorSurfaceLinkType.isOfType(LinkType.DEFAULTS.ROAD));
@@ -96,9 +96,9 @@ public class LinkTypeTest
                 waterwayType.isCompatible(carType, GTUDirectionality.DIR_PLUS));
         GtuCompatibility<LinkType> compatibility = waterwayType.getCompatibility();
         assertTrue("compatibility allows SHIP in dir plus",
-                compatibility.isCompatible(network.getGtuType(GTUType.DEFAULTS.SHIP), GTUDirectionality.DIR_PLUS));
+                compatibility.isCompatible(network.getGtuType(GtuType.DEFAULTS.SHIP), GTUDirectionality.DIR_PLUS));
         assertTrue("compatibility allows SHIP in dir minus",
-                compatibility.isCompatible(network.getGtuType(GTUType.DEFAULTS.SHIP), GTUDirectionality.DIR_MINUS));
+                compatibility.isCompatible(network.getGtuType(GtuType.DEFAULTS.SHIP), GTUDirectionality.DIR_MINUS));
         assertNull("compatibility cannot decide for catamaran",
                 compatibility.isCompatible(catamaran, GTUDirectionality.DIR_PLUS));
         assertTrue("compatibility can decide for parent type of catamaran",

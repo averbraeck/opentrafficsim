@@ -19,7 +19,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -227,7 +227,7 @@ public final class LaneFactory
                     this.offset.plus(this.offsetEnd), STRIPE_WIDTH), "Unexpected exception while building link.");
             if (perm != null)
             {
-                stripe.addPermeability(this.link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), perm);
+                stripe.addPermeability(this.link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), perm);
             }
         }
         return this;
@@ -381,8 +381,8 @@ public final class LaneFactory
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
             final OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
-        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), speedLimit);
+        Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
         Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, speedMap);
         return result;
     }

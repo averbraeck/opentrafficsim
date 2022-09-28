@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.generator.characteristics;
 
-import org.opentrafficsim.core.gtu.GTUCharacteristics;
+import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedGTUCharacteristics extends GTUCharacteristics
+public class LaneBasedGTUCharacteristics extends GtuCharacteristics
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -45,11 +45,11 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
      * @param destination Node; destination
      * @param vehicleModel VehicleModel; vehicle model
      */
-    public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics,
+    public LaneBasedGTUCharacteristics(final GtuCharacteristics gtuCharacteristics,
             final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route,
             final Node origin, final Node destination, final VehicleModel vehicleModel)
     {
-        super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getLength(), gtuCharacteristics.getWidth(),
+        super(gtuCharacteristics.getGtuType(), gtuCharacteristics.getLength(), gtuCharacteristics.getWidth(),
                 gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getMaximumAcceleration(),
                 gtuCharacteristics.getMaximumDeceleration(), gtuCharacteristics.getFront());
         this.strategicalPlannerFactory = laneBasedStrategicalPlannerFactory;

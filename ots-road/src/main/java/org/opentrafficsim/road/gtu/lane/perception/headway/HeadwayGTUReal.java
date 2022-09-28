@@ -6,8 +6,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -54,12 +54,12 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
-     * @param gtu LaneBasedGTU; the observed GTU, can not be null.
+     * @param gtu LaneBasedGtu; the observed GTU, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param facingSameDirection boolean; whether the GTU is facing the same direction.
-     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final boolean facingSameDirection) throws GTUException
+    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final boolean facingSameDirection) throws GtuException
     {
         super(distance);
         this.gtu = gtu;
@@ -68,15 +68,15 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /**
      * Construct a new Headway information object, for a GTU parallel with us.
-     * @param gtu LaneBasedGTU; the observed GTU, can not be null.
-     * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
-     * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
+     * @param gtu LaneBasedGtu; the observed GTU, can not be null.
+     * @param overlapFront the front-front distance to the other Gtu; if this constructor is used, this value cannot be null.
+     * @param overlap the 'center' overlap with the other Gtu; if this constructor is used, this value cannot be null.
+     * @param overlapRear the rear-rear distance to the other Gtu; if this constructor is used, this value cannot be null.
      * @param facingSameDirection boolean; whether the GTU is facing the same direction.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear,
-            final boolean facingSameDirection) throws GTUException
+            final boolean facingSameDirection) throws GtuException
     {
         super(overlapFront, overlap, overlapRear);
         this.gtu = gtu;
@@ -85,7 +85,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /**
      * Creates speed limit prospect for given GTU.
-     * @param wrappedGtu LaneBasedGTU; gtu to the the speed limit prospect for
+     * @param wrappedGtu LaneBasedGtu; gtu to the the speed limit prospect for
      * @return speed limit prospect for given GTU
      */
     private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU wrappedGtu)
@@ -95,9 +95,9 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
         try
         {
             sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN,
-                    wrappedGtu.getReferencePosition().getLane().getSpeedLimit(wrappedGtu.getGTUType()));
+                    wrappedGtu.getReferencePosition().getLane().getSpeedLimit(wrappedGtu.getGtuType()));
         }
-        catch (NetworkException | GTUException exception)
+        catch (NetworkException | GtuException exception)
         {
             throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
         }
@@ -151,7 +151,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
                     getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(),
                     getGtuStatus());
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             // input should be consistent
             throw new RuntimeException("Exception while copying Headway GTU.", exception);
@@ -239,9 +239,9 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public final GTUType getGtuType()
+    public final GtuType getGtuType()
     {
-        return this.gtu.getGTUType();
+        return this.gtu.getGtuType();
     }
 
     /** {@inheritDoc} */

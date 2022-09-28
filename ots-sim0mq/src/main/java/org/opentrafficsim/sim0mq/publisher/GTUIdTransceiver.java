@@ -3,7 +3,7 @@ package org.opentrafficsim.sim0mq.publisher;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
@@ -29,9 +29,9 @@ public class GTUIdTransceiver extends AbstractIdTransceiver
 
     /** {@inheritDoc} */
     @Override
-    ImmutableSet<GTU> getSet()
+    ImmutableSet<Gtu> getSet()
     {
-        return new ImmutableLinkedHashSet<GTU>(getNetwork().getGTUs(), Immutable.WRAP);
+        return new ImmutableLinkedHashSet<Gtu>(getNetwork().getGTUs(), Immutable.WRAP);
     }
 
     /** {@inheritDoc} */

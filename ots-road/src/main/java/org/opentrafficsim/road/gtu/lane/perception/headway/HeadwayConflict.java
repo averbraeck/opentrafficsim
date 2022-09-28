@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -100,7 +100,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
      * @param stopLine HeadwayStopLine; stop line on the own lane
      * @param conflictingStopLine HeadwayStopLine; stop line on the conflicting lane
      * @param lane Lane; the lane
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayConflict(final ConflictType conflictType, final ConflictPriority conflictPriority,
@@ -108,7 +108,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
             final Length conflictingLength, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
             final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width,
-            final HeadwayStopLine stopLine, final HeadwayStopLine conflictingStopLine, final Lane lane) throws GTUException
+            final HeadwayStopLine stopLine, final HeadwayStopLine conflictingStopLine, final Lane lane) throws GtuException
     {
         super(ObjectType.CONFLICT, id, distance, length, lane);
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -154,7 +154,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
      * @param conflictingLink CrossSectionLink; conflicting link
      * @param width Width; width progression of conflict
      * @param lane Lane; the lane
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayConflict(final ConflictType conflictType, final ConflictPriority conflictPriority,
@@ -162,7 +162,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
             final Length conflictingLength, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
             final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width, final Lane lane)
-            throws GTUException
+            throws GtuException
     {
         this(conflictType, conflictPriority, conflictRuleType, id, distance, length, conflictingLength, upstreamConflictingGTUs,
                 downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit, conflictingLink, width, null, null,

@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
 
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
@@ -36,7 +36,7 @@ public class IncentiveColorer extends DesireColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu)
+    public final Color getColor(final Gtu gtu)
     {
         if (!(gtu.getTacticalPlanner() instanceof DesireBased))
         {

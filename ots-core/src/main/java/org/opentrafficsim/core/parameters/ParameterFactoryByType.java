@@ -17,7 +17,7 @@ import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -38,20 +38,20 @@ public class ParameterFactoryByType implements ParameterFactory
 {
 
     /** Parameters. */
-    private final Map<GTUType, Set<ParameterEntry<?>>> map = new LinkedHashMap<>();
+    private final Map<GtuType, Set<ParameterEntry<?>>> map = new LinkedHashMap<>();
 
     /** Map of correlations. */
-    private Map<GTUType, Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>>> correlations = new LinkedHashMap<>();
+    private Map<GtuType, Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>>> correlations = new LinkedHashMap<>();
 
     /** {@inheritDoc} */
     @Override
-    public void setValues(final Parameters parameters, final GTUType gtuType) throws ParameterException
+    public void setValues(final Parameters parameters, final GtuType gtuType) throws ParameterException
     {
         // set of parameters that this class is going to set
         Map<ParameterType<?>, ParameterEntry<?>> setType = new LinkedHashMap<>();
-        List<GTUType> gtuTypes = new ArrayList<>();
+        List<GtuType> gtuTypes = new ArrayList<>();
         gtuTypes.add(gtuType);
-        GTUType parent = gtuType;
+        GtuType parent = gtuType;
         do
         {
             parent = parent.getParent();
@@ -59,7 +59,7 @@ public class ParameterFactoryByType implements ParameterFactory
         }
         while (parent != null);
         Collections.reverse(gtuTypes);
-        for (GTUType type : gtuTypes)
+        for (GtuType type : gtuTypes)
         {
             if (this.map.containsKey(type))
             {
@@ -82,7 +82,7 @@ public class ParameterFactoryByType implements ParameterFactory
          */
         Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>> remainingCorrelations = new LinkedHashMap<>();
         Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>> allCorrelations = new LinkedHashMap<>();
-        for (GTUType type : gtuTypes) // null first, so specific type overwrites
+        for (GtuType type : gtuTypes) // null first, so specific type overwrites
         {
             if (this.correlations.containsKey(type))
             {
@@ -203,25 +203,25 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
-     * @param gtuType GTUType; the gtu type
+     * @param gtuType GtuType; the gtu type
      * @param parameterType ParameterType&lt;T&gt;; the parameter type
      * @param value T; the value of the parameter
      * @param <T> parameter value type
      */
-    public <T> void addParameter(final GTUType gtuType, final ParameterType<T> parameterType, final T value)
+    public <T> void addParameter(final GtuType gtuType, final ParameterType<T> parameterType, final T value)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new FixedEntry<>(parameterType, value));
     }
 
     /**
-     * @param gtuType GTUType; the gtu type
+     * @param gtuType GtuType; the gtu type
      * @param parameterType ParameterTypeNumeric&lt;T&gt;; the parameter type
      * @param distribution ContinuousDistDoubleScalar.Rel&lt;T,U&gt;; the distribution of the parameter
      * @param <U> unit type
      * @param <T> parameter value type
      */
-    public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addParameter(final GTUType gtuType,
+    public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addParameter(final GtuType gtuType,
             final ParameterTypeNumeric<T> parameterType, final ContinuousDistDoubleScalar.Rel<T, U> distribution)
     {
         assureTypeInMap(gtuType);
@@ -229,22 +229,22 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
-     * @param gtuType GTUType; the gtu type
+     * @param gtuType GtuType; the gtu type
      * @param parameterType ParameterTypeInteger; the parameter type
      * @param distribution DistDiscrete; the distribution of the parameter
      */
-    public void addParameter(final GTUType gtuType, final ParameterType<Integer> parameterType, final DistDiscrete distribution)
+    public void addParameter(final GtuType gtuType, final ParameterType<Integer> parameterType, final DistDiscrete distribution)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new DistributedEntryInteger(parameterType, distribution));
     }
 
     /**
-     * @param gtuType GTUType; the gtu type
+     * @param gtuType GtuType; the gtu type
      * @param parameterType ParameterTypeDouble; the parameter type
      * @param distribution DistContinuous; the distribution of the parameter
      */
-    public void addParameter(final GTUType gtuType, final ParameterType<Double> parameterType,
+    public void addParameter(final GtuType gtuType, final ParameterType<Double> parameterType,
             final DistContinuous distribution)
     {
         assureTypeInMap(gtuType);
@@ -298,14 +298,14 @@ public class ParameterFactoryByType implements ParameterFactory
     /**
      * Correlates one parameter to another. The parameter 'first' may also be {@code null}, in which case the parameter can be
      * correlated to an external source.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param first ParameterType&lt;C&gt;; independent parameter
      * @param then ParameterType&lt;T&gt;; dependent parameter
      * @param correlation Correlation&lt;C, T&gt;; correlation
      * @param <C> parameter value type of first parameter
      * @param <T> parameter value type of then parameter
      */
-    public <C, T> void addCorrelation(final GTUType gtuType, final ParameterType<C> first, final ParameterType<T> then,
+    public <C, T> void addCorrelation(final GtuType gtuType, final ParameterType<C> first, final ParameterType<T> then,
             final Correlation<C, T> correlation)
     {
         assureTypeInMap(gtuType);
@@ -335,9 +335,9 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * Assures the gtu type is in the map.
-     * @param gtuType GTUType; the gtu type
+     * @param gtuType GtuType; the gtu type
      */
-    private void assureTypeInMap(final GTUType gtuType)
+    private void assureTypeInMap(final GtuType gtuType)
     {
         if (!this.map.containsKey(gtuType))
         {

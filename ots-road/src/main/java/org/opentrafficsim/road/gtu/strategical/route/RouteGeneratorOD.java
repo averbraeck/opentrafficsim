@@ -9,7 +9,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -36,7 +36,7 @@ public interface RouteGeneratorOD
     RouteGeneratorOD NULL = new RouteGeneratorOD()
     {
         @Override
-        public Route getRoute(final Node origin, final Node destination, final GTUType gtuType)
+        public Route getRoute(final Node origin, final Node destination, final GtuType gtuType)
         {
             return null;
         }
@@ -65,7 +65,7 @@ public interface RouteGeneratorOD
     class DefaultRouteGenerator implements RouteGeneratorOD
     {
         /** Shortest route cache. */
-        private MultiKeyMap<Route> shortestRouteCache = new MultiKeyMap<>(GTUType.class, Node.class, Node.class, List.class);
+        private MultiKeyMap<Route> shortestRouteCache = new MultiKeyMap<>(GtuType.class, Node.class, Node.class, List.class);
 
         /** Stream of random numbers. */
         private final StreamInterface stream;
@@ -81,7 +81,7 @@ public interface RouteGeneratorOD
         }
 
         @Override
-        public Route getRoute(final Node origin, final Node destination, final GTUType gtuType)
+        public Route getRoute(final Node origin, final Node destination, final GtuType gtuType)
         {
             List<Node> viaNodes = new ArrayList<>();
             double cumulWeight = 0.0;
@@ -176,8 +176,8 @@ public interface RouteGeneratorOD
      * Returns a route.
      * @param origin Node; origin
      * @param destination Node; destination
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @return Route; route
      */
-    Route getRoute(Node origin, Node destination, GTUType gtuType);
+    Route getRoute(Node origin, Node destination, GtuType gtuType);
 }

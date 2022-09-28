@@ -7,7 +7,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LinkDirection;
 
 /**
@@ -42,14 +42,14 @@ public class DirectedLanePosition implements Serializable
      * @param position Length; the position on the lane, relative to the cross section link (design line)
      * @param gtuDirection GTUDirectionality; the direction the vehicle is driving to -- either in the direction of the design
      *            line, or against it
-     * @throws GTUException when preconditions fail
+     * @throws GtuException when preconditions fail
      */
     public DirectedLanePosition(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
-            throws GTUException
+            throws GtuException
     {
-        Throw.when(lane == null, GTUException.class, "lane is null");
-        Throw.when(position == null, GTUException.class, "position is null");
-        Throw.when(gtuDirection == null, GTUException.class, "gtuDirection is null");
+        Throw.when(lane == null, GtuException.class, "lane is null");
+        Throw.when(position == null, GtuException.class, "position is null");
+        Throw.when(gtuDirection == null, GtuException.class, "gtuDirection is null");
         this.lane = lane;
         this.position = position;
         this.gtuDirection = gtuDirection;

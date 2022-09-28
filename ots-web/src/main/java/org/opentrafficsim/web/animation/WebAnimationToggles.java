@@ -1,6 +1,6 @@
 package org.opentrafficsim.web.animation;
 
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
@@ -58,7 +58,7 @@ public final class WebAnimationToggles
         panel.addToggleAnimationButtonText("LaneCenter", LaneAnimation.CenterLine.class, "Show/hide lane center lines", false);
         panel.addToggleAnimationButtonText("Stripe", Stripe.class, "Show/hide stripes", true);
         panel.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
-        panel.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
+        panel.addToggleAnimationButtonText("GTU", Gtu.class, "Show/hide GTUs", true);
         panel.addToggleAnimationButtonText("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
         panel.addToggleAnimationButtonText("Sensor", SingleSensor.class, "Show/hide sensors", true);
         panel.addToggleAnimationButtonText("SensorId", SensorAnimation.Text.class, "Show/hide sensors Ids", false);
@@ -85,7 +85,7 @@ public final class WebAnimationToggles
         panel.addToggleAnimationButtonText("LaneCenter", LaneAnimation.CenterLine.class, "Show/hide lane center lines", false);
         panel.addToggleAnimationButtonText("Stripe", Stripe.class, "Show/hide stripes", true);
         panel.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
-        panel.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
+        panel.addToggleAnimationButtonText("GTU", Gtu.class, "Show/hide GTUs", true);
         panel.addToggleAnimationButtonText("GTUId", DefaultCarAnimation.Text.class, "Show/hide GTU Ids", false);
         panel.addToggleAnimationButtonText("Sensor", Sensor.class, "Show/hide sensors", false);
         panel.addToggleAnimationButtonText("SensorId", SensorAnimation.Text.class, "Show/hide sensors Ids", false);
@@ -130,7 +130,7 @@ public final class WebAnimationToggles
         hideAnimationClass(panel, LaneAnimation.CenterLine.class);
         showAnimationClass(panel, Stripe.class);
         showAnimationClass(panel, Shoulder.class);
-        showAnimationClass(panel, GTU.class);
+        showAnimationClass(panel, Gtu.class);
         hideAnimationClass(panel, DefaultCarAnimation.Text.class);
         showAnimationClass(panel, SingleSensor.class);
         hideAnimationClass(panel, SensorAnimation.Text.class);
@@ -157,7 +157,7 @@ public final class WebAnimationToggles
         hideAnimationClass(panel, LaneAnimation.CenterLine.class);
         showAnimationClass(panel, Stripe.class);
         showAnimationClass(panel, Shoulder.class);
-        showAnimationClass(panel, GTU.class);
+        showAnimationClass(panel, Gtu.class);
         hideAnimationClass(panel, DefaultCarAnimation.Text.class);
         hideAnimationClass(panel, SingleSensor.class);
         hideAnimationClass(panel, SensorAnimation.Text.class);

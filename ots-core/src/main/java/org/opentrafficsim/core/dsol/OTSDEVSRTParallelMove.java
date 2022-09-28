@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -255,7 +255,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeAnimator<Duration>
                     {
                         event = this.eventList.removeFirst();
                         SimEvent<Duration> se = (SimEvent<Duration>) event;
-                        if (se.getTarget() instanceof GTU && se.getMethod().equals("move"))
+                        if (se.getTarget() instanceof Gtu && se.getMethod().equals("move"))
                         {
                             moveEvents.add(event);
                         }

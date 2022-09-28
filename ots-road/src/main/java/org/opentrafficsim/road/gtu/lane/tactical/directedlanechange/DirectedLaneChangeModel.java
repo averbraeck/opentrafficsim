@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -28,7 +28,7 @@ public interface DirectedLaneChangeModel
 {
     /**
      * Compute the acceleration and lane change.
-     * @param gtu LaneBasedGTU; the GTU for which the acceleration and lane change is computed
+     * @param gtu LaneBasedGtu; the GTU for which the acceleration and lane change is computed
      * @param direction LateralDirectionality; the direction of the lane we want to change to
      * @param sameLaneTraffic Collection&lt;Headway&gt;; the set of information about observable GTUs in the current lane (can
      *            not be null and may include the <code>gtu</code>)
@@ -42,7 +42,7 @@ public interface DirectedLaneChangeModel
      *            overtake other traffic
      * @param laneChangeTime Duration; time spent to overtake
      * @return LaneMovementStep; the result of the lane change and GTU following model
-     * @throws GTUException when the position of the GTU on the lane(s) cannot be determined
+     * @throws GtuException when the position of the GTU on the lane(s) cannot be determined
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
@@ -50,7 +50,7 @@ public interface DirectedLaneChangeModel
     DirectedLaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGTU gtu, LateralDirectionality direction,
             Collection<Headway> sameLaneTraffic, Collection<Headway> otherLaneTraffic, Length maxDistance, Speed speedLimit,
             Acceleration otherLaneRouteIncentive, Acceleration laneChangeThreshold, Duration laneChangeTime)
-            throws GTUException, ParameterException, OperationalPlanException;
+            throws GtuException, ParameterException, OperationalPlanException;
 
     /** @return the perception. */
     LanePerception getPerception();

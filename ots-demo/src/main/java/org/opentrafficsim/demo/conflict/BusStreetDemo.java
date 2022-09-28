@@ -34,10 +34,10 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUCharacteristics;
+import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -235,13 +235,13 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         /**
          * Make the generator.
          * @param stream StreamInterface; random number stream
-         * @throws GTUException on exception
+         * @throws GtuException on exception
          * @throws ParameterException on exception
          * @throws ProbabilityException on exception
          * @throws SimRuntimeException on exception
          */
         private void makeGenerator(final StreamInterface stream)
-                throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
+                throws GtuException, SimRuntimeException, ProbabilityException, ParameterException
         {
             Lane lane = ((CrossSectionLink) this.network.getLink("AB")).getLanes().get(0);
             String id = lane.getId();
@@ -426,12 +426,12 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
+        public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
         {
             double r = this.simulator.getModel().getStream("generation").nextDouble();
             int classNum = r < this.probabilities[0] ? 0 : r < this.probabilities[0] + this.probabilities[1] ? 1 : 2;
             r = this.simulator.getModel().getStream("generation").nextDouble();
-            GTUType gtuType;
+            GtuType gtuType;
             Length length;
             Length width;
             Speed maximumSpeed;
@@ -440,7 +440,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
             {
                 case 0:
                 {
-                    gtuType = new GTUType("CAR", this.network.getGtuType(GTUType.DEFAULTS.CAR));
+                    gtuType = new GtuType("CAR", this.network.getGtuType(GtuType.DEFAULTS.CAR));
                     length = new Length(4.0, LengthUnit.SI);
                     width = new Length(1.8, LengthUnit.SI);
                     maximumSpeed = new Speed(200.0, SpeedUnit.KM_PER_HOUR);
@@ -449,7 +449,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                 }
                 case 1:
                 {
-                    gtuType = new GTUType("BUS1", this.network.getGtuType(GTUType.DEFAULTS.SCHEDULED_BUS));
+                    gtuType = new GtuType("BUS1", this.network.getGtuType(GtuType.DEFAULTS.SCHEDULED_BUS));
                     length = new Length(8.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
@@ -469,7 +469,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                 }
                 case 2:
                 {
-                    gtuType = new GTUType("BUS2", this.network.getGtuType(GTUType.DEFAULTS.SCHEDULED_BUS));
+                    gtuType = new GtuType("BUS2", this.network.getGtuType(GtuType.DEFAULTS.SCHEDULED_BUS));
                     length = new Length(12.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
@@ -490,7 +490,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
                     throw new RuntimeException("Reaching default of switch case.");
             }
 
-            GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, length, width, maximumSpeed,
+            GtuCharacteristics gtuCharacteristics = new GtuCharacteristics(gtuType, length, width, maximumSpeed,
                     Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), length.times(0.5));
 
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route, null, null,
@@ -531,13 +531,13 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
 
         /** {@inheritDoc} */
         @Override
-        public final LMRS create(final LaneBasedGTU gtu) throws GTUException
+        public final LMRS create(final LaneBasedGTU gtu) throws GtuException
         {
             DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
             LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
                     GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.setDefaultIncentives();
-            if (gtu.getGTUType().isOfType(GTUType.DEFAULTS.SCHEDULED_BUS))
+            if (gtu.getGtuType().isOfType(GtuType.DEFAULTS.SCHEDULED_BUS))
             {
                 lmrs.addMandatoryIncentive(new IncentiveBusStop());
                 lmrs.addAccelerationIncentive(new AccelerationBusStop());
@@ -568,15 +568,15 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
 
         /** {@inheritDoc} */
         @Override
-        public void setValues(final Parameters parameters, final GTUType gtuType) throws ParameterException
+        public void setValues(final Parameters parameters, final GtuType gtuType) throws ParameterException
         {
 
             parameters.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
-            if (gtuType.isOfType(GTUType.DEFAULTS.CAR))
+            if (gtuType.isOfType(GtuType.DEFAULTS.CAR))
             {
                 parameters.setParameter(LmrsParameters.VGAIN, new Speed(3.0, SpeedUnit.METER_PER_SECOND));
             }
-            else if (gtuType.isOfType(GTUType.DEFAULTS.SCHEDULED_BUS))
+            else if (gtuType.isOfType(GtuType.DEFAULTS.SCHEDULED_BUS))
             {
                 parameters.setParameter(ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.METER_PER_SECOND_2));
             }

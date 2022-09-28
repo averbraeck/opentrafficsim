@@ -6,7 +6,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -75,18 +75,18 @@ public class Stripe extends RoadMarkerAlong
      *            Link
      * @param width Length; positioned &lt;i&gt;symmetrically around&lt;/i&gt; the center line given by the
      *            lateralCenterPosition
-     * @param gtuTypes Set&lt;GTUType&gt;; the GTU types for which the permeability is defined
+     * @param gtuTypes Set&lt;GtuType&gt;; the GTU types for which the permeability is defined
      * @param permeable Permeable; one of the enums of Stripe.Permeable to define the permeability
      * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public Stripe(final CrossSectionLink parentLink, final Length lateralCenterPositionStart,
-            final Length lateralCenterPositionEnd, final Length width, final Set<GTUType> gtuTypes, final Permeable permeable,
+            final Length lateralCenterPositionEnd, final Length width, final Set<GtuType> gtuTypes, final Permeable permeable,
             final boolean fixGradualLateralOffset) throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPositionStart, lateralCenterPositionEnd, width, width, fixGradualLateralOffset);
-        for (GTUType gtuType : gtuTypes)
+        for (GtuType gtuType : gtuTypes)
         {
             addPermeability(gtuType, permeable);
         }
@@ -103,13 +103,13 @@ public class Stripe extends RoadMarkerAlong
      *            Link
      * @param width Length; positioned &lt;i&gt;symmetrically around&lt;/i&gt; the center line given by the
      *            lateralCenterPosition
-     * @param gtuTypes Set&lt;GTUType&gt;; the GTU types for which the permeability is defined
+     * @param gtuTypes Set&lt;GtuType&gt;; the GTU types for which the permeability is defined
      * @param permeable Permeable; one of the enums of Stripe.Permeable to define the permeability
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     public Stripe(final CrossSectionLink parentLink, final Length lateralCenterPositionStart,
-            final Length lateralCenterPositionEnd, final Length width, final Set<GTUType> gtuTypes, final Permeable permeable)
+            final Length lateralCenterPositionEnd, final Length width, final Set<GtuType> gtuTypes, final Permeable permeable)
             throws OTSGeometryException, NetworkException
     {
         this(parentLink, lateralCenterPositionStart, lateralCenterPositionEnd, width, gtuTypes, permeable, false);
@@ -132,8 +132,8 @@ public class Stripe extends RoadMarkerAlong
             final Permeable permeable) throws OTSGeometryException, NetworkException
     {
         super(parentLink, crossSectionSlices);
-        addPermeability(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), permeable);
-        addPermeability(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.PEDESTRIAN), permeable);
+        addPermeability(parentLink.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), permeable);
+        addPermeability(parentLink.getNetwork().getGtuType(GtuType.DEFAULTS.PEDESTRIAN), permeable);
     }
 
     /**
@@ -151,10 +151,10 @@ public class Stripe extends RoadMarkerAlong
     }
 
     /**
-     * @param gtuType GTUType; GTU type to add permeability for.
+     * @param gtuType GtuType; GTU type to add permeability for.
      * @param permeable Permeable; direction(s) to add compared to the direction of the design line.
      */
-    public final void addPermeability(final GTUType gtuType, final Permeable permeable)
+    public final void addPermeability(final GtuType gtuType, final Permeable permeable)
     {
         if (permeable.equals(Permeable.LEFT) || permeable.equals(Permeable.BOTH))
         {

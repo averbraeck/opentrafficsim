@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
@@ -46,8 +46,8 @@ public class SplitFraction
     /** Simulator. */
     private final OTSSimulatorInterface simulator;
 
-    /** Map of fractions by GTUType and Link. */
-    private final Map<GTUType, Map<Link, Map<Duration, Double>>> fractions = new LinkedHashMap<>();
+    /** Map of fractions by GtuType and Link. */
+    private final Map<GtuType, Map<Link, Map<Duration, Double>>> fractions = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -66,22 +66,22 @@ public class SplitFraction
     }
 
     /**
-     * Add fraction to link, this will apply to {@code GTUType.ALL} and all time.
+     * Add fraction to link, this will apply to {@code GtuType.ALL} and all time.
      * @param link Link; link
      * @param fraction double; fraction
      */
     public void addFraction(final Link link, final double fraction)
     {
-        addFraction(link, link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), fraction);
+        addFraction(link, link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), fraction);
     }
 
     /**
      * Add fraction to link for gtu type, this will apply to all time.
      * @param link Link; link
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @param fraction double; fraction
      */
-    public void addFraction(final Link link, final GTUType gtuType, final double fraction)
+    public void addFraction(final Link link, final GtuType gtuType, final double fraction)
     {
         double[] fracs = new double[2];
         fracs[0] = fraction;
@@ -102,24 +102,24 @@ public class SplitFraction
     }
 
     /**
-     * Add fraction to link over time, this will apply to {@code GTUType.ALL}.
+     * Add fraction to link over time, this will apply to {@code GtuType.ALL}.
      * @param link Link; link
      * @param time DurationVector; time
      * @param fraction double[]; fraction
      */
     public void addFraction(final Link link, final DurationVector time, final double[] fraction)
     {
-        addFraction(link, link.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), time, fraction);
+        addFraction(link, link.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), time, fraction);
     }
 
     /**
      * Add fraction to link over time for gtu type.
      * @param link Link; link
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @param time DurationVector; time
      * @param fraction double[]; fraction
      */
-    public void addFraction(final Link link, final GTUType gtuType, final DurationVector time, final double[] fraction)
+    public void addFraction(final Link link, final GtuType gtuType, final DurationVector time, final double[] fraction)
     {
         Throw.when(time.size() != fraction.length, IllegalArgumentException.class,
                 "Time vector and fraction array require equal length.");
@@ -151,12 +151,12 @@ public class SplitFraction
     /**
      * Draw next link based on split fractions. If no fractions were defined, split fractions are determined based on the number
      * of lanes per link.
-     * @param gtuType GTUType; gtuType
+     * @param gtuType GtuType; gtuType
      * @return next link
      */
-    public Link draw(final GTUType gtuType)
+    public Link draw(final GtuType gtuType)
     {
-        for (GTUType gtu : this.fractions.keySet())
+        for (GtuType gtu : this.fractions.keySet())
         {
             if (gtuType.isOfType(gtu))
             {

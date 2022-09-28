@@ -22,7 +22,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -85,7 +85,7 @@ public class TrafficLightSensor extends EventProducer
 
     /**
      * Construct a new traffic light sensor.<br>
-     * TODO Possibly provide the GTUTypes that trigger the sensor as an argument for the constructor
+     * TODO Possibly provide the GtuTypes that trigger the sensor as an argument for the constructor
      * @param id String; id of this sensor
      * @param laneA Lane; the lane of the A detection point of this traffic light sensor
      * @param positionA Length; the position of the A detection point of this traffic light sensor
@@ -233,7 +233,7 @@ public class TrafficLightSensor extends EventProducer
 
     /**
      * Add a GTU to the set.
-     * @param gtu LaneBasedGTU; the GTU that must be added
+     * @param gtu LaneBasedGtu; the GTU that must be added
      */
     protected final void addGTU(final LaneBasedGTU gtu)
     {
@@ -246,7 +246,7 @@ public class TrafficLightSensor extends EventProducer
 
     /**
      * Remove a GTU from the set.
-     * @param gtu LaneBasedGTU; the GTU that must be removed
+     * @param gtu LaneBasedGtu; the GTU that must be removed
      */
     protected final void removeGTU(final LaneBasedGTU gtu)
     {
@@ -283,7 +283,7 @@ public class TrafficLightSensor extends EventProducer
                 // of our exit flank sensors or when the GTU leaves this detector laterally
                 return;
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 System.err.println("Caught GTU exception trying to get the frontPositions");
                 exception.printStackTrace();
@@ -435,7 +435,7 @@ public class TrafficLightSensor extends EventProducer
                 }
                 return;
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 System.err.println("Caught GTU exception trying to get the frontPositions");
                 exception.printStackTrace();
@@ -478,7 +478,7 @@ public class TrafficLightSensor extends EventProducer
     /**
      * One of our flank sensors has triggered.
      * @param sensor FlankSensor; the sensor that was triggered
-     * @param gtu LaneBasedGTU; the gtu that triggered the flank sensor
+     * @param gtu LaneBasedGtu; the gtu that triggered the flank sensor
      */
     public final void signalDetection(final FlankSensor sensor, final LaneBasedGTU gtu)
     {
@@ -487,7 +487,7 @@ public class TrafficLightSensor extends EventProducer
         {
             gtuDirection = gtu.getDirection(sensor.getLane());
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             exception.printStackTrace();
         }

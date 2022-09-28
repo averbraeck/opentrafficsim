@@ -13,7 +13,7 @@ import org.opentrafficsim.base.Type;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -141,7 +141,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
             params = getPerception().getGtu().getParameters();
             now = getPerception().getGtu().getSimulator().getSimulatorAbsTime();
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new RuntimeException("GTU not yet initialized.", exception);
         }

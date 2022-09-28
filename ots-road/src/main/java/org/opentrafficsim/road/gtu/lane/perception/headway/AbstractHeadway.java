@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 
 /**
  * Super class for non-delayed and non-erroneous perception. Sub classes should wrap the actual simulation object to obtain
@@ -79,18 +79,18 @@ public abstract class AbstractHeadway implements Headway
      * @param overlapFront Length; the front-front distance to the other object
      * @param overlap Length; the 'center' overlap with the other object
      * @param overlapRear Length; the rear-rear distance to the other object
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     protected AbstractHeadway(final Length distance, final Length overlapFront, final Length overlap, final Length overlapRear)
-            throws GTUException
+            throws GtuException
     {
-        Throw.when(distance != null && (overlap != null || overlapFront != null || overlapRear != null), GTUException.class,
+        Throw.when(distance != null && (overlap != null || overlapFront != null || overlapRear != null), GtuException.class,
                 "overlap parameter cannot be null for front / rear headway");
         this.distance = distance;
 
-        Throw.when(distance == null && (overlap == null || overlapFront == null || overlapRear == null), GTUException.class,
+        Throw.when(distance == null && (overlap == null || overlapFront == null || overlapRear == null), GtuException.class,
                 "overlap parameter cannot be null for parallel headway");
-        Throw.when(overlap != null && overlap.si < 0, GTUException.class, "overlap cannot be negative");
+        Throw.when(overlap != null && overlap.si < 0, GtuException.class, "overlap cannot be negative");
         this.overlap = overlap;
         this.overlapFront = overlapFront;
         this.overlapRear = overlapRear;
@@ -99,9 +99,9 @@ public abstract class AbstractHeadway implements Headway
     /**
      * Construct a new Headway information object, for an object ahead of us or behind us.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadway(final Length distance) throws GTUException
+    public AbstractHeadway(final Length distance) throws GtuException
     {
         this(distance, null, null, null);
     }
@@ -111,10 +111,10 @@ public abstract class AbstractHeadway implements Headway
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractHeadway(final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
+    public AbstractHeadway(final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
     {
         this(null, overlapFront, overlap, overlapRear);
     }

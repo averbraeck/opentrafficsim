@@ -4,8 +4,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -35,7 +35,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @param <G> GTU type
  * @param <P> perception type
  */
-public interface TacticalPlanner<G extends GTU, P extends Perception<G>>
+public interface TacticalPlanner<G extends Gtu, P extends Perception<G>>
 {
 
     /** Parameter type for tactical planner. */
@@ -55,12 +55,12 @@ public interface TacticalPlanner<G extends GTU, P extends Perception<G>>
      * @param locationAtStartTime DirectedPoint; the location of the GTU at the start time of the new plan
      * @return a new operational plan
      * @throws OperationalPlanException when there is a problem planning a path in the network
-     * @throws GTUException when there is a problem with the state of the GTU when planning a path
+     * @throws GtuException when there is a problem with the state of the GTU when planning a path
      * @throws NetworkException when there is a problem with the network on which the GTU is driving
      * @throws ParameterException when there is a problem with a parameter
      */
     OperationalPlan generateOperationalPlan(Time startTime, DirectedPoint locationAtStartTime)
-            throws OperationalPlanException, GTUException, NetworkException, ParameterException;
+            throws OperationalPlanException, GtuException, NetworkException, ParameterException;
 
     /** @return the perception unit belonging to this tactical planner. */
     P getPerception();

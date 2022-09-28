@@ -14,7 +14,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -106,7 +106,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** {@inheritDoc} */
     @Override
-    public final void updateAll() throws GTUException, NetworkException, ParameterException
+    public final void updateAll() throws GtuException, NetworkException, ParameterException
     {
 
         if (this.remainder == null)
@@ -132,7 +132,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
                 }
                 this.remainder = Duration.instantiateSI(rem);
             }
-            catch (ParameterException | GTUException exception)
+            catch (ParameterException | GtuException exception)
             {
                 throw new RuntimeException("Exception while setting up delayed neighors perception.", exception);
             }
@@ -234,17 +234,17 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
      * Performs actual update.
      * @throws ParameterException if parameter is not present or is given a wrong value
      * @throws NetworkException on error in the network
-     * @throws GTUException if not initialized
+     * @throws GtuException if not initialized
      */
     // TODO private when DSOL allows
-    protected void updateAllDelayed() throws GTUException, NetworkException, ParameterException
+    protected void updateAllDelayed() throws GtuException, NetworkException, ParameterException
     {
 
         try
         {
             getGtu().getReferencePosition();
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             // GTU was destroyed
             return;

@@ -73,7 +73,7 @@ public class GTUDumperTest implements OTSModelInterface
     private OTSSimulatorInterface simulator;
 
     /** The GTUDumper. */
-    private GTUDumper gtuDumper;
+    private GtuDumper gtuDumper;
 
     /** The network. */
     private OTSNetwork network;
@@ -124,7 +124,7 @@ public class GTUDumperTest implements OTSModelInterface
      */
     public void createGTU()
     {
-        GTU gtu = new GTU()
+        Gtu gtu = new Gtu()
         {
 
             /** ... */
@@ -247,7 +247,7 @@ public class GTUDumperTest implements OTSModelInterface
             }
 
             @Override
-            public GTUType getGTUType()
+            public GtuType getGtuType()
             {
                 return null;
             }
@@ -393,37 +393,37 @@ public class GTUDumperTest implements OTSModelInterface
             }
 
             @Override
-            public void addGtu(final GTU gtu) throws GTUException
+            public void addGtu(final Gtu gtu) throws GtuException
             {
                 // Do nothing
             }
 
             @Override
-            public void removeGtu(final GTU gtu)
+            public void removeGtu(final Gtu gtu)
             {
                 // Do nothing
             }
 
             @Override
-            public void setParent(final GTU gtu) throws GTUException
+            public void setParent(final Gtu gtu) throws GtuException
             {
                 // Do nothing
             }
 
             @Override
-            public GTU getParent()
+            public Gtu getParent()
             {
                 return null;
             }
 
             @Override
-            public Set<GTU> getChildren()
+            public Set<Gtu> getChildren()
             {
                 return null;
             }
 
             @Override
-            public void setErrorHandler(final GTUErrorHandler errorHandler)
+            public void setErrorHandler(final GtuErrorHandler errorHandler)
             {
                 // Do nothing
             }
@@ -443,7 +443,7 @@ public class GTUDumperTest implements OTSModelInterface
         // System.out.println("constructModel called.");
         try
         {
-            this.gtuDumper = new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND),
+            this.gtuDumper = new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND),
                     this.network, this.containerDir.getCanonicalPath() + "/");
         }
         catch (SimRuntimeException | IOException e)
@@ -518,7 +518,7 @@ public class GTUDumperTest implements OTSModelInterface
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
         try
         {
-            new GTUDumper(null, new Duration(300, DurationUnit.SECOND), this.network,
+            new GtuDumper(null, new Duration(300, DurationUnit.SECOND), this.network,
                     this.containerDir.getCanonicalPath() + "/");
             fail("null firstDumpTime should have thrown a NullPointerException");
         }
@@ -529,7 +529,7 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), null, this.network, this.containerDir.getCanonicalPath() + "/");
+            new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), null, this.network, this.containerDir.getCanonicalPath() + "/");
             fail("null interval should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -539,7 +539,7 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), null,
+            new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), null,
                     this.containerDir.getCanonicalPath() + "/");
             fail("null network should have thrown a NullPointerException");
         }
@@ -550,7 +550,7 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network, null);
+            new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network, null);
             fail("null fileNamePrefix should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -560,7 +560,7 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(-10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network,
+            new GtuDumper(new Time(-10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network,
                     this.containerDir.getCanonicalPath() + "/");
             fail("null parameter should have thrown a NullPointerException");
         }
@@ -571,7 +571,7 @@ public class GTUDumperTest implements OTSModelInterface
 
         try
         {
-            new GTUDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(-300, DurationUnit.SECOND), this.network,
+            new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(-300, DurationUnit.SECOND), this.network,
                     this.containerDir.getCanonicalPath() + "/");
             fail("firstDumpTime before current simulator time should have thrown a RuntimeException");
         }

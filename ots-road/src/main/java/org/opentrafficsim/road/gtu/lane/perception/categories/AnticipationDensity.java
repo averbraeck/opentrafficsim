@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionCollector;
@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationDensit
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class AnticipationDensity implements PerceptionCollector<LinearDensity, GTU, CountAndDistance>
+public class AnticipationDensity implements PerceptionCollector<LinearDensity, Gtu, CountAndDistance>
 {
 
     /** {@inheritDoc} */
@@ -41,14 +41,14 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionAccumulator<GTU, CountAndDistance> getAccumulator()
+    public PerceptionAccumulator<Gtu, CountAndDistance> getAccumulator()
     {
-        return new PerceptionAccumulator<GTU, CountAndDistance>()
+        return new PerceptionAccumulator<Gtu, CountAndDistance>()
         {
             /** {@inheritDoc} */
             @Override
             public Intermediate<CountAndDistance> accumulate(final Intermediate<CountAndDistance> intermediate,
-                    final GTU object, final Length distance)
+                    final Gtu object, final Length distance)
             {
                 intermediate.getObject().increaseCount();
                 intermediate.getObject().setDistance(distance);

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 
 /**
@@ -55,7 +55,7 @@ public class SynchronizationColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public Color getColor(final Gtu gtu)
     {
         if (!(gtu.getTacticalPlanner() instanceof Synchronizable))
         {

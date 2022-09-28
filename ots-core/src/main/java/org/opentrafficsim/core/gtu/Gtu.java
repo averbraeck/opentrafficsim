@@ -45,7 +45,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface GTU extends Locatable, Serializable, EventProducerInterface, Identifiable, Drawable
+public interface Gtu extends Locatable, Serializable, EventProducerInterface, Identifiable, Drawable
 {
     /** @return the id of the GTU */
     @Override
@@ -74,7 +74,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     Acceleration getMaximumDeceleration();
 
     /** @return the type of GTU, e.g. TruckType, CarType, BusType. */
-    GTUType getGTUType();
+    GtuType getGtuType();
 
     /** @return the simulator of the GTU. */
     OTSSimulatorInterface getSimulator();
@@ -180,41 +180,41 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
 
     /**
      * Adds the provided GTU to this GTU, meaning it moves with this GTU.
-     * @param gtu GTU; gtu to enter this GTU
-     * @throws GTUException if the gtu already has a parent
+     * @param gtu Gtu; gtu to enter this GTU
+     * @throws GtuException if the gtu already has a parent
      */
-    void addGtu(GTU gtu) throws GTUException;
+    void addGtu(Gtu gtu) throws GtuException;
 
     /**
      * Removes the provided GTU from this GTU, meaning it no longer moves with this GTU.
-     * @param gtu GTU; gtu to exit this GTU
+     * @param gtu Gtu; gtu to exit this GTU
      */
-    void removeGtu(GTU gtu);
+    void removeGtu(Gtu gtu);
 
     /**
      * Set the parent GTU.
-     * @param gtu GTU; parent GTU, may be {@code null}
-     * @throws GTUException if the gtu already has a parent
+     * @param gtu Gtu; parent GTU, may be {@code null}
+     * @throws GtuException if the gtu already has a parent
      */
-    void setParent(GTU gtu) throws GTUException;
+    void setParent(Gtu gtu) throws GtuException;
 
     /**
      * Returns the parent GTU, or {@code null} if this GTU has no parent.
-     * @return GTU; parent GTU, or {@code null} if this GTU has no parent
+     * @return Gtu; parent GTU, or {@code null} if this GTU has no parent
      */
-    GTU getParent();
+    Gtu getParent();
 
     /**
      * Returns the children GTU's.
      * @return Set&lt;GTU&gt;; children GTU's
      */
-    Set<GTU> getChildren();
+    Set<Gtu> getChildren();
 
     /**
      * Sets the error handler.
      * @param errorHandler GTUErrorHandler; error handler
      */
-    void setErrorHandler(GTUErrorHandler errorHandler);
+    void setErrorHandler(GtuErrorHandler errorHandler);
 
     /**
      * The event type for pub/sub indicating the initialization of a new GTU. <br>

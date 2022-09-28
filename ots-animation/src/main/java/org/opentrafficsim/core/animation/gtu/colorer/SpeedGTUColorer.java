@@ -9,7 +9,7 @@ import java.util.List;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.animation.ColorInterpolator;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * Color GTU depending on their speed.
@@ -52,7 +52,7 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu)
+    public final Color getColor(final Gtu gtu)
     {
         Speed speed = gtu.getSpeed();
         double ratio = speed.getSI() / this.maximumSpeed.getSI() * (this.legend.size() - 1);

@@ -5,8 +5,8 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.Type;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 
 /**
  * <p>
@@ -19,7 +19,7 @@ import org.opentrafficsim.core.gtu.GTUException;
  * @param <G> GTU type
  * @param <P> perception type
  */
-public abstract class AbstractPerceptionCategory<G extends GTU, P extends Perception<G>>
+public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Perception<G>>
         extends Type<AbstractPerceptionCategory<G, P>> implements Serializable, PerceptionCategory<G, P>
 {
 
@@ -51,10 +51,10 @@ public abstract class AbstractPerceptionCategory<G extends GTU, P extends Percep
     /**
      * Returns the connected GTU.
      * @return connected GTU
-     * @throws GTUException if the GTU has not been initialized
+     * @throws GtuException if the GTU has not been initialized
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public G getGtu() throws GTUException
+    public G getGtu() throws GtuException
     {
         return this.perception.getGtu();
     }
@@ -62,13 +62,13 @@ public abstract class AbstractPerceptionCategory<G extends GTU, P extends Percep
     /**
      * Returns the current time.
      * @return current time
-     * @throws GTUException if the GTU has not been initialized
+     * @throws GtuException if the GTU has not been initialized
      */
-    public final Time getTimestamp() throws GTUException
+    public final Time getTimestamp() throws GtuException
     {
         if (getGtu() == null)
         {
-            throw new GTUException("gtu value has not been initialized for LanePerception when perceiving.");
+            throw new GtuException("gtu value has not been initialized for LanePerception when perceiving.");
         }
         return getGtu().getSimulator().getSimulatorAbsTime();
     }

@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.parameters;
 
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * Only use given parameters, do not set any others.
@@ -18,7 +18,7 @@ public class ParameterFactoryDefault implements ParameterFactory
 
     /** {@inheritDoc} */
     @Override
-    public void setValues(final Parameters parameters, final GTUType gtuType)
+    public void setValues(final Parameters parameters, final GtuType gtuType)
     {
         //
     }

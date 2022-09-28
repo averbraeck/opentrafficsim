@@ -7,7 +7,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
@@ -28,41 +28,41 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
 {
 
     /**
-     * @throws GTUException when the GTU was not initialized yet.
+     * @throws GtuException when the GTU was not initialized yet.
      * @throws NetworkException when the speed limit for a GTU type cannot be retrieved from the network.
      * @throws ParameterException in case of not being able to retrieve parameter ParameterTypes.LOOKAHEAD
      */
-    void updateLanePathInfo() throws GTUException, NetworkException, ParameterException;
+    void updateLanePathInfo() throws GtuException, NetworkException, ParameterException;
 
     /**
      * Update the forward headway and first object (a GTU) in front.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
      */
-    void updateForwardHeadwayGTU() throws GTUException, NetworkException, ParameterException;
+    void updateForwardHeadwayGTU() throws GtuException, NetworkException, ParameterException;
 
     /**
      * Update the forward headway and first object (but not a GTU) in front.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
      */
-    void updateForwardHeadwayObject() throws GTUException, NetworkException, ParameterException;
+    void updateForwardHeadwayObject() throws GtuException, NetworkException, ParameterException;
 
     /**
      * Update the backward headway and first object (e.g., a GTU) behind.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
      */
-    void updateBackwardHeadway() throws GTUException, ParameterException, NetworkException;
+    void updateBackwardHeadway() throws GtuException, ParameterException, NetworkException;
 
     /**
      * Update the accessible adjacent lanes.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      */
-    default void updateAccessibleAdjacentLanes() throws GTUException
+    default void updateAccessibleAdjacentLanes() throws GtuException
     {
         updateAccessibleAdjacentLanesLeft();
         updateAccessibleAdjacentLanesRight();
@@ -70,73 +70,73 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
 
     /**
      * Update the accessible adjacent lanes on the left.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      */
-    void updateAccessibleAdjacentLanesLeft() throws GTUException;
+    void updateAccessibleAdjacentLanesLeft() throws GtuException;
 
     /**
      * Update the accessible adjacent lanes on the right.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      */
-    void updateAccessibleAdjacentLanesRight() throws GTUException;
+    void updateAccessibleAdjacentLanesRight() throws GtuException;
 
     /**
      * Update the objects (e.g., GTUs) in parallel, in front and behind on the left neighboring lane, with their headway
      * relative to our GTU, and information about the status of the adjacent objects.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
      */
-    void updateNeighboringHeadwaysLeft() throws GTUException, ParameterException, NetworkException;
+    void updateNeighboringHeadwaysLeft() throws GtuException, ParameterException, NetworkException;
 
     /**
      * Update the objects (e.g., GTUs) in parallel, in front and behind on the right neighboring lane, with their headway
      * relative to our GTU, and information about the status of the adjacent objects.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
      */
-    void updateNeighboringHeadwaysRight() throws GTUException, ParameterException, NetworkException;
+    void updateNeighboringHeadwaysRight() throws GtuException, ParameterException, NetworkException;
 
     /**
      * Update the objects (e.g., GTUs) in parallel, in front and behind for the lane in the given direction, with their headway
      * relative to our GTU, and information about the status of the adjacent objects.
      * @param lateralDirection LateralDirectionality; the direction to update the parallel headway collection for
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
      */
     void updateNeighboringHeadways(LateralDirectionality lateralDirection)
-            throws GTUException, ParameterException, NetworkException;
+            throws GtuException, ParameterException, NetworkException;
 
     /**
      * Update the parallel objects (e.g., GTUs) on the left, with information about their status and parallel overlap with our
      * GTU.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      */
-    void updateParallelHeadwaysLeft() throws GTUException;
+    void updateParallelHeadwaysLeft() throws GtuException;
 
     /**
      * Update the parallel objects (e.g., GTUs) on the right, with information about their status and parallel overlap with our
      * GTU.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      */
-    void updateParallelHeadwaysRight() throws GTUException;
+    void updateParallelHeadwaysRight() throws GtuException;
 
     /**
      * Update the parallel objects (e.g., GTUs) for the given direction, with information about their status and parallel
      * overlap with our GTU.
      * @param lateralDirection LateralDirectionality; the direction to return the neighboring headway collection for
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      */
-    void updateParallelHeadways(LateralDirectionality lateralDirection) throws GTUException;
+    void updateParallelHeadways(LateralDirectionality lateralDirection) throws GtuException;
 
     /**
      * Update speedLimit.
-     * @throws GTUException when the GTU was not yet initialized
+     * @throws GtuException when the GTU was not yet initialized
      * @throws NetworkException in case of network exception
      */
-    void updateSpeedLimit() throws GTUException, NetworkException;
+    void updateSpeedLimit() throws GtuException, NetworkException;
 
     /**
      * Retrieve the last perceived lane path info.
@@ -220,7 +220,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
 
     /** {@inheritDoc} */
     @Override
-    default void updateAll() throws GTUException, ParameterException, NetworkException
+    default void updateAll() throws GtuException, ParameterException, NetworkException
     {
         updateLanePathInfo();
         updateForwardHeadwayGTU();
@@ -246,7 +246,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
      * relevant lateral edges of the two adjacent lanes. <br>
      * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a car lane
-     * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
+     * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GtuType is
      * returned. <br>
      * <b>Note:</b> LEFT is seen as a negative lateral direction, RIGHT as a positive lateral direction. <br>
      * FIXME In other places in OTS LEFT is positive (and RIGHT is negative). This should be made more consistent.

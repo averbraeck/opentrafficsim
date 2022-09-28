@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
@@ -51,7 +51,7 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
             final Collection<Headway> sameLaneTraffic, final Collection<Headway> rightLaneTraffic,
             final Collection<Headway> leftLaneTraffic, final Speed speedLimit, final Acceleration preferredLaneRouteIncentive,
             final Acceleration laneChangeThreshold, final Acceleration nonPreferredLaneRouteIncentive)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         Length headway = gtu.getParameters().getParameter(LOOKAHEAD);
         GTUFollowingModelOld gtuFollowingModel =

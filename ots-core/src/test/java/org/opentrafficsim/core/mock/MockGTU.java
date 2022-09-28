@@ -2,7 +2,7 @@ package org.opentrafficsim.core.mock;
 
 import org.mockito.Mockito;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * MockGTU.java.
@@ -15,7 +15,7 @@ import org.opentrafficsim.core.gtu.GTU;
 public class MockGTU
 {
     /** mocked GTU. */
-    private GTU mockGTU;
+    private Gtu mockGTU;
 
     /** name. */
     private String name;
@@ -29,7 +29,7 @@ public class MockGTU
     public MockGTU(final String name)
     {
         this.name = name;
-        this.mockGTU = Mockito.mock(GTU.class);
+        this.mockGTU = Mockito.mock(Gtu.class);
         Mockito.when(this.mockGTU.getSimulator()).thenReturn(this.simulator);
         Mockito.when(this.mockGTU.getId()).thenReturn(this.name);
     }
@@ -37,7 +37,7 @@ public class MockGTU
     /**
      * @return mocked DEVSSimulator
      */
-    public GTU getMock()
+    public Gtu getMock()
     {
         return this.mockGTU;
     }

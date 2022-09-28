@@ -11,8 +11,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -50,7 +50,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     private final OTSLine3D designLine;
 
     /** The GTUs on this Link. */
-    private final Set<GTU> gtus = new LinkedHashSet<>();
+    private final Set<Gtu> gtus = new LinkedHashSet<>();
 
     /**
      * Construct a new link.
@@ -100,14 +100,14 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
+    public final LongitudinalDirectionality getDirectionality(final GtuType gtuType)
     {
         return this.getLinkType().getDirectionality(gtuType, true);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void addGTU(final GTU gtu)
+    public final void addGTU(final Gtu gtu)
     {
         // TODO verify that gtu.getSimulator() equals getSimulator() ?
         if (!this.gtus.contains(gtu))
@@ -120,7 +120,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final void removeGTU(final GTU gtu)
+    public final void removeGTU(final Gtu gtu)
     {
         // TODO verify that gtu.getSimulator() equals getSimulator() ?
         if (this.gtus.contains(gtu))
@@ -133,7 +133,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final Set<GTU> getGTUs()
+    public final Set<Gtu> getGTUs()
     {
         return new LinkedHashSet<>(this.gtus);
     }

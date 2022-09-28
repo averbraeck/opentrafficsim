@@ -19,7 +19,7 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.network.xml.Grid10X10.TestXMLModelGrid;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -342,7 +342,7 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
                 XmlNetworkLaneParser.build(bos, this.network, true);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
-                    | URISyntaxException | XmlParserException | GTUException | IOException | TrafficControlException exception)
+                    | URISyntaxException | XmlParserException | GtuException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();
             }

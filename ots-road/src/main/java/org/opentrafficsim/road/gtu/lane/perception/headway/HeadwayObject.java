@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 
 /**
  * Container for a reference to information about a (lane based) object and a headway. The Headway can store information about
@@ -37,10 +37,10 @@ public class HeadwayObject extends AbstractHeadwayCopy
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length distance, final Speed speed, final Acceleration acceleration)
-            throws GTUException
+            throws GtuException
     {
         super(ObjectType.OBJECT, id, distance, speed, acceleration);
     }
@@ -49,9 +49,9 @@ public class HeadwayObject extends AbstractHeadwayCopy
      * Construct a new Headway information object, for a non-moving object ahead of us or behind us.
      * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayObject(final String id, final Length distance) throws GTUException
+    public HeadwayObject(final String id, final Length distance) throws GtuException
     {
         super(ObjectType.OBJECT, id, distance);
     }
@@ -64,10 +64,10 @@ public class HeadwayObject extends AbstractHeadwayCopy
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear,
-            final Speed speed, final Acceleration acceleration) throws GTUException
+            final Speed speed, final Acceleration acceleration) throws GtuException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear, speed, acceleration);
     }
@@ -78,10 +78,10 @@ public class HeadwayObject extends AbstractHeadwayCopy
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear)
-            throws GTUException
+            throws GtuException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear);
     }
@@ -93,10 +93,10 @@ public class HeadwayObject extends AbstractHeadwayCopy
      * @param length Length; the length of the other object, can be null of unknown.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length distance, final Length length, final Speed speed,
-            final Acceleration acceleration) throws GTUException
+            final Acceleration acceleration) throws GtuException
     {
         super(ObjectType.OBJECT, id, distance, length, speed, acceleration);
     }
@@ -106,9 +106,9 @@ public class HeadwayObject extends AbstractHeadwayCopy
      * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param length Length; the length of the other object, can be null of unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayObject(final String id, final Length distance, final Length length) throws GTUException
+    public HeadwayObject(final String id, final Length distance, final Length length) throws GtuException
     {
         super(ObjectType.OBJECT, id, distance, length);
     }
@@ -122,10 +122,10 @@ public class HeadwayObject extends AbstractHeadwayCopy
      * @param length Length; the length of the other object, can be null of unknown.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear,
-            final Length length, final Speed speed, final Acceleration acceleration) throws GTUException
+            final Length length, final Speed speed, final Acceleration acceleration) throws GtuException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear, length, speed, acceleration);
     }
@@ -137,10 +137,10 @@ public class HeadwayObject extends AbstractHeadwayCopy
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @param length Length; the length of the other object, can be null of unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear,
-            final Length length) throws GTUException
+            final Length length) throws GtuException
     {
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear, length);
     }

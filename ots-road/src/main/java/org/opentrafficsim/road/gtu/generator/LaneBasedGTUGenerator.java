@@ -33,9 +33,9 @@ import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUErrorHandler;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuErrorHandler;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
@@ -56,7 +56,7 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
- * Lane based GTU generator. This generator generates lane based GTUs using a LaneBasedTemplateGTUType. The template is used to
+ * Lane based GTU generator. This generator generates lane based GTUs using a LaneBasedTemplateGtuType. The template is used to
  * generate a set of GTU characteristics at the times implied by the headway generator. These sets are queued until there is
  * sufficient room to construct a GTU at the specified lane locations. The speed of a construction GTU may be reduced to ensure
  * it does not run into its immediate leader GTU.
@@ -119,7 +119,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     private boolean instantaneousLaneChange = false;
 
     /** GTU error handler. */
-    private GTUErrorHandler errorHandler = GTUErrorHandler.THROW;
+    private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
 
     /** Vehicle generation is ignored on these lanes. */
     private Set<LaneDirection> disabled = new LinkedHashSet<>();
@@ -183,26 +183,26 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * Sets the GTU error handler.
      * @param gtuErrorHandler GTUErrorHandler; GTU error handler
      */
-    public void setErrorHandler(final GTUErrorHandler gtuErrorHandler)
+    public void setErrorHandler(final GtuErrorHandler gtuErrorHandler)
     {
         this.errorHandler = gtuErrorHandler;
     }
 
     /**
      * Generate the characteristics of the next GTU.
-     * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGTUType
+     * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGtuType
      * @throws SimRuntimeException when this method fails to re-schedule itself or the call to the method that tries to place a
      *             GTU on the road
      * @throws ParameterException in case of a parameter problem
-     * @throws GTUException if strategical planner cannot generate a plan
+     * @throws GtuException if strategical planner cannot generate a plan
      */
     @SuppressWarnings("unused")
-    private void generateCharacteristics() throws ProbabilityException, SimRuntimeException, ParameterException, GTUException
+    private void generateCharacteristics() throws ProbabilityException, SimRuntimeException, ParameterException, GtuException
     {
         synchronized (this.unplacedTemplates)
         {
             LaneBasedGTUCharacteristics characteristics = this.laneBasedGTUCharacteristicsGenerator.draw();
-            GTUType gtuType = characteristics.getGTUType();
+            GtuType gtuType = characteristics.getGtuType();
             // gather information on number of unplaced templates per lane, and per link, for the drawing of a new position
             Map<CrossSectionLink, Map<Integer, Integer>> unplaced = new LinkedHashMap<>();
             for (CrossSectionLink link : this.unplacedTemplates.keySet())
@@ -246,14 +246,14 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * Check if the queue is non-empty and, if it is, try to place the GTUs in the queue on the road.
      * @param position GeneratorLanePosition; position
      * @throws SimRuntimeException should never happen
-     * @throws GTUException when something wrong in the definition of the GTU
+     * @throws GtuException when something wrong in the definition of the GTU
      * @throws OTSGeometryException when something is wrong in the definition of the GTU
      * @throws NetworkException when something is wrong with the initial location of the GTU
      * @throws NamingException ???
      * @throws ProbabilityException pe
      */
     @SuppressWarnings("unused")
-    private void tryToPlaceGTU(final GeneratorLanePosition position) throws SimRuntimeException, GTUException, NamingException,
+    private void tryToPlaceGTU(final GeneratorLanePosition position) throws SimRuntimeException, GtuException, NamingException,
             NetworkException, OTSGeometryException, ProbabilityException
     {
         TimeStampedObject<LaneBasedGTUCharacteristics> timedCharacteristics;
@@ -366,16 +366,16 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * @param position Set&lt;DirectedLanePosition&gt;; position
      * @param speed Speed; speed
      * @throws NamingException on exception
-     * @throws GTUException on exception
+     * @throws GtuException on exception
      * @throws NetworkException on exception
      * @throws SimRuntimeException on exception
      * @throws OTSGeometryException on exception
      */
     public final void placeGtu(final LaneBasedGTUCharacteristics characteristics, final Set<DirectedLanePosition> position,
-            final Speed speed) throws NamingException, GTUException, NetworkException, SimRuntimeException, OTSGeometryException
+            final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException, OTSGeometryException
     {
         String gtuId = this.idGenerator.nextId();
-        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(),
+        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(gtuId, characteristics.getGtuType(),
                 characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
                 characteristics.getFront(), this.simulator, this.network);
         gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
@@ -396,10 +396,10 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * @param startDistance Length; distance from generator location (nose) to start of the lane
      * @param beyond Length; location to search downstream of which is the generator position, or the start for downstream lanes
      * @param set Set&lt;HeadwayGTU&gt;; set to add the GTU's to
-     * @throws GTUException if a GTU is incorrectly positioned on a lane
+     * @throws GtuException if a GTU is incorrectly positioned on a lane
      */
     private void getFirstLeaders(final LaneDirection lane, final Length startDistance, final Length beyond,
-            final Set<HeadwayGTU> set) throws GTUException
+            final Set<HeadwayGTU> set) throws GtuException
     {
         LaneBasedGTU next = lane.getLane().getGtuAhead(beyond, lane.getDirection(), RelativePosition.FRONT,
                 this.simulator.getSimulatorAbsTime());
@@ -421,7 +421,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
             return;
         }
         ImmutableMap<Lane, GTUDirectionality> downstreamLanes =
-                lane.getLane().downstreamLanes(lane.getDirection(), this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
+                lane.getLane().downstreamLanes(lane.getDirection(), this.network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         for (Lane downstreamLane : downstreamLanes.keySet())
         {
             Length startDistanceDownstream = startDistance.plus(lane.getLane().getLength());
@@ -513,10 +513,10 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
          *         current time
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
-         * @throws GTUException on parameter exception
+         * @throws GtuException on parameter exception
          */
         Placement canPlace(SortedSet<HeadwayGTU> leaders, LaneBasedGTUCharacteristics characteristics, Duration since,
-                Set<DirectedLanePosition> initialPosition) throws NetworkException, GTUException;
+                Set<DirectedLanePosition> initialPosition) throws NetworkException, GtuException;
     }
 
     /**

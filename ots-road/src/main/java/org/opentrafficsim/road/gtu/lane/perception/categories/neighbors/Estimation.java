@@ -59,8 +59,8 @@ public interface Estimation
 
     /**
      * Estimate headway, speed and acceleration.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
-     * @param perceivedGtu LaneBasedGTU; perceived GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
+     * @param perceivedGtu LaneBasedGtu; perceived GTU
      * @param distance Length; actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
      * @param downstream boolean; downstream (or upstream) neighbor
      * @param when Time; moment of perception, reaction time included
@@ -72,8 +72,8 @@ public interface Estimation
 
     /**
      * Returns a delayed headway.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
-     * @param perceivedGtu LaneBasedGTU; perceived GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
+     * @param perceivedGtu LaneBasedGtu; perceived GTU
      * @param distance Length; actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
      * @param downstream boolean; downstream (or upstream) neighbor
      * @param when Time; moment of perception, reaction time included
@@ -94,7 +94,7 @@ public interface Estimation
     /**
      * Returns the ego speed. This is the speed used in AbstractLaneBasedGTU.getCarFollowingAcceleration(), and hence this is
      * the reference speed for the stimulus of speed difference.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @return Speed; ego speed
      */
     default Speed getEgoSpeed(final LaneBasedGTU perceivingGtu)
@@ -112,8 +112,8 @@ public interface Estimation
 
     /**
      * Returns a delayed speed difference (other minus ego).
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
-     * @param perceivedGtu LaneBasedGTU; perceived GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
+     * @param perceivedGtu LaneBasedGtu; perceived GTU
      * @param when Time; moment of perception, reaction time included
      * @return Speed; delayed speed difference (other minus ego)
      */

@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
- * Color by GTU type, based on the GTUType id or the enum id from the defaults.
+ * Color by GTU type, based on the GtuType id or the enum id from the defaults.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,7 +21,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUTypeColorer implements GTUColorer, Serializable
+public class GtuTypeColorer implements GTUColorer, Serializable
 {
 
     /** */
@@ -48,17 +48,17 @@ public class GTUTypeColorer implements GTUColorer, Serializable
         standardColors[9] = Color.WHITE;
     }
 
-    /** Default instance with colors for common GTUTypes. */
-    public static final GTUTypeColorer DEFAULT = new GTUTypeColorer().add(GTUType.DEFAULTS.CAR, Color.BLUE)
-            .add(GTUType.DEFAULTS.TRUCK, Color.RED).add(GTUType.DEFAULTS.VEHICLE, Color.GRAY)
-            .add(GTUType.DEFAULTS.PEDESTRIAN, Color.YELLOW).add(GTUType.DEFAULTS.BICYCLE, Color.GREEN);
+    /** Default instance with colors for common GtuTypes. */
+    public static final GtuTypeColorer DEFAULT = new GtuTypeColorer().add(GtuType.DEFAULTS.CAR, Color.BLUE)
+            .add(GtuType.DEFAULTS.TRUCK, Color.RED).add(GtuType.DEFAULTS.VEHICLE, Color.GRAY)
+            .add(GtuType.DEFAULTS.PEDESTRIAN, Color.YELLOW).add(GtuType.DEFAULTS.BICYCLE, Color.GREEN);
 
     /**
      * Adds a GTU type to the list with color from the default list.
-     * @param gtuTypeEnum GTUType; GTU type
-     * @return this GTUTypeColorer
+     * @param gtuTypeEnum GtuType; GTU type
+     * @return this GtuTypeColorer
      */
-    public GTUTypeColorer add(final GTUType.DEFAULTS gtuTypeEnum)
+    public GtuTypeColorer add(final GtuType.DEFAULTS gtuTypeEnum)
     {
         this.map.put(gtuTypeEnum.getId(), standardColors[this.nextDefault]);
         this.nextDefault++;
@@ -71,10 +71,10 @@ public class GTUTypeColorer implements GTUColorer, Serializable
 
     /**
      * Adds a GTU type to the list with color based on the type.
-     * @param gtuType GTUType; GTU type
-     * @return this GTUTypeColorer
+     * @param gtuType GtuType; GTU type
+     * @return this GtuTypeColorer
      */
-    public GTUTypeColorer add(final GTUType gtuType)
+    public GtuTypeColorer add(final GtuType gtuType)
     {
         this.map.put(gtuType.getId(), standardColors[this.nextDefault]);
         this.nextDefault++;
@@ -87,11 +87,11 @@ public class GTUTypeColorer implements GTUColorer, Serializable
 
     /**
      * Adds a GTU type to the list with given color.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param color Color; color
-     * @return this GTUTypeColorer
+     * @return this GtuTypeColorer
      */
-    public GTUTypeColorer add(final GTUType gtuType, final Color color)
+    public GtuTypeColorer add(final GtuType gtuType, final Color color)
     {
         this.map.put(gtuType.getId(), color);
         return this;
@@ -99,11 +99,11 @@ public class GTUTypeColorer implements GTUColorer, Serializable
 
     /**
      * Adds a GTU type based on its enum to the list with given color.
-     * @param gtuTypeEnum GTUType.DEFAULTS; GTU type default enum
+     * @param gtuTypeEnum GtuType.DEFAULTS; GTU type default enum
      * @param color Color; color
-     * @return this GTUTypeColorer
+     * @return this GtuTypeColorer
      */
-    public GTUTypeColorer add(final GTUType.DEFAULTS gtuTypeEnum, final Color color)
+    public GtuTypeColorer add(final GtuType.DEFAULTS gtuTypeEnum, final Color color)
     {
         this.map.put(gtuTypeEnum.getId(), color);
         return this;
@@ -111,9 +111,9 @@ public class GTUTypeColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public Color getColor(final Gtu gtu)
     {
-        GTUType gtuType = gtu.getGTUType();
+        GtuType gtuType = gtu.getGtuType();
         Color color = this.map.get(gtuType.getId());
         while (gtuType != null && color == null)
         {

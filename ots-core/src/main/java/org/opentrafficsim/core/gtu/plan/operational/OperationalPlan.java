@@ -22,7 +22,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.math.Solver;
 
@@ -69,7 +69,7 @@ public class OperationalPlan implements Serializable
     private final boolean waitPlan;
 
     /** GTU for debugging purposes. */
-    private final GTU gtu;
+    private final Gtu gtu;
 
     /**
      * An array of relative start times of each segment, expressed in the SI unit, where the last time is the overall ending
@@ -88,7 +88,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Construct an operational plan.
-     * @param gtu GTU; the GTU for debugging purposes
+     * @param gtu Gtu; the GTU for debugging purposes
      * @param path OTSLine3D; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
      *            least&lt;/i&gt; the length
      * @param startTime Time; the absolute start time when we start executing the path
@@ -97,7 +97,7 @@ public class OperationalPlan implements Serializable
      *            speed or deceleration profile
      * @throws OperationalPlanException when the path is too short for the operation
      */
-    public OperationalPlan(final GTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
+    public OperationalPlan(final Gtu gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
             final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
     {
 
@@ -147,13 +147,13 @@ public class OperationalPlan implements Serializable
 
     /**
      * Build a plan where the GTU will wait for a certain time.
-     * @param gtu GTU; the GTU for debugging purposes
+     * @param gtu Gtu; the GTU for debugging purposes
      * @param waitPoint DirectedPoint; the point at which the GTU will wait
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param duration Duration; the waiting time
      * @throws OperationalPlanException when construction of a waiting path fails
      */
-    public OperationalPlan(final GTU gtu, final DirectedPoint waitPoint, final Time startTime, final Duration duration)
+    public OperationalPlan(final Gtu gtu, final DirectedPoint waitPoint, final Time startTime, final Duration duration)
             throws OperationalPlanException
     {
         this.waitPlan = true;

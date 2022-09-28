@@ -29,8 +29,8 @@ import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -95,8 +95,8 @@ public class LaneBasedGTUTest implements UNITS
 
         Model model = new Model(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        GTUType carType = network.getGtuType(GTUType.DEFAULTS.CAR);
-        GTUType truckType = network.getGtuType(GTUType.DEFAULTS.TRUCK);
+        GtuType carType = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType truckType = network.getGtuType(GtuType.DEFAULTS.TRUCK);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         // Create a series of Nodes (some closely bunched together)
         List<OTSRoadNode> nodes = new ArrayList<>();
@@ -384,7 +384,7 @@ public class LaneBasedGTUTest implements UNITS
                     ie = null; // ignore
                 }
             }
-            GTUType carType = network.getGtuType(GTUType.DEFAULTS.CAR);
+            GtuType carType = network.getGtuType(GtuType.DEFAULTS.CAR);
             LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             OTSRoadNode fromNode = new OTSRoadNode(network, "Node A", new OTSPoint3D(0, 0, 0), Direction.ZERO);
             OTSRoadNode toNode = new OTSRoadNode(network, "Node B", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
@@ -485,7 +485,7 @@ public class LaneBasedGTUTest implements UNITS
                         result.add(new DirectedLanePosition(lane, new Length(rearPositionInLink, METER),
                                 GTUDirectionality.DIR_PLUS));
                     }
-                    catch (GTUException exception)
+                    catch (GtuException exception)
                     {
                         fail("Error in test; DirectedLanePosition for lane " + lane);
                     }

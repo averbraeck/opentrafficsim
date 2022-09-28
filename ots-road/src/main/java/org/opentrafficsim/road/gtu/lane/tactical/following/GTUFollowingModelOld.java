@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
@@ -25,30 +25,30 @@ public interface GTUFollowingModelOld extends CarFollowingModel
 {
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
-     * @param gtu LaneBasedGTU; the GTU for which acceleration is computed
+     * @param gtu LaneBasedGtu; the GTU for which acceleration is computed
      * @param leaderSpeed Speed; the speed of the leader
      * @param headway Length; the headway of the leader
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
      * @return AccelerationStep; the result of application of the GTU following model
-     * @throws GTUException when the speed of the gtu cannot be determined
+     * @throws GtuException when the speed of the gtu cannot be determined
      */
     AccelerationStep computeAccelerationStep(LaneBasedGTU gtu, Speed leaderSpeed, Length headway, Length maxDistance,
-            Speed speedLimit) throws GTUException;
+            Speed speedLimit) throws GtuException;
 
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
-     * @param gtu LaneBasedGTU; the GTU for which acceleration is computed
+     * @param gtu LaneBasedGtu; the GTU for which acceleration is computed
      * @param leaderSpeed Speed; the speed of the leader
      * @param headway Length; the headway of the leader
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
      * @param stepSize Duration; given step size, which can be longer or shorter than the provided step size in the algorithms.
      * @return AccelerationStep; the result of application of the GTU following model
-     * @throws GTUException when the speed of the gtu cannot be determined
+     * @throws GtuException when the speed of the gtu cannot be determined
      */
     AccelerationStep computeAccelerationStep(LaneBasedGTU gtu, Speed leaderSpeed, Length headway, Length maxDistance,
-            Speed speedLimit, Duration stepSize) throws GTUException;
+            Speed speedLimit, Duration stepSize) throws GtuException;
 
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -115,17 +115,17 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * referenceGTU), prohibitive decelerations shall be returned.<br>
      * Two AccelerationStep values are returned in a DualAccelerationStep.<br>
      * or should slow down for a crossing from accelerating to unsafe speeds.
-     * @param gtu LaneBasedGTU; the GTU for which the accelerations are computed
+     * @param gtu LaneBasedGtu; the GTU for which the accelerations are computed
      * @param otherHeadways Collection&lt;Headway&gt;; the other GTUs. A negative headway value indicates that the other GTU is
      *            a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
      * @return DualAccelerationStep; the result with the lowest accelerations (or most severe decelerations) of application of
      *         the GTU following model of the referenceGTU for each leader and follower
-     * @throws GTUException when the speed of the gtu cannot be determined
+     * @throws GtuException when the speed of the gtu cannot be determined
      */
     DualAccelerationStep computeDualAccelerationStep(LaneBasedGTU gtu, Collection<Headway> otherHeadways, Length maxDistance,
-            Speed speedLimit) throws GTUException;
+            Speed speedLimit) throws GtuException;
 
     /**
      * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
@@ -134,7 +134,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * referenceGTU), prohibitive decelerations shall be returned.<br>
      * Two AccelerationStep values are returned in a DualAccelerationStep.<br>
      * or should slow down for a crossing from accelerating to unsafe speeds.
-     * @param gtu LaneBasedGTU; the GTU for which the accelerations are computed
+     * @param gtu LaneBasedGtu; the GTU for which the accelerations are computed
      * @param otherHeadways Collection&lt;Headway&gt;; the other GTUs. A negative headway value indicates that the other GTU is
      *            a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
@@ -142,33 +142,33 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @param stepSize Duration; given step size, which can be longer or shorter than the provided step size in the algorithms.
      * @return DualAccelerationStep; the result with the lowest accelerations (or most severe decelerations) of application of
      *         the GTU following model of the referenceGTU for each leader and follower
-     * @throws GTUException when the speed of the gtu cannot be determined
+     * @throws GtuException when the speed of the gtu cannot be determined
      */
     DualAccelerationStep computeDualAccelerationStep(LaneBasedGTU gtu, Collection<Headway> otherHeadways, Length maxDistance,
-            Speed speedLimit, Duration stepSize) throws GTUException;
+            Speed speedLimit, Duration stepSize) throws GtuException;
 
     /**
      * Compute the acceleration that would be used if the is not leader in sight.
-     * @param gtu LaneBasedGTU; the GTU for which acceleration is computed
+     * @param gtu LaneBasedGtu; the GTU for which acceleration is computed
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
      * @return AccelerationStep; the result of application of the GTU following model
-     * @throws GTUException when the speed of the gtu cannot be determined
+     * @throws GtuException when the speed of the gtu cannot be determined
      */
     AccelerationStep computeAccelerationStepWithNoLeader(LaneBasedGTU gtu, Length maxDistance, Speed speedLimit)
-            throws GTUException;
+            throws GtuException;
 
     /**
      * Compute the acceleration that would be used if the is not leader in sight.
-     * @param gtu LaneBasedGTU; the GTU for which acceleration is computed
+     * @param gtu LaneBasedGtu; the GTU for which acceleration is computed
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
      * @param stepSize Duration; given step size, which can be longer or shorter than the provided step size in the algorithms.
      * @return AccelerationStep; the result of application of the GTU following model
-     * @throws GTUException when the speed of the gtu cannot be determined
+     * @throws GtuException when the speed of the gtu cannot be determined
      */
     AccelerationStep computeAccelerationStepWithNoLeader(LaneBasedGTU gtu, Length maxDistance, Speed speedLimit,
-            Duration stepSize) throws GTUException;
+            Duration stepSize) throws GtuException;
 
     /**
      * Compute the minimum <b>net</b> headway given the speed of the follower and the leader.<br>

@@ -11,7 +11,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -43,7 +43,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGTU referenceGTU,
-            final Collection<Headway> otherGTUs, final Length maxDistance, final Speed speedLimit) throws GTUException
+            final Collection<Headway> otherGTUs, final Length maxDistance, final Speed speedLimit) throws GtuException
     {
         return computeDualAccelerationStep(referenceGTU, otherGTUs, maxDistance, speedLimit, getStepSize());
     }
@@ -52,7 +52,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGTU referenceGTU,
             final Collection<Headway> otherHeadways, final Length maxDistance, final Speed speedLimit, final Duration stepSize)
-            throws GTUException
+            throws GtuException
     {
         // Find out if there is an immediate collision
         for (Headway headway : otherHeadways)
@@ -122,7 +122,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final LaneBasedGTU gtu, final Speed leaderSpeed, final Length headway,
-            final Length maxDistance, final Speed speedLimit) throws GTUException
+            final Length maxDistance, final Speed speedLimit) throws GtuException
     {
         return computeAccelerationStep(gtu, leaderSpeed, headway, maxDistance, speedLimit, getStepSize());
     }
@@ -130,7 +130,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final LaneBasedGTU gtu, final Speed leaderSpeed, final Length headway,
-            final Length maxDistance, final Speed speedLimit, final Duration stepSize) throws GTUException
+            final Length maxDistance, final Speed speedLimit, final Duration stepSize) throws GtuException
     {
         Length distance;
         Speed leaderOrBlockSpeed;
@@ -175,7 +175,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGTU gtu, final Length maxDistance,
-            final Speed speedLimit) throws GTUException
+            final Speed speedLimit) throws GtuException
     {
         return computeAccelerationStepWithNoLeader(gtu, maxDistance, speedLimit, getStepSize());
     }
@@ -183,7 +183,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGTU gtu, final Length maxDistance,
-            final Speed speedLimit, final Duration stepSize) throws GTUException
+            final Speed speedLimit, final Duration stepSize) throws GtuException
     {
         Length stopDistance = new Length(
                 gtu.getMaximumSpeed().si * gtu.getMaximumSpeed().si / (2.0 * getMaximumSafeDeceleration().si), LengthUnit.SI);

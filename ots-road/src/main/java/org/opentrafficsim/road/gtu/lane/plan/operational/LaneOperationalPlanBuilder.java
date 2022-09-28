@@ -23,7 +23,7 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
@@ -78,7 +78,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * Build a plan with a path and a given start speed to try to reach a provided end speed, exactly at the end of the curve.
      * The acceleration (and deceleration) are capped by maxAcceleration and maxDeceleration. Therefore, there is no guarantee
      * that the end speed is actually reached by this plan.
-     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param distance Length; distance to drive for reaching the end speed
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
@@ -137,7 +137,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * Build a plan with a path and a given start speed to reach a provided end speed, exactly at the end of the curve.
      * Acceleration and deceleration are virtually unbounded (1E12 m/s2) to reach the end speed (e.g., to come to a complete
      * stop).
-     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param distance Length; distance to drive for reaching the end speed
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
@@ -160,7 +160,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * provided, until the end speed is reached. After this, constant end speed is used to reach the end point of the path.
      * There is no guarantee that the end speed is actually reached by this plan. If the end speed is zero, and it is reached
      * before completing the path, a truncated path that ends where the GTU stops is used instead.
-     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param distance Length; distance to drive for reaching the end speed
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
@@ -248,7 +248,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * provided, until the end speed is reached. After this, constant end speed is used to reach the end point of the path.
      * There is no guarantee that the end speed is actually reached by this plan. If the end speed is zero, and it is reached
      * before completing the path, a truncated path that ends where the GTU stops is used instead.
-     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
      * @param acceleration Acceleration; the acceleration to use
@@ -282,7 +282,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
 
     /**
      * Creates a path along lane center lines.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param distance Length; minimum distance
      * @return OTSLine3D; path along lane center lines
      * @throws OTSGeometryException when any of the OTSLine3D operations fails
@@ -355,7 +355,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 {
                     // check sink sensor
                     Length pos = prevFrom.getDirection().isPlus() ? prevFrom.getLength() : Length.ZERO;
-                    for (SingleSensor sensor : prevFrom.getLane().getSensors(pos, pos, gtu.getGTUType(),
+                    for (SingleSensor sensor : prevFrom.getLane().getSensors(pos, pos, gtu.getGtuType(),
                             prevFrom.getDirection()))
                     {
                         // XXX for now, the same is not done for the DestinationSensor (e.g., decrease speed for parking)
@@ -436,7 +436,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 }
             }
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new RuntimeException("Error during creation of path.", exception);
         }
@@ -448,7 +448,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * provided, until the end speed is reached. After this, constant end speed is used to reach the end point of the path.
      * There is no guarantee that the end speed is actually reached by this plan. If the end speed is zero, and it is reached
      * before completing the path, a truncated path that ends where the GTU stops is used instead.
-     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param laneChangeDirectionality LateralDirectionality; direction of lane change (on initiation only, after that not
      *            important)
      * @param startPosition DirectedPoint; current position
@@ -484,7 +484,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             Map<Lane, Length> positions = gtu.positions(gtu.getReference());
             DirectedLanePosition ref = gtu.getReferencePosition();
             Iterator<Lane> iterator = ref.getLane()
-                    .accessibleAdjacentLanesPhysical(direction, gtu.getGTUType(), ref.getGtuDirection()).iterator();
+                    .accessibleAdjacentLanesPhysical(direction, gtu.getGtuType(), ref.getGtuDirection()).iterator();
             Lane adjLane = iterator.hasNext() ? iterator.next() : null;
             DirectedLanePosition from = null;
             if (laneChange.getDirection() == null || (adjLane != null && positions.containsKey(adjLane)))
@@ -497,7 +497,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 // reference lane is to lane, this should be accounted for
                 for (Lane lane : positions.keySet())
                 {
-                    if (lane.accessibleAdjacentLanesPhysical(direction, gtu.getGTUType(), ref.getGtuDirection())
+                    if (lane.accessibleAdjacentLanesPhysical(direction, gtu.getGtuType(), ref.getGtuDirection())
                             .contains(ref.getLane()))
                     {
                         from = new DirectedLanePosition(lane, positions.get(lane), ref.getGtuDirection());
@@ -512,7 +512,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             LaneBasedOperationalPlan plan = new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, true);
             return plan;
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new RuntimeException("Error during creation of lane change plan.", exception);
         }
@@ -568,19 +568,19 @@ public final class LaneOperationalPlanBuilder // class package private for sched
 
     /**
      * Build an operational plan based on a simple operational plan and status info.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param startTime Time; start time for plan
      * @param simplePlan SimpleOperationalPlan; simple operational plan
      * @param laneChange LaneChange; lane change status
      * @return operational plan
      * @throws ParameterException if parameter is not defined
-     * @throws GTUException gtu exception
+     * @throws GtuException gtu exception
      * @throws NetworkException network exception
      * @throws OperationalPlanException operational plan exeption
      */
     public static LaneBasedOperationalPlan buildPlanFromSimplePlan(final LaneBasedGTU gtu, final Time startTime,
             final SimpleOperationalPlan simplePlan, final LaneChange laneChange)
-            throws ParameterException, GTUException, NetworkException, OperationalPlanException
+            throws ParameterException, GtuException, NetworkException, OperationalPlanException
     {
         Acceleration acc = gtu.getVehicleModel().boundAcceleration(simplePlan.getAcceleration(), gtu);
 
@@ -628,7 +628,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * but at that point no time can be derived as the plan is required for that. Hence, this method can be scheduled at the
      * same time (sequentially after creation of the plan) to then schedule the actual finalization by deriving time from
      * distance with the plan.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param distance Length; distance
      * @param laneChangeDirection LateralDirectionality; lane change direction
      * @throws SimRuntimeException on bad time
@@ -651,7 +651,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * Build a plan with a path and a given start speed to try to come to a stop with a given deceleration. If the GTU can stop
      * before completing the given path, a truncated path that ends where the GTU stops is used instead. There is no guarantee
      * that the OperationalPlan will lead to a complete stop.
-     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param distance Length; distance to drive for reaching the end speed
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path

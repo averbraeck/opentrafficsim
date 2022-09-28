@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.routesystem;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
@@ -27,11 +27,11 @@ public interface RouteSystem
      * @param position DirectedLanePosition; position
      * @param front Length; distance required for the front (relative to reference position)
      * @param route Route; route, may be {@code null}
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param distance Length; distance over which required lane changes are desired to be known
      * @return SortedSet&lt;LaneChangeInfo&gt;; lane change information
      */
-    SortedSet<LaneChangeInfo> getLaneChangeInfo(DirectedLanePosition position, Length front, Route route, GTUType gtuType,
+    SortedSet<LaneChangeInfo> getLaneChangeInfo(DirectedLanePosition position, Length front, Route route, GtuType gtuType,
             Length distance);
 
     // public void clearCache();

@@ -127,7 +127,7 @@ public class Distraction
 
     /**
      * Returns a task for the given GTU.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @return Task; task for given GTU
      */
     public final Task getTask(final LaneBasedGTU gtu)

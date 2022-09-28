@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * GTU colorer that uses a coloring method that can be switched by the user of the program.
@@ -63,7 +63,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu)
+    public final Color getColor(final Gtu gtu)
     {
         return this.activeColorer.getColor(gtu);
     }

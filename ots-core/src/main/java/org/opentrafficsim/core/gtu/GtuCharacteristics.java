@@ -15,14 +15,14 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GTUCharacteristics implements Serializable
+public class GtuCharacteristics implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160000L;
 
     /** The type of the GTU. */
-    private final GTUType gtuType;
+    private final GtuType gtuType;
 
     /** Length of the GTU. */
     private final Length length;
@@ -44,7 +44,7 @@ public class GTUCharacteristics implements Serializable
 
     /**
      * Construct a new set of GTUCharacteristics.
-     * @param gtuType GTUType; type of the (not yet constructed) GTU
+     * @param gtuType GtuType; type of the (not yet constructed) GTU
      * @param length Length; the length of the (non yet constructed) GTU
      * @param width Length; the width of the (non yet constructed) GTU
      * @param maximumSpeed Speed; the maximum speed of the (non yet constructed) GTU
@@ -52,7 +52,7 @@ public class GTUCharacteristics implements Serializable
      * @param maximumDeceleration Acceleration; maximum deceleration
      * @param front Length; front position relative to the reference position
      */
-    public GTUCharacteristics(final GTUType gtuType, final Length length, final Length width, final Speed maximumSpeed,
+    public GtuCharacteristics(final GtuType gtuType, final Length length, final Length width, final Speed maximumSpeed,
             final Acceleration maximumAcceleration, final Acceleration maximumDeceleration, final Length front)
     {
         this.gtuType = gtuType;
@@ -66,9 +66,9 @@ public class GTUCharacteristics implements Serializable
 
     /**
      * Retrieve the GTU type.
-     * @return GTUType
+     * @return GtuType
      */
-    public final GTUType getGTUType()
+    public final GtuType getGtuType()
     {
         return this.gtuType;
     }

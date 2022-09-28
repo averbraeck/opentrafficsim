@@ -26,8 +26,8 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
@@ -63,18 +63,18 @@ public class CarTest implements UNITS
      * @throws NetworkException on ???
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
-     * @throws GTUException on ???
+     * @throws GtuException on ???
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
     @SuppressWarnings("static-method")
     @Test
     public final void carTest()
-            throws NetworkException, SimRuntimeException, NamingException, GTUException, OTSGeometryException
+            throws NetworkException, SimRuntimeException, NamingException, GtuException, OTSGeometryException
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         OTSSimulatorInterface simulator = makeSimulator();
         OTSRoadNetwork network = new OTSRoadNetwork("network", true, simulator);
-        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
         Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
@@ -113,7 +113,7 @@ public class CarTest implements UNITS
     /**
      * Create a new Car.
      * @param id String; the name (number) of the Car
-     * @param gtuType GTUType; the type of the new car
+     * @param gtuType GtuType; the type of the new car
      * @param lane Lane; the lane on which the new Car is positioned
      * @param initialPosition Length; the initial longitudinal position of the new Car
      * @param initialSpeed Speed; the initial speed
@@ -126,13 +126,13 @@ public class CarTest implements UNITS
      * @throws NamingException on network error when making the animation
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
-     * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
+     * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
      * @throws OTSGeometryException when the initial path is wrong
      */
-    public static LaneBasedIndividualGTU makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
+    public static LaneBasedIndividualGTU makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OTSSimulatorInterface simulator,
             final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
-            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
+            throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException
     {
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);

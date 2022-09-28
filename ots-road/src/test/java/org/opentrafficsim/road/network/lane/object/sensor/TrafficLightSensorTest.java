@@ -32,8 +32,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -124,9 +124,9 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * @param lanes Lane[]; the sequence of lanes
      * @param position Length; the distance
      * @return DirectedLanePosition
-     * @throws GTUException should not happen; if it does; the test has failed
+     * @throws GtuException should not happen; if it does; the test has failed
      */
-    private DirectedLanePosition findLaneAndPosition(final Lane[] lanes, final Length position) throws GTUException
+    private DirectedLanePosition findLaneAndPosition(final Lane[] lanes, final Length position) throws GtuException
     {
         Length remainingLength = position;
         for (Lane lane : lanes)
@@ -153,11 +153,11 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * @throws OTSGeometryException if that happens (uncaught) this test has failed
      * @throws NamingException if that happens (uncaught) this test has failed
      * @throws NetworkException if that happens (uncaught) this test has failed
-     * @throws GTUException if that happens (uncaught) this test has failed
+     * @throws GtuException if that happens (uncaught) this test has failed
      */
     // XXX @Test
     public final void trafficLightSensorTest()
-            throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException, GTUException
+            throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException, GtuException
     {
         double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900},};
         for (double[] lengthList : lengthLists)
@@ -208,7 +208,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 tls.addListener(this, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
                 assertEquals("event list is empty", 0, this.loggedEvents.size());
 
-                GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.TRUCK);
+                GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.TRUCK);
                 Length gtuLength = new Length(17, LengthUnit.METER);
                 Length gtuWidth = new Length(2, LengthUnit.METER);
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);

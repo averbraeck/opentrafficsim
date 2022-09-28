@@ -28,8 +28,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.FundamentalDiagrams.FundamentalDiagramPlotsModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -172,7 +172,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                                 false, Duration.instantiateSI(60.0), false),
                         null));
             }
-            catch (NetworkException | GTUException exception)
+            catch (NetworkException | GtuException exception)
             {
                 throw new OTSSimulationException(exception);
             }
@@ -297,7 +297,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 // Remove the block at t = 7 minutes
                 this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
             }
-            catch (SimRuntimeException | NetworkException | GTUException | OTSGeometryException | ParameterException
+            catch (SimRuntimeException | NetworkException | GtuException | OTSGeometryException | ParameterException
                     | InputParameterException exception)
             {
                 exception.printStackTrace();
@@ -330,7 +330,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 boolean generateTruck = this.stream.nextDouble() > this.carProbability;
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
-                        this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
+                        this.network.getGtuType(GtuType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
                         new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
                 gtu.setNoLaneChangeDistance(Length.ZERO);
@@ -349,7 +349,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 gtu.init(strategicalPlanner, initialPositions, initialSpeed);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
-            catch (SimRuntimeException | NetworkException | GTUException | OTSGeometryException exception)
+            catch (SimRuntimeException | NetworkException | GtuException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }

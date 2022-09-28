@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu.generator.od;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType.DEFAULTS;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -38,10 +38,10 @@ public interface StrategicalPlannerFactorySupplierOD
      * @param category Category; category (GTU type, route, or more)
      * @param randomStream StreamInterface; stream for random numbers
      * @return LaneBasedGTUCharacteristics
-     * @throws GTUException if characteristics could not be generated for the GTUException
+     * @throws GtuException if characteristics could not be generated for the GTUException
      */
     LaneBasedStrategicalPlannerFactory<?> getFactory(Node origin, Node destination, Category category,
-            StreamInterface randomStream) throws GTUException;
+            StreamInterface randomStream) throws GtuException;
 
     /**
      * Returns a standard implementation for LMRS.
@@ -54,7 +54,7 @@ public interface StrategicalPlannerFactorySupplierOD
             /** {@inheritDoc} */
             @Override
             public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
-                    final Category category, final StreamInterface randomStream) throws GTUException
+                    final Category category, final StreamInterface randomStream) throws GtuException
             {
                 ParameterFactoryByType params = new ParameterFactoryByType();
                 params.addParameter(origin.getNetwork().getGtuType(DEFAULTS.TRUCK), ParameterTypes.A,
@@ -81,7 +81,7 @@ public interface StrategicalPlannerFactorySupplierOD
             /** {@inheritDoc} */
             @Override
             public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
-                    final Category category, final StreamInterface randomStream) throws GTUException
+                    final Category category, final StreamInterface randomStream) throws GtuException
             {
                 return new LaneBasedStrategicalRoutePlannerFactory(
                         tacticalPlannerFactorySupplierOD.getFactory(origin, destination, category, randomStream));

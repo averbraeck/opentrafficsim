@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu.plan.tactical;
 
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 
 /**
  * A factory class is used to generate tactical planners as the tactical planner is state-full.
@@ -27,10 +27,10 @@ public interface TacticalPlannerFactory<T extends TacticalPlanner>
 
     /**
      * Creates a new tactical planner for the given GTU.
-     * @param gtu GTU; GTU
+     * @param gtu Gtu; GTU
      * @return tactical planner for the given GTU
-     * @throws GTUException if the gtu is not suitable in any way for the creation of the tactical planner
+     * @throws GtuException if the gtu is not suitable in any way for the creation of the tactical planner
      */
-    T create(GTU gtu) throws GTUException;
+    T create(Gtu gtu) throws GtuException;
 
 }

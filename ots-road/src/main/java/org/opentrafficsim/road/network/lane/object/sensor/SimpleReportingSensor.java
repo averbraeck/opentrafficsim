@@ -61,7 +61,7 @@ public class SimpleReportingSensor extends AbstractSensor
         Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         return new SimpleReportingSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
-                (OTSSimulatorInterface) newSimulator, getDetectedGTUTypes());
+                (OTSSimulatorInterface) newSimulator, getDetectedGtuTypes());
 
         // the sensor creates its own animation (for now)
     }

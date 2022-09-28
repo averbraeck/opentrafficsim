@@ -55,7 +55,7 @@ public interface VehicleModel
     /**
      * Returns a bounded acceleration.
      * @param acceleration Acceleration; intended acceleration
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @return Acceleration; possible acceleration
      */
     Acceleration boundAcceleration(Acceleration acceleration, LaneBasedGTU gtu);

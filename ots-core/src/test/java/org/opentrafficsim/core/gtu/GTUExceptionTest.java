@@ -25,51 +25,51 @@ public class GTUExceptionTest
     @Test
     public final void gtuExceptionTest()
     {
-        GTUException e = new GTUException();
+        GtuException e = new GtuException();
         assertNotNull("result should not be null", e);
         String message = "test message";
-        e = new GTUException(message);
+        e = new GtuException(message);
         assertEquals("message should be " + message, message, e.getMessage());
         String causeMessage = "cause message";
         Throwable cause = new Throwable(causeMessage);
-        e = new GTUException(cause);
+        e = new GtuException(cause);
         assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
-        e = new GTUException(message, cause);
+        e = new GtuException(message, cause);
         assertEquals("message should be " + message, message, e.getMessage());
         assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
-        e = new GTUException(message, cause, false, false);
+        e = new GtuException(message, cause, false, false);
         assertEquals("message should be " + message, message, e.getMessage());
         assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
         // TODO check that the values of enableSuppresion and writableStackTrace are correctly reflected in e
-        e = new GTUException(message, cause, false, true);
+        e = new GtuException(message, cause, false, true);
         assertEquals("message should be " + message, message, e.getMessage());
         assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
-        e = new GTUException(message, cause, true, false);
+        e = new GtuException(message, cause, true, false);
         assertEquals("message should be " + message, message, e.getMessage());
         assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
-        e = new GTUException(message, cause, true, true);
+        e = new GtuException(message, cause, true, true);
         assertEquals("message should be " + message, message, e.getMessage());
         assertEquals("cause message should be" + causeMessage, causeMessage, e.getCause().getMessage());
     }
 
     /**
      * Test the throwIf method.
-     * @throws GTUException should not happen (this test has failed if it does)
+     * @throws GtuException should not happen (this test has failed if it does)
      */
     @Test
-    public final void throwIfTest() throws GTUException
+    public final void throwIfTest() throws GtuException
     {
         String message = "message";
         try
         {
-            Throw.when(true, GTUException.class, message);
+            Throw.when(true, GtuException.class, message);
             fail("Previous statement should have thrown a GTUException");
         }
-        catch (GTUException e)
+        catch (GtuException e)
         {
             assertTrue(e.getMessage().endsWith(message));
         }
 
-        Throw.when(false, GTUException.class, message);
+        Throw.when(false, GtuException.class, message);
     }
 }

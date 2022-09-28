@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
@@ -55,7 +55,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
     /**
      * Constructor.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @param root LaneRecord&lt;?&gt;; root record
      * @param initialPosition Length; initial position
      * @param downstream boolean; search downstream (or upstream)
@@ -100,9 +100,9 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * @param position Length; position to look beyond
      * @param counter C; counter
      * @return next object(s) on the lane or {@code null} if none
-     * @throws GTUException on any exception in the process
+     * @throws GtuException on any exception in the process
      */
-    protected abstract Entry getNext(LaneRecord<?> record, Length position, C counter) throws GTUException;
+    protected abstract Entry getNext(LaneRecord<?> record, Length position, C counter) throws GtuException;
 
     /**
      * Returns the distance to the object. The position fed in to this method is directly taken from an {@code Entry} returned

@@ -17,7 +17,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
@@ -79,7 +79,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
-     * @param gtu LaneBasedGTU; the Car to draw
+     * @param gtu LaneBasedGtu; the Car to draw
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
@@ -92,7 +92,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
-     * @param gtu LaneBasedGTU; the Car to draw
+     * @param gtu LaneBasedGtu; the Car to draw
      * @param simulator OTSSimulatorInterface; the simulator to schedule on
      * @param gtuColorer GTUColorer; the GTUColorer that determines what fill color to use
      * @throws NamingException in case of registration failure of the animation
@@ -153,7 +153,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             this.rightIndicator = new Rectangle2D.Double(lFront - w4, w2 - w4, w4, w4);
             this.leftBrake = new Rectangle2D.Double(lRear, w2 - w4, w4, w4);
             this.rightBrake = new Rectangle2D.Double(lRear, -w2, w4, w4);
-            this.dot = gtu.getGTUType().isOfType(gtu.getPerceivableContext().getGtuType(GTUType.DEFAULTS.TRUCK))
+            this.dot = gtu.getGtuType().isOfType(gtu.getPerceivableContext().getGtuType(GtuType.DEFAULTS.TRUCK))
                     ? new Rectangle2D.Double(0, 0, 0, 0) : new Ellipse2D.Double(0, 0, 0, 0);
         }
 

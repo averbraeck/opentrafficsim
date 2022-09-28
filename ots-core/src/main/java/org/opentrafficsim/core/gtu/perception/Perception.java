@@ -3,8 +3,8 @@ package org.opentrafficsim.core.gtu.perception;
 import java.io.Serializable;
 
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -19,24 +19,24 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @param <G> GTU type
  */
-public interface Perception<G extends GTU> extends Serializable
+public interface Perception<G extends Gtu> extends Serializable
 {
     /**
      * Invoked by the GTU prior to determining the operational plan. If the implementation works in-sync with the tactical
      * planner, this method is used to update perceived information. It is however possible for the implementation to ignore
      * this and have fully autonomous perception.
-     * @throws GTUException when GTU has not been properly initialized.
+     * @throws GtuException when GTU has not been properly initialized.
      * @throws NetworkException in case of inconsistencies in the network during perception calculations.
      * @throws ParameterException in case of a parameter error.
      */
-    void perceive() throws GTUException, NetworkException, ParameterException;
+    void perceive() throws GtuException, NetworkException, ParameterException;
 
     /**
      * Return the GTU of this perception.
      * @return GTU of this perception
-     * @throws GTUException if the GTU has not been initialized
+     * @throws GtuException if the GTU has not been initialized
      */
-    G getGtu() throws GTUException;
+    G getGtu() throws GtuException;
 
     /**
      * Adds given perception category to the perception.

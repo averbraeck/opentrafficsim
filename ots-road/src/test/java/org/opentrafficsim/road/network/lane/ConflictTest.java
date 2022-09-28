@@ -28,7 +28,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
@@ -152,8 +152,8 @@ public class ConflictTest implements EventListenerInterface
                 conflictBStart.si));
         System.out.println(String.format("c0,0,0 l%f,0", conflictBLength.si));
 
-        GTUType bicycles = network.getGtuType("BICYCLE");
-        GTUType cars = network.getGtuType("CAR");
+        GtuType bicycles = network.getGtuType("BICYCLE");
+        GtuType cars = network.getGtuType("CAR");
 
         assertEquals("not events received yet", 0, this.collectedEvents.size());
 

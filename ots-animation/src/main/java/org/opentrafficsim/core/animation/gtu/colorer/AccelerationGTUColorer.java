@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.core.animation.ColorInterpolator;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * Color GTUs based on their current acceleration.
@@ -68,7 +68,7 @@ public class AccelerationGTUColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu)
+    public final Color getColor(final Gtu gtu)
     {
         Acceleration acceleration = gtu.getAcceleration();
         double ratio;

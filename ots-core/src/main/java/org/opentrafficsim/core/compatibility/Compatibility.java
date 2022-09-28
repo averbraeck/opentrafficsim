@@ -3,8 +3,8 @@ package org.opentrafficsim.core.compatibility;
 import org.opentrafficsim.base.HierarchicalType;
 
 /**
- * Compatibility of infrastructure and users of that infrastructure. Examples are compatibility of a GTUType with a LinkType, or
- * GTUType with a LaneType, or GTUType with a SensorType. Both infrastructure type and user type are hierarchical, and the
+ * Compatibility of infrastructure and users of that infrastructure. Examples are compatibility of a GtuType with a LinkType, or
+ * GtuType with a LaneType, or GtuType with a SensorType. Both infrastructure type and user type are hierarchical, and the
  * information to make the decision might be higher up in the hierarchy. The outcome depends on whether the infrastructure or
  * the user hierarchy is traversed first. Example:
  * 
@@ -40,8 +40,8 @@ import org.opentrafficsim.base.HierarchicalType;
 public interface Compatibility<U extends HierarchicalType<U>, I extends HierarchicalType<I>>
 {
     /**
-     * Test if a user type is compatible with the infrastructure type. Examples are compatibility of a GTUType with a LinkType,
-     * or GTUType with a LaneType, or GTUType with a SensorType. Since both GTUType and InfrastructureType are hierarchical
+     * Test if a user type is compatible with the infrastructure type. Examples are compatibility of a GtuType with a LinkType,
+     * or GtuType with a LaneType, or GtuType with a SensorType. Since both GtuType and InfrastructureType are hierarchical
      * types, it might be that compatibility has to look one or more levels up to determine whether user type and infrastructure
      * type are compatible. The outcome depends on which hierarchy is examined first. The way this is implemented is as follows:
      * First, all combinations in the two hierarchies will be searched for explicitly forbidden combinations. If there is a

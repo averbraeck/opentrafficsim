@@ -6,7 +6,7 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -35,7 +35,7 @@ public class LaneDirectionRecord implements LaneRecord<LaneDirectionRecord>
     private final Length startDistance;
 
     /** GTU type. */
-    private final GTUType gtuType;
+    private final GtuType gtuType;
 
     /** Stored next lanes. */
     private List<LaneDirectionRecord> next;
@@ -48,9 +48,9 @@ public class LaneDirectionRecord implements LaneRecord<LaneDirectionRecord>
      * @param lane Lane; lane
      * @param dir GTUDirectionality; direction of travel
      * @param startDistance Length; distance to start
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      */
-    public LaneDirectionRecord(final Lane lane, final GTUDirectionality dir, final Length startDistance, final GTUType gtuType)
+    public LaneDirectionRecord(final Lane lane, final GTUDirectionality dir, final Length startDistance, final GtuType gtuType)
     {
         this.lane = lane;
         this.dir = dir;

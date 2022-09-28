@@ -19,7 +19,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -81,12 +81,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     /**
      * Constructor.
      * @param carFollowingModel CarFollowingModel; Car-following model.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      */
     public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
-        this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GTUException.class);
+        this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
         getPerception().addPerceptionCategory(new ToledoPerception(getPerception()));
         getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGtuType.WRAP));
     }
@@ -94,7 +94,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-            throws OperationalPlanException, GTUException, NetworkException, ParameterException
+            throws OperationalPlanException, GtuException, NetworkException, ParameterException
     {
 
         // obtain objects to get info
@@ -463,7 +463,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns info regarding gap-acceptance.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param params Parameters; parameters
      * @param perception LanePerception; perception
      * @param emuTg double; emu from target gap model
@@ -555,7 +555,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the utility of a lane.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param params Parameters; parameters
      * @param perception LanePerception; perception
      * @param emuGa double; emu from gap acceptance model
@@ -705,7 +705,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the density in the given lane based on the following and leading vehicles.
-     * @param gtu LaneBasedGTU; subject GTU
+     * @param gtu LaneBasedGtu; subject GTU
      * @param perception LanePerception; perception
      * @param lane RelativeLane; lane to get density of
      * @return density in the given lane based on the following and leading vehicles

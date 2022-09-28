@@ -8,8 +8,8 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
@@ -95,9 +95,9 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
         paramFactory.addParameter(ParameterTypes.TMIN, simulation.getIdmOptions().getTMin());
         paramFactory.addParameter(ParameterTypes.TMAX, simulation.getIdmOptions().getTMax());
         paramFactory.addParameter(ParameterTypes.T, simulation.getIdmOptions().getTMax());
-        paramFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.A,
+        paramFactory.addParameter(network.getGtuType(GtuType.DEFAULTS.CAR), ParameterTypes.A,
                 simulation.getIdmOptions().getACar());
-        paramFactory.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A,
+        paramFactory.addParameter(network.getGtuType(GtuType.DEFAULTS.TRUCK), ParameterTypes.A,
                 simulation.getIdmOptions().getATruck());
         paramFactory.addParameter(ParameterTypes.B, simulation.getIdmOptions().getB());
 
@@ -123,9 +123,9 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
     /** {@inheritDoc} */
     @Override
     public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination, final Category category,
-            final StreamInterface randomStream) throws GTUException
+            final StreamInterface randomStream) throws GtuException
     {
-        if (category.get(GTUType.class).isOfType(GTUType.DEFAULTS.TRUCK))
+        if (category.get(GtuType.class).isOfType(GtuType.DEFAULTS.TRUCK))
         {
             return this.truckFactory;
         }

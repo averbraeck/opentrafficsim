@@ -20,7 +20,7 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -133,7 +133,7 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<OTSModelInterf
                 XmlNetworkLaneParser.build(url.getPath(), this.network, true);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | OTSGeometryException | JAXBException
-                    | URISyntaxException | XmlParserException | GTUException | IOException | TrafficControlException exception)
+                    | URISyntaxException | XmlParserException | GtuException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();
             }

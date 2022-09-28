@@ -8,7 +8,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -90,7 +90,7 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
             }
             return stops;
         }
-        catch (GTUException | ParameterException exception)
+        catch (GtuException | ParameterException exception)
         {
             throw new RuntimeException("Unexpected exception while perceiving bus stops.");
         }
@@ -105,7 +105,7 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
 
     /** {@inheritDoc} */
     @Override
-    public void updateAll() throws GTUException, NetworkException, ParameterException
+    public void updateAll() throws GtuException, NetworkException, ParameterException
     {
         // lazy evaluation
     }

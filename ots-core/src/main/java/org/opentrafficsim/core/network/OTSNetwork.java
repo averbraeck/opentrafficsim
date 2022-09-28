@@ -23,8 +23,8 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
@@ -63,19 +63,19 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     private Map<String, InvisibleObjectInterface> invisibleObjectMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Map of Routes. */
-    private Map<GTUType, Map<String, Route>> routeMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<GtuType, Map<String, Route>> routeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    /** Graphs to calculate shortest paths per GTUType. */
-    private Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new LinkedHashMap<>();
+    /** Graphs to calculate shortest paths per GtuType. */
+    private Map<GtuType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new LinkedHashMap<>();
 
-    /** GTUTypes registered for this network. */
-    private Map<String, GTUType> gtuTypeMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    /** GtuTypes registered for this network. */
+    private Map<String, GtuType> gtuTypeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** LinkTypes registered for this network. */
     private Map<String, LinkType> linkTypeMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** GTUs registered in this network. */
-    private Map<String, GTU> gtuMap = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<String, Gtu> gtuMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** The DSOL simulator engine. */
     private final OTSSimulatorInterface simulator;
@@ -83,7 +83,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * Construction of an empty network.
      * @param id String; the network id.
-     * @param addDefaultTypes add the default GTUTypes and LinkTypes, or not
+     * @param addDefaultTypes add the default GtuTypes and LinkTypes, or not
      * @param simulator OTSSimulatorInterface; the DSOL simulator engine
      */
     public OTSNetwork(final String id, final boolean addDefaultTypes, final OTSSimulatorInterface simulator)
@@ -182,11 +182,11 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * Return a list of Centroid nodes that have incoming connectors without corresponding outgoing connectors to the same node
      * or vice versa (which can be fully okay, especially when the lanes are a dead end, or when lanes / links only go in a
      * single direction).
-     * @param gtuType GTUType; the GTU type for which to check the connectors
+     * @param gtuType GtuType; the GTU type for which to check the connectors
      * @return List&lt;Node&gt;; a list of Centroid nodes that have incoming connectors without corresponding outgoing
      *         connectors to the same node or vice versa.
      */
-    public List<Node> getUnbalancedCentroids(final GTUType gtuType)
+    public List<Node> getUnbalancedCentroids(final GtuType gtuType)
     {
         List<Node> centroidList = new ArrayList<>();
         for (Node node : getRawNodeMap().values())
@@ -535,7 +535,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final ImmutableMap<String, Route> getDefinedRouteMap(final GTUType gtuType)
+    public final ImmutableMap<String, Route> getDefinedRouteMap(final GtuType gtuType)
     {
         Map<String, Route> routes = new LinkedHashMap<>();
         if (this.routeMap.containsKey(gtuType))
@@ -547,23 +547,23 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void addRoute(final GTUType gtuType, final Route route) throws NetworkException
+    public final void addRoute(final GtuType gtuType, final Route route) throws NetworkException
     {
         if (containsRoute(gtuType, route))
         {
             throw new NetworkException(
-                    "Route " + route + " for GTUType " + gtuType + " already registered in network " + this.id);
+                    "Route " + route + " for GtuType " + gtuType + " already registered in network " + this.id);
         }
         if (this.routeMap.containsKey(gtuType) && this.routeMap.get(gtuType).keySet().contains(route.getId()))
         {
-            throw new NetworkException("Route with name " + route.getId() + " for GTUType " + gtuType
+            throw new NetworkException("Route with name " + route.getId() + " for GtuType " + gtuType
                     + " already registered in network " + this.id);
         }
         for (Node node : route.getNodes())
         {
             if (!containsNode(node))
             {
-                throw new NetworkException("Node " + node.getId() + " of route " + route.getId() + " for GTUType " + gtuType
+                throw new NetworkException("Node " + node.getId() + " of route " + route.getId() + " for GtuType " + gtuType
                         + " not registered in network " + this.id);
             }
         }
@@ -579,11 +579,11 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void removeRoute(final GTUType gtuType, final Route route) throws NetworkException
+    public final void removeRoute(final GtuType gtuType, final Route route) throws NetworkException
     {
         if (!containsRoute(gtuType, route))
         {
-            throw new NetworkException("Route " + route + " for GTUType " + gtuType + " not registered in network " + this.id);
+            throw new NetworkException("Route " + route + " for GtuType " + gtuType + " not registered in network " + this.id);
         }
         fireTimedEvent(Network.ROUTE_REMOVE_EVENT, new Object[] {gtuType.getId(), route.getId()},
                 getSimulator().getSimulatorTime());
@@ -593,7 +593,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsRoute(final GTUType gtuType, final Route route)
+    public final boolean containsRoute(final GtuType gtuType, final Route route)
     {
         if (this.routeMap.containsKey(gtuType))
         {
@@ -604,7 +604,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsRoute(final GTUType gtuType, final String routeId)
+    public final boolean containsRoute(final GtuType gtuType, final String routeId)
     {
         if (this.routeMap.containsKey(gtuType))
         {
@@ -620,7 +620,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      */
     public final Route getRoute(final String routeId)
     {
-        for (GTUType gtuType : this.routeMap.keySet())
+        for (GtuType gtuType : this.routeMap.keySet())
         {
             Route route = this.routeMap.get(gtuType).get(routeId);
             if (route != null)
@@ -633,7 +633,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final Route getRoute(final GTUType gtuType, final String routeId)
+    public final Route getRoute(final GtuType gtuType, final String routeId)
     {
         if (this.routeMap.containsKey(gtuType))
         {
@@ -644,7 +644,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final Set<Route> getRoutesBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo)
+    public final Set<Route> getRoutesBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo)
     {
         Set<Route> routes = new LinkedHashSet<>();
         if (this.routeMap.containsKey(gtuType))
@@ -669,7 +669,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void buildGraph(final GTUType gtuType)
+    public final void buildGraph(final GtuType gtuType)
     {
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = buildGraph(gtuType, LinkWeight.LENGTH_NO_CONNECTORS);
         this.linkGraphs.put(gtuType, graph);
@@ -677,11 +677,11 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /**
      * Builds a graph using the specified link weight.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param linkWeight LinkWeight; link weight
      * @return SimpleDirectedWeightedGraph graph
      */
-    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> buildGraph(final GTUType gtuType, final LinkWeight linkWeight)
+    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> buildGraph(final GtuType gtuType, final LinkWeight linkWeight)
     {
         // TODO: take connections into account, and possibly do node expansion to build the graph
         @SuppressWarnings({"unchecked"})
@@ -694,7 +694,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         for (Link link : this.linkMap.values())
         {
-            // determine if the link is accessible for the GTUType , and in which direction(s)
+            // determine if the link is accessible for the GtuType , and in which direction(s)
             LongitudinalDirectionality directionality = link.getDirectionality(gtuType);
             if (directionality.isForwardOrBoth())
             {
@@ -714,7 +714,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
+    public final CompleteRoute getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final LinkWeight linkWeight) throws NetworkException
     {
         CompleteRoute route = new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
@@ -750,7 +750,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
+    public final CompleteRoute getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia) throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH_NO_CONNECTORS);
@@ -758,7 +758,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
+    public final CompleteRoute getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia, final LinkWeight linkWeight) throws NetworkException
     {
         CompleteRoute route = new CompleteRoute(
@@ -812,11 +812,11 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /**
      * Returns the graph, possibly a stored one.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param linkWeight LinkWeight; link weight
      * @return SimpleDirectedWeightedGraph
      */
-    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getGraph(final GTUType gtuType, final LinkWeight linkWeight)
+    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getGraph(final GtuType gtuType, final LinkWeight linkWeight)
     {
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph;
         if (linkWeight.equals(LinkWeight.LENGTH))
@@ -838,7 +838,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * @return a defensive copy of the routeMap.
      */
-    public final ImmutableMap<GTUType, Map<String, Route>> getRouteMap()
+    public final ImmutableMap<GtuType, Map<String, Route>> getRouteMap()
     {
         return new ImmutableHashMap<>(this.routeMap, Immutable.WRAP);
     }
@@ -846,16 +846,16 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * @return routeMap; only to be used in the 'network' package for cloning.
      */
-    final Map<GTUType, Map<String, Route>> getRawRouteMap()
+    final Map<GtuType, Map<String, Route>> getRawRouteMap()
     {
         return this.routeMap;
     }
 
     /**
-     * @param newRouteMap Map&lt;GTUType,Map&lt;String,Route&gt;&gt;; the routeMap to set, only to be used in the 'network'
+     * @param newRouteMap Map&lt;GtuType,Map&lt;String,Route&gt;&gt;; the routeMap to set, only to be used in the 'network'
      *            package for cloning.
      */
-    public final void setRawRouteMap(final Map<GTUType, Map<String, Route>> newRouteMap)
+    public final void setRawRouteMap(final Map<GtuType, Map<String, Route>> newRouteMap)
     {
         this.routeMap = newRouteMap;
     }
@@ -863,7 +863,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * @return linkGraphs; only to be used in the 'network' package for cloning.
      */
-    public final ImmutableMap<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getLinkGraphs()
+    public final ImmutableMap<GtuType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getLinkGraphs()
     {
         return new ImmutableHashMap<>(this.linkGraphs, Immutable.WRAP);
     }
@@ -871,7 +871,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * @return linkGraphs; only to be used in the 'network' package for cloning.
      */
-    final Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getRawLinkGraphs()
+    final Map<GtuType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getRawLinkGraphs()
     {
         return this.linkGraphs;
     }
@@ -888,27 +888,27 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         new LinkType("NONE", null, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_BOTH);
         LinkType road = new LinkType("ROAD", null, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.PEDESTRIAN), LongitudinalDirectionality.DIR_NONE);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.BICYCLE), LongitudinalDirectionality.DIR_NONE);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN), LongitudinalDirectionality.DIR_NONE);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE), LongitudinalDirectionality.DIR_NONE);
         new LinkType("FREEWAY", road, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_BOTH);
         new LinkType("WATERWAY", null, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_BOTH);
         new LinkType("RAILWAY", null, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGTUType(getGtuType(GTUType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_PLUS);
         new LinkType("CONNECTOR", null, compatibility, this);
     }
 
@@ -941,57 +941,57 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     }
 
     /***************************************************************************************/
-    /************************************** GTUTypes ***************************************/
+    /************************************** GtuTypes ***************************************/
     /***************************************************************************************/
 
     /** {@inheritDoc} */
     @Override
     public void addDefaultGtuTypes()
     {
-        GTUType roadUser = new GTUType("ROAD_USER", this);
-        GTUType waterwayUser = new GTUType("WATERWAY_USER", this);
-        GTUType railwayUser = new GTUType("RAILWAY_USER", this);
+        GtuType roadUser = new GtuType("ROAD_USER", this);
+        GtuType waterwayUser = new GtuType("WATERWAY_USER", this);
+        GtuType railwayUser = new GtuType("RAILWAY_USER", this);
 
-        new GTUType("SHIP", waterwayUser);
-        new GTUType("TRAIN", railwayUser);
-        new GTUType("PEDESTRIAN", roadUser);
-        GTUType bicycle = new GTUType("BICYCLE", roadUser);
+        new GtuType("SHIP", waterwayUser);
+        new GtuType("TRAIN", railwayUser);
+        new GtuType("PEDESTRIAN", roadUser);
+        GtuType bicycle = new GtuType("BICYCLE", roadUser);
 
-        new GTUType("MOPED", bicycle);
+        new GtuType("MOPED", bicycle);
 
-        GTUType vehicle = new GTUType("VEHICLE", roadUser);
-        new GTUType("EMERGENCY_VEHICLE", vehicle);
-        new GTUType("CAR", vehicle);
-        new GTUType("VAN", vehicle);
-        GTUType bus = new GTUType("BUS", vehicle);
-        new GTUType("TRUCK", vehicle);
-        new GTUType("SCHEDULED_BUS", bus);
+        GtuType vehicle = new GtuType("VEHICLE", roadUser);
+        new GtuType("EMERGENCY_VEHICLE", vehicle);
+        new GtuType("CAR", vehicle);
+        new GtuType("VAN", vehicle);
+        GtuType bus = new GtuType("BUS", vehicle);
+        new GtuType("TRUCK", vehicle);
+        new GtuType("SCHEDULED_BUS", bus);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addGtuType(final GTUType gtuType)
+    public void addGtuType(final GtuType gtuType)
     {
         this.gtuTypeMap.put(gtuType.getId(), gtuType);
     }
 
     /** {@inheritDoc} */
     @Override
-    public GTUType getGtuType(final String gtuId)
+    public GtuType getGtuType(final String gtuId)
     {
         return this.gtuTypeMap.get(gtuId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public GTUType getGtuType(final GTUType.DEFAULTS gtuEnum)
+    public GtuType getGtuType(final GtuType.DEFAULTS gtuEnum)
     {
         return this.gtuTypeMap.get(gtuEnum.getId());
     }
 
     /** {@inheritDoc} */
     @Override
-    public ImmutableMap<String, GTUType> getGtuTypes()
+    public ImmutableMap<String, GtuType> getGtuTypes()
     {
         return new ImmutableHashMap<>(this.gtuTypeMap, Immutable.WRAP);
     }
@@ -1002,7 +1002,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void addGTU(final GTU gtu)
+    public final void addGTU(final Gtu gtu)
     {
         this.gtuMap.put(gtu.getId(), gtu);
         // TODO verify that gtu.getSimulator() equals getSimulator() ?
@@ -1012,7 +1012,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final void removeGTU(final GTU gtu)
+    public final void removeGTU(final Gtu gtu)
     {
         fireTimedEvent(Network.GTU_REMOVE_EVENT, gtu.getId(), getSimulator().getSimulatorTime());
         fireTimedEvent(Network.ANIMATION_GTU_REMOVE_EVENT, gtu, getSimulator().getSimulatorTime());
@@ -1021,21 +1021,21 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsGTU(final GTU gtu)
+    public final boolean containsGTU(final Gtu gtu)
     {
         return this.gtuMap.containsValue(gtu);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final GTU getGTU(final String gtuId)
+    public final Gtu getGTU(final String gtuId)
     {
         return this.gtuMap.get(gtuId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Set<GTU> getGTUs()
+    public final Set<Gtu> getGTUs()
     {
         // defensive copy
         return new LinkedHashSet<>(this.gtuMap.values());
@@ -1051,7 +1051,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /**
      * @return gtuMap
      */
-    final Map<String, GTU> getRawGtuMap()
+    final Map<String, Gtu> getRawGtuMap()
     {
         return this.gtuMap;
     }

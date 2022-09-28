@@ -27,9 +27,9 @@ import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.TemplateGTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.TemplateGtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -176,7 +176,7 @@ public final class ODParser
                     List<Class<?>> categoryClasses = new ArrayList<>();
                     if (od.getCATEGORY().get(0).getGTUTYPE() != null)
                     {
-                        categoryClasses.add(GTUType.class);
+                        categoryClasses.add(GtuType.class);
                     }
                     if (od.getCATEGORY().get(0).getROUTE() != null)
                     {
@@ -201,9 +201,9 @@ public final class ODParser
                     for (CATEGORYTYPE category : od.getCATEGORY())
                     {
                         Throw.when(
-                                (categorization.entails(GTUType.class) && category.getGTUTYPE() == null)
-                                        || (!categorization.entails(GTUType.class) && category.getGTUTYPE() != null),
-                                XmlParserException.class, "Categories are inconsistent concerning GTUType.");
+                                (categorization.entails(GtuType.class) && category.getGTUTYPE() == null)
+                                        || (!categorization.entails(GtuType.class) && category.getGTUTYPE() != null),
+                                XmlParserException.class, "Categories are inconsistent concerning GtuType.");
                         Throw.when(
                                 (categorization.entails(Route.class) && category.getROUTE() == null)
                                         || (!categorization.entails(Route.class) && category.getROUTE() != null),
@@ -213,7 +213,7 @@ public final class ODParser
                                         || (!categorization.entails(Lane.class) && category.getLANE() != null),
                                 XmlParserException.class, "Categories are inconsistent concerning Lane.");
                         List<Object> objects = new ArrayList<>();
-                        if (categorization.entails(GTUType.class))
+                        if (categorization.entails(GtuType.class))
                         {
                             objects.add(otsNetwork.getGtuType(category.getGTUTYPE()));
                         }
@@ -387,17 +387,17 @@ public final class ODParser
                 ODOptions odOptions =
                         new ODOptions().set(ODOptions.GTU_ID, idGenerator).set(ODOptions.NO_LC_DIST, Length.instantiateSI(1.0));
                 // templates
-                Set<TemplateGTUType> templates = new LinkedHashSet<>();
+                Set<TemplateGtuType> templates = new LinkedHashSet<>();
                 for (GTUTEMPLATE template : gtuTemplates.values())
                 {
-                    GTUType gtuType = otsNetwork.getGtuType(template.getGTUTYPE());
+                    GtuType gtuType = otsNetwork.getGtuType(template.getGTUTYPE());
                     Generator<Length> lengthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getLENGTHDIST());
                     Generator<Length> widthGenerator = ParseDistribution.parseLengthDist(streamMap, template.getWIDTHDIST());
                     Generator<Speed> maximumSpeedGenerator =
                             ParseDistribution.parseSpeedDist(streamMap, template.getMAXSPEEDDIST());
                     if (template.getMAXACCELERATIONDIST() == null || template.getMAXDECELERATIONDIST() == null)
                     {
-                        templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
+                        templates.add(new TemplateGtuType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
                     }
                     else
                     {
@@ -405,7 +405,7 @@ public final class ODParser
                                 ParseDistribution.parseAccelerationDist(streamMap, template.getMAXACCELERATIONDIST());
                         Generator<Acceleration> maxDecelerationGenerator =
                                 ParseDistribution.parseAccelerationDist(streamMap, template.getMAXDECELERATIONDIST());
-                        templates.add(new TemplateGTUType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
+                        templates.add(new TemplateGtuType(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
                                 maxAccelerationGenerator, maxDecelerationGenerator));
                     }
                 }
@@ -446,12 +446,12 @@ public final class ODParser
                                 defaultFactory = null;
                             }
                             // compose map that couples GTU types to factories through MODEL ID's
-                            final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> gtuTypeFactoryMap = new LinkedHashMap<>();
+                            final Map<GtuType, LaneBasedStrategicalPlannerFactory<?>> gtuTypeFactoryMap = new LinkedHashMap<>();
                             if (options.getMODEL() != null)
                             {
                                 for (MODEL model : options.getMODEL())
                                 {
-                                    GTUType gtuType = otsNetwork.getGtuType(model.getGTUTYPE());
+                                    GtuType gtuType = otsNetwork.getGtuType(model.getGTUTYPE());
                                     Throw.when(!factories.containsKey(model.getID()), XmlParserException.class,
                                             "OD option MODEL refers to a non existent-model with ID %s.", model.getID());
                                     gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals)));
@@ -465,12 +465,12 @@ public final class ODParser
                                 @Override
                                 public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin,
                                         final Node destination, final Category category, final StreamInterface randomStream)
-                                        throws GTUException
+                                        throws GtuException
                                 {
-                                    if (category.getCategorization().entails(GTUType.class))
+                                    if (category.getCategorization().entails(GtuType.class))
                                     {
                                         LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory =
-                                                gtuTypeFactoryMap.get(category.get(GTUType.class));
+                                                gtuTypeFactoryMap.get(category.get(GtuType.class));
                                         if (strategicalPlannerFactory != null)
                                         {
                                             // a model factory for this GTU type is specified
@@ -511,15 +511,15 @@ public final class ODParser
                         // markov
                         if (options.getMARKOV() != null)
                         {
-                            Throw.when(!categorization.entails(GTUType.class), XmlParserException.class,
-                                    "The OD option MARKOV can only be used if GTUType is in the CATEGORY's.");
+                            Throw.when(!categorization.entails(GtuType.class), XmlParserException.class,
+                                    "The OD option MARKOV can only be used if GtuType is in the CATEGORY's.");
                             Throw.when(!categorization.entails(Lane.class) && options.getLANE() != null,
                                     XmlParserException.class,
                                     "Markov chains at lane level are not used if Lane's are not in the CATEGORY's.");
-                            MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
+                            MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
                             for (STATE state : options.getMARKOV().getSTATE())
                             {
-                                GTUType gtuType = otsNetwork.getGtuType(state.getGTUTYPE());
+                                GtuType gtuType = otsNetwork.getGtuType(state.getGTUTYPE());
                                 double correlation = state.getCORRELATION();
                                 if (state.getPARENT() == null)
                                 {
@@ -527,7 +527,7 @@ public final class ODParser
                                 }
                                 else
                                 {
-                                    GTUType parentType = otsNetwork.getGtuType(state.getPARENT());
+                                    GtuType parentType = otsNetwork.getGtuType(state.getPARENT());
                                     markov.addState(parentType, gtuType, correlation);
                                 }
                             }
@@ -539,7 +539,7 @@ public final class ODParser
                             LaneBiases laneBiases = new LaneBiases();
                             for (LANEBIAS laneBias : options.getLANEBIASES().getLANEBIAS())
                             {
-                                GTUType gtuType = otsNetwork.getGtuType(laneBias.getGTUTYPE());
+                                GtuType gtuType = otsNetwork.getGtuType(laneBias.getGTUTYPE());
                                 double bias = laneBias.getBIAS();
                                 int stickyLanes;
                                 if (laneBias.getSTICKYLANES() == null)

@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 
 /**
  * Container for a reference to information about a (lane based) GTU and a headway. The Headway can store information about GTUs
@@ -59,15 +59,15 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param overlapRear Length; the rear-rear distance to the other object
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length distance, final Length length,
             final Speed speed, final Acceleration acceleration, final Length overlapFront, final Length overlap,
-            final Length overlapRear) throws GTUException
+            final Length overlapRear) throws GtuException
     {
         super(distance, overlapFront, overlap, overlapRear);
-        Throw.when(id == null, GTUException.class, "Object id of a headway cannot be null");
+        Throw.when(id == null, GtuException.class, "Object id of a headway cannot be null");
         this.id = id;
 
         this.objectType = objectType;
@@ -83,10 +83,10 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length distance, final Speed speed,
-            final Acceleration acceleration) throws GTUException
+            final Acceleration acceleration) throws GtuException
     {
         this(objectType, id, distance, null, speed, acceleration, null, null, null);
     }
@@ -96,9 +96,9 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
      * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length distance) throws GTUException
+    public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length distance) throws GtuException
     {
         this(objectType, id, distance, null, Speed.ZERO, Acceleration.ZERO, null, null, null);
     }
@@ -112,11 +112,11 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
+            final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GtuException
     {
         this(objectType, id, null, null, speed, acceleration, overlapFront, overlap, overlapRear);
     }
@@ -128,10 +128,10 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length overlapFront, final Length overlap,
-            final Length overlapRear) throws GTUException
+            final Length overlapRear) throws GtuException
     {
         this(objectType, id, null, null, null, null, overlapFront, overlap, overlapRear);
     }
@@ -144,10 +144,10 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length distance, final Length length,
-            final Speed speed, final Acceleration acceleration) throws GTUException
+            final Speed speed, final Acceleration acceleration) throws GtuException
     {
         this(objectType, id, distance, length, speed, acceleration, null, null, null);
         Throw.whenNull(length, "Length may not be null.");
@@ -159,10 +159,10 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length distance, final Length length)
-            throws GTUException
+            throws GtuException
     {
         this(objectType, id, distance, length, null, null, null, null, null);
         Throw.whenNull(length, "Length may not be null.");
@@ -178,12 +178,12 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Length length, final Speed speed, final Acceleration acceleration)
-            throws GTUException
+            throws GtuException
     {
         this(objectType, id, null, length, speed, acceleration, overlapFront, overlap, overlapRear);
         Throw.whenNull(length, "Length may not be null.");
@@ -197,10 +197,10 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayCopy(final ObjectType objectType, final String id, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final Length length) throws GTUException
+            final Length overlapRear, final Length length) throws GtuException
     {
         this(objectType, id, null, length, null, null, overlapFront, overlap, overlapRear);
         Throw.whenNull(length, "Length may not be null.");

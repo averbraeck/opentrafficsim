@@ -24,7 +24,7 @@ import org.opentrafficsim.core.dsol.AbstractOTSSimulationApplication;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.AbstractGTU;
+import org.opentrafficsim.core.gtu.AbstractGtu;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -83,7 +83,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
     @SuppressWarnings("checkstyle:methodlength")
     public static void main(final String[] args) throws SimRuntimeException
     {
-        AbstractGTU.ALIGNED = false;
+        AbstractGtu.ALIGNED = false;
         long t1 = System.currentTimeMillis();
         boolean autorun = true;
         int replication = 1;

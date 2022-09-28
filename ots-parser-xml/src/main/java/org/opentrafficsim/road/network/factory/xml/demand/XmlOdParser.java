@@ -29,7 +29,7 @@ import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
@@ -69,7 +69,7 @@ public class XmlOdParser implements Serializable
     final OTSRoadNetwork network;
 
     /** GTU types. */
-    private final Map<String, GTUType> gtuTypes = new LinkedHashMap<>();
+    private final Map<String, GtuType> gtuTypes = new LinkedHashMap<>();
 
     /** Categorization. */
     Categorization categorization;
@@ -91,15 +91,15 @@ public class XmlOdParser implements Serializable
      * Constructor.
      * @param simulator OTSSimulatorInterface; simulator
      * @param network OTSRoadNetwork; network
-     * @param gtuTypes Set&lt;GTUType&gt;; set of GTU types
+     * @param gtuTypes Set&lt;GtuType&gt;; set of GTU types
      */
-    public XmlOdParser(final OTSSimulatorInterface simulator, final OTSRoadNetwork network, final Set<GTUType> gtuTypes)
+    public XmlOdParser(final OTSSimulatorInterface simulator, final OTSRoadNetwork network, final Set<GtuType> gtuTypes)
     {
         Throw.whenNull(simulator, "Simulator should not be null.");
         Throw.whenNull(network, "Network should not be null.");
         this.simulator = simulator;
         this.network = network;
-        for (GTUType gtuType : gtuTypes)
+        for (GtuType gtuType : gtuTypes)
         {
             this.gtuTypes.put(gtuType.getId(), gtuType);
         }
@@ -111,7 +111,7 @@ public class XmlOdParser implements Serializable
      * @return GTU type for the given id
      * @throws XmlParserException if the GTU type is not available
      */
-    public GTUType getGTUType(final String id) throws XmlParserException
+    public GtuType getGtuType(final String id) throws XmlParserException
     {
         Throw.when(!this.gtuTypes.containsKey(id), XmlParserException.class, "GTU type %s is not available.", id);
         return this.gtuTypes.get(id);

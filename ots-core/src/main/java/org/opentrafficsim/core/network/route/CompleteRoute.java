@@ -2,7 +2,7 @@ package org.opentrafficsim.core.network.route;
 
 import java.util.List;
 
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -22,15 +22,15 @@ public class CompleteRoute extends Route
     /** */
     private static final long serialVersionUID = 20150722L;
 
-    /** The GTUType for which this is a route. */
-    private final GTUType gtuType;
+    /** The GtuType for which this is a route. */
+    private final GtuType gtuType;
 
     /**
-     * Create an empty route for the given GTUType.
+     * Create an empty route for the given GtuType.
      * @param id String; the name of the route
-     * @param gtuType GTUType; the GTUType for which this is a route
+     * @param gtuType GtuType; the GtuType for which this is a route
      */
-    public CompleteRoute(final String id, final GTUType gtuType)
+    public CompleteRoute(final String id, final GtuType gtuType)
     {
         super(id);
         this.gtuType = gtuType;
@@ -40,11 +40,11 @@ public class CompleteRoute extends Route
      * Create a route based on an initial list of nodes. <br>
      * This constructor makes a defensive copy of the provided List.
      * @param id String; the name of the route.
-     * @param gtuType GTUType; the GTUType for which this is a route
+     * @param gtuType GtuType; the GtuType for which this is a route
      * @param nodes List&lt;Node&gt;; the initial list of nodes.
      * @throws NetworkException if intermediate nodes are missing in the route.
      */
-    public CompleteRoute(final String id, final GTUType gtuType, final List<Node> nodes) throws NetworkException
+    public CompleteRoute(final String id, final GtuType gtuType, final List<Node> nodes) throws NetworkException
     {
         super(id, nodes);
         this.gtuType = gtuType;

@@ -23,7 +23,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -312,7 +312,7 @@ public interface Synchronization extends LmrsParameters
             {
                 dx = perception.getGtu().getFront().getDx();
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 throw new OperationalPlanException(exception);
             }
@@ -572,7 +572,7 @@ public interface Synchronization extends LmrsParameters
             out = new SortedSetPerceptionIterable<HeadwayGTU>(
                     (OTSRoadNetwork) perception.getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new OperationalPlanException(exception);
         }
@@ -642,9 +642,9 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns the upstream gtu of the given gtu.
-     * @param gtu HeadwayGTU; gtu
+     * @param gtu HeadwayGtu; gtu
      * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leaders of own vehicle
-     * @param follower HeadwayGTU; following vehicle of own vehicle
+     * @param follower HeadwayGtu; following vehicle of own vehicle
      * @param ownLength Length; own vehicle length
      * @return upstream gtu of the given gtu
      */
@@ -665,7 +665,7 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Calculates acceleration by following an adjacent vehicle, with tagging along if desire is not very high and speed is low.
-     * @param leader HeadwayGTU; leader
+     * @param leader HeadwayGtu; leader
      * @param followerSpeed Speed; follower speed
      * @param followerLength Length; follower length
      * @param tagSpeed Speed; maximum tag along speed
@@ -705,7 +705,7 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns whether a driver estimates it can be ahead of an adjacent vehicle for merging.
-     * @param adjacentVehicle HeadwayGTU; adjacent vehicle
+     * @param adjacentVehicle HeadwayGtu; adjacent vehicle
      * @param xCur Length; remaining distance
      * @param nCur int; number of lane changes to perform
      * @param ownSpeed Speed; own speed
@@ -819,7 +819,7 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns the leader of one gtu from a set.
-     * @param gtu HeadwayGTU; gtu
+     * @param gtu HeadwayGtu; gtu
      * @param leaders SortedSet&lt;HeadwayGTU&gt;; leaders
      * @return leader of one gtu from a set
      */

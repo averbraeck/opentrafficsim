@@ -44,9 +44,9 @@ import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.AbstractGTU;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.AbstractGtu;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Node;
@@ -64,7 +64,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeNumber;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
-import org.opentrafficsim.road.gtu.colorer.GTUTypeColorer;
+import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
 import org.opentrafficsim.road.gtu.colorer.IncentiveColorer;
 import org.opentrafficsim.road.gtu.colorer.ReactionTimeColorer;
 import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
@@ -303,7 +303,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
                 .addColorer(new TaskColorer("car-following")).addColorer(new TaskColorer("lane-changing"))
                 .addColorer(new TaskSaturationColorer()).addColorer(new ReactionTimeColorer(Duration.instantiateSI(1.0)))
-                .addColorer(GTUTypeColorer.DEFAULT).addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(GtuTypeColorer.DEFAULT).addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
                 .addColorer(
                         new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
                 .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
@@ -340,7 +340,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
     @Override
     protected OTSRoadNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
-        AbstractGTU.ALIGNED = true;
+        AbstractGtu.ALIGNED = true;
 
         // Network
         URL xmlURL = URLResource.getResource("/resources/AHFE/Network.xml");
@@ -358,12 +358,12 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         origins.add(network.getNode("RIGHTINPRE"));
         List<Node> destinations = new ArrayList<>();
         destinations.add(network.getNode("EXIT"));
-        Categorization categorization = new Categorization("Distraction", GTUType.class);
+        Categorization categorization = new Categorization("Distraction", GtuType.class);
         TimeVector globalTime =
                 DoubleVector.instantiate(new double[] {0, 360, 1560, 2160, 3960}, TimeUnit.BASE_SECOND, StorageType.DENSE);
         ODMatrix od = new ODMatrix("Distraction", origins, destinations, categorization, globalTime, Interpolation.LINEAR);
-        Category carCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
-        Category truckCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.TRUCK));
+        Category carCategory = new Category(categorization, network.getGtuType(GtuType.DEFAULTS.CAR));
+        Category truckCategory = new Category(categorization, network.getGtuType(GtuType.DEFAULTS.TRUCK));
         FrequencyVector leftDemandPatternCar =
                 getDemand(this.leftDemand.getInUnit(FrequencyUnit.PER_HOUR) * (1.0 - this.fTruck));
         FrequencyVector leftDemandPatternTruck = getDemand(this.leftDemand.getInUnit(FrequencyUnit.PER_HOUR) * this.fTruck);
@@ -494,7 +494,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         @SuppressWarnings("synthetic-access")
         @Override
         public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
-                final Category category, final StreamInterface randomStream) throws GTUException
+                final Category category, final StreamInterface randomStream) throws GtuException
         {
             OTSRoadNetwork network = (OTSRoadNetwork) origin.getNetwork();
             if (this.factoryCar == null)
@@ -517,7 +517,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                 }
                 catch (ProbabilityException ex)
                 {
-                    throw new GTUException("Random stream is null.", ex);
+                    throw new GtuException("Random stream is null.", ex);
                 }
                 PerceptionFactory perceptionFactory = new LmrsPerceptionFactoryAR(estimation);
 
@@ -543,19 +543,19 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
                 // parameter factory
                 ParameterFactoryByType params = new ParameterFactoryByType();
-                params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.FSPEED,
+                params.addParameter(network.getGtuType(GtuType.DEFAULTS.CAR), ParameterTypes.FSPEED,
                         new DistNormal(randomStream, 123.7 / 120.0, 12.0 / 120.0));
-                params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A,
+                params.addParameter(network.getGtuType(GtuType.DEFAULTS.TRUCK), ParameterTypes.A,
                         Acceleration.instantiateSI(0.4));
                 if (AnticipationRelianceScript.this.strategies)
                 {
                     params.addParameter(Tailgating.RHO, 0.0);
-                    params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.SOCIO,
+                    params.addParameter(network.getGtuType(GtuType.DEFAULTS.CAR), LmrsParameters.SOCIO,
                             new DistTriangular(randomStream, 0.0, 0.25, 1.0));
-                    params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.SOCIO, 1.0);
-                    params.addParameter(network.getGtuType(GTUType.DEFAULTS.CAR), LmrsParameters.VGAIN,
+                    params.addParameter(network.getGtuType(GtuType.DEFAULTS.TRUCK), LmrsParameters.SOCIO, 1.0);
+                    params.addParameter(network.getGtuType(GtuType.DEFAULTS.CAR), LmrsParameters.VGAIN,
                             new ContinuousDistSpeed(new DistLogNormal(randomStream, 3.3789, 0.4), SpeedUnit.KM_PER_HOUR));
-                    params.addParameter(network.getGtuType(GTUType.DEFAULTS.TRUCK), LmrsParameters.VGAIN,
+                    params.addParameter(network.getGtuType(GtuType.DEFAULTS.TRUCK), LmrsParameters.VGAIN,
                             new Speed(50.0, SpeedUnit.KM_PER_HOUR));
                     params.addParameter(ParameterTypes.TMAX, Duration.instantiateSI(1.6));
                 }
@@ -572,7 +572,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
                         perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tailgating,
                         mandatoryIncentives, voluntaryIncentivesTruck, accelerationIncentives), params);
             }
-            return category.get(GTUType.class).isOfType(network.getGtuType(GTUType.DEFAULTS.TRUCK)) ? this.factoryTruck
+            return category.get(GtuType.class).isOfType(network.getGtuType(GtuType.DEFAULTS.TRUCK)) ? this.factoryTruck
                     : this.factoryCar;
         }
     }
@@ -593,7 +593,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         /** {@inheritDoc} */
         @Override
         public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtuCF,
-                final Parameters parameters) throws ParameterException, GTUException
+                final Parameters parameters) throws ParameterException, GtuException
         {
             try
             {
@@ -604,7 +604,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             }
             catch (OperationalPlanException ex)
             {
-                throw new GTUException(ex);
+                throw new GtuException(ex);
             }
         }
     }
@@ -621,7 +621,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         /** {@inheritDoc} */
         @Override
         public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtuLC,
-                final Parameters parameters) throws ParameterException, GTUException
+                final Parameters parameters) throws ParameterException, GtuException
         {
             return Math.max(0.0,
                     Math.max(parameters.getParameter(LmrsParameters.DLEFT), parameters.getParameter(LmrsParameters.DRIGHT)));
@@ -708,7 +708,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         /** {@inheritDoc} */
         @Override
         public void manage(final Set<Task> tasksMan, final LanePerception perception, final LaneBasedGTU gtu,
-                final Parameters parameters) throws ParameterException, GTUException
+                final Parameters parameters) throws ParameterException, GtuException
         {
             Task primary = null;
             Set<Task> auxiliaryTasks = new LinkedHashSet<>();

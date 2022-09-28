@@ -6,7 +6,7 @@ import org.djunits.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.sim0mq.Sim0MQException;
@@ -59,10 +59,10 @@ public class LinkGTUIdTransceiver extends AbstractTransceiver
             returnWrapper.nack("Network does not contain a link with id " + address[0]);
             return null;
         }
-        Set<GTU> gtus = link.getGTUs();
+        Set<Gtu> gtus = link.getGTUs();
         Object[] result = new Object[gtus.size()];
         int nextIndex = 0;
-        for (GTU gtu : gtus)
+        for (Gtu gtu : gtus)
         {
             result[nextIndex++] = gtu.getId();
         }

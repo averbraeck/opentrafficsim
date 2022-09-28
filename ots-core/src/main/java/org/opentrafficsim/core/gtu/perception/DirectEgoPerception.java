@@ -4,8 +4,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.TimeStampedObject;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
@@ -20,7 +20,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * @param <P> perception type
  */
 
-public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends AbstractPerceptionCategory<G, P>
+public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends AbstractPerceptionCategory<G, P>
         implements EgoPerception<G, P>
 {
 
@@ -49,7 +49,7 @@ public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends
 
     /** {@inheritDoc} */
     @Override
-    public final void updateSpeed() throws GTUException
+    public final void updateSpeed() throws GtuException
     {
         synchronized (getGtu())
         {
@@ -59,7 +59,7 @@ public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends
 
     /** {@inheritDoc} */
     @Override
-    public final void updateAcceleration() throws GTUException
+    public final void updateAcceleration() throws GtuException
     {
         synchronized (getGtu())
         {
@@ -69,7 +69,7 @@ public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends
 
     /** {@inheritDoc} */
     @Override
-    public final void updateLength() throws GTUException
+    public final void updateLength() throws GtuException
     {
         synchronized (getGtu())
         {
@@ -79,7 +79,7 @@ public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends
 
     /** {@inheritDoc} */
     @Override
-    public final void updateWidth() throws GTUException
+    public final void updateWidth() throws GtuException
     {
         synchronized (getGtu())
         {
@@ -104,10 +104,10 @@ public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends
             {
                 System.out.println("GetSpeed: GTU is " + getGtu() + " this.speed is " + this.speed + " cached speed is null");
                 System.out.println(getGtu().getOperationalPlan());
-                System.out.println(((OTSNetwork) getGtu().getGTUType().getNetwork()).getGTUs());
+                System.out.println(((OTSNetwork) getGtu().getGtuType().getNetwork()).getGTUs());
             }
         }
-        catch (GTUException e1)
+        catch (GtuException e1)
         {
             e1.printStackTrace();
         }

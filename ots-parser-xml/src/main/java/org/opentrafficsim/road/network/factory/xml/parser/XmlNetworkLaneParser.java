@@ -32,8 +32,8 @@ import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -99,14 +99,14 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
      * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws GTUException when construction of the Strategical Planner failed
+     * @throws GtuException when construction of the Strategical Planner failed
      * @throws TrafficControlException when construction of a traffic controller fails
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static OTSRoadNetwork build(final String filename, final OTSRoadNetwork otsNetwork, final boolean buildConflicts)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException, SAXException,
-            ParserConfigurationException, SimRuntimeException, GTUException, MalformedURLException, IOException,
+            ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
             TrafficControlException
     {
         URL xmlURL = URLResource.getResource(filename);
@@ -128,14 +128,14 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
      * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws GTUException when construction of the Strategical Planner failed
+     * @throws GtuException when construction of the Strategical Planner failed
      * @throws TrafficControlException when construction of a traffic controller fails
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static ExperimentRunControl<Duration> build(final InputStream xmlStream, final OTSRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
-            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
+            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
     {
         return build(parseXML(xmlStream), otsNetwork, buildConflicts);
@@ -195,14 +195,14 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
      * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws GTUException when construction of the Strategical Planner failed
+     * @throws GtuException when construction of the Strategical Planner failed
      * @throws TrafficControlException when construction of a traffic controller fails
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static ExperimentRunControl<Duration> build(final URL xmlURL, final OTSRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
-            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
+            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
     {
         return build(parseXML(xmlURL), otsNetwork, buildConflicts);
@@ -222,14 +222,14 @@ public final class XmlNetworkLaneParser implements Serializable
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
      * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws GTUException when construction of the Strategical Planner failed
+     * @throws GtuException when construction of the Strategical Planner failed
      * @throws TrafficControlException when construction of a traffic controller fails
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     public static ExperimentRunControl<Duration> build(final OTS ots, final OTSRoadNetwork otsNetwork,
             final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException,
-            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GTUException,
+            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
             MalformedURLException, IOException, TrafficControlException
     {
         CategoryLogger.setLogCategories(Cat.PARSER);
@@ -241,7 +241,7 @@ public final class XmlNetworkLaneParser implements Serializable
 
         Map<String, ROADLAYOUT> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GTUTEMPLATE> gtuTemplates = new LinkedHashMap<>();
-        Map<LinkType, Map<GTUType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
+        Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
         DefinitionsParser.parseDefinitions(otsNetwork, ots.getDEFINITIONS(), true, roadLayoutMap, gtuTemplates,
                 streamInformation, linkTypeSpeedLimitMap);
 
@@ -334,13 +334,13 @@ public final class XmlNetworkLaneParser implements Serializable
 
             if (conflictCandidateMap.size() == 0)
             {
-                ConflictBuilder.buildConflictsParallel(otsNetwork, otsNetwork.getGtuType(GTUType.DEFAULTS.VEHICLE),
+                ConflictBuilder.buildConflictsParallel(otsNetwork, otsNetwork.getGtuType(GtuType.DEFAULTS.VEHICLE),
                         otsNetwork.getSimulator(), new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
             }
             else
             {
                 ConflictBuilder.buildConflictsParallel(otsNetwork, conflictCandidateMap,
-                        otsNetwork.getGtuType(GTUType.DEFAULTS.VEHICLE), otsNetwork.getSimulator(),
+                        otsNetwork.getGtuType(GtuType.DEFAULTS.VEHICLE), otsNetwork.getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
             }
             otsNetwork.getSimulator().getLogger().always().info("Object map size = {}", otsNetwork.getObjectMap().size());

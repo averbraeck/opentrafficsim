@@ -68,7 +68,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListenerInter
 
     /**
      * Check the move of the given GTU.
-     * @param gtu LaneBasedGTU; GTU.
+     * @param gtu LaneBasedGtu; GTU.
      * @throws Exception thrown when something is not all right
      */
     public abstract void checkMove(LaneBasedGTU gtu) throws Exception;

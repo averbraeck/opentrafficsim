@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.util.Iterator;
 
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -55,7 +55,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker
         }
         catch (OperationalPlanException exception)
         {
-            throw new GTUException(exception);
+            throw new GtuException(exception);
         }
     }
 

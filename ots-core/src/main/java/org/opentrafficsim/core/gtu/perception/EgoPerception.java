@@ -4,8 +4,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -20,32 +20,32 @@ import org.opentrafficsim.core.network.NetworkException;
  * @param <G> GTU type
  * @param <P> perception type
  */
-public interface EgoPerception<G extends GTU, P extends Perception<G>> extends PerceptionCategory<G, P>
+public interface EgoPerception<G extends Gtu, P extends Perception<G>> extends PerceptionCategory<G, P>
 {
 
     /**
      * Update speed.
-     * @throws GTUException if the GTU has not been initialized
+     * @throws GtuException if the GTU has not been initialized
      */
-    void updateSpeed() throws GTUException;
+    void updateSpeed() throws GtuException;
 
     /**
      * Update acceleration.
-     * @throws GTUException if the GTU has not been initialized
+     * @throws GtuException if the GTU has not been initialized
      */
-    void updateAcceleration() throws GTUException;
+    void updateAcceleration() throws GtuException;
 
     /**
      * Update length.
-     * @throws GTUException if the GTU has not been initialized
+     * @throws GtuException if the GTU has not been initialized
      */
-    void updateLength() throws GTUException;
+    void updateLength() throws GtuException;
 
     /**
      * Update width.
-     * @throws GTUException if the GTU has not been initialized
+     * @throws GtuException if the GTU has not been initialized
      */
-    void updateWidth() throws GTUException;
+    void updateWidth() throws GtuException;
 
     /**
      * Returns the acceleration.
@@ -73,7 +73,7 @@ public interface EgoPerception<G extends GTU, P extends Perception<G>> extends P
 
     /** {@inheritDoc} */
     @Override
-    default void updateAll() throws GTUException, NetworkException, ParameterException
+    default void updateAll() throws GtuException, NetworkException, ParameterException
     {
         updateSpeed();
         updateAcceleration();

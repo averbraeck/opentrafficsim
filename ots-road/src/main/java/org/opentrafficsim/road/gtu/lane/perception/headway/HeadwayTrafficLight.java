@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
@@ -28,9 +28,9 @@ public class HeadwayTrafficLight extends AbstractHeadwayLaneBasedObject
      * very useful).
      * @param trafficLight TrafficLight; the traffic light object for further observation, can not be null.
      * @param distance Length; the distance to the traffic light, distance cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayTrafficLight(final TrafficLight trafficLight, final Length distance) throws GTUException
+    public HeadwayTrafficLight(final TrafficLight trafficLight, final Length distance) throws GtuException
     {
         super(ObjectType.TRAFFICLIGHT, id(trafficLight), distance, trafficLight.getLane());
         this.trafficLight = trafficLight;
@@ -40,11 +40,11 @@ public class HeadwayTrafficLight extends AbstractHeadwayLaneBasedObject
      * Get the id of the traffic light; throw an exception if traffic light is null.
      * @param trafficLight TrafficLight; the traffic light object for further observation, can not be null.
      * @return he id of the traffic light.
-     * @throws GTUException when the trafficLight object is null
+     * @throws GtuException when the trafficLight object is null
      */
-    private static String id(final TrafficLight trafficLight) throws GTUException
+    private static String id(final TrafficLight trafficLight) throws GtuException
     {
-        Throw.when(trafficLight == null, GTUException.class, "Headway constructor: trafficLight == null");
+        Throw.when(trafficLight == null, GtuException.class, "Headway constructor: trafficLight == null");
         return trafficLight.getId();
     }
 

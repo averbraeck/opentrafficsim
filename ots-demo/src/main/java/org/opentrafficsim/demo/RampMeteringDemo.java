@@ -41,11 +41,11 @@ import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUCharacteristics;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.Perception;
@@ -58,7 +58,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
-import org.opentrafficsim.road.gtu.colorer.GTUTypeColorer;
+import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.GTUCharacteristicsGeneratorOD;
@@ -250,13 +250,13 @@ public class RampMeteringDemo extends AbstractSimulationScript
             network.addListener(this, Network.GTU_ADD_EVENT);
             network.addListener(this, Network.GTU_REMOVE_EVENT);
         }
-        GTUType car = network.getGtuType(GTUType.DEFAULTS.CAR);
-        GTUType controlledCar = new GTUType(CONTROLLED_CAR_ID, car);
+        GtuType car = network.getGtuType(GtuType.DEFAULTS.CAR);
+        GtuType controlledCar = new GtuType(CONTROLLED_CAR_ID, car);
 
         GTUColorer[] colorers =
                 new GTUColorer[] {new IDGTUColorer(), new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
                         new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
-                        new GTUTypeColorer().add(car).add(controlledCar)};
+                        new GtuTypeColorer().add(car).add(controlledCar)};
         SwitchableGTUColorer colorer = new SwitchableGTUColorer(0, colorers);
         setGtuColorer(colorer);
 
@@ -330,7 +330,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         origins.add(nodeE);
         List<OTSRoadNode> destinations = new ArrayList<>();
         destinations.add(nodeD);
-        Categorization categorization = new Categorization("cat", GTUType.class);// , Lane.class);
+        Categorization categorization = new Categorization("cat", GtuType.class);// , Lane.class);
         Interpolation globalInterpolation = Interpolation.LINEAR;
         ODMatrix od = new ODMatrix("rampMetering", origins, destinations, categorization, this.demandTime, globalInterpolation);
         // Category carCatMainLeft = new Category(categorization, car, lanesAB.get(0));
@@ -404,7 +404,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             Detector.writeToFile(getNetwork(), file, true, "%.3f", CompressionMethod.NONE);
 
             // travel time data
-            for (GTU gtu : getNetwork().getGTUs())
+            for (Gtu gtu : getNetwork().getGTUs())
             {
                 measureTravelTime(gtu.getId());
             }
@@ -481,7 +481,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
                         @SuppressWarnings("synthetic-access")
                         @Override
-                        public LaneBasedTacticalPlanner create(final LaneBasedGTU gtu) throws GTUException
+                        public LaneBasedTacticalPlanner create(final LaneBasedGTU gtu) throws GtuException
                         {
                             // here the lateral control system is initiated
                             ParameterSet settings = new ParameterSet();
@@ -502,7 +502,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             }
                             catch (ParameterException exception)
                             {
-                                throw new GTUException(exception);
+                                throw new GtuException(exception);
                             }
                             return new ControlledTacticalPlanner(gtu, new SyncAndAccept(gtu, new IDMPlus(), settings));
                         }
@@ -515,16 +515,16 @@ public class RampMeteringDemo extends AbstractSimulationScript
         /** {@inheritDoc} */
         @Override
         public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
-                final StreamInterface randomStream) throws GTUException
+                final StreamInterface randomStream) throws GtuException
         {
-            GTUType gtuType = category.get(GTUType.class);
+            GtuType gtuType = category.get(GtuType.class);
             // if GTU type is a controlled car, create characteristics for a controlled car
             if (gtuType.equals(getNetwork().getGtuType(CONTROLLED_CAR_ID)))
             {
                 Route route = null;
                 VehicleModel vehicleModel = VehicleModel.MINMAX;
-                GTUCharacteristics gtuCharacteristics =
-                        GTUType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
+                GtuCharacteristics gtuCharacteristics =
+                        GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
                 return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.controlledPlannerFactory, route, origin,
                         destination, vehicleModel);
             }
@@ -551,7 +551,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGTU; gtu
+         * @param gtu LaneBasedGtu; gtu
          * @param laneChangeSystem AutomaticLaneChangeSystem; lane change system
          */
         ControlledTacticalPlanner(final LaneBasedGTU gtu, final AutomaticLaneChangeSystem laneChangeSystem)
@@ -559,12 +559,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
             super(new IDMPlus(), gtu, generatePerception(gtu));
             setDefaultIncentives();
             this.laneChangeSystem = laneChangeSystem;
-            this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GTUException.class);
+            this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
         }
 
         /**
          * Helper method to create perception.
-         * @param gtu LaneBasedGTU; gtu
+         * @param gtu LaneBasedGtu; gtu
          * @return LanePerception lane perception
          */
         private static LanePerception generatePerception(final LaneBasedGTU gtu)
@@ -582,7 +582,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         /** {@inheritDoc} */
         @Override
         public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-                throws OperationalPlanException, GTUException, NetworkException, ParameterException
+                throws OperationalPlanException, GtuException, NetworkException, ParameterException
         {
             // get some general input
             Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -708,7 +708,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGTU; GTU
+         * @param gtu LaneBasedGtu; GTU
          * @param carFollowingModel CarFollowingModel; car-following model
          * @param settings Parameters; system settings
          */

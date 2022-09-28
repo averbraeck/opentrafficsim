@@ -7,7 +7,7 @@ import org.djutils.draw.point.Point3d;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 
@@ -27,13 +27,13 @@ public class LaneStructureLocatable implements Locatable
     private final RollingLaneStructure rollingLaneStructure;
 
     /** GTU. */
-    private final GTU gtu;
+    private final Gtu gtu;
 
     /**
      * @param rollingLaneStructure RollingLaneStructure; the rolling lane structure
-     * @param gtu GTU; the gtu
+     * @param gtu Gtu; the gtu
      */
-    public LaneStructureLocatable(final RollingLaneStructure rollingLaneStructure, final GTU gtu)
+    public LaneStructureLocatable(final RollingLaneStructure rollingLaneStructure, final Gtu gtu)
     {
         this.rollingLaneStructure = rollingLaneStructure;
         this.gtu = gtu;
@@ -81,7 +81,7 @@ public class LaneStructureLocatable implements Locatable
     /**
      * @return gtu
      */
-    public final GTU getGtu()
+    public final Gtu getGtu()
     {
         return this.gtu;
     }

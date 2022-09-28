@@ -14,7 +14,7 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
@@ -78,7 +78,7 @@ public class StochasticDistractionModel implements EventListenerInterface
 
     /**
      * Start a distraction.
-     * @param gtu LaneBasedGTU; gtu to start the distraction on
+     * @param gtu LaneBasedGtu; gtu to start the distraction on
      * @param distraction Distraction; distraction
      * @param scheduleNext boolean; whether to schedule the next distraction (not if starting from queue)
      * @throws SimRuntimeException on time error
@@ -123,7 +123,7 @@ public class StochasticDistractionModel implements EventListenerInterface
 
     /**
      * Stops a distraction task.
-     * @param gtu LaneBasedGTU; gtu to stop the task for
+     * @param gtu LaneBasedGtu; gtu to stop the task for
      * @param task Task; task to stop
      * @throws SimRuntimeException on time error
      */
@@ -160,10 +160,10 @@ public class StochasticDistractionModel implements EventListenerInterface
         {
             // The GTU is not initialized yet, so we can't obtain the tactical planner
             String gtuId = (String) event.getContent();
-            GTU gtu = this.network.getGTU(gtuId);
-            gtu.addListener(this, GTU.INIT_EVENT);
+            Gtu gtu = this.network.getGTU(gtuId);
+            gtu.addListener(this, Gtu.INIT_EVENT);
         }
-        else if (event.getType().equals(GTU.INIT_EVENT))
+        else if (event.getType().equals(Gtu.INIT_EVENT))
         {
             String gtuId = (String) ((Object[]) event.getContent())[0];
             LaneBasedGTU gtu = (LaneBasedGTU) this.network.getGTU(gtuId);

@@ -38,8 +38,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
@@ -92,11 +92,11 @@ public class TransceiverTest
      * @throws OTSGeometryException on error
      * @throws NamingException on error
      * @throws SimRuntimeException on error
-     * @throws GTUException on error
+     * @throws GtuException on error
      */
     @Test
     public void testGTUIdTransceiver() throws RemoteException, Sim0MQException, SerializationException, NetworkException,
-            OTSGeometryException, SimRuntimeException, NamingException, GTUException
+            OTSGeometryException, SimRuntimeException, NamingException, GtuException
     {
         ReturnWrapper storeLastResult = new ReturnWrapper()
         {
@@ -185,7 +185,7 @@ public class TransceiverTest
         assertNull("Bad address",
                 checkAckNack(gtuIdTransceiver, new Object[] {"this is a bad address"}, false, "wrong length"));
 
-        GTUType gtuType = new GTUType("gtuType 1", network);
+        GtuType gtuType = new GtuType("gtuType 1", network);
         LaneBasedGTU gtu1 =
                 new MyMockGTU("gtu 1", gtuType, new DirectedPoint(1, 10, 100, 1, 1, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
                         new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
@@ -290,7 +290,7 @@ public class TransceiverTest
             assertEquals("gtuResult is gtu with expected id", result[i], gtuResult[0]);
             LaneBasedGTU gtu = (LaneBasedGTU) network.getGTU(((String) gtuResult[0]));
             assertNotNull("GTU is in the network", gtu);
-            assertTrue("field 1 is id of a GTUType", gtuResult[1] instanceof String);
+            assertTrue("field 1 is id of a GtuType", gtuResult[1] instanceof String);
             assertEquals("gtu type matches", gtuType.getId(), gtuResult[1]);
             assertEquals("x matches", gtu.getLocation().x, ((PositionVector) gtuResult[2]).get(0).si, 0.0000);
             assertEquals("y matches", gtu.getLocation().y, ((PositionVector) gtuResult[2]).get(1).si, 0.0000);
@@ -600,7 +600,7 @@ class MyMockGTU
     private final java.lang.String name;
 
     /** gtu type. */
-    private final GTUType gtuType;
+    private final GtuType gtuType;
 
     /** location. */
     private final DirectedPoint location;
@@ -616,14 +616,14 @@ class MyMockGTU
 
     /**
      * @param name String; the name of the mocked GTU
-     * @param gtuType GTUType; the GTU type
+     * @param gtuType GtuType; the GTU type
      * @param location DirectedPoint; the location of the mocked GTU
      * @param speed Speed; the speed of the mocked GTU
      * @param acceleration Acceleration; the acceleration of the mocked GTU
      * @param simulator OTSSimulatorInterface; (mocked) simulator
      * @throws RemoteException cannot happen ...
      */
-    MyMockGTU(final String name, final GTUType gtuType, final DirectedPoint location, final Speed speed,
+    MyMockGTU(final String name, final GtuType gtuType, final DirectedPoint location, final Speed speed,
             final Acceleration acceleration, final OTSSimulatorInterface simulator) throws RemoteException
     {
         this.name = name;
@@ -634,7 +634,7 @@ class MyMockGTU
         this.simulator = simulator;
         this.mockGTU = Mockito.mock(LaneBasedGTU.class);
         Mockito.when(this.mockGTU.getSimulator()).thenReturn(this.simulator);
-        Mockito.when(this.mockGTU.getGTUType()).thenReturn(this.gtuType);
+        Mockito.when(this.mockGTU.getGtuType()).thenReturn(this.gtuType);
         Mockito.when(this.mockGTU.getLocation()).thenReturn(this.location);
         Mockito.when(this.mockGTU.getSpeed()).thenReturn(this.speed);
         Mockito.when(this.mockGTU.getAcceleration()).thenReturn(this.acceleration);

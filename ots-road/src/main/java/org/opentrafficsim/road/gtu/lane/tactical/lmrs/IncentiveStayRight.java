@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -45,7 +45,7 @@ public class IncentiveStayRight implements VoluntaryIncentive
         LaneStructureRecord record = root;
         RelativeLane lane = RelativeLane.CURRENT;
         Route route = Try.assign(() -> perception.getGtu().getStrategicalPlanner().getRoute(), "");
-        GTUType gtuType = Try.assign(() -> perception.getGtu().getGTUType(), "");
+        GtuType gtuType = Try.assign(() -> perception.getGtu().getGtuType(), "");
         Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         // move all the way left
         while (record.physicalLeft())

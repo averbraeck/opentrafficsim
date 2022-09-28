@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -57,7 +57,7 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
 
     /** {@inheritDoc} */
     @Override
-    public void updateAll() throws GTUException, NetworkException, ParameterException
+    public void updateAll() throws GtuException, NetworkException, ParameterException
     {
         // lazy evaluation
     }
@@ -87,7 +87,7 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
                             .getParameter(LongitudinalControllerPerception.RANGE),
                     getGtu().getFront(), this.sensors, RelativeLane.CURRENT, ignoreIfUpstream);
         }
-        catch (ParameterException | GTUException exception)
+        catch (ParameterException | GtuException exception)
         {
             throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
         }
@@ -109,7 +109,7 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
 
         /**
          * Constructor.
-         * @param perceivingGtu LaneBasedGTU; perceiving GTU
+         * @param perceivingGtu LaneBasedGtu; perceiving GTU
          * @param root LaneRecord&lt;?&gt;; root record
          * @param initialPosition Length; position on the root record
          * @param maxDistance Length; maximum distance to search
@@ -128,7 +128,7 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
 
         /** {@inheritDoc} */
         @Override
-        protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GTUException
+        protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
         {
             Entry next;
             do

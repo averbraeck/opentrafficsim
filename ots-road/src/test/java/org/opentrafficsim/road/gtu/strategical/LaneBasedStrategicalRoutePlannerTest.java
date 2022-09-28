@@ -6,7 +6,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
@@ -32,12 +32,12 @@ public class LaneBasedStrategicalRoutePlannerTest
 
     /**
      * Test the nextLinkDirection method.
-     * @throws GTUException if not caught this test has failed
+     * @throws GtuException if not caught this test has failed
      * @throws NetworkException if not caught this test has failed
      * @throws OTSGeometryException when construction of design line fails
      */
     @Test
-    public final void nextLinkDirectionTest() throws GTUException, NetworkException, OTSGeometryException
+    public final void nextLinkDirectionTest() throws GtuException, NetworkException, OTSGeometryException
     {
         OTSSimulatorInterface simulator = MockSimulator.createMock();
         OTSRoadNetwork network = new OTSRoadNetwork("next link direction test", true, simulator);

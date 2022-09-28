@@ -20,7 +20,7 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -132,7 +132,7 @@ public class Circuit extends OTSSimulationApplication<OTSModelInterface>
                 this.network = new OTSRoadNetwork("Circuit", true, getSimulator());
                 XmlNetworkLaneParser.build(xmlURL, this.network, false);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | GTUException | OTSGeometryException
+            catch (NetworkException | ParserConfigurationException | SAXException | GtuException | OTSGeometryException
                     | JAXBException | URISyntaxException | XmlParserException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();

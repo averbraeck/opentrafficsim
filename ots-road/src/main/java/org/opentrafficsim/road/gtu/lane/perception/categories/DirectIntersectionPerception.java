@@ -13,7 +13,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -103,14 +103,14 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                     {
                         return new HeadwayTrafficLight(trafficLight, distance);
                     }
-                    catch (GTUException exception)
+                    catch (GtuException exception)
                     {
                         throw new RuntimeException(exception);
                     }
                 }
             };
         }
-        catch (GTUException | ParameterException exception)
+        catch (GtuException | ParameterException exception)
         {
             throw new RuntimeException("Unexpected exception while computing traffic lights.", exception);
         }
@@ -240,7 +240,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                             headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());
                         }
                     }
-                    catch (GTUException | OTSGeometryException | ParameterException exception)
+                    catch (GtuException | OTSGeometryException | ParameterException exception)
                     {
                         throw new RuntimeException("Could not create headway objects.", exception);
                     }
@@ -248,7 +248,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 }
             };
         }
-        catch (GTUException | ParameterException exception)
+        catch (GtuException | ParameterException exception)
         {
             throw new RuntimeException("Unexpected exception while computing conflicts.", exception);
         }
@@ -276,7 +276,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             }
             return false;
         }
-        catch (GTUException | ParameterException exception)
+        catch (GtuException | ParameterException exception)
         {
             throw new RuntimeException("Unexpected exception while computing conflict alongside.", exception);
         }
@@ -314,7 +314,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
 
     /** {@inheritDoc} */
     @Override
-    public void updateAll() throws GTUException, NetworkException, ParameterException
+    public void updateAll() throws GtuException, NetworkException, ParameterException
     {
         // lazy evaluation
     }

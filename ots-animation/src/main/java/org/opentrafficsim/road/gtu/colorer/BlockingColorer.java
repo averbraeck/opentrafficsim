@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 
@@ -47,7 +47,7 @@ public class BlockingColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public Color getColor(final Gtu gtu)
     {
         TacticalPlanner<?, ?> tact = gtu.getTacticalPlanner();
         if (tact instanceof Blockable && ((Blockable) tact).isBlocking())

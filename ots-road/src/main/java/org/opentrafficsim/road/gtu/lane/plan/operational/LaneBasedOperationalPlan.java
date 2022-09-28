@@ -12,7 +12,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -40,7 +40,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Construct an operational plan with or without a lane change.
-     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param path OTSLine3D; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
      *            least&lt;/i&gt; the length
      * @param startTime Time; the absolute start time when we start executing the path
@@ -60,7 +60,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Build a plan where the GTU will wait for a certain time. Of course no lane change takes place.
-     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param gtu LaneBasedGtu; the GTU for debugging purposes
      * @param waitPoint DirectedPoint; the point at which the GTU will wait
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param duration Duration; the waiting time
@@ -86,11 +86,11 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     /**
      * Returns the total length along the reference lane that the GTU travels. In case of a deviative plan this involves
      * projection of the actual path to the lane center lines.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @return Length; total length along the path
-     * @throws GTUException if the GTU has not reference position
+     * @throws GtuException if the GTU has not reference position
      */
-    public final Length getTotalLengthAlongLane(final LaneBasedGTU gtu) throws GTUException
+    public final Length getTotalLengthAlongLane(final LaneBasedGTU gtu) throws GtuException
     {
         if (!this.deviative)
         {
@@ -125,12 +125,12 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Returns the distance along the reference lane that the GTU travels from the current location up to the point.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param point DirectedPoint; point where the GTU is or will be
      * @return Length; total length along the path
-     * @throws GTUException if the GTU has not reference position
+     * @throws GtuException if the GTU has not reference position
      */
-    public final Length getDistanceAlongLane(final LaneBasedGTU gtu, final DirectedPoint point) throws GTUException
+    public final Length getDistanceAlongLane(final LaneBasedGTU gtu, final DirectedPoint point) throws GtuException
     {
 
         // start lane center lines at current reference lane

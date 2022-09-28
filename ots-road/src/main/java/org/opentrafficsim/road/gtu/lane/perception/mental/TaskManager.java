@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
@@ -25,13 +25,13 @@ public interface TaskManager
      * Manage tasks.
      * @param tasks Set&lt;Task&gt;; tasks
      * @param perception LanePerception; perception
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param parameters Parameters; parameters
      * @throws ParameterException if a parameter is missing or out of bounds
-     * @throws GTUException exceptions pertaining to the GTU
+     * @throws GtuException exceptions pertaining to the GTU
      */
     void manage(Set<Task> tasks, LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
-            throws ParameterException, GTUException;
+            throws ParameterException, GtuException;
 
     /**
      * Manages a set of tasks without considering anticipation reliance.
@@ -49,7 +49,7 @@ public interface TaskManager
         /** {@inheritDoc} */
         @Override
         public void manage(final Set<Task> tasks, final LanePerception perception, final LaneBasedGTU gtu,
-                final Parameters parameters) throws ParameterException, GTUException
+                final Parameters parameters) throws ParameterException, GtuException
         {
             for (Task task : tasks)
             {

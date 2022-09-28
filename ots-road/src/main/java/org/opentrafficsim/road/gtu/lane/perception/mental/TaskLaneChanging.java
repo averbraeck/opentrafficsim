@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -102,7 +102,7 @@ public class TaskLaneChanging extends TaskHeadwayBased
         {
             @Override
             public double getConsideration(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
-                    throws ParameterException, GTUException
+                    throws ParameterException, GtuException
             {
                 double dLeft = gtu.getParameters().getParameter(LmrsParameters.DLEFT);
                 double dRight = gtu.getParameters().getParameter(LmrsParameters.DRIGHT);
@@ -122,14 +122,14 @@ public class TaskLaneChanging extends TaskHeadwayBased
          * Returns fraction of lateral consideration, &lt;0 for left lane, &gt;0 for right lane. Should be in the range -1 ...
          * 1.
          * @param perception LanePerception; perception
-         * @param gtu LaneBasedGTU; gtu
+         * @param gtu LaneBasedGtu; gtu
          * @param parameters Parameters; parameters
          * @return double; demand of this task
          * @throws ParameterException if a parameter is missing or out of bounds
-         * @throws GTUException exceptions pertaining to the GTU
+         * @throws GtuException exceptions pertaining to the GTU
          */
         double getConsideration(LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
-                throws ParameterException, GTUException;
+                throws ParameterException, GtuException;
     }
 
 }

@@ -22,7 +22,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUDumper
+public class GtuDumper
 {
     /**
      * Write all GTU positions in a file.
@@ -34,7 +34,7 @@ public class GTUDumper
             Time now = this.simulator.getSimulatorAbsTime();
             String fileName = String.format("%s%08.2f.txt", this.fileNamePrefix, now.si);
             PrintWriter pw = new PrintWriter(new File(fileName));
-            for (GTU gtu : this.network.getGTUs())
+            for (Gtu gtu : this.network.getGTUs())
             {
                 DirectedPoint dp = gtu.getOperationalPlan().getLocation(now);
                 pw.format("%s position %.3f,%.3f dir=%5.1f speed %s\n", gtu.toString(), dp.x, dp.y,
@@ -70,7 +70,7 @@ public class GTUDumper
      *            appended to the file name. The file type will be .txt
      * @throws SimRuntimeException when scheduling the first dump time fails
      */
-    public GTUDumper(final Time firstDumpTime, final Duration interval, final OTSNetwork network, final String fileNamePrefix)
+    public GtuDumper(final Time firstDumpTime, final Duration interval, final OTSNetwork network, final String fileNamePrefix)
             throws SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null");

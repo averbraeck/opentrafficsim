@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * Factory for vehicle models.
@@ -31,7 +31,7 @@ public interface VehicleModelFactory
         return new VehicleModelFactory()
         {
             @Override
-            public VehicleModel create(final GTUType gtuType)
+            public VehicleModel create(final GtuType gtuType)
             {
                 return vehicleModel;
             }
@@ -40,9 +40,9 @@ public interface VehicleModelFactory
 
     /**
      * Create next vehicle model for given GTU type.
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @return next vehicle model for given GTU type
      */
-    VehicleModel create(GTUType gtuType);
+    VehicleModel create(GtuType gtuType);
 
 }

@@ -20,7 +20,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -78,7 +78,7 @@ public class LaneChange implements Serializable
 
     /**
      * Constructor.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      */
     public LaneChange(final LaneBasedGTU gtu)
     {
@@ -183,7 +183,7 @@ public class LaneChange implements Serializable
      * Second lane of lane change relative to the reference lane. Note that the reference lane may either be the source or the
      * target lane. Thus, the second lane during a lane change may either be the left or right lane, regardless of the lane
      * change direction.
-     * @param gtu LaneBasedGTU; the GTU
+     * @param gtu LaneBasedGtu; the GTU
      * @return target lane of lane change
      * @throws OperationalPlanException If no lane change is being performed.
      */
@@ -198,12 +198,12 @@ public class LaneChange implements Serializable
             map = gtu.positions(gtu.getReference());
             dlp = gtu.getReferencePosition();
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new OperationalPlanException("Second lane of lane change could not be determined.", exception);
         }
         Set<Lane> accessibleLanes = dlp.getLane().accessibleAdjacentLanesPhysical(this.laneChangeDirectionality,
-                gtu.getGTUType(), dlp.getGtuDirection());
+                gtu.getGtuType(), dlp.getGtuDirection());
         if (!accessibleLanes.isEmpty() && map.containsKey(accessibleLanes.iterator().next()))
         {
             return isChangingLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
@@ -214,7 +214,7 @@ public class LaneChange implements Serializable
     /**
      * Returns the path for a lane change. Lane change initialization and finalization events are automatically performed.
      * @param timeStep Duration; plan time step
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param from DirectedLanePosition; current position on the from lane (i.e. not necessarily the reference position)
      * @param startPosition DirectedPoint; current position in 2D
      * @param planDistance Length; absolute distance that will be covered during the time step
@@ -500,7 +500,7 @@ public class LaneChange implements Serializable
 
     /**
      * Checks whether the given GTU has sufficient space relative to a {@code Headway}.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param headway Headway; headway
      * @return boolean; whether the given GTU has sufficient space relative to a {@code Headway}
      */

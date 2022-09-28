@@ -11,7 +11,7 @@ import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -57,7 +57,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
             final LateralDirectionality direction, final Collection<Headway> sameLaneGTUs,
             final Collection<Headway> otherLaneGTUs, final Length maxDistance, final Speed speedLimit,
             final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
-            throws GTUException, ParameterException, OperationalPlanException
+            throws GtuException, ParameterException, OperationalPlanException
     {
         Lane lane = gtu.getReferencePosition().getLane();
         Length longitudinalPosition = gtu.getReferencePosition().getPosition();
@@ -66,7 +66,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) gtu.getTacticalPlanner().getCarFollowingModel();
         if (null == gtuFollowingModel)
         {
-            throw new GTUException(gtu + " has null GTUFollowingModel");
+            throw new GtuException(gtu + " has null GTUFollowingModel");
         }
         DualAccelerationStep thisLaneAccelerationSteps =
                 gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, maxDistance, speedLimit, laneChangeTime);

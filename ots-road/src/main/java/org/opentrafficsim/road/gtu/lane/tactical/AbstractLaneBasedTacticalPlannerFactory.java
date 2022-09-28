@@ -4,8 +4,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -71,7 +71,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
 
     /**
      * Returns the next car following model.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @return CarFollowingModel; next car following model
      */
     protected final CarFollowingModel nextCarFollowingModel(final LaneBasedGTU gtu)
@@ -105,8 +105,8 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
 
     /** {@inheritDoc} */
     @Override
-    public final Speed peekDesiredSpeed(final GTUType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
-            final Parameters parameters) throws GTUException
+    public final Speed peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
+            final Parameters parameters) throws GtuException
     {
         try
         {
@@ -117,14 +117,14 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
         }
         catch (ParameterException exception)
         {
-            throw new GTUException(exception);
+            throw new GtuException(exception);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length peekDesiredHeadway(final GTUType gtuType, final Speed speed, final Parameters parameters)
-            throws GTUException
+    public final Length peekDesiredHeadway(final GtuType gtuType, final Speed speed, final Parameters parameters)
+            throws GtuException
     {
         try
         {
@@ -132,7 +132,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
         }
         catch (ParameterException exception)
         {
-            throw new GTUException(exception);
+            throw new GtuException(exception);
         }
     }
 

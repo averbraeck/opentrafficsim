@@ -32,7 +32,7 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
     /**
      * Constructor.
      * @param carFollowingModel CarFollowingModel; Car-following model.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param lanePerception LanePerception; perception
      */
     public AbstractIncentivesTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu,

@@ -3,8 +3,8 @@ package org.opentrafficsim.road.gtu.lane;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 /**
@@ -37,24 +37,24 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     /**
      * Construct a new AbstractLaneBasedIndividualGTU.
      * @param id String; the id of the GTU
-     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed; the maximum speed of the GTU (in the driving direction)
      * @param simulator OTSSimulatorInterface; the simulator
      * @param network OTSRoadNetwork; the network that the GTU is initially registered in
-     * @throws GTUException when a parameter is invalid
+     * @throws GtuException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final OTSSimulatorInterface simulator, final OTSRoadNetwork network) throws GTUException
+    public AbstractLaneBasedIndividualGTU(final String id, final GtuType gtuType, final Length length, final Length width,
+            final Speed maximumSpeed, final OTSSimulatorInterface simulator, final OTSRoadNetwork network) throws GtuException
     {
         super(id, gtuType, network);
         this.length = length;
         this.width = width;
         if (null == maximumSpeed)
         {
-            throw new GTUException("maximumSpeed may not be null");
+            throw new GtuException("maximumSpeed may not be null");
         }
         this.maximumSpeed = maximumSpeed;
     }

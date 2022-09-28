@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * Color GTUs based on their id. If the id ends on one or more digits, the value that those digits constitute is used.
@@ -41,7 +41,7 @@ public class IDGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu)
+    public final Color getColor(final Gtu gtu)
     {
         return LEGEND.get(Math.abs(gtu.getId().hashCode() % LEGEND.size())).getColor();
     }

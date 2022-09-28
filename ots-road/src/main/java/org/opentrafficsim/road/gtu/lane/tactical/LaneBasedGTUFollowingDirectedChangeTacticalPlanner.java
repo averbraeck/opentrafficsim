@@ -24,7 +24,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -115,7 +115,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
      * @param carFollowingModel GTUFollowingModelOld; Car-following model.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      */
     public LaneBasedGTUFollowingDirectedChangeTacticalPlanner(final GTUFollowingModelOld carFollowingModel,
             final LaneBasedGTU gtu)
@@ -173,7 +173,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     @Override
     @SuppressWarnings("checkstyle:methodlength")
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-            throws OperationalPlanException, NetworkException, GTUException, ParameterException
+            throws OperationalPlanException, NetworkException, GtuException, ParameterException
     {
         try
         {
@@ -390,7 +390,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
             return currentLanePlan(laneBasedGTU, startTime, locationAtStartTime, lanePathInfo);
         }
-        catch (GTUException | NetworkException | OperationalPlanException exception)
+        catch (GtuException | NetworkException | OperationalPlanException exception)
         {
             if (isDestroyGtuOnFailure())
             {
@@ -405,19 +405,19 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * Make a plan for the current lane.
-     * @param laneBasedGTU LaneBasedGTU; the gtu to generate the plan for
+     * @param laneBasedGTU LaneBasedGtu; the gtu to generate the plan for
      * @param startTime Time; the time from which the new operational plan has to be operational
      * @param locationAtStartTime DirectedPoint; the location of the GTU at the start time of the new plan
      * @param lanePathInfo LanePathInfo; the lane path for the current lane.
      * @return An operation plan for staying in the current lane.
      * @throws OperationalPlanException when there is a problem planning a path in the network
-     * @throws GTUException when there is a problem with the state of the GTU when planning a path
+     * @throws GtuException when there is a problem with the state of the GTU when planning a path
      * @throws ParameterException in case LOOKAHEAD parameter cannot be found
      * @throws NetworkException in case the headways to GTUs or objects cannot be calculated
      */
     private OperationalPlan currentLanePlan(final LaneBasedGTU laneBasedGTU, final Time startTime,
             final DirectedPoint locationAtStartTime, final LanePathInfo lanePathInfo)
-            throws OperationalPlanException, GTUException, ParameterException, NetworkException
+            throws OperationalPlanException, GtuException, ParameterException, NetworkException
     {
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
 
@@ -451,7 +451,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * We are not on a lane that leads to our destination. Determine whether the lateral direction to go is left or right.
-     * @param laneBasedGTU LaneBasedGTU; the gtu
+     * @param laneBasedGTU LaneBasedGtu; the gtu
      * @param nextSplitInfo NextSplitInfo; the information about the next split
      * @return the lateral direction to go, or null if this cannot be determined
      */
@@ -481,7 +481,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                 }
             }
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             System.err.println(
                     "Exception in LaneBasedGTUFollowingChange0TacticalPlanner.determineLeftRight: " + exception.getMessage());
@@ -492,20 +492,20 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * See if a lane change in the given direction if possible.
-     * @param gtu LaneBasedGTU; the GTU that has to make the lane change
+     * @param gtu LaneBasedGtu; the GTU that has to make the lane change
      * @param perception LanePerception; the perception, where forward headway, accessible lanes and speed limit have been
      *            assessed
      * @param lanePathInfo LanePathInfo; the information for the path on the current lane
      * @param direction LateralDirectionality; the lateral direction, either LEFT or RIGHT
      * @return whether a lane change is possible.
      * @throws NetworkException when there is a network inconsistency in updating the perception
-     * @throws GTUException when there is an issue retrieving GTU information for the perception update
+     * @throws GtuException when there is an issue retrieving GTU information for the perception update
      * @throws ParameterException when there is a parameter problem.
      * @throws OperationalPlanException in case a perception category is not present
      */
     private boolean canChange(final LaneBasedGTU gtu, final LanePerception perception, final LanePathInfo lanePathInfo,
             final LateralDirectionality direction)
-            throws GTUException, NetworkException, ParameterException, OperationalPlanException
+            throws GtuException, NetworkException, ParameterException, OperationalPlanException
     {
 
         // TODO remove this hack
@@ -520,7 +520,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         {
             Length pos = positions.get(lane);
             if (pos.si > 0.0 && pos.si < lane.getLength().si && lane
-                    .accessibleAdjacentLanesLegal(direction, getGtu().getGTUType(), getGtu().getDirection(lane)).isEmpty())
+                    .accessibleAdjacentLanesLegal(direction, getGtu().getGtuType(), getGtu().getDirection(lane)).isEmpty())
             {
                 return false;
             }
@@ -547,7 +547,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         }
         else
         {
-            throw new GTUException("Lateral direction is neither LEFT nor RIGHT during a lane change");
+            throw new GtuException("Lateral direction is neither LEFT nor RIGHT during a lane change");
         }
         if (!simplePerception.getParallelHeadways(direction).isEmpty())
         {
@@ -583,12 +583,12 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * Change lanes instantaneously.
-     * @param gtu LaneBasedGTU; the gtu
+     * @param gtu LaneBasedGtu; the gtu
      * @param direction LateralDirectionality; the direction
      * @return the new location of the GTU after the lane change
-     * @throws GTUException in case the enter lane fails
+     * @throws GtuException in case the enter lane fails
      */
-    private DirectedPoint changeLane(final LaneBasedGTU gtu, final LateralDirectionality direction) throws GTUException
+    private DirectedPoint changeLane(final LaneBasedGTU gtu, final LateralDirectionality direction) throws GtuException
     {
         gtu.changeLaneInstantaneously(direction);
 
@@ -614,11 +614,11 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * @return the acceleration based on the most limiting headway.
      * @throws OperationalPlanException in case the PerceptionCategory cannot be found
      * @throws ParameterException in case LOOKAHEAD parameter cannot be found
-     * @throws GTUException in case the AccelerationStep cannot be calculated
+     * @throws GtuException in case the AccelerationStep cannot be calculated
      * @throws NetworkException in case the headways to GTUs or objects cannot be calculated
      */
     private AccelerationStep mostLimitingAccelerationStep(final LanePathInfo lanePathInfo, final Headway... headways)
-            throws OperationalPlanException, ParameterException, GTUException, NetworkException
+            throws OperationalPlanException, ParameterException, GtuException, NetworkException
     {
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
         simplePerception.updateForwardHeadwayGTU();
@@ -767,11 +767,11 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     /**
      * Set the duration to stay in a Lane after a lane change.
      * @param durationInLaneAfterLaneChange Duration; set duration to stay in a Lane after a lane change
-     * @throws GTUException when durationInLaneAfterLaneChange less than zero
+     * @throws GtuException when durationInLaneAfterLaneChange less than zero
      */
-    protected final void setDurationInLaneAfterLaneChange(final Duration durationInLaneAfterLaneChange) throws GTUException
+    protected final void setDurationInLaneAfterLaneChange(final Duration durationInLaneAfterLaneChange) throws GtuException
     {
-        Throw.when(durationInLaneAfterLaneChange.lt0(), GTUException.class, "durationInLaneAfterLaneChange should be >= 0");
+        Throw.when(durationInLaneAfterLaneChange.lt0(), GtuException.class, "durationInLaneAfterLaneChange should be >= 0");
         this.durationInLaneAfterLaneChange = durationInLaneAfterLaneChange;
     }
 

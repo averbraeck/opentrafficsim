@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -106,19 +106,19 @@ public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
     /**
      * Returns whether this lane allows the route to be followed.
      * @param route Route; the route to follow
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @return whether this lane allows the route to be followed
      * @throws NetworkException if no destination node
      */
-    boolean allowsRoute(Route route, GTUType gtuType) throws NetworkException;
+    boolean allowsRoute(Route route, GtuType gtuType) throws NetworkException;
 
     /**
      * Returns whether the end of this lane allows the route to be followed.
      * @param route Route; the route to follow
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @return whether the end of this lane allows the route to be followed
      * @throws NetworkException if no destination node
      */
-    boolean allowsRouteAtEnd(Route route, GTUType gtuType) throws NetworkException;
+    boolean allowsRouteAtEnd(Route route, GtuType gtuType) throws NetworkException;
 
 }

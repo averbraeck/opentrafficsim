@@ -12,8 +12,8 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
@@ -262,77 +262,77 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
     /***************************************************************************************/
 
     /**
-     * Return an immutable map of routes that exist in the network for the GTUType.
-     * @param gtuType GTUType; the GTUType for which to retrieve the defined routes
-     * @return an immutable map of routes in the network for the given GTUType, or an empty Map if no routes are defined for the
-     *         given GTUType.
+     * Return an immutable map of routes that exist in the network for the GtuType.
+     * @param gtuType GtuType; the GtuType for which to retrieve the defined routes
+     * @return an immutable map of routes in the network for the given GtuType, or an empty Map if no routes are defined for the
+     *         given GtuType.
      */
-    ImmutableMap<String, Route> getDefinedRouteMap(GTUType gtuType);
+    ImmutableMap<String, Route> getDefinedRouteMap(GtuType gtuType);
 
     /**
      * Add a route to the network.
-     * @param gtuType GTUType; the GTUType for which to add a route
+     * @param gtuType GtuType; the GtuType for which to add a route
      * @param route Route; the route to add to the network.
      * @throws NetworkException if route already exists in the network, if name of the route is not unique, if one of the nodes
      *             of the route are not registered in the network.
      */
-    void addRoute(GTUType gtuType, Route route) throws NetworkException;
+    void addRoute(GtuType gtuType, Route route) throws NetworkException;
 
     /**
      * Remove the route from the network, e.g. because of road maintenance.
-     * @param gtuType GTUType; the GTUType for which to remove a route
+     * @param gtuType GtuType; the GtuType for which to remove a route
      * @param route Route; the route to remove from the network.
      * @throws NetworkException if route does not exist in the network.
      */
-    void removeRoute(GTUType gtuType, Route route) throws NetworkException;
+    void removeRoute(GtuType gtuType, Route route) throws NetworkException;
 
     /**
-     * Return the route with the given id in the network for the given GTUType, or null if it the route with the id does not
+     * Return the route with the given id in the network for the given GtuType, or null if it the route with the id does not
      * exist.
-     * @param gtuType GTUType; the GTUType for which to retrieve a route based on its id.
+     * @param gtuType GtuType; the GtuType for which to retrieve a route based on its id.
      * @param routeId String; the route to search for in the network.
      * @return the route or null if not present
      */
-    Route getRoute(GTUType gtuType, String routeId);
+    Route getRoute(GtuType gtuType, String routeId);
 
     /**
-     * Determine whether the provided route exists in the network for the given GTUType.
-     * @param gtuType GTUType; the GTUType for which to check whether the route exists
+     * Determine whether the provided route exists in the network for the given GtuType.
+     * @param gtuType GtuType; the GtuType for which to check whether the route exists
      * @param route Route; the route to check for
-     * @return whether the route exists in the network for the given GTUType
+     * @return whether the route exists in the network for the given GtuType
      */
-    boolean containsRoute(GTUType gtuType, Route route);
+    boolean containsRoute(GtuType gtuType, Route route);
 
     /**
-     * Determine whether a route with the given id exists in the network for the given GTUType.
-     * @param gtuType GTUType; the GTUType for which to check whether the route exists
+     * Determine whether a route with the given id exists in the network for the given GtuType.
+     * @param gtuType GtuType; the GtuType for which to check whether the route exists
      * @param routeId String; the id of the route to check for
-     * @return whether a route with the given id exists in the network for the given GTUType
+     * @return whether a route with the given id exists in the network for the given GtuType
      */
-    boolean containsRoute(GTUType gtuType, String routeId);
+    boolean containsRoute(GtuType gtuType, String routeId);
 
     /**
      * Return the the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
      * the start node to the end node via the intermediate nodes in the network, null is returned.
-     * @param gtuType GTUType; the GTUType for which to retrieve the defined routes
+     * @param gtuType GtuType; the GtuType for which to retrieve the defined routes
      * @param nodeFrom Node; the start node.
      * @param nodeTo Node; the end node.
      * @return a set with routes from the start Node to the end Node in the network; if no route can be found, an empty set is
      *         returned.
      */
-    Set<Route> getRoutesBetween(GTUType gtuType, Node nodeFrom, Node nodeTo);
+    Set<Route> getRoutesBetween(GtuType gtuType, Node nodeFrom, Node nodeTo);
 
     /**
-     * (Re)build the underlying graph for the given GTUType.
-     * @param gtuType GTUType; the GTUType for which to (re)build the graph
+     * (Re)build the underlying graph for the given GtuType.
+     * @param gtuType GtuType; the GtuType for which to (re)build the graph
      */
-    void buildGraph(GTUType gtuType);
+    void buildGraph(GtuType gtuType);
 
     /**
      * Calculate the shortest route between two nodes in the network. If no path exists from the start node to the end node in
      * the network, null is returned. This method returns a CompleteRoute, which includes all nodes to get from start to end. In
-     * case the graph for the GTUType has not yet been built, this method will call the buildGraph method.
-     * @param gtuType GTUType; the GTUType for which to calculate the shortest route
+     * case the graph for the GtuType has not yet been built, this method will call the buildGraph method.
+     * @param gtuType GtuType; the GtuType for which to calculate the shortest route
      * @param nodeFrom Node; the start node.
      * @param nodeTo Node; the end node.
      * @return the shortest route from the start Node to the end Node in the network. If no path exists from the start node to
@@ -340,7 +340,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    default CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo) throws NetworkException
+    default CompleteRoute getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo) throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, LinkWeight.LENGTH);
     }
@@ -349,7 +349,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * Calculate the shortest route between two nodes in the network. If no path exists from the start node to the end node in
      * the network, null is returned. This method returns a CompleteRoute, which includes all nodes to get from start to end.
      * This method recalculates the graph.
-     * @param gtuType GTUType; the GTUType for which to calculate the shortest route
+     * @param gtuType GtuType; the GtuType for which to calculate the shortest route
      * @param nodeFrom Node; the start node.
      * @param nodeTo Node; the end node.
      * @param linkWeight LinkWeight; link weight.
@@ -358,15 +358,15 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, LinkWeight linkWeight)
+    CompleteRoute getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, LinkWeight linkWeight)
             throws NetworkException;
 
     /**
      * Calculate the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
      * the start node to the end node via the intermediate nodes in the network, null is returned. This method returns a
-     * CompleteRoute, which includes all nodes to get from start to end. In case the graph for the GTUType has not yet been
+     * CompleteRoute, which includes all nodes to get from start to end. In case the graph for the GtuType has not yet been
      * built, this method will call the buildGraph method.
-     * @param gtuType GTUType; the GTUType for which to calculate the shortest route
+     * @param gtuType GtuType; the GtuType for which to calculate the shortest route
      * @param nodeFrom Node; the start node.
      * @param nodeTo Node; the end node.
      * @param nodesVia List&lt;Node&gt;; a number of nodes that the GTU has to pass between nodeFrom and nodeTo in the given
@@ -376,7 +376,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    default CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia)
+    default CompleteRoute getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia)
             throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH);
@@ -386,7 +386,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * Calculate the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
      * the start node to the end node via the intermediate nodes in the network, null is returned. This method returns a
      * CompleteRoute, which includes all nodes to get from start to end. This method recalculates the graph.
-     * @param gtuType GTUType; the GTUType for which to calculate the shortest route
+     * @param gtuType GtuType; the GtuType for which to calculate the shortest route
      * @param nodeFrom Node; the start node.
      * @param nodeTo Node; the end node.
      * @param nodesVia List&lt;Node&gt;; a number of nodes that the GTU has to pass between nodeFrom and nodeTo in the given
@@ -397,7 +397,7 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia,
+    CompleteRoute getShortestRouteBetween(GtuType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia,
             LinkWeight linkWeight) throws NetworkException;
 
     /***************************************************************************************/
@@ -471,20 +471,20 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
 
     /**
      * The timed event type for pub/sub indicating the addition of a Route for a gtuType. <br>
-     * Payload: [GTUType gtuType, Route route]
+     * Payload: [GtuType gtuType, Route route]
      */
     TimedEventType ANIMATION_ROUTE_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.ROUTE.ADD",
             new MetaData("Route animation added", "Route animation",
-                    new ObjectDescriptor[] {new ObjectDescriptor("GTU type", "GTU type", GTUType.class),
+                    new ObjectDescriptor[] {new ObjectDescriptor("GTU type", "GTU type", GtuType.class),
                             new ObjectDescriptor("Route animation", "Route animation", Route.class)}));
 
     /**
      * The timed event type for pub/sub indicating the removal of a Route for a gtuType. <br>
-     * Payload: [GTUType gtuType, Route route]
+     * Payload: [GtuType gtuType, Route route]
      */
     TimedEventType ANIMATION_ROUTE_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.ROUTE.REMOVE",
             new MetaData("Route animation removed", "Route animation",
-                    new ObjectDescriptor[] {new ObjectDescriptor("GTU type", "GTU type", GTUType.class),
+                    new ObjectDescriptor[] {new ObjectDescriptor("GTU type", "GTU type", GtuType.class),
                             new ObjectDescriptor("Route animation", "Route animation", Route.class)}));
 
     /**
@@ -492,14 +492,14 @@ public interface Network extends Definitions, EventProducerInterface, Identifiab
      * Payload: GTU gtu (not an array, just an Object)
      */
     TimedEventType ANIMATION_GTU_ADD_EVENT = new TimedEventType("ANIMATION.NETWORK.GTU.ADD",
-            new MetaData("GTU animation added", "GTU animation", new ObjectDescriptor("GTU", "GTU", GTU.class)));
+            new MetaData("GTU animation added", "GTU animation", new ObjectDescriptor("GTU", "GTU", Gtu.class)));
 
     /**
      * The timed event type for pub/sub indicating the removal of a GTU from the network. <br>
      * Payload: GTU gtu (not an array, just an Object)
      */
     TimedEventType ANIMATION_GTU_REMOVE_EVENT = new TimedEventType("ANIMATION.NETWORK.GTU.REMOVE",
-            new MetaData("GTU animation removed", "GTU animation", new ObjectDescriptor("GTU", "GTU", GTU.class)));
+            new MetaData("GTU animation removed", "GTU animation", new ObjectDescriptor("GTU", "GTU", Gtu.class)));
 
     /**
      * The timed event type for pub/sub indicating the addition of an GTUGenerator implementing object. <br>

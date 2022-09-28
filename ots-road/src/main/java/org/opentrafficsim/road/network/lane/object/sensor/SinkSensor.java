@@ -75,7 +75,7 @@ public class SinkSensor extends AbstractSensor
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
-        return new SinkSensor((Lane) newCSE, getLongitudinalPosition(), getDetectedGTUTypes(),
+        return new SinkSensor((Lane) newCSE, getLongitudinalPosition(), getDetectedGtuTypes(),
                 (OTSSimulatorInterface) newSimulator);
     }
 

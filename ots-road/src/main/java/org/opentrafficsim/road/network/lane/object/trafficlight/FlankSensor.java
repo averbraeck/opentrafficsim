@@ -67,7 +67,7 @@ public class FlankSensor extends AbstractSensor
         // XXX should the parent of the clone be our parent??? And should the (cloned) parent not construct its own flank
         // sensors?
         return new FlankSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
-                (OTSSimulatorInterface) newSimulator, this.parent, super.getDetectedGTUTypes());
+                (OTSSimulatorInterface) newSimulator, this.parent, super.getDetectedGtuTypes());
     }
 
     /**

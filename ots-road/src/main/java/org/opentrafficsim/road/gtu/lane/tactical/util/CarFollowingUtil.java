@@ -9,7 +9,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadway;
@@ -62,7 +62,7 @@ public final class CarFollowingUtil
      * @param parameters Parameters; parameters
      * @param speed Speed; current speed
      * @param speedLimitInfo SpeedLimitInfo; speed limit info
-     * @param leader HeadwayGTU; leader
+     * @param leader HeadwayGtu; leader
      * @return acceleration for following the leader
      * @throws ParameterException if a parameter is not given or out of bounds
      */
@@ -241,9 +241,9 @@ public final class CarFollowingUtil
          * Constructor.
          * @param headway Length; distance to the leader
          * @param speed Speed; leader speed
-         * @throws GTUException on exception
+         * @throws GtuException on exception
          */
-        public CarFollowingHeadway(final Length headway, final Speed speed) throws GTUException
+        public CarFollowingHeadway(final Length headway, final Speed speed) throws GtuException
         {
             super(headway);
             this.speed = speed;

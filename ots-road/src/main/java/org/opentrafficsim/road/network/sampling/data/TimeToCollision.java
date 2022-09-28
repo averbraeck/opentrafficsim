@@ -11,7 +11,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -74,7 +74,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
                     }
                     visited.add(laneDir);
                     cumulDist = cumulDist.plus(lane.getLength());
-                    map = lane.downstreamLanes(dir, gtuObj.getGTUType()).toMap();
+                    map = lane.downstreamLanes(dir, gtuObj.getGtuType()).toMap();
                 }
                 else
                 {
@@ -92,7 +92,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
             }
             return FloatDuration.NaN;
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             // GTU was destroyed and is without a reference location
             return FloatDuration.NaN;

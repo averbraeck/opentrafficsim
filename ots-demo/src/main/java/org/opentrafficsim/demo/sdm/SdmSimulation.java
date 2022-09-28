@@ -35,7 +35,7 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -339,10 +339,10 @@ public class SdmSimulation extends AbstractSimulationScript
         TimeVector timeVector = DoubleVector.instantiate(new double[] {0.0, wut, wut + (rl - wut) * 0.5, rl}, TimeUnit.DEFAULT,
                 StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR;
-        Categorization categorization = new Categorization("GTU categorization", GTUType.class);
+        Categorization categorization = new Categorization("GTU categorization", GtuType.class);
         ODMatrix odMatrix = new ODMatrix("OD", origins, destinations, categorization, timeVector, interpolation);
-        Category carCategory = new Category(categorization, this.network.getGtuType(GTUType.DEFAULTS.CAR));
-        Category truCategory = new Category(categorization, this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
+        Category carCategory = new Category(categorization, this.network.getGtuType(GtuType.DEFAULTS.CAR));
+        Category truCategory = new Category(categorization, this.network.getGtuType(GtuType.DEFAULTS.TRUCK));
         double f1 = this.truckFraction;
         double f2 = 1.0 - f1;
         double left2 = this.demandLeft.getInUnit(FrequencyUnit.PER_HOUR);

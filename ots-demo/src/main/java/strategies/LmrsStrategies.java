@@ -58,10 +58,10 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUCharacteristics;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuCharacteristics;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -91,7 +91,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
-import org.opentrafficsim.road.gtu.colorer.GTUTypeColorer;
+import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
 import org.opentrafficsim.road.gtu.colorer.IncentiveColorer;
 import org.opentrafficsim.road.gtu.colorer.SocialPressureColorer;
 import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
@@ -240,7 +240,7 @@ public class LmrsStrategies implements EventListenerInterface
     private String folder;
 
     /** Strategical planner factories per GTU type. */
-    private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
+    private final Map<GtuType, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
 
     /** The simulator. */
     private OTSSimulatorInterface simulator;
@@ -262,7 +262,7 @@ public class LmrsStrategies implements EventListenerInterface
 
     /** GTU colorer. */
     private static final GTUColorer colorer = SwitchableGTUColorer.builder()
-            .addActiveColorer(new FixedColor(Color.BLUE, "Blue")).addColorer(GTUTypeColorer.DEFAULT)
+            .addActiveColorer(new FixedColor(Color.BLUE, "Blue")).addColorer(GtuTypeColorer.DEFAULT)
             .addColorer(new IDGTUColorer()).addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
             .addColorer(new DesiredSpeedColorer(new Speed(80, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
             .addColorer(new AccelerationGTUColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
@@ -582,16 +582,16 @@ public class LmrsStrategies implements EventListenerInterface
                 /** {@inheritDoc} */
                 @Override
                 public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
-                        final StreamInterface randomStream) throws GTUException
+                        final StreamInterface randomStream) throws GtuException
                 {
-                    GTUType gtuType = category.get(GTUType.class);
-                    GTUCharacteristics gtuCharacteristics =
-                            Try.assign(() -> GTUType.defaultCharacteristics(gtuType, LmrsStrategies.this.network, randomStream),
+                    GtuType gtuType = category.get(GtuType.class);
+                    GtuCharacteristics gtuCharacteristics =
+                            Try.assign(() -> GtuType.defaultCharacteristics(gtuType, LmrsStrategies.this.network, randomStream),
                                     "Exception while applying default GTU characteristics.");
-                    if (gtuType.equals(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK)))
+                    if (gtuType.equals(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK)))
                     {
-                        gtuCharacteristics = new GTUCharacteristics(
-                                LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), gtuCharacteristics.getLength(),
+                        gtuCharacteristics = new GtuCharacteristics(
+                                LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK), gtuCharacteristics.getLength(),
                                 gtuCharacteristics.getWidth(), this.vTruck.draw(), gtuCharacteristics.getMaximumAcceleration(),
                                 gtuCharacteristics.getMaximumDeceleration(), gtuCharacteristics.getFront());
                     }
@@ -648,39 +648,39 @@ public class LmrsStrategies implements EventListenerInterface
             parameterFactory.addParameter(Tailgating.RHO, 0.0);
             if (!LmrsStrategies.this.baseLMRS)
             {
-                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR),
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR),
                         LmrsParameters.SOCIO, new DistTriangular(stream, 0.0, LmrsStrategies.this.sigma, 1.0));
-                parameterFactory.addCorrelation(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR), null,
+                parameterFactory.addCorrelation(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR), null,
                         LmrsParameters.SOCIO, (
                                 first, then
                         ) -> then <= 1.0 ? then : 1.0);
-                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK),
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK),
                         LmrsParameters.SOCIO, 1.0);
-                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR),
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR),
                         LmrsParameters.VGAIN, new ContinuousDistSpeed(new DistLogNormal(stream, LmrsStrategies.this.vGain, 0.4),
                                 SpeedUnit.KM_PER_HOUR));
-                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK),
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK),
                         LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
                 parameterFactory.addParameter(ParameterTypes.TMAX, Duration.instantiateSI(LmrsStrategies.this.tMax));
             }
             else
             {
                 // overrule for sensitivity analysis
-                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR),
+                parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR),
                         LmrsParameters.VGAIN, new Speed(LmrsStrategies.this.vGain, SpeedUnit.KM_PER_HOUR));
             }
-            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR), ParameterTypes.FSPEED,
+            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR), ParameterTypes.FSPEED,
                     new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0));
-            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.A,
+            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK), ParameterTypes.A,
                     Acceleration.instantiateSI(0.4));
-            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), ParameterTypes.FSPEED,
+            parameterFactory.addParameter(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK), ParameterTypes.FSPEED,
                     1.0);
 
             try
             {
                 // Strategical factories
-                for (GTUType gtuType : new GTUType[] {LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR),
-                        LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK)})
+                for (GtuType gtuType : new GtuType[] {LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR),
+                        LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK)})
                 {
                     // incentives
                     Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -694,13 +694,13 @@ public class LmrsStrategies implements EventListenerInterface
                         voluntaryIncentives.add(new IncentiveSocioSpeed());
                     }
                     // accelerationIncentives.add(new AccelerationNoRightOvertake());
-                    if (gtuType.equals(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK)))
+                    if (gtuType.equals(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK)))
                     {
                         voluntaryIncentives.add(new IncentiveStayRight());
                     }
                     // car-following factory
                     CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
-                            gtuType.equals(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR))
+                            gtuType.equals(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR))
                                     && !LmrsStrategies.this.baseLMRS ? new SocioIDMFactory() : new IDMPlusFactory(stream);
                     // tailgating
                     Tailgating tlgt = LmrsStrategies.this.baseLMRS ? Tailgating.NONE : LmrsStrategies.this.tailgating;
@@ -741,8 +741,8 @@ public class LmrsStrategies implements EventListenerInterface
                 Lane laneBC2 = new Lane(linkBC, "laneBC2", Length.instantiateSI(3.5), Length.instantiateSI(3.5),
                         LmrsStrategies.this.network.getLaneType(LaneType.DEFAULTS.HIGHWAY),
                         new Speed(120, SpeedUnit.KM_PER_HOUR));
-                Set<GTUType> gtuTypes = new LinkedHashSet<>();
-                gtuTypes.add(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.VEHICLE));
+                Set<GtuType> gtuTypes = new LinkedHashSet<>();
+                gtuTypes.add(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.VEHICLE));
                 Stripe stripeAB1 =
                         new Stripe(linkAB, Length.instantiateSI(-1.75), Length.instantiateSI(-1.75), Length.instantiateSI(0.2));
                 Stripe stripeAB2 = new Stripe(linkAB, Length.instantiateSI(1.75), Length.instantiateSI(1.75),
@@ -805,7 +805,7 @@ public class LmrsStrategies implements EventListenerInterface
                 }
 
                 // OD
-                Categorization categorization = new Categorization("ODExample", GTUType.class);
+                Categorization categorization = new Categorization("ODExample", GtuType.class);
                 List<Node> origins = new ArrayList<>();
                 origins.add(nodeA);
                 List<Node> destinations = new ArrayList<>();
@@ -817,18 +817,18 @@ public class LmrsStrategies implements EventListenerInterface
                 double q = LmrsStrategies.this.qMax;
                 FrequencyVector demand = DoubleVector.instantiate(new double[] {q * .6, q * .6, q, 0.0}, FrequencyUnit.PER_HOUR,
                         StorageType.DENSE);
-                Category category = new Category(categorization, LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.CAR));
+                Category category = new Category(categorization, LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.CAR));
                 od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR,
                         1.0 - LmrsStrategies.this.fTruck);
-                category = new Category(categorization, LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK));
+                category = new Category(categorization, LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK));
                 od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR,
                         LmrsStrategies.this.fTruck);
                 // options
-                MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
-                markov.addState(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), 0.4);
+                MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
+                markov.addState(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK), 0.4);
                 LaneBiases biases = new LaneBiases()
-                        .addBias(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), LaneBias.bySpeed(140, 100))
-                        .addBias(LmrsStrategies.this.network.getGtuType(GTUType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT);
+                        .addBias(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), LaneBias.bySpeed(140, 100))
+                        .addBias(LmrsStrategies.this.network.getGtuType(GtuType.DEFAULTS.TRUCK), LaneBias.TRUCK_RIGHT);
                 ODOptions odOptions = new ODOptions().set(ODOptions.MARKOV, markov)
                         .set(ODOptions.getLaneBiasOption(LmrsStrategies.this.network), biases)
                         .set(ODOptions.NO_LC_DIST, Length.instantiateSI(100.0)).set(ODOptions.INSTANT_LC, true)
@@ -950,7 +950,7 @@ public class LmrsStrategies implements EventListenerInterface
         if (event.getType().equals(LaneBasedGTU.LANE_CHANGE_EVENT))
         {
             Object[] payload = (Object[]) event.getContent();
-            GTU gtu = this.network.getGTU((String) payload[0]);
+            Gtu gtu = this.network.getGTU((String) payload[0]);
             LateralDirectionality dir = (LateralDirectionality) payload[1];
             DirectedLanePosition from = (DirectedLanePosition) payload[2];
             DesireBased desire = (DesireBased) gtu.getTacticalPlanner();
@@ -1278,7 +1278,7 @@ public class LmrsStrategies implements EventListenerInterface
             try
             {
                 vDes0 = Math.min(gtu.getMaximumSpeed().si, gtu.getParameters().getParameter(ParameterTypes.FSPEED)
-                        * loopDetector.getLane().getSpeedLimit(gtu.getGTUType()).si);
+                        * loopDetector.getLane().getSpeedLimit(gtu.getGtuType()).si);
             }
             catch (ParameterException | NetworkException exception)
             {

@@ -4,7 +4,7 @@ import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -26,45 +26,45 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      * Updates the infrastructural lane change info. It starts at the given lane and moves downstream over the network. Whenever
      * a point is encountered where lane changes are required, this information is saved.
      * @param lane RelativeLane; relative lateral lane
-     * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
+     * @throws GtuException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
-    void updateInfrastructureLaneChangeInfo(RelativeLane lane) throws GTUException, ParameterException;
+    void updateInfrastructureLaneChangeInfo(RelativeLane lane) throws GtuException, ParameterException;
 
     /**
      * Updates the speed limit prospect.
      * @param lane RelativeLane; relative lateral lane
-     * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
+     * @throws GtuException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
-    void updateSpeedLimitProspect(RelativeLane lane) throws GTUException, ParameterException;
+    void updateSpeedLimitProspect(RelativeLane lane) throws GtuException, ParameterException;
 
     /**
      * Updates the distance over which lane changes remains legally possible.
      * @param lane RelativeLane; lane from which the lane change possibility is requested
      * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
+     * @throws GtuException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
-    void updateLegalLaneChangePossibility(RelativeLane lane, LateralDirectionality lat) throws GTUException, ParameterException;
+    void updateLegalLaneChangePossibility(RelativeLane lane, LateralDirectionality lat) throws GtuException, ParameterException;
 
     /**
      * Updates the distance over which lane changes remains physically possible.
      * @param lane RelativeLane; lane from which the lane change possibility is requested
      * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
+     * @throws GtuException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
     void updatePhysicalLaneChangePossibility(RelativeLane lane, LateralDirectionality lat)
-            throws GTUException, ParameterException;
+            throws GtuException, ParameterException;
 
     /**
      * Updates a set of relative lanes representing the cross section. This set consists of all lanes on the current link, and
      * an additional lane on the left and/or right side in case of a merge that is sufficiently nearby.
-     * @throws GTUException if the GTU was not initialized
+     * @throws GtuException if the GTU was not initialized
      * @throws ParameterException if a parameter is not defined
      */
-    void updateCrossSection() throws GTUException, ParameterException;
+    void updateCrossSection() throws GtuException, ParameterException;
 
     /**
      * Returns infrastructure lane change info of a lane. A set is returned as multiple points may force lane changes. Which
@@ -126,7 +126,7 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
 
     /** {@inheritDoc} */
     @Override
-    default void updateAll() throws GTUException, ParameterException
+    default void updateAll() throws GtuException, ParameterException
     {
         updateCrossSection();
         for (RelativeLane lane : getCrossSection())

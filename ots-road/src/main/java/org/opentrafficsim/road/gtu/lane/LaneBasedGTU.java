@@ -14,9 +14,9 @@ import org.djutils.event.TimedEventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -37,7 +37,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface LaneBasedGTU extends GTU
+public interface LaneBasedGTU extends Gtu
 {
     /** @return the road network to which the LaneBasedGTU belongs */
     RoadNetwork getNetwork();
@@ -73,16 +73,16 @@ public interface LaneBasedGTU extends GTU
     /**
      * Change lanes instantaneously.
      * @param laneChangeDirection LateralDirectionality; the direction to change to
-     * @throws GTUException in case lane change fails
+     * @throws GtuException in case lane change fails
      */
-    void changeLaneInstantaneously(LateralDirectionality laneChangeDirection) throws GTUException;
+    void changeLaneInstantaneously(LateralDirectionality laneChangeDirection) throws GtuException;
 
     /**
      * Register on lanes in target lane.
      * @param laneChangeDirection LateralDirectionality; direction of lane change
-     * @throws GTUException exception
+     * @throws GtuException exception
      */
-    void initLaneChange(LateralDirectionality laneChangeDirection) throws GTUException;
+    void initLaneChange(LateralDirectionality laneChangeDirection) throws GtuException;
 
     /**
      * Sets event to finalize lane change.
@@ -94,9 +94,9 @@ public interface LaneBasedGTU extends GTU
      * Get projected length on the lane.
      * @param lane Lane; lane to project the vehicle on
      * @return Length; the length on the lane, which is different from the actual length during deviative tactical plans
-     * @throws GTUException when the vehicle is not on the given lane
+     * @throws GtuException when the vehicle is not on the given lane
      */
-    default Length getProjectedLength(final Lane lane) throws GTUException
+    default Length getProjectedLength(final Lane lane) throws GtuException
     {
         Length front = position(lane, getFront());
         Length rear = position(lane, getRear());
@@ -123,9 +123,9 @@ public interface LaneBasedGTU extends GTU
      * taken.
      * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
-     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws GtuException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Length> positions(RelativePosition relativePosition) throws GTUException;
+    Map<Lane, Length> positions(RelativePosition relativePosition) throws GtuException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -134,9 +134,9 @@ public interface LaneBasedGTU extends GTU
      * @param when Time; the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
-     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws GtuException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Length> positions(RelativePosition relativePosition, Time when) throws GTUException;
+    Map<Lane, Length> positions(RelativePosition relativePosition, Time when) throws GtuException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane at the current
@@ -144,9 +144,9 @@ public interface LaneBasedGTU extends GTU
      * @param lane Lane; the position on this lane will be returned.
      * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
-     * @throws GTUException when the vehicle is not on the given lane.
+     * @throws GtuException when the vehicle is not on the given lane.
      */
-    Length position(Lane lane, RelativePosition relativePosition) throws GTUException;
+    Length position(Lane lane, RelativePosition relativePosition) throws GtuException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane.
@@ -154,9 +154,9 @@ public interface LaneBasedGTU extends GTU
      * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @param when Time; the future time for which to calculate the positions.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
-     * @throws GTUException when the vehicle is not on the given lane.
+     * @throws GtuException when the vehicle is not on the given lane.
      */
-    Length position(Lane lane, RelativePosition relativePosition, Time when) throws GTUException;
+    Length position(Lane lane, RelativePosition relativePosition, Time when) throws GtuException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -164,9 +164,9 @@ public interface LaneBasedGTU extends GTU
      * next to each other and we compare an 'inner' and 'outer' curve.<br>
      * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
-     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws GtuException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition) throws GTUException;
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition) throws GtuException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -176,9 +176,9 @@ public interface LaneBasedGTU extends GTU
      * @param when Time; the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
-     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws GtuException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time when) throws GTUException;
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time when) throws GtuException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
@@ -188,9 +188,9 @@ public interface LaneBasedGTU extends GTU
      * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @param when Time; the future time for which to calculate the positions.
      * @return the fractional relative position on the lane at the given time.
-     * @throws GTUException when the vehicle is not on the given lane.
+     * @throws GtuException when the vehicle is not on the given lane.
      */
-    double fractionalPosition(Lane lane, RelativePosition relativePosition, Time when) throws GTUException;
+    double fractionalPosition(Lane lane, RelativePosition relativePosition, Time when) throws GtuException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
@@ -199,24 +199,24 @@ public interface LaneBasedGTU extends GTU
      * @param lane Lane; the position on this lane will be returned.
      * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @return the fractional relative position on the lane at the given time.
-     * @throws GTUException when the vehicle is not on the given lane.
+     * @throws GtuException when the vehicle is not on the given lane.
      */
-    double fractionalPosition(Lane lane, RelativePosition relativePosition) throws GTUException;
+    double fractionalPosition(Lane lane, RelativePosition relativePosition) throws GtuException;
 
     /**
      * Return the current Lane, position and directionality of the GTU.
      * @return DirectedLanePosition; the current Lane, position and directionality of the GTU
-     * @throws GTUException in case the reference position of the GTU cannot be found on the lanes in its current path
+     * @throws GtuException in case the reference position of the GTU cannot be found on the lanes in its current path
      */
-    DirectedLanePosition getReferencePosition() throws GTUException;
+    DirectedLanePosition getReferencePosition() throws GtuException;
 
     /**
      * Return the directionality of a lane on which the GTU is registered for its current operational plan.
      * @param lane Lane; the lane for which we want to know the direction
      * @return GTUDirectionality; the direction on the given lane
-     * @throws GTUException in case the GTU is not registered on the Lane
+     * @throws GtuException in case the GTU is not registered on the Lane
      */
-    GTUDirectionality getDirection(Lane lane) throws GTUException;
+    GTUDirectionality getDirection(Lane lane) throws GtuException;
 
     /**
      * Add an event to the list of lane triggers scheduled for this GTU.
@@ -296,9 +296,9 @@ public interface LaneBasedGTU extends GTU
      * Returns the lateral position of the GTU relative to the lane center line. Negative values are towards the right.
      * @param lane Lane; lane to consider (most important regarding left/right, not upstream downstream)
      * @return Length; lateral position of the GTU relative to the lane center line
-     * @throws GTUException when the vehicle is not on the given lane.
+     * @throws GtuException when the vehicle is not on the given lane.
      */
-    Length getLateralPosition(Lane lane) throws GTUException;
+    Length getLateralPosition(Lane lane) throws GtuException;
 
     /** @return the status of the turn indicator */
     TurnIndicatorStatus getTurnIndicatorStatus();
@@ -312,14 +312,14 @@ public interface LaneBasedGTU extends GTU
     /**
      * Set the status of the turn indicator.
      * @param turnIndicatorStatus TurnIndicatorStatus; the new status of the turn indicator.
-     * @throws GTUException when GTUType does not have a turn indicator
+     * @throws GtuException when GtuType does not have a turn indicator
      */
-    void setTurnIndicatorStatus(TurnIndicatorStatus turnIndicatorStatus) throws GTUException;
+    void setTurnIndicatorStatus(TurnIndicatorStatus turnIndicatorStatus) throws GtuException;
 
     /**
      * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
      * Payload: [String gtuId, PositionVector initialPosition, Direction initialDirection, Length length, Length width, String
-     * linkId, String laneId, Length positionOnReferenceLane, GTUDirectionality direction, GTUType gtuType]
+     * linkId, String laneId, Length positionOnReferenceLane, GTUDirectionality direction, GtuType gtuType]
      */
     TimedEventType LANEBASED_INIT_EVENT = new TimedEventType("LANEBASEDGTU.INIT",
             new MetaData("Lane based GTU created", "Lane based GTU created",

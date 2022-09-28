@@ -5,8 +5,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -55,7 +55,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     /**
      * Protected constructor for moved copies or subclasses.
      * @param id String; id
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param distance Length; distance
      * @param length Length; length
      * @param width Length; width
@@ -67,13 +67,13 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
      * @param route Route; route
      * @param desiredSpeed Speed; desired speed
      * @param gtuStatus GTUStatus...; gtu status
-     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length distance, final Length length, final Length width,
+    HeadwayGTURealCopy(final String id, final GtuType gtuType, final Length distance, final Length length, final Length width,
             final Speed speed, final Acceleration acceleration, final CarFollowingModel carFollowingModel,
             final Parameters parameters, final SpeedLimitInfo speedLimitInfo, final Route route, final Speed desiredSpeed,
-            final GTUStatus... gtuStatus) throws GTUException
+            final GTUStatus... gtuStatus) throws GtuException
     {
         super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, gtuStatus);
         this.carFollowingModel = carFollowingModel;
@@ -85,10 +85,10 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     /**
      * Protected constructor for moved copies or subclasses.
      * @param id String; id
-     * @param gtuType GTUType; GTU type
-     * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
-     * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
+     * @param gtuType GtuType; GTU type
+     * @param overlapFront the front-front distance to the other Gtu; if this constructor is used, this value cannot be null.
+     * @param overlap the 'center' overlap with the other Gtu; if this constructor is used, this value cannot be null.
+     * @param overlapRear the rear-rear distance to the other Gtu; if this constructor is used, this value cannot be null.
      * @param length Length; length
      * @param width Length; width
      * @param speed Speed; speed
@@ -99,14 +99,14 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
      * @param route Route; route
      * @param desiredSpeed Speed; desired speed
      * @param gtuStatus GTUStatus...; gtu status
-     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
+    HeadwayGTURealCopy(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Length length, final Length width, final Speed speed,
             final Acceleration acceleration, final CarFollowingModel carFollowingModel, final Parameters parameters,
             final SpeedLimitInfo speedLimitInfo, final Route route, final Speed desiredSpeed, final GTUStatus... gtuStatus)
-            throws GTUException
+            throws GtuException
     {
         super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, speed, acceleration, desiredSpeed,
                 gtuStatus);
@@ -118,13 +118,13 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
-     * @param gtu LaneBasedGTU; the observed GTU, can not be null.
+     * @param gtu LaneBasedGtu; the observed GTU, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTURealCopy(final LaneBasedGTU gtu, final Length distance) throws GTUException
+    public HeadwayGTURealCopy(final LaneBasedGTU gtu, final Length distance) throws GtuException
     {
-        super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getWidth(), gtu.getSpeed(),
+        super(gtu.getId(), gtu.getGtuType(), distance, true, gtu.getLength(), gtu.getWidth(), gtu.getSpeed(),
                 gtu.getAcceleration(), gtu.getDesiredSpeed(), getGTUStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.parameters = new ParameterSet(gtu.getParameters());
@@ -134,16 +134,16 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 
     /**
      * Construct a new Headway information object, for a GTU parallel with us.
-     * @param gtu LaneBasedGTU; the observed GTU, can not be null.
-     * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
-     * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @param gtu LaneBasedGtu; the observed GTU, can not be null.
+     * @param overlapFront the front-front distance to the other Gtu; if this constructor is used, this value cannot be null.
+     * @param overlap the 'center' overlap with the other Gtu; if this constructor is used, this value cannot be null.
+     * @param overlapRear the rear-rear distance to the other Gtu; if this constructor is used, this value cannot be null.
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayGTURealCopy(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
-            throws GTUException
+            throws GtuException
     {
-        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getWidth(),
+        super(gtu.getId(), gtu.getGtuType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getWidth(),
                 gtu.getSpeed(), gtu.getAcceleration(), gtu.getDesiredSpeed(),
                 getGTUStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
@@ -190,7 +190,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
                     getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(),
                     getGtuStatus());
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             // input should be consistent
             throw new RuntimeException("Exception while copying Headway GTU.", exception);

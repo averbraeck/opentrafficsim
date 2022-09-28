@@ -7,10 +7,10 @@ import java.util.Objects;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.OTSRuntimeException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
- * Compatibility between a GTUType and a certain type of infrastructure. Infrastructure can be any hierarchical structure: a
+ * Compatibility between a GtuType and a certain type of infrastructure. Infrastructure can be any hierarchical structure: a
  * LinkType, a LaneType, a SensorType, etc.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -21,13 +21,13 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <I> infrastructure type, e.g. LinkType or LaneType, or water way type
  */
-public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GTUType, I>> implements Compatibility<GTUType, I>
+public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuType, I>> implements Compatibility<GtuType, I>
 {
-    /** The map of GTUTypes that define on this infrastructure level what GTUTypes are compatible or not. */
-    private final Map<GTUType, Boolean> levelCompatibilityMap = new LinkedHashMap<>();
+    /** The map of GtuTypes that define on this infrastructure level what GtuTypes are compatible or not. */
+    private final Map<GtuType, Boolean> levelCompatibilityMap = new LinkedHashMap<>();
 
-    /** The cached map of GTUTypes that have been resolved. */
-    private final Map<GTUType, Boolean> cachedCompatibilityMap = new LinkedHashMap<>();
+    /** The cached map of GtuTypes that have been resolved. */
+    private final Map<GtuType, Boolean> cachedCompatibilityMap = new LinkedHashMap<>();
 
     /** Infrastructure for which this compatibility definition holds, e.g. a LinkType, a LaneType, or a SensorType. */
     private final I infrastructure;
@@ -52,12 +52,12 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
     }
 
     /**
-     * Determine if this Compatibility allows or denies a particular GTUType.
-     * @param gtuType GTUType; the GTUType to check
-     * @return boolean; true if the GTUType is compatible; false if the GTUType is not compatible
+     * Determine if this Compatibility allows or denies a particular GtuType.
+     * @param gtuType GtuType; the GtuType to check
+     * @return boolean; true if the GtuType is compatible; false if the GtuType is not compatible
      */
     @Override
-    public boolean isCompatible(final GTUType gtuType)
+    public boolean isCompatible(final GtuType gtuType)
     {
         if (!this.cachedCompatibilityMap.containsKey(gtuType))
         {
@@ -66,7 +66,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
             I infra = this.infrastructure;
             while (infra != null)
             {
-                GTUType gType = gtuType;
+                GtuType gType = gtuType;
                 while (gType != null)
                 {
                     if (infra.isCompatibleOnInfraLevel(gType) != null)
@@ -102,19 +102,19 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
 
     /** {@inheritDoc} */
     @Override
-    public Boolean isCompatibleOnInfraLevel(final GTUType gtuType)
+    public Boolean isCompatibleOnInfraLevel(final GtuType gtuType)
     {
         return this.levelCompatibilityMap.get(gtuType);
     }
 
     /**
-     * Add an compatible GTUType to this GtuCompatibility.
-     * @param gtuType GTUType; the GTUType to add to the compatible set of this Compatibility
+     * Add an compatible GtuType to this GtuCompatibility.
+     * @param gtuType GtuType; the GtuType to add to the compatible set of this Compatibility
      * @return GTUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
      */
-    public final GtuCompatibility<I> addCompatibleGTUType(final GTUType gtuType) throws NullPointerException
+    public final GtuCompatibility<I> addCompatibleGtuType(final GtuType gtuType) throws NullPointerException
     {
         Throw.whenNull(gtuType, "gtuType may not be null");
         clearCompatibilityCache();
@@ -123,13 +123,13 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
     }
 
     /**
-     * Add a incompatible GTUType to this GtuCompatibility.
-     * @param gtuType GTUType; the GTUType to add to the incompatible set of this Compatibility
+     * Add a incompatible GtuType to this GtuCompatibility.
+     * @param gtuType GtuType; the GtuType to add to the incompatible set of this Compatibility
      * @return GTUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OTSRuntimeException when changes are made to compatibility after results have been cached
      */
-    public final GtuCompatibility<I> addIncompatibleGTUType(final GTUType gtuType) throws NullPointerException
+    public final GtuCompatibility<I> addIncompatibleGtuType(final GtuType gtuType) throws NullPointerException
     {
         Throw.whenNull(gtuType, "gtuType may not be null");
         clearCompatibilityCache();

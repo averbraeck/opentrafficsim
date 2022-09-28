@@ -14,8 +14,8 @@ import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.GtuGenerator;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -125,14 +125,14 @@ public class DefaultAnimationFactory implements EventListenerInterface
                             {
                                 Stripe stripe = (Stripe) element;
                                 TYPE type;
-                                if (stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR), LateralDirectionality.LEFT))
+                                if (stripe.isPermeable(network.getGtuType(GtuType.DEFAULTS.CAR), LateralDirectionality.LEFT))
                                 {
-                                    type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR),
+                                    type = stripe.isPermeable(network.getGtuType(GtuType.DEFAULTS.CAR),
                                             LateralDirectionality.RIGHT) ? TYPE.DASHED : TYPE.LEFTONLY;
                                 }
                                 else
                                 {
-                                    type = stripe.isPermeable(network.getGtuType(GTUType.DEFAULTS.CAR),
+                                    type = stripe.isPermeable(network.getGtuType(GtuType.DEFAULTS.CAR),
                                             LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY : TYPE.SOLID;
                                 }
                                 new StripeAnimation((Stripe) element, this.simulator, type);
@@ -148,7 +148,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
             }
 
-            for (GTU gtu : network.getGTUs())
+            for (Gtu gtu : network.getGTUs())
             {
                 Renderable2D<LaneBasedGTU> gtuAnimation =
                         new DefaultCarAnimation((LaneBasedGTU) gtu, this.simulator, this.gtuColorer);
@@ -250,7 +250,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
     /**
      * Draw the GTU (scheduled method).
-     * @param gtu LaneBasedGTU; the GTU to draw
+     * @param gtu LaneBasedGtu; the GTU to draw
      */
     protected void animateGTU(final LaneBasedGTU gtu)
     {

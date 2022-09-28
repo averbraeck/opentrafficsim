@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.opentrafficsim.core.animation.ColorInterpolator;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
@@ -67,7 +67,7 @@ public class TaskColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public Color getColor(final Gtu gtu)
     {
         if (gtu.getTacticalPlanner().getPerception() instanceof LanePerception)
         {

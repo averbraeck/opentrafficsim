@@ -20,7 +20,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -118,7 +118,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             this.norm = new DistNormal(perception.getGtu().getSimulator().getModel().getStream("perception"));
             perception.getGtu().addListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
         }
-        catch (GTUException | RemoteException exception)
+        catch (GtuException | RemoteException exception)
         {
             throw new RuntimeException("GTU not initialized.", exception);
         }
@@ -178,7 +178,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             }
             this.rearrangeTime = time;
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new RuntimeException("GTU not initialized while rearranging neighbors.", exception);
         }
@@ -310,7 +310,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             }
 
         }
-        catch (PerceptionException | GTUException exception)
+        catch (PerceptionException | GtuException exception)
         {
             // lane change performed, info on a lane not present
         }
@@ -347,7 +347,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
             }
         }
-        catch (ParameterException | GTUException pe)
+        catch (ParameterException | GtuException pe)
         {
             //
         }
@@ -368,7 +368,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         {
             now = getTimestamp();
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new RuntimeException("Could not get time stamp.", exception);
         }

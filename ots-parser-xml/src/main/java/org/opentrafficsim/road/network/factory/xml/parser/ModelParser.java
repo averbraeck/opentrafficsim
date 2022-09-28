@@ -28,8 +28,8 @@ import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
@@ -300,7 +300,7 @@ public class ModelParser
                 }
             }
             // set input parameters, these may override the above parameters
-            for (GTUType gtuType : inputParameters.getObjects(GTUType.class))
+            for (GtuType gtuType : inputParameters.getObjects(GtuType.class))
             {
                 for (Entry<String, InputParameter<?, ?>> entry : inputParameters.getInputParameters(gtuType).entrySet())
                 {
@@ -384,7 +384,7 @@ public class ModelParser
                     tacticalPlannerFactory = new LMRSFactory(new IDMPlusFactory(streamInformation.getStream("generation")),
                             new DefaultLMRSPerceptionFactory());
                 }
-                catch (GTUException exception)
+                catch (GtuException exception)
                 {
                     throw new XmlParserException(exception);
                 }
@@ -453,9 +453,9 @@ public class ModelParser
     /**
      * @param gtuTypeId the gtu type
      * @param network the network
-     * @return the GTUType belonging to the id
+     * @return the GtuType belonging to the id
      */
-    private static GTUType getGtuType(final String gtuTypeId, final OTSRoadNetwork network)
+    private static GtuType getGtuType(final String gtuTypeId, final OTSRoadNetwork network)
     {
         if (gtuTypeId == null)
         {

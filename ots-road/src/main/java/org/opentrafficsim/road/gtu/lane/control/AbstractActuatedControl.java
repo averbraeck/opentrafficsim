@@ -54,7 +54,7 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
     /**
      * Delays the actuation of acceleration.
      * @param desiredAcceleration Acceleration; desired acceleration
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @return Acceleration; delayed acceleration
      */
     public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGTU gtu)
@@ -84,7 +84,7 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
 
     /**
      * Returns the desired acceleration from the longitudinal control.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param leaders PerceptionCollectable&lt;HeadwayGTU, LaneBasedGTU&gt;; leaders
      * @param settings Parameters; system settings
      * @return Acceleration; desired acceleration

@@ -4,8 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -19,7 +19,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  * @param <G> GTU type
  */
-public abstract class AbstractPerception<G extends GTU> implements Perception<G>
+public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
 {
 
     /** */
@@ -140,7 +140,7 @@ public abstract class AbstractPerception<G extends GTU> implements Perception<G>
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public void perceive() throws GTUException, NetworkException, ParameterException
+    public void perceive() throws GtuException, NetworkException, ParameterException
     {
         for (PerceptionCategory<?, ?> category : this.perceptionCategories.values())
         {

@@ -10,7 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.animation.ColorInterpolator;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * Color on a scale from Tmin to Tmax parameters, or two given limits.
@@ -82,7 +82,7 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu)
+    public final Color getColor(final Gtu gtu)
     {
         Parameters params = gtu.getParameters();
         Double minT;

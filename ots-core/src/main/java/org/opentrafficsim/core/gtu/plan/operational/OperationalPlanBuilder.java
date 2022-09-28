@@ -12,7 +12,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
 import org.opentrafficsim.core.math.Solver;
 
@@ -45,7 +45,7 @@ public final class OperationalPlanBuilder
 
     /**
      * Build a plan with a path and a given speed.
-     * @param gtu GTU; the GTU for debugging purposes
+     * @param gtu Gtu; the GTU for debugging purposes
      * @param path OTSLine3D; the path to drive (provides the length)
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param speed Speed; the speed at the start of the path
@@ -53,7 +53,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildConstantSpeedPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildConstantSpeedPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
             final Speed speed) throws OperationalPlanException
     {
         Length length = path.getLength();
@@ -70,7 +70,7 @@ public final class OperationalPlanBuilder
      * there is no guarantee that the end speed is actually reached by this plan.
      * <p>
      * TODO: rename this method buildConstantAccelerationPlan.
-     * @param gtu GTU; the GTU for debugging purposes
+     * @param gtu Gtu; the GTU for debugging purposes
      * @param path OTSLine3D; the path to drive (provides the length)
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
@@ -81,7 +81,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildGradualAccelerationPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
             final Speed startSpeed, final Speed endSpeed, final Acceleration maximumAcceleration,
             final Acceleration maximumDeceleration) throws OperationalPlanException
     {
@@ -128,7 +128,7 @@ public final class OperationalPlanBuilder
      * Build a plan with a path and a given start speed to reach a provided end speed, exactly at the end of the curve.
      * Acceleration and deceleration are virtually unbounded (1E12 m/s2) to reach the end speed (e.g., to come to a complete
      * stop).
-     * @param gtu GTU; the GTU for debugging purposes
+     * @param gtu Gtu; the GTU for debugging purposes
      * @param path OTSLine3D; the path to drive (provides the length)
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
@@ -137,7 +137,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildGradualAccelerationPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
             final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException
     {
         return buildGradualAccelerationPlan(gtu, path, startTime, startSpeed, endSpeed, MAX_ACCELERATION, MAX_DECELERATION);
@@ -150,7 +150,7 @@ public final class OperationalPlanBuilder
      * before completing the path, a truncated path that ends where the GTU stops is used instead. The maximum acceleration and
      * deceleration is limited by the provided values. If these prevent the <code>endSpeed</code> from being reached, the
      * generated plan is a constant acceleration plan using the limiting value.
-     * @param gtu GTU; the GTU for debugging purposes
+     * @param gtu Gtu; the GTU for debugging purposes
      * @param path OTSLine3D; the path to drive (provides the length)
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
@@ -163,7 +163,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildMaximumAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildMaximumAccelerationPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
             final Speed startSpeed, final Speed endSpeed, final Acceleration maximumAcceleration,
             final Acceleration maximumDeceleration) throws OperationalPlanException
     {
@@ -241,7 +241,7 @@ public final class OperationalPlanBuilder
      * Build a plan with a path and a given start speed to try to come to a stop with a given deceleration. If the GTU can stop
      * before completing the given path, a truncated path that ends where the GTU stops is used instead. There is no guarantee
      * that the OperationalPlan will lead to a complete stop.
-     * @param gtu GTU; the GTU for debugging purposes
+     * @param gtu Gtu; the GTU for debugging purposes
      * @param path OTSLine3D; the path to drive (provides the length)
      * @param startTime Time; the current time or a time in the future when the plan should start
      * @param startSpeed Speed; the speed at the start of the path
@@ -250,7 +250,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildStopPlan(final GTU gtu, final OTSLine3D path, final Time startTime,
+    public static OperationalPlan buildStopPlan(final Gtu gtu, final OTSLine3D path, final Time startTime,
             final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException
     {
         return buildMaximumAccelerationPlan(gtu, path, startTime, startSpeed, Speed.ZERO,

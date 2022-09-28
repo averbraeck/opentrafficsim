@@ -25,8 +25,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
@@ -176,7 +176,7 @@ public class SteeringSimulation extends AbstractSimulationScript
                 Stripe stripe = new Stripe(link, offset, offset, stripeWidth);
                 if (i < this.numberOfLanes - 1)
                 {
-                    stripe.addPermeability(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.BOTH);
+                    stripe.addPermeability(network.getGtuType(GtuType.DEFAULTS.VEHICLE), Permeable.BOTH);
                 }
                 // sink sensors
                 if (lane.getParentLink().getId().equals("CD"))
@@ -194,7 +194,7 @@ public class SteeringSimulation extends AbstractSimulationScript
         }
         new Stripe(linkAB, Length.ZERO, Length.ZERO, stripeWidth);
         Stripe stripe = new Stripe(linkBC, Length.ZERO, Length.ZERO, stripeWidth);
-        stripe.addPermeability(network.getGtuType(GTUType.DEFAULTS.VEHICLE), Permeable.LEFT);
+        stripe.addPermeability(network.getGtuType(GtuType.DEFAULTS.VEHICLE), Permeable.LEFT);
         new Stripe(linkCD, Length.ZERO, Length.ZERO, stripeWidth);
         new Lane(linkBC, "Acceleration lane", laneWidth.times(-0.5), laneWidth, network.getLaneType(LaneType.DEFAULTS.FREEWAY),
                 new Speed(120, SpeedUnit.KM_PER_HOUR));
@@ -212,9 +212,9 @@ public class SteeringSimulation extends AbstractSimulationScript
         destinations.add(nodeD);
         TimeVector timeVector = DoubleVector.instantiate(new double[] {0.0, 0.5, 1.0}, TimeUnit.BASE_HOUR, StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR; // or STEPWISE
-        Categorization categorization = new Categorization("GTU type", GTUType.class);
-        Category carCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.CAR));
-        Category truCategory = new Category(categorization, network.getGtuType(GTUType.DEFAULTS.TRUCK));
+        Categorization categorization = new Categorization("GTU type", GtuType.class);
+        Category carCategory = new Category(categorization, network.getGtuType(GtuType.DEFAULTS.CAR));
+        Category truCategory = new Category(categorization, network.getGtuType(GtuType.DEFAULTS.TRUCK));
         ODMatrix odMatrix = new ODMatrix("Steering OD", origins, destinations, categorization, timeVector, interpolation);
 
         odMatrix.putDemandVector(nodeA, nodeD, carCategory, freq(new double[] {1000.0, 2000.0, 0.0}));
@@ -226,7 +226,7 @@ public class SteeringSimulation extends AbstractSimulationScript
                 new IDMPlusFactory(sim.getModel().getStream("generation")), new DefaultLMRSPerceptionFactory())
         {
             @Override
-            public SteeringLmrs create(final LaneBasedGTU gtu) throws GTUException
+            public SteeringLmrs create(final LaneBasedGTU gtu) throws GtuException
             {
                 return new SteeringLmrs(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
                         Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, FEEDBACK_CAR);
@@ -248,8 +248,8 @@ public class SteeringSimulation extends AbstractSimulationScript
             public LaneBasedTacticalPlannerFactory<SteeringLmrs> getFactory(final Node origin, final Node destination,
                     final Category category, final StreamInterface randomStream)
             {
-                GTUType gtuType = category.get(GTUType.class);
-                if (gtuType.equals(network.getGtuType(GTUType.DEFAULTS.CAR)))
+                GtuType gtuType = category.get(GtuType.class);
+                if (gtuType.equals(network.getGtuType(GtuType.DEFAULTS.CAR)))
                 {
                     return car;
                 }
@@ -270,10 +270,10 @@ public class SteeringSimulation extends AbstractSimulationScript
         VehicleModelFactory vehicleModelGenerator = new VehicleModelFactory()
         {
             @Override
-            public VehicleModel create(final GTUType gtuType)
+            public VehicleModel create(final GtuType gtuType)
             {
                 Mass mass =
-                        gtuType.isOfType(network.getGtuType(GTUType.DEFAULTS.CAR)) ? massDistCar.draw() : massDistTruck.draw();
+                        gtuType.isOfType(network.getGtuType(GtuType.DEFAULTS.CAR)) ? massDistCar.draw() : massDistTruck.draw();
                 return new VehicleModel.MassBased(mass, momentOfInertiaAboutZ);
             }
         };

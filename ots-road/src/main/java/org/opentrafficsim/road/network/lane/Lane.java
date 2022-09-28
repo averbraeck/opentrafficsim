@@ -31,8 +31,8 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -83,35 +83,35 @@ public class Lane extends CrossSectionElement implements Serializable
      * reverse, or both. This can differ per GTU type. In an overtake lane, cars might overtake and trucks not. It might be that
      * the lane (e.g., a street in a city) is FORWARD (from start node of the link to end node of the link) for the GTU type
      * CAR, but BOTH for the GTU type BICYCLE (i.e., bicycles can also go in the other direction, opposite to the drawing
-     * direction of the Link). If the directionality for a GTUType is set to NONE, this means that the given GTUType cannot use
-     * the Lane. If a Directionality is set for GTUType.ALL, the getDirectionality will default to these settings when there is
+     * direction of the Link). If the directionality for a GtuType is set to NONE, this means that the given GtuType cannot use
+     * the Lane. If a Directionality is set for GtuType.ALL, the getDirectionality will default to these settings when there is
      * no specific entry for a given directionality. This means that the settings can be used additive, or restrictive. <br>
-     * In <b>additive use</b>, set the directionality for GTUType.ALL to NONE, or do not set the directionality for GTUType.ALL.
+     * In <b>additive use</b>, set the directionality for GtuType.ALL to NONE, or do not set the directionality for GtuType.ALL.
      * Now, one by one, the allowed directionalities can be added. An example is a lane on a highway, which we only open for
      * CAR, TRUCK and BUS. <br>
-     * In <b>restrictive use</b>, set the directionality for GTUType.ALL to BOTH, FORWARD, or BACKWARD. Override the
-     * directionality for certain GTUTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
+     * In <b>restrictive use</b>, set the directionality for GtuType.ALL to BOTH, FORWARD, or BACKWARD. Override the
+     * directionality for certain GtuTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
      * road users, except TRUCK.
      */
-    // private final Map<GTUType, LongitudinalDirectionality> directionalityMap;
+    // private final Map<GtuType, LongitudinalDirectionality> directionalityMap;
 
     /**
      * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
-     * If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be used
+     * If the speed limit is the same for all GTU types, GtuType.ALL will be used. This means that the settings can be used
      * additive, or subtractive. <br>
-     * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
+     * In <b>additive use</b>, do not set the speed limit for GtuType.ALL. Now, one by one, the allowed maximum speeds for each
      * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
      * <br>
-     * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
-     * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
+     * In <b>subtractive use</b>, set the speed limit for GtuType.ALL to the most common one. Override the speed limit for
+     * certain GtuTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
-     * GTUType.ALL to 120 km/h, and for TRUCK to 90 km/h.
+     * GtuType.ALL to 120 km/h, and for TRUCK to 90 km/h.
      */
     // TODO allow for direction-dependent speed limit
-    private Map<GTUType, Speed> speedLimitMap;
+    private Map<GtuType, Speed> speedLimitMap;
 
     /** Cached speed limits; these are cleared when a speed limit is changed. */
-    private final Map<GTUType, Speed> cachedSpeedLimits = new LinkedHashMap<>();
+    private final Map<GtuType, Speed> cachedSpeedLimits = new LinkedHashMap<>();
 
     /**
      * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
@@ -142,7 +142,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * positive offset than the current lane. Initially empty so we can calculate and cache the first time the method is called.
      */
     private final MultiKeyMap<Set<Lane>> leftNeighbours =
-            new MultiKeyMap<>(GTUType.class, GTUDirectionality.class, Boolean.class);
+            new MultiKeyMap<>(GtuType.class, GTUDirectionality.class, Boolean.class);
 
     /**
      * Adjacent right lanes that some GTU types can change onto. Right is defined relative to the direction of the design line
@@ -150,33 +150,33 @@ public class Lane extends CrossSectionElement implements Serializable
      * negative offset than the current lane. Initially empty so we can calculate and cache the first time the method is called.
      */
     private final MultiKeyMap<Set<Lane>> rightNeighbours =
-            new MultiKeyMap<>(GTUType.class, GTUDirectionality.class, Boolean.class);
+            new MultiKeyMap<>(GtuType.class, GTUDirectionality.class, Boolean.class);
 
     /**
      * Next lane(s) following this lane that some GTU types can drive from or onto. Next is defined in the direction of the
      * design line. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Map<GTUType, Map<Lane, GTUDirectionality>> nextLanes = null;
+    private Map<GtuType, Map<Lane, GTUDirectionality>> nextLanes = null;
 
     /**
      * Previous lane(s) preceding this lane that some GTU types can drive from or onto. Previous is defined relative to the
      * direction of the design line. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Map<GTUType, Map<Lane, GTUDirectionality>> prevLanes = null;
+    private Map<GtuType, Map<Lane, GTUDirectionality>> prevLanes = null;
 
     /**
      * Downstream lane(s) following this lane that some GTU types can drive onto given the direction. Initially empty so we can
      * calculate and cache the first time the method is called.
      */
     private MultiKeyMap<ImmutableMap<Lane, GTUDirectionality>> downLanes =
-            new MultiKeyMap<>(GTUType.class, GTUDirectionality.class);
+            new MultiKeyMap<>(GtuType.class, GTUDirectionality.class);
 
     /**
      * Previous lane(s) preceding this lane that some GTU types can drive from given the direction. Initially empty so we can
      * calculate and cache the first time the method is called.
      */
     private MultiKeyMap<ImmutableMap<Lane, GTUDirectionality>> upLanes =
-            new MultiKeyMap<>(GTUType.class, GTUDirectionality.class);
+            new MultiKeyMap<>(GtuType.class, GTUDirectionality.class);
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
@@ -229,7 +229,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GTUType, Speed&gt;; speed limit on this lane, specified per GTU Type
+     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; speed limit on this lane, specified per GTU Type
      * @param fixGradualLateralOffset boolean; true if gradualLateralOffset needs to be fixed
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
@@ -237,7 +237,7 @@ public class Lane extends CrossSectionElement implements Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Map<GTUType, Speed> speedLimitMap, final boolean fixGradualLateralOffset)
+            final Map<GtuType, Speed> speedLimitMap, final boolean fixGradualLateralOffset)
             throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, fixGradualLateralOffset);
@@ -258,14 +258,14 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param beginWidth Length; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GTUType, Speed&gt;; speed limit on this lane, specified per GTU Type
+     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; speed limit on this lane, specified per GTU Type
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffsetAtStart,
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth, final LaneType laneType,
-            final Map<GTUType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
+            final Map<GtuType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
     {
         this(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, speedLimitMap, false);
     }
@@ -295,7 +295,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.laneType = laneType;
         checkDirectionality();
         this.speedLimitMap = new LinkedHashMap<>();
-        this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), speedLimit);
+        this.speedLimitMap.put(parentLink.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
         this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
@@ -330,13 +330,13 @@ public class Lane extends CrossSectionElement implements Serializable
      *            line of the parent Link
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
      * @param laneType LaneType; type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GTUType, Speed&gt;; the speed limit on this lane, specified per GTU Type
+     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width,
-            final LaneType laneType, final Map<GTUType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffset, width);
         this.laneType = laneType;
@@ -349,12 +349,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * Construct a speed limit map that contains the provided speed limit for VEHICLE.
      * @param speedLimit Speed; the speed limit
      * @param network RoadNetwork; the road network (needed to obtain the VEHICLE GTU type)
-     * @return Map<GTUType, Speed>; the speed limit map
+     * @return Map<GtuType, Speed>; the speed limit map
      */
-    private static Map<GTUType, Speed> constructDefaultSpeedLimitMap(final Speed speedLimit, final RoadNetwork network)
+    private static Map<GtuType, Speed> constructDefaultSpeedLimitMap(final Speed speedLimit, final RoadNetwork network)
     {
-        Map<GTUType, Speed> result = new LinkedHashMap<>();
-        result.put(network.getGtuType(GTUType.DEFAULTS.VEHICLE), speedLimit);
+        Map<GtuType, Speed> result = new LinkedHashMap<>();
+        result.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), speedLimit);
         return result;
     }
 
@@ -387,13 +387,13 @@ public class Lane extends CrossSectionElement implements Serializable
      *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
      *            If not, a NetworkException is thrown.
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
-     * @param speedLimitMap Map&lt;GTUType, Speed&gt;; the speed limit on this lane, specified per GTU Type
+     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
-            final LaneType laneType, final Map<GTUType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
+            final LaneType laneType, final Map<GtuType, Speed> speedLimitMap) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, crossSectionSlices);
         this.laneType = laneType;
@@ -455,12 +455,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param direction LateralDirectionality; either LEFT or RIGHT, relative to the DESIGN LINE of the link (and the direction
      *            of the center line of the lane). In terms of offsets, 'left' lanes always have a more positive offset than the
      *            current lane, and 'right' lanes a more negative offset.
-     * @param gtuType GTUType; the GTU type to check the accessibility for
+     * @param gtuType GtuType; the GTU type to check the accessibility for
      * @param drivingDirection GTUDirectionality; driving direction of the GTU
      * @param legal boolean; whether to check legal possibility
      * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
      */
-    private Set<Lane> neighbors(final LateralDirectionality direction, final GTUType gtuType,
+    private Set<Lane> neighbors(final LateralDirectionality direction, final GtuType gtuType,
             final GTUDirectionality drivingDirection, final boolean legal)
     {
         MultiKeyMap<Set<Lane>> cache = direction.isLeft() ? this.leftNeighbours : this.rightNeighbours;
@@ -493,13 +493,13 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param direction LateralDirectionality; the direction to look at, relative to the DESIGN LINE of the link. This is a very
      *            important aspect to note: all information is stored relative to the direction of the design line, and not in a
      *            driving direction, which can vary for lanes that can be driven in two directions (e.g. at overtaking).
-     * @param gtuType GTUType; the GTU type to check the accessibility for
+     * @param gtuType GtuType; the GTU type to check the accessibility for
      * @param drivingDirection GTUDirectionality; driving direction of the GTU
      * @param legal boolean; whether to check legal possibility
      * @return boolean; true if the other lane is adjacent to this lane and accessible for the given GTU type; false otherwise
      */
     private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
-            final GTUType gtuType, final GTUDirectionality drivingDirection, final boolean legal)
+            final GtuType gtuType, final GTUDirectionality drivingDirection, final boolean legal)
     {
         if (!lane.getLaneType().isCompatible(gtuType, drivingDirection))
         {
@@ -640,16 +640,16 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * Retrieve the list of Sensors of this Lane in the specified distance range for the given GTUType. The resulting list is a
+     * Retrieve the list of Sensors of this Lane in the specified distance range for the given GtuType. The resulting list is a
      * defensive copy.
      * @param minimumPosition Length; the minimum distance on the Lane (inclusive)
      * @param maximumPosition Length; the maximum distance on the Lane (inclusive)
-     * @param gtuType GTUType; the GTU type to provide the sensors for
+     * @param gtuType GtuType; the GTU type to provide the sensors for
      * @param direction GTUDirectionality; direction of movement of the GTU
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range. This is a defensive copy.
      */
     public final List<SingleSensor> getSensors(final Length minimumPosition, final Length maximumPosition,
-            final GTUType gtuType, final GTUDirectionality direction)
+            final GtuType gtuType, final GTUDirectionality direction)
     {
         List<SingleSensor> sensorList = new ArrayList<>(1);
         for (List<SingleSensor> sl : this.sensors.values())
@@ -667,13 +667,13 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * Retrieve the list of Sensors of this Lane that are triggered by the given GTUType. The resulting list is a defensive
+     * Retrieve the list of Sensors of this Lane that are triggered by the given GtuType. The resulting list is a defensive
      * copy.
-     * @param gtuType GTUType; the GTU type to provide the sensors for
+     * @param gtuType GtuType; the GTU type to provide the sensors for
      * @param direction GTUDirectionality; direction of movement of the GTU
      * @return List&lt;Sensor&gt;; list of the sensors, in ascending order for the location on the Lane
      */
-    public final List<SingleSensor> getSensors(final GTUType gtuType, final GTUDirectionality direction)
+    public final List<SingleSensor> getSensors(final GtuType gtuType, final GTUDirectionality direction)
     {
         List<SingleSensor> sensorList = new ArrayList<>(1);
         for (List<SingleSensor> sl : this.sensors.values())
@@ -711,12 +711,12 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * Retrieve the list of Sensors of this Lane for the given GTUType. The resulting Map is a defensive copy.
-     * @param gtuType GTUType; the GTU type to provide the sensors for
+     * Retrieve the list of Sensors of this Lane for the given GtuType. The resulting Map is a defensive copy.
+     * @param gtuType GtuType; the GTU type to provide the sensors for
      * @param direction GTUDirectionality; direction of movement of the GTU
-     * @return SortedMap&lt;Double, List&lt;Sensor&gt;&gt;; all sensors on this lane for the given GTUType as a map per distance
+     * @return SortedMap&lt;Double, List&lt;Sensor&gt;&gt;; all sensors on this lane for the given GtuType as a map per distance
      */
-    public final SortedMap<Double, List<SingleSensor>> getSensorMap(final GTUType gtuType, final GTUDirectionality direction)
+    public final SortedMap<Double, List<SingleSensor>> getSensorMap(final GtuType gtuType, final GTUDirectionality direction)
     {
         SortedMap<Double, List<SingleSensor>> sensorMap = new TreeMap<>();
         for (double d : this.sensors.keySet())
@@ -751,7 +751,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Schedule triggering of the sensors for a certain time step; from now until the nextEvaluationTime of the GTU.
-     * @param gtu LaneBasedGTU; the lane based GTU for which to schedule triggering of the sensors.
+     * @param gtu LaneBasedGtu; the lane based GTU for which to schedule triggering of the sensors.
      * @param referenceStartSI double; the SI distance of the GTU reference point on the lane at the current time
      * @param referenceMoveSI double; the SI distance traveled in the next time step.
      * @throws NetworkException when GTU not on this lane.
@@ -780,7 +780,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             for (SingleSensor sensor : map.get(pos))
             {
-                if (sensor.isCompatible(gtu.getGTUType(), drivingDirection))
+                if (sensor.isCompatible(gtu.getGtuType(), drivingDirection))
                 {
                     double dx = gtu.getRelativePositions().get(sensor.getPositionType()).getDx().si;
                     if (drivingDirection.isPlus())
@@ -996,13 +996,13 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Add a LaneBasedGTU to the list of this Lane.
-     * @param gtu LaneBasedGTU; the GTU to add
+     * @param gtu LaneBasedGtu; the GTU to add
      * @param fractionalPosition double; the fractional position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
-     * @throws GTUException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this Lane
+     * @throws GtuException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws GTUException
+    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws GtuException
     {
         // TODO: should this change when we drive in the opposite direction?
         int index;
@@ -1033,7 +1033,7 @@ public class Lane extends CrossSectionElement implements Serializable
                     LaneBasedGTU otherGTU = this.gtuList.get(index);
                     if (gtu == otherGTU)
                     {
-                        throw new GTUException(gtu + " already registered on Lane " + this + " [registered lanes: "
+                        throw new GtuException(gtu + " already registered on Lane " + this + " [registered lanes: "
                                 + gtu.positions(gtu.getFront()).keySet() + "] locations: "
                                 + gtu.positions(gtu.getFront()).values() + " time: " + gtu.getSimulator().getSimulatorTime());
                     }
@@ -1063,20 +1063,20 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Add a LaneBasedGTU to the list of this Lane.
-     * @param gtu LaneBasedGTU; the GTU to add
+     * @param gtu LaneBasedGtu; the GTU to add
      * @param longitudinalPosition Length; the longitudinal position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
-     * @throws GTUException when longitudinalPosition is negative or exceeds the length of this Lane
+     * @throws GtuException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final Length longitudinalPosition) throws GTUException
+    public final int addGTU(final LaneBasedGTU gtu, final Length longitudinalPosition) throws GtuException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
 
     /**
      * Remove a GTU from the GTU list of this lane.
-     * @param gtu LaneBasedGTU; the GTU to remove.
+     * @param gtu LaneBasedGtu; the GTU to remove.
      * @param removeFromParentLink boolean; when the GTU leaves the last lane of the parentLink of this Lane
      * @param position Length; last position of the GTU
      */
@@ -1098,10 +1098,10 @@ public class Lane extends CrossSectionElement implements Serializable
      * Get the last GTU on the lane, relative to a driving direction on this lane.
      * @param direction GTUDirectionality; whether we are looking in the the design line direction or against the center line
      *            direction.
-     * @return LaneBasedGTU; the last GTU on this lane in the given direction, or null if no GTU could be found.
-     * @throws GTUException when there is a problem with the position of the GTUs on the lane.
+     * @return LaneBasedGtu; the last GTU on this lane in the given direction, or null if no GTU could be found.
+     * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGTU getLastGtu(final GTUDirectionality direction) throws GTUException
+    public final LaneBasedGTU getLastGtu(final GTUDirectionality direction) throws GtuException
     {
         if (this.gtuList.size() == 0)
         {
@@ -1121,10 +1121,10 @@ public class Lane extends CrossSectionElement implements Serializable
      * Get the first GTU on the lane, relative to a driving direction on this lane.
      * @param direction GTUDirectionality; whether we are looking in the the design line direction or against the center line
      *            direction.
-     * @return LaneBasedGTU; the first GTU on this lane in the given direction, or null if no GTU could be found.
-     * @throws GTUException when there is a problem with the position of the GTUs on the lane.
+     * @return LaneBasedGtu; the first GTU on this lane in the given direction, or null if no GTU could be found.
+     * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGTU getFirstGtu(final GTUDirectionality direction) throws GTUException
+    public final LaneBasedGTU getFirstGtu(final GTUDirectionality direction) throws GtuException
     {
         if (this.gtuList.size() == 0)
         {
@@ -1148,12 +1148,12 @@ public class Lane extends CrossSectionElement implements Serializable
      *            direction.
      * @param relativePosition RelativePosition.TYPE; the relative position we want to compare against
      * @param when Time; the time for which to evaluate the positions.
-     * @return LaneBasedGTU; the first GTU before a position on this lane in the given direction, or null if no GTU could be
+     * @return LaneBasedGtu; the first GTU before a position on this lane in the given direction, or null if no GTU could be
      *         found.
-     * @throws GTUException when there is a problem with the position of the GTUs on the lane.
+     * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGTU getGtuAhead(final Length position, final GTUDirectionality direction,
-            final RelativePosition.TYPE relativePosition, final Time when) throws GTUException
+            final RelativePosition.TYPE relativePosition, final Time when) throws GtuException
     {
         List<LaneBasedGTU> list = this.gtuList.get(when);
         if (list.isEmpty())
@@ -1192,9 +1192,9 @@ public class Lane extends CrossSectionElement implements Serializable
      * @return int[2]; Where int[0] is the index of the object with lower position, and int[1] with higher. In case an object is
      *         exactly at the position int[1] - int[0] = 2. If all objects have a higher position int[0] = -1, if all objects
      *         have a lower position int[1] = listSize.
-     * @throws GTUException ...
+     * @throws GtuException ...
      */
-    private int[] lineSearch(final Positions positions, final int listSize, final double position) throws GTUException
+    private int[] lineSearch(final Positions positions, final int listSize, final double position) throws GtuException
     {
         int[] out = new int[2];
         // line search only works if the position is within the original domain, first catch 4 outside situations
@@ -1315,12 +1315,12 @@ public class Lane extends CrossSectionElement implements Serializable
      *            direction.
      * @param relativePosition RelativePosition.TYPE; the relative position of the GTU we are looking for.
      * @param when Time; the time for which to evaluate the positions.
-     * @return LaneBasedGTU; the first GTU after a position on this lane in the given direction, or null if no GTU could be
+     * @return LaneBasedGtu; the first GTU after a position on this lane in the given direction, or null if no GTU could be
      *         found.
-     * @throws GTUException when there is a problem with the position of the GTUs on the lane.
+     * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGTU getGtuBehind(final Length position, final GTUDirectionality direction,
-            final RelativePosition.TYPE relativePosition, final Time when) throws GTUException
+            final RelativePosition.TYPE relativePosition, final Time when) throws GtuException
     {
         if (direction.equals(GTUDirectionality.DIR_PLUS))
         {
@@ -1352,7 +1352,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @return set of Lanes following this lane for the given GTU type.
      */
     // TODO this should return something immutable
-    public final Map<Lane, GTUDirectionality> nextLanes(final GTUType gtuType)
+    public final Map<Lane, GTUDirectionality> nextLanes(final GtuType gtuType)
     {
         if (this.nextLanes == null)
         {
@@ -1431,7 +1431,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @return set of Lanes following this lane for the given GTU type.
      */
     // TODO this should return something immutable
-    public final Map<Lane, GTUDirectionality> prevLanes(final GTUType gtuType)
+    public final Map<Lane, GTUDirectionality> prevLanes(final GtuType gtuType)
     {
         if (this.prevLanes == null)
         {
@@ -1496,11 +1496,11 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Returns the lanes that could be followed in a given direction and for the given GTU type.
      * @param direction GTUDirectionality; gtu direction
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @return lanes that can be followed in a given direction and for the given GTU type
      */
     public final synchronized ImmutableMap<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction,
-            final GTUType gtuType)
+            final GtuType gtuType)
     {
         return this.downLanes.get(() ->
         {
@@ -1525,11 +1525,11 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Returns the lanes that could precede in a given direction and for the given GTU type.
      * @param direction GTUDirectionality; gtu direction
-     * @param gtuType GTUType; gtu type
+     * @param gtuType GtuType; gtu type
      * @return lanes that can be followed in a given direction and for the given GTU type
      */
     public final synchronized ImmutableMap<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction,
-            final GTUType gtuType)
+            final GtuType gtuType)
     {
         return this.upLanes.get(() ->
         {
@@ -1558,12 +1558,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
      * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
      * @param lateralDirection LateralDirectionality; LEFT or RIGHT.
-     * @param gtuType GTUType; the type of GTU for which to return the adjacent lanes.
+     * @param gtuType GtuType; the type of GTU for which to return the adjacent lanes.
      * @param drivingDirection GTUDirectionality; the driving direction of the GTU on &lt;code&gt;this&lt;/code&gt; Lane
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
-    public final Set<Lane> accessibleAdjacentLanesPhysical(final LateralDirectionality lateralDirection, final GTUType gtuType,
+    public final Set<Lane> accessibleAdjacentLanesPhysical(final LateralDirectionality lateralDirection, final GtuType gtuType,
             final GTUDirectionality drivingDirection)
     {
         LateralDirectionality dir =
@@ -1580,12 +1580,12 @@ public class Lane extends CrossSectionElement implements Serializable
      * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
      * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
      * @param lateralDirection LateralDirectionality; LEFT or RIGHT.
-     * @param gtuType GTUType; the type of GTU for which to return the adjacent lanes.
+     * @param gtuType GtuType; the type of GTU for which to return the adjacent lanes.
      * @param drivingDirection GTUDirectionality; the driving direction of the GTU on &lt;code&gt;this&lt;/code&gt; Lane
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
-    public final Set<Lane> accessibleAdjacentLanesLegal(final LateralDirectionality lateralDirection, final GTUType gtuType,
+    public final Set<Lane> accessibleAdjacentLanesLegal(final LateralDirectionality lateralDirection, final GtuType gtuType,
             final GTUDirectionality drivingDirection)
     {
         Set<Lane> candidates = new LinkedHashSet<>(1);
@@ -1604,11 +1604,11 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Get the speed limit of this lane, which can differ per GTU type. E.g., cars might be allowed to drive 120 km/h and trucks
      * 90 km/h.
-     * @param gtuType GTUType; the GTU type to provide the speed limit for
+     * @param gtuType GtuType; the GTU type to provide the speed limit for
      * @return the speedLimit.
      * @throws NetworkException on network inconsistency
      */
-    public final Speed getSpeedLimit(final GTUType gtuType) throws NetworkException
+    public final Speed getSpeedLimit(final GtuType gtuType) throws NetworkException
     {
         Speed speedLimit = this.cachedSpeedLimits.get(gtuType);
         if (speedLimit == null)
@@ -1623,7 +1623,7 @@ public class Lane extends CrossSectionElement implements Serializable
             }
             else
             {
-                throw new NetworkException("No speed limit set for GTUType " + gtuType + " on lane " + toString());
+                throw new NetworkException("No speed limit set for GtuType " + gtuType + " on lane " + toString());
             }
             this.cachedSpeedLimits.put(gtuType, speedLimit);
         }
@@ -1639,7 +1639,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         Throw.when(this.speedLimitMap.isEmpty(), NetworkException.class, "Lane %s has no speed limits set.", toString());
         Speed out = Speed.POSITIVE_INFINITY;
-        for (GTUType gtuType : this.speedLimitMap.keySet())
+        for (GtuType gtuType : this.speedLimitMap.keySet())
         {
             out = Speed.min(out, this.speedLimitMap.get(gtuType));
         }
@@ -1655,7 +1655,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         Throw.when(this.speedLimitMap.isEmpty(), NetworkException.class, "Lane %s has no speed limits set.", toString());
         Speed out = Speed.ZERO;
-        for (GTUType gtuType : this.speedLimitMap.keySet())
+        for (GtuType gtuType : this.speedLimitMap.keySet())
         {
             out = Speed.max(out, this.speedLimitMap.get(gtuType));
         }
@@ -1664,33 +1664,33 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Set the speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90
-     * km/h. If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be
+     * km/h. If the speed limit is the same for all GTU types, GtuType.ALL will be used. This means that the settings can be
      * used additive, or subtractive. <br>
-     * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
+     * In <b>additive use</b>, do not set the speed limit for GtuType.ALL. Now, one by one, the allowed maximum speeds for each
      * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
      * <br>
-     * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
-     * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
+     * In <b>subtractive use</b>, set the speed limit for GtuType.ALL to the most common one. Override the speed limit for
+     * certain GtuTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
-     * GTUType.ALL to 120 km/h, and for TRUCK to 90 km/h.
-     * @param gtuType GTUType; the GTU type to provide the speed limit for
+     * GtuType.ALL to 120 km/h, and for TRUCK to 90 km/h.
+     * @param gtuType GtuType; the GTU type to provide the speed limit for
      * @param speedLimit Speed; the speed limit for this gtu type
      */
-    public final void setSpeedLimit(final GTUType gtuType, final Speed speedLimit)
+    public final void setSpeedLimit(final GtuType gtuType, final Speed speedLimit)
     {
         this.speedLimitMap.put(gtuType, speedLimit);
         this.cachedSpeedLimits.clear();
     }
 
     /**
-     * Remove the set speed limit for a GTUType. If the speed limit for GTUType.ALL will be removed, there will not be a
-     * 'default' speed limit anymore. If the speed limit for a certain GTUType is removed, its speed limit will default to the
-     * speed limit of GTUType.ALL. <br>
-     * <b>Note</b>: if no speed limit is known for a GTUType, getSpeedLimit will throw a NetworkException when the speed limit
-     * is retrieved for that GTUType.
-     * @param gtuType GTUType; the GTU type to provide the speed limit for
+     * Remove the set speed limit for a GtuType. If the speed limit for GtuType.ALL will be removed, there will not be a
+     * 'default' speed limit anymore. If the speed limit for a certain GtuType is removed, its speed limit will default to the
+     * speed limit of GtuType.ALL. <br>
+     * <b>Note</b>: if no speed limit is known for a GtuType, getSpeedLimit will throw a NetworkException when the speed limit
+     * is retrieved for that GtuType.
+     * @param gtuType GtuType; the GTU type to provide the speed limit for
      */
-    public final void removeSpeedLimit(final GTUType gtuType)
+    public final void removeSpeedLimit(final GtuType gtuType)
     {
         this.speedLimitMap.remove(gtuType);
         this.cachedSpeedLimits.clear();
@@ -1708,22 +1708,22 @@ public class Lane extends CrossSectionElement implements Serializable
      * This method sets the directionality of the lane for a GTU type. It might be that the driving direction in the lane is
      * FORWARD (from start node of the link to end node of the link) for the GTU type CAR, but BOTH for the GTU type BICYCLE
      * (i.e., bicycles can also go in the other direction; we see this on some city streets). If the directionality for a
-     * GTUType is set to NONE, this means that the given GTUType cannot use the Lane. If a Directionality is set for
-     * GTUType.ALL, the getDirectionality will default to these settings when there is no specific entry for a given
+     * GtuType is set to NONE, this means that the given GtuType cannot use the Lane. If a Directionality is set for
+     * GtuType.ALL, the getDirectionality will default to these settings when there is no specific entry for a given
      * directionality. This means that the settings can be used additive, or restrictive. <br>
-     * In <b>additive use</b>, set the directionality for GTUType.ALL to NONE, or do not set the directionality for GTUType.ALL.
+     * In <b>additive use</b>, set the directionality for GtuType.ALL to NONE, or do not set the directionality for GtuType.ALL.
      * Now, one by one, the allowed directionalities can be added. An example is a lane on a highway, which we only open for
      * CAR, TRUCK and BUS. <br>
-     * In <b>restrictive use</b>, set the directionality for GTUType.ALL to BOTH, FORWARD, or BACKWARD. Override the
-     * directionality for certain GTUTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
+     * In <b>restrictive use</b>, set the directionality for GtuType.ALL to BOTH, FORWARD, or BACKWARD. Override the
+     * directionality for certain GtuTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
      * road users, except TRUCK.
      * @param gtuType the GTU type to set the directionality for.
      * @param directionality the longitudinal directionality of the link (FORWARD, BACKWARD, BOTH or NONE) for the given GTU
      *            type.
-     * @throws NetworkException when the lane directionality for the given GTUType is inconsistent with the Link directionality
+     * @throws NetworkException when the lane directionality for the given GtuType is inconsistent with the Link directionality
      *             to which the lane belongs.
      */
-    // public final void addDirectionality(final GTUType gtuType, final LongitudinalDirectionality directionality)
+    // public final void addDirectionality(final GtuType gtuType, final LongitudinalDirectionality directionality)
     // throws NetworkException
     // {
     // this.directionalityMap.put(gtuType, directionality);
@@ -1732,11 +1732,11 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * This method removes an earlier provided directionality of the lane for a given GTU type, e.g. for maintenance of the
-     * lane. After removing, the directionality for the GTU will fall back to the provided directionality for GTUType.ALL (if
+     * lane. After removing, the directionality for the GTU will fall back to the provided directionality for GtuType.ALL (if
      * present). Thereby removing a directionality is different from setting the directionality to NONE.
      * @param gtuType the GTU type to remove the directionality for on this lane.
      */
-    // public final void removeDirectionality(final GTUType gtuType)
+    // public final void removeDirectionality(final GtuType gtuType)
     // {
     // this.directionalityMap.remove(gtuType);
     // }
@@ -1744,13 +1744,13 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Check whether the directionalities for the GTU types for this lane are consistent with the directionalities of the
      * overarching Link.
-     * @throws NetworkException when the lane directionality for a given GTUType is inconsistent with the Link directionality to
+     * @throws NetworkException when the lane directionality for a given GtuType is inconsistent with the Link directionality to
      *             which the lane belongs.
      */
     private void checkDirectionality() throws NetworkException
     {
         // TODO check that the directionality of this Lane does not conflict with that of the parent the OTSLink
-        // for (GTUType gtuType : this.directionalityMap.keySet())
+        // for (GtuType gtuType : this.directionalityMap.keySet())
         // {
         // LongitudinalDirectionality directionality = this.directionalityMap.get(gtuType);
         // if (!getParentLink().getDirectionality(gtuType).contains(directionality))
@@ -1808,7 +1808,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Returns the index of the given GTU, or -1 if not present.
-     * @param gtu LaneBasedGTU; gtu to get the index of
+     * @param gtu LaneBasedGtu; gtu to get the index of
      * @return int; index of the given GTU, or -1 if not present
      */
     public final int indexOfGtu(final LaneBasedGTU gtu)
@@ -1821,7 +1821,7 @@ public class Lane extends CrossSectionElement implements Serializable
             {
                 return gtu1.position(this, gtu1.getReference()).compareTo(gtu2.position(this, gtu2.getReference()));
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 throw new RuntimeException(exception);
             }
@@ -1830,7 +1830,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Returns the index of the given GTU, or -1 if not present, at specified time.
-     * @param gtu LaneBasedGTU; gtu to get the index of
+     * @param gtu LaneBasedGtu; gtu to get the index of
      * @param time Time; time
      * @return int; index of the given GTU, or -1 if not present
      */
@@ -1845,7 +1845,7 @@ public class Lane extends CrossSectionElement implements Serializable
                 return Double.compare(gtu1.fractionalPosition(this, gtu1.getReference(), time),
                         gtu2.fractionalPosition(this, gtu2.getReference(), time));
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 throw new RuntimeException(exception);
             }
@@ -1855,7 +1855,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Returns the index'th GTU.
      * @param index int; index of the GTU
-     * @return LaneBasedGTU; the index'th GTU
+     * @return LaneBasedGtu; the index'th GTU
      */
     public final LaneBasedGTU getGtu(final int index)
     {
@@ -1866,7 +1866,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * Returns the index'th GTU at specified time.
      * @param index int; index of the GTU
      * @param time Time; time
-     * @return LaneBasedGTU; the index'th GTU
+     * @return LaneBasedGtu; the index'th GTU
      */
     public final LaneBasedGTU getGtu(final int index, final Time time)
     {
@@ -1986,9 +1986,9 @@ public class Lane extends CrossSectionElement implements Serializable
          * Returns the position of the index'th element.
          * @param index int; index
          * @return double; position of the index'th element
-         * @throws GTUException on exception
+         * @throws GtuException on exception
          */
-        double get(int index) throws GTUException;
+        double get(int index) throws GtuException;
     }
 
 }

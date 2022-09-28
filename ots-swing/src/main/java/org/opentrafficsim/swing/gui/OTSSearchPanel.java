@@ -16,7 +16,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -59,10 +59,10 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.add(new JLabel("    ")); // insert some white space in the GUI
         this.add(new JLabel(OTSControlPanel.loadIcon("/View.png")));
-        ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<GTU>("GTU")
+        ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
         {
             @Override
-            GTU searchNetwork(final OTSNetwork network, final String id)
+            Gtu searchNetwork(final OTSNetwork network, final String id)
             {
                 return network.getGTU(id);
             }

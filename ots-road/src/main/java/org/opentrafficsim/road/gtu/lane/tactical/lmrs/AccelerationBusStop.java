@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -46,7 +46,7 @@ public class AccelerationBusStop implements AccelerationIncentive
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws OperationalPlanException, ParameterException, GTUException
+            throws OperationalPlanException, ParameterException, GtuException
     {
         PerceptionCollectable<HeadwayBusStop, BusStop> stops =
                 perception.getPerceptionCategory(BusStopPerception.class).getBusStops();

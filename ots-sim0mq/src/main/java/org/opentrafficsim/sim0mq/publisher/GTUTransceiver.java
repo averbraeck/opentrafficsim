@@ -10,7 +10,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.sim0mq.Sim0MQException;
 
@@ -40,7 +40,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
     public GTUTransceiver(final OTSNetwork network, final GTUIdTransceiver gtuIdSource)
     {
         super("GTU transceiver", new MetaData("GTU id", "GTU id",
-                new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class)}), GTU.MOVE_EVENT);
+                new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class)}), Gtu.MOVE_EVENT);
         this.network = network;
         this.gtuIdSource = gtuIdSource;
     }
@@ -77,14 +77,14 @@ public class GTUTransceiver extends AbstractEventTransceiver
             return null;
         }
 
-        GTU gtu = this.network.getGTU((String) address[0]);
+        Gtu gtu = this.network.getGTU((String) address[0]);
         if (null == gtu)
         {
             returnWrapper.nack("No GTU found with id \"" + address[0] + "\"");
             return null;
         }
         OrientedPoint3d gtuPosition = (OrientedPoint3d) gtu.getLocation();
-        return new Object[] {gtu.getId(), gtu.getGTUType().getId(),
+        return new Object[] {gtu.getId(), gtu.getGtuType().getId(),
                 new OTSPoint3D(gtuPosition).doubleVector(PositionUnit.METER),
                 new Direction(gtuPosition.getDirZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration()};
     }

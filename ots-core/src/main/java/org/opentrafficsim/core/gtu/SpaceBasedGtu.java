@@ -10,7 +10,7 @@ package org.opentrafficsim.core.gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface SpaceBasedGTU extends GTU
+public interface SpaceBasedGtu extends Gtu
 {
     // TODO space based interface for a GTU. Can be 2D, 3D.
 }

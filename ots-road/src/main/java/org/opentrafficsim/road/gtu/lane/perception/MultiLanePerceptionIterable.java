@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
@@ -39,7 +39,7 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
 
     /**
      * Constructor.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
      */
     public MultiLanePerceptionIterable(final LaneBasedGTU perceivingGtu)
     {
@@ -155,7 +155,7 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
     /** {@inheritDoc} */
     @Override
     public H perceive(final LaneBasedGTU perceivingGtu, final U object, final Length distance)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         return this.iterables.get(this.laneMap.get(object)).perceive(perceivingGtu, object, distance);
     }

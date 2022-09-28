@@ -4,8 +4,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.parameters.ParameterFactoryDefault;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -66,26 +66,26 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
 
     /** {@inheritDoc} */
     @Override
-    public final Speed peekDesiredSpeed(final GTUType gtuType, final Speed speedLimit, final Speed maxGtuSpeed)
-            throws GTUException
+    public final Speed peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed)
+            throws GtuException
     {
         return this.tacticalPlannerFactory.peekDesiredSpeed(gtuType, speedLimit, maxGtuSpeed, peekParameters(gtuType));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length peekDesiredHeadway(final GTUType gtuType, final Speed speed) throws GTUException
+    public final Length peekDesiredHeadway(final GtuType gtuType, final Speed speed) throws GtuException
     {
         return this.tacticalPlannerFactory.peekDesiredHeadway(gtuType, speed, peekParameters(gtuType));
     }
 
     /**
      * Determine or return the next parameter set.
-     * @param gtuType GTUType; GTU type to generate parameters for
+     * @param gtuType GtuType; GTU type to generate parameters for
      * @return Parameters; next parameter set
-     * @throws GTUException on parameter exception
+     * @throws GtuException on parameter exception
      */
-    private Parameters peekParameters(final GTUType gtuType) throws GTUException
+    private Parameters peekParameters(final GtuType gtuType) throws GtuException
     {
         if (this.peekedParameters != null)
         {
@@ -103,7 +103,7 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
         }
         catch (ParameterException exception)
         {
-            throw new GTUException("Parameter was set to illegal value.", exception);
+            throw new GtuException("Parameter was set to illegal value.", exception);
         }
         return this.peekedParameters;
     }
@@ -118,11 +118,11 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
 
     /**
      * Returns the parameters for the next GTU.
-     * @param gtuType GTUType; GTU type of GTU to be generated
+     * @param gtuType GtuType; GTU type of GTU to be generated
      * @return Parameters; parameters for the next GTU
-     * @throws GTUException on parameter exception
+     * @throws GtuException on parameter exception
      */
-    protected final Parameters nextParameters(final GTUType gtuType) throws GTUException
+    protected final Parameters nextParameters(final GtuType gtuType) throws GtuException
     {
         Parameters parameters = peekParameters(gtuType);
         this.peekedParameters = null;
@@ -131,11 +131,11 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
 
     /**
      * Returns the next tactical planner.
-     * @param gtu LaneBasedGTU; GTU to be generated
+     * @param gtu LaneBasedGtu; GTU to be generated
      * @return T; next tactical planner
-     * @throws GTUException on exception during tactical planner creation
+     * @throws GtuException on exception during tactical planner creation
      */
-    protected final LaneBasedTacticalPlanner nextTacticalPlanner(final LaneBasedGTU gtu) throws GTUException
+    protected final LaneBasedTacticalPlanner nextTacticalPlanner(final LaneBasedGTU gtu) throws GtuException
     {
         return this.tacticalPlannerFactory.create(gtu);
     }

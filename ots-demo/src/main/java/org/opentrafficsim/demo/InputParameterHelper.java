@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
@@ -42,21 +42,21 @@ public final class InputParameterHelper implements ParameterFactory
 
     /** {@inheritDoc} */
     @Override
-    public void setValues(final Parameters parameters, final GTUType gtuType) throws ParameterException
+    public void setValues(final Parameters parameters, final GtuType gtuType) throws ParameterException
     {
         try
         {
-            if (gtuType.isOfType(GTUType.DEFAULTS.CAR))
+            if (gtuType.isOfType(GtuType.DEFAULTS.CAR))
             {
                 getParametersCar(this.rootMap).setAllIn(parameters);
             }
-            else if (gtuType.isOfType(GTUType.DEFAULTS.TRUCK))
+            else if (gtuType.isOfType(GtuType.DEFAULTS.TRUCK))
             {
                 getParametersTruck(this.rootMap).setAllIn(parameters);
             }
             else
             {
-                throw new ParameterException("GTUType " + gtuType + " not supported in demo parameter factory.");
+                throw new ParameterException("GtuType " + gtuType + " not supported in demo parameter factory.");
             }
         }
         catch (InputParameterException exception)

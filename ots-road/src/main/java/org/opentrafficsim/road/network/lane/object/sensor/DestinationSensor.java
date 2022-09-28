@@ -94,7 +94,7 @@ public class DestinationSensor extends AbstractSensor
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof OTSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
-        return new DestinationSensor((Lane) newCSE, getLongitudinalPosition(), getDetectedGTUTypes(),
+        return new DestinationSensor((Lane) newCSE, getLongitudinalPosition(), getDetectedGtuTypes(),
                 (OTSSimulatorInterface) newSimulator);
     }
 

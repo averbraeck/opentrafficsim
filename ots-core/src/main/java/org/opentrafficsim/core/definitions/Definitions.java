@@ -1,12 +1,12 @@
 package org.opentrafficsim.core.definitions;
 
 import org.djutils.immutablecollections.ImmutableMap;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 
 /**
  * The Definitions interface contains access to the core definitions that can be used to interpret the Network and the
- * PerceivableContext. Example interfaces allow the retrieval of GTUTypes and LinkTypes.
+ * PerceivableContext. Example interfaces allow the retrieval of GtuTypes and LinkTypes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -53,40 +53,40 @@ public interface Definitions
     ImmutableMap<String, LinkType> getLinkTypes();
 
     /***************************************************************************************/
-    /************************************** GTUTypes ***************************************/
+    /************************************** GtuTypes ***************************************/
     /***************************************************************************************/
 
     /**
-     * Add the default GTU Types that have been defined in the enum GTUType.DEFAULTS to the network. It is not necessary to call
-     * this method on every network; when the GTUTypes are for instance defined in an XML file, adding the default types might
+     * Add the default GTU Types that have been defined in the enum GtuType.DEFAULTS to the network. It is not necessary to call
+     * this method on every network; when the GtuTypes are for instance defined in an XML file, adding the default types might
      * not be needed.
      */
     void addDefaultGtuTypes();
 
     /**
-     * Add a GTU type to the map. This method is automatically called from the GTUType constructor.
-     * @param gtuType the GTUType to add
+     * Add a GTU type to the map. This method is automatically called from the GtuType constructor.
+     * @param gtuType the GtuType to add
      */
-    void addGtuType(GTUType gtuType);
+    void addGtuType(GtuType gtuType);
 
     /**
-     * Retrieve a defined GTUType based on its id.
+     * Retrieve a defined GtuType based on its id.
      * @param gtuId the id to search for
-     * @return the GTUType or null in case it could not be found
+     * @return the GtuType or null in case it could not be found
      */
-    GTUType getGtuType(String gtuId);
+    GtuType getGtuType(String gtuId);
 
     /**
-     * Retrieve a defined default GTUType based on its enum.
+     * Retrieve a defined default GtuType based on its enum.
      * @param gtuEnum the enum to search for
-     * @return the GTUType or null in case it could not be found
+     * @return the GtuType or null in case it could not be found
      */
-    GTUType getGtuType(GTUType.DEFAULTS gtuEnum);
+    GtuType getGtuType(GtuType.DEFAULTS gtuEnum);
 
     /**
-     * Retrieve a safe copy of the map of defined GTUTypes in this network.
-     * @return the map of defined GTUTypes
+     * Retrieve a safe copy of the map of defined GtuTypes in this network.
+     * @return the map of defined GtuTypes
      */
-    ImmutableMap<String, GTUType> getGtuTypes();
+    ImmutableMap<String, GtuType> getGtuTypes();
 
 }

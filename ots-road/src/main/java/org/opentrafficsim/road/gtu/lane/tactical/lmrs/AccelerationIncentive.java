@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSLink;
@@ -37,7 +37,7 @@ public interface AccelerationIncentive
      * @param simplePlan SimpleOperationalPlan; simple plan to set the acceleration
      * @param lane RelativeLane; lane on which to consider the acceleration
      * @param mergeDistance Length; distance over which a lane change is impossible
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param perception LanePerception; perception
      * @param carFollowingModel CarFollowingModel; car-following model
      * @param speed Speed; current speed
@@ -45,17 +45,17 @@ public interface AccelerationIncentive
      * @param speedLimitInfo SpeedLimitInfo; speed limit info
      * @throws OperationalPlanException in case of an error
      * @throws ParameterException on missing parameter
-     * @throws GTUException when there is a problem with the state of the GTU when planning a path
+     * @throws GtuException when there is a problem with the state of the GTU when planning a path
      */
     void accelerate(SimpleOperationalPlan simplePlan, RelativeLane lane, Length mergeDistance, LaneBasedGTU gtu,
             LanePerception perception, CarFollowingModel carFollowingModel, Speed speed, Parameters params,
-            SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException, GTUException;
+            SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException, GtuException;
 
     /**
      * Returns an iterable with only those lane-based objects that are on the route, accounting for longitudinal direction of
      * the GTU type.
      * @param iterable Iterable&lt;T&gt;; iterable
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param <T> type of lane-based object
      * @return Iterable&lt;T&gt;; iterable with only those lane-based objects that are on the route
      */
@@ -75,7 +75,7 @@ public interface AccelerationIncentive
                 OTSLink link = t.getLane().getParentLink();
                 if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
                 {
-                    LongitudinalDirectionality dir = link.getDirectionality(gtu.getGTUType());
+                    LongitudinalDirectionality dir = link.getDirectionality(gtu.getGtuType());
                     if (dir.isNone())
                     {
                         return false;

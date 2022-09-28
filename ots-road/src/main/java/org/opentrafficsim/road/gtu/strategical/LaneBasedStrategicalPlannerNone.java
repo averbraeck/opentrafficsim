@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -29,7 +29,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /**
      * Constructor.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      */
     public LaneBasedStrategicalPlannerNone(final LaneBasedGTU gtu)
     {
@@ -52,7 +52,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /** {@inheritDoc} */
     @Override
-    public final Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+    public final Node nextNode(final Link link, final GTUDirectionality direction, final GtuType gtuType)
             throws NetworkException
     {
         return null;
@@ -60,7 +60,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /** {@inheritDoc} */
     @Override
-    public final LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+    public final LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GtuType gtuType)
             throws NetworkException
     {
         return null;
@@ -68,14 +68,14 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /** {@inheritDoc} */
     @Override
-    public final Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
+    public final Node nextNode(final Node node, final Link previousLink, final GtuType gtuType) throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
+    public final LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GtuType gtuType)
             throws NetworkException
     {
         return null;

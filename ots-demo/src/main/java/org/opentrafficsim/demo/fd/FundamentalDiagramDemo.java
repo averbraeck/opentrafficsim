@@ -46,12 +46,12 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUErrorHandler;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.GTUType.DEFAULTS;
+import org.opentrafficsim.core.gtu.GtuErrorHandler;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.DirectedLinkPosition;
@@ -205,8 +205,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     {
         // Network
         OTSRoadNetwork network = new OTSRoadNetwork("FD demo network", true, sim);
-        GTUType car = network.getGtuType(DEFAULTS.CAR);
-        GTUType truck = network.getGtuType(DEFAULTS.TRUCK);
+        GtuType car = network.getGtuType(DEFAULTS.CAR);
+        GtuType truck = network.getGtuType(DEFAULTS.TRUCK);
 
         OTSRoadNode nodeA = new OTSRoadNode(network, "Origin", new OTSPoint3D(0.0, 0.0), Direction.ZERO);
         OTSRoadNode nodeB = new OTSRoadNode(network, "Lane-drop", new OTSPoint3D(1500.0, 0.0), Direction.ZERO);
@@ -246,7 +246,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         {
             @SuppressWarnings("synthetic-access")
             @Override
-            public void setValues(final Parameters parameters, final GTUType gtuType) throws ParameterException
+            public void setValues(final Parameters parameters, final GtuType gtuType) throws ParameterException
             {
                 if (gtuType.equals(truck))
                 {
@@ -266,11 +266,11 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator = new LaneBasedGTUCharacteristicsGenerator()
         {
             @Override
-            public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
+            public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
             {
                 @SuppressWarnings("synthetic-access")
-                GTUType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;
-                return new LaneBasedGTUCharacteristics(GTUType.defaultCharacteristics(gtuType, network, stream),
+                GtuType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;
+                return new LaneBasedGTUCharacteristics(GtuType.defaultCharacteristics(gtuType, network, stream),
                         laneBasedStrategicalPlannerFactory, null, nodeA, nodeC, VehicleModel.MINMAX);
             }
         };
@@ -291,7 +291,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // generator
         LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator("generator", interarrivelTimeGenerator,
                 laneBasedGTUCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
-        generator.setErrorHandler(GTUErrorHandler.DELETE);
+        generator.setErrorHandler(GtuErrorHandler.DELETE);
         generator.setInstantaneousLaneChange(true);
         generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));
 
@@ -493,7 +493,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 FundamentalDiagramDemo.this.tMax = Duration.instantiateSI(value);
                 FundamentalDiagramDemo.this.fdLine.update();
                 notifyPlotsChanged();
-                for (GTU gtu : getNetwork().getGTUs())
+                for (Gtu gtu : getNetwork().getGTUs())
                 {
                     try
                     {
@@ -539,7 +539,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                         lane.setSpeedLimit(getNetwork().getGtuType(DEFAULTS.VEHICLE), FundamentalDiagramDemo.this.speedLimit);
                     }
                 }
-                for (GTU gtu : getNetwork().getGTUs())
+                for (Gtu gtu : getNetwork().getGTUs())
                 {
                     DirectInfrastructurePerception infra;
                     try

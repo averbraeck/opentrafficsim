@@ -7,7 +7,7 @@ import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.compatibility.Compatibility;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * Link type to indicate compatibility with GTU types. The id of a LinkType should be unique within a simulation. This is,
@@ -20,7 +20,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LinkType extends HierarchicalType<LinkType> implements Serializable, Identifiable, Compatibility<GTUType, LinkType>
+public class LinkType extends HierarchicalType<LinkType> implements Serializable, Identifiable, Compatibility<GtuType, LinkType>
 {
     /** */
     private static final long serialVersionUID = 20140821L;
@@ -78,7 +78,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      * Create a new Link type with compatibility set.
      * @param id String; the id of the lane type (may not be null)
      * @param parent LinkType; the parent type (may be null)
-     * @param compatibility the collection of compatible GTUTypes for this LinkType; can be null (resulting in a LinkType that
+     * @param compatibility the collection of compatible GtuTypes for this LinkType; can be null (resulting in a LinkType that
      *            is inaccessible to all GTU types). This constructor makes a deep copy of the <code>compatibility</code>.
      * @param network Network; The network to which the LinkType belongs
      */
@@ -111,7 +111,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public Boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+    public Boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
     {
         return this.compatibility.isCompatible(gtuType, directionality);
     }
@@ -196,9 +196,9 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
+    public LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
     {
-        return this.compatibility.getDirectionality(gtuType, tryParentsOfGTUType);
+        return this.compatibility.getDirectionality(gtuType, tryParentsOfGtuType);
     }
 
     /**
@@ -234,14 +234,14 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
         /** {@inheritDoc} */
         @Override
-        public final LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
+        public final LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
         {
-            return super.compatibility.getDirectionality(gtuType, tryParentsOfGTUType).invert();
+            return super.compatibility.getDirectionality(gtuType, tryParentsOfGtuType).invert();
         }
 
         /** {@inheritDoc} */
         @Override
-        public Boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+        public Boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
         {
             return this.original.isCompatible(gtuType, directionality.flip());
         }

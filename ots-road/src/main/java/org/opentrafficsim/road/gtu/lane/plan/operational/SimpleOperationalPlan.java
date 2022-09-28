@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -262,10 +262,10 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
-     * @param gtu LaneBasedGTU; LaneBasedGTU to set the indicator on
-     * @throws GTUException if GTU does not support the indicator
+     * @param gtu LaneBasedGtu; LaneBasedGTU to set the indicator on
+     * @throws GtuException if GTU does not support the indicator
      */
-    public final void setTurnIndicator(final LaneBasedGTU gtu) throws GTUException
+    public final void setTurnIndicator(final LaneBasedGTU gtu) throws GtuException
     {
         if (this.indicatorIntent.isLeft())
         {

@@ -20,8 +20,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.mock.MockGTU;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -293,7 +293,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("other event count is 0", 0, this.otherEventCount);
         assertEquals("network now contains one link", 1, network.getLinkMap().size());
         MockGTU mockGtu1 = new MockGTU("gtu1");
-        GTU gtu1 = mockGtu1.getMock();
+        Gtu gtu1 = mockGtu1.getMock();
         network.addGTU(gtu1);
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 1", 1, this.linkRemovedCount);
@@ -302,7 +302,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("GTU add event count is 1", 1, this.gtuAddedCount);
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         MockGTU mockGtu2 = new MockGTU("gtu2");
-        GTU gtu2 = mockGtu2.getMock();
+        Gtu gtu2 = mockGtu2.getMock();
         network.addGTU(gtu2);
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 1", 1, this.linkRemovedCount);
@@ -430,11 +430,11 @@ public class OTSNetworkTest implements EventListenerInterface
         Route route1 = new Route("route1", nodeList);
         Route route2 = new Route("route2");
         Route route3 = new Route("route3");
-        GTUType carType = new GTUType("car", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
-        GTUType bicycleType = new GTUType("bicycle", network.getGtuType(GTUType.DEFAULTS.BICYCLE));
-        // The next test makes little sense until the getters are changed to search up to the GTUType root.
+        GtuType carType = new GtuType("car", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
+        GtuType bicycleType = new GtuType("bicycle", network.getGtuType(GtuType.DEFAULTS.BICYCLE));
+        // The next test makes little sense until the getters are changed to search up to the GtuType root.
         assertEquals("initially the network has 0 routes", 0,
-                network.getDefinedRouteMap(network.getGtuType(GTUType.DEFAULTS.VEHICLE)).size());
+                network.getDefinedRouteMap(network.getGtuType(GtuType.DEFAULTS.VEHICLE)).size());
         network.addRoute(carType, route1);
         assertEquals("list for carType contains one entry", 1, network.getDefinedRouteMap(carType).size());
         assertEquals("route for carType route1 is route1", route1, network.getRoute(carType, "route1"));
@@ -476,7 +476,7 @@ public class OTSNetworkTest implements EventListenerInterface
         try
         {
             network.removeRoute(bicycleType, route1);
-            fail("attempt to remove a route that is not defined for this GTUType should have thrown a NetworkException");
+            fail("attempt to remove a route that is not defined for this GtuType should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
@@ -492,7 +492,7 @@ public class OTSNetworkTest implements EventListenerInterface
                 network.getRoutesBetween(carType, node2, node1).size());
         assertEquals("there are no routes from node1 to node1 for carTypecleType", 0,
                 network.getRoutesBetween(carType, node1, node1).size());
-        GTUType junkType = new GTUType("junk", network.getGtuType(GTUType.DEFAULTS.VEHICLE));
+        GtuType junkType = new GtuType("junk", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         assertEquals("there are no routes from node1 to node2 for badType", 0,
                 network.getRoutesBetween(junkType, node1, node2).size());
         compareNetworkWithClone(network);
@@ -527,7 +527,7 @@ public class OTSNetworkTest implements EventListenerInterface
                 Node fromNode = nodes.get(fromNodeIndex);
                 Node toNode = nodes.get((fromNodeIndex + skip) % maxNode);
                 CompleteRoute route =
-                        network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode);
+                        network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode);
                 assertEquals("route size is skip + 1", skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
                 {
@@ -535,10 +535,10 @@ public class OTSNetworkTest implements EventListenerInterface
                             route.getNode(i));
                 }
                 CompleteRoute routeWithExplicitLengthWeight = network.getShortestRouteBetween(
-                        network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode, LinkWeight.LENGTH);
+                        network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode, LinkWeight.LENGTH);
                 assertEquals("route with explicit link weight should be the same", route, routeWithExplicitLengthWeight);
                 // reverse direction
-                route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), toNode, fromNode);
+                route = network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), toNode, fromNode);
                 // System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
                 assertEquals("route size is skip + 1", skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
@@ -553,7 +553,7 @@ public class OTSNetworkTest implements EventListenerInterface
         // TODO fix OTSNetwork class to throw the documented exception instead of
         // java.lang IllegalArgumentException: graph must contain the start vertex
         // Node freeNode = new OTSNode(network, "unconnectedNode", new OTSPoint3D(5, 5, 5));
-        // assertNull(network.getShortestRouteBetween(GTUType.ALL, freeNode, network.getNode("node1")));
+        // assertNull(network.getShortestRouteBetween(GtuType.ALL, freeNode, network.getNode("node1")));
     }
 
     /**
@@ -574,7 +574,7 @@ public class OTSNetworkTest implements EventListenerInterface
                 Node fromNode = nodes.get(fromNodeIndex);
                 Node toNode = nodes.get((fromNodeIndex + skip) % maxNode);
                 CompleteRoute route =
-                        network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode);
+                        network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode);
                 assertEquals("route size is skip + 1", skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
                 {
@@ -582,7 +582,7 @@ public class OTSNetworkTest implements EventListenerInterface
                             route.getNode(i));
                 }
                 // reverse direction
-                route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), toNode, fromNode);
+                route = network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), toNode, fromNode);
                 // System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
                 assertEquals("route size is maxNode - skip + 1", maxNode - skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
@@ -613,7 +613,7 @@ public class OTSNetworkTest implements EventListenerInterface
                 Node fromNode = nodes.get(fromNodeIndex);
                 Node toNode = nodes.get((fromNodeIndex + skip) % maxNode);
                 CompleteRoute route =
-                        network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode);
+                        network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode);
                 assertEquals("route size is maxNode - skip + 1", maxNode - skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
                 {
@@ -621,7 +621,7 @@ public class OTSNetworkTest implements EventListenerInterface
                             route.getNode(i));
                 }
                 // reverse direction
-                route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), toNode, fromNode);
+                route = network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), toNode, fromNode);
                 // System.out.println("Shortest route from " + toNode + " to " + fromNode + " is " + route);
                 assertEquals("route size is skip + 1", skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
@@ -681,7 +681,7 @@ public class OTSNetworkTest implements EventListenerInterface
                         // }
                         // System.out.println("");
                         Node toNode = network.getNode("node" + toNodeIndex);
-                        CompleteRoute route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+                        CompleteRoute route = network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                                 fromNode, toNode, viaNodes);
                         // Now compute the expected path using our knowledge about the structure
                         List<Node> expectedPath = new ArrayList<>();
@@ -722,10 +722,10 @@ public class OTSNetworkTest implements EventListenerInterface
                         {
                             assertEquals("node i should match", expectedPath.get(i), route.getNode(i));
                         }
-                        route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode,
+                        route = network.getShortestRouteBetween(network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode,
                                 viaNodes);
                         CompleteRoute routeWithExplicitLengthAsWeight = network.getShortestRouteBetween(
-                                network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode, viaNodes, LinkWeight.LENGTH);
+                                network.getGtuType(GtuType.DEFAULTS.VEHICLE), fromNode, toNode, viaNodes, LinkWeight.LENGTH);
                         assertEquals("route with explicit weight should be same as route", route,
                                 routeWithExplicitLengthAsWeight);
                     }
@@ -761,7 +761,7 @@ public class OTSNetworkTest implements EventListenerInterface
             throws NetworkException, OTSGeometryException
     {
         GtuCompatibility<LinkType> compatibility =
-                new GtuCompatibility<>((LinkType) null).addAllowedGTUType(network.getGtuType(GTUType.DEFAULTS.ROAD_USER), ld);
+                new GtuCompatibility<>((LinkType) null).addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.ROAD_USER), ld);
         LinkType linkType = new LinkType("linkType", null, compatibility, network);
         List<Node> nodes = new ArrayList<>();
         double radius = 500;

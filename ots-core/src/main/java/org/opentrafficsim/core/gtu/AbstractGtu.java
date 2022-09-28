@@ -45,7 +45,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public abstract class AbstractGTU extends EventProducer implements GTU
+public abstract class AbstractGtu extends EventProducer implements Gtu
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -60,7 +60,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     private static int staticUNIQUENUMBER = 0;
 
     /** The type of GTU, e.g. TruckType, CarType, BusType. */
-    private final GTUType gtuType;
+    private final GtuType gtuType;
 
     /** The simulator to schedule activities on. */
     private final OTSSimulatorInterface simulator;
@@ -120,31 +120,31 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     private Acceleration cachedAcceleration = null;
 
     /** Parent GTU. */
-    private GTU parent = null;
+    private Gtu parent = null;
 
     /** Children GTU's. */
-    private Set<GTU> children = new LinkedHashSet<>();
+    private Set<Gtu> children = new LinkedHashSet<>();
 
     /** Error handler. */
-    private GTUErrorHandler errorHandler = GTUErrorHandler.THROW;
+    private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
 
     /**
      * @param id String; the id of the GTU
-     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param simulator OTSSimulatorInterface; the simulator to schedule plan changes on
      * @param perceivableContext PerceivableContext; the perceivable context in which this GTU will be registered
-     * @throws GTUException when the preconditions of the constructor are not met
+     * @throws GtuException when the preconditions of the constructor are not met
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
-            final PerceivableContext perceivableContext) throws GTUException
+    public AbstractGtu(final String id, final GtuType gtuType, final OTSSimulatorInterface simulator,
+            final PerceivableContext perceivableContext) throws GtuException
     {
-        Throw.when(id == null, GTUException.class, "id is null");
-        Throw.when(gtuType == null, GTUException.class, "gtuType is null");
-        Throw.when(perceivableContext == null, GTUException.class, "perceivableContext is null for GTU with id %s", id);
-        Throw.when(perceivableContext.containsGtuId(id), GTUException.class,
+        Throw.when(id == null, GtuException.class, "id is null");
+        Throw.when(gtuType == null, GtuException.class, "gtuType is null");
+        Throw.when(perceivableContext == null, GtuException.class, "perceivableContext is null for GTU with id %s", id);
+        Throw.when(perceivableContext.containsGtuId(id), GtuException.class,
                 "GTU with id %s already registered in perceivableContext %s", id, perceivableContext.getId());
-        Throw.when(simulator == null, GTUException.class, "simulator is null for GTU with id %s", id);
+        Throw.when(simulator == null, GtuException.class, "simulator is null for GTU with id %s", id);
 
         HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
         this.id = id;
@@ -161,14 +161,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /**
      * @param idGenerator IdGenerator; the generator that will produce a unique id of the GTU
-     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param simulator OTSSimulatorInterface; the simulator to schedule plan changes on
      * @param perceivableContext PerceivableContext; the perceivable context in which this GTU will be registered
-     * @throws GTUException when the preconditions of the constructor are not met
+     * @throws GtuException when the preconditions of the constructor are not met
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTU(final IdGenerator idGenerator, final GTUType gtuType, final OTSSimulatorInterface simulator,
-            final PerceivableContext perceivableContext) throws GTUException
+    public AbstractGtu(final IdGenerator idGenerator, final GtuType gtuType, final OTSSimulatorInterface simulator,
+            final PerceivableContext perceivableContext) throws GtuException
     {
         this(generateId(idGenerator), gtuType, simulator, perceivableContext);
     }
@@ -180,19 +180,19 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @param initialLocation DirectedPoint; the initial location (and direction) of the GTU
      * @param initialSpeed Speed; the initial speed of the GTU
      * @throws SimRuntimeException when scheduling after the first move fails
-     * @throws GTUException when the preconditions of the parameters are not met or when the construction of the original
+     * @throws GtuException when the preconditions of the parameters are not met or when the construction of the original
      *             waiting path fails
      */
     @SuppressWarnings({"checkstyle:hiddenfield", "hiding", "checkstyle:designforextension"})
     public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint initialLocation, final Speed initialSpeed)
-            throws SimRuntimeException, GTUException
+            throws SimRuntimeException, GtuException
     {
-        Throw.when(strategicalPlanner == null, GTUException.class, "strategicalPlanner is null for GTU with id %s", this.id);
+        Throw.when(strategicalPlanner == null, GtuException.class, "strategicalPlanner is null for GTU with id %s", this.id);
         Throw.whenNull(initialLocation, "Initial location of GTU cannot be null");
         Throw.when(Double.isNaN(initialLocation.x) || Double.isNaN(initialLocation.y) || Double.isNaN(initialLocation.z),
-                GTUException.class, "initialLocation %s invalid for GTU with id %s", initialLocation, this.id);
-        Throw.when(initialSpeed == null, GTUException.class, "initialSpeed is null for GTU with id %s", this.id);
-        Throw.when(!getId().equals(strategicalPlanner.getGtu().getId()), GTUException.class,
+                GtuException.class, "initialLocation %s invalid for GTU with id %s", initialLocation, this.id);
+        Throw.when(initialSpeed == null, GtuException.class, "initialSpeed is null for GTU with id %s", this.id);
+        Throw.when(!getId().equals(strategicalPlanner.getGtu().getId()), GtuException.class,
                 "GTU %s is initialized with a strategical planner for GTU %s", getId(), strategicalPlanner.getGtu().getId());
 
         this.strategicalPlanner.set(strategicalPlanner);
@@ -200,7 +200,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         Time now = this.simulator.getSimulatorAbsTime();
 
         DirectedPoint location = getLocation();
-        fireTimedEvent(GTU.INIT_EVENT, new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
+        fireTimedEvent(Gtu.INIT_EVENT, new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
                 new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getLength(), getWidth()}, now);
 
         try
@@ -209,7 +209,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         }
         catch (OperationalPlanException | NetworkException | ParameterException exception)
         {
-            throw new GTUException("Failed to create OperationalPlan for GTU " + this.id, exception);
+            throw new GtuException("Failed to create OperationalPlan for GTU " + this.id, exception);
         }
     }
 
@@ -217,11 +217,11 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * Generate an id, but check first that we have a valid IdGenerator.
      * @param idGenerator IdGenerator; the generator that will produce a unique id of the GTU
      * @return a (hopefully unique) Id of the GTU
-     * @throws GTUException when the idGenerator is null
+     * @throws GtuException when the idGenerator is null
      */
-    private static String generateId(final IdGenerator idGenerator) throws GTUException
+    private static String generateId(final IdGenerator idGenerator) throws GtuException
     {
-        Throw.when(idGenerator == null, GTUException.class, "AbstractGTU.<init>: idGenerator is null");
+        Throw.when(idGenerator == null, GtuException.class, "AbstractGTU.<init>: idGenerator is null");
         return idGenerator.nextId();
     }
 
@@ -233,7 +233,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     public void destroy()
     {
         DirectedPoint location = getLocation();
-        fireTimedEvent(GTU.DESTROY_EVENT,
+        fireTimedEvent(Gtu.DESTROY_EVENT,
                 new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
                         new Direction(location.getZ(), DirectionUnit.EAST_RADIAN), getOdometer()},
                 this.simulator.getSimulatorTime());
@@ -260,13 +260,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @return boolean; whether an exception occurred
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
-     * @throws GTUException when there is a problem with the state of the GTU when planning a path
+     * @throws GtuException when there is a problem with the state of the GTU when planning a path
      * @throws NetworkException in case of a problem with the network, e.g., a dead end where it is not expected
      * @throws ParameterException in there is a parameter problem
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected boolean move(final DirectedPoint fromLocation)
-            throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException, ParameterException
+            throws SimRuntimeException, OperationalPlanException, GtuException, NetworkException, ParameterException
     {
         try
         {
@@ -328,7 +328,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                                 this, this, "move", new Object[] {newOperationalPlan.getEndLocation()});
             }
             this.simulator.scheduleEvent(this.nextMoveEvent);
-            fireTimedEvent(GTU.MOVE_EVENT,
+            fireTimedEvent(Gtu.MOVE_EVENT,
                     new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
                             new Direction(fromLocation.getZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getOdometer()},
@@ -344,7 +344,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             }
             catch (Exception exception)
             {
-                throw new GTUException(exception);
+                throw new GtuException(exception);
             }
             return true;
         }
@@ -356,13 +356,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @throws OperationalPlanException when there was a problem retrieving the location from the running plan
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
-     * @throws GTUException when there is a problem with the state of the GTU when planning a path
+     * @throws GtuException when there is a problem with the state of the GTU when planning a path
      * @throws NetworkException in case of a problem with the network, e.g., unreachability of a certain point
      * @throws ParameterException when there is a problem with a parameter
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected void interruptMove()
-            throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException, ParameterException
+            throws SimRuntimeException, OperationalPlanException, GtuException, NetworkException, ParameterException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
         move(this.operationalPlan.get().getLocation(this.simulator.getSimulatorTime()));
@@ -378,7 +378,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public GTUType getGTUType()
+    public GtuType getGtuType()
     {
         return this.gtuType;
     }
@@ -672,7 +672,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public void addGtu(final GTU gtu) throws GTUException
+    public void addGtu(final Gtu gtu) throws GtuException
     {
         this.children.add(gtu);
         gtu.setParent(this);
@@ -680,14 +680,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public void removeGtu(final GTU gtu)
+    public void removeGtu(final Gtu gtu)
     {
         this.children.remove(gtu);
         try
         {
             gtu.setParent(null);
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             // cannot happen, setting null is always ok
         }
@@ -695,22 +695,22 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public void setParent(final GTU gtu) throws GTUException
+    public void setParent(final Gtu gtu) throws GtuException
     {
-        Throw.when(gtu != null && this.parent != null, GTUException.class, "GTU %s already has a parent.", this);
+        Throw.when(gtu != null && this.parent != null, GtuException.class, "GTU %s already has a parent.", this);
         this.parent = gtu;
     }
 
     /** {@inheritDoc} */
     @Override
-    public GTU getParent()
+    public Gtu getParent()
     {
         return this.parent;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<GTU> getChildren()
+    public Set<Gtu> getChildren()
     {
         return new LinkedHashSet<>(this.children); // safe copy
     }
@@ -718,14 +718,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * @return errorHandler.
      */
-    protected GTUErrorHandler getErrorHandler()
+    protected GtuErrorHandler getErrorHandler()
     {
         return this.errorHandler;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setErrorHandler(final GTUErrorHandler errorHandler)
+    public void setErrorHandler(final GtuErrorHandler errorHandler)
     {
         this.errorHandler = errorHandler;
     }
@@ -769,7 +769,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AbstractGTU other = (AbstractGTU) obj;
+        AbstractGtu other = (AbstractGtu) obj;
         if (this.id == null)
         {
             if (other.id != null)

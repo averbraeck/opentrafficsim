@@ -8,8 +8,8 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSSimulator;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.GTUType.DEFAULTS;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType.Correlation;
 
@@ -40,11 +40,11 @@ public final class ParameterFactoryByTypeTest
     {
 
         OTSNetwork network = new OTSNetwork("network", true, new OTSSimulator("Simulator for ParameterFactoryByTypeTest"));
-        GTUType roadUser = network.getGtuType(DEFAULTS.ROAD_USER);
-        GTUType bicycle = network.getGtuType(DEFAULTS.BICYCLE);
-        GTUType vehicle = network.getGtuType(DEFAULTS.VEHICLE);
-        GTUType car = network.getGtuType(DEFAULTS.CAR);
-        GTUType truck = network.getGtuType(DEFAULTS.TRUCK);
+        GtuType roadUser = network.getGtuType(DEFAULTS.ROAD_USER);
+        GtuType bicycle = network.getGtuType(DEFAULTS.BICYCLE);
+        GtuType vehicle = network.getGtuType(DEFAULTS.VEHICLE);
+        GtuType car = network.getGtuType(DEFAULTS.CAR);
+        GtuType truck = network.getGtuType(DEFAULTS.TRUCK);
 
         ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
 
@@ -138,12 +138,12 @@ public final class ParameterFactoryByTypeTest
      * Tests a single parameter value.
      * @param parameterFactory ParameterFactory; parameter factory
      * @param parameterType ParameterTypeDouble; parameter type
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param value double; value
      * @throws ParameterException if parameter 'a' is not set
      */
     private static void testParameterValue(final ParameterFactory parameterFactory, final ParameterTypeDouble parameterType,
-            final GTUType gtuType, final Double value) throws ParameterException
+            final GtuType gtuType, final Double value) throws ParameterException
     {
         Parameters parameters = new ParameterSet();
         parameterFactory.setValues(parameters, gtuType);
@@ -153,10 +153,10 @@ public final class ParameterFactoryByTypeTest
     /**
      * Adds a correlation B = A * factor + 0.5.
      * @param parameterFactory ParameterFactoryByType; parameter factory
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @param factor double; factor
      */
-    private static void addCorrelation(final ParameterFactoryByType parameterFactory, final GTUType gtuType,
+    private static void addCorrelation(final ParameterFactoryByType parameterFactory, final GtuType gtuType,
             final double factor)
     {
         Correlation<Double, Double> correlation = new Correlation<Double, Double>()

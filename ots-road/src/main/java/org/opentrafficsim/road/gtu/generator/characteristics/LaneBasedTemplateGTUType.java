@@ -6,8 +6,8 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.TemplateGTUType;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.TemplateGtuType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBasedGTUCharacteristicsGenerator
+public class LaneBasedTemplateGtuType extends TemplateGtuType implements LaneBasedGTUCharacteristicsGenerator
 {
     /** */
     private static final long serialVersionUID = 20160101L;
@@ -36,7 +36,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     private Generator<Speed> initialSpeedGenerator;
 
     /**
-     * @param gtuType GTUType; The GTUType to make it identifiable.
+     * @param gtuType GtuType; The GtuType to make it identifiable.
      * @param lengthGenerator Generator&lt;Length&gt;; Generator&lt;Length&gt; generator for the length of the GTU type
      *            (parallel with driving direction).
      * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
@@ -49,7 +49,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedTemplateGTUType(final GTUType gtuType, final Generator<Length> lengthGenerator,
+    public LaneBasedTemplateGtuType(final GtuType gtuType, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final Generator<Route> routeGenerator)
             throws NullPointerException

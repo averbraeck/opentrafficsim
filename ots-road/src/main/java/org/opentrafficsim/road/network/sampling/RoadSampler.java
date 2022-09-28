@@ -20,7 +20,7 @@ import org.djutils.event.ref.ReferenceType;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -186,7 +186,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
                 }
                 count++;
             }
-            catch (RemoteException | GTUException exception)
+            catch (RemoteException | GtuException exception)
             {
                 throw new RuntimeException("Position cannot be obtained for GTU that is registered on a lane", exception);
             }
@@ -281,7 +281,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
                 // TODO Length from Lane.GTU_ADD_EVENT
                 position = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 throw new RuntimeException(exception);
             }
@@ -358,7 +358,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Schedules a sampling event for the given gtu on the given lane for the sampling interval from the current time.
-     * @param gtu LaneBasedGTU; gtu to sample
+     * @param gtu LaneBasedGtu; gtu to sample
      * @param laneDirection LaneDirection; lane direction where the gtu is at
      */
     private void scheduleSamplingEvent(final LaneBasedGTU gtu, final LaneDirection laneDirection)
@@ -386,7 +386,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Samples a gtu and schedules the next sampling event.
-     * @param gtu LaneBasedGTU; gtu to sample
+     * @param gtu LaneBasedGtu; gtu to sample
      * @param laneDirection LaneDirection; lane direction where the gtu is at
      */
     public final void notifySample(final LaneBasedGTU gtu, final LaneDirection laneDirection)
@@ -399,7 +399,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
                     gtu.position(laneDirection.getLane(), RelativePosition.REFERENCE_POSITION), gtu.getSpeed(),
                     gtu.getAcceleration(), now(), new GtuData(gtu));
         }
-        catch (GTUException exception)
+        catch (GtuException exception)
         {
             throw new RuntimeException("Requesting position on lane, but the GTU is not on the lane.", exception);
         }

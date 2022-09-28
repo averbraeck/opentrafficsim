@@ -46,9 +46,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -443,13 +443,13 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             }
                             else if (message.length == 8)
                             {
-                                for (GTU gtu : this.model.network.getGTUs())
+                                for (Gtu gtu : this.model.network.getGTUs())
                                 {
                                     // Send information about one GTU to master
                                     try
                                     {
                                         DirectedPoint gtuPosition = gtu.getLocation();
-                                        Object[] gtuData = new Object[] {gtu.getId(), gtu.getGTUType().getId(), gtuPosition.x,
+                                        Object[] gtuData = new Object[] {gtu.getId(), gtu.getGtuType().getId(), gtuPosition.x,
                                                 gtuPosition.y, gtuPosition.z, gtuPosition.getRotZ(), gtu.getSpeed(),
                                                 gtu.getAcceleration()};
                                         sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave_XXXXX", "master", "GTUPOSITION",
@@ -708,12 +708,12 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                         false);
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 LaneCombinationList permittedList = new LaneCombinationList();
-                ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE),
+                ConflictBuilder.buildConflictsParallel(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE),
                         getSimulator(), new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList,
                         permittedList);
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
-                    | SAXException | ParserConfigurationException | GTUException | IOException
+                    | SAXException | ParserConfigurationException | GtuException | IOException
                     | TrafficControlException exception)
             {
                 exception.printStackTrace();

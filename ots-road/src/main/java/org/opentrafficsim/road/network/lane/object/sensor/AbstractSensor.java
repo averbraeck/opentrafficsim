@@ -9,7 +9,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -37,7 +37,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     private final OTSSimulatorInterface simulator;
 
     /** The GTU types and driving directions that this sensor will trigger on. */
-    private final Compatible detectedGTUTypes;
+    private final Compatible detectedGtuTypes;
 
     /**
      * Create a sensor on a lane at a position on that lane.
@@ -50,13 +50,13 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
      * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
      * @param elevation Length; elevation of the sensor
-     * @param detectedGTUTypes Compatible; The GTU types will trigger this sensor
+     * @param detectedGtuTypes Compatible; The GTU types will trigger this sensor
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
             final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final OTSLine3D geometry,
-            final Length elevation, final Compatible detectedGTUTypes) throws NetworkException
+            final Length elevation, final Compatible detectedGtuTypes) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
         Throw.when(simulator == null, NullPointerException.class, "simulator is null");
@@ -64,7 +64,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
         Throw.when(id == null, NullPointerException.class, "id is null");
         this.positionType = positionType;
         this.simulator = simulator;
-        this.detectedGTUTypes = detectedGTUTypes;
+        this.detectedGtuTypes = detectedGtuTypes;
 
         init();
 
@@ -81,14 +81,14 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      *            the sensor.
      * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
      * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
-     * @param detectedGTUTypes Compatible; The GTU types will trigger this sensor
+     * @param detectedGtuTypes Compatible; The GTU types will trigger this sensor
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
             final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final OTSLine3D geometry,
-            final Compatible detectedGTUTypes) throws NetworkException
+            final Compatible detectedGtuTypes) throws NetworkException
     {
-        this(id, lane, longitudinalPosition, positionType, simulator, geometry, DEFAULT_SENSOR_ELEVATION, detectedGTUTypes);
+        this(id, lane, longitudinalPosition, positionType, simulator, geometry, DEFAULT_SENSOR_ELEVATION, detectedGtuTypes);
     }
 
     /**
@@ -101,15 +101,15 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
      * @param simulator OTSSimulatorInterface; the simulator (needed to generate the animation).
-     * @param detectedGTUTypes Compatible; The GTU types will trigger this sensor
+     * @param detectedGtuTypes Compatible; The GTU types will trigger this sensor
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final Compatible detectedGTUTypes)
+            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final Compatible detectedGtuTypes)
             throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition, 0.9),
-                detectedGTUTypes);
+                detectedGtuTypes);
     }
 
     /**
@@ -149,7 +149,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /**
      * Implementation of the response to a trigger of this sensor by a GTU.
-     * @param gtu LaneBasedGTU; the lane based GTU that triggered this sensor.
+     * @param gtu LaneBasedGtu; the lane based GTU that triggered this sensor.
      */
     protected abstract void triggerResponse(LaneBasedGTU gtu);
 
@@ -253,18 +253,18 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
-    public final boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+    public final boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
     {
-        return this.detectedGTUTypes.isCompatible(gtuType, directionality);
+        return this.detectedGtuTypes.isCompatible(gtuType, directionality);
     }
 
     /**
      * Retrieve the object that decides if a particular GTU type is detected when passing in a particular direction.
      * @return Compatible; the object that decides if a particular GTU type is detected when passing in a particular direction
      */
-    public final Compatible getDetectedGTUTypes()
+    public final Compatible getDetectedGtuTypes()
     {
-        return this.detectedGTUTypes;
+        return this.detectedGtuTypes;
     }
 
 }

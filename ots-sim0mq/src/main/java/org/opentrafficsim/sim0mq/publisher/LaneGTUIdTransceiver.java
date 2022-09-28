@@ -5,7 +5,7 @@ import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -79,7 +79,7 @@ public class LaneGTUIdTransceiver extends AbstractTransceiver
         ImmutableList<LaneBasedGTU> gtus = lane.getGtuList();
         Object[] result = new Object[gtus.size()];
         int nextIndex = 0;
-        for (GTU gtu : gtus)
+        for (Gtu gtu : gtus)
         {
             result[nextIndex++] = gtu.getId();
         }

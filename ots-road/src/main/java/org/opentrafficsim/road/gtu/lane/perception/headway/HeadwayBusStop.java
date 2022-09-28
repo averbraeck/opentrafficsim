@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.BusStop;
@@ -39,10 +39,10 @@ public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
      * @param relativeLane RelativeLane; relative lane
      * @param conflictIds Set&lt;String&gt;; conflicts downstream of the bus stop
      * @param lane Lane; lane
-     * @throws GTUException when id is null, or parameters are inconsistent
+     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayBusStop(final BusStop busStop, final Length distance, final RelativeLane relativeLane,
-            final Set<String> conflictIds, final Lane lane) throws GTUException
+            final Set<String> conflictIds, final Lane lane) throws GtuException
     {
         super(ObjectType.BUSSTOP, busStop.getId(), distance, lane);
         this.relativeLane = relativeLane;

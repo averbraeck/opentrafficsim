@@ -31,8 +31,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -44,8 +44,8 @@ import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
@@ -254,7 +254,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | GTUException
+        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | GtuException
                 | InputParameterException | ProbabilityException | ParameterException exception)
         {
             exception.printStackTrace();
@@ -266,21 +266,21 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
      * @param lane Lane; the lane on which the generated GTUs are placed
      * @param routeGenerator the fixed route for this lane
      * @return LaneBasedGTUGenerator
-     * @throws GTUException when lane position out of bounds
+     * @throws GtuException when lane position out of bounds
      * @throws SimRuntimeException when generation scheduling fails
      * @throws ProbabilityException when probability distribution is wrong
      * @throws ParameterException when a parameter is missing for the perception of the GTU
      * @throws InputParameterException when a parameter is missing for the perception of the GTU
      */
     private LaneBasedGTUGenerator makeGenerator(final Lane lane, final Generator<Route> routeGenerator)
-            throws GTUException, SimRuntimeException, ProbabilityException, ParameterException, InputParameterException
+            throws GtuException, SimRuntimeException, ProbabilityException, ParameterException, InputParameterException
     {
-        Distribution<LaneBasedTemplateGTUType> distribution = new Distribution<>(this.stream);
+        Distribution<LaneBasedTemplateGtuType> distribution = new Distribution<>(this.stream);
         Length initialPosition = new Length(16, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
 
-        LaneBasedTemplateGTUType template = makeTemplate(this.stream, lane,
+        LaneBasedTemplateGtuType template = makeTemplate(this.stream, lane,
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 3, 6), METER),
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 1.6, 2.0), METER),
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(this.stream, 140, 180), KM_PER_HOUR),
@@ -294,7 +294,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
                 initialPositions, this.strategicalPlannerFactoryTruck, routeGenerator);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
-        LaneBasedTemplateGTUTypeDistribution templateDistribution = new LaneBasedTemplateGTUTypeDistribution(distribution);
+        LaneBasedTemplateGtuTypeDistribution templateDistribution = new LaneBasedTemplateGtuTypeDistribution(distribution);
         LaneBasedGTUGenerator.RoomChecker roomChecker = new CFRoomChecker();
         return new LaneBasedGTUGenerator(lane.getId(), new Generator<Duration>()
         {
@@ -319,18 +319,18 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
      *            generate the strategical planner for the GTU
      * @param routeGenerator the route generator
      * @return template for a GTU
-     * @throws GTUException when characteristics cannot be initialized
+     * @throws GtuException when characteristics cannot be initialized
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    LaneBasedTemplateGTUType makeTemplate(final StreamInterface randStream, final Lane lane,
+    LaneBasedTemplateGtuType makeTemplate(final StreamInterface randStream, final Lane lane,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
             final Set<DirectedLanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory,
-            final Generator<Route> routeGenerator) throws GTUException
+            final Generator<Route> routeGenerator) throws GtuException
     {
-        return new LaneBasedTemplateGTUType(this.network.getGtuType(GTUType.DEFAULTS.CAR), new Generator<Length>()
+        return new LaneBasedTemplateGtuType(this.network.getGtuType(GtuType.DEFAULTS.CAR), new Generator<Length>()
         {
             @Override
             public Length draw()

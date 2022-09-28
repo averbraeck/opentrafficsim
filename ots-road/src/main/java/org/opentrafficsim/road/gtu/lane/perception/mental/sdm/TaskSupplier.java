@@ -20,7 +20,7 @@ public interface TaskSupplier
 
     /**
      * Returns a task for the given GTU.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @return Task; task for given GTU
      */
     Task getTask(LaneBasedGTU gtu);

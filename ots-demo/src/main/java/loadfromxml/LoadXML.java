@@ -28,8 +28,8 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -200,11 +200,11 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
                     // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
                 }
                 LaneCombinationList permittedList = new LaneCombinationList();
-                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GTUType.DEFAULTS.VEHICLE), getSimulator(),
+                ConflictBuilder.buildConflicts(this.network, this.network.getGtuType(GtuType.DEFAULTS.VEHICLE), getSimulator(),
                         new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }
             catch (NetworkException | OTSGeometryException | JAXBException | URISyntaxException | XmlParserException
-                    | SAXException | ParserConfigurationException | GTUException | IOException
+                    | SAXException | ParserConfigurationException | GtuException | IOException
                     | TrafficControlException exception)
             {
                 exception.printStackTrace();

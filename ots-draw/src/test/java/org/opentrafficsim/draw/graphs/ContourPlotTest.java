@@ -37,8 +37,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
@@ -205,7 +205,7 @@ public class ContourPlotTest implements UNITS
         ContourPlotDensity dcp = new ContourPlotDensity("density", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
         assertEquals("SeriesKey should be \"density\"", "density", dcp.getSeriesKey(0));
-        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         standardContourTests(simulator, dcp, path, Double.NaN, Double.NaN);
     }
 
@@ -225,7 +225,7 @@ public class ContourPlotTest implements UNITS
         ContourPlotFlow fcp = new ContourPlotFlow("flow", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
         assertEquals("SeriesKey should be \"flow\"", "flow", fcp.getSeriesKey(0));
-        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         standardContourTests(simulator, fcp, path, Double.NaN, Double.NaN);
     }
 
@@ -245,7 +245,7 @@ public class ContourPlotTest implements UNITS
         ContourPlotSpeed scp = new ContourPlotSpeed("speed", simulator, dataPool);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);
         assertEquals("SeriesKey should be \"speed\"", "speed", scp.getSeriesKey(0));
-        GTUType gtuType = network.getGtuType(GTUType.DEFAULTS.CAR);
+        GtuType gtuType = network.getGtuType(GtuType.DEFAULTS.CAR);
         standardContourTests(simulator, scp, path, Double.NaN, 50);
     }
 
@@ -755,7 +755,7 @@ public class ContourPlotTest implements UNITS
     /**
      * Create a new Car.
      * @param id String; the name (number) of the Car
-     * @param gtuType GTUType; the type of the new car
+     * @param gtuType GtuType; the type of the new car
      * @param lane Lane; the lane on which the new Car is positioned
      * @param initialPosition Length; the initial longitudinal position of the new Car
      * @param initialSpeed Speed; the initial speed
@@ -768,13 +768,13 @@ public class ContourPlotTest implements UNITS
      * @throws NamingException on network error when making the animation
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
-     * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
+     * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
      * @throws OTSGeometryException when the initial path is wrong
      */
-    private static LaneBasedIndividualGTU makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
+    private static LaneBasedIndividualGTU makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OTSSimulatorInterface simulator,
             final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
-            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
+            throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException
     {
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);

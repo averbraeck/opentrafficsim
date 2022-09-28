@@ -21,7 +21,7 @@ public class GtuData implements GtuDataInterface
     private final LaneBasedGTU gtu;
 
     /**
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      */
     public GtuData(final LaneBasedGTU gtu)
     {
@@ -75,7 +75,7 @@ public class GtuData implements GtuDataInterface
     @Override
     public final GtuTypeData getGtuTypeData()
     {
-        return new GtuTypeData(this.gtu.getGTUType());
+        return new GtuTypeData(this.gtu.getGtuType());
     }
 
     /** {@inheritDoc} */

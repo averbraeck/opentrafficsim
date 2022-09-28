@@ -9,7 +9,7 @@ package org.opentrafficsim.core.gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GTUException extends Exception
+public class GtuException extends Exception
 {
 
     /** */
@@ -18,14 +18,14 @@ public class GTUException extends Exception
     /**
      * 
      */
-    public GTUException()
+    public GtuException()
     {
     }
 
     /**
      * @param message String; String
      */
-    public GTUException(final String message)
+    public GtuException(final String message)
     {
         super(message);
     }
@@ -33,7 +33,7 @@ public class GTUException extends Exception
     /**
      * @param cause Throwable; Throwable
      */
-    public GTUException(final Throwable cause)
+    public GtuException(final Throwable cause)
     {
         super(cause);
     }
@@ -42,7 +42,7 @@ public class GTUException extends Exception
      * @param message String; String
      * @param cause Throwable; Throwable
      */
-    public GTUException(final String message, final Throwable cause)
+    public GtuException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -53,7 +53,7 @@ public class GTUException extends Exception
      * @param enableSuppression boolean; whether or not suppression is enabled or disabled
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
-    public GTUException(final String message, final Throwable cause, final boolean enableSuppression,
+    public GtuException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);

@@ -19,7 +19,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -104,7 +104,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateLanePathInfo() throws GTUException, NetworkException, ParameterException
+    public final void updateLanePathInfo() throws GtuException, NetworkException, ParameterException
     {
         Time timestamp = getTimestamp();
         this.lanePathInfo = new TimeStampedObject<>(
@@ -114,7 +114,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateForwardHeadwayGTU() throws GTUException, NetworkException, ParameterException
+    public final void updateForwardHeadwayGTU() throws GtuException, NetworkException, ParameterException
     {
         Time timestamp = getTimestamp();
         if (this.lanePathInfo == null || this.lanePathInfo.getTimestamp().ne(timestamp))
@@ -127,7 +127,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateForwardHeadwayObject() throws GTUException, NetworkException, ParameterException
+    public final void updateForwardHeadwayObject() throws GtuException, NetworkException, ParameterException
     {
         Time timestamp = getTimestamp();
         if (this.lanePathInfo == null || this.lanePathInfo.getTimestamp().ne(timestamp))
@@ -140,7 +140,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateBackwardHeadway() throws GTUException, ParameterException, NetworkException
+    public final void updateBackwardHeadway() throws GtuException, ParameterException, NetworkException
     {
         Time timestamp = getTimestamp();
         Length maximumReverseHeadway = getGtu().getParameters().getParameter(LOOKBACKOLD);
@@ -149,14 +149,14 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateAccessibleAdjacentLanesLeft() throws GTUException
+    public final void updateAccessibleAdjacentLanesLeft() throws GtuException
     {
         Time timestamp = getTimestamp();
         Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new LinkedHashMap<>();
         for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
         {
             Set<Lane> adjacentLanes = new LinkedHashSet<>(1);
-            adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, getGtu().getGTUType(),
+            adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, getGtu().getGtuType(),
                     getGtu().getDirection(lane)));
             accessibleAdjacentLanesMap.put(lane, adjacentLanes);
         }
@@ -165,14 +165,14 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateAccessibleAdjacentLanesRight() throws GTUException
+    public final void updateAccessibleAdjacentLanesRight() throws GtuException
     {
         Time timestamp = getTimestamp();
         Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new LinkedHashMap<>();
         for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
         {
             Set<Lane> adjacentLanes = new LinkedHashSet<>(1);
-            adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, getGtu().getGTUType(),
+            adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, getGtu().getGtuType(),
                     getGtu().getDirection(lane)));
             accessibleAdjacentLanesMap.put(lane, adjacentLanes);
         }
@@ -181,7 +181,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateNeighboringHeadwaysLeft() throws GTUException, ParameterException, NetworkException
+    public final void updateNeighboringHeadwaysLeft() throws GtuException, ParameterException, NetworkException
     {
         Time timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesLeft == null || !timestamp.equals(this.accessibleAdjacentLanesLeft.getTimestamp()))
@@ -204,7 +204,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateNeighboringHeadwaysRight() throws GTUException, ParameterException, NetworkException
+    public final void updateNeighboringHeadwaysRight() throws GtuException, ParameterException, NetworkException
     {
         Time timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesRight == null || !timestamp.equals(this.accessibleAdjacentLanesRight.getTimestamp()))
@@ -227,7 +227,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     /** {@inheritDoc} */
     @Override
     public final void updateNeighboringHeadways(final LateralDirectionality lateralDirection)
-            throws GTUException, ParameterException, NetworkException
+            throws GtuException, ParameterException, NetworkException
     {
         if (lateralDirection.equals(LateralDirectionality.LEFT))
         {
@@ -241,7 +241,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateParallelHeadwaysLeft() throws GTUException
+    public final void updateParallelHeadwaysLeft() throws GtuException
     {
         Time timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesLeft == null || !timestamp.equals(this.accessibleAdjacentLanesLeft.getTimestamp()))
@@ -261,7 +261,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateParallelHeadwaysRight() throws GTUException
+    public final void updateParallelHeadwaysRight() throws GtuException
     {
         Time timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesRight == null || !timestamp.equals(this.accessibleAdjacentLanesRight.getTimestamp()))
@@ -281,7 +281,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateParallelHeadways(final LateralDirectionality lateralDirection) throws GTUException
+    public final void updateParallelHeadways(final LateralDirectionality lateralDirection) throws GtuException
     {
         if (lateralDirection.equals(LateralDirectionality.LEFT))
         {
@@ -295,12 +295,12 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** {@inheritDoc} */
     @Override
-    public final void updateSpeedLimit() throws GTUException, NetworkException
+    public final void updateSpeedLimit() throws GtuException, NetworkException
     {
         Time timestamp = getTimestamp();
         // assess the speed limit where we are right now
         Lane lane = getGtu().getReferencePosition().getLane();
-        this.speedLimit = new TimeStampedObject<>(lane.getSpeedLimit(getGtu().getGTUType()), timestamp);
+        this.speedLimit = new TimeStampedObject<>(lane.getSpeedLimit(getGtu().getGtuType()), timestamp);
     }
 
     /** {@inheritDoc} */
@@ -583,14 +583,14 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * traffic is not taken into account in the headway calculation. Instead, gap acceptance algorithms or their equivalent
      * should guide the merging behavior.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
-     * @param maxDistance the maximum distance to look for the nearest GTU; positive values search forwards; negative values
+     * @param maxDistance the maximum distance to look for the nearest Gtu; positive values search forwards; negative values
      *            search backwards
      * @param gtu boolean; look for gtu if true, for an object if false
-     * @return HeadwayGTU; the headway and the GTU information
-     * @throws GTUException when there is an error with the next lanes in the network.
+     * @return HeadwayGtu; the headway and the GTU information
+     * @throws GtuException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
      */
-    private Headway forwardHeadway(final Length maxDistance, final boolean gtu) throws GTUException, NetworkException
+    private Headway forwardHeadway(final Length maxDistance, final boolean gtu) throws GtuException, NetworkException
     {
         LanePathInfo lpi = getLanePathInfo();
         return forwardHeadway(lpi, maxDistance, gtu);
@@ -608,17 +608,17 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param lpi LanePathInfo; the lanePathInfo object that informs the headway algorithm in which lanes to look, and from
      *            which position on the first lane.
-     * @param maxDistance the maximum distance to look for the nearest GTU; positive values search forwards; negative values
+     * @param maxDistance the maximum distance to look for the nearest Gtu; positive values search forwards; negative values
      *            search backwards
      * @param gtu boolean; look for gtu if true, for an object if false
-     * @return HeadwayGTU; the headway and the GTU information
-     * @throws GTUException when there is an error with the next lanes in the network.
+     * @return HeadwayGtu; the headway and the GTU information
+     * @throws GtuException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
      */
     private Headway forwardHeadway(final LanePathInfo lpi, final Length maxDistance, final boolean gtu)
-            throws GTUException, NetworkException
+            throws GtuException, NetworkException
     {
-        Throw.when(maxDistance.le0(), GTUException.class, "forwardHeadway: maxDistance should be positive");
+        Throw.when(maxDistance.le0(), GtuException.class, "forwardHeadway: maxDistance should be positive");
 
         int ldIndex = 0;
         LaneDirection ld = lpi.getReferenceLaneDirection();
@@ -694,10 +694,10 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * @return the HeadwayGTU, containing information on a GTU that is ahead of the given start position, or null if no GTU can
      *         be found on this lane
      * @param gtu boolean; look for gtu if true, for an object if false
-     * @throws GTUException when the GTUs ahead on the lane cannot be determined
+     * @throws GtuException when the GTUs ahead on the lane cannot be determined
      */
     private Headway headwayLane(final LaneDirection laneDirection, final double startPosSI, final double cumDistSI,
-            final Time now, final boolean gtu) throws GTUException
+            final Time now, final boolean gtu) throws GtuException
     {
         Lane lane = laneDirection.getLane();
 
@@ -710,7 +710,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
                 return null;
             }
             double gtuDistanceSI = Math.abs(laneBasedGTU.position(lane, laneBasedGTU.getRear()).si - startPosSI);
-            return new HeadwayGTUSimple(laneBasedGTU.getId(), laneBasedGTU.getGTUType(),
+            return new HeadwayGTUSimple(laneBasedGTU.getId(), laneBasedGTU.getGtuType(),
                     new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getWidth(),
                     laneBasedGTU.getSpeed(), laneBasedGTU.getAcceleration(), null, getGtuStatus(laneBasedGTU));
         }
@@ -778,7 +778,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /**
      * Returns a set of statuses for the GTU.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @return set of statuses for the GTU
      */
     private GTUStatus[] getGtuStatus(final LaneBasedGTU gtu)
@@ -807,14 +807,14 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * of the Lanes. When the Lanes (or underlying CrossSectionLinks) converge, "parallel" traffic is not taken into account in
      * the headway calculation. Instead, gap acceptance algorithms or their equivalent should guide the merging behavior.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a back-to-front basis.
-     * @param maxDistance the maximum distance to look for the nearest GTU; it should have a negative value to search backwards
-     * @return HeadwayGTU; the headway and the GTU information
-     * @throws GTUException when there is an error with the next lanes in the network.
+     * @param maxDistance the maximum distance to look for the nearest Gtu; it should have a negative value to search backwards
+     * @return HeadwayGtu; the headway and the GTU information
+     * @throws GtuException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
      */
-    private Headway backwardHeadway(final Length maxDistance) throws GTUException, NetworkException
+    private Headway backwardHeadway(final Length maxDistance) throws GtuException, NetworkException
     {
-        Throw.when(maxDistance.ge0(), GTUException.class, "backwardHeadway: maxDistance should be negative");
+        Throw.when(maxDistance.ge0(), GtuException.class, "backwardHeadway: maxDistance should be negative");
         Time time = getGtu().getSimulator().getSimulatorAbsTime();
         double maxDistanceSI = maxDistance.si;
         Headway foundHeadway = new HeadwayDistance(-maxDistanceSI);
@@ -839,7 +839,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
             return new HeadwayDistance(foundHeadway.getDistance().neg());
         }
         // TODO allow observation of other objects as well.
-        throw new GTUException("backwardHeadway not implemented yet for other object types than GTU");
+        throw new GtuException("backwardHeadway not implemented yet for other object types than GTU");
     }
 
     /**
@@ -857,10 +857,10 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * @param when Time; the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
-     * @throws GTUException when there is a problem with the geometry of the network
+     * @throws GtuException when there is a problem with the geometry of the network
      */
     private Headway headwayRecursiveBackwardSI(final Lane lane, final GTUDirectionality direction, final double lanePositionSI,
-            final double cumDistanceSI, final double maxDistanceSI, final Time when) throws GTUException
+            final double cumDistanceSI, final double maxDistanceSI, final Time when) throws GtuException
     {
         LaneBasedGTU otherGTU =
                 lane.getGtuBehind(new Length(lanePositionSI, LengthUnit.SI), direction, RelativePosition.FRONT, when);
@@ -869,7 +869,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
             double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
-                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
+                return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGtuType(), new Length(distanceM, LengthUnit.SI),
                         otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
@@ -879,10 +879,10 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         if (cumDistanceSI + lanePositionSI < maxDistanceSI)
         {
             // is there a predecessor link?
-            if (lane.prevLanes(getGtu().getGTUType()).size() > 0)
+            if (lane.prevLanes(getGtu().getGtuType()).size() > 0)
             {
                 Headway foundMaxGTUDistanceSI = new HeadwayDistance(Double.MAX_VALUE);
-                for (Lane prevLane : lane.prevLanes(getGtu().getGTUType()).keySet())
+                for (Lane prevLane : lane.prevLanes(getGtu().getGtuType()).keySet())
                 {
                     // What is behind us is INDEPENDENT of the followed route!
                     double traveledDistanceSI = cumDistanceSI + lanePositionSI;
@@ -914,10 +914,10 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * @param when Time; the future time for which to calculate the headway
      * @return the set of GTUs parallel to us on the other lane (partial overlap counts as parallel), based on fractional
      *         positions, or an empty set when no GTUs were found.
-     * @throws GTUException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their lanes,
+     * @throws GtuException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their lanes,
      *             or when the given lane is not parallel to one of the lanes where we are registered.
      */
-    private Collection<Headway> parallel(final Lane lane, final Time when) throws GTUException
+    private Collection<Headway> parallel(final Lane lane, final Time when) throws GtuException
     {
         Collection<Headway> headwayCollection = new LinkedHashSet<>();
         for (Lane l : getGtu().positions(getGtu().getReference()).keySet())
@@ -955,7 +955,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
                             Length overlapFront = new Length(1.0, LengthUnit.SI);
                             Length overlap = new Length(1.0, LengthUnit.SI);
                             Length overlapRear = new Length(1.0, LengthUnit.SI);
-                            headwayCollection.add(new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), overlapFront,
+                            headwayCollection.add(new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGtuType(), overlapFront,
                                     overlap, overlapRear, otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(),
                                     otherGTU.getAcceleration(), null, getGtuStatus(otherGTU)));
                         }
@@ -975,10 +975,10 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * @param when Time; the future time for which to calculate the headway
      * @return the set of GTUs parallel to us on other lane(s) in the given direction (partial overlap counts as parallel),
      *         based on fractional positions, or an empty set when no GTUs were found.
-     * @throws GTUException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their lanes,
+     * @throws GtuException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their lanes,
      *             or when there are no lanes parallel to one of the lanes where we are registered in the given direction.
      */
-    private Collection<Headway> parallel(final LateralDirectionality lateralDirection, final Time when) throws GTUException
+    private Collection<Headway> parallel(final LateralDirectionality lateralDirection, final Time when) throws GtuException
     {
         Collection<Headway> gtuSet = new LinkedHashSet<>();
         for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
@@ -1000,12 +1000,12 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * @param maximumReverseHeadway Length; the maximum reverse search distance
      * @return Collection&lt;LaneBasedGTU&gt;;
      * @throws NetworkException on network inconsistency
-     * @throws GTUException on problems with the GTU state (e.g., position)
+     * @throws GtuException on problems with the GTU state (e.g., position)
      * @throws ParameterException in case of a parameter problem
      */
     private Collection<Headway> collectNeighborLaneTraffic(final LateralDirectionality directionality, final Time when,
             final Length maximumForwardHeadway, final Length maximumReverseHeadway)
-            throws NetworkException, GTUException, ParameterException
+            throws NetworkException, GtuException, ParameterException
     {
         Collection<Headway> result = new LinkedHashSet<>();
         for (Headway p : parallel(directionality, when))
@@ -1061,7 +1061,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
             }
             else
             {
-                throw new GTUException("collectNeighborLaneTraffic not yet suited to observe obstacles on neighboring lanes");
+                throw new GtuException("collectNeighborLaneTraffic not yet suited to observe obstacles on neighboring lanes");
             }
         }
         return result;
@@ -1074,12 +1074,12 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      *            <cite>LateralDirectionality.RIGHT</cite>
      * @param when Time; the (current) time
      * @return the adjacent LanePathInfo
-     * @throws GTUException when the GTU was not initialized yet.
+     * @throws GtuException when the GTU was not initialized yet.
      * @throws NetworkException when the speed limit for a GTU type cannot be retrieved from the network.
      * @throws ParameterException in case of a parameter problem
      */
     private LanePathInfo buildLanePathInfoAdjacent(final Lane adjacentLane, final LateralDirectionality direction,
-            final Time when) throws GTUException, NetworkException, ParameterException
+            final Time when) throws GtuException, NetworkException, ParameterException
     {
         if (this.lanePathInfo == null || this.lanePathInfo.getTimestamp().ne(when))
         {
@@ -1094,7 +1094,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         for (int i = 1; i < lpi.getLaneDirectionList().size(); i++)
         {
             LaneDirection ld = lpi.getLaneDirectionList().get(i);
-            Set<Lane> accessibleLanes = ld.getLane().accessibleAdjacentLanesLegal(direction, getGtu().getGTUType(),
+            Set<Lane> accessibleLanes = ld.getLane().accessibleAdjacentLanesLegal(direction, getGtu().getGtuType(),
                     lpi.getReferenceLaneDirection().getDirection());
             Lane adjLane = null;
             for (Lane lane : accessibleLanes)

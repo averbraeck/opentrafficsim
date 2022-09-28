@@ -2,7 +2,7 @@ package org.opentrafficsim.core.parameters;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * <p>
@@ -19,9 +19,9 @@ public interface ParameterFactory
     /**
      * Creates a set of parameters for the provided GTU type.
      * @param parameters Parameters; parameters
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @throws ParameterException when illegal parameter value is set
      */
-    void setValues(Parameters parameters, GTUType gtuType) throws ParameterException;
+    void setValues(Parameters parameters, GtuType gtuType) throws ParameterException;
 
 }

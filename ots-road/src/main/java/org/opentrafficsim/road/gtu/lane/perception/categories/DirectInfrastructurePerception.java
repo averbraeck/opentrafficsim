@@ -14,7 +14,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -94,7 +94,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /** {@inheritDoc} */
     @Override
-    public void updateAll() throws GTUException, ParameterException
+    public void updateAll() throws GtuException, ParameterException
     {
         updateCrossSection();
         // clean-up
@@ -148,7 +148,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /** {@inheritDoc} */
     @Override
-    public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GTUException, ParameterException
+    public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GtuException, ParameterException
     {
         if (this.infrastructureLaneChangeInfo.containsKey(lane)
                 && this.infrastructureLaneChangeInfo.get(lane).getTimestamp().equals(getTimestamp()))
@@ -164,7 +164,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         try
         {
             record = getPerception().getLaneStructure().getFirstRecord(lane);
-            if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
+            if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGtuType()))
             {
                 resultSet.add(InfrastructureLaneChangeInfo.fromInaccessibleLane(record.isDeadEnd()));
                 this.infrastructureLaneChangeInfo.put(lane, new TimeStampedObject<>(resultSet, getTimestamp()));
@@ -173,7 +173,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         }
         catch (NetworkException exception)
         {
-            throw new GTUException("Route has no destination.", exception);
+            throw new GtuException("Route has no destination.", exception);
         }
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new LinkedHashMap<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new LinkedHashMap<>();
@@ -220,7 +220,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                     {
                         try
                         {
-                            if (next.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
+                            if (next.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGtuType()))
                             {
                                 InfrastructureLaneChangeInfo prev = currentSet.get(laneRecord);
                                 InfrastructureLaneChangeInfo info =
@@ -278,9 +278,9 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * @param record LaneStructureRecord; checked record
      * @return whether the given record end is ok to pass
      * @throws NetworkException if destination could not be obtained
-     * @throws GTUException if the GTU could not be obtained
+     * @throws GtuException if the GTU could not be obtained
      */
-    private boolean anyNextOk(final LaneStructureRecord record) throws NetworkException, GTUException
+    private boolean anyNextOk(final LaneStructureRecord record) throws NetworkException, GtuException
     {
         if (record.isCutOffEnd())
         {
@@ -330,14 +330,14 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             return true; // if no route assume ok, i.e. simple networks without routes
         }
         // finally check route
-        ok = record.allowsRouteAtEnd(currentRoute, getGtu().getGTUType());
+        ok = record.allowsRouteAtEnd(currentRoute, getGtu().getGtuType());
         this.anyNextOkCache.put(record, ok);
         return ok;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GTUException, ParameterException
+    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GtuException, ParameterException
     {
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
@@ -358,7 +358,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             Lane laneObj = getGtu().getReferencePosition().getLane();
             if (!slp.containsAddSource(laneObj))
             {
-                slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getGTUType()),
+                slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getGtuType()),
                         laneObj);
             }
         }
@@ -372,7 +372,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     /** {@inheritDoc} */
     @Override
     public final void updateLegalLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         updateLaneChangePossibility(lane, lat, true, this.legalLaneChangePossibility);
     }
@@ -380,7 +380,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     /** {@inheritDoc} */
     @Override
     public final void updatePhysicalLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         updateLaneChangePossibility(lane, lat, false, this.physicalLaneChangePossibility);
     }
@@ -394,12 +394,12 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; legal
      *            or physical possibility map
-     * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
+     * @throws GtuException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
     private void updateLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat, final boolean legal,
             final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> possibilityMap)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
@@ -468,17 +468,17 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /**
      * @param lane RelativeLane; lane to check
-     * @throws GTUException if the lane is not in the cross section
+     * @throws GtuException if the lane is not in the cross section
      */
-    private void checkLaneIsInCrossSection(final RelativeLane lane) throws GTUException
+    private void checkLaneIsInCrossSection(final RelativeLane lane) throws GtuException
     {
-        Throw.when(!getCrossSection().contains(lane), GTUException.class,
+        Throw.when(!getCrossSection().contains(lane), GtuException.class,
                 "The requeasted lane %s is not in the most recent cross section.", lane);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void updateCrossSection() throws GTUException, ParameterException
+    public final void updateCrossSection() throws GtuException, ParameterException
     {
         if (this.crossSection != null && this.crossSection.getTimestamp().equals(getTimestamp()))
         {

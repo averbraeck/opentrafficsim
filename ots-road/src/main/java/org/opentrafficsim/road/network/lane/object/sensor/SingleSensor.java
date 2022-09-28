@@ -27,7 +27,7 @@ public interface SingleSensor extends Sensor, Comparable<SingleSensor>, LaneBase
     /**
      * Trigger an action on the GTU. Normally this is the GTU that triggered the sensor. The typical call therefore is
      * <code>sensor.trigger(this);</code>.
-     * @param gtu LaneBasedGTU; the GTU for which to carry out the trigger action.
+     * @param gtu LaneBasedGtu; the GTU for which to carry out the trigger action.
      */
     void trigger(LaneBasedGTU gtu);
 

@@ -23,10 +23,10 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -165,7 +165,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         try
         {
             StringBuilder state = new StringBuilder();
-            for (GTU gtu : this.network.getGTUs())
+            for (Gtu gtu : this.network.getGTUs())
             {
                 LaneBasedGTU lbg = (LaneBasedGTU) gtu;
                 state.append(String.format("%s: %130.130s ", lbg.getId(), lbg.getLocation().toString()));
@@ -210,7 +210,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
-            GTUType gtuType = this.network.getGtuType(GTUType.DEFAULTS.CAR);
+            GtuType gtuType = this.network.getGtuType(GtuType.DEFAULTS.CAR);
             LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
             OTSRoadNode start = new OTSRoadNode(this.network, "Start", new OTSPoint3D(radius, 0, 0),
                     new Direction(90, DirectionUnit.EAST_DEGREE));
@@ -268,15 +268,15 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
      * Generate one gtu.
      * @param initialPosition Length; the initial position of the new cars
      * @param lane Lane; the lane on which the new cars are placed
-     * @param gtuType GTUType; the type of the new cars
+     * @param gtuType GtuType; the type of the new cars
      * @throws SimRuntimeException cannot happen
      * @throws NetworkException on network inconsistency
-     * @throws GTUException when something goes wrong during construction of the car
+     * @throws GtuException when something goes wrong during construction of the car
      * @throws OTSGeometryException when the initial position is outside the center line of the lane
      * @throws InputParameterException when generic.gradualLaneChange is not set
      */
-    protected final void generateGTU(final Length initialPosition, final Lane lane, final GTUType gtuType)
-            throws GTUException, NetworkException, SimRuntimeException, OTSGeometryException, InputParameterException
+    protected final void generateGTU(final Length initialPosition, final Lane lane, final GtuType gtuType)
+            throws GtuException, NetworkException, SimRuntimeException, OTSGeometryException, InputParameterException
     {
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;

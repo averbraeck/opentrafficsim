@@ -5,7 +5,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerception;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -59,7 +59,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
 
     /**
      * Create a new LanePerception module without mental module.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      */
     public AbstractLanePerception(final LaneBasedGTU gtu)
     {
@@ -69,7 +69,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
 
     /**
      * Create a new LanePerception module with mental module.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param mental Mental; mental module
      */
     public AbstractLanePerception(final LaneBasedGTU gtu, final Mental mental)
@@ -104,9 +104,9 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
             try
             {
                 dlp = getGtu().getReferencePosition();
-                this.laneStructure.update(dlp, getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType());
+                this.laneStructure.update(dlp, getGtu().getStrategicalPlanner().getRoute(), getGtu().getGtuType());
             }
-            catch (GTUException exception)
+            catch (GtuException exception)
             {
                 exception.printStackTrace();
                 throw new RuntimeException("Error while updating the lane map.", exception);
@@ -125,7 +125,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
 
     /** {@inheritDoc} */
     @Override
-    public void perceive() throws GTUException, NetworkException, ParameterException
+    public void perceive() throws GtuException, NetworkException, ParameterException
     {
         if (this.mental != null)
         {

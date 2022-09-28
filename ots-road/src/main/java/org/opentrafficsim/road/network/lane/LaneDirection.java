@@ -106,12 +106,12 @@ public class LaneDirection implements Serializable
 
     /**
      * Returns the next lane and direction.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @return LaneDirection; next lane and direction, {@code null} if none
      */
     public final LaneDirection getNextLaneDirection(final LaneBasedGTU gtu)
     {
-        ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGTUType());
+        ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGtuType());
         if (next.isEmpty())
         {
             return null;
@@ -138,12 +138,12 @@ public class LaneDirection implements Serializable
 
     /**
      * Returns a set of {@code LaneDirection}'s that can be followed considering the route.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @return set of {@code LaneDirection}'s that can be followed considering the route
      */
     public Set<LaneDirection> getNextForRoute(final LaneBasedGTU gtu)
     {
-        ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGTUType());
+        ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGtuType());
         if (next.isEmpty())
         {
             return null;
@@ -151,7 +151,7 @@ public class LaneDirection implements Serializable
         LinkDirection ld;
         try
         {
-            ld = gtu.getStrategicalPlanner().nextLinkDirection(this.lane.getParentLink(), this.direction, gtu.getGTUType());
+            ld = gtu.getStrategicalPlanner().nextLinkDirection(this.lane.getParentLink(), this.direction, gtu.getGtuType());
         }
         catch (NetworkException exception)
         {
@@ -218,13 +218,13 @@ public class LaneDirection implements Serializable
 
     /**
      * Returns the adjacent lane and direction.
-     * @param gtu LaneBasedGTU; gtu
+     * @param gtu LaneBasedGtu; gtu
      * @param laneChangeDirection LateralDirectionality; lane change direction
      * @return LaneDirection; adjacent lane and direction, {@code null} if none
      */
     public final LaneDirection getAdjacentLaneDirection(final LateralDirectionality laneChangeDirection, final LaneBasedGTU gtu)
     {
-        Set<Lane> adjLanes = this.lane.accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getGTUType(), this.direction);
+        Set<Lane> adjLanes = this.lane.accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getGtuType(), this.direction);
         if (!adjLanes.isEmpty())
         {
             return new LaneDirection(adjLanes.iterator().next(), this.direction);

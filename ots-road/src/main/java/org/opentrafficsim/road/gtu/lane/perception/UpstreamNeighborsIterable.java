@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
@@ -38,7 +38,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
 
     /**
      * Constructor.
-     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @param root LaneRecord&lt;?&gt;; root record
      * @param initialPosition Length; position on the root record
      * @param maxDistance Length; maximum distance to search
@@ -57,7 +57,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
 
     /** {@inheritDoc} */
     @Override
-    protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GTUException
+    protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
     {
         int n;
         LaneBasedGTU next;
@@ -112,7 +112,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
     /** {@inheritDoc} */
     @Override
     public HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         return this.headwayGtuType.createUpstreamGtu(perceivingGtu, object, distance);
     }

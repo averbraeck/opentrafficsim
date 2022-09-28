@@ -28,7 +28,7 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      * @param endNode Node; end node (directional)
      * @param linkType LinkType; Link type to indicate compatibility with GTU types
      * @param designLine OTSLine3D; the OTSLine3D design line of the Link
-     * @param capacity Frequency; link capacity in GTUs per hour // XXX per direction? which GTUType?
+     * @param capacity Frequency; link capacity in GTUs per hour // XXX per direction? which GtuType?
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */

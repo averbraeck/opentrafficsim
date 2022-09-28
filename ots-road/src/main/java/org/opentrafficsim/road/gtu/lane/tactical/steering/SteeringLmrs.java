@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClassList;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -75,7 +75,7 @@ public class SteeringLmrs extends AbstractLaneBasedTacticalPlanner
     /**
      * Constructor setting the car-following model.
      * @param carFollowingModel CarFollowingModel; Car-following model.
-     * @param gtu LaneBasedGTU; GTU
+     * @param gtu LaneBasedGtu; GTU
      * @param lanePerception LanePerception; perception
      * @param synchronization Synchronization; type of synchronization
      * @param cooperation Cooperation; type of cooperation
@@ -87,7 +87,7 @@ public class SteeringLmrs extends AbstractLaneBasedTacticalPlanner
             final FeedbackTable feedbackTable)
     {
         super(carFollowingModel, gtu, lanePerception);
-        this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GTUException.class);
+        this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
         this.lmrsData = new LmrsData(synchronization, cooperation, gapAcceptance, Tailgating.NONE);
         this.feedbackTable = feedbackTable;
     }
@@ -119,7 +119,7 @@ public class SteeringLmrs extends AbstractLaneBasedTacticalPlanner
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
-            throws OperationalPlanException, GTUException, NetworkException, ParameterException
+            throws OperationalPlanException, GtuException, NetworkException, ParameterException
     {
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,

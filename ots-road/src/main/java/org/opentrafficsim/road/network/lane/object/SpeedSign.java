@@ -5,7 +5,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -34,7 +34,7 @@ public class SpeedSign extends AbstractLaneBasedObject
     private final Speed speed;
 
     /** GTU type. */
-    private final GTUType gtuType;
+    private final GtuType gtuType;
 
     /** Start time-of-day. */
     private final Duration startTimeOfDay;
@@ -50,14 +50,14 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param longitudinalPosition Length; the longitudinal position along the lane of the new SpeedSign
      * @param simulator OTSSimulatorInterface; the simulator
      * @param speed Speed; the speed limit shown by the new SpeedSign
-     * @param gtuType GTUType; GTU type that should obey the speed sign
+     * @param gtuType GtuType; GTU type that should obey the speed sign
      * @param startTimeOfDay Duration; start time-of-day
      * @param endTimeOfDay Duration; end time-of-day
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final GTUType gtuType,
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final GtuType gtuType,
             final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         super(id, lane, direction, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
@@ -77,11 +77,11 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param longitudinalPosition Length; longitudinal position
      * @param simulator OTSSimulatorInterface; simulator
      * @param speed Speed; speed
-     * @param gtuType GTUType; GTU type
+     * @param gtuType GtuType; GTU type
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final GTUType gtuType)
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final GtuType gtuType)
             throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed, gtuType, Duration.ZERO, ENDOFDAY);
@@ -105,7 +105,7 @@ public class SpeedSign extends AbstractLaneBasedObject
             final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed,
-                lane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), startTimeOfDay, endTimeOfDay);
+                lane.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), startTimeOfDay, endTimeOfDay);
     }
 
     /**
@@ -122,16 +122,16 @@ public class SpeedSign extends AbstractLaneBasedObject
             final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed) throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed,
-                lane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Duration.ZERO, ENDOFDAY);
+                lane.getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE), Duration.ZERO, ENDOFDAY);
     }
 
     /**
      * Return whether this speed limit is currently active.
-     * @param gtuTypeIn GTUType; GTU type
+     * @param gtuTypeIn GtuType; GTU type
      * @param time Duration; current time-of-day
      * @return whether this speed limit is currently active
      */
-    public final boolean isActive(final GTUType gtuTypeIn, final Duration time)
+    public final boolean isActive(final GtuType gtuTypeIn, final Duration time)
     {
         return gtuTypeIn.isOfType(this.gtuType) && time.ge(this.startTimeOfDay) && time.le(this.endTimeOfDay);
     }

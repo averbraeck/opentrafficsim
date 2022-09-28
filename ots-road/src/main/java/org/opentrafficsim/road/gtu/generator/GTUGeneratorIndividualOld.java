@@ -12,7 +12,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -50,7 +50,7 @@ public class GTUGeneratorIndividualOld extends AbstractGTUGeneratorOld implement
 
     /**
      * @param name String; the name of the generator
-     * @param gtuType GTUType; the type of GTU to generate
+     * @param gtuType GtuType; the type of GTU to generate
      * @param gtuClass Class&lt;?&gt;; the gtu class to instantiate
      * @param initialSpeedDist ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the initial speed of the
      *            GTU
@@ -75,7 +75,7 @@ public class GTUGeneratorIndividualOld extends AbstractGTUGeneratorOld implement
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GTUGeneratorIndividualOld(final String name, final OTSSimulatorInterface simulator, final GTUType gtuType,
+    public GTUGeneratorIndividualOld(final String name, final OTSSimulatorInterface simulator, final GtuType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist,
