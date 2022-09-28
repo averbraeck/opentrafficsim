@@ -40,10 +40,11 @@ import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
@@ -125,7 +126,6 @@ import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import org.opentrafficsim.core.geometry.DirectedPoint;
 import picocli.CommandLine.Option;
 
 /**

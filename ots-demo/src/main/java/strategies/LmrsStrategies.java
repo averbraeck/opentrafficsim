@@ -166,7 +166,6 @@ import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;

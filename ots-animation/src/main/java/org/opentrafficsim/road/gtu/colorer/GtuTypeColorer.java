@@ -56,7 +56,7 @@ public class GtuTypeColorer implements GTUColorer, Serializable
     /**
      * Adds a GTU type to the list with color from the default list.
      * @param gtuTypeEnum GtuType; GTU type
-     * @return this GtuTypeColorer
+     * @return this GTUTypeColorer
      */
     public GtuTypeColorer add(final GtuType.DEFAULTS gtuTypeEnum)
     {
@@ -72,7 +72,7 @@ public class GtuTypeColorer implements GTUColorer, Serializable
     /**
      * Adds a GTU type to the list with color based on the type.
      * @param gtuType GtuType; GTU type
-     * @return this GtuTypeColorer
+     * @return this GTUTypeColorer
      */
     public GtuTypeColorer add(final GtuType gtuType)
     {
@@ -89,7 +89,7 @@ public class GtuTypeColorer implements GTUColorer, Serializable
      * Adds a GTU type to the list with given color.
      * @param gtuType GtuType; GTU type
      * @param color Color; color
-     * @return this GtuTypeColorer
+     * @return this GTUTypeColorer
      */
     public GtuTypeColorer add(final GtuType gtuType, final Color color)
     {
@@ -101,7 +101,7 @@ public class GtuTypeColorer implements GTUColorer, Serializable
      * Adds a GTU type based on its enum to the list with given color.
      * @param gtuTypeEnum GtuType.DEFAULTS; GTU type default enum
      * @param color Color; color
-     * @return this GtuTypeColorer
+     * @return this GTUTypeColorer
      */
     public GtuTypeColorer add(final GtuType.DEFAULTS gtuTypeEnum, final Color color)
     {
