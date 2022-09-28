@@ -2,12 +2,12 @@
 
 ## 1 Make a branch in GitHub to take care of local changes
 
-The branch ensures that working on a temporary inconsistent code base Is not a problem since it is isolated from the main branch (or the stable branch) that users may check out. 
+The branch ensures that working on a temporary inconsistent code base Is not a problem since it is isolated from the main branch (and the stable branch) that users may check out. 
 Go to the project and select "branches". The number of existing / active branches is given:
 
 ![](../images/01-technical/git-branch-merge-001.png)
 
-Select new branch and provide the name. Typically, the branch forks from main, but sometimes a small helper branch is needed for an existing branch.
+Select new branch and provide the name. Typically, the branch forks from main, but sometimes a small side-branch is needed for a development branch that is not the main branch.
 
 ![](../images/01-technical/git-branch-merge-002.png)
  
