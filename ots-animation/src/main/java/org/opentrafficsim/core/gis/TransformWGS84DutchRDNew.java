@@ -6,14 +6,14 @@ import java.awt.geom.Rectangle2D;
 /**
  * Convert geographical coordinates between WGS84 and the Dutch RD (Rijksdriehoek) system. <br>
  * Specific MathTransform for WGS84 (EPSG:4326) to RD_new (EPSG:28992) conversions. Code based on C code by Peter Knoppers as
- * applied <a href="http://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on
- * <a href="http://home.solcon.nl/pvanmanen/Download/Transformatieformules.pdf">this</a> paper.
+ * applied <a href="https://www.regiolab-delft.nl/?q=node/36">here</a>, which is based on
+ * <a href="https://home.solcon.nl/pvanmanen/Download/Transformatieformules.pdf">this</a> paper.
  * <p>
  * Copyright (c) ~2000-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author Gert-Jan Stolk
  **/
 public final class TransformWGS84DutchRDNew

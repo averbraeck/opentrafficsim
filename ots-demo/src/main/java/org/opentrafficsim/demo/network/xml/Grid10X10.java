@@ -43,7 +43,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * Copyright (c) 2019-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://djunits.org/docs/license.html">DJUNITS License</a>.
  * <p>
- * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
+ * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 @SuppressWarnings({"checkstyle:operatorwrap", "checkstyle:linelength"})
 public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
@@ -306,8 +306,8 @@ public class Grid10X10 extends OTSSimulationApplication<TestXMLModelGrid>
      * All rights reserved. BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim
      * License</a>.
      * <p>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
     static class TestXMLModelGrid extends AbstractOTSModel
     {

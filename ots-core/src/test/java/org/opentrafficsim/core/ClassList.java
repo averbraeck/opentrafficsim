@@ -14,16 +14,16 @@ import java.util.zip.ZipFile;
 
 /**
  * Build a list of the classes in the project (or under a specific directory/package in the project).<br>
- * Adapted from <a href="http://stackoverflow.com/questions/3923129/get-a-list-of-resources-from-classpath-directory">
- * http://stackoverflow.com/questions/3923129/get-a-list-of-resources-from-classpath-directory</a> which apparently copied the
+ * Adapted from <a href="https://stackoverflow.com/questions/3923129/get-a-list-of-resources-from-classpath-directory">
+ * https://stackoverflow.com/questions/3923129/get-a-list-of-resources-from-classpath-directory</a> which apparently copied the
  * code from <a href="http://forums.devx.com/showthread.php?153784-how-to-list-resources-in-a-package">
  * http://forums.devx.com/showthread.php?153784-how-to-list-resources-in-a-package</a>. Original poster stoughto has not visited
  * that forum after 2006.
  * <p>
  * Copyright (c) 2006 by stoughto! TODO replace this by something that is provably free code.
  * <p>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public final class ClassList
 {

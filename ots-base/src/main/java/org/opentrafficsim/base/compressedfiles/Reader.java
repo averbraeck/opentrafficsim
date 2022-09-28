@@ -15,9 +15,9 @@ import java.util.zip.ZipFile;
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public final class Reader
 {
@@ -78,8 +78,8 @@ public final class Reader
     /**
      * Determine the type of compression used in a file.
      * <p>
-     * Derived from <a href="http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped">
-     * http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped</a>. <br>
+     * Derived from <a href="https://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped">
+     * https://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped</a>. <br>
      * Gzip inflate an inputStream (if it is indeed gzip compressed), otherwise return an InputStream that yields the same data
      * as the <cite>input</cite> argument.
      * @param fileName String; the name of the file to check
@@ -110,8 +110,8 @@ public final class Reader
 
     /**
      * Determine if bytes match the GZip compression signature. Derived from
-     * <a href="http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped">
-     * http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped</a>. <br>
+     * <a href="https://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped">
+     * https://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped</a>. <br>
      * Determines if a byte array is compressed. The java.util.zip GZip implementation does not expose the GZip header so it is
      * difficult to determine if a string is compressed.
      * @param bytes byte[]; at least 2 bytes from the start of the stream to determine compression type

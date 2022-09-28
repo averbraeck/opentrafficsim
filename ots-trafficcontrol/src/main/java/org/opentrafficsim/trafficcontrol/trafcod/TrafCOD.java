@@ -53,7 +53,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class TrafCOD extends AbstractTrafficController implements ActuatedTrafficController, EventListenerInterface
 {
@@ -1302,7 +1302,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     /**
      * States of the rule parser.
      * <p>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
     enum ParserState
     {
@@ -1321,7 +1321,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     /**
      * Types of TrafCOD tokens.
      * <p>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
     enum Token
     {

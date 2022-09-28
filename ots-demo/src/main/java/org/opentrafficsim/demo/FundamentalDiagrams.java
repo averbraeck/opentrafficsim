@@ -73,7 +73,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 17 dec. 2014 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDiagramPlotsModel> implements UNITS
 {
@@ -193,7 +193,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$, initial version ug 1, 2014 <br>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      */
     static class FundamentalDiagramPlotsModel extends AbstractOTSModel implements UNITS
     {

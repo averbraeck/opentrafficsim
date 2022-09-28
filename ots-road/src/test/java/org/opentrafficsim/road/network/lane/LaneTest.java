@@ -61,7 +61,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public class LaneTest implements UNITS
 {
@@ -800,7 +800,7 @@ public class LaneTest implements UNITS
 
     /**
      * Algorithm of W. Randolph Franklin http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html, found via
-     * stackoverflow.com: http://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test.
+     * stackoverflow.com: https://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test.
      * @param point Coordinate; the point
      * @param polygon OTSPoint3D[]; the polygon (last coordinate is allowed to be identical to the first, but his is not a
      *            requirement)

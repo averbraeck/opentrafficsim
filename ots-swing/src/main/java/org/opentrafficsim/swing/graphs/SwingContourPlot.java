@@ -18,9 +18,9 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
 /**
  * Embed a ContourPlot in a Swing JPanel.
  * <P>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 public class SwingContourPlot extends SwingSpaceTimePlot
 {
