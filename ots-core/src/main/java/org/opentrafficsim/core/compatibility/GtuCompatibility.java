@@ -38,6 +38,7 @@ public class GtuCompatibility<I extends HierarchicalType<I> & Compatibility<GtuT
      */
     public GtuCompatibility(final I infrastructure)
     {
+        Throw.whenNull(infrastructure, "infrastructure cannot be null");
         this.infrastructure = infrastructure;
     }
 

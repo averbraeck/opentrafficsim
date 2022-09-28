@@ -10,7 +10,6 @@ import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
@@ -142,11 +141,10 @@ public final class DefinitionsParser
                             throw new XmlParserException("LinkType " + linkTag.getID() + ".compatibility: GtuType "
                                     + compTag.getGTUTYPE() + " not found");
                         }
-                        compatibility.addCompatibleGtuType(gtuType,
-                                LongitudinalDirectionality.valueOf(compTag.getDIRECTION().toString()));
+                        compatibility.addCompatibleGtuType(gtuType);
                     }
                     LinkType parent = otsNetwork.getLinkType(linkTag.getPARENT());
-                    LinkType linkType = new LinkType(linkTag.getID(), parent, compatibility, otsNetwork);
+                    LinkType linkType = new LinkType(linkTag.getID(), parent, otsNetwork);
                     networkLinkType = linkType;
                     CategoryLogger.filter(Cat.PARSER).trace("Added LinkType {}", linkType);
                 }
@@ -193,8 +191,7 @@ public final class DefinitionsParser
                             throw new XmlParserException("LaneType " + laneTag.getID() + ".compatibility: GtuType "
                                     + compTag.getGTUTYPE() + " not found");
                         }
-                        compatibility.addCompatibleGtuType(gtuType,
-                                LongitudinalDirectionality.valueOf(compTag.getDIRECTION().toString()));
+                        compatibility.addCompatibleGtuType(gtuType);
                     }
                     if (laneTag.getPARENT() != null)
                     {

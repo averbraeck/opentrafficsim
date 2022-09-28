@@ -114,8 +114,7 @@ public final class OTSRoadNetworkUtils
         {
             if (linkType.getParent() != null)
             {
-                new LinkType(linkType.getId(), linkType.getParent(), new GtuCompatibility<>(linkType.getGtuCompatibility()),
-                        newNetwork);
+                new LinkType(linkType.getId(), linkType.getParent(), newNetwork);
             }
         }
 

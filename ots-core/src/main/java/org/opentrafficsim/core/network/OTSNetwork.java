@@ -884,32 +884,26 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public void addDefaultLinkTypes()
     {
-        GtuCompatibility<LinkType> compatibility = new GtuCompatibility<>((LinkType) null);
-        new LinkType("NONE", null, compatibility, this);
+        new LinkType("NONE", null, this);
         //
-        compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        LinkType road = new LinkType("ROAD", null, compatibility, this);
+        LinkType road = new LinkType("ROAD", null, this);
+        road.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
         //
-        compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE));
-        new LinkType("FREEWAY", road, compatibility, this);
+        LinkType freeway = new LinkType("FREEWAY", road, this);
+        freeway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
+        freeway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+        freeway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE));
         //
-        compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER));
-        new LinkType("WATERWAY", null, compatibility, this);
+        LinkType waterway = new LinkType("WATERWAY", null, this);
+        waterway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER));
         //
-        compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER));
-        new LinkType("RAILWAY", null, compatibility, this);
+        LinkType railway = new LinkType("RAILWAY", null, this);
+        railway.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER));
         //
-        compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER));
-        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER));
-        new LinkType("CONNECTOR", null, compatibility, this);
+        LinkType connector = new LinkType("CONNECTOR", null, this);
+        connector.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
+        connector.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER));
+        connector.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER));
     }
 
     /** {@inheritDoc} */

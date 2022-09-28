@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.compatibility.Compatibility;
-import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -75,12 +74,9 @@ public class LinkType extends GtuCompatibleInfraType<LinkType> implements Serial
      * Create a new Link type with compatibility set.
      * @param id String; the id of the lane type (may not be null)
      * @param parent LinkType; the parent type (may be null)
-     * @param compatibility the collection of compatible GtuTypes for this LinkType; can be null (resulting in a LinkType that
-     *            is inaccessible to all GTU types). This constructor makes a deep copy of the <code>compatibility</code>.
      * @param network Network; The network to which the LinkType belongs
      */
-    public LinkType(final String id, final LinkType parent, final GtuCompatibility<LinkType> compatibility,
-            final Network network)
+    public LinkType(final String id, final LinkType parent, final Network network)
     {
         super(id, parent);
         this.network = network;
@@ -224,7 +220,7 @@ public class LinkType extends GtuCompatibleInfraType<LinkType> implements Serial
         ReversedLinkType(final LinkType original)
         {
             super(original.getId() + "_rev", null == original.getParent() ? null : original.getParent().reverse(),
-                    new GtuCompatibility<>((LinkType) null), original.getNetwork());
+                    original.getNetwork());
             this.original = original;
         }
 

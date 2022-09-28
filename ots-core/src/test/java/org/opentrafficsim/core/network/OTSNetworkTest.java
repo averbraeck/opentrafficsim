@@ -762,7 +762,7 @@ public class OTSNetworkTest implements EventListenerInterface
     {
         GtuCompatibility<LinkType> compatibility =
                 new GtuCompatibility<>((LinkType) null).addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.ROAD_USER));
-        LinkType linkType = new LinkType("linkType", null, compatibility, network);
+        LinkType linkType = new LinkType("linkType", null, network);
         List<Node> nodes = new ArrayList<>();
         double radius = 500;
         double centerX = 0;
