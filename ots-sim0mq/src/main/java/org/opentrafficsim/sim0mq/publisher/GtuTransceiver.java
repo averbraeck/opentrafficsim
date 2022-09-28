@@ -24,7 +24,7 @@ import org.sim0mq.Sim0MQException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUTransceiver extends AbstractEventTransceiver
+public class GtuTransceiver extends AbstractEventTransceiver
 {
     /** The network. */
     private final OTSNetwork network;
@@ -33,11 +33,11 @@ public class GTUTransceiver extends AbstractEventTransceiver
     private final TransceiverInterface gtuIdSource;
 
     /**
-     * Construct a GTUTransceiver.
+     * Construct a GtuTransceiver.
      * @param network Network; the Network
-     * @param gtuIdSource GTUIdTransceiver; the transceiver that can produce all active GTU ids in the Network
+     * @param gtuIdSource GtuIdTransceiver; the transceiver that can produce all active GTU ids in the Network
      */
-    public GTUTransceiver(final OTSNetwork network, final GTUIdTransceiver gtuIdSource)
+    public GtuTransceiver(final OTSNetwork network, final GtuIdTransceiver gtuIdSource)
     {
         super("GTU transceiver", new MetaData("GTU id", "GTU id",
                 new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class)}), Gtu.MOVE_EVENT);
@@ -93,7 +93,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
     @Override
     public String toString()
     {
-        return "GTUTransceiver [network=" + this.network.getId() + ", super=" + super.toString() + "]";
+        return "GtuTransceiver [network=" + this.network.getId() + ", super=" + super.toString() + "]";
     }
 
 }

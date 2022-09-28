@@ -32,7 +32,7 @@ public class SubscriptionHandler
     /** Id of this SubscriptionHandler. */
     private final String id;
 
-    /** Transceiver to retrieve the data right now; e.g. GTUIdTransceiver. */
+    /** Transceiver to retrieve the data right now; e.g. GtuIdTransceiver. */
     private final TransceiverInterface listTransceiver;
 
     /** Event producer for add, remove, or change events; e.g. the OTSNetwork. */

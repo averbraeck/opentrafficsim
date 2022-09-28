@@ -84,7 +84,7 @@ public class TransceiverTest
     Time lastTime = null;
 
     /**
-     * Test the GTUIdTransceiver and the GTUTransceiver.
+     * Test the GtuIdTransceiver and the GtuTransceiver.
      * @throws RemoteException if the happens, this test has failed
      * @throws SerializationException on error
      * @throws Sim0MQException on error
@@ -95,7 +95,7 @@ public class TransceiverTest
      * @throws GtuException on error
      */
     @Test
-    public void testGTUIdTransceiver() throws RemoteException, Sim0MQException, SerializationException, NetworkException,
+    public void testGtuIdTransceiver() throws RemoteException, Sim0MQException, SerializationException, NetworkException,
             OTSGeometryException, SimRuntimeException, NamingException, GtuException
     {
         ReturnWrapper storeLastResult = new ReturnWrapper()
@@ -109,7 +109,7 @@ public class TransceiverTest
         };
         try
         {
-            new GTUIdTransceiver(null);
+            new GtuIdTransceiver(null);
             fail("null argument should have thrown an exception");
         }
         catch (NullPointerException npe)
@@ -119,7 +119,7 @@ public class TransceiverTest
         OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
 
         OTSRoadNetwork network = new OTSRoadNetwork("test network for TransceiverTest", true, simulator);
-        GTUIdTransceiver gtuIdTransceiver = new GTUIdTransceiver(network);
+        GtuIdTransceiver gtuIdTransceiver = new GtuIdTransceiver(network);
         assertEquals("getId returns correct id", "GTU id transceiver", gtuIdTransceiver.getId());
         assertEquals("address has 0 entries", 0, gtuIdTransceiver.getAddressFields().size());
         assertEquals("result has one field", 1, gtuIdTransceiver.getResultFields().size());
@@ -215,9 +215,9 @@ public class TransceiverTest
             }
             assertEquals("found gtu i once", 1, count);
         }
-        // Make the GTUTransceiver
-        GTUTransceiver gtuTransceiver = new GTUTransceiver(network, gtuIdTransceiver);
-        assertEquals("GTUTransceiver returns correct id", "GTU transceiver", gtuTransceiver.getId());
+        // Make the GtuTransceiver
+        GtuTransceiver gtuTransceiver = new GtuTransceiver(network, gtuIdTransceiver);
+        assertEquals("GtuTransceiver returns correct id", "GTU transceiver", gtuTransceiver.getId());
         assertEquals("getIdSource returns gtuIdTransceiver", gtuIdTransceiver, gtuTransceiver.getIdSource(0, null));
         try
         {
@@ -331,10 +331,10 @@ public class TransceiverTest
         Stripe stripe = new Stripe(link, Length.ZERO, Length.ZERO, new Length(20, LengthUnit.DECIMETER));
         String stripeId = stripe.getId();
 
-        LinkGTUIdTransceiver linkgit = new LinkGTUIdTransceiver(network);
-        assertTrue("toString of LinkGTUIdTransceiver returns something descriptive",
-                linkgit.toString().startsWith("LinkGTUIdTransceiver"));
-        assertFalse("LinkGTUIdTransceiver does not have an id source", linkgit.hasIdSource());
+        LinkGtuIdTransceiver linkgit = new LinkGtuIdTransceiver(network);
+        assertTrue("toString of LinkGtuIdTransceiver returns something descriptive",
+                linkgit.toString().startsWith("LinkGtuIdTransceiver"));
+        assertFalse("LinkGtuIdTransceiver does not have an id source", linkgit.hasIdSource());
 
         assertNull("Bad address", checkAckNack(linkgit, new Object[] {"bad", "address"}, false, "need id of a link"));
         assertNull("Non existing link",
@@ -346,10 +346,10 @@ public class TransceiverTest
         assertEquals("result is empty array", 0, result.length);
         assertNull(this.lastAckNack);
 
-        LaneGTUIdTransceiver lanegit = new LaneGTUIdTransceiver(network);
-        assertTrue("toString of LaneGTUIdTransceiver returns something descriptive",
-                lanegit.toString().startsWith("LaneGTUIdTransceiver"));
-        assertFalse("LaneGTUIdTransceiver does not have an Id source", lanegit.hasIdSource());
+        LaneGtuIdTransceiver lanegit = new LaneGtuIdTransceiver(network);
+        assertTrue("toString of LaneGtuIdTransceiver returns something descriptive",
+                lanegit.toString().startsWith("LaneGtuIdTransceiver"));
+        assertFalse("LaneGtuIdTransceiver does not have an Id source", lanegit.hasIdSource());
 
         assertNull("Bad address", checkAckNack(lanegit, new Object[] {"this", "is", "a", "bad", "address"}, false,
                 "need id of a link and id of a CrossSectionElement"));

@@ -94,7 +94,7 @@ public class PublisherTest implements OTSModelInterface
             assertTrue("transceiver name is a String", o instanceof String);
             // System.out.println("transceiver: " + o);
         }
-        // See if we can obtain the GTUIdTransceiver
+        // See if we can obtain the GtuIdTransceiver
         Object[] subscriptionHandler = publisher.get(new Object[] {"GTUs in network"}, storeLastResult);
         assertNotNull("result of get should not be null", subscriptionHandler);
         assertEquals("result should contain one elements", 1, subscriptionHandler.length);

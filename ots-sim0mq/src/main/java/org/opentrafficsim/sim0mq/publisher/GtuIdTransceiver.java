@@ -16,13 +16,13 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUIdTransceiver extends AbstractIdTransceiver
+public class GtuIdTransceiver extends AbstractIdTransceiver
 {
     /**
-     * Construct a GTUIdTransceiver.
+     * Construct a GtuIdTransceiver.
      * @param network OTSNetwork; the OTS network
      */
-    public GTUIdTransceiver(final OTSNetwork network)
+    public GtuIdTransceiver(final OTSNetwork network)
     {
         super(network, "GTU id transceiver");
     }
@@ -38,7 +38,7 @@ public class GTUIdTransceiver extends AbstractIdTransceiver
     @Override
     public String toString()
     {
-        return "GTUIdTransceiver [network=" + getNetwork().getId() + ", super=" + super.toString() + "]";
+        return "GtuIdTransceiver [network=" + getNetwork().getId() + ", super=" + super.toString() + "]";
     }
 
 }

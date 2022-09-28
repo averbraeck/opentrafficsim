@@ -21,16 +21,16 @@ import org.sim0mq.Sim0MQException;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LinkGTUIdTransceiver extends AbstractTransceiver
+public class LinkGtuIdTransceiver extends AbstractTransceiver
 {
     /** The network. */
     private final OTSNetwork network;
 
     /**
-     * Construct a GTUIdTransceiver.
+     * Construct a GtuIdTransceiver.
      * @param network OTSNetwork; the OTS network
      */
-    public LinkGTUIdTransceiver(final OTSNetwork network)
+    public LinkGtuIdTransceiver(final OTSNetwork network)
     {
         super("Link GTU id transceiver",
                 new MetaData("Link id", "Link id",
@@ -73,7 +73,7 @@ public class LinkGTUIdTransceiver extends AbstractTransceiver
     @Override
     public String toString()
     {
-        return "LinkGTUIdTransceiver [network=" + this.network + ", super=" + super.toString() + "]";
+        return "LinkGtuIdTransceiver [network=" + this.network + ", super=" + super.toString() + "]";
     }
 
 }
