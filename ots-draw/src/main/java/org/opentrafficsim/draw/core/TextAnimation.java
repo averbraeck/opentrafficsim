@@ -265,17 +265,6 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * Clone the TextAnimation and return a copy for the new source on the new simulator.
-     * @param newSource Locatable; the new source to link to the text animation
-     * @param newSimulator OTSSimulatorInterface; the new simulator to register the animation on
-     * @return TextAnimation; a copy of this TextAnimation
-     * @throws RemoteException when remote animation cannot be reached
-     * @throws NamingException when animation name cannot be found or bound in the Context
-     */
-    public abstract TextAnimation clone(Locatable newSource, OTSSimulatorInterface newSimulator)
-            throws RemoteException, NamingException;
-
-    /**
      * Retrieve the source.
      * @return Locatable; the source
      */

@@ -109,15 +109,6 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
 
         /** {@inheritDoc} */
         @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-                throws RemoteException, NamingException
-        {
-            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public final String toString()
         {
             return "Text []";

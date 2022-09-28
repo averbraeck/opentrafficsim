@@ -30,7 +30,7 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictType;
  */
 public class ConflictAnimation extends AbstractLineAnimation<Conflict> implements Serializable
 {
-    // TODO should ConflictAnimation implement the ClonableRenderable2DInterface?
+    // TODO should ConflictAnimation implement the Renderable2DInterface?
 
     /** */
     private static final long serialVersionUID = 20161207L;

@@ -18,7 +18,6 @@ import org.opentrafficsim.core.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -26,6 +25,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -38,8 +38,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu>
-        implements ClonableRenderable2DInterface<LaneBasedGtu>, Serializable
+public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu> implements Renderable2DInterface<LaneBasedGtu>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -236,16 +235,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<LaneBasedGtu> clone(final LaneBasedGtu newSource,
-            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
-    {
-        // the constructor also constructs the corresponding Text object
-        return new DefaultCarAnimation(newSource, newSimulator, this.gtuColorer);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
         return super.toString(); // this.getSource().toString();
@@ -362,15 +351,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu>
                 a += Math.PI;
             }
             return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-                throws RemoteException, NamingException
-        {
-            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
         }
 
         /** {@inheritDoc} */

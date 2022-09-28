@@ -11,12 +11,12 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -30,7 +30,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
-        implements ClonableRenderable2DInterface<SingleSensor>, Serializable
+        implements Renderable2DInterface<SingleSensor>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -90,16 +90,6 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<SingleSensor> clone(final SingleSensor newSource,
-            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
-    {
-        // the constructor also constructs the corresponding Text object
-        return new SensorAnimation(newSource, this.sensorPosition, newSimulator, this.color);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
         return "SensorAnimation [getSource()=" + this.getSource() + "]";
@@ -137,15 +127,6 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator, TextAnimation.RENDERALWAYS);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-                throws RemoteException, NamingException
-        {
-            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
         }
 
         /** {@inheritDoc} */

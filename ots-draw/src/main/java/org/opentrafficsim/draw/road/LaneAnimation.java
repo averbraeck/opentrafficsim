@@ -12,7 +12,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.draw.core.TextAlignment;
@@ -21,6 +20,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -31,7 +31,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneAnimation extends Renderable2D<Lane> implements ClonableRenderable2DInterface<Lane>, Serializable
+public class LaneAnimation extends Renderable2D<Lane> implements Renderable2DInterface<Lane>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -89,16 +89,6 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<Lane> clone(final Lane newSource, final OTSSimulatorInterface newSimulator)
-            throws NamingException, RemoteException
-    {
-        // the constructor also constructs the corresponding Text object
-        return new LaneAnimation(newSource, newSimulator, this.color);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
         return "LaneAnimation [lane = " + getSource().toString() + ", color=" + this.color + "]";
@@ -149,7 +139,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
      * Animation for center line of a lane.
      */
     public static class CenterLineAnimation extends Renderable2D<CenterLine>
-            implements ClonableRenderable2DInterface<CenterLine>, Serializable
+            implements Renderable2DInterface<CenterLine>, Serializable
     {
         /** Drawing color for the center line. */
         private static final Color COLOR = Color.MAGENTA.darker().darker();
@@ -168,14 +158,6 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
                 throws NamingException, RemoteException
         {
             super(centerLine, simulator);
-        }
-
-        @Override
-        public final ClonableRenderable2DInterface<CenterLine> clone(final CenterLine newSource,
-                final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
-        {
-            // TODO Auto-generated method stub
-            return null;
         }
 
         @Override
@@ -233,15 +215,6 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
                 a += Math.PI;
             }
             return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-                throws RemoteException, NamingException
-        {
-            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
         }
 
         /** {@inheritDoc} */

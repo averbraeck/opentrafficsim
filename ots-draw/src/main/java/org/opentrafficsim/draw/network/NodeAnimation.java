@@ -18,13 +18,13 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.draw.core.TextAnimation.ScaleDependentRendering;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.introspection.DelegateIntrospection;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -37,7 +37,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 @SuppressWarnings("rawtypes")
 public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
-        implements ClonableRenderable2DInterface<NodeAnimation.ElevatedNode>, Serializable
+        implements Renderable2DInterface<NodeAnimation.ElevatedNode>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;
@@ -94,15 +94,6 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
     {
         super.destroy(contextProvider);
         this.text.destroy(contextProvider);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ClonableRenderable2DInterface<NodeAnimation.ElevatedNode> clone(final ElevatedNode newSource,
-            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
-    {
-        // the constructor also constructs the corresponding Text object and ElevatedNode
-        return new NodeAnimation(newSource.getNode(), newSimulator);
     }
 
     /** {@inheritDoc} */
@@ -202,16 +193,6 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
             super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, simulator, scaleDependentRendering);
             setFlip(false);
             setRotate(false);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-                throws RemoteException, NamingException
-        {
-            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator,
-                    getScaleDependentRendering());
         }
 
         /** {@inheritDoc} */

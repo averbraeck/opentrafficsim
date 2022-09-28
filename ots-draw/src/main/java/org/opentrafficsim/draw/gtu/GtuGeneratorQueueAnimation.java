@@ -17,8 +17,6 @@ import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-
 /**
  * Animator that displays generation queues as numbers.
  * <p>
@@ -72,14 +70,6 @@ public class GtuGeneratorQueueAnimation extends TextAnimation
         {
             CategoryLogger.always().warn(exception);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-            throws RemoteException, NamingException
-    {
-        return new GtuGeneratorQueueAnimation((GtuGeneratorQueue) newSource, newSimulator);
     }
 
 }

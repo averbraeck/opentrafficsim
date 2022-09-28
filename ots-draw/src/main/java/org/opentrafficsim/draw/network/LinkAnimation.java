@@ -18,13 +18,13 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.PaintLine;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -36,7 +36,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class LinkAnimation extends Renderable2D<Link> implements ClonableRenderable2DInterface<Link>, Serializable
+public class LinkAnimation extends Renderable2D<Link> implements Renderable2DInterface<Link>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;
@@ -130,16 +130,6 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<Link> clone(final Link newSource, final OTSSimulatorInterface newSimulator)
-            throws NamingException, RemoteException
-    {
-        // the constructor also constructs the corresponding Text object
-        return new LinkAnimation(newSource, newSimulator, this.width);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
         return "LinkAnimation [width=" + this.width + ", link=" + super.getSource() + "]";
@@ -193,16 +183,6 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
                 a += Math.PI;
             }
             return new DirectedPoint(p.x, p.y, Double.MAX_VALUE, 0.0, 0.0, a);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-                throws RemoteException, NamingException
-        {
-            return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator,
-                    super.getScaleDependentRendering());
         }
 
         /** {@inheritDoc} */

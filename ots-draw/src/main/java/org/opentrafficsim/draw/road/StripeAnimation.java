@@ -19,11 +19,11 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Stripe;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 
 /**
  * Draw road stripes.
@@ -33,7 +33,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * <p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRenderable2DInterface<Stripe>, Serializable
+public class StripeAnimation extends Renderable2D<Stripe> implements Renderable2DInterface<Stripe>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20141017L;
@@ -245,22 +245,6 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
 
         /** Block : allow to cross in both directions. */
         BLOCK
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<Stripe> clone(final Stripe newSource, final OTSSimulatorInterface newSimulator)
-            throws NamingException, RemoteException
-    {
-        try
-        {
-            return new StripeAnimation(newSource, newSimulator, this.type);
-        }
-        catch (OTSGeometryException exception)
-        {
-            throw new RemoteException("Stripe animation clone failed", exception);
-        }
     }
 
     /** {@inheritDoc} */

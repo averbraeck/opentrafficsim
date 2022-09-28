@@ -7,14 +7,8 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNetworkUtils;
-import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
@@ -36,81 +30,6 @@ public final class OTSNetworkAnimationUtils
     private OTSNetworkAnimationUtils()
     {
         // utility class
-    }
-
-    /**
-     * Clone the OTSNetwork, including animation.
-     * @param network OTSNetwork; the network to clone
-     * @param newId String; the new id of the network
-     * @param oldSimulator OTSSimulatorInterface; the old simulator for this network
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @return a clone of this network
-     * @throws NetworkException in case the cloning fails
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public static OTSNetwork clone(final OTSNetwork network, final String newId, final OTSSimulatorInterface oldSimulator,
-            final OTSSimulatorInterface newSimulator) throws NetworkException
-    {
-        OTSNetwork newNetwork = OTSNetworkUtils.clone(network, newId, newSimulator);
-
-        // clone the link animation
-        for (Link oldLink : network.getLinkMap().values())
-        {
-            OTSLink newLink = (OTSLink) newNetwork.getLink(oldLink.getId());
-            cloneAnimation(oldLink, newLink, oldSimulator, newSimulator);
-        }
-
-        // clone the node animation
-        for (Node oldNode : network.getNodeMap().values())
-        {
-            OTSNode newNode = (OTSNode) newNetwork.getNode(oldNode.getId());
-            cloneAnimation(oldNode, newNode, oldSimulator, newSimulator);
-        }
-
-        // TODO clone the animation of the visible objects
-
-        return newNetwork;
-    }
-
-    /**
-     * Clone all animation objects for the given class. The given class is the <b>source</b> of the animation objects, as it is
-     * not known on beforehand which objects need to be cloned. It is important for cloning that the animation objects implement
-     * the CloneableRenderable2DInterface, so they can be cloned with their properties. If not, they will not be taken into
-     * account for cloning by this method.
-     * @param oldSource Locatable; the old source object that might have one or more animation objects attached to it
-     * @param newSource T; the new source object to attach the cloned animation objects to
-     * @param oldSimulator OTSSimulatorInterface; the old simulator when the old objects can be found
-     * @param newSimulator OTSSimulatorInterface; the new simulator where the new simulation objects need to be registered
-     * @param <T> locatable type
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public static <T extends Locatable> void cloneAnimation(final Locatable oldSource, final T newSource,
-            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
-    {
-        if (!(oldSimulator instanceof AnimatorInterface) || !(newSimulator instanceof AnimatorInterface))
-        {
-            return;
-        }
-
-        try
-        {
-            ContextInterface context =
-                    ContextUtil.lookupOrCreateSubContext(oldSimulator.getReplication().getContext(), "animation/2D");
-            for (Object element : context.values())
-            {
-                @SuppressWarnings("unchecked")
-                Renderable2DInterface<T> animationObject = (Renderable2DInterface<T>) element;
-                T locatable = animationObject.getSource();
-                if (oldSource.equals(locatable) && animationObject instanceof ClonableRenderable2DInterface)
-                {
-                    ((ClonableRenderable2DInterface<T>) animationObject).clone(newSource, newSimulator);
-                }
-            }
-        }
-        catch (NamingException | RemoteException exception)
-        {
-            System.err.println("Error when cloning animation objects for object " + oldSource);
-        }
     }
 
     /**
