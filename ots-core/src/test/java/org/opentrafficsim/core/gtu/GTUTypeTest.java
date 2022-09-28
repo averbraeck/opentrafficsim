@@ -22,7 +22,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 15 jan. 2015 <br>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GtuTypeTest
+public class GTUTypeTest
 {
 
     /**

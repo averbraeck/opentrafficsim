@@ -59,7 +59,7 @@ public class OTSLinkTest implements EventListenerInterface
         Node startNode = new OTSNode(network, "start", new OTSPoint3D(10, 20, 0));
         Node endNode = new OTSNode(network, "end", new OTSPoint3D(1000, 2000, 10));
         GtuCompatibility<LinkType> compatibility = new GtuCompatibility<LinkType>((LinkType) null)
-                .addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_NONE);
+                .addIncompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         LinkType linkType = new LinkType("myLinkType", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
         // Map<GtuType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
@@ -69,7 +69,7 @@ public class OTSLinkTest implements EventListenerInterface
         assertEquals("directionality for network.getGtuType(GtuType.DEFAULTS.VEHICLE) is DIR_NONE",
                 LongitudinalDirectionality.DIR_NONE, link.getDirectionality(network.getGtuType(GtuType.DEFAULTS.VEHICLE)));
         GtuType carType = new GtuType("car", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
-        compatibility.addAllowedGtuType(carType, LongitudinalDirectionality.DIR_MINUS);
+        compatibility.addCompatibleGtuType(carType);
         linkType = new LinkType("myLinkType2", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         link = new OTSLink(network, "link2", startNode, endNode, linkType, designLine);
         assertEquals("directionality for carType is DIR_MINUS", LongitudinalDirectionality.DIR_MINUS,
@@ -77,12 +77,12 @@ public class OTSLinkTest implements EventListenerInterface
         GtuType bicycle = new GtuType("bicycle", network.getGtuType(GtuType.DEFAULTS.BICYCLE));
         assertEquals("directionality for bicycle is DIR_NONE", LongitudinalDirectionality.DIR_NONE,
                 link.getDirectionality(bicycle));
-        compatibility.addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.BICYCLE), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.BICYCLE));
         linkType = new LinkType("myLinkType3", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         link = new OTSLink(network, "link3", startNode, endNode, linkType, designLine);
         assertEquals("directionality for bicycle is now DIR_PLUS", LongitudinalDirectionality.DIR_PLUS,
                 link.getDirectionality(bicycle));
-        compatibility.addAllowedGtuType(carType, LongitudinalDirectionality.DIR_NONE);
+        compatibility.addIncompatibleGtuType(carType);
         linkType = new LinkType("myLinkType4", network.getLinkType(LinkType.DEFAULTS.ROAD), compatibility, network);
         link = new OTSLink(network, "link4", startNode, endNode, linkType, designLine);
         assertEquals("directionality for bicycle is now DIR_PLUS", LongitudinalDirectionality.DIR_PLUS,

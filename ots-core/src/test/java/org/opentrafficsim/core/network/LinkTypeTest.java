@@ -32,8 +32,8 @@ public class LinkTypeTest
     public final void testLinkType()
     {
         OTSNetwork network = new OTSNetwork("test", true, new OTSSimulator("Simulator for LinkTypeTest"));
-        GtuCompatibility<LinkType> roadCompatibility = new GtuCompatibility<>((LinkType) null)
-                .addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_BOTH);
+        GtuCompatibility<LinkType> roadCompatibility =
+                new GtuCompatibility<>((LinkType) null).addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         try
         {
             new LinkType("name", null, null, network);
@@ -54,8 +54,8 @@ public class LinkTypeTest
         GtuType truckType = new GtuType("Truck", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         GtuType catamaran = new GtuType("Catamaran", network.getGtuType(GtuType.DEFAULTS.SHIP));
         LinkType roadLinkType = new LinkType("Vehicles", null, roadCompatibility, network);
-        GtuCompatibility<LinkType> waterCompatibility = new GtuCompatibility<>((LinkType) null)
-                .addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.SHIP), LongitudinalDirectionality.DIR_BOTH);
+        GtuCompatibility<LinkType> waterCompatibility =
+                new GtuCompatibility<>((LinkType) null).addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.SHIP));
         LinkType waterwayType = new LinkType("Waterway", null, waterCompatibility, network);
         assertTrue("equals to itself", roadLinkType.equals(roadLinkType));
         assertFalse("not equal to the other", roadLinkType.equals(waterwayType));
@@ -87,24 +87,17 @@ public class LinkTypeTest
         // assertTrue("waterWayType2 is a waterway", waterWayType2.isWaterWay());
         // TODO next one fails - what is wrong?
         // assertTrue("roadLinkType is a road", roadLinkType.isRoad());
-        GtuCompatibility<LinkType> poorRoadCompatibility = new GtuCompatibility<>((LinkType) null)
-                .addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.CAR), LongitudinalDirectionality.DIR_BOTH);
+        GtuCompatibility<LinkType> poorRoadCompatibility =
+                new GtuCompatibility<>((LinkType) null).addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.CAR));
         LinkType poorSurfaceLinkType =
                 new LinkType("PoorSurfaceType", network.getLinkType(LinkType.DEFAULTS.ROAD), poorRoadCompatibility, network);
         assertTrue("poor road is of type ROAD", poorSurfaceLinkType.isOfType(LinkType.DEFAULTS.ROAD));
         assertNull("compatibility of waterway for car is not decidable",
                 waterwayType.isCompatible(carType, GTUDirectionality.DIR_PLUS));
-        GtuCompatibility<LinkType> compatibility = waterwayType.getCompatibility();
-        assertTrue("compatibility allows SHIP in dir plus",
-                compatibility.isCompatible(network.getGtuType(GtuType.DEFAULTS.SHIP), GTUDirectionality.DIR_PLUS));
-        assertTrue("compatibility allows SHIP in dir minus",
-                compatibility.isCompatible(network.getGtuType(GtuType.DEFAULTS.SHIP), GTUDirectionality.DIR_MINUS));
-        assertNull("compatibility cannot decide for catamaran",
-                compatibility.isCompatible(catamaran, GTUDirectionality.DIR_PLUS));
-        assertTrue("compatibility can decide for parent type of catamaran",
-                compatibility.isCompatible(catamaran.getParent(), GTUDirectionality.DIR_PLUS));
-        assertEquals("Directionality of waterwayType for catamaran is DIR_BOTH", LongitudinalDirectionality.DIR_BOTH,
-                waterwayType.getCompatibility().getDirectionality(catamaran, true));
+        GtuCompatibility<LinkType> compatibility = waterwayType.getGtuCompatibility();
+        assertTrue("compatibility allows SHIP", compatibility.isCompatible(network.getGtuType(GtuType.DEFAULTS.SHIP)));
+        assertFalse("compatibility has no info for catamaran", compatibility.isCompatible(catamaran));
+        assertTrue("compatibility can decide for parent type of catamaran", compatibility.isCompatible(catamaran.getParent()));
         LinkType reverseWaterway = waterwayType.reverse();
         // Reverse of DIR_BOTH should be DIR_BOTH
         // The next two tests fail.

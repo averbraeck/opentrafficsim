@@ -761,7 +761,7 @@ public class OTSNetworkTest implements EventListenerInterface
             throws NetworkException, OTSGeometryException
     {
         GtuCompatibility<LinkType> compatibility =
-                new GtuCompatibility<>((LinkType) null).addAllowedGtuType(network.getGtuType(GtuType.DEFAULTS.ROAD_USER), ld);
+                new GtuCompatibility<>((LinkType) null).addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.ROAD_USER));
         LinkType linkType = new LinkType("linkType", null, compatibility, network);
         List<Node> nodes = new ArrayList<>();
         double radius = 500;

@@ -107,7 +107,7 @@ public final class OTSNetworkUtils
         {
             if (linkType.getParent() != null)
             {
-                new LinkType(linkType.getId(), linkType.getParent(), new GtuCompatibility<>(linkType.getCompatibility()),
+                new LinkType(linkType.getId(), linkType.getParent(), new GtuCompatibility<>(linkType.getGtuCompatibility()),
                         newNetwork);
             }
         }

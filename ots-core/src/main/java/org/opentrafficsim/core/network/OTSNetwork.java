@@ -888,27 +888,27 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         new LinkType("NONE", null, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
         LinkType road = new LinkType("ROAD", null, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN), LongitudinalDirectionality.DIR_NONE);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE), LongitudinalDirectionality.DIR_NONE);
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.PEDESTRIAN));
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.BICYCLE));
         new LinkType("FREEWAY", road, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER));
         new LinkType("WATERWAY", null, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER));
         new LinkType("RAILWAY", null, compatibility, this);
         //
         compatibility = new GtuCompatibility<>((LinkType) null);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER), LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER), LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER), LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.ROAD_USER));
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.WATERWAY_USER));
+        compatibility.addCompatibleGtuType(getGtuType(GtuType.DEFAULTS.RAILWAY_USER));
         new LinkType("CONNECTOR", null, compatibility, this);
     }
 

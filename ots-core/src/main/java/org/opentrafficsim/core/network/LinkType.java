@@ -2,10 +2,10 @@ package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.compatibility.Compatibility;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 
@@ -20,13 +20,10 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LinkType extends HierarchicalType<LinkType> implements Serializable, Identifiable, Compatibility<GtuType, LinkType>
+public class LinkType extends GtuCompatibleInfraType<LinkType> implements Serializable, Identifiable, Compatibility<GtuType, LinkType>
 {
     /** */
     private static final long serialVersionUID = 20140821L;
-
-    /** The compatibility of GTU types with this link type. */
-    private final GtuCompatibility<LinkType> compatibility;
 
     /** Reversed link type. */
     private LinkType reversed = null;
@@ -86,7 +83,6 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
             final Network network)
     {
         super(id, parent);
-        this.compatibility = new GtuCompatibility<>(compatibility);
         this.network = network;
         this.network.addLinkType(this);
     }
@@ -109,20 +105,15 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Temp method for compatibility
+     * @param gtuType X
+     * @param directionality X
+     * @return X
+     */
     public Boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
     {
-        return this.compatibility.isCompatible(gtuType, directionality);
-    }
-
-    /**
-     * This method won't work correctly in a ReverseLinkType; it should only be used to clone a network; nowhere else.
-     * @return GtuCompatibility&lt;LinkType&gt;; the GTU compatibility for this LinkType
-     */
-    public GtuCompatibility<LinkType> getCompatibility()
-    {
-        return this.compatibility;
+        return isCompatible(gtuType);
     }
 
     /**
@@ -191,14 +182,19 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "LinkType [id=" + getId() + ", compatibilitySet=" + this.compatibility + "]";
+        return "LinkType [id=" + getId() + ", compatibilitySet=" + getGtuCompatibility() + "]";
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * TEMP.
+     * @param gtuType X
+     * @param tryParentsOfGtuType X
+     * @return X
+     */
     public LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
     {
-        return this.compatibility.getDirectionality(gtuType, tryParentsOfGtuType);
+        // TEMP
+        return LongitudinalDirectionality.DIR_BOTH;
     }
 
     /**
@@ -236,7 +232,8 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         @Override
         public final LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
         {
-            return super.compatibility.getDirectionality(gtuType, tryParentsOfGtuType).invert();
+         // TEMP
+            return LongitudinalDirectionality.DIR_BOTH;
         }
 
         /** {@inheritDoc} */
