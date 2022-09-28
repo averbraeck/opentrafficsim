@@ -5,7 +5,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.control.CACC;
 import org.opentrafficsim.road.gtu.lane.control.ControlTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedAbstractPerceptionCategory;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
  * CACC perception.
@@ -34,7 +34,7 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
     private static final long serialVersionUID = 20190312L;
 
     /** Onboard sensors in the form of a headway GTU type. */
-    private final HeadwayGTUType sensors;
+    private final HeadwayGtuType sensors;
 
     /**
      * Constructor using default sensors with zero delay.
@@ -48,9 +48,9 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
     /**
      * Constructor using specified sensors.
      * @param perception LanePerception; perception
-     * @param sensors HeadwayGTUType; onboard sensor information
+     * @param sensors HeadwayGtuType; onboard sensor information
      */
-    public CaccPerception(final LanePerception perception, final HeadwayGTUType sensors)
+    public CaccPerception(final LanePerception perception, final HeadwayGtuType sensors)
     {
         super(perception);
         this.sensors = sensors;
@@ -65,7 +65,7 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders()
+    public PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders()
     {
         return computeIfAbsent("leaders", () -> computeLeaders());
     }
@@ -74,7 +74,7 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
      * Computes leaders.
      * @return perception iterable for leaders
      */
-    private PerceptionCollectable<HeadwayGTU, LaneBasedGTU> computeLeaders()
+    private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeLeaders()
     {
         try
         {
@@ -115,14 +115,14 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
          * @param initialPosition Length; position on the root record
          * @param maxDistance Length; maximum distance to search
          * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
-         * @param headwayGtuType HeadwayGTUType; type of HeadwayGTU to return
+         * @param headwayGtuType HeadwayGtuType; type of HeadwayGtu to return
          * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
          * @param ignoreIfUpstream boolean; whether to ignore GTU that are partially upstream of a record
          */
         @SuppressWarnings("checkstyle:parameternumber")
-        DownstreamNeighboursIterableCACC(final LaneBasedGTU perceivingGtu, final LaneRecord<?> root,
+        DownstreamNeighboursIterableCACC(final LaneBasedGtu perceivingGtu, final LaneRecord<?> root,
                 final Length initialPosition, final Length maxDistance, final RelativePosition relativePosition,
-                final HeadwayGTUType headwayGtuType, final RelativeLane lane, final boolean ignoreIfUpstream)
+                final HeadwayGtuType headwayGtuType, final RelativeLane lane, final boolean ignoreIfUpstream)
         {
             super(perceivingGtu, root, initialPosition, maxDistance, relativePosition, headwayGtuType, lane, ignoreIfUpstream);
         }

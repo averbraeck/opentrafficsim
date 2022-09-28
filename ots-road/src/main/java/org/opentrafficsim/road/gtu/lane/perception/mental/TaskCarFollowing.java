@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
@@ -30,7 +30,7 @@ public class TaskCarFollowing extends TaskHeadwayBased
 
     /** {@inheritDoc} */
     @Override
-    protected Duration getHeadway(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+    protected Duration getHeadway(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
     {
         NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
                 "NeighborsPerception not available.");

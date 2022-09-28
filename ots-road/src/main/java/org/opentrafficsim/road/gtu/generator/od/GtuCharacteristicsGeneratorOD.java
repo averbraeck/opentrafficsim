@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.generator.od;
 
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -18,19 +18,19 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface GTUCharacteristicsGeneratorOD
+public interface GtuCharacteristicsGeneratorOD
 {
 
     /**
-     * Generate new {@code LaneBasedGTUCharacteristics} using given input from OD.
+     * Generate new {@code LaneBasedGtuCharacteristics} using given input from OD.
      * @param origin Node; origin
      * @param destination Node; destination
      * @param category Category; category (GTU type, route, or more)
      * @param randomStream StreamInterface; stream for random numbers
-     * @return LaneBasedGTUCharacteristics
+     * @return LaneBasedGtuCharacteristics
      * @throws GtuException if characteristics could not be generated for the GTUException
      */
-    LaneBasedGTUCharacteristics draw(Node origin, Node destination, Category category, StreamInterface randomStream)
+    LaneBasedGtuCharacteristics draw(Node origin, Node destination, Category category, StreamInterface randomStream)
             throws GtuException;
 
 }

@@ -36,7 +36,7 @@ import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -70,7 +70,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
     private final GtuColorer gtuColorer;
 
     /** rendered gtus. */
-    private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<LaneBasedGtu, Renderable2D<LaneBasedGtu>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** rendered static objects. */
     public Map<ObjectInterface, Renderable2D<?>> animatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -150,9 +150,9 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
             for (Gtu gtu : network.getGTUs())
             {
-                Renderable2D<LaneBasedGTU> gtuAnimation =
-                        new DefaultCarAnimation((LaneBasedGTU) gtu, this.simulator, this.gtuColorer);
-                this.animatedGTUs.put((LaneBasedGTU) gtu, gtuAnimation);
+                Renderable2D<LaneBasedGtu> gtuAnimation =
+                        new DefaultCarAnimation((LaneBasedGtu) gtu, this.simulator, this.gtuColorer);
+                this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
             }
 
             for (ObjectInterface object : network.getObjectMap().values())
@@ -205,12 +205,12 @@ public class DefaultAnimationFactory implements EventListenerInterface
             if (event.getType().equals(Network.ANIMATION_GTU_ADD_EVENT))
             {
                 // schedule the addition of the GTU to prevent it from not having an operational plan
-                LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
+                LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
                 this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] {gtu});
             }
             else if (event.getType().equals(Network.ANIMATION_GTU_REMOVE_EVENT))
             {
-                LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
+                LaneBasedGtu gtu = (LaneBasedGtu) event.getContent();
                 if (this.animatedGTUs.containsKey(gtu))
                 {
                     this.animatedGTUs.get(gtu).destroy(gtu.getSimulator());
@@ -235,7 +235,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
             else if (event.getType().equals(Network.ANIMATION_GENERATOR_ADD_EVENT))
             {
                 GtuGenerator gtuGenerator = (GtuGenerator) event.getContent();
-                animateGTUGenerator(gtuGenerator);
+                animateGtuGenerator(gtuGenerator);
             }
             else if (event.getType().equals(Network.ANIMATION_GENERATOR_REMOVE_EVENT))
             {
@@ -252,11 +252,11 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Draw the GTU (scheduled method).
      * @param gtu LaneBasedGtu; the GTU to draw
      */
-    protected void animateGTU(final LaneBasedGTU gtu)
+    protected void animateGTU(final LaneBasedGtu gtu)
     {
         try
         {
-            Renderable2D<LaneBasedGTU> gtuAnimation = new DefaultCarAnimation(gtu, this.simulator, this.gtuColorer);
+            Renderable2D<LaneBasedGtu> gtuAnimation = new DefaultCarAnimation(gtu, this.simulator, this.gtuColorer);
             this.animatedGTUs.put(gtu, gtuAnimation);
         }
         catch (RemoteException | NamingException exception)
@@ -322,10 +322,10 @@ public class DefaultAnimationFactory implements EventListenerInterface
     }
 
     /**
-     * Draw the GTUGenerator.
-     * @param gtuGenerator GtuGenerator; the GTUGenerator to draw
+     * Draw the GtuGenerator.
+     * @param gtuGenerator GtuGenerator; the GtuGenerator to draw
      */
-    protected void animateGTUGenerator(final GtuGenerator gtuGenerator)
+    protected void animateGtuGenerator(final GtuGenerator gtuGenerator)
     {
         // TODO: default animation of GTU generator
     }

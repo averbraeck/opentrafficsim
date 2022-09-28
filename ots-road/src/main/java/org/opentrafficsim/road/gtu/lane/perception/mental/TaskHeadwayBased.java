@@ -7,7 +7,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
@@ -37,7 +37,7 @@ public abstract class TaskHeadwayBased extends AbstractTask
 
     /** {@inheritDoc} */
     @Override
-    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException
     {
         double a = gtu.getAcceleration().si;
@@ -72,7 +72,7 @@ public abstract class TaskHeadwayBased extends AbstractTask
      * @return Duration; headway, {@code null} of none.
      * @throws ParameterException on invalid parameter
      */
-    protected abstract Duration getHeadway(LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
+    protected abstract Duration getHeadway(LanePerception perception, LaneBasedGtu gtu, Parameters parameters)
             throws ParameterException;
 
 }

@@ -7,7 +7,7 @@ import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.parameters.ParameterTypeClassList;
 import org.opentrafficsim.base.parameters.constraint.ClassCollectionConstraint;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -35,7 +35,7 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
      * @param gtu LaneBasedGtu; GTU
      * @param lanePerception LanePerception; perception
      */
-    public AbstractIncentivesTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu,
+    public AbstractIncentivesTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu,
             final LanePerception lanePerception)
     {
         super(carFollowingModel, gtu, lanePerception);

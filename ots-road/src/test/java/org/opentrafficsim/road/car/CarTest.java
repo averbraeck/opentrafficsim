@@ -31,10 +31,10 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -79,10 +79,10 @@ public class CarTest implements UNITS
         Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);
-        GTUFollowingModelOld gtuFollowingModel =
+        GtuFollowingModelOld gtuFollowingModel =
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedIndividualGTU referenceCar = makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator,
+        LaneBasedIndividualGtu referenceCar = makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator,
                 gtuFollowingModel, laneChangeModel, network);
         assertEquals("The car should store it's ID", "12345", referenceCar.getId());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
@@ -92,7 +92,7 @@ public class CarTest implements UNITS
                 0.0001);
         // TODO check with following model as part of tactical planner
         // assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel, referenceCar
-        // .getBehavioralCharacteristics().getGTUFollowingModel());
+        // .getBehavioralCharacteristics().getGtuFollowingModel());
         // There is (currently) no way to retrieve the lane change model of a GTU.
     }
 
@@ -119,7 +119,7 @@ public class CarTest implements UNITS
      * @param initialSpeed Speed; the initial speed
      * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
      *            getLastEvalutionTime())
-     * @param gtuFollowingModel GTUFollowingModel; the GTU following model
+     * @param gtuFollowingModel GtuFollowingModel; the GTU following model
      * @param laneChangeModel LaneChangeModel; the lane change model
      * @param network the network
      * @return Car; the new Car
@@ -129,9 +129,9 @@ public class CarTest implements UNITS
      * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
      * @throws OTSGeometryException when the initial path is wrong
      */
-    public static LaneBasedIndividualGTU makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
+    public static LaneBasedIndividualGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OTSSimulatorInterface simulator,
-            final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
+            final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSRoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException
     {
         Length length = new Length(5.0, METER);
@@ -140,8 +140,8 @@ public class CarTest implements UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Parameters parameters = DefaultTestParameters.create();
-        LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU(id, gtuType, length, width, maxSpeed, length.times(0.5), simulator, network);
+        LaneBasedIndividualGtu gtu =
+                new LaneBasedIndividualGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.setParameters(parameters);

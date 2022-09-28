@@ -43,7 +43,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -186,7 +186,7 @@ public class TransceiverTest
                 checkAckNack(gtuIdTransceiver, new Object[] {"this is a bad address"}, false, "wrong length"));
 
         GtuType gtuType = new GtuType("gtuType 1", network);
-        LaneBasedGTU gtu1 =
+        LaneBasedGtu gtu1 =
                 new MyMockGTU("gtu 1", gtuType, new DirectedPoint(1, 10, 100, 1, 1, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
                         new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu1);
@@ -194,7 +194,7 @@ public class TransceiverTest
         assertEquals("length of result is now 1", 1, result.length);
         assertTrue("result contains a string", result[0] instanceof String);
         assertEquals("result[0] is name of our mocked GTU", "gtu 1", result[0]);
-        LaneBasedGTU gtu2 =
+        LaneBasedGtu gtu2 =
                 new MyMockGTU("gtu 2", gtuType, new DirectedPoint(2, 20, 200, 2, 2, 2), new Speed(2, SpeedUnit.KM_PER_HOUR),
                         new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu2);
@@ -288,7 +288,7 @@ public class TransceiverTest
             assertEquals("result has 6 fields", 6, gtuResult.length);
             assertEquals("first field is a String", String.class, gtuResult[0].getClass());
             assertEquals("gtuResult is gtu with expected id", result[i], gtuResult[0]);
-            LaneBasedGTU gtu = (LaneBasedGTU) network.getGTU(((String) gtuResult[0]));
+            LaneBasedGtu gtu = (LaneBasedGtu) network.getGTU(((String) gtuResult[0]));
             assertNotNull("GTU is in the network", gtu);
             assertTrue("field 1 is id of a GtuType", gtuResult[1] instanceof String);
             assertEquals("gtu type matches", gtuType.getId(), gtuResult[1]);
@@ -594,7 +594,7 @@ public class TransceiverTest
 class MyMockGTU
 {
     /** mocked GTU. */
-    private LaneBasedGTU mockGTU;
+    private LaneBasedGtu mockGTU;
 
     /** name. */
     private final java.lang.String name;
@@ -632,7 +632,7 @@ class MyMockGTU
         this.speed = speed;
         this.acceleration = acceleration;
         this.simulator = simulator;
-        this.mockGTU = Mockito.mock(LaneBasedGTU.class);
+        this.mockGTU = Mockito.mock(LaneBasedGtu.class);
         Mockito.when(this.mockGTU.getSimulator()).thenReturn(this.simulator);
         Mockito.when(this.mockGTU.getGtuType()).thenReturn(this.gtuType);
         Mockito.when(this.mockGTU.getLocation()).thenReturn(this.location);
@@ -644,7 +644,7 @@ class MyMockGTU
     /**
      * @return mocked GTU
      */
-    public LaneBasedGTU getMock()
+    public LaneBasedGtu getMock()
     {
         return this.mockGTU;
     }

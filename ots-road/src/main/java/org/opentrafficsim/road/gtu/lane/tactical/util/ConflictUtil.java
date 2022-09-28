@@ -31,14 +31,14 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -120,7 +120,7 @@ public final class ConflictUtil
      * stopping before a more upstream conflict is applied if there not sufficient stopping length in between conflicts.
      * @param parameters Parameters; parameters
      * @param conflicts PerceptionCollectable&lt;HeadwayConflict,Conflict&gt;; set of conflicts to approach
-     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leading vehicles
+     * @param leaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leading vehicles
      * @param carFollowingModel CarFollowingModel; car-following model
      * @param vehicleLength Length; length of vehicle
      * @param vehicleWidth Length; width of vehicle
@@ -136,9 +136,9 @@ public final class ConflictUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Acceleration approachConflicts(final Parameters parameters, final Iterable<HeadwayConflict> conflicts,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final CarFollowingModel carFollowingModel,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final CarFollowingModel carFollowingModel,
             final Length vehicleLength, final Length vehicleWidth, final Speed speed, final Acceleration acceleration,
-            final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGTU gtu,
+            final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGtu gtu,
             final RelativeLane lane) throws GtuException, ParameterException
     {
 
@@ -343,13 +343,13 @@ public final class ConflictUtil
             final SpeedLimitInfo speedLimitInfo, final Length vehicleWidth) throws ParameterException
     {
         // ignore if no conflicting GTU's, or if first is downstream of conflict
-        PerceptionIterable<HeadwayGTU> downstreamGTUs = conflict.getDownstreamConflictingGTUs();
+        PerceptionIterable<HeadwayGtu> downstreamGTUs = conflict.getDownstreamConflictingGTUs();
         if (downstreamGTUs.isEmpty() || downstreamGTUs.first().isAhead())
         {
             return Acceleration.POS_MAXVALUE;
         }
         // get the most upstream GTU to consider
-        HeadwayGTU c = null;
+        HeadwayGtu c = null;
         Length virtualHeadway = null;
         if (conflict.getDistance().gt0())
         {
@@ -358,7 +358,7 @@ public final class ConflictUtil
         }
         else
         {
-            for (HeadwayGTU con : downstreamGTUs)
+            for (HeadwayGtu con : downstreamGTUs)
             {
                 if (con.isAhead())
                 {
@@ -442,8 +442,8 @@ public final class ConflictUtil
     {
 
         // TODO only within visibility
-        List<HeadwayGTU> conflictingGTUs = new ArrayList<>();
-        for (HeadwayGTU gtu : conflict.getUpstreamConflictingGTUs())
+        List<HeadwayGtu> conflictingGTUs = new ArrayList<>();
+        for (HeadwayGtu gtu : conflict.getUpstreamConflictingGTUs())
         {
             if (isOnRoute(conflict.getConflictingLink(), gtu))
             {
@@ -452,7 +452,7 @@ public final class ConflictUtil
                 break;
             }
         }
-        for (HeadwayGTU gtu : conflict.getDownstreamConflictingGTUs())
+        for (HeadwayGtu gtu : conflict.getDownstreamConflictingGTUs())
         {
             if (gtu.isParallel())
             {
@@ -471,7 +471,7 @@ public final class ConflictUtil
         }
 
         Acceleration a = Acceleration.POS_MAXVALUE;
-        for (HeadwayGTU conflictingGTU : conflictingGTUs)
+        for (HeadwayGtu conflictingGTU : conflictingGTUs)
         {
             AnticipationInfo tteC;
             Length distance;
@@ -531,13 +531,13 @@ public final class ConflictUtil
             final CarFollowingModel carFollowingModel, final Speed speed, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException
     {
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> conflicting = conflict.getUpstreamConflictingGTUs();
+        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> conflicting = conflict.getUpstreamConflictingGTUs();
         if (conflicting.isEmpty() || conflicting.first().isParallel())
         {
             return Acceleration.POS_MAXVALUE;
         }
         // TODO: this check is simplistic, designed quick and dirty
-        HeadwayGTU conflictingGtu = conflicting.first();
+        HeadwayGtu conflictingGtu = conflicting.first();
         double tteC = conflictingGtu.getDistance().si / conflictingGtu.getSpeed().si;
         if (tteC < conflict.getDistance().si / speed.si + 3.0)
         {
@@ -550,7 +550,7 @@ public final class ConflictUtil
      * Approach a priority conflict. Stopping is applied to give way to conflicting traffic in case congestion is present on the
      * own lane. This is courtesy yielding.
      * @param conflict HeadwayConflict; conflict to approach
-     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leading vehicles in own lane
+     * @param leaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leading vehicles in own lane
      * @param speed Speed; current speed
      * @param vehicleLength Length; vehicle length
      * @param parameters Parameters; parameters
@@ -559,7 +559,7 @@ public final class ConflictUtil
      * @throws ParameterException if parameter B is not defined
      */
     public static boolean stopForPriorityConflict(final HeadwayConflict conflict,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Length vehicleLength,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Speed speed, final Length vehicleLength,
             final Parameters parameters, final Length prevEnd) throws ParameterException
     {
 
@@ -567,7 +567,7 @@ public final class ConflictUtil
         Length passable = passableDistance(vehicleLength, parameters);
         if (prevEnd != null && conflict.isMerge() && !conflict.getDownstreamConflictingGTUs().isEmpty())
         {
-            HeadwayGTU conflictingGTU = conflict.getDownstreamConflictingGTUs().first();
+            HeadwayGtu conflictingGTU = conflict.getDownstreamConflictingGTUs().first();
             Acceleration b = parameters.getParameter(BCRIT);
             double t = conflictingGTU.getSpeed().divide(b).si;
             Length stopDistance = Length.instantiateSI(conflictingGTU.getSpeed().si * t - .5 * b.si * t * t);
@@ -594,7 +594,7 @@ public final class ConflictUtil
         }
         else
         {
-            HeadwayGTU conflictingGTU = conflict.getUpstreamConflictingGTUs().first();
+            HeadwayGtu conflictingGTU = conflict.getUpstreamConflictingGTUs().first();
             if (conflictingGTU.getSpeed().eq0() && conflictingGTU.isAhead()
                     && conflictingGTU.getDistance().gt(parameters.getParameter(S0)))
             {
@@ -612,7 +612,7 @@ public final class ConflictUtil
         {
             // for ourselves
             Length required = conflict.getDistance().plus(typeCorrection).plus(passableDistance(vehicleLength, parameters));
-            for (HeadwayGTU leader : leaders)
+            for (HeadwayGtu leader : leaders)
             {
                 if (leader.getSpeed().eq0())
                 {
@@ -632,7 +632,7 @@ public final class ConflictUtil
     /**
      * Approach a give-way conflict.
      * @param conflict HeadwayConflict; conflict
-     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leaders
+     * @param leaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leaders
      * @param speed Speed; current speed
      * @param acceleration Acceleration; current acceleration
      * @param vehicleLength Length; vehicle length
@@ -646,7 +646,7 @@ public final class ConflictUtil
      */
     @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
     public static boolean stopForGiveWayConflict(final HeadwayConflict conflict,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Acceleration acceleration,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Speed speed, final Acceleration acceleration,
             final Length vehicleLength, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
             final CarFollowingModel carFollowingModel, final ParameterTypeAcceleration bType, final Length prevEnd)
             throws ParameterException
@@ -699,7 +699,7 @@ public final class ConflictUtil
         {
             // stop for merge (and previous conflict) if we are likely to stop partially on the previous conflict
             Length preGap = conflict.getDistance().minus(prevEnd);
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downs = conflict.getDownstreamConflictingGTUs();
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> downs = conflict.getDownstreamConflictingGTUs();
             if (!downs.isEmpty() && downs.first().isParallel())
             {
                 distance = passableDistance(vehicleLength, parameters).minus(preGap).minus(downs.first().getOverlapRear());
@@ -723,8 +723,8 @@ public final class ConflictUtil
             }
         }
 
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> conflictingVehiclesCollectable = conflict.getUpstreamConflictingGTUs();
-        Iterable<HeadwayGTU> conflictingVehicles;
+        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> conflictingVehiclesCollectable = conflict.getUpstreamConflictingGTUs();
+        Iterable<HeadwayGtu> conflictingVehicles;
         if (conflictingVehiclesCollectable.isEmpty())
         {
             if (conflict.getConflictingTrafficLightDistance() == null)
@@ -733,11 +733,11 @@ public final class ConflictUtil
                 try
                 {
                     RoadNetwork network = conflict.getConflictingLink().getNetwork();
-                    HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(),
+                    HeadwayGtuSimple conflictGtu = new HeadwayGtuSimple("virtual " + UUID.randomUUID().toString(),
                             network.getGtuType(GtuType.DEFAULTS.CAR), conflict.getConflictingVisibility(),
                             new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), conflict.getConflictingSpeedLimit(),
                             Acceleration.ZERO, Speed.ZERO);
-                    List<HeadwayGTU> conflictingVehiclesList = new ArrayList<>();
+                    List<HeadwayGtu> conflictingVehiclesList = new ArrayList<>();
                     conflictingVehiclesList.add(conflictGtu);
                     conflictingVehicles = conflictingVehiclesList;
                 }
@@ -755,7 +755,7 @@ public final class ConflictUtil
         }
         else
         {
-            HeadwayGTU conflicting = conflictingVehiclesCollectable.first();
+            HeadwayGtu conflicting = conflictingVehiclesCollectable.first();
             if (conflict.getConflictingTrafficLightDistance() != null && conflicting.isAhead()
                     && conflict.getConflictingTrafficLightDistance().lt(conflicting.getDistance())
                     && (conflicting.getSpeed().eq0() || conflicting.getAcceleration().lt0()))
@@ -769,7 +769,7 @@ public final class ConflictUtil
         // Loop over conflicting vehicles
         boolean first = true;
         boolean ignoreBeyondFirst = false;
-        for (HeadwayGTU conflictingVehicle : conflictingVehicles)
+        for (HeadwayGtu conflictingVehicle : conflictingVehicles)
         {
 
             // skip if not on route
@@ -791,7 +791,7 @@ public final class ConflictUtil
             }
             else
             {
-                if (conflictingVehicle instanceof HeadwayGTUSimple)
+                if (conflictingVehicle instanceof HeadwayGtuSimple)
                 {
                     tteCa = AnticipationInfo.anticipateMovement(conflictingVehicle.getDistance(), conflictingVehicle.getSpeed(),
                             conflictingVehicle.getAcceleration());
@@ -891,7 +891,7 @@ public final class ConflictUtil
     /**
      * Approach a stop conflict. Currently this is equal to approaching a give-way conflict.
      * @param conflict HeadwayConflict; conflict
-     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leaders
+     * @param leaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leaders
      * @param speed Speed; current speed
      * @param acceleration Acceleration; current acceleration
      * @param vehicleLength Length; vehicle length
@@ -905,7 +905,7 @@ public final class ConflictUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static boolean stopForStopConflict(final HeadwayConflict conflict,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Acceleration acceleration,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Speed speed, final Acceleration acceleration,
             final Length vehicleLength, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
             final CarFollowingModel carFollowingModel, final ParameterTypeAcceleration bType, final Length prevEnd)
             throws ParameterException
@@ -939,7 +939,7 @@ public final class ConflictUtil
      * @param gtu HeadwayGtu; gtu
      * @return whether the conflict is on the route of the given gtu
      */
-    private static boolean isOnRoute(final CrossSectionLink conflictingLink, final HeadwayGTU gtu)
+    private static boolean isOnRoute(final CrossSectionLink conflictingLink, final HeadwayGtu gtu)
     {
         try
         {
@@ -1023,7 +1023,7 @@ public final class ConflictUtil
          * @param gtu AbstractHeadwayGtu; GTU
          * @param time Time; estimated arrival time
          */
-        void setArrivalTime(final AbstractHeadwayGTU gtu, final Time time)
+        void setArrivalTime(final AbstractHeadwayGtu gtu, final Time time)
         {
             this.arrivalTimes.put(gtu.getId(), time);
         }
@@ -1033,7 +1033,7 @@ public final class ConflictUtil
          * @param gtu AbstractHeadwayGtu; GTU
          * @return estimated arrival time of given GTU
          */
-        Time getArrivalTime(final AbstractHeadwayGTU gtu)
+        Time getArrivalTime(final AbstractHeadwayGtu gtu)
         {
             return this.arrivalTimes.get(gtu.getId());
         }

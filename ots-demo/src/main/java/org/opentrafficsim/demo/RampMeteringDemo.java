@@ -60,12 +60,12 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.gtu.colorer.GtuTypeColorer;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.GTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGtuCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -76,9 +76,9 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -444,11 +444,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
      * Strategical planner generator. This class can be used as input in {@code ODOptions} to generate the right models with
      * different GTU types.
      */
-    private class ControlledStrategicalPlannerGenerator implements GTUCharacteristicsGeneratorOD
+    private class ControlledStrategicalPlannerGenerator implements GtuCharacteristicsGeneratorOD
     {
 
         /** Default generator. */
-        private DefaultGTUCharacteristicsGeneratorOD defaultGenerator = new DefaultGTUCharacteristicsGeneratorOD();
+        private DefaultGtuCharacteristicsGeneratorOD defaultGenerator = new DefaultGtuCharacteristicsGeneratorOD();
 
         /** Controlled planner factory. */
         private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> controlledPlannerFactory;
@@ -481,7 +481,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
                         @SuppressWarnings("synthetic-access")
                         @Override
-                        public LaneBasedTacticalPlanner create(final LaneBasedGTU gtu) throws GtuException
+                        public LaneBasedTacticalPlanner create(final LaneBasedGtu gtu) throws GtuException
                         {
                             // here the lateral control system is initiated
                             ParameterSet settings = new ParameterSet();
@@ -514,7 +514,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
+        public LaneBasedGtuCharacteristics draw(final Node origin, final Node destination, final Category category,
                 final StreamInterface randomStream) throws GtuException
         {
             GtuType gtuType = category.get(GtuType.class);
@@ -525,7 +525,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 VehicleModel vehicleModel = VehicleModel.MINMAX;
                 GtuCharacteristics gtuCharacteristics =
                         GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
-                return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.controlledPlannerFactory, route, origin,
+                return new LaneBasedGtuCharacteristics(gtuCharacteristics, this.controlledPlannerFactory, route, origin,
                         destination, vehicleModel);
             }
             // otherwise generate default characteristics
@@ -554,7 +554,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
          * @param gtu LaneBasedGtu; gtu
          * @param laneChangeSystem AutomaticLaneChangeSystem; lane change system
          */
-        ControlledTacticalPlanner(final LaneBasedGTU gtu, final AutomaticLaneChangeSystem laneChangeSystem)
+        ControlledTacticalPlanner(final LaneBasedGtu gtu, final AutomaticLaneChangeSystem laneChangeSystem)
         {
             super(new IDMPlus(), gtu, generatePerception(gtu));
             setDefaultIncentives();
@@ -567,15 +567,15 @@ public class RampMeteringDemo extends AbstractSimulationScript
          * @param gtu LaneBasedGtu; gtu
          * @return LanePerception lane perception
          */
-        private static LanePerception generatePerception(final LaneBasedGTU gtu)
+        private static LanePerception generatePerception(final LaneBasedGtu gtu)
         {
             CategoricalLanePerception perception = new CategoricalLanePerception(gtu);
-            perception.addPerceptionCategory(new DirectEgoPerception<LaneBasedGTU, Perception<LaneBasedGTU>>(perception));
+            perception.addPerceptionCategory(new DirectEgoPerception<LaneBasedGtu, Perception<LaneBasedGtu>>(perception));
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
             // TODO: perceived GTUs as first type
-            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGTUType.WRAP));
+            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
             perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
-            perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGTUType.WRAP));
+            perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGtuType.WRAP));
             return perception;
         }
 
@@ -692,7 +692,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 "Time after which cooperation starts (indicator).", Duration.instantiateSI(2.0), NumericConstraint.POSITIVE);
 
         /** GTU. */
-        private final LaneBasedGTU gtu;
+        private final LaneBasedGtu gtu;
 
         /** Car-following model for gap-acceptance. */
         private final CarFollowingModel carFollowingModel;
@@ -712,7 +712,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
          * @param carFollowingModel CarFollowingModel; car-following model
          * @param settings Parameters; system settings
          */
-        SyncAndAccept(final LaneBasedGTU gtu, final CarFollowingModel carFollowingModel, final Parameters settings)
+        SyncAndAccept(final LaneBasedGtu gtu, final CarFollowingModel carFollowingModel, final Parameters settings)
         {
             this.gtu = gtu;
             this.carFollowingModel = carFollowingModel;
@@ -754,11 +754,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
             if (since.gt(this.settings.getParameter(SYNCTIME))
                     || this.gtu.getSpeed().lt(this.settings.getParameter(ParameterTypes.VCONG)))
             {
-                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
                         neighbors.getLeaders(new RelativeLane(this.direction, 1));
                 if (!leaders.isEmpty())
                 {
-                    HeadwayGTU leader = leaders.first();
+                    HeadwayGtu leader = leaders.first();
                     Acceleration a = CarFollowingUtil.followSingleLeader(this.carFollowingModel, this.settings,
                             this.gtu.getSpeed(), sli, leader);
                     a = Acceleration.max(a, this.settings.getParameter(ParameterTypes.B).neg());
@@ -786,16 +786,16 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Checks whether a gap can be accepted.
-         * @param neighbors Set&lt;HeadwayGTU&gt;; neighbors
+         * @param neighbors Set&lt;HeadwayGtu&gt;; neighbors
          * @param sli SpeedLimitInfo; speed limit info
          * @param leaders boolean; whether we are dealing with leaders, or followers
          * @return boolean; whether the gap is accepted
          * @throws ParameterException if a parameter is not defined
          */
-        private boolean acceptGap(final Set<HeadwayGTU> neighbors, final SpeedLimitInfo sli, final boolean leaders)
+        private boolean acceptGap(final Set<HeadwayGtu> neighbors, final SpeedLimitInfo sli, final boolean leaders)
                 throws ParameterException
         {
-            for (HeadwayGTU neighbor : neighbors)
+            for (HeadwayGtu neighbor : neighbors)
             {
                 Acceleration a = CarFollowingUtil.followSingleLeader(this.carFollowingModel, this.settings,
                         leaders ? this.gtu.getSpeed() : neighbor.getSpeed(), sli, neighbor.getDistance(),

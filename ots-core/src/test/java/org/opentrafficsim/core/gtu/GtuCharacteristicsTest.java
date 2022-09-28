@@ -21,7 +21,7 @@ import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 
 /**
- * Test the GTUCharacteristics class
+ * Test the GtuCharacteristics class
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -34,15 +34,15 @@ public class GtuCharacteristicsTest implements OTSModelInterface
     private static final long serialVersionUID = 20160311L;
 
     /**
-     * Test the GTUCharacteristics class.
+     * Test the GtuCharacteristics class.
      * @throws SimRuntimeException should never happen
      * @throws NamingException should never happen
      */
     @Test
-    public final void testGTUCharacteristics() throws SimRuntimeException, NamingException
+    public final void testGtuCharacteristics() throws SimRuntimeException, NamingException
     {
         OTSNetwork network = new OTSNetwork("network", true, this.simulator);
-        // Make two sets of values so we can prove that the constructed GTUCharacteristics sets are really distinct.
+        // Make two sets of values so we can prove that the constructed GtuCharacteristics sets are really distinct.
         GtuType gtuTypeA = new GtuType("Type A", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         GtuType gtuTypeB = new GtuType("Type B", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         Length lengthA = new Length(5, LengthUnit.METER);

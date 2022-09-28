@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
@@ -38,7 +38,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
+public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
 {
     /** */
     private static final long serialVersionUID = 20170324L;
@@ -47,7 +47,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     private SpeedLimitInfo speedLimitInfo;
 
     /** Wrapped GTU. */
-    private final LaneBasedGTU gtu;
+    private final LaneBasedGtu gtu;
 
     /** Whether the GTU is facing the same direction. */
     private final boolean facingSameDirection;
@@ -59,7 +59,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * @param facingSameDirection boolean; whether the GTU is facing the same direction.
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final boolean facingSameDirection) throws GtuException
+    public HeadwayGtuReal(final LaneBasedGtu gtu, final Length distance, final boolean facingSameDirection) throws GtuException
     {
         super(distance);
         this.gtu = gtu;
@@ -75,7 +75,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * @param facingSameDirection boolean; whether the GTU is facing the same direction.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear,
+    public HeadwayGtuReal(final LaneBasedGtu gtu, final Length overlapFront, final Length overlap, final Length overlapRear,
             final boolean facingSameDirection) throws GtuException
     {
         super(overlapFront, overlap, overlapRear);
@@ -88,7 +88,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * @param wrappedGtu LaneBasedGtu; gtu to the the speed limit prospect for
      * @return speed limit prospect for given GTU
      */
-    private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU wrappedGtu)
+    private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGtu wrappedGtu)
     {
         SpeedLimitInfo sli = new SpeedLimitInfo();
         sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, wrappedGtu.getMaximumSpeed());
@@ -139,15 +139,15 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     /**
      * {@inheritDoc} <br>
      * <br>
-     * <b>Note: when moving a {@code HeadwayGTURealDirect}, only headway, speed and acceleration may be considered to be delayed
+     * <b>Note: when moving a {@code HeadwayGtuRealDirect}, only headway, speed and acceleration may be considered to be delayed
      * and anticipated. Other information is taken from the actual GTU at the time {@code moved()} is called.</b>
      */
     @Override
-    public final HeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    public final HeadwayGtu moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
         try
         {
-            return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
+            return new HeadwayGtuRealCopy(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
                     getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(),
                     getGtuStatus());
         }
@@ -162,30 +162,30 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * Returns an array with GTU status.
      * @return array with GTU status
      */
-    private GTUStatus[] getGtuStatus()
+    private GtuStatus[] getGtuStatus()
     {
-        EnumSet<GTUStatus> gtuStatus = EnumSet.noneOf(GTUStatus.class);
+        EnumSet<GtuStatus> gtuStatus = EnumSet.noneOf(GtuStatus.class);
         if (isLeftTurnIndicatorOn())
         {
-            gtuStatus.add(GTUStatus.LEFT_TURNINDICATOR);
+            gtuStatus.add(GtuStatus.LEFT_TURNINDICATOR);
         }
         if (isRightTurnIndicatorOn())
         {
-            gtuStatus.add(GTUStatus.RIGHT_TURNINDICATOR);
+            gtuStatus.add(GtuStatus.RIGHT_TURNINDICATOR);
         }
         if (isBrakingLightsOn())
         {
-            gtuStatus.add(GTUStatus.BRAKING_LIGHTS);
+            gtuStatus.add(GtuStatus.BRAKING_LIGHTS);
         }
         if (isEmergencyLightsOn())
         {
-            gtuStatus.add(GTUStatus.EMERGENCY_LIGHTS);
+            gtuStatus.add(GtuStatus.EMERGENCY_LIGHTS);
         }
         if (isHonking())
         {
-            gtuStatus.add(GTUStatus.HONK);
+            gtuStatus.add(GtuStatus.HONK);
         }
-        return gtuStatus.toArray(new GTUStatus[gtuStatus.size()]);
+        return gtuStatus.toArray(new GtuStatus[gtuStatus.size()]);
     }
 
     /** {@inheritDoc} */
@@ -292,7 +292,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     @Override
     public final String toString()
     {
-        return "HeadwayGTUReal [speedLimitInfo=" + this.speedLimitInfo + ", gtu=" + this.gtu + ", facingSameDirection="
+        return "HeadwayGtuReal [speedLimitInfo=" + this.speedLimitInfo + ", gtu=" + this.gtu + ", facingSameDirection="
                 + this.facingSameDirection + "]";
     }
 

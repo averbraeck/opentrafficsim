@@ -5,7 +5,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * <p>
@@ -16,7 +16,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayGTUPerceived extends HeadwayGTURealCopy
+public class HeadwayGtuPerceived extends HeadwayGtuRealCopy
 {
 
     /** */
@@ -29,13 +29,13 @@ public class HeadwayGTUPerceived extends HeadwayGTURealCopy
      * @param acceleration Acceleration; acceleration
      * @throws GtuException ...
      */
-    public HeadwayGTUPerceived(final LaneBasedGTU gtu, final Length distance, final Speed speed,
+    public HeadwayGtuPerceived(final LaneBasedGtu gtu, final Length distance, final Speed speed,
             final Acceleration acceleration) throws GtuException
     {
         super(gtu.getId(), gtu.getGtuType(), distance, gtu.getLength(), gtu.getWidth(), speed, acceleration,
                 gtu.getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()), getSpeedLimitInfo(gtu),
                 gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(),
-                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
+                getGtuStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
     }
 
     /**
@@ -47,13 +47,13 @@ public class HeadwayGTUPerceived extends HeadwayGTURealCopy
      * @param acceleration Acceleration; acceleration
      * @throws GtuException ...
      */
-    public HeadwayGTUPerceived(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap,
+    public HeadwayGtuPerceived(final LaneBasedGtu gtu, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GtuException
     {
         super(gtu.getId(), gtu.getGtuType(), overlapFront, overlap, overlapRear, gtu.getLength(), gtu.getWidth(), speed,
                 acceleration, gtu.getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()),
                 getSpeedLimitInfo(gtu), gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(),
-                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
+                getGtuStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
     }
 
 }

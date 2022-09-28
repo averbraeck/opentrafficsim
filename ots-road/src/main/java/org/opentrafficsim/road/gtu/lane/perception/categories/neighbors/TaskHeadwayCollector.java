@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionCollector;
@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Percept
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneBasedGTU, Duration>
+public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneBasedGtu, Duration>
 {
 
     /** Own speed. */
@@ -52,13 +52,13 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionAccumulator<LaneBasedGTU, Duration> getAccumulator()
+    public PerceptionAccumulator<LaneBasedGtu, Duration> getAccumulator()
     {
-        return new PerceptionAccumulator<LaneBasedGTU, Duration>()
+        return new PerceptionAccumulator<LaneBasedGtu, Duration>()
         {
             @SuppressWarnings("synthetic-access")
             @Override
-            public Intermediate<Duration> accumulate(final Intermediate<Duration> intermediate, final LaneBasedGTU object,
+            public Intermediate<Duration> accumulate(final Intermediate<Duration> intermediate, final LaneBasedGtu object,
                     final Length distance)
             {
                 intermediate.setObject(distance.divide(TaskHeadwayCollector.this.speed));

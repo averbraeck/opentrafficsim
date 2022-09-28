@@ -35,7 +35,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
+public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
 {
     /** */
     private static final long serialVersionUID = 20141025L;
@@ -65,7 +65,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @throws GtuException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedIndividualGTU(final String id, final GtuType gtuType, final Length length, final Length width,
+    public LaneBasedIndividualGtu(final String id, final GtuType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final Length front, final OTSSimulatorInterface simulator, final OTSRoadNetwork network)
             throws GtuException
     {
@@ -86,7 +86,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @throws GtuException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedIndividualGTU(final String id, final GtuType gtuType, final Length length, final Length width,
+    public LaneBasedIndividualGtu(final String id, final GtuType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final Length front, final Length centerOfGravity, final OTSSimulatorInterface simulator,
             final OTSRoadNetwork network) throws GtuException
     {
@@ -430,7 +430,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @return the built Car with the set properties
          * @throws Exception when not all required values have been set
          */
-        public final LaneBasedIndividualGTU build(
+        public final LaneBasedIndividualGtu build(
                 final LaneBasedStrategicalPlannerFactory<
                         ? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
                 final Route route, final Node origin, final Node destination) throws Exception
@@ -443,7 +443,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
                 // TODO Should throw a more specific Exception type
                 throw new GtuException("factory settings incomplete");
             }
-            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(this.id, this.gtuType, this.length, this.width,
+            LaneBasedIndividualGtu gtu = new LaneBasedIndividualGtu(this.id, this.gtuType, this.length, this.width,
                     this.maximumSpeed, this.front, this.simulator, this.network);
             gtu.setMaximumAcceleration(this.maximumAcceleration);
             gtu.setMaximumDeceleration(this.maximumDeceleration);

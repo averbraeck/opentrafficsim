@@ -8,7 +8,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
@@ -64,7 +64,7 @@ public interface LaneStructure
      * @return Map; sorted set of objects of requested type per lane
      * @throws GtuException if lane is not in current set
      */
-    <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(Class<T> clazz, LaneBasedGTU gtu,
+    <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(Class<T> clazz, LaneBasedGtu gtu,
             RelativePosition.TYPE pos) throws GtuException;
 
     /**
@@ -78,7 +78,7 @@ public interface LaneStructure
      * @return SortedSet; sorted set of objects of requested type
      * @throws GtuException if lane is not in current set
      */
-    <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(RelativeLane lane, Class<T> clazz, LaneBasedGTU gtu,
+    <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(RelativeLane lane, Class<T> clazz, LaneBasedGtu gtu,
             RelativePosition.TYPE pos) throws GtuException;
 
     /**
@@ -93,7 +93,7 @@ public interface LaneStructure
      * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(Class<T> clazz,
-            LaneBasedGTU gtu, RelativePosition.TYPE pos, Route route) throws GtuException;
+            LaneBasedGtu gtu, RelativePosition.TYPE pos, Route route) throws GtuException;
 
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
@@ -109,7 +109,7 @@ public interface LaneStructure
      * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjectsOnRoute(RelativeLane lane, Class<T> clazz,
-            LaneBasedGTU gtu, RelativePosition.TYPE pos, Route route) throws GtuException;
+            LaneBasedGtu gtu, RelativePosition.TYPE pos, Route route) throws GtuException;
 
     /**
      * Retrieve objects on a lane of a specific type. Returns upstream objects from the relative position for as far as the lane
@@ -122,7 +122,7 @@ public interface LaneStructure
      * @return SortedSet; sorted set of objects of requested type
      * @throws GtuException if lane is not in current set
      */
-    <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(RelativeLane lane, Class<T> clazz, LaneBasedGTU gtu,
+    <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(RelativeLane lane, Class<T> clazz, LaneBasedGtu gtu,
             RelativePosition.TYPE pos) throws GtuException;
 
     /**

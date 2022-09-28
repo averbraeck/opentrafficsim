@@ -7,7 +7,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlannerFactory;
@@ -90,7 +90,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route, final Node origin,
+    public final LaneBasedStrategicalPlanner create(final LaneBasedGtu gtu, final Route route, final Node origin,
             final Node destination) throws GtuException
     {
         LaneBasedStrategicalRoutePlanner strategicalPlanner;

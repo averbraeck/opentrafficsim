@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGTUType extends TemplateGtuType implements LaneBasedGTUCharacteristicsGenerator
+public class LaneBasedTemplateGtuType extends TemplateGtuType implements LaneBasedGtuCharacteristicsGenerator
 {
     /** */
     private static final long serialVersionUID = 20160101L;
@@ -49,7 +49,7 @@ public class LaneBasedTemplateGTUType extends TemplateGtuType implements LaneBas
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedTemplateGTUType(final GtuType gtuType, final Generator<Length> lengthGenerator,
+    public LaneBasedTemplateGtuType(final GtuType gtuType, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final Generator<Route> routeGenerator)
             throws NullPointerException
@@ -63,14 +63,14 @@ public class LaneBasedTemplateGTUType extends TemplateGtuType implements LaneBas
 
     /**
      * Generate the properties of the next GTU.
-     * @return the LaneBasedGTUCharacteristics with a drawn perception, strategical planner, and initial speed.
+     * @return the LaneBasedGtuCharacteristics with a drawn perception, strategical planner, and initial speed.
      * @throws ProbabilityException when a generator is improperly configured
      * @throws ParameterException in case of a parameter problem.
      */
     @Override
-    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
+    public final LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException
     {
-        return new LaneBasedGTUCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw(), null,
+        return new LaneBasedGtuCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw(), null,
                 null, VehicleModel.MINMAX);
     }
 
@@ -79,7 +79,7 @@ public class LaneBasedTemplateGTUType extends TemplateGtuType implements LaneBas
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("LaneBasedGTUTemplate [%s, %s, %s]", this.strategicalPlannerFactory, this.initialSpeedGenerator,
+        return String.format("LaneBasedGtuTemplate [%s, %s, %s]", this.strategicalPlannerFactory, this.initialSpeedGenerator,
                 super.toString());
     }
 

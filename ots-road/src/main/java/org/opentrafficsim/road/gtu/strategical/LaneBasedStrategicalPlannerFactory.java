@@ -6,7 +6,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * A factory class is used to generate strategical planners as the strategical planner is state-full.
@@ -31,7 +31,7 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
      * @return strategical planner for the given GTU
      * @throws GtuException if the gtu is not suitable in any way for the creation of the strategical planner
      */
-    T create(LaneBasedGTU gtu, Route route, Node origin, Node destination) throws GtuException;
+    T create(LaneBasedGtu gtu, Route route, Node origin, Node destination) throws GtuException;
 
     /**
      * Peek to see the desired speed of the next GTU to be generated at the given location. The default implementation returns

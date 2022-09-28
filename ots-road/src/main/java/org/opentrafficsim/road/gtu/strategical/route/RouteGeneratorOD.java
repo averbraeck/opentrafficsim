@@ -168,7 +168,7 @@ public interface RouteGeneratorOD
         @Override
         public String toString()
         {
-            return "ShortestRouteGTUCharacteristicsGeneratorOD [shortestRouteCache=" + this.shortestRouteCache + "]";
+            return "ShortestRouteGtuCharacteristicsGeneratorOD [shortestRouteCache=" + this.shortestRouteCache + "]";
         }
     };
 

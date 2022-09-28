@@ -100,13 +100,13 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.GtuGeneratorQueue;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
-import org.opentrafficsim.road.gtu.generator.od.GTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -114,7 +114,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
@@ -563,7 +563,7 @@ public class LmrsStrategies implements EventListenerInterface
             // Vehicle-driver classes
             // characteristics generator using the input available in this context
             /** Characteristics generator. */
-            class LmrsStrategyCharacteristicsGenerator implements GTUCharacteristicsGeneratorOD
+            class LmrsStrategyCharacteristicsGenerator implements GtuCharacteristicsGeneratorOD
             {
 
                 /** Distributed maximum speed for trucks. */
@@ -580,7 +580,7 @@ public class LmrsStrategies implements EventListenerInterface
 
                 /** {@inheritDoc} */
                 @Override
-                public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
+                public LaneBasedGtuCharacteristics draw(final Node origin, final Node destination, final Category category,
                         final StreamInterface randomStream) throws GtuException
                 {
                     GtuType gtuType = category.get(GtuType.class);
@@ -594,7 +594,7 @@ public class LmrsStrategies implements EventListenerInterface
                                 gtuCharacteristics.getWidth(), this.vTruck.draw(), gtuCharacteristics.getMaximumAcceleration(),
                                 gtuCharacteristics.getMaximumDeceleration(), gtuCharacteristics.getFront());
                     }
-                    return new LaneBasedGTUCharacteristics(gtuCharacteristics, LmrsStrategies.this.factories.get(gtuType), null,
+                    return new LaneBasedGtuCharacteristics(gtuCharacteristics, LmrsStrategies.this.factories.get(gtuType), null,
                             origin, destination, VehicleModel.NONE);
                 }
             }
@@ -603,12 +603,12 @@ public class LmrsStrategies implements EventListenerInterface
             {
                 /** {@inheritDoc} */
                 @Override
-                public LanePerception generatePerception(final LaneBasedGTU gtu)
+                public LanePerception generatePerception(final LaneBasedGtu gtu)
                 {
                     LanePerception perception = new CategoricalLanePerception(gtu);
                     perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
                     perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
-                    perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGTUType.WRAP));
+                    perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
                     perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
                     return perception;
                 }
@@ -946,7 +946,7 @@ public class LmrsStrategies implements EventListenerInterface
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(LaneBasedGTU.LANE_CHANGE_EVENT))
+        if (event.getType().equals(LaneBasedGtu.LANE_CHANGE_EVENT))
         {
             Object[] payload = (Object[]) event.getContent();
             Gtu gtu = this.network.getGTU((String) payload[0]);
@@ -969,11 +969,11 @@ public class LmrsStrategies implements EventListenerInterface
         }
         else if (event.getType().equals(Network.GTU_ADD_EVENT))
         {
-            this.network.getGTU((String) event.getContent()).addListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
+            this.network.getGTU((String) event.getContent()).addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
         }
         else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
         {
-            this.network.getGTU((String) event.getContent()).removeListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
+            this.network.getGTU((String) event.getContent()).removeListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
         }
         else if (event.getType().equals(ReplicationInterface.END_REPLICATION_EVENT))
         {
@@ -1055,7 +1055,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             Double sig = gtu.getParameters().getParameterOrNull(LmrsParameters.SOCIO);
             if (sig == null)
@@ -1071,7 +1071,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative;
         }
@@ -1127,7 +1127,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             Speed vGn = gtu.getParameters().getParameterOrNull(LmrsParameters.VGAIN);
             if (vGn == null)
@@ -1143,7 +1143,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative;
         }
@@ -1199,7 +1199,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             Speed vDes = gtu.getDesiredSpeed();
             if (vDes == null)
@@ -1215,7 +1215,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative;
         }
@@ -1271,7 +1271,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             double vDes0;
             try
@@ -1289,7 +1289,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative;
         }

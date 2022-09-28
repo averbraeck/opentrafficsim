@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -39,13 +39,13 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     private Iterator<PrimaryIteratorEntry> primaryIterator;
 
     /** Perceiving GTU. */
-    private final LaneBasedGTU gtu;
+    private final LaneBasedGtu gtu;
 
     /**
      * Constructor.
      * @param perceivingGtu LaneBasedGtu; perceiving GTU
      */
-    protected AbstractPerceptionReiterable(final LaneBasedGTU perceivingGtu)
+    protected AbstractPerceptionReiterable(final LaneBasedGtu perceivingGtu)
     {
         this.gtu = perceivingGtu;
     }
@@ -54,7 +54,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
      * Returns the GTU.
      * @return LaneBasedGtu; GTU
      */
-    protected LaneBasedGTU getGtu()
+    protected LaneBasedGtu getGtu()
     {
         return this.gtu;
     }
@@ -87,7 +87,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
      * @throws GtuException on exception
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    protected abstract H perceive(LaneBasedGTU perceivingGtu, U object, Length distance)
+    protected abstract H perceive(LaneBasedGtu perceivingGtu, U object, Length distance)
             throws GtuException, ParameterException;
 
     /** {@inheritDoc} */

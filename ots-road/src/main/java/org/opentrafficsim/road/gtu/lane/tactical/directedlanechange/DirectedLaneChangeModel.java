@@ -10,7 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
@@ -47,7 +47,7 @@ public interface DirectedLaneChangeModel
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    DirectedLaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGTU gtu, LateralDirectionality direction,
+    DirectedLaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGtu gtu, LateralDirectionality direction,
             Collection<Headway> sameLaneTraffic, Collection<Headway> otherLaneTraffic, Length maxDistance, Speed speedLimit,
             Acceleration otherLaneRouteIncentive, Acceleration laneChangeThreshold, Duration laneChangeTime)
             throws GtuException, ParameterException, OperationalPlanException;

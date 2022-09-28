@@ -47,7 +47,7 @@ public interface NonDirectionalOccupancySensor extends Serializable, Identifiabl
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancySensor. <br>
-     * Payload: Object[] {String sensorId, NonDirectionalOccupancySensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE
+     * Payload: Object[] {String sensorId, NonDirectionalOccupancySensor sensor, LaneBasedGtu gtu, RelativePosition.TYPE
      * relativePosition}
      */
     TimedEventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT =
@@ -55,7 +55,7 @@ public interface NonDirectionalOccupancySensor extends Serializable, Identifiabl
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the exit of an NonDirectionalOccupancySensor. <br>
-     * Payload: Object[] {String sensorId, NonDirectionalOccupancySensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE
+     * Payload: Object[] {String sensorId, NonDirectionalOccupancySensor sensor, LaneBasedGtu gtu, RelativePosition.TYPE
      * relativePosition}
      */
     TimedEventType NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT =

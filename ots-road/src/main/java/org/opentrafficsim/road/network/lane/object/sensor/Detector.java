@@ -30,7 +30,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -51,7 +51,7 @@ public class Detector extends AbstractSensor
     /** */
     private static final long serialVersionUID = 20180312L;
 
-    /** Trigger event. Payload: [Id of LaneBasedGTU]. */
+    /** Trigger event. Payload: [Id of LaneBasedGtu]. */
     public static final TimedEventType DETECTOR_TRIGGERED = new TimedEventType("DUAL_LOOP_DETECTOR.TRIGGER",
             new MetaData("Dual loop detector triggered", "Dual loop detector triggered",
                     new ObjectDescriptor[] {new ObjectDescriptor("Id of GTU", "Id of GTU", String.class)}));
@@ -81,13 +81,13 @@ public class Detector extends AbstractSensor
         }
 
         @Override
-        public Double accumulateEntry(final Double cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative + gtu.getSpeed().si;
         }
 
         @Override
-        public Double accumulateExit(final Double cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative;
         }
@@ -133,13 +133,13 @@ public class Detector extends AbstractSensor
         }
 
         @Override
-        public Double accumulateEntry(final Double cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative + (1.0 / gtu.getSpeed().si);
         }
 
         @Override
-        public Double accumulateExit(final Double cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative;
         }
@@ -185,13 +185,13 @@ public class Detector extends AbstractSensor
         }
 
         @Override
-        public Double accumulateEntry(final Double cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative + ((gtu.getLength().si + loopDetector.getLength().si) / gtu.getSpeed().si);
         }
 
         @Override
-        public Double accumulateExit(final Double cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final Detector loopDetector)
         {
             return cumulative;
         }
@@ -238,7 +238,7 @@ public class Detector extends AbstractSensor
                 }
 
                 @Override
-                public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu,
+                public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGtu gtu,
                         final Detector loopDetector)
                 {
                     cumulative.add(gtu.getSimulator().getSimulatorTime().si);
@@ -246,7 +246,7 @@ public class Detector extends AbstractSensor
                 }
 
                 @Override
-                public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu,
+                public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGtu gtu,
                         final Detector loopDetector)
                 {
                     return cumulative;
@@ -377,7 +377,7 @@ public class Detector extends AbstractSensor
             /** {@inheritDoc} */
             @SuppressWarnings("synthetic-access")
             @Override
-            protected void triggerResponse(final LaneBasedGTU gtu)
+            protected void triggerResponse(final LaneBasedGtu gtu)
             {
                 for (DetectorMeasurement<?, ?> measurement : Detector.this.cumulDataMap.keySet())
                 {
@@ -410,7 +410,7 @@ public class Detector extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    protected void triggerResponse(final LaneBasedGTU gtu)
+    protected void triggerResponse(final LaneBasedGtu gtu)
     {
         this.periodCount++;
         this.overallCount++;
@@ -429,7 +429,7 @@ public class Detector extends AbstractSensor
      * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
-    <C> void accumulate(final DetectorMeasurement<C, ?> measurement, final LaneBasedGTU gtu, final boolean front)
+    <C> void accumulate(final DetectorMeasurement<C, ?> measurement, final LaneBasedGtu gtu, final boolean front)
     {
         if (front)
         {
@@ -769,7 +769,7 @@ public class Detector extends AbstractSensor
          * @param loopDetector Detector; loop detector
          * @return C; accumulated value
          */
-        C accumulateEntry(C cumulative, LaneBasedGTU gtu, Detector loopDetector);
+        C accumulateEntry(C cumulative, LaneBasedGtu gtu, Detector loopDetector);
 
         /**
          * Returns an accumulated value for when the rear leaves the detector. GTU's may trigger an exit without having
@@ -779,7 +779,7 @@ public class Detector extends AbstractSensor
          * @param loopDetector Detector; loop detector
          * @return C; accumulated value
          */
-        C accumulateExit(C cumulative, LaneBasedGTU gtu, Detector loopDetector);
+        C accumulateExit(C cumulative, LaneBasedGtu gtu, Detector loopDetector);
 
         /**
          * Returns whether the measurement aggregates every aggregation period (or only over the entire simulation).
@@ -847,7 +847,7 @@ public class Detector extends AbstractSensor
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGTU gtu,
+        public PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final Detector loopDetector)
         {
             Time now = gtu.getSimulator().getSimulatorAbsTime();
@@ -871,7 +871,7 @@ public class Detector extends AbstractSensor
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public PlatoonMeasurement accumulateExit(final PlatoonMeasurement cumulative, final LaneBasedGTU gtu,
+        public PlatoonMeasurement accumulateExit(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final Detector loopDetector)
         {
             int index = cumulative.enteredGTUs.indexOf(gtu);
@@ -951,7 +951,7 @@ public class Detector extends AbstractSensor
         private List<Integer> platoons = new ArrayList<>();
 
         /** GTU's currently on the detector, some may have left by a lane change. */
-        private List<LaneBasedGTU> enteredGTUs = new ArrayList<>();
+        private List<LaneBasedGtu> enteredGTUs = new ArrayList<>();
     }
 
 }

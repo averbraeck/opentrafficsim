@@ -27,7 +27,7 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
 
@@ -66,7 +66,7 @@ public class TrafficLightSensor extends EventProducer
     private final FlankSensor exitB;
 
     /** GTUs detected by the upSensor, but not yet removed by the downSensor. */
-    private final Set<LaneBasedGTU> currentGTUs = new LinkedHashSet<>();
+    private final Set<LaneBasedGtu> currentGTUs = new LinkedHashSet<>();
 
     /** The lanes that the detector (partly) covers. */
     private final Set<Lane> lanes = new LinkedHashSet<>();
@@ -235,7 +235,7 @@ public class TrafficLightSensor extends EventProducer
      * Add a GTU to the set.
      * @param gtu LaneBasedGtu; the GTU that must be added
      */
-    protected final void addGTU(final LaneBasedGTU gtu)
+    protected final void addGTU(final LaneBasedGtu gtu)
     {
         if (this.currentGTUs.add(gtu) && this.currentGTUs.size() == 1)
         {
@@ -248,7 +248,7 @@ public class TrafficLightSensor extends EventProducer
      * Remove a GTU from the set.
      * @param gtu LaneBasedGtu; the GTU that must be removed
      */
-    protected final void removeGTU(final LaneBasedGTU gtu)
+    protected final void removeGTU(final LaneBasedGtu gtu)
     {
         if (this.currentGTUs.remove(gtu) && this.currentGTUs.size() == 0)
         {
@@ -263,7 +263,7 @@ public class TrafficLightSensor extends EventProducer
     {
         // System.out.println("Received notification: " + event);
         String gtuId = (String) ((Object[]) event.getContent())[0];
-        LaneBasedGTU gtu = (LaneBasedGTU) this.network.getGTU(gtuId);
+        LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId);
         if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
         {
             if (!this.currentGTUs.contains(gtu))
@@ -480,7 +480,7 @@ public class TrafficLightSensor extends EventProducer
      * @param sensor FlankSensor; the sensor that was triggered
      * @param gtu LaneBasedGtu; the gtu that triggered the flank sensor
      */
-    public final void signalDetection(final FlankSensor sensor, final LaneBasedGTU gtu)
+    public final void signalDetection(final FlankSensor sensor, final LaneBasedGtu gtu)
     {
         GTUDirectionality gtuDirection = null;
         try

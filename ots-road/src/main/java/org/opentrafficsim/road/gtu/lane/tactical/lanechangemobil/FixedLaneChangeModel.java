@@ -11,10 +11,10 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 
 /**
  * Dummy lane change model with totally predictable results (used for testing).
@@ -47,15 +47,15 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
-    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
+    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
             final Collection<Headway> sameLaneTraffic, final Collection<Headway> rightLaneTraffic,
             final Collection<Headway> leftLaneTraffic, final Speed speedLimit, final Acceleration preferredLaneRouteIncentive,
             final Acceleration laneChangeThreshold, final Acceleration nonPreferredLaneRouteIncentive)
             throws GtuException, ParameterException
     {
         Length headway = gtu.getParameters().getParameter(LOOKAHEAD);
-        GTUFollowingModelOld gtuFollowingModel =
-                (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
+        GtuFollowingModelOld gtuFollowingModel =
+                (GtuFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
         if (null == this.laneChange)
         {
             return new LaneMovementStep(gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneTraffic, headway, speedLimit)

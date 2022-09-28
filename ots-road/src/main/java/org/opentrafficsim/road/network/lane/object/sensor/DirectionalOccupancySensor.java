@@ -47,13 +47,13 @@ public interface DirectionalOccupancySensor extends Serializable, Identifiable
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of an OccupancySensor. <br>
-     * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE relativePosition}
+     * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGtu gtu, RelativePosition.TYPE relativePosition}
      */
     EventType DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT = new EventType("DIRECTIONALOCCUPANCYSENSOR.TRIGGER.ENTRY");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the exit of an OccupancySensor. <br>
-     * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGTU gtu, RelativePosition.TYPE relativePosition}
+     * Payload: Object[] {String sensorId, Sensor sensor, LaneBasedGtu gtu, RelativePosition.TYPE relativePosition}
      */
     EventType DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT = new EventType("DIRECTIONALOCCUPANCYSENSOR.TRIGGER.EXIT");
 

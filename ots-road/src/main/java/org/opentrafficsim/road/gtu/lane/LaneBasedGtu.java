@@ -37,9 +37,9 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface LaneBasedGTU extends Gtu
+public interface LaneBasedGtu extends Gtu
 {
-    /** @return the road network to which the LaneBasedGTU belongs */
+    /** @return the road network to which the LaneBasedGtu belongs */
     RoadNetwork getNetwork();
 
     /** {@inheritDoc} */

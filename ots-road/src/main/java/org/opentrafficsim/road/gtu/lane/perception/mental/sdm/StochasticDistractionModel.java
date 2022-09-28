@@ -16,7 +16,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
@@ -83,7 +83,7 @@ public class StochasticDistractionModel implements EventListenerInterface
      * @param scheduleNext boolean; whether to schedule the next distraction (not if starting from queue)
      * @throws SimRuntimeException on time error
      */
-    public void startDistraction(final LaneBasedGTU gtu, final Distraction distraction, final boolean scheduleNext)
+    public void startDistraction(final LaneBasedGtu gtu, final Distraction distraction, final boolean scheduleNext)
             throws SimRuntimeException
     {
         if (gtu.isDestroyed())
@@ -127,7 +127,7 @@ public class StochasticDistractionModel implements EventListenerInterface
      * @param task Task; task to stop
      * @throws SimRuntimeException on time error
      */
-    public void stopDistraction(final LaneBasedGTU gtu, final Task task) throws SimRuntimeException
+    public void stopDistraction(final LaneBasedGtu gtu, final Task task) throws SimRuntimeException
     {
         if (gtu.isDestroyed())
         {
@@ -166,7 +166,7 @@ public class StochasticDistractionModel implements EventListenerInterface
         else if (event.getType().equals(Gtu.INIT_EVENT))
         {
             String gtuId = (String) ((Object[]) event.getContent())[0];
-            LaneBasedGTU gtu = (LaneBasedGTU) this.network.getGTU(gtuId);
+            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId);
             Mental mental = gtu.getTacticalPlanner().getPerception().getMental();
             if (mental != null && mental instanceof Fuller)
             {

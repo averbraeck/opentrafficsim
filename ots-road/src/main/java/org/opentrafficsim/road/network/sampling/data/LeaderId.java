@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.sampling.data;
 import java.util.Iterator;
 
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeString;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.network.sampling.GtuData;
@@ -39,7 +39,7 @@ public class LeaderId extends ExtendedDataTypeString<GtuData>
         {
             throw new RuntimeException("Leader id can only be stored in trajectories if the GTU's have NeighborsPerception.");
         }
-        Iterator<LaneBasedGTU> it = neigbors.getLeaders(RelativeLane.CURRENT).underlying();
+        Iterator<LaneBasedGtu> it = neigbors.getLeaders(RelativeLane.CURRENT).underlying();
         return it.hasNext() ? it.next().getId() : "";
     }
 

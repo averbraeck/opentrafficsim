@@ -36,7 +36,7 @@ import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
@@ -329,7 +329,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             {
                 boolean generateTruck = this.stream.nextDouble() > this.carProbability;
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
+                LaneBasedIndividualGtu gtu = new LaneBasedIndividualGtu("" + (++this.carsCreated),
                         this.network.getGtuType(GtuType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
                         new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);

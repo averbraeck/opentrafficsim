@@ -9,12 +9,12 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -49,7 +49,7 @@ public interface Cooperation extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGTU leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
+            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
                     relativeLane), perception, RelativeLane.CURRENT))
             {
@@ -87,10 +87,10 @@ public interface Cooperation extends LmrsParameters
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             NeighborsPerception neighbours = perception.getPerceptionCategory(NeighborsPerception.class);
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
             Speed thresholdSpeed = Speed.instantiateSI(40.0 / 3.6);
             boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
-            for (HeadwayGTU leader : Synchronization.removeAllUpstreamOfConflicts(
+            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(
                     Synchronization.removeAllUpstreamOfConflicts(neighbours.getLeaders(relativeLane), perception, relativeLane),
                     perception, RelativeLane.CURRENT))
             {
@@ -129,7 +129,7 @@ public interface Cooperation extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGTU leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
+            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
                     relativeLane), perception, RelativeLane.CURRENT))
             {

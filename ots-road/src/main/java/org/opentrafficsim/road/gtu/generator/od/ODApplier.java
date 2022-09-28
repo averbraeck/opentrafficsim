@@ -32,11 +32,11 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.headway.Arrivals;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
@@ -350,7 +350,7 @@ public final class ODApplier
                 HeadwayDistribution randomization = odOptions.get(ODOptions.HEADWAY_DIST, lane, o, linkType);
                 ArrivalsHeadwayGenerator headwayGenerator =
                         new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
-                GTUCharacteristicsGeneratorODWrapper characteristicsGenerator = new GTUCharacteristicsGeneratorODWrapper(root,
+                GtuCharacteristicsGeneratorODWrapper characteristicsGenerator = new GtuCharacteristicsGeneratorODWrapper(root,
                         simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType), stream);
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
@@ -358,7 +358,7 @@ public final class ODApplier
                 // and finally, the generator
                 try
                 {
-                    LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
+                    LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
                             GeneratorPositions.create(initialPosition, stream, biases, linkWeights, viaNodes), network,
                             simulator, roomChecker, idGenerator);
                     generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC_DIST, lane, o, linkType));
@@ -834,7 +834,7 @@ public final class ODApplier
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private static class GTUCharacteristicsGeneratorODWrapper implements LaneBasedGTUCharacteristicsGenerator
+    private static class GtuCharacteristicsGeneratorODWrapper implements LaneBasedGtuCharacteristicsGenerator
     {
 
         /** Root node with origin. */
@@ -844,7 +844,7 @@ public final class ODApplier
         private final OTSSimulatorInterface simulator;
 
         /** Characteristics generator based on OD information. */
-        private final GTUCharacteristicsGeneratorOD characteristicsGenerator;
+        private final GtuCharacteristicsGeneratorOD characteristicsGenerator;
 
         /** Stream for random numbers. */
         private final StreamInterface randomStream;
@@ -852,11 +852,11 @@ public final class ODApplier
         /**
          * @param root DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; root node with origin
          * @param simulator OTSSimulatorInterface; simulator
-         * @param characteristicsGenerator GTUCharacteristicsGeneratorOD; characteristics generator based on OD information
+         * @param characteristicsGenerator GtuCharacteristicsGeneratorOD; characteristics generator based on OD information
          * @param randomStream StreamInterface; stream for random numbers
          */
-        GTUCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OTSSimulatorInterface simulator, final GTUCharacteristicsGeneratorOD characteristicsGenerator,
+        GtuCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
+                final OTSSimulatorInterface simulator, final GtuCharacteristicsGeneratorOD characteristicsGenerator,
                 final StreamInterface randomStream)
         {
             this.root = root;
@@ -867,7 +867,7 @@ public final class ODApplier
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+        public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
         {
             // obtain node objects
             Time time = this.simulator.getSimulatorAbsTime();
@@ -876,7 +876,7 @@ public final class ODApplier
             Node destination = destinationNode.getObject();
             Category category = destinationNode.draw(time).getObject();
             // forward to lower-level generator
-            // XXX typically calls DefaultGTUCharacteristicsGeneratorOD.draw(...)
+            // XXX typically calls DefaultGtuCharacteristicsGeneratorOD.draw(...)
             return this.characteristicsGenerator.draw(origin, destination, category, this.randomStream);
         }
 
@@ -884,7 +884,7 @@ public final class ODApplier
         @Override
         public String toString()
         {
-            return "GTUCharacteristicsGeneratorODWrapper [root=" + this.root + ", simulator=" + this.simulator
+            return "GtuCharacteristicsGeneratorODWrapper [root=" + this.root + ", simulator=" + this.simulator
                     + ", characteristicsGenerator=" + this.characteristicsGenerator + ", randomStream=" + this.randomStream
                     + "]";
         }
@@ -906,21 +906,21 @@ public final class ODApplier
     {
 
         /** Main generator for GTU's. */
-        private final LaneBasedGTUGenerator generator;
+        private final LaneBasedGtuGenerator generator;
 
         /** Generator of headways. */
         private final Generator<Duration> headwayGenerator;
 
         /** Generator of GTU characteristics. */
-        private final LaneBasedGTUCharacteristicsGenerator characteristicsGenerator;
+        private final LaneBasedGtuCharacteristicsGenerator characteristicsGenerator;
 
         /**
-         * @param generator LaneBasedGTUGenerator; main generator for GTU's
+         * @param generator LaneBasedGtuGenerator; main generator for GTU's
          * @param headwayGenerator Generator&lt;Duration&gt;; generator of headways
-         * @param characteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of GTU characteristics
+         * @param characteristicsGenerator LaneBasedGtuCharacteristicsGenerator; generator of GTU characteristics
          */
-        public GeneratorObjects(final LaneBasedGTUGenerator generator, final Generator<Duration> headwayGenerator,
-                final LaneBasedGTUCharacteristicsGenerator characteristicsGenerator)
+        public GeneratorObjects(final LaneBasedGtuGenerator generator, final Generator<Duration> headwayGenerator,
+                final LaneBasedGtuCharacteristicsGenerator characteristicsGenerator)
         {
             this.generator = generator;
             this.headwayGenerator = headwayGenerator;
@@ -929,9 +929,9 @@ public final class ODApplier
 
         /**
          * Returns the main generator for GTU's.
-         * @return LaneBasedGTUGenerator; main generator for GTU's
+         * @return LaneBasedGtuGenerator; main generator for GTU's
          */
-        public LaneBasedGTUGenerator getGenerator()
+        public LaneBasedGtuGenerator getGenerator()
         {
             return this.generator;
         }
@@ -947,9 +947,9 @@ public final class ODApplier
 
         /**
          * Returns the generator of GTU characteristics.
-         * @return LaneBasedGTUCharacteristicsGenerator; generator of GTU characteristics
+         * @return LaneBasedGtuCharacteristicsGenerator; generator of GTU characteristics
          */
-        public LaneBasedGTUCharacteristicsGenerator getCharachteristicsGenerator()
+        public LaneBasedGtuCharacteristicsGenerator getCharachteristicsGenerator()
         {
             return this.characteristicsGenerator;
         }

@@ -27,7 +27,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -38,7 +38,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPercep
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
@@ -132,13 +132,13 @@ public interface Synchronization extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
-            PerceptionCollectable<HeadwayGTU,
-                    LaneBasedGTU> set =
+            PerceptionCollectable<HeadwayGtu,
+                    LaneBasedGtu> set =
                             removeAllUpstreamOfConflicts(
                                     removeAllUpstreamOfConflicts(perception.getPerceptionCategory(NeighborsPerception.class)
                                             .getLeaders(relativeLane), perception, relativeLane),
                                     perception, RelativeLane.CURRENT);
-            HeadwayGTU leader = null;
+            HeadwayGtu leader = null;
             if (set != null)
             {
                 if (desire >= dCoop && !set.isEmpty())
@@ -147,7 +147,7 @@ public interface Synchronization extends LmrsParameters
                 }
                 else
                 {
-                    for (HeadwayGTU gtu : set)
+                    for (HeadwayGtu gtu : set)
                     {
                         if (gtu.getSpeed().gt0())
                         {
@@ -170,7 +170,7 @@ public interface Synchronization extends LmrsParameters
                         initiatedLaneChange));
             }
             // keep some space ahead to perform lane change
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
             if (!leaders.isEmpty() && leaders.first().getSpeed().lt(params.getParameter(ParameterTypes.VCONG)))
             {
@@ -212,18 +212,18 @@ public interface Synchronization extends LmrsParameters
             EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
             Speed ownSpeed = ego.getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane);
             if (!leaders.isEmpty())
             {
-                HeadwayGTU leader = leaders.first();
+                HeadwayGtu leader = leaders.first();
                 Length gap = leader.getDistance();
                 LmrsUtil.setDesiredHeadway(params, desire);
-                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> followers =
+                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers =
                         perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(relativeLane);
                 if (!followers.isEmpty())
                 {
-                    HeadwayGTU follower = followers.first();
+                    HeadwayGtu follower = followers.first();
                     Length netGap = leader.getDistance().plus(follower.getDistance()).times(0.5);
                     gap = Length.max(gap, leader.getDistance().minus(netGap).plus(cfm.desiredHeadway(params, ownSpeed)));
                 }
@@ -345,10 +345,10 @@ public interface Synchronization extends LmrsParameters
             // abandon the gap if the sync vehicle is no longer adjacent, in congestion within xMergeSync, or too far
             NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
             RelativeLane lane = new RelativeLane(lat, 1);
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
                     removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getLeaders(lane), perception, lane),
                             perception, RelativeLane.CURRENT);
-            HeadwayGTU syncVehicle = lmrsData.getSyncVehicle(leaders);
+            HeadwayGtu syncVehicle = lmrsData.getSyncVehicle(leaders);
             if (syncVehicle != null && ((syncVehicle.getSpeed().lt(vCong) && syncVehicle.getDistance().lt(xMergeSync))
                     || syncVehicle.getDistance().gt(xCur)))
             {
@@ -359,7 +359,7 @@ public interface Synchronization extends LmrsParameters
             if (leaders != null && syncVehicle == null)
             {
                 Length maxDistance = Length.min(x0, xCur);
-                for (HeadwayGTU leader : leaders)
+                for (HeadwayGtu leader : leaders)
                 {
                     if (leader.getDistance().lt(maxDistance))
                     {
@@ -379,11 +379,11 @@ public interface Synchronization extends LmrsParameters
             }
 
             // select upstream vehicle if we can safely follow that, or if we cannot stay ahead of it (infrastructure, in coop)
-            HeadwayGTU up;
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> followers =
+            HeadwayGtu up;
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers =
                     removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getFollowers(lane), perception, lane),
                             perception, RelativeLane.CURRENT);
-            HeadwayGTU follower = followers == null || followers.isEmpty() ? null
+            HeadwayGtu follower = followers == null || followers.isEmpty() ? null
                     : followers.first().moved(
                             followers.first().getDistance().plus(ownLength).plus(followers.first().getLength()).neg(),
                             followers.first().getSpeed(), followers.first().getAcceleration());
@@ -551,14 +551,14 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.
-     * @param set PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; set of GTUs
+     * @param set PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; set of GTUs
      * @param perception LanePerception; perception
      * @param relativeLane RelativeLane; relative lane
      * @return the input set, for chained use
      * @throws OperationalPlanException if the {@code IntersectionPerception} category is not present
      */
-    static PerceptionCollectable<HeadwayGTU, LaneBasedGTU> removeAllUpstreamOfConflicts(
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> set, final LanePerception perception,
+    static PerceptionCollectable<HeadwayGtu, LaneBasedGtu> removeAllUpstreamOfConflicts(
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> set, final LanePerception perception,
             final RelativeLane relativeLane) throws OperationalPlanException
     {
         // if (true)
@@ -566,10 +566,10 @@ public interface Synchronization extends LmrsParameters
         // return set;
         // }
         // TODO find a better solution for this inefficient hack... when to ignore a vehicle for synchronization?
-        SortedSetPerceptionIterable<HeadwayGTU> out;
+        SortedSetPerceptionIterable<HeadwayGtu> out;
         try
         {
-            out = new SortedSetPerceptionIterable<HeadwayGTU>(
+            out = new SortedSetPerceptionIterable<HeadwayGtu>(
                     (OTSRoadNetwork) perception.getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
         }
         catch (GtuException exception)
@@ -585,8 +585,8 @@ public interface Synchronization extends LmrsParameters
         {
             return set;
         }
-        Map<String, HeadwayGTU> map = new LinkedHashMap<>();
-        for (HeadwayGTU gtu : set)
+        Map<String, HeadwayGtu> map = new LinkedHashMap<>();
+        for (HeadwayGtu gtu : set)
         {
             map.put(gtu.getId(), gtu);
         }
@@ -597,7 +597,7 @@ public interface Synchronization extends LmrsParameters
             {
                 if (conflict.isCrossing() || conflict.isMerge())
                 {
-                    for (HeadwayGTU conflictGtu : conflict.getUpstreamConflictingGTUs())
+                    for (HeadwayGtu conflictGtu : conflict.getUpstreamConflictingGTUs())
                     {
                         if (map.containsKey(conflictGtu.getId()))
                         {
@@ -643,16 +643,16 @@ public interface Synchronization extends LmrsParameters
     /**
      * Returns the upstream gtu of the given gtu.
      * @param gtu HeadwayGtu; gtu
-     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leaders of own vehicle
+     * @param leaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leaders of own vehicle
      * @param follower HeadwayGtu; following vehicle of own vehicle
      * @param ownLength Length; own vehicle length
      * @return upstream gtu of the given gtu
      */
-    static HeadwayGTU getFollower(final HeadwayGTU gtu, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders,
-            final HeadwayGTU follower, final Length ownLength)
+    static HeadwayGtu getFollower(final HeadwayGtu gtu, final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders,
+            final HeadwayGtu follower, final Length ownLength)
     {
-        HeadwayGTU last = null;
-        for (HeadwayGTU leader : leaders)
+        HeadwayGtu last = null;
+        for (HeadwayGtu leader : leaders)
         {
             if (leader.equals(gtu))
             {
@@ -677,7 +677,7 @@ public interface Synchronization extends LmrsParameters
      * @throws ParameterException if a parameter is not present
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    static Acceleration tagAlongAcceleration(final HeadwayGTU leader, final Speed followerSpeed, final Length followerLength,
+    static Acceleration tagAlongAcceleration(final HeadwayGtu leader, final Speed followerSpeed, final Length followerLength,
             final Speed tagSpeed, final double desire, final Parameters params, final SpeedLimitInfo sli,
             final CarFollowingModel cfm) throws ParameterException
     {
@@ -722,7 +722,7 @@ public interface Synchronization extends LmrsParameters
      * @return whether a driver estimates it can be ahead of an adjacent vehicle for merging
      * @throws ParameterException if parameter is not defined
      */
-    static boolean canBeAhead(final HeadwayGTU adjacentVehicle, final Length xCur, final int nCur, final Speed ownSpeed,
+    static boolean canBeAhead(final HeadwayGtu adjacentVehicle, final Length xCur, final int nCur, final Speed ownSpeed,
             final Length ownLength, final Speed tagSpeed, final double dCoop, final Acceleration b, final Duration tMin,
             final Duration tMax, final Length x0, final Duration t0, final Duration lc, final double desire)
             throws ParameterException
@@ -820,12 +820,12 @@ public interface Synchronization extends LmrsParameters
     /**
      * Returns the leader of one gtu from a set.
      * @param gtu HeadwayGtu; gtu
-     * @param leaders SortedSet&lt;HeadwayGTU&gt;; leaders
+     * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders
      * @return leader of one gtu from a set
      */
-    static HeadwayGTU getTargetLeader(final HeadwayGTU gtu, final SortedSet<HeadwayGTU> leaders)
+    static HeadwayGtu getTargetLeader(final HeadwayGtu gtu, final SortedSet<HeadwayGtu> leaders)
     {
-        for (HeadwayGTU leader : leaders)
+        for (HeadwayGtu leader : leaders)
         {
             if (leader.getDistance().gt(gtu.getDistance()))
             {

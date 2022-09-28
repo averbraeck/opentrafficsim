@@ -5,7 +5,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -66,7 +66,7 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
 
     /** {@inheritDoc} */
     @Override
-    default void init(LaneBasedGTU gtu)
+    default void init(LaneBasedGtu gtu)
     {
         //
     }

@@ -35,10 +35,10 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -53,7 +53,7 @@ import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
- * Test the various methods of an AbstractLaneBasedGTU.<br>
+ * Test the various methods of an AbstractLaneBasedGtu.<br>
  * As abstract classes cannot be directly
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -62,20 +62,20 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class AbstractLaneBasedGTUTest implements UNITS
+public class AbstractLaneBasedGtuTest implements UNITS
 {
     /**
      * Test that the constructor puts the supplied values in the correct fields, then check the motion of the GTU.
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void abstractLaneBasedGTUTest() throws Exception
+    public final void abstractLaneBasedGtuTest() throws Exception
     {
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
         // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSSimulatorInterface simulator = new OTSSimulator("abstractLaneBasedGTUTest");
+        OTSSimulatorInterface simulator = new OTSSimulator("abstractLaneBasedGtuTest");
         OTSRoadNetwork network = new OTSRoadNetwork("lane base gtu test network", true, simulator);
         OTSModelInterface model = new DummyModel(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
@@ -100,7 +100,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // A Car needs a CarFollowingModel
         Acceleration acceleration = new Acceleration(2, METER_PER_SECOND_2);
         Duration validFor = new Duration(10, SECOND);
-        GTUFollowingModelOld gfm = new FixedAccelerationModel(acceleration, validFor);
+        GtuFollowingModelOld gfm = new FixedAccelerationModel(acceleration, validFor);
         // A Car needs a lane change model
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
@@ -125,7 +125,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                                                 // BehavioralCharacteristics();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(gfm, laneChangeModel);
-        LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed,
+        LaneBasedIndividualGtu car = new LaneBasedIndividualGtu(carID, gtuType, carLength, carWidth, maximumSpeed,
                 carLength.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(gfm, laneChangeModel, car), car);
@@ -135,7 +135,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         // TODO: Test with gfm as part of tactical planner
         // assertEquals("GTU following model should be identical to the provided one", gfm, car
-        // .getBehavioralCharacteristics().getGTUFollowingModel());
+        // .getBehavioralCharacteristics().getGtuFollowingModel());
         assertEquals("Width should be identical to the provided width", carWidth, car.getWidth());
         assertEquals("Length should be identical to the provided length", carLength, car.getLength());
         assertEquals("GTU type should be identical to the provided one", gtuType, car.getGtuType());
@@ -433,7 +433,7 @@ class DummyModel extends AbstractOTSModel
     @Override
     public Serializable getSourceId()
     {
-        return "AbstractLaneBasedGTUTest.DummyModel";
+        return "AbstractLaneBasedGtuTest.DummyModel";
     }
 
 }

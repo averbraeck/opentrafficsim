@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * Interface that can be implemented by desired headway models and desired speed models, such that they can be coupled to their
@@ -23,6 +23,6 @@ public interface Initialisable
      * Initialize car-following model.
      * @param gtu LaneBasedGtu; gtu
      */
-    void init(LaneBasedGTU gtu);
+    void init(LaneBasedGtu gtu);
 
 }

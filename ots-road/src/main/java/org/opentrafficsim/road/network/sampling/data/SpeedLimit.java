@@ -6,7 +6,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.sampling.GtuData;
 
 /**
@@ -35,7 +35,7 @@ public class SpeedLimit extends ExtendedDataTypeSpeed<GtuData>
     public final FloatSpeed getValue(final GtuData gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
-        LaneBasedGTU laneGtu = gtu.getGtu();
+        LaneBasedGtu laneGtu = gtu.getGtu();
         try
         {
             return new FloatSpeed(laneGtu.getReferencePosition().getLane().getSpeedLimit(laneGtu.getGtuType()).si,

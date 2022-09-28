@@ -12,7 +12,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -37,7 +37,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements HeadwayGTU
+public abstract class AbstractHeadwayGtu extends AbstractHeadwayCopy implements HeadwayGtu
 {
     /** */
     private static final long serialVersionUID = 20160410L;
@@ -49,7 +49,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
     private final boolean facingSameDirection;
 
     /** The observable characteristics of the GTU. */
-    private final EnumSet<GTUStatus> gtuStatus = EnumSet.noneOf(GTUStatus.class);
+    private final EnumSet<GtuStatus> gtuStatus = EnumSet.noneOf(GtuStatus.class);
 
     /** Perceived desired speed. */
     private final Speed desiredSpeed;
@@ -68,13 +68,13 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
+     * @param gtuStatus GtuStatus...; the observable characteristics of the GTU.
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractHeadwayGTU(final String id, final GtuType gtuType, final Length distance, final boolean facingSameDirection,
+    public AbstractHeadwayGtu(final String id, final GtuType gtuType, final Length distance, final boolean facingSameDirection,
             final Length length, final Length width, final Speed speed, final Acceleration acceleration,
-            final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GtuException
+            final Speed desiredSpeed, final GtuStatus... gtuStatus) throws GtuException
     {
         super(ObjectType.GTU, id, distance, length, speed, acceleration);
         Throw.whenNull(width, "Width may not be null.");
@@ -82,7 +82,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
         this.desiredSpeed = desiredSpeed;
-        for (GTUStatus status : gtuStatus)
+        for (GtuStatus status : gtuStatus)
         {
             this.gtuStatus.add(status);
         }
@@ -97,11 +97,11 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param length the (perceived) length of the other object; can not be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
+     * @param gtuStatus GtuStatus...; the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public AbstractHeadwayGTU(final String id, final GtuType gtuType, final Length distance, final boolean facingSameDirection,
-            final Length length, final Length width, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GtuException
+    public AbstractHeadwayGtu(final String id, final GtuType gtuType, final Length distance, final boolean facingSameDirection,
+            final Length length, final Length width, final Speed desiredSpeed, final GtuStatus... gtuStatus) throws GtuException
     {
         super(ObjectType.GTU, id, distance, length);
         Throw.whenNull(width, "Width may not be null.");
@@ -109,7 +109,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
         this.desiredSpeed = desiredSpeed;
-        for (GTUStatus status : gtuStatus)
+        for (GtuStatus status : gtuStatus)
         {
             this.gtuStatus.add(status);
         }
@@ -128,13 +128,13 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param speed the (perceived) speed of the other Gtu; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other Gtu; can be null if unknown.
      * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
+     * @param gtuStatus GtuStatus...; the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractHeadwayGTU(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
+    public AbstractHeadwayGtu(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
             final Length overlapRear, final boolean facingSameDirection, final Length length, final Length width,
-            final Speed speed, final Acceleration acceleration, final Speed desiredSpeed, final GTUStatus... gtuStatus)
+            final Speed speed, final Acceleration acceleration, final Speed desiredSpeed, final GtuStatus... gtuStatus)
             throws GtuException
     {
         super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, length, speed, acceleration);
@@ -143,7 +143,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
         this.desiredSpeed = desiredSpeed;
-        for (GTUStatus status : gtuStatus)
+        for (GtuStatus status : gtuStatus)
         {
             this.gtuStatus.add(status);
         }
@@ -160,13 +160,13 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param length the (perceived) length of the other object; can not be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
+     * @param gtuStatus GtuStatus...; the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractHeadwayGTU(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
+    public AbstractHeadwayGtu(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
             final Length overlapRear, final boolean facingSameDirection, final Length length, final Length width,
-            final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GtuException
+            final Speed desiredSpeed, final GtuStatus... gtuStatus) throws GtuException
     {
         super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, length);
         Throw.whenNull(width, "Width may not be null.");
@@ -174,7 +174,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
         this.desiredSpeed = desiredSpeed;
-        for (GTUStatus status : gtuStatus)
+        for (GtuStatus status : gtuStatus)
         {
             this.gtuStatus.add(status);
         }
@@ -209,44 +209,44 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
     @Override
     public final boolean isBrakingLightsOn()
     {
-        return this.gtuStatus.contains(GTUStatus.BRAKING_LIGHTS);
+        return this.gtuStatus.contains(GtuStatus.BRAKING_LIGHTS);
     }
 
     /** @return was the left turn indicator on? */
     @Override
     public final boolean isLeftTurnIndicatorOn()
     {
-        return this.gtuStatus.contains(GTUStatus.LEFT_TURNINDICATOR);
+        return this.gtuStatus.contains(GtuStatus.LEFT_TURNINDICATOR);
     }
 
     /** @return was the right turn indicator on? */
     @Override
     public final boolean isRightTurnIndicatorOn()
     {
-        return this.gtuStatus.contains(GTUStatus.RIGHT_TURNINDICATOR);
+        return this.gtuStatus.contains(GtuStatus.RIGHT_TURNINDICATOR);
     }
 
     /** @return were the emergency lights on? */
     @Override
     public final boolean isEmergencyLightsOn()
     {
-        return this.gtuStatus.contains(GTUStatus.EMERGENCY_LIGHTS);
+        return this.gtuStatus.contains(GtuStatus.EMERGENCY_LIGHTS);
     }
 
     /** @return was the vehicle honking or ringing its bell when being observed for the headway? */
     @Override
     public final boolean isHonking()
     {
-        return this.gtuStatus.contains(GTUStatus.HONK);
+        return this.gtuStatus.contains(GtuStatus.HONK);
     }
 
     /**
      * For subclasses that create a copy of themselves.
      * @return set of gtu status
      */
-    protected final GTUStatus[] getGtuStatus()
+    protected final GtuStatus[] getGtuStatus()
     {
-        return this.gtuStatus.toArray(new GTUStatus[this.gtuStatus.size()]);
+        return this.gtuStatus.toArray(new GtuStatus[this.gtuStatus.size()]);
     }
 
     /**
@@ -255,26 +255,26 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param when Time; time
      * @return GTU statuses
      */
-    public static final GTUStatus[] getGTUStatuses(final LaneBasedGTU gtu, final Time when)
+    public static final GtuStatus[] getGtuStatuses(final LaneBasedGtu gtu, final Time when)
     {
-        List<GTUStatus> statuses = new ArrayList<>();
+        List<GtuStatus> statuses = new ArrayList<>();
         if (gtu.isBrakingLightsOn(when))
         {
-            statuses.add(GTUStatus.BRAKING_LIGHTS);
+            statuses.add(GtuStatus.BRAKING_LIGHTS);
         }
         if (gtu.getTurnIndicatorStatus(when).isHazard())
         {
-            statuses.add(GTUStatus.EMERGENCY_LIGHTS);
+            statuses.add(GtuStatus.EMERGENCY_LIGHTS);
         }
         else if (gtu.getTurnIndicatorStatus(when).isLeft())
         {
-            statuses.add(GTUStatus.LEFT_TURNINDICATOR);
+            statuses.add(GtuStatus.LEFT_TURNINDICATOR);
         }
         else if (gtu.getTurnIndicatorStatus(when).isRight())
         {
-            statuses.add(GTUStatus.RIGHT_TURNINDICATOR);
+            statuses.add(GtuStatus.RIGHT_TURNINDICATOR);
         }
-        return statuses.toArray(new GTUStatus[statuses.size()]);
+        return statuses.toArray(new GtuStatus[statuses.size()]);
     }
 
     /**
@@ -282,7 +282,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param gtu LaneBasedGtu; gtu to the the speed limit info for
      * @return speed limit info for given GTU
      */
-    public static SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU gtu)
+    public static SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGtu gtu)
     {
         SpeedLimitInfo sli = new SpeedLimitInfo();
         sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, gtu.getMaximumSpeed());
@@ -309,7 +309,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "AbstractHeadwayGTU [gtuType=" + this.gtuType + ", gtuStatus=" + this.gtuStatus + ", getSpeed()="
+        return "AbstractHeadwayGtu [gtuType=" + this.gtuType + ", gtuStatus=" + this.gtuStatus + ", getSpeed()="
                 + this.getSpeed() + ", getDistance()=" + this.getDistance() + ", getAcceleration()=" + this.getAcceleration()
                 + "]";
     }

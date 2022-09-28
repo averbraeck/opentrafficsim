@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.vector.LengthVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -45,13 +45,13 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
      * Set of conflicting GTU's <i>completely</i> upstream of the <i>start</i> of the conflict ordered close to far from the
      * start of the conflict. Distance and overlap info concerns the conflict.
      */
-    private final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs;
+    private final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> upstreamConflictingGTUs;
 
     /**
      * Set of conflicting GTU's (partially) downstream of the <i>start</i> of the conflict ordered close to far from the start
      * of conflict. Distance and overlap info concerns the conflict.
      */
-    private final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs;
+    private final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> downstreamConflictingGTUs;
 
     /** Visibility on the conflicting lane within which conflicting vehicles are visible. */
     private final Length conflictingVisibility;
@@ -89,9 +89,9 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
      * @param distance Length; distance
      * @param length Length; length of the conflict
      * @param conflictingLength Length; length of the conflict on the conflicting lane
-     * @param upstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; conflicting GTU's upstream of the
+     * @param upstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; conflicting GTU's upstream of the
      *            &lt;i&gt;start&lt;/i&gt; of the conflict
-     * @param downstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; conflicting GTU's downstream of
+     * @param downstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; conflicting GTU's downstream of
      *            the &lt;i&gt;start&lt;/i&gt; of the conflict
      * @param conflictingVisibility Length; visibility on the conflicting lane within which conflicting vehicles are visible
      * @param conflictingSpeedLimit Speed; speed limit on the conflicting lane
@@ -105,8 +105,8 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayConflict(final ConflictType conflictType, final ConflictPriority conflictPriority,
             final Class<? extends ConflictRule> conflictRuleType, final String id, final Length distance, final Length length,
-            final Length conflictingLength, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
+            final Length conflictingLength, final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> upstreamConflictingGTUs,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> downstreamConflictingGTUs, final Length conflictingVisibility,
             final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width,
             final HeadwayStopLine stopLine, final HeadwayStopLine conflictingStopLine, final Lane lane) throws GtuException
     {
@@ -145,9 +145,9 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
      * @param distance Length; distance
      * @param length Length; length of the conflict
      * @param conflictingLength Length; length of the conflict on the conflicting lane
-     * @param upstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; conflicting GTU's upstream of the
+     * @param upstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; conflicting GTU's upstream of the
      *            &lt;i&gt;start&lt;/i&gt; of the conflict
-     * @param downstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; conflicting GTU's downstream of
+     * @param downstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; conflicting GTU's downstream of
      *            the &lt;i&gt;start&lt;/i&gt; of the conflict
      * @param conflictingVisibility Length; visibility on the conflicting lane within which conflicting vehicles are visible
      * @param conflictingSpeedLimit Speed; speed limit on the conflicting lane
@@ -159,8 +159,8 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayConflict(final ConflictType conflictType, final ConflictPriority conflictPriority,
             final Class<? extends ConflictRule> conflictRuleType, final String id, final Length distance, final Length length,
-            final Length conflictingLength, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs,
-            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
+            final Length conflictingLength, final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> upstreamConflictingGTUs,
+            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> downstreamConflictingGTUs, final Length conflictingVisibility,
             final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width, final Lane lane)
             throws GtuException
     {
@@ -227,7 +227,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
      * Returns a set of conflicting GTU's upstream of the <i>start</i> of the conflict ordered close to far from the conflict.
      * @return set of conflicting GTU's upstream of the <i>start</i> of the conflict ordered close to far from the conflict
      */
-    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getUpstreamConflictingGTUs()
+    public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getUpstreamConflictingGTUs()
     {
         return this.upstreamConflictingGTUs;
     }
@@ -238,7 +238,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
      * latter case the overlap is used.
      * @return set of conflicting GTU's downstream of the <i>start</i> of the conflict ordered close to far from the conflict
      */
-    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getDownstreamConflictingGTUs()
+    public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getDownstreamConflictingGTUs()
     {
         return this.downstreamConflictingGTUs;
     }

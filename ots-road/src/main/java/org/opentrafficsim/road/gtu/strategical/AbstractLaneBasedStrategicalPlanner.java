@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.strategical;
 import java.io.Serializable;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * <p>
@@ -19,12 +19,12 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
     private static final long serialVersionUID = 20151126L;
 
     /** GTU. */
-    private final LaneBasedGTU gtu;
+    private final LaneBasedGtu gtu;
 
     /**
      * @param gtu LaneBasedGtu; GTU
      */
-    public AbstractLaneBasedStrategicalPlanner(final LaneBasedGTU gtu)
+    public AbstractLaneBasedStrategicalPlanner(final LaneBasedGtu gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
         this.gtu = gtu;
@@ -32,7 +32,7 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTU getGtu()
+    public final LaneBasedGtu getGtu()
     {
         return this.gtu;
     }

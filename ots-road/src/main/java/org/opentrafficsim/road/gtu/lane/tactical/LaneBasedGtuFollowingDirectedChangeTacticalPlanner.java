@@ -31,20 +31,20 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedAltruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedEgoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLaneMovementStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -80,7 +80,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends AbstractLaneBasedTacticalPlanner
+public class LaneBasedGtuFollowingDirectedChangeTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
     /** */
     private static final long serialVersionUID = 20160129L;
@@ -114,11 +114,11 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
-     * @param carFollowingModel GTUFollowingModelOld; Car-following model.
+     * @param carFollowingModel GtuFollowingModelOld; Car-following model.
      * @param gtu LaneBasedGtu; GTU
      */
-    public LaneBasedGTUFollowingDirectedChangeTacticalPlanner(final GTUFollowingModelOld carFollowingModel,
-            final LaneBasedGTU gtu)
+    public LaneBasedGtuFollowingDirectedChangeTacticalPlanner(final GtuFollowingModelOld carFollowingModel,
+            final LaneBasedGtu gtu)
     {
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
@@ -129,9 +129,9 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * Returns the car-following model.
      * @return The car-following model.
      */
-    public final GTUFollowingModelOld getCarFollowingModelOld()
+    public final GtuFollowingModelOld getCarFollowingModelOld()
     {
-        return (GTUFollowingModelOld) super.getCarFollowingModel();
+        return (GtuFollowingModelOld) super.getCarFollowingModel();
     }
 
     /**
@@ -179,7 +179,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         {
 
             // ask Perception for the local situation
-            LaneBasedGTU laneBasedGTU = getGtu();
+            LaneBasedGtu laneBasedGTU = getGtu();
             DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
             Parameters parameters = laneBasedGTU.getParameters();
             // This is the only interaction between the car-following model and the parameters
@@ -197,7 +197,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             }
 
             // perceive the forward headway, accessible lanes and speed limit.
-            simplePerception.updateForwardHeadwayGTU();
+            simplePerception.updateForwardHeadwayGtu();
             simplePerception.updateForwardHeadwayObject();
             simplePerception.updateAccessibleAdjacentLanesLeft();
             simplePerception.updateAccessibleAdjacentLanesRight();
@@ -231,7 +231,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                         Length minDistance = new Length(Double.MAX_VALUE, LengthUnit.SI);
                         for (Headway headway : simplePerception.getNeighboringHeadways(direction))
                         {
-                            if ((headway.isAhead() || headway.isParallel()) && (headway instanceof AbstractHeadwayGTU))
+                            if ((headway.isAhead() || headway.isParallel()) && (headway instanceof AbstractHeadwayGtu))
                             {
                                 if (headway.isParallel() || headway.getDistance().lt(minDistance))
                                 {
@@ -261,10 +261,10 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                 for (Headway headway : simplePerception.getNeighboringHeadways(direction))
                 {
                     // other vehicle ahead, its a vehicle, its the nearest, and its indicator is on
-                    if (headway.isAhead() && (headway instanceof AbstractHeadwayGTU)
+                    if (headway.isAhead() && (headway instanceof AbstractHeadwayGtu)
                             && (this.coopHeadway == null || headway.getDistance().lt(this.coopHeadway.getDistance()))
-                            && (direction.isLeft() ? ((AbstractHeadwayGTU) headway).isRightTurnIndicatorOn()
-                                    : ((AbstractHeadwayGTU) headway).isLeftTurnIndicatorOn()))
+                            && (direction.isLeft() ? ((AbstractHeadwayGtu) headway).isRightTurnIndicatorOn()
+                                    : ((AbstractHeadwayGtu) headway).isLeftTurnIndicatorOn()))
                     {
                         this.coopHeadway = headway;
                     }
@@ -294,10 +294,10 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                     Collection<Headway> sameLaneTraffic = new LinkedHashSet<>();
                     // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
                     // XXX Object & GTU
-                    if (simplePerception.getForwardHeadwayGTU() != null
-                            && simplePerception.getForwardHeadwayGTU().getObjectType().isGtu())
+                    if (simplePerception.getForwardHeadwayGtu() != null
+                            && simplePerception.getForwardHeadwayGtu().getObjectType().isGtu())
                     {
-                        sameLaneTraffic.add(simplePerception.getForwardHeadwayGTU());
+                        sameLaneTraffic.add(simplePerception.getForwardHeadwayGtu());
                     }
                     if (simplePerception.getBackwardHeadway() != null
                             && simplePerception.getBackwardHeadway().getObjectType().isGtu())
@@ -341,10 +341,10 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
                     Collection<Headway> sameLaneTraffic = new LinkedHashSet<>();
                     // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
                     // XXX GTU & Object
-                    if (simplePerception.getForwardHeadwayGTU() != null
-                            && simplePerception.getForwardHeadwayGTU().getObjectType().isGtu())
+                    if (simplePerception.getForwardHeadwayGtu() != null
+                            && simplePerception.getForwardHeadwayGtu().getObjectType().isGtu())
                     {
-                        sameLaneTraffic.add(simplePerception.getForwardHeadwayGTU());
+                        sameLaneTraffic.add(simplePerception.getForwardHeadwayGtu());
                     }
                     if (simplePerception.getBackwardHeadway() != null
                             && simplePerception.getBackwardHeadway().getObjectType().isGtu())
@@ -394,7 +394,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         {
             if (isDestroyGtuOnFailure())
             {
-                System.err.println("LaneBasedGTUFollowingChange0TacticalPlanner.generateOperationalPlan() failed for "
+                System.err.println("LaneBasedGtuFollowingChange0TacticalPlanner.generateOperationalPlan() failed for "
                         + getGtu() + " because of " + exception.getMessage() + " -- GTU destroyed");
                 getGtu().destroy();
                 return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
@@ -415,14 +415,14 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * @throws ParameterException in case LOOKAHEAD parameter cannot be found
      * @throws NetworkException in case the headways to GTUs or objects cannot be calculated
      */
-    private OperationalPlan currentLanePlan(final LaneBasedGTU laneBasedGTU, final Time startTime,
+    private OperationalPlan currentLanePlan(final LaneBasedGtu laneBasedGTU, final Time startTime,
             final DirectedPoint locationAtStartTime, final LanePathInfo lanePathInfo)
             throws OperationalPlanException, GtuException, ParameterException, NetworkException
     {
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
 
         // No lane change. Continue on current lane.
-        AccelerationStep accelerationStep = mostLimitingAccelerationStep(lanePathInfo, simplePerception.getForwardHeadwayGTU(),
+        AccelerationStep accelerationStep = mostLimitingAccelerationStep(lanePathInfo, simplePerception.getForwardHeadwayGtu(),
                 simplePerception.getForwardHeadwayObject());
 
         // see if we have to continue standing still. In that case, generate a stand still plan
@@ -455,7 +455,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * @param nextSplitInfo NextSplitInfo; the information about the next split
      * @return the lateral direction to go, or null if this cannot be determined
      */
-    private LateralDirectionality determineLeftRight(final LaneBasedGTU laneBasedGTU, final NextSplitInfo nextSplitInfo)
+    private LateralDirectionality determineLeftRight(final LaneBasedGtu laneBasedGTU, final NextSplitInfo nextSplitInfo)
     {
         // are the lanes in nextSplitInfo.getCorrectCurrentLanes() left or right of the current lane(s) of the GTU?
         try
@@ -484,7 +484,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         catch (GtuException exception)
         {
             System.err.println(
-                    "Exception in LaneBasedGTUFollowingChange0TacticalPlanner.determineLeftRight: " + exception.getMessage());
+                    "Exception in LaneBasedGtuFollowingChange0TacticalPlanner.determineLeftRight: " + exception.getMessage());
         }
         // perhaps known from split info (if need to change away from all lanes on current link)
         return nextSplitInfo.getRequiredDirection();
@@ -503,13 +503,13 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * @throws ParameterException when there is a parameter problem.
      * @throws OperationalPlanException in case a perception category is not present
      */
-    private boolean canChange(final LaneBasedGTU gtu, final LanePerception perception, final LanePathInfo lanePathInfo,
+    private boolean canChange(final LaneBasedGtu gtu, final LanePerception perception, final LanePathInfo lanePathInfo,
             final LateralDirectionality direction)
             throws GtuException, NetworkException, ParameterException, OperationalPlanException
     {
 
         // TODO remove this hack
-        if (!((AbstractLaneBasedGTU) gtu).isSafeToChange())
+        if (!((AbstractLaneBasedGtu) gtu).isSafeToChange())
         {
             return false;
         }
@@ -528,7 +528,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
         Collection<Headway> otherLaneTraffic;
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
-        simplePerception.updateForwardHeadwayGTU();
+        simplePerception.updateForwardHeadwayGtu();
         simplePerception.updateForwardHeadwayObject();
         simplePerception.updateBackwardHeadway();
         if (direction.isLeft())
@@ -557,9 +557,9 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         Collection<Headway> sameLaneTraffic = new LinkedHashSet<>();
         // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
         // XXX Object & GTU
-        if (simplePerception.getForwardHeadwayGTU() != null && simplePerception.getForwardHeadwayGTU().getObjectType().isGtu())
+        if (simplePerception.getForwardHeadwayGtu() != null && simplePerception.getForwardHeadwayGtu().getObjectType().isGtu())
         {
-            sameLaneTraffic.add(simplePerception.getForwardHeadwayGTU());
+            sameLaneTraffic.add(simplePerception.getForwardHeadwayGtu());
         }
         if (simplePerception.getBackwardHeadway() != null && simplePerception.getBackwardHeadway().getObjectType().isGtu())
         {
@@ -588,7 +588,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * @return the new location of the GTU after the lane change
      * @throws GtuException in case the enter lane fails
      */
-    private DirectedPoint changeLane(final LaneBasedGTU gtu, final LateralDirectionality direction) throws GtuException
+    private DirectedPoint changeLane(final LaneBasedGtu gtu, final LateralDirectionality direction) throws GtuException
     {
         gtu.changeLaneInstantaneously(direction);
 
@@ -608,7 +608,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * negative acceleration). There could, e.g. be a GTU in front of us, a speed sign in front of us, and a traffic light in
      * front of the GTU and speed sign. This method will return the acceleration based on the headway that limits us most.<br>
      * The method can e.g., be called with:
-     * <code>mostLimitingHeadway(simplePerception.getForwardHeadwayGTU(), simplePerception.getForwardHeadwayObject());</code>
+     * <code>mostLimitingHeadway(simplePerception.getForwardHeadwayGtu(), simplePerception.getForwardHeadwayObject());</code>
      * @param lanePathInfo LanePathInfo; the lane path info that was calculated for this GTU.
      * @param headways Headway...; zero or more headways specifying possible limitations on our acceleration.
      * @return the acceleration based on the most limiting headway.
@@ -621,7 +621,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             throws OperationalPlanException, ParameterException, GtuException, NetworkException
     {
         DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
-        simplePerception.updateForwardHeadwayGTU();
+        simplePerception.updateForwardHeadwayGtu();
         simplePerception.updateForwardHeadwayObject();
         boolean sinkAtEnd = false;
         for (SingleSensor sensor : (lanePathInfo.getLanes().get(lanePathInfo.getLanes().size() - 1).getSensors()))
@@ -779,7 +779,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     @Override
     public final String toString()
     {
-        return "LaneBasedGTUFollowingChange0TacticalPlanner [earliestNexLaneChangeTime=" + this.earliestNextLaneChangeTime
+        return "LaneBasedGtuFollowingChange0TacticalPlanner [earliestNexLaneChangeTime=" + this.earliestNextLaneChangeTime
                 + ", referenceLane=" + this.laneAfterLaneChange + ", referencePos=" + this.posAfterLaneChange
                 + ", destroyGtuOnFailure=" + this.destroyGtuOnFailure + "]";
     }

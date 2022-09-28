@@ -27,10 +27,10 @@ import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -221,13 +221,13 @@ public final class GeneratorSinkParser
      * @throws XmlParserException when the objects cannot be inserted into the network due to inconsistencies
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public static List<LaneBasedGTUGenerator> parseGenerators(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand,
+    public static List<LaneBasedGtuGenerator> parseGenerators(final OTSRoadNetwork otsNetwork, final NETWORKDEMAND demand,
             final Map<String, GTUTEMPLATE> gtuTemplates, final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation)
             throws XmlParserException
     {
         OTSSimulatorInterface simulator = otsNetwork.getSimulator();
-        List<LaneBasedGTUGenerator> generators = new ArrayList<>();
+        List<LaneBasedGtuGenerator> generators = new ArrayList<>();
         try
         {
             for (GENERATOR generatorTag : demand.getGENERATOR())
@@ -308,7 +308,7 @@ public final class GeneratorSinkParser
                         new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
 
                 // the distribution of GTUs
-                Distribution<LaneBasedTemplateGTUType> gtuTypeDistribution =
+                Distribution<LaneBasedTemplateGtuType> gtuTypeDistribution =
                         new Distribution<>(streamInformation.getStream("generation"));
                 if (generatorTag.getGTUTEMPLATE() != null)
                 {
@@ -326,7 +326,7 @@ public final class GeneratorSinkParser
                             Generators.makeLengthGenerator(streamInformation, templateTag.getWIDTHDIST());
                     Generator<Speed> maximumSpeedGenerator =
                             Generators.makeSpeedGenerator(streamInformation, templateTag.getMAXSPEEDDIST());
-                    LaneBasedTemplateGTUType templateGtuType = new LaneBasedTemplateGTUType(gtuType, lengthGenerator,
+                    LaneBasedTemplateGtuType templateGtuType = new LaneBasedTemplateGtuType(gtuType, lengthGenerator,
                             widthGenerator, maximumSpeedGenerator, strategicalFactory, routeGenerator);
                     gtuTypeDistribution.add(new FrequencyAndObject<>(1.0, templateGtuType));
                 }
@@ -356,9 +356,9 @@ public final class GeneratorSinkParser
 
                 IdGenerator idGenerator = new IdGenerator(lane.getFullId());
 
-                LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
-                        new LaneBasedTemplateGTUTypeDistribution(gtuTypeDistribution);
-                generators.add(new LaneBasedGTUGenerator(lane.getFullId(), headwayGenerator, characteristicsGenerator,
+                LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
+                        new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
+                generators.add(new LaneBasedGtuGenerator(lane.getFullId(), headwayGenerator, characteristicsGenerator,
                         GeneratorPositions.create(initialLongitudinalPositions, stream), otsNetwork, simulator, roomChecker,
                         idGenerator));
             }

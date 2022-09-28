@@ -24,16 +24,16 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -83,12 +83,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @param carFollowingModel CarFollowingModel; Car-following model.
      * @param gtu LaneBasedGtu; GTU
      */
-    public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
+    public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu)
     {
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
         getPerception().addPerceptionCategory(new ToledoPerception(getPerception()));
-        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGTUType.WRAP));
+        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGtuType.WRAP));
     }
 
     /** {@inheritDoc} */
@@ -326,20 +326,20 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         {
             constant = params.getParameter(ToledoLaneChangeParameters.C_FWD_TG);
             alpha = 0;
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> itAble = neighbors.getLeaders(lane);
-            HeadwayGTU second = null;
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> itAble = neighbors.getLeaders(lane);
+            HeadwayGtu second = null;
             if (!itAble.isEmpty())
             {
-                Iterator<HeadwayGTU> it = itAble.iterator();
+                Iterator<HeadwayGtu> it = itAble.iterator();
                 it.next();
                 second = it.next();
             }
             if (second != null)
             {
                 // two leaders
-                Iterator<HeadwayGTU> it = neighbors.getLeaders(lane).iterator();
+                Iterator<HeadwayGtu> it = neighbors.getLeaders(lane).iterator();
                 it.next();
-                HeadwayGTU leader = it.next();
+                HeadwayGtu leader = it.next();
                 leaderDist = leader.getDistance();
                 leaderSpeed = leader.getSpeed();
                 putativeLength = leaderDist.minus(neighbors.getLeaders(lane).first().getDistance())
@@ -397,20 +397,20 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             constant = params.getParameter(ToledoLaneChangeParameters.C_BCK_TG);
             alpha = params.getParameter(ToledoLaneChangeParameters.ALPHA_BCK);
             deltaFrontVehicle = 0;
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> itAble = neighbors.getFollowers(lane);
-            HeadwayGTU second = null;
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> itAble = neighbors.getFollowers(lane);
+            HeadwayGtu second = null;
             if (!itAble.isEmpty())
             {
-                Iterator<HeadwayGTU> it = itAble.iterator();
+                Iterator<HeadwayGtu> it = itAble.iterator();
                 it.next();
                 second = it.next();
             }
             if (second != null)
             {
                 // two followers
-                Iterator<HeadwayGTU> it = neighbors.getFollowers(lane).iterator();
+                Iterator<HeadwayGtu> it = neighbors.getFollowers(lane).iterator();
                 it.next();
-                HeadwayGTU follower = it.next();
+                HeadwayGtu follower = it.next();
                 followerDist = follower.getDistance();
                 followerSpeed = follower.getSpeed();
                 putativeLength = followerDist.minus(neighbors.getFollowers(lane).first().getDistance())
@@ -474,7 +474,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @throws ParameterException if parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    private GapAcceptanceInfo getGapAcceptanceInfo(final LaneBasedGTU gtu, final Parameters params,
+    private GapAcceptanceInfo getGapAcceptanceInfo(final LaneBasedGtu gtu, final Parameters params,
             final LanePerception perception, final double emuTg, final double eLead, final double eLag, final RelativeLane lane)
             throws ParameterException, OperationalPlanException
     {
@@ -565,7 +565,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @throws ParameterException if parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    private double laneUtility(final LaneBasedGTU gtu, final Parameters params, final LanePerception perception,
+    private double laneUtility(final LaneBasedGtu gtu, final Parameters params, final LanePerception perception,
             final double emuGa, final SpeedLimitInfo sli, final RelativeLane lane)
             throws ParameterException, OperationalPlanException
     {
@@ -711,19 +711,19 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      * @return density in the given lane based on the following and leading vehicles
      * @throws OperationalPlanException perception exception
      */
-    private LinearDensity getDensityInLane(final LaneBasedGTU gtu, final LanePerception perception, final RelativeLane lane)
+    private LinearDensity getDensityInLane(final LaneBasedGtu gtu, final LanePerception perception, final RelativeLane lane)
             throws OperationalPlanException
     {
         int nVehicles = 0;
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         Length up = Length.ZERO;
         Length down = Length.ZERO;
-        for (HeadwayGTU neighbor : neighbors.getFollowers(lane))
+        for (HeadwayGtu neighbor : neighbors.getFollowers(lane))
         {
             nVehicles++;
             down = neighbor.getDistance();
         }
-        for (HeadwayGTU neighbor : neighbors.getLeaders(lane))
+        for (HeadwayGtu neighbor : neighbors.getLeaders(lane))
         {
             nVehicles++;
             up = neighbor.getDistance();

@@ -33,12 +33,12 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.road.DefaultTestParameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
@@ -56,7 +56,7 @@ import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
- * Test the LaneBasedGTU class.
+ * Test the LaneBasedGtu class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -64,7 +64,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedGTUTest implements UNITS
+public class LaneBasedGtuTest implements UNITS
 {
     /** Id generator. */
     private IdGenerator idGenerator = new IdGenerator("id");
@@ -127,10 +127,10 @@ public class LaneBasedGTUTest implements UNITS
         Length truckWidth = new Length(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         Speed maximumSpeed = new Speed(120, KM_PER_HOUR);
-        GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
+        GtuFollowingModelOld gtuFollowingModel = new IDMPlusOld();
         Parameters parameters = DefaultTestParameters.create();
 
-        LaneBasedIndividualGTU truck = new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed,
+        LaneBasedIndividualGtu truck = new LaneBasedIndividualGtu("Truck", truckType, truckLength, truckWidth, maximumSpeed,
                 truckLength.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
@@ -175,7 +175,7 @@ public class LaneBasedGTUTest implements UNITS
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getTacticalPlanner().getPerception().perceive();
         Headway leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
-                .getForwardHeadwayGTU();
+                .getForwardHeadwayGtu();
         assertTrue(
                 "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance",
                 forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
@@ -207,7 +207,7 @@ public class LaneBasedGTUTest implements UNITS
                         buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 parameters = DefaultTestParameters.create();
 
-                LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed,
+                LaneBasedIndividualGtu car = new LaneBasedIndividualGtu("Car", carType, carLength, carWidth, maximumSpeed,
                         carLength.times(0.5), simulator, network);
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
@@ -216,7 +216,7 @@ public class LaneBasedGTUTest implements UNITS
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
-                        .getForwardHeadwayGTU();
+                        .getForwardHeadwayGtu();
                 double actualHeadway = leader.getDistance().si;
                 double expectedHeadway = laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
                         || step - truckPosition.getSI() - truckLength.getSI() <= 0 ? Double.MAX_VALUE
@@ -267,7 +267,7 @@ public class LaneBasedGTUTest implements UNITS
                         }
                     }
                     leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
-                            .getForwardHeadwayGTU();
+                            .getForwardHeadwayGtu();
                     actualHeadway = leader.getDistance().si;
                     expectedHeadway = laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
                             || step - truckLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE
@@ -401,7 +401,7 @@ public class LaneBasedGTUTest implements UNITS
             Speed maximumSpeed = new Speed(200, KM_PER_HOUR);
             Parameters parameters = DefaultTestParameters.create();
 
-            LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType,
+            LaneBasedIndividualGtu car = new LaneBasedIndividualGtu("Car" + this.idGenerator.nextId(), carType,
                     new Length(4, METER), new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), simulator, network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
@@ -549,7 +549,7 @@ public class LaneBasedGTUTest implements UNITS
         @Override
         public Serializable getSourceId()
         {
-            return "LaneBasedGTUTest.Model";
+            return "LaneBasedGtuTest.Model";
         }
     }
 }

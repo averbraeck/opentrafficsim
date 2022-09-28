@@ -31,9 +31,9 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -52,7 +52,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGTUTypeTest implements UNITS
+public class LaneBasedTemplateGtuTypeTest implements UNITS
 {
     /** The random stream. */
     private StreamInterface stream = new MersenneTwister();
@@ -75,7 +75,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
         OTSModelInterface model = new DummyModelForTemplateGTUTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        LaneBasedTemplateGTUType passengerCar = new LaneBasedTemplateGTUType(pcType, new Generator<Length>()
+        LaneBasedTemplateGtuType passengerCar = new LaneBasedTemplateGtuType(pcType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -105,7 +105,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
-        LaneBasedTemplateGTUType truck = new LaneBasedTemplateGTUType(truckType, new Generator<Length>()
+        LaneBasedTemplateGtuType truck = new LaneBasedTemplateGtuType(truckType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -153,7 +153,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route, final Node origin,
+        public LaneBasedStrategicalPlanner create(final LaneBasedGtu gtu, final Route route, final Node origin,
                 final Node destination) throws GtuException
         {
             return null;
@@ -272,14 +272,14 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * @throws GtuException in case of a GTU exception
      * @throws NamingException in case of a naming exception
      */
-    private void verifyFields(final LaneBasedTemplateGTUType templateGtuType, final GtuType gtuType,
+    private void verifyFields(final LaneBasedTemplateGtuType templateGtuType, final GtuType gtuType,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> width,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed)
             throws ProbabilityException, ParameterException, NamingException, GtuException
     {
         assertTrue("Type should be " + gtuType, gtuType.equals(templateGtuType.getGtuType()));
-        LaneBasedGTUCharacteristics characteristics = templateGtuType.draw();
+        LaneBasedGtuCharacteristics characteristics = templateGtuType.draw();
         assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
         assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(),

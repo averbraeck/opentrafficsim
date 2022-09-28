@@ -8,8 +8,8 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 /**
- * Specific type of LaneBasedGTU. This class adds length, width, maximum speed and a reference to the simulator to the
- * AbstractLaneBasedGTU.
+ * Specific type of LaneBasedGtu. This class adds length, width, maximum speed and a reference to the simulator to the
+ * AbstractLaneBasedGtu.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -17,7 +17,7 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGTU2
+public abstract class AbstractLaneBasedIndividualGtu extends AbstractLaneBasedGtu2
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -46,7 +46,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
      * @throws GtuException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedIndividualGTU(final String id, final GtuType gtuType, final Length length, final Length width,
+    public AbstractLaneBasedIndividualGtu(final String id, final GtuType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final OTSSimulatorInterface simulator, final OTSRoadNetwork network) throws GtuException
     {
         super(id, gtuType, network);

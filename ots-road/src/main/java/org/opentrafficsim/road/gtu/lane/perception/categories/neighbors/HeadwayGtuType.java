@@ -7,11 +7,11 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUPerceived;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTURealCopy;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuPerceived;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuRealCopy;
 
 /**
  * Whether a GTU needs to be wrapped, or information should be copied for later and unaltered use.
@@ -23,56 +23,56 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTURealCopy;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface HeadwayGTUType
+public interface HeadwayGtuType
 {
 
     /** The GTU is wrapped, and info is taken directly from it. */
-    HeadwayGTUType WRAP = new HeadwayGTUType()
+    HeadwayGtuType WRAP = new HeadwayGtuType()
     {
         @Override
-        public HeadwayGTUReal createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtuReal createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException
         {
-            return new HeadwayGTUReal(perceivedGtu, distance, true);
+            return new HeadwayGtuReal(perceivedGtu, distance, true);
         }
 
         @Override
-        public HeadwayGTUReal createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtuReal createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException
         {
-            return new HeadwayGTUReal(perceivedGtu, distance, true);
+            return new HeadwayGtuReal(perceivedGtu, distance, true);
         }
 
         @Override
-        public HeadwayGTUReal createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtuReal createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
         {
-            return new HeadwayGTUReal(perceivedGtu, overlapFront, overlap, overlapRear, true);
+            return new HeadwayGtuReal(perceivedGtu, overlapFront, overlap, overlapRear, true);
         }
     };
 
     /** Info regarding the GTU is copied. */
-    HeadwayGTUType COPY = new HeadwayGTUType()
+    HeadwayGtuType COPY = new HeadwayGtuType()
     {
         @Override
-        public HeadwayGTURealCopy createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtuRealCopy createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException
         {
-            return new HeadwayGTURealCopy(perceivedGtu, distance);
+            return new HeadwayGtuRealCopy(perceivedGtu, distance);
         }
 
         @Override
-        public HeadwayGTURealCopy createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtuRealCopy createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException
         {
-            return new HeadwayGTURealCopy(perceivedGtu, distance);
+            return new HeadwayGtuRealCopy(perceivedGtu, distance);
         }
 
         @Override
-        public HeadwayGTURealCopy createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtuRealCopy createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
         {
-            return new HeadwayGTURealCopy(perceivedGtu, overlapFront, overlap, overlapRear);
+            return new HeadwayGtuRealCopy(perceivedGtu, overlapFront, overlap, overlapRear);
         }
     };
 
@@ -87,7 +87,7 @@ public interface HeadwayGTUType
      * @throws GtuException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    default HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+    default HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length distance, final boolean downstream) throws GtuException, ParameterException
     {
         if (distance.ge0())
@@ -124,7 +124,7 @@ public interface HeadwayGTUType
      * @throws GtuException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    HeadwayGTU createDownstreamGtu(LaneBasedGTU perceivingGtu, LaneBasedGTU perceivedGtu, Length distance)
+    HeadwayGtu createDownstreamGtu(LaneBasedGtu perceivingGtu, LaneBasedGtu perceivedGtu, Length distance)
             throws GtuException, ParameterException;
 
     /**
@@ -136,7 +136,7 @@ public interface HeadwayGTUType
      * @throws GtuException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    HeadwayGTU createUpstreamGtu(LaneBasedGTU perceivingGtu, LaneBasedGTU perceivedGtu, Length distance)
+    HeadwayGtu createUpstreamGtu(LaneBasedGtu perceivingGtu, LaneBasedGtu perceivedGtu, Length distance)
             throws GtuException, ParameterException;
 
     /**
@@ -149,7 +149,7 @@ public interface HeadwayGTUType
      * @return headway object from a gtu
      * @throws GtuException when headway object cannot be created
      */
-    HeadwayGTU createParallelGtu(LaneBasedGTU perceivingGtu, LaneBasedGTU perceivedGtu, Length overlapFront, Length overlap,
+    HeadwayGtu createParallelGtu(LaneBasedGtu perceivingGtu, LaneBasedGtu perceivedGtu, Length overlapFront, Length overlap,
             Length overlapRear) throws GtuException;
 
     /**
@@ -163,7 +163,7 @@ public interface HeadwayGTUType
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    class PerceivedHeadwayGTUType implements HeadwayGTUType
+    class PerceivedHeadwayGtuType implements HeadwayGtuType
     {
 
         /** Estimation. */
@@ -189,7 +189,7 @@ public interface HeadwayGTUType
          * @param estimation Estimation; estimation
          * @param anticipation Anticipation; anticipation
          */
-        public PerceivedHeadwayGTUType(final Estimation estimation, final Anticipation anticipation)
+        public PerceivedHeadwayGtuType(final Estimation estimation, final Anticipation anticipation)
         {
             this.estimation = estimation;
             this.anticipation = anticipation;
@@ -197,7 +197,7 @@ public interface HeadwayGTUType
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance, final boolean downstream) throws GtuException, ParameterException
         {
             Time now = perceivedGtu.getSimulator().getSimulatorAbsTime();
@@ -215,12 +215,12 @@ public interface HeadwayGTUType
             }
             NeighborTriplet triplet = this.estimation.estimate(perceivingGtu, perceivedGtu, distance, downstream, this.when);
             triplet = this.anticipation.anticipate(triplet, this.tr, this.traveledDistance, downstream);
-            return new HeadwayGTUPerceived(perceivedGtu, triplet.getHeadway(), triplet.getSpeed(), triplet.getAcceleration());
+            return new HeadwayGtuPerceived(perceivedGtu, triplet.getHeadway(), triplet.getSpeed(), triplet.getAcceleration());
         }
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
         {
             return createHeadwayGtu(perceivingGtu, perceivedGtu, distance, true);
@@ -228,7 +228,7 @@ public interface HeadwayGTUType
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
         {
             return createHeadwayGtu(perceivingGtu, perceivedGtu, distance, false);
@@ -236,10 +236,10 @@ public interface HeadwayGTUType
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
         {
-            return new HeadwayGTUPerceived(perceivedGtu, overlapFront, overlap, overlapRear, perceivedGtu.getSpeed(),
+            return new HeadwayGtuPerceived(perceivedGtu, overlapFront, overlap, overlapRear, perceivedGtu.getSpeed(),
                     perceivedGtu.getAcceleration());
         }
 

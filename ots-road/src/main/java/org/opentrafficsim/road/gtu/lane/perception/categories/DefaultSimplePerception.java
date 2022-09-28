@@ -40,7 +40,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
      */
-    void updateForwardHeadwayGTU() throws GtuException, NetworkException, ParameterException;
+    void updateForwardHeadwayGtu() throws GtuException, NetworkException, ParameterException;
 
     /**
      * Update the forward headway and first object (but not a GTU) in front.
@@ -147,7 +147,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     /**
      * @return forwardHeadway, the forward headway and first object (GTU) in front
      */
-    Headway getForwardHeadwayGTU();
+    Headway getForwardHeadwayGtu();
 
     /**
      * @return forwardHeadway, the forward headway and first object (not a GTU) in front
@@ -155,7 +155,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     Headway getForwardHeadwayObject();
 
     /**
-     * @return backwardHeadwayGTU, the backward headway and first object (e.g., a GTU) behind
+     * @return backwardHeadwayGtu, the backward headway and first object (e.g., a GTU) behind
      */
     Headway getBackwardHeadway();
 
@@ -223,7 +223,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     default void updateAll() throws GtuException, ParameterException, NetworkException
     {
         updateLanePathInfo();
-        updateForwardHeadwayGTU();
+        updateForwardHeadwayGtu();
         updateForwardHeadwayObject();
         updateBackwardHeadway();
         updateAccessibleAdjacentLanesLeft();

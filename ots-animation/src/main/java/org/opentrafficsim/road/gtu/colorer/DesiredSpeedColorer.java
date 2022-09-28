@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.animation.ColorInterpolator;
 import org.opentrafficsim.core.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * <p>
@@ -60,9 +60,9 @@ public class DesiredSpeedColorer implements GtuColorer, Serializable
     @Override
     public final Color getColor(final Gtu gtu)
     {
-        if (gtu instanceof LaneBasedGTU)
+        if (gtu instanceof LaneBasedGtu)
         {
-            Speed speed = ((LaneBasedGTU) gtu).getDesiredSpeed();
+            Speed speed = ((LaneBasedGtu) gtu).getDesiredSpeed();
             double ratio = (speed.si - this.minimumSpeed.si) / (this.maximumSpeed.si - this.minimumSpeed.si)
                     * (this.legend.size() - 2);
             if (ratio <= 0)

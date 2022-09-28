@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -73,10 +73,10 @@ public class IncentiveCourtesy implements VoluntaryIncentive
         boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
         for (LateralDirectionality dir : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.RIGHT})
         {
-            Iterable<HeadwayGTU> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
+            Iterable<HeadwayGtu> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
             if (leaders != null)
             {
-                for (HeadwayGTU leader : leaders)
+                for (HeadwayGtu leader : leaders)
                 {
                     Parameters params = leader.getParameters();
                     double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
@@ -103,10 +103,10 @@ public class IncentiveCourtesy implements VoluntaryIncentive
                 }
             }
             // consider close followers on 2 lanes away
-            Iterable<HeadwayGTU> followers = neighbors.getFollowers(new RelativeLane(dir, 2));
+            Iterable<HeadwayGtu> followers = neighbors.getFollowers(new RelativeLane(dir, 2));
             if (followers != null)
             {
-                for (HeadwayGTU follower : followers)
+                for (HeadwayGtu follower : followers)
                 {
                     Parameters params = follower.getParameters();
                     double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
@@ -140,7 +140,7 @@ public class IncentiveCourtesy implements VoluntaryIncentive
             leaders = neighbors.getLeaders(new RelativeLane(dir, 2));
             if (leaders != null)
             {
-                for (HeadwayGTU leader : leaders)
+                for (HeadwayGtu leader : leaders)
                 {
                     Parameters params = leader.getParameters();
                     double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);

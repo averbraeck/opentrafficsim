@@ -14,7 +14,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationSpeed.SpeedSet;
@@ -87,7 +87,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
         Speed vAnt = this.speed.get(lane);
         if (vAnt == null)
         {
-            LaneBasedGTU gtu = Try.assign(() -> getPerception().getGtu(), "");
+            LaneBasedGtu gtu = Try.assign(() -> getPerception().getGtu(), "");
             Speed desiredSpeed = gtu.getDesiredSpeed();
             vAnt = anticipationSpeed(lane, gtu.getParameters(),
                     getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class),

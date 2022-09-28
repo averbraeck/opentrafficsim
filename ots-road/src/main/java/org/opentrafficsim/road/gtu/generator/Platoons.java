@@ -27,8 +27,8 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.generator.od.GTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.generator.od.GtuCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.network.lane.LaneDirection;
@@ -41,7 +41,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * {@code Platoons.ofCategory(...).addPlatoon(...).addGtu(...).addGtu(...).addPlatoon(...).addGtu(...).addGtu(...).start();}.
  * Method {@code addGtu(...)} may only determine a generation time if other info is set by {@code fixInfo(...)}.<br>
  * <br>
- * This class may be used with a {@code LaneBasedGTUCharacteristicsGenerator} or {@code GTUCharacteristicsGeneratorOD}. Use
+ * This class may be used with a {@code LaneBasedGtuCharacteristicsGenerator} or {@code GtuCharacteristicsGeneratorOD}. Use
  * {@code ofGtuType()} or {@code ofCategory()} respectively.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -56,7 +56,7 @@ public abstract class Platoons<T>
 {
 
     /** GTU generator to disable. */
-    private LaneBasedGTUGenerator gen;
+    private LaneBasedGtuGenerator gen;
 
     /** Simulator. */
     private final OTSSimulatorInterface simulator;
@@ -104,20 +104,20 @@ public abstract class Platoons<T>
 
     /**
      * Creates a {@code Platoon&lt;Category&gt;} instance for platoons.
-     * @param characteristics GTUCharacteristicsGeneratorOD; characteristics generator
+     * @param characteristics GtuCharacteristicsGeneratorOD; characteristics generator
      * @param simulator OTSSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
      * @param position Set&lt;LaneDirection&gt;; position
      * @return Platoons&lt;Category&gt;; platoons based on OD
      */
     @SuppressWarnings("synthetic-access")
-    public static Platoons<Category> ofCategory(final GTUCharacteristicsGeneratorOD characteristics,
+    public static Platoons<Category> ofCategory(final GtuCharacteristicsGeneratorOD characteristics,
             final OTSSimulatorInterface simulator, final StreamInterface stream, final Set<LaneDirection> position)
     {
         return new Platoons<Category>(simulator, position)
         {
             /** Characteristics generator OD based. */
-            private final GTUCharacteristicsGeneratorOD characteristicsOD = characteristics;
+            private final GtuCharacteristicsGeneratorOD characteristicsOD = characteristics;
 
             /** Random number stream. */
             private final StreamInterface strm = stream;
@@ -136,20 +136,20 @@ public abstract class Platoons<T>
 
     /**
      * Creates a {@code Platoon&lt;GtuType&gt;} instance for platoons.
-     * @param characteristics LaneBasedGTUCharacteristicsGenerator; characteristics generator
+     * @param characteristics LaneBasedGtuCharacteristicsGenerator; characteristics generator
      * @param simulator OTSSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
      * @param position Set&lt;LaneDirection&gt;; position
      * @return Platoons&lt;GtuType&gt;; platoons based on OD
      */
     @SuppressWarnings("synthetic-access")
-    public static Platoons<GtuType> ofGtuType(final LaneBasedGTUCharacteristicsGenerator characteristics,
+    public static Platoons<GtuType> ofGtuType(final LaneBasedGtuCharacteristicsGenerator characteristics,
             final OTSSimulatorInterface simulator, final StreamInterface stream, final Set<LaneDirection> position)
     {
         return new Platoons<GtuType>(simulator, position)
         {
             /** Characteristics generator. */
-            private final LaneBasedGTUCharacteristicsGenerator chrctrstcs = characteristics;
+            private final LaneBasedGtuCharacteristicsGenerator chrctrstcs = characteristics;
 
             /** {@inheritDoc} */
             @Override
@@ -234,10 +234,10 @@ public abstract class Platoons<T>
 
     /**
      * Sets the generator and starts the events.
-     * @param generator LaneBasedGTUGenerator; GTU generator
+     * @param generator LaneBasedGtuGenerator; GTU generator
      * @throws SimRuntimeException if start of first platoon is in the past
      */
-    public void start(final LaneBasedGTUGenerator generator) throws SimRuntimeException
+    public void start(final LaneBasedGtuGenerator generator) throws SimRuntimeException
     {
         Throw.when(this.started, IllegalStateException.class, "Cannot start the Platoons, it was already started.");
         this.gen = generator;
@@ -256,9 +256,9 @@ public abstract class Platoons<T>
 
     /**
      * Returns the vehicle generator for sub classes.
-     * @return LaneBasedGTUGenerator; vehicle generator for sub classes
+     * @return LaneBasedGtuGenerator; vehicle generator for sub classes
      */
-    protected LaneBasedGTUGenerator getGenerator()
+    protected LaneBasedGtuGenerator getGenerator()
     {
         return this.gen;
     }

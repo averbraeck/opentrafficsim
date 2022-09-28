@@ -31,7 +31,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class GTUGeneratorIndividualOld extends AbstractGTUGeneratorOld implements Serializable
+public class GtuGeneratorIndividualOld extends AbstractGtuGeneratorOld implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160000L;
@@ -75,7 +75,7 @@ public class GTUGeneratorIndividualOld extends AbstractGTUGeneratorOld implement
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GTUGeneratorIndividualOld(final String name, final OTSSimulatorInterface simulator, final GtuType gtuType,
+    public GtuGeneratorIndividualOld(final String name, final OTSSimulatorInterface simulator, final GtuType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist,
@@ -131,7 +131,7 @@ public class GTUGeneratorIndividualOld extends AbstractGTUGeneratorOld implement
     @Override
     public final String toString()
     {
-        return "GTUGeneratorIndividual [lengthDist=" + this.lengthDist + ", widthDist=" + this.widthDist + ", maximumSpeedDist="
+        return "GtuGeneratorIndividual [lengthDist=" + this.lengthDist + ", widthDist=" + this.widthDist + ", maximumSpeedDist="
                 + this.maximumSpeedDist + "]";
     }
 

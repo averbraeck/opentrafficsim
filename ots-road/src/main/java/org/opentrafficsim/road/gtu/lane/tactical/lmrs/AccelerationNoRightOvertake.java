@@ -10,13 +10,13 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
@@ -43,7 +43,7 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
     /** {@inheritDoc} */
     @Override
     public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
-            final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
+            final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GtuException
     {
@@ -53,16 +53,16 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
             Speed vCong = params.getParameter(VCONG);
             if (perception.getPerceptionCategory(TrafficPerception.class).getSpeed(RelativeLane.CURRENT).si > vCong.si)
             {
-                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
                         perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
                 {
-                    HeadwayGTU leader = leaders.first();
+                    HeadwayGtu leader = leaders.first();
                     Speed desiredSpeed = perception.getGtu().getDesiredSpeed();
                     if (desiredSpeed.si > leader.getSpeed().si)
                     {
                         Acceleration b0 = params.getParameter(B0);
-                        // TODO only sensible if the left leader can change right; add this info to HeadwayGTU?
+                        // TODO only sensible if the left leader can change right; add this info to HeadwayGtu?
                         Acceleration a =
                                 CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo, leader);
                         simplePlan.minimizeAcceleration(a.si < -b0.si ? b0.neg() : a);

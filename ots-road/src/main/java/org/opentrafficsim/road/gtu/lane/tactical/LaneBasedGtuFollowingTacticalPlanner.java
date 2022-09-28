@@ -14,14 +14,14 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 
 /**
  * Lane-based tactical planner that implements car following behavior. This tactical planner retrieves the car following model
@@ -36,17 +36,17 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacticalPlanner
+public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
     /** */
     private static final long serialVersionUID = 20151125L;
 
     /**
      * Instantiate a tactical planner with just GTU following behavior and no lane changes.
-     * @param carFollowingModel GTUFollowingModelOld; Car-following model.
+     * @param carFollowingModel GtuFollowingModelOld; Car-following model.
      * @param gtu LaneBasedGtu; GTU
      */
-    public LaneBasedGTUFollowingTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneBasedGTU gtu)
+    public LaneBasedGtuFollowingTacticalPlanner(final GtuFollowingModelOld carFollowingModel, final LaneBasedGtu gtu)
     {
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
@@ -58,7 +58,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
             throws OperationalPlanException, NetworkException, GtuException, ParameterException
     {
         // ask Perception for the local situation
-        LaneBasedGTU laneBasedGTU = getGtu();
+        LaneBasedGtu laneBasedGTU = getGtu();
         LanePerception perception = getPerception();
 
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
@@ -73,18 +73,18 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
         // look at the conditions for headway from a GTU in front
         DefaultSimplePerception simplePerception = perception.getPerceptionCategory(DefaultSimplePerception.class);
-        Headway headwayGTU = simplePerception.getForwardHeadwayGTU();
+        Headway headwayGTU = simplePerception.getForwardHeadwayGtu();
         AccelerationStep accelerationStepGTU = null;
         if (headwayGTU.getDistance().ge(maxDistance))
         {
             // TODO I really don't like this -- if there is a lane drop at 20 m, the GTU should stop...
-            accelerationStepGTU = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
+            accelerationStepGTU = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
                     laneBasedGTU, lanePathInfo.getPath().getLength(), simplePerception.getSpeedLimit());
         }
         else
         {
             accelerationStepGTU =
-                    ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU, headwayGTU.getSpeed(),
+                    ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU, headwayGTU.getSpeed(),
                             headwayGTU.getDistance(), lanePathInfo.getPath().getLength(), simplePerception.getSpeedLimit());
         }
 
@@ -93,12 +93,12 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         AccelerationStep accelerationStepObject = null;
         if (headwayObject.getDistance().ge(maxDistance))
         {
-            accelerationStepObject = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
+            accelerationStepObject = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
                     laneBasedGTU, lanePathInfo.getPath().getLength(), simplePerception.getSpeedLimit());
         }
         else
         {
-            accelerationStepObject = ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
+            accelerationStepObject = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
                     headwayObject.getSpeed(), headwayObject.getDistance(), lanePathInfo.getPath().getLength(),
                     simplePerception.getSpeedLimit());
         }
@@ -134,6 +134,6 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     @Override
     public final String toString()
     {
-        return "LaneBasedGTUFollowingTacticalPlanner [carFollowingModel=" + getCarFollowingModel() + "]";
+        return "LaneBasedGtuFollowingTacticalPlanner [carFollowingModel=" + getCarFollowingModel() + "]";
     }
 }

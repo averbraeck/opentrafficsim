@@ -5,7 +5,7 @@ import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.sampling.GtuData;
 
 /**
@@ -36,7 +36,7 @@ public class ReferenceSpeed extends ExtendedDataTypeSpeed<GtuData>
     @Override
     public final FloatSpeed getValue(final GtuData gtu)
     {
-        LaneBasedGTU gtuObj = gtu.getGtu();
+        LaneBasedGtu gtuObj = gtu.getGtu();
         try
         {
             double v1 = gtuObj.getReferencePosition().getLane().getSpeedLimit(gtuObj.getGtuType()).si;

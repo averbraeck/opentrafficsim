@@ -57,7 +57,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -85,7 +85,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * underlying CrossSectionLinks) converge, "parallel" traffic is not taken into account in the headway calculation. Instead, gap
  * acceptance algorithms or their equivalent should guide the merging behavior.
  * <p>
- * To decide its movement, an AbstractLaneBasedGTU applies its car following algorithm and lane change algorithm to set the
+ * To decide its movement, an AbstractLaneBasedGtu applies its car following algorithm and lane change algorithm to set the
  * acceleration and any lane change operation to perform. It then schedules the triggers that will add it to subsequent lanes
  * and remove it from current lanes as needed during the time step that is has committed to. Finally, it re-schedules its next
  * movement evaluation with the simulator.
@@ -96,7 +96,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneBasedGTU
+public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneBasedGtu
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -175,7 +175,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneB
      * @param network OTSRoadNetwork; the network that the GTU is initially registered in
      * @throws GtuException when initial values are not correct
      */
-    public AbstractLaneBasedGTU2(final String id, final GtuType gtuType, final OTSRoadNetwork network) throws GtuException
+    public AbstractLaneBasedGtu2(final String id, final GtuType gtuType, final OTSRoadNetwork network) throws GtuException
     {
         super(id, gtuType, network.getSimulator(), network);
         OTSSimulatorInterface simulator = network.getSimulator();
@@ -347,7 +347,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneB
 
         // init event
         DirectedLanePosition referencePosition = getReferencePosition();
-        fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
+        fireTimedEvent(LaneBasedGtu.LANEBASED_INIT_EVENT,
                 new Object[] {getId(), new OTSPoint3D(initialLocation).doubleVector(PositionUnit.METER),
                         OTSPoint3D.direction(initialLocation, DirectionUnit.EAST_RADIAN), getLength(), getWidth(),
                         referencePosition.getLane().getParentLink().getId(), referencePosition.getLane().getId(),
@@ -432,7 +432,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneB
 
         // fire event
         this.fireTimedEvent(
-                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
+                LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
                         from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
                 getSimulator().getSimulatorTime());
 
@@ -623,10 +623,10 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneB
             throw new RuntimeException(exception);
         }
 
-        // XXX: WRONG: this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
+        // XXX: WRONG: this.fireTimedEvent(LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
         // XXX: WRONG: getSimulator().getSimulatorTime());
         this.fireTimedEvent(
-                LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
+                LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
                         from.getLane().getParentLink().getId(), from.getLane().getId(), from.getPosition()},
                 getSimulator().getSimulatorTime());
 
@@ -710,7 +710,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneB
                 }
             }
 
-            fireTimedEvent(LaneBasedGTU.LANEBASED_MOVE_EVENT,
+            fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
                     new Object[] {getId(), new OTSPoint3D(fromLocation).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(fromLocation, DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
                             getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getParentLink().getId(),
@@ -1435,7 +1435,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneB
         if (dlp != null && dlp.getLane() != null)
         {
             Lane referenceLane = dlp.getLane();
-            fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
+            fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
                     new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(),
                             referenceLane.getParentLink().getId(), referenceLane.getId(), dlp.getPosition(),
@@ -1444,7 +1444,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneB
         }
         else
         {
-            fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
+            fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
                     new Object[] {getId(), new OTSPoint3D(location).doubleVector(PositionUnit.METER),
                             OTSPoint3D.direction(location, DirectionUnit.EAST_RADIAN), getOdometer(), null, null, null, null},
                     getSimulator().getSimulatorTime());
@@ -1536,7 +1536,7 @@ public abstract class AbstractLaneBasedGTU2 extends AbstractGtu implements LaneB
                 // leaders
                 NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
                 Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
-                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
                 // obtain
                 this.cachedCarFollowingAcceleration =
                         Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(),

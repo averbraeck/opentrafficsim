@@ -17,13 +17,13 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.road.gtu.lane.perception.headway.GTUStatus;
+import org.opentrafficsim.road.gtu.lane.perception.headway.GtuStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 
 /**
- * Test the HeadwayGTU class and the EnumType in the Headway interface.
+ * Test the HeadwayGtu class and the EnumType in the Headway interface.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -32,10 +32,10 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayGTUTest
+public class HeadwayGtuTest
 {
     /** The network. */
-    private OTSRoadNetwork network = new OTSRoadNetwork("test network", true, new OTSSimulator("Simulator for HeadwayGTUTest"));
+    private OTSRoadNetwork network = new OTSRoadNetwork("test network", true, new OTSSimulator("Simulator for HeadwayGtuTest"));
 
     /**
      * Test the constructor and the getters.
@@ -44,16 +44,16 @@ public class HeadwayGTUTest
     @Test
     public final void constructorTest() throws GtuException
     {
-        // Make two headway GTUs with different values to prove that HeadwayGTUs do not share static fields.
+        // Make two headway GTUs with different values to prove that HeadwayGtus do not share static fields.
         String id1 = "id1";
         GtuType gtuType1 = new GtuType("type1", this.network.getGtuType(GtuType.DEFAULTS.CAR));
         Length distance1 = new Length(123, LengthUnit.METER);
         String id2 = "id2";
         GtuType gtuType2 = new GtuType("type2", this.network.getGtuType(GtuType.DEFAULTS.CAR));
         Length distance2 = new Length(234, LengthUnit.METER);
-        HeadwayGTUSimple hg1 = new HeadwayGTUSimple(id1, gtuType1, distance1, Length.ZERO, Length.ZERO, (Speed) null,
+        HeadwayGtuSimple hg1 = new HeadwayGtuSimple(id1, gtuType1, distance1, Length.ZERO, Length.ZERO, (Speed) null,
                 (Acceleration) null, null);
-        HeadwayGTUSimple hg2 = new HeadwayGTUSimple(id2, gtuType2, distance2, Length.ZERO, Length.ZERO, (Speed) null,
+        HeadwayGtuSimple hg2 = new HeadwayGtuSimple(id2, gtuType2, distance2, Length.ZERO, Length.ZERO, (Speed) null,
                 (Acceleration) null, null);
         verifyFields(hg1, null, distance1, gtuType1, id1, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
                 false, false, false, false, false);
@@ -62,30 +62,30 @@ public class HeadwayGTUTest
         Length overlapFront = new Length(2, LengthUnit.METER);
         Length overlap = new Length(3, LengthUnit.METER);
         Length overlapRear = new Length(4, LengthUnit.METER);
-        hg2 = new HeadwayGTUSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, Length.ZERO, (Speed) null,
+        hg2 = new HeadwayGtuSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, Length.ZERO, (Speed) null,
                 (Acceleration) null, null);
         verifyFields(hg2, null, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear, null, false,
                 false, false, false, false, false, false, true);
         Speed speed2 = new Speed(50, SpeedUnit.KM_PER_HOUR);
         Acceleration acceleration2 = new Acceleration(1.234, AccelerationUnit.METER_PER_SECOND_2);
-        hg2 = new HeadwayGTUSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, Length.ZERO, speed2,
+        hg2 = new HeadwayGtuSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, Length.ZERO, speed2,
                 acceleration2, null);
         verifyFields(hg2, acceleration2, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear,
                 speed2, false, false, false, false, false, false, false, true);
-        // Test all combinations of two GTUStatus values.
-        for (GTUStatus gtuStatus1 : GTUStatus.values())
+        // Test all combinations of two GtuStatus values.
+        for (GtuStatus gtuStatus1 : GtuStatus.values())
         {
-            for (GTUStatus gtuStatus2 : GTUStatus.values())
+            for (GtuStatus gtuStatus2 : GtuStatus.values())
             {
-                hg2 = new HeadwayGTUSimple(id2, gtuType2, distance2, Length.ZERO, Length.ZERO, speed2, acceleration2, null,
+                hg2 = new HeadwayGtuSimple(id2, gtuType2, distance2, Length.ZERO, Length.ZERO, speed2, acceleration2, null,
                         gtuStatus1, gtuStatus2);
-                boolean honking = GTUStatus.HONK == gtuStatus1 || GTUStatus.HONK == gtuStatus2;
-                boolean braking = GTUStatus.BRAKING_LIGHTS == gtuStatus1 || GTUStatus.BRAKING_LIGHTS == gtuStatus2;
+                boolean honking = GtuStatus.HONK == gtuStatus1 || GtuStatus.HONK == gtuStatus2;
+                boolean braking = GtuStatus.BRAKING_LIGHTS == gtuStatus1 || GtuStatus.BRAKING_LIGHTS == gtuStatus2;
                 boolean leftIndicator =
-                        GTUStatus.LEFT_TURNINDICATOR == gtuStatus1 || GTUStatus.LEFT_TURNINDICATOR == gtuStatus2;
+                        GtuStatus.LEFT_TURNINDICATOR == gtuStatus1 || GtuStatus.LEFT_TURNINDICATOR == gtuStatus2;
                 boolean rightIndicator =
-                        GTUStatus.RIGHT_TURNINDICATOR == gtuStatus1 || GTUStatus.RIGHT_TURNINDICATOR == gtuStatus2;
-                boolean hazardLights = GTUStatus.EMERGENCY_LIGHTS == gtuStatus1 || GTUStatus.EMERGENCY_LIGHTS == gtuStatus2;
+                        GtuStatus.RIGHT_TURNINDICATOR == gtuStatus1 || GtuStatus.RIGHT_TURNINDICATOR == gtuStatus2;
+                boolean hazardLights = GtuStatus.EMERGENCY_LIGHTS == gtuStatus1 || GtuStatus.EMERGENCY_LIGHTS == gtuStatus2;
                 verifyFields(hg2, acceleration2, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, speed2,
                         true, false, braking, hazardLights, honking, leftIndicator, rightIndicator, false);
 
@@ -96,7 +96,7 @@ public class HeadwayGTUTest
         assertTrue("toString returns something", hg2.toString().length() > 10);
         try
         {
-            new HeadwayGTUSimple(null, gtuType1, distance1, Length.ZERO, Length.ZERO, Speed.ZERO);
+            new HeadwayGtuSimple(null, gtuType1, distance1, Length.ZERO, Length.ZERO, Speed.ZERO);
             fail("null for id should have thrown a GTUException");
         }
         catch (GtuException e)
@@ -105,7 +105,7 @@ public class HeadwayGTUTest
         }
         try
         {
-            new HeadwayGTUSimple(id1, gtuType1, null, Length.ZERO, Length.ZERO, Speed.ZERO);
+            new HeadwayGtuSimple(id1, gtuType1, null, Length.ZERO, Length.ZERO, Speed.ZERO);
             fail("null for distance should have thrown a GTUException");
         }
         catch (GtuException e)
@@ -119,8 +119,8 @@ public class HeadwayGTUTest
     }
 
     /**
-     * Verify all fields in a HeadwayGTU.
-     * @param headwayGTU HeadwayGtu; the HeadwayGTU to check
+     * Verify all fields in a HeadwayGtu.
+     * @param headwayGTU HeadwayGtu; the HeadwayGtu to check
      * @param acceleration Acceleration; the expected return value for getAcceleration
      * @param distance Length; the expected return value for getDistance
      * @param gtuType GtuType; the expected return value for getGtuType
@@ -139,7 +139,7 @@ public class HeadwayGTUTest
      * @param rightIndicator boolean; the expected return value for isRightTurnIndicatorOn
      * @param parallel boolean; the expected return value for isParallel
      */
-    private void verifyFields(final HeadwayGTUSimple headwayGTU, final Acceleration acceleration, final Length distance,
+    private void verifyFields(final HeadwayGtuSimple headwayGTU, final Acceleration acceleration, final Length distance,
             final GtuType gtuType, final String id, final Headway.ObjectType objectType, final Length overlap,
             final Length overlapFront, final Length overlapRear, final Speed speed, final boolean ahead, final boolean behind,
             final boolean breakingLights, final boolean hazardLights, final boolean honk, final boolean leftIndicator,

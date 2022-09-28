@@ -16,29 +16,29 @@ import org.opentrafficsim.core.gtu.GtuException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharacteristicsGenerator, Serializable
+public class LaneBasedTemplateGtuTypeDistribution implements LaneBasedGtuCharacteristicsGenerator, Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160000L;
 
     /** The Distribution of lane based template GTU types. */
-    private final Distribution<LaneBasedTemplateGTUType> distribution;
+    private final Distribution<LaneBasedTemplateGtuType> distribution;
 
     /**
      * Construct a new LaneBasedTemplateGTUTypeDistribution.
      * @param distributionOfLanebasedTemplateGTUType Distribution&lt;LaneBasedTemplateGTUType&gt;; the distribution of
      *            LaneBasedTemplateGTUTypes
      */
-    public LaneBasedTemplateGTUTypeDistribution(
-            final Distribution<LaneBasedTemplateGTUType> distributionOfLanebasedTemplateGTUType)
+    public LaneBasedTemplateGtuTypeDistribution(
+            final Distribution<LaneBasedTemplateGtuType> distributionOfLanebasedTemplateGTUType)
     {
         this.distribution = distributionOfLanebasedTemplateGTUType;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+    public final LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
     {
         return this.distribution.draw().draw();
     }

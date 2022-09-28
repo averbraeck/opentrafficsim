@@ -18,7 +18,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -67,7 +67,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param gtu LaneBasedGtu; GTU
      * @throws GtuException if fixed tactical planner == null
      */
-    public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu)
+    public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGtu gtu)
             throws GtuException
     {
         this(fixedTacticalPlanner, null, gtu, null, null, RouteGeneratorOD.NULL);
@@ -83,7 +83,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @throws GtuException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final Route route,
-            final LaneBasedGTU gtu, final Node origin, final Node destination) throws GtuException
+            final LaneBasedGtu gtu, final Node origin, final Node destination) throws GtuException
     {
         this(fixedTacticalPlanner, route, gtu, origin, destination, RouteGeneratorOD.NULL);
     }
@@ -97,7 +97,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param routeGenerator RouteGeneratorOD; route generator
      * @throws GtuException if fixed tactical planner == null
      */
-    public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu,
+    public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGtu gtu,
             final Node origin, final Node destination, final RouteGeneratorOD routeGenerator) throws GtuException
     {
         this(fixedTacticalPlanner, null, gtu, origin, destination, routeGenerator);
@@ -115,7 +115,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @throws GtuException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final Route route,
-            final LaneBasedGTU gtu, final Node origin, final Node destination, final RouteGeneratorOD routeGenerator)
+            final LaneBasedGtu gtu, final Node origin, final Node destination, final RouteGeneratorOD routeGenerator)
             throws GtuException
     {
         super(gtu);

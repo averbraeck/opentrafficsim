@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -16,7 +16,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
@@ -73,7 +73,7 @@ public class IncentiveQueue implements VoluntaryIncentive
         double dLeft = 0.0;
         if (infra.getCrossSection().contains(RelativeLane.LEFT))
         {
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neigbors.getLeaders(RelativeLane.LEFT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.LEFT);
             if (!leaders.isEmpty())
             {
                 Acceleration acc = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, ego.getSpeed(), sli,
@@ -84,7 +84,7 @@ public class IncentiveQueue implements VoluntaryIncentive
         double dRight = 0.0;
         if (infra.getCrossSection().contains(RelativeLane.RIGHT))
         {
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neigbors.getLeaders(RelativeLane.RIGHT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.RIGHT);
             if (!leaders.isEmpty())
             {
                 Acceleration acc = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, ego.getSpeed(), sli,

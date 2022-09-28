@@ -14,7 +14,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
@@ -58,11 +58,11 @@ public class SplitColorer implements GtuColorer
     @Override
     public final Color getColor(final Gtu gtu)
     {
-        if (!(gtu instanceof LaneBasedGTU))
+        if (!(gtu instanceof LaneBasedGtu))
         {
             return UNKNOWN;
         }
-        LaneBasedGTU laneGtu = (LaneBasedGTU) gtu;
+        LaneBasedGtu laneGtu = (LaneBasedGtu) gtu;
         DirectedLanePosition refPos;
         try
         {

@@ -8,7 +8,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -66,7 +66,7 @@ public class BusStopConflictRule implements ConflictRule
         GTUDirectionality dir =
                 busConflict.getDirection().isForward() ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
         Length pos = busConflict.getLongitudinalPosition();
-        LaneBasedGTU gtu = null;
+        LaneBasedGtu gtu = null;
         try
         {
             while (gtu == null && lane != null)

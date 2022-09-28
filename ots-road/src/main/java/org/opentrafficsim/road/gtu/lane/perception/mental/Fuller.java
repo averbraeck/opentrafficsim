@@ -17,7 +17,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager.SummativeTaskManager;
 
@@ -162,7 +162,7 @@ public class Fuller implements Mental
     @Override
     public void apply(final LanePerception perception) throws ParameterException, GtuException
     {
-        LaneBasedGTU gtu = Try.assign(() -> perception.getGtu(), "Could not obtain GTU.");
+        LaneBasedGtu gtu = Try.assign(() -> perception.getGtu(), "Could not obtain GTU.");
         Parameters parameters = gtu.getParameters();
         double taskDemand = 0.0;
         // a) the fundamental diagrams of task workload are defined in the tasks

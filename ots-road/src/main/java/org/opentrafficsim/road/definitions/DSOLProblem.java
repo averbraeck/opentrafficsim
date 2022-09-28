@@ -140,7 +140,7 @@ class DummyModel extends AbstractOTSModel
     @Override
     public Serializable getSourceId()
     {
-        return "AbstractLaneBasedGTUTest.DummyModel";
+        return "AbstractLaneBasedGtuTest.DummyModel";
     }
 
 }

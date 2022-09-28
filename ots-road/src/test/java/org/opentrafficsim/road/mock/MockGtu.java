@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class MockGTU
+public class MockGtu
 {
     /** mocked GTU. */
     private Gtu mockGTU;
@@ -26,7 +26,7 @@ public class MockGTU
     /**
      * @param name the name
      */
-    public MockGTU(final String name)
+    public MockGtu(final String name)
     {
         this.name = name;
         this.mockGTU = Mockito.mock(Gtu.class);

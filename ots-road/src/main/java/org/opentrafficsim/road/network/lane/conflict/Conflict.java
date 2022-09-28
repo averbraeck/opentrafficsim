@@ -26,7 +26,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
@@ -36,9 +36,9 @@ import org.opentrafficsim.road.gtu.lane.perception.LaneRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -112,25 +112,25 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     private final Length rootPosition;
 
     /** Current upstream GTUs provider. */
-    private AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> upstreamGtus;
+    private AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer> upstreamGtus;
 
     /** Upstream GTUs update time. */
     private Time upstreamTime;
 
     /** Lanes on which upstream GTUs are found. */
-    private Map<LaneBasedGTU, Lane> upstreamLanes;
+    private Map<LaneBasedGtu, Lane> upstreamLanes;
 
     /** Current downstream GTUs provider. */
-    private AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> downstreamGtus;
+    private AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer> downstreamGtus;
 
     /** Downstream GTUs update time. */
     private Time downstreamTime;
 
     /** Lanes on which downstream GTUs are found. */
-    private Map<LaneBasedGTU, Lane> downstreamLanes;
+    private Map<LaneBasedGtu, Lane> downstreamLanes;
 
     /** Headway type for the provided GTUs. */
-    private final HeadwayGTUType conflictGtuType = new ConflictGtuType();
+    private final HeadwayGtuType conflictGtuType = new ConflictGtuType();
 
     /** Distance within which upstreamGTUs are provided (is automatically enlarged). */
     private Length maxUpstreamVisibility = Length.ZERO;
@@ -139,10 +139,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     private Length maxDownstreamVisibility = Length.ZERO;
 
     /** Set of upstream GTU that invalidate the iterable when any changes lane. */
-    private Set<LaneBasedGTU> upstreamListening = new LinkedHashSet<>();
+    private Set<LaneBasedGtu> upstreamListening = new LinkedHashSet<>();
 
     /** Set of upstream GTU that invalidate the iterable when any changes lane. */
-    private Set<LaneBasedGTU> downstreamListening = new LinkedHashSet<>();
+    private Set<LaneBasedGtu> downstreamListening = new LinkedHashSet<>();
 
     /////////////////////////////////////////////////////////////////
 
@@ -233,20 +233,20 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /**
      * Provides the upstream GTUs.
      * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param headwayGtuType HeadwayGTUType; headway GTU type to use
+     * @param headwayGtuType HeadwayGtuType; headway GTU type to use
      * @param visibility Length; distance over which GTU's are provided
      * @return PerceptionIterable&lt;HeadwayGtU&gt;; iterable over the upstream GTUs
      */
-    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getUpstreamGtus(final LaneBasedGTU perceivingGtu,
-            final HeadwayGTUType headwayGtuType, final Length visibility)
+    public PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getUpstreamGtus(final LaneBasedGtu perceivingGtu,
+            final HeadwayGtuType headwayGtuType, final Length visibility)
     {
         provideUpstreamVisibility(visibility);
         Time time = this.getLane().getParentLink().getSimulator().getSimulatorAbsTime();
         if (this.upstreamTime == null || !time.eq(this.upstreamTime))
         {
-            for (LaneBasedGTU gtu : this.upstreamListening)
+            for (LaneBasedGtu gtu : this.upstreamListening)
             {
-                Try.execute(() -> gtu.removeListener(this, LaneBasedGTU.LANE_CHANGE_EVENT), "Unable to unlisten to GTU %s.",
+                Try.execute(() -> gtu.removeListener(this, LaneBasedGtu.LANE_CHANGE_EVENT), "Unable to unlisten to GTU %s.",
                         gtu);
             }
             this.upstreamListening.clear();
@@ -257,15 +257,15 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 /** {@inheritDoc} */
                 @SuppressWarnings("synthetic-access")
                 @Override
-                protected AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry getNext(
+                protected AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>.Entry getNext(
                         final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
                 {
-                    AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry entry =
+                    AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>.Entry entry =
                             super.getNext(record, position, counter);
                     if (entry != null)
                     {
                         Conflict.this.upstreamListening.add(entry.getObject());
-                        Try.execute(() -> entry.getObject().addListener(Conflict.this, LaneBasedGTU.LANE_CHANGE_EVENT),
+                        Try.execute(() -> entry.getObject().addListener(Conflict.this, LaneBasedGtu.LANE_CHANGE_EVENT),
                                 "Unable to listen to GTU %s.", entry.getObject());
                         Conflict.this.upstreamLanes.put(entry.getObject(), record.getLane());
                     }
@@ -283,20 +283,20 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /**
      * Provides the downstream GTUs.
      * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param headwayGtuType HeadwayGTUType; headway GTU type to use
+     * @param headwayGtuType HeadwayGtuType; headway GTU type to use
      * @param visibility Length; distance over which GTU's are provided
      * @return PerceptionIterable&lt;HeadwayGtU&gt;; iterable over the downstream GTUs
      */
-    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getDownstreamGtus(final LaneBasedGTU perceivingGtu,
-            final HeadwayGTUType headwayGtuType, final Length visibility)
+    public PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getDownstreamGtus(final LaneBasedGtu perceivingGtu,
+            final HeadwayGtuType headwayGtuType, final Length visibility)
     {
         provideDownstreamVisibility(visibility);
         Time time = this.getLane().getParentLink().getSimulator().getSimulatorAbsTime();
         if (this.downstreamTime == null || !time.eq(this.downstreamTime))
         {
-            for (LaneBasedGTU gtu : this.downstreamListening)
+            for (LaneBasedGtu gtu : this.downstreamListening)
             {
-                Try.execute(() -> gtu.removeListener(this, LaneBasedGTU.LANE_CHANGE_EVENT), "Unable to unlisten to GTU %s.",
+                Try.execute(() -> gtu.removeListener(this, LaneBasedGtu.LANE_CHANGE_EVENT), "Unable to unlisten to GTU %s.",
                         gtu);
             }
             this.downstreamListening.clear();
@@ -309,15 +309,15 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                         /** {@inheritDoc} */
                         @SuppressWarnings("synthetic-access")
                         @Override
-                        protected AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry getNext(
+                        protected AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>.Entry getNext(
                                 final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
                         {
-                            AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>.Entry entry =
+                            AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>.Entry entry =
                                     super.getNext(record, position, counter);
                             if (entry != null)
                             {
                                 Conflict.this.downstreamListening.add(entry.getObject());
-                                Try.execute(() -> entry.getObject().addListener(Conflict.this, LaneBasedGTU.LANE_CHANGE_EVENT),
+                                Try.execute(() -> entry.getObject().addListener(Conflict.this, LaneBasedGtu.LANE_CHANGE_EVENT),
                                         "Unable to listen to GTU %s.", entry.getObject());
                                 Conflict.this.downstreamLanes.put(entry.getObject(), record.getLane());
                             }
@@ -337,7 +337,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        LaneBasedGTU gtu = (LaneBasedGTU) event.getSourceId();
+        LaneBasedGtu gtu = (LaneBasedGtu) event.getSourceId();
         if (this.upstreamListening.contains(gtu))
         {
             this.upstreamTime = null;
@@ -425,7 +425,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                         {
                             /** {@inheritDoc} */
                             @Override
-                            protected HeadwayTrafficLight perceive(final LaneBasedGTU perceivingGtu, final TrafficLight object,
+                            protected HeadwayTrafficLight perceive(final LaneBasedGtu perceivingGtu, final TrafficLight object,
                                     final Length distance) throws GtuException, ParameterException
                             {
                                 return new HeadwayTrafficLight(object, distance);
@@ -591,10 +591,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
-     * HeadwayGTU that is returned by base iterators for upstream and downstream GTUs. This class is used with both
-     * {@code UpstreamNeighborsIterable} and {@code DownstreamNeighborsIterable} which work with HeadwayGTU. The role of this
-     * class is however to simply provide the GTU itself such that other specific HeadwayGTU types can be created with it.
-     * Therefore, it extends HeadwayGTUReal which simply wraps the GTU. As the HeadwayGTUReal class has the actual GTU hidden,
+     * HeadwayGtu that is returned by base iterators for upstream and downstream GTUs. This class is used with both
+     * {@code UpstreamNeighborsIterable} and {@code DownstreamNeighborsIterable} which work with HeadwayGtu. The role of this
+     * class is however to simply provide the GTU itself such that other specific HeadwayGtu types can be created with it.
+     * Therefore, it extends HeadwayGtuReal which simply wraps the GTU. As the HeadwayGtuReal class has the actual GTU hidden,
      * this class can provide it.
      * <p>
      * FIXME: why not create a getter for the gtu in the super class?
@@ -607,13 +607,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private class ConflictGtu extends HeadwayGTUReal
+    private class ConflictGtu extends HeadwayGtuReal
     {
         /** */
         private static final long serialVersionUID = 20180221L;
 
-        /** Visible pointer to the GTU (which HeadwayGTUReal has not). */
-        private final LaneBasedGTU gtu;
+        /** Visible pointer to the GTU (which HeadwayGtuReal has not). */
+        private final LaneBasedGtu gtu;
 
         /**
          * Constructor.
@@ -623,7 +623,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
          * @param overlapRear Length; rear overlap
          * @throws GtuException on exception
          */
-        ConflictGtu(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
+        ConflictGtu(final LaneBasedGtu gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
                 throws GtuException
         {
             super(gtu, overlapFront, overlap, overlapRear, true);
@@ -636,7 +636,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
          * @param distance Length; distance
          * @throws GtuException on exception
          */
-        ConflictGtu(final LaneBasedGTU gtu, final Length distance) throws GtuException
+        ConflictGtu(final LaneBasedGtu gtu, final Length distance) throws GtuException
         {
             super(gtu, distance, true);
             this.gtu = gtu;
@@ -644,7 +644,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
-     * HeadwayGTUType that generates ConflictGtu's, for use within the base iterators for upstream and downstream neighbors.
+     * HeadwayGtuType that generates ConflictGtu's, for use within the base iterators for upstream and downstream neighbors.
      * This result is used by secondary iterators (ConflictGtuIterable) to provide the requested specific HeadwatGtuType.
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -655,7 +655,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private class ConflictGtuType implements HeadwayGTUType
+    private class ConflictGtuType implements HeadwayGtuType
     {
         /** Constructor. */
         ConflictGtuType()
@@ -665,7 +665,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public ConflictGtu createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public ConflictGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance, final boolean downstream) throws GtuException
         {
             return new ConflictGtu(perceivedGtu, distance);
@@ -673,7 +673,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
         {
             return new ConflictGtu(perceivedGtu, distance); // actually do not change it, called by iterable assuming downstream
@@ -681,7 +681,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
         {
             return new ConflictGtu(perceivedGtu, distance); // actually do not change it, called by iterable assuming upstream
@@ -689,7 +689,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public ConflictGtu createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public ConflictGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
         {
             throw new UnsupportedOperationException("ConflictGtuType is a pass-through type, no actual perception is allowed.");
@@ -697,8 +697,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
-     * HeadwayGTUType that changes a negative headway in to an overlapping headway, by forwarding the request to a wrapped
-     * HeadwayGTUType. This is used for downstream GTUs of the conflict, accounting also for the length of the conflict. Hence,
+     * HeadwayGtuType that changes a negative headway in to an overlapping headway, by forwarding the request to a wrapped
+     * HeadwayGtuType. This is used for downstream GTUs of the conflict, accounting also for the length of the conflict. Hence,
      * overlap information concerns the conflict and a downstream GTU (downstream of the start of the conflict).
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -709,23 +709,23 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private class OverlapHeadway implements HeadwayGTUType
+    private class OverlapHeadway implements HeadwayGtuType
     {
         /** Wrapped headway type. */
-        private HeadwayGTUType wrappedType;
+        private HeadwayGtuType wrappedType;
 
         /**
          * Constructor.
-         * @param wrappedType HeadwayGTUType; wrapped headway type
+         * @param wrappedType HeadwayGtuType; wrapped headway type
          */
-        OverlapHeadway(final HeadwayGTUType wrappedType)
+        OverlapHeadway(final HeadwayGtuType wrappedType)
         {
             this.wrappedType = wrappedType;
         }
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu, final Length dist,
+        public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu, final Length dist,
                 final boolean downstream) throws GtuException, ParameterException
         {
             if (dist.ge(getLength()))
@@ -755,7 +755,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
         {
             throw new UnsupportedOperationException("OverlapHeadway is a pass-through type, no actual perception is allowed.");
@@ -763,7 +763,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
         {
             throw new UnsupportedOperationException("OverlapHeadway is a pass-through type, no actual perception is allowed.");
@@ -771,7 +771,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
         {
             return this.wrappedType.createParallelGtu(perceivingGtu, perceivedGtu, overlapFront, overlap, overlapRear);
@@ -789,10 +789,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
      */
-    private class ConflictGtuIterable extends AbstractPerceptionReiterable<HeadwayGTU, LaneBasedGTU>
+    private class ConflictGtuIterable extends AbstractPerceptionReiterable<HeadwayGtu, LaneBasedGtu>
     {
-        /** HeadwayGTU type. */
-        private final HeadwayGTUType headwayGtuType;
+        /** HeadwayGtu type. */
+        private final HeadwayGtuType headwayGtuType;
 
         /** Guaranteed visibility. */
         private final Length visibility;
@@ -801,17 +801,17 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         private final boolean downstream;
 
         /** Base iterator of the base iterable. */
-        private final Iterator<HeadwayGTU> baseIterator;
+        private final Iterator<HeadwayGtu> baseIterator;
 
         /**
          * @param perceivingGtu LaneBasedGtu; perceiving GTU
-         * @param headwayGtuType HeadwayGTUType; HeadwayGTU type
+         * @param headwayGtuType HeadwayGtuType; HeadwayGtu type
          * @param visibility Length; guaranteed visibility
          * @param downstream boolean; downstream (or upstream) neighbors
-         * @param base AbstractPerceptionIterable&lt;HeadwayGTU, LaneBasedGTU, Integer&gt;; base iterable from the conflict
+         * @param base AbstractPerceptionIterable&lt;HeadwayGtu, LaneBasedGtu, Integer&gt;; base iterable from the conflict
          */
-        ConflictGtuIterable(final LaneBasedGTU perceivingGtu, final HeadwayGTUType headwayGtuType, final Length visibility,
-                final boolean downstream, final AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> base)
+        ConflictGtuIterable(final LaneBasedGtu perceivingGtu, final HeadwayGtuType headwayGtuType, final Length visibility,
+                final boolean downstream, final AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer> base)
         {
             super(perceivingGtu);
             this.headwayGtuType = headwayGtuType;
@@ -881,7 +881,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        protected HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
+        protected HeadwayGtu perceive(final LaneBasedGtu perceivingGtu, final LaneBasedGtu object, final Length distance)
                 throws GtuException, ParameterException
         {
             return this.headwayGtuType.createHeadwayGtu(perceivingGtu, object, distance, this.downstream);

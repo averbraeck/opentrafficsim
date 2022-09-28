@@ -9,10 +9,10 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.LongitudinalControllerPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
  * Simple linear CACC controller.
@@ -57,18 +57,18 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
      * @param gtu LaneBasedGtu; gtu
      * @return Acceleration; delayed acceleration
      */
-    public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGTU gtu)
+    public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGtu gtu)
     {
         return this.delayedActuation.delayActuation(desiredAcceleration, gtu);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Acceleration getAcceleration(final LaneBasedGTU gtu, final Parameters settings)
+    public Acceleration getAcceleration(final LaneBasedGtu gtu, final Parameters settings)
     {
         try
         {
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = gtu.getTacticalPlanner().getPerception()
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = gtu.getTacticalPlanner().getPerception()
                     .getPerceptionCategory(LongitudinalControllerPerception.class).getLeaders();
             return delayActuation(getDesiredAcceleration(gtu, leaders, settings), gtu);
         }
@@ -85,12 +85,12 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
     /**
      * Returns the desired acceleration from the longitudinal control.
      * @param gtu LaneBasedGtu; gtu
-     * @param leaders PerceptionCollectable&lt;HeadwayGTU, LaneBasedGTU&gt;; leaders
+     * @param leaders PerceptionCollectable&lt;HeadwayGtu, LaneBasedGtu&gt;; leaders
      * @param settings Parameters; system settings
      * @return Acceleration; desired acceleration
      * @throws ParameterException if parameter is not present
      */
-    public abstract Acceleration getDesiredAcceleration(LaneBasedGTU gtu,
-            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, Parameters settings) throws ParameterException;
+    public abstract Acceleration getDesiredAcceleration(LaneBasedGtu gtu,
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, Parameters settings) throws ParameterException;
 
 }

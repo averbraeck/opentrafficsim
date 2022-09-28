@@ -12,7 +12,7 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -170,7 +170,7 @@ public class CycleTimeLightController implements RampMeteringLightController
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        protected void triggerResponse(final LaneBasedGTU gtu)
+        protected void triggerResponse(final LaneBasedGtu gtu)
         {
             if (CycleTimeLightController.this.enabled && this.trafficLight.getTrafficLightColor().isGreen())
             {

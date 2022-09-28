@@ -43,7 +43,7 @@ public class GtuCharacteristics implements Serializable
     private final Length front;
 
     /**
-     * Construct a new set of GTUCharacteristics.
+     * Construct a new set of GtuCharacteristics.
      * @param gtuType GtuType; type of the (not yet constructed) GTU
      * @param length Length; the length of the (non yet constructed) GTU
      * @param width Length; the width of the (non yet constructed) GTU
@@ -131,7 +131,7 @@ public class GtuCharacteristics implements Serializable
     @Override
     public String toString()
     {
-        return "GTUCharacteristics [gtuType=" + this.gtuType + ", length=" + this.length + ", width=" + this.width
+        return "GtuCharacteristics [gtuType=" + this.gtuType + ", length=" + this.length + ", width=" + this.width
                 + ", maximumSpeed=" + this.maximumSpeed + ", maximumAcceleration=" + this.maximumAcceleration
                 + ", maximumDeceleration=" + this.maximumDeceleration + ", front=" + this.front + "]";
     }

@@ -14,7 +14,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
@@ -45,7 +45,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
     @Override
     public final FloatDuration getValue(final GtuData gtu)
     {
-        LaneBasedGTU gtuObj = gtu.getGtu();
+        LaneBasedGtu gtuObj = gtu.getGtu();
         try
         {
             DirectedLanePosition ref = gtuObj.getReferencePosition();
@@ -55,7 +55,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
             Length pos = ref.getPosition();
             Length cumulDist = Length.ZERO; // from start of lane
             Time now = gtuObj.getSimulator().getSimulatorAbsTime();
-            LaneBasedGTU next = null;
+            LaneBasedGtu next = null;
             while (map.size() == 1)
             {
                 Lane lane = map.keySet().iterator().next();

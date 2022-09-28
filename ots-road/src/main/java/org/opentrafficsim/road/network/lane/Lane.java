@@ -42,7 +42,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
@@ -128,10 +128,10 @@ public class Lane extends CrossSectionElement implements Serializable
     private final SortedMap<Double, List<LaneBasedObject>> laneBasedObjects = new TreeMap<>();
 
     /** GTUs ordered by increasing longitudinal position; increasing in the direction of the center line. */
-    private final HistoricalList<LaneBasedGTU> gtuList;
+    private final HistoricalList<LaneBasedGtu> gtuList;
 
     /** Last returned past GTU list. */
-    private List<LaneBasedGTU> gtuListAtTime = null;
+    private List<LaneBasedGtu> gtuListAtTime = null;
 
     /** Time of last returned GTU list. */
     private Time gtuListTime = null;
@@ -180,7 +180,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
+     * Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_addition}
      */
     public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD");
     // public static final TimedEventType GTU_ADD_EVENT = new TimedEventType("LANE.GTU.ADD",
@@ -190,7 +190,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
-     * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, Length position}
+     * Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position}
      */
     public static final TimedEventType GTU_REMOVE_EVENT = new TimedEventType("LANE.GTU.REMOVE");
 
@@ -757,7 +757,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI,
+    public final void scheduleSensorTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
             final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
         GTUDirectionality drivingDirection;
@@ -995,14 +995,14 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * Add a LaneBasedGTU to the list of this Lane.
+     * Add a LaneBasedGtu to the list of this Lane.
      * @param gtu LaneBasedGtu; the GTU to add
      * @param fractionalPosition double; the fractional position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
      * @throws GtuException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws GtuException
+    public final int addGTU(final LaneBasedGtu gtu, final double fractionalPosition) throws GtuException
     {
         // TODO: should this change when we drive in the opposite direction?
         int index;
@@ -1016,7 +1016,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             /*-
             // check if we can add at the front
-            LaneBasedGTU lastGTU = this.gtuList.get(this.gtuList.size() - 1);
+            LaneBasedGtu lastGTU = this.gtuList.get(this.gtuList.size() - 1);
             if (fractionalPosition < lastGTU.fractionalPosition(this, lastGTU.getFront()))
             {
                 // this.gtuList.add(gtu); // XXX: AV 20190113
@@ -1030,7 +1030,7 @@ public class Lane extends CrossSectionElement implements Serializable
                 // figure out the rank for the new GTU
                 for (index = 0; index < this.gtuList.size(); index++)
                 {
-                    LaneBasedGTU otherGTU = this.gtuList.get(index);
+                    LaneBasedGtu otherGTU = this.gtuList.get(index);
                     if (gtu == otherGTU)
                     {
                         throw new GtuException(gtu + " already registered on Lane " + this + " [registered lanes: "
@@ -1046,7 +1046,7 @@ public class Lane extends CrossSectionElement implements Serializable
                 /*-
                 for (int i = 0; i < this.gtuList.size(); i++)
                 {
-                    LaneBasedGTU gtui = this.gtuList.get(i);
+                    LaneBasedGtu gtui = this.gtuList.get(i);
                     System.out.println(i + ": GTU." + gtui.getId() + " at pos: " + gtui.position(this, gtui.getFront()));
                 }
                 System.out.println();
@@ -1062,14 +1062,14 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * Add a LaneBasedGTU to the list of this Lane.
+     * Add a LaneBasedGtu to the list of this Lane.
      * @param gtu LaneBasedGtu; the GTU to add
      * @param longitudinalPosition Length; the longitudinal position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
      * @throws GtuException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final Length longitudinalPosition) throws GtuException
+    public final int addGTU(final LaneBasedGtu gtu, final Length longitudinalPosition) throws GtuException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -1080,7 +1080,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param removeFromParentLink boolean; when the GTU leaves the last lane of the parentLink of this Lane
      * @param position Length; last position of the GTU
      */
-    public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink, final Length position)
+    public final void removeGTU(final LaneBasedGtu gtu, final boolean removeFromParentLink, final Length position)
     {
         boolean contained = this.gtuList.remove(gtu);
         if (contained)
@@ -1101,7 +1101,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @return LaneBasedGtu; the last GTU on this lane in the given direction, or null if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGTU getLastGtu(final GTUDirectionality direction) throws GtuException
+    public final LaneBasedGtu getLastGtu(final GTUDirectionality direction) throws GtuException
     {
         if (this.gtuList.size() == 0)
         {
@@ -1124,7 +1124,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @return LaneBasedGtu; the first GTU on this lane in the given direction, or null if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGTU getFirstGtu(final GTUDirectionality direction) throws GtuException
+    public final LaneBasedGtu getFirstGtu(final GTUDirectionality direction) throws GtuException
     {
         if (this.gtuList.size() == 0)
         {
@@ -1152,10 +1152,10 @@ public class Lane extends CrossSectionElement implements Serializable
      *         found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGTU getGtuAhead(final Length position, final GTUDirectionality direction,
+    public final LaneBasedGtu getGtuAhead(final Length position, final GTUDirectionality direction,
             final RelativePosition.TYPE relativePosition, final Time when) throws GtuException
     {
-        List<LaneBasedGTU> list = this.gtuList.get(when);
+        List<LaneBasedGtu> list = this.gtuList.get(when);
         if (list.isEmpty())
         {
             return null;
@@ -1164,7 +1164,7 @@ public class Lane extends CrossSectionElement implements Serializable
                 final int index
         ) ->
         {
-            LaneBasedGTU gtu = list.get(index);
+            LaneBasedGtu gtu = list.get(index);
             return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
         }, list.size(), position.si);
         if (direction.equals(GTUDirectionality.DIR_PLUS))
@@ -1319,7 +1319,7 @@ public class Lane extends CrossSectionElement implements Serializable
      *         found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGTU getGtuBehind(final Length position, final GTUDirectionality direction,
+    public final LaneBasedGtu getGtuBehind(final Length position, final GTUDirectionality direction,
             final RelativePosition.TYPE relativePosition, final Time when) throws GtuException
     {
         if (direction.equals(GTUDirectionality.DIR_PLUS))
@@ -1764,7 +1764,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * @return gtuList.
      */
-    public final ImmutableList<LaneBasedGTU> getGtuList()
+    public final ImmutableList<LaneBasedGtu> getGtuList()
     {
         // TODO let HistoricalArrayList return an Immutable (WRAP) of itself
         return this.gtuList == null ? new ImmutableArrayList<>(new ArrayList<>())
@@ -1776,7 +1776,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param time Time; time
      * @return list of GTU's at the specified times
      */
-    public final List<LaneBasedGTU> getGtuList(final Time time)
+    public final List<LaneBasedGtu> getGtuList(final Time time)
     {
         if (time.equals(this.gtuListTime))
         {
@@ -1811,7 +1811,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param gtu LaneBasedGtu; gtu to get the index of
      * @return int; index of the given GTU, or -1 if not present
      */
-    public final int indexOfGtu(final LaneBasedGTU gtu)
+    public final int indexOfGtu(final LaneBasedGtu gtu)
     {
         return Collections.binarySearch(this.gtuList, gtu, (
                 gtu1, gtu2
@@ -1834,7 +1834,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param time Time; time
      * @return int; index of the given GTU, or -1 if not present
      */
-    public final int indexOfGtu(final LaneBasedGTU gtu, final Time time)
+    public final int indexOfGtu(final LaneBasedGtu gtu, final Time time)
     {
         return Collections.binarySearch(getGtuList(time), gtu, (
                 gtu1, gtu2
@@ -1857,7 +1857,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param index int; index of the GTU
      * @return LaneBasedGtu; the index'th GTU
      */
-    public final LaneBasedGTU getGtu(final int index)
+    public final LaneBasedGtu getGtu(final int index)
     {
         return this.gtuList.get(index);
     }
@@ -1868,7 +1868,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param time Time; time
      * @return LaneBasedGtu; the index'th GTU
      */
-    public final LaneBasedGTU getGtu(final int index, final Time time)
+    public final LaneBasedGtu getGtu(final int index, final Time time)
     {
         return getGtuList(time).get(index);
     }

@@ -53,7 +53,7 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
 
     /** {@inheritDoc} */
     @Override
-    public void checkMove(final LaneBasedGTU gtu) throws Exception
+    public void checkMove(final LaneBasedGtu gtu) throws Exception
     {
         Acceleration a = gtu.getOperationalPlan().getAcceleration(Duration.ZERO);
         if (gtu.getOperationalPlan().getSpeed(Duration.ZERO).si > this.minSpeed.si

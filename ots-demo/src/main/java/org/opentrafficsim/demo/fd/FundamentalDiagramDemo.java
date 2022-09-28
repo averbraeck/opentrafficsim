@@ -72,10 +72,10 @@ import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
@@ -263,14 +263,14 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         };
         LaneBasedStrategicalRoutePlannerFactory laneBasedStrategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory, parametersFactory);
-        LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator = new LaneBasedGTUCharacteristicsGenerator()
+        LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
         {
             @Override
-            public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+            public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
             {
                 @SuppressWarnings("synthetic-access")
                 GtuType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;
-                return new LaneBasedGTUCharacteristics(GtuType.defaultCharacteristics(gtuType, network, stream),
+                return new LaneBasedGtuCharacteristics(GtuType.defaultCharacteristics(gtuType, network, stream),
                         laneBasedStrategicalPlannerFactory, null, nodeA, nodeC, VehicleModel.MINMAX);
             }
         };
@@ -289,8 +289,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // id generator
         IdGenerator idGenerator = new IdGenerator("");
         // generator
-        LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator("generator", interarrivelTimeGenerator,
-                laneBasedGTUCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
+        LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("generator", interarrivelTimeGenerator,
+                laneBasedGtuCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
         generator.setErrorHandler(GtuErrorHandler.DELETE);
         generator.setInstantaneousLaneChange(true);
         generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));

@@ -9,8 +9,8 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 
 /**
  * <p>
@@ -22,21 +22,21 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
 
-public class LaneBasedGTUFollowingTacticalPlannerFactory
-        implements LaneBasedTacticalPlannerFactory<LaneBasedGTUFollowingTacticalPlanner>, Serializable
+public class LaneBasedGtuFollowingTacticalPlannerFactory
+        implements LaneBasedTacticalPlannerFactory<LaneBasedGtuFollowingTacticalPlanner>, Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160811L;
 
     /** The car following model. */
-    private GTUFollowingModelOld carFollowingModel;
+    private GtuFollowingModelOld carFollowingModel;
 
     /**
      * Constructor with fixed stateless car-following and lane change model.
-     * @param carFollowingModel GTUFollowingModelOld; car following model
+     * @param carFollowingModel GtuFollowingModelOld; car following model
      */
-    public LaneBasedGTUFollowingTacticalPlannerFactory(final GTUFollowingModelOld carFollowingModel)
+    public LaneBasedGtuFollowingTacticalPlannerFactory(final GtuFollowingModelOld carFollowingModel)
     {
         this.carFollowingModel = carFollowingModel;
     }
@@ -59,16 +59,16 @@ public class LaneBasedGTUFollowingTacticalPlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedGTUFollowingTacticalPlanner create(final LaneBasedGTU gtu) throws GtuException
+    public final LaneBasedGtuFollowingTacticalPlanner create(final LaneBasedGtu gtu) throws GtuException
     {
-        return new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModel, gtu);
+        return new LaneBasedGtuFollowingTacticalPlanner(this.carFollowingModel, gtu);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LaneBasedGTUFollowingTacticalPlanner [car-following=" + this.carFollowingModel + "]";
+        return "LaneBasedGtuFollowingTacticalPlanner [car-following=" + this.carFollowingModel + "]";
     }
 
 }

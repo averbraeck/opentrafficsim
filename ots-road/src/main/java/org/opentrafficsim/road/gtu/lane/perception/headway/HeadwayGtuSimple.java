@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class HeadwayGTUSimple extends AbstractHeadwayGTU
+public class HeadwayGtuSimple extends AbstractHeadwayGtu
 {
     /** */
     private static final long serialVersionUID = 20160527L;
@@ -48,12 +48,12 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
+     * @param gtuStatus GtuStatus...; the observable characteristics of the GTU.
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTUSimple(final String id, final GtuType gtuType, final Length distance, final Length length,
+    public HeadwayGtuSimple(final String id, final GtuType gtuType, final Length distance, final Length length,
             final Length width, final Speed speed, final Acceleration acceleration, final Speed desiredSpeed,
-            final GTUStatus... gtuStatus) throws GtuException
+            final GtuStatus... gtuStatus) throws GtuException
     {
         super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, gtuStatus);
     }
@@ -66,11 +66,11 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
+     * @param gtuStatus GtuStatus...; the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTUSimple(final String id, final GtuType gtuType, final Length distance, final Length length,
-            final Length width, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GtuException
+    public HeadwayGtuSimple(final String id, final GtuType gtuType, final Length distance, final Length length,
+            final Length width, final Speed desiredSpeed, final GtuStatus... gtuStatus) throws GtuException
     {
         super(id, gtuType, distance, true, length, width, desiredSpeed, gtuStatus);
     }
@@ -87,13 +87,13 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @param speed the (perceived) speed of the other Gtu; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other Gtu; can be null if unknown.
      * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
+     * @param gtuStatus GtuStatus...; the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public HeadwayGTUSimple(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
+    public HeadwayGtuSimple(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Length length, final Length width, final Speed speed,
-            final Acceleration acceleration, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GtuException
+            final Acceleration acceleration, final Speed desiredSpeed, final GtuStatus... gtuStatus) throws GtuException
     {
         super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, speed, acceleration, desiredSpeed,
                 gtuStatus);
@@ -109,12 +109,12 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
+     * @param gtuStatus GtuStatus...; the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayGTUSimple(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
+    public HeadwayGtuSimple(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Length length, final Length width, final Speed desiredSpeed,
-            final GTUStatus... gtuStatus) throws GtuException
+            final GtuStatus... gtuStatus) throws GtuException
     {
         super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, desiredSpeed, gtuStatus);
     }
@@ -123,21 +123,21 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
     @Override
     public final CarFollowingModel getCarFollowingModel()
     {
-        throw new UnsupportedOperationException("HeadwayGTUSimple does not support the getCarFollowingModel() method.");
+        throw new UnsupportedOperationException("HeadwayGtuSimple does not support the getCarFollowingModel() method.");
     }
 
     /** {@inheritDoc} */
     @Override
     public final Parameters getParameters()
     {
-        throw new UnsupportedOperationException("HeadwayGTUSimple does not support the getParameters() method.");
+        throw new UnsupportedOperationException("HeadwayGtuSimple does not support the getParameters() method.");
     }
 
     /** {@inheritDoc} */
     @Override
     public final SpeedLimitInfo getSpeedLimitInfo()
     {
-        throw new UnsupportedOperationException("HeadwayGTUSimple does not support the getSpeedLimitInfo() method.");
+        throw new UnsupportedOperationException("HeadwayGtuSimple does not support the getSpeedLimitInfo() method.");
     }
 
     /** {@inheritDoc} */
@@ -149,11 +149,11 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public final AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    public final AbstractHeadwayGtu moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
         try
         {
-            return new HeadwayGTUSimple(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
+            return new HeadwayGtuSimple(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
                     getDesiredSpeed(), getGtuStatus());
         }
         catch (GtuException exception)
@@ -167,7 +167,7 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
     @Override
     public final String toString()
     {
-        return "HeadwayGTUSimple [length=" + super.getLength() + "]";
+        return "HeadwayGtuSimple [length=" + super.getLength() + "]";
     }
 
 }

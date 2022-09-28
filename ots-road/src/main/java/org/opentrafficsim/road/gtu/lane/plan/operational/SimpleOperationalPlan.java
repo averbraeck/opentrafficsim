@@ -11,7 +11,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * Simplified plan containing an acceleration value and possible lane change direction.
@@ -262,10 +262,10 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
-     * @param gtu LaneBasedGtu; LaneBasedGTU to set the indicator on
+     * @param gtu LaneBasedGtu; LaneBasedGtu to set the indicator on
      * @throws GtuException if GTU does not support the indicator
      */
-    public final void setTurnIndicator(final LaneBasedGTU gtu) throws GtuException
+    public final void setTurnIndicator(final LaneBasedGtu gtu) throws GtuException
     {
         if (this.indicatorIntent.isLeft())
         {

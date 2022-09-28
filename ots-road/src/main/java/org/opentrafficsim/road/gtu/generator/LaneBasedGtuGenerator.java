@@ -41,12 +41,12 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLinkPosition;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -67,7 +67,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedGTUGenerator extends EventProducer implements Serializable, Identifiable, GtuGeneratorQueue
+public class LaneBasedGtuGenerator extends EventProducer implements Serializable, Identifiable, GtuGeneratorQueue
 {
     /** */
     private static final long serialVersionUID = 20160000L;
@@ -79,7 +79,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
 
     /** FIFO for templates that have not been generated yet due to insufficient room/headway, per position, and per link. */
     private final Map<CrossSectionLink,
-            Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
+            Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGtuCharacteristics>>>> unplacedTemplates =
                     new LinkedHashMap<>();
 
     /** Name of the GTU generator. */
@@ -89,7 +89,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     private final Generator<Duration> interarrivelTimeGenerator;
 
     /** Generates most properties of the GTUs. */
-    private final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator;
+    private final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator;
 
     /** Total number of GTUs generated so far. */
     private long generatedGTUs = 0;
@@ -128,7 +128,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * Construct a new lane base GTU generator.
      * @param id String; name of the new GTU generator
      * @param interarrivelTimeGenerator Generator&lt;Duration&gt;; generator for the interval times between GTUs
-     * @param laneBasedGTUCharacteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of the characteristics of
+     * @param laneBasedGtuCharacteristicsGenerator LaneBasedGtuCharacteristicsGenerator; generator of the characteristics of
      *            each GTU
      * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
      * @param network OTSRoadNetwork; the OTS network that owns the generated GTUs
@@ -140,15 +140,15 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * @throws ParameterException if drawing from the interarrival generator fails
      */
     @SuppressWarnings("parameternumber")
-    public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
-            final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
+    public LaneBasedGtuGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
+            final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final OTSRoadNetwork network, final OTSSimulatorInterface simulator,
             final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {
         this.id = id;
         this.interarrivelTimeGenerator = interarrivelTimeGenerator;
-        this.laneBasedGTUCharacteristicsGenerator = laneBasedGTUCharacteristicsGenerator;
+        this.laneBasedGtuCharacteristicsGenerator = laneBasedGtuCharacteristicsGenerator;
         this.generatorPositions = generatorPositions;
         this.network = network;
         this.simulator = simulator;
@@ -201,14 +201,14 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     {
         synchronized (this.unplacedTemplates)
         {
-            LaneBasedGTUCharacteristics characteristics = this.laneBasedGTUCharacteristicsGenerator.draw();
+            LaneBasedGtuCharacteristics characteristics = this.laneBasedGtuCharacteristicsGenerator.draw();
             GtuType gtuType = characteristics.getGtuType();
             // gather information on number of unplaced templates per lane, and per link, for the drawing of a new position
             Map<CrossSectionLink, Map<Integer, Integer>> unplaced = new LinkedHashMap<>();
             for (CrossSectionLink link : this.unplacedTemplates.keySet())
             {
                 Map<Integer, Integer> linkMap = new LinkedHashMap<>();
-                Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>> linkTemplates =
+                Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGtuCharacteristics>>> linkTemplates =
                         this.unplacedTemplates.get(link);
                 for (GeneratorLanePosition lanePosition : linkTemplates.keySet())
                 {
@@ -256,8 +256,8 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     private void tryToPlaceGTU(final GeneratorLanePosition position) throws SimRuntimeException, GtuException, NamingException,
             NetworkException, OTSGeometryException, ProbabilityException
     {
-        TimeStampedObject<LaneBasedGTUCharacteristics> timedCharacteristics;
-        Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue =
+        TimeStampedObject<LaneBasedGtuCharacteristics> timedCharacteristics;
+        Queue<TimeStampedObject<LaneBasedGtuCharacteristics>> queue =
                 this.unplacedTemplates.get(position.getLink()).get(position);
 
         synchronized (queue)
@@ -269,8 +269,8 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
             return; // Do not re-schedule this method
         }
 
-        LaneBasedGTUCharacteristics characteristics = timedCharacteristics.getObject();
-        SortedSet<HeadwayGTU> leaders = new TreeSet<>();
+        LaneBasedGtuCharacteristics characteristics = timedCharacteristics.getObject();
+        SortedSet<HeadwayGtu> leaders = new TreeSet<>();
         for (DirectedLanePosition dirPos : position.getPosition())
         {
             getFirstLeaders(dirPos.getLaneDirection(), dirPos.getPosition().neg().minus(characteristics.getFront()),
@@ -300,10 +300,10 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     /**
      * Adds a GTU to the generation queue. This method ignores whether vehicle generation is enabled at the location. This
      * allows an external party to govern (over some time) what vehicles are generated.
-     * @param characteristics LaneBasedGTUCharacteristics; characteristics of GTU to add to the queue
+     * @param characteristics LaneBasedGtuCharacteristics; characteristics of GTU to add to the queue
      * @param position Set&lt;LaneDirection&gt;; position to generate the GTU at
      */
-    public final void queueGtu(final LaneBasedGTUCharacteristics characteristics, final Set<LaneDirection> position)
+    public final void queueGtu(final LaneBasedGtuCharacteristics characteristics, final Set<LaneDirection> position)
     {
         // first find the correct GeneratorLanePosition
         GeneratorLanePosition genPosition = null;
@@ -336,23 +336,23 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * Places the characteristics in the queue pertaining to the position, and schedules a call to {@code tryToPlace} now if the
      * queue length is 1.
      * @param lanePosition GeneratorLanePosition; position to generate the GTU at
-     * @param characteristics LaneBasedGTUCharacteristics; characteristics of GTU to add to the queue
+     * @param characteristics LaneBasedGtuCharacteristics; characteristics of GTU to add to the queue
      * @throws SimRuntimeException when an event is scheduled in the past
      */
-    private void queueGtu(final GeneratorLanePosition lanePosition, final LaneBasedGTUCharacteristics characteristics)
+    private void queueGtu(final GeneratorLanePosition lanePosition, final LaneBasedGtuCharacteristics characteristics)
             throws SimRuntimeException
     {
         if (!this.unplacedTemplates.containsKey(lanePosition.getLink()))
         {
             this.unplacedTemplates.put(lanePosition.getLink(), new LinkedHashMap<>());
         }
-        Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>> linkMap =
+        Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGtuCharacteristics>>> linkMap =
                 this.unplacedTemplates.get(lanePosition.getLink());
         if (!linkMap.containsKey(lanePosition))
         {
             linkMap.put(lanePosition, new LinkedList<>());
         }
-        Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue = linkMap.get(lanePosition);
+        Queue<TimeStampedObject<LaneBasedGtuCharacteristics>> queue = linkMap.get(lanePosition);
         queue.add(new TimeStampedObject<>(characteristics, this.simulator.getSimulatorAbsTime()));
         if (queue.size() == 1)
         {
@@ -362,7 +362,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
 
     /**
      * Places a GTU, regardless of whether it has room. The user of this method should verify this is the case.
-     * @param characteristics LaneBasedGTUCharacteristics; characteristics
+     * @param characteristics LaneBasedGtuCharacteristics; characteristics
      * @param position Set&lt;DirectedLanePosition&gt;; position
      * @param speed Speed; speed
      * @throws NamingException on exception
@@ -371,11 +371,11 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * @throws SimRuntimeException on exception
      * @throws OTSGeometryException on exception
      */
-    public final void placeGtu(final LaneBasedGTUCharacteristics characteristics, final Set<DirectedLanePosition> position,
+    public final void placeGtu(final LaneBasedGtuCharacteristics characteristics, final Set<DirectedLanePosition> position,
             final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException, OTSGeometryException
     {
         String gtuId = this.idGenerator.nextId();
-        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(gtuId, characteristics.getGtuType(),
+        LaneBasedIndividualGtu gtu = new LaneBasedIndividualGtu(gtuId, characteristics.getGtuType(),
                 characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
                 characteristics.getFront(), this.simulator, this.network);
         gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
@@ -395,13 +395,13 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * @param lane LaneDirection; lane to search on
      * @param startDistance Length; distance from generator location (nose) to start of the lane
      * @param beyond Length; location to search downstream of which is the generator position, or the start for downstream lanes
-     * @param set Set&lt;HeadwayGTU&gt;; set to add the GTU's to
+     * @param set Set&lt;HeadwayGtu&gt;; set to add the GTU's to
      * @throws GtuException if a GTU is incorrectly positioned on a lane
      */
     private void getFirstLeaders(final LaneDirection lane, final Length startDistance, final Length beyond,
-            final Set<HeadwayGTU> set) throws GtuException
+            final Set<HeadwayGtu> set) throws GtuException
     {
-        LaneBasedGTU next = lane.getLane().getGtuAhead(beyond, lane.getDirection(), RelativePosition.FRONT,
+        LaneBasedGtu next = lane.getLane().getGtuAhead(beyond, lane.getDirection(), RelativePosition.FRONT,
                 this.simulator.getSimulatorAbsTime());
         if (next != null)
         {
@@ -416,7 +416,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
             }
             if (headway.si < 300)
             {
-                set.add(new HeadwayGTUReal(next, headway, true));
+                set.add(new HeadwayGtuReal(next, headway, true));
             }
             return;
         }
@@ -439,7 +439,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     @Override
     public final String toString()
     {
-        return "LaneBasedGTUGenerator " + this.id + " on " + this.generatorPositions;
+        return "LaneBasedGtuGenerator " + this.id + " on " + this.generatorPositions;
     }
 
     /**
@@ -451,8 +451,8 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     }
 
     /**
-     * Retrieve the id of this LaneBasedGTUGenerator.
-     * @return String; the id of this LaneBasedGTUGenerator
+     * Retrieve the id of this LaneBasedGtuGenerator.
+     * @return String; the id of this LaneBasedGtuGenerator
      */
     @Override
     public final String getId()
@@ -506,8 +506,8 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
          * Return the maximum safe speed and position for a new GTU with the specified characteristics. Returns
          * {@code Placement.NO} if there is no safe speed and position. This method might be called with an empty leader set
          * such that the desired speed can be implemented.
-         * @param leaders SortedSet&lt;HeadwayGTU&gt;; leaders, usually 1, possibly more after a branch
-         * @param characteristics LaneBasedGTUCharacteristics; characteristics of the proposed new GTU
+         * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders, usually 1, possibly more after a branch
+         * @param characteristics LaneBasedGtuCharacteristics; characteristics of the proposed new GTU
          * @param since Duration; time since the GTU wanted to arrive
          * @param initialPosition Set&lt;DirectedLanePosition&gt;; initial position
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
@@ -515,7 +515,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          * @throws GtuException on parameter exception
          */
-        Placement canPlace(SortedSet<HeadwayGTU> leaders, LaneBasedGTUCharacteristics characteristics, Duration since,
+        Placement canPlace(SortedSet<HeadwayGtu> leaders, LaneBasedGtuCharacteristics characteristics, Duration since,
                 Set<DirectedLanePosition> initialPosition) throws NetworkException, GtuException;
     }
 

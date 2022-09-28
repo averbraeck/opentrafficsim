@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public interface GTUFollowingModelOld extends CarFollowingModel
+public interface GtuFollowingModelOld extends CarFollowingModel
 {
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -33,7 +33,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GtuException when the speed of the gtu cannot be determined
      */
-    AccelerationStep computeAccelerationStep(LaneBasedGTU gtu, Speed leaderSpeed, Length headway, Length maxDistance,
+    AccelerationStep computeAccelerationStep(LaneBasedGtu gtu, Speed leaderSpeed, Length headway, Length maxDistance,
             Speed speedLimit) throws GtuException;
 
     /**
@@ -47,7 +47,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GtuException when the speed of the gtu cannot be determined
      */
-    AccelerationStep computeAccelerationStep(LaneBasedGTU gtu, Speed leaderSpeed, Length headway, Length maxDistance,
+    AccelerationStep computeAccelerationStep(LaneBasedGtu gtu, Speed leaderSpeed, Length headway, Length maxDistance,
             Speed speedLimit, Duration stepSize) throws GtuException;
 
     /**
@@ -124,7 +124,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      *         the GTU following model of the referenceGTU for each leader and follower
      * @throws GtuException when the speed of the gtu cannot be determined
      */
-    DualAccelerationStep computeDualAccelerationStep(LaneBasedGTU gtu, Collection<Headway> otherHeadways, Length maxDistance,
+    DualAccelerationStep computeDualAccelerationStep(LaneBasedGtu gtu, Collection<Headway> otherHeadways, Length maxDistance,
             Speed speedLimit) throws GtuException;
 
     /**
@@ -144,7 +144,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      *         the GTU following model of the referenceGTU for each leader and follower
      * @throws GtuException when the speed of the gtu cannot be determined
      */
-    DualAccelerationStep computeDualAccelerationStep(LaneBasedGTU gtu, Collection<Headway> otherHeadways, Length maxDistance,
+    DualAccelerationStep computeDualAccelerationStep(LaneBasedGtu gtu, Collection<Headway> otherHeadways, Length maxDistance,
             Speed speedLimit, Duration stepSize) throws GtuException;
 
     /**
@@ -155,7 +155,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GtuException when the speed of the gtu cannot be determined
      */
-    AccelerationStep computeAccelerationStepWithNoLeader(LaneBasedGTU gtu, Length maxDistance, Speed speedLimit)
+    AccelerationStep computeAccelerationStepWithNoLeader(LaneBasedGtu gtu, Length maxDistance, Speed speedLimit)
             throws GtuException;
 
     /**
@@ -167,7 +167,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GtuException when the speed of the gtu cannot be determined
      */
-    AccelerationStep computeAccelerationStepWithNoLeader(LaneBasedGTU gtu, Length maxDistance, Speed speedLimit,
+    AccelerationStep computeAccelerationStepWithNoLeader(LaneBasedGtu gtu, Length maxDistance, Speed speedLimit,
             Duration stepSize) throws GtuException;
 
     /**

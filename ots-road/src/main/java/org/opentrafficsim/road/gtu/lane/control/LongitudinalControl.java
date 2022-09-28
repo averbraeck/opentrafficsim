@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.control;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
  * Longitudinal controller, such as ACC or CACC. The controller is part of a tactical planner and does not function
@@ -24,6 +24,6 @@ public interface LongitudinalControl
      * @param settings Parameters; system settings
      * @return Acceleration; level of acceleration, may be {@code null} if the controller is unable to deal with a situation
      */
-    Acceleration getAcceleration(LaneBasedGTU gtu, Parameters settings);
+    Acceleration getAcceleration(LaneBasedGtu gtu, Parameters settings);
 
 }

@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -43,7 +43,7 @@ public interface LaneChangeModel
      * @throws OperationalPlanException if DefaultAlexander perception category is not present.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    LaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGTU gtu, Collection<Headway> sameLaneTraffic,
+    LaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGtu gtu, Collection<Headway> sameLaneTraffic,
             Collection<Headway> rightLaneTraffic, Collection<Headway> leftLaneTraffic, Speed speedLimit,
             Acceleration preferredLaneRouteIncentive, Acceleration laneChangeThreshold,
             Acceleration nonPreferredLaneRouteIncentive) throws GtuException, ParameterException, OperationalPlanException;

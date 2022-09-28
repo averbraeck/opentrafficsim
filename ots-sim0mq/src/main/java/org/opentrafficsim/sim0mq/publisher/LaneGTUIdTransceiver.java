@@ -8,7 +8,7 @@ import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -76,7 +76,7 @@ public class LaneGTUIdTransceiver extends AbstractTransceiver
             return null;
         }
         Lane lane = (Lane) cse;
-        ImmutableList<LaneBasedGTU> gtus = lane.getGtuList();
+        ImmutableList<LaneBasedGtu> gtus = lane.getGtuList();
         Object[] result = new Object[gtus.size()];
         int nextIndex = 0;
         for (Gtu gtu : gtus)

@@ -1,7 +1,7 @@
 /**
  * GTU (Car) following models such as IDM+.
  * <p>
- * All GTU following models should extend GTUFollowingModel. If that appears impossible, the abstract class GTUFollowingModel
+ * All GTU following models should extend GtuFollowingModel. If that appears impossible, the abstract class GtuFollowingModel
  * may need to be adapted.
  * </p>
  * <p>

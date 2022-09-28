@@ -21,8 +21,8 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.draw.core.ClonableRenderable2DInterface;
 import org.opentrafficsim.draw.core.TextAlignment;
 import org.opentrafficsim.draw.core.TextAnimation;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -38,8 +38,8 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
-        implements ClonableRenderable2DInterface<LaneBasedGTU>, Serializable
+public class DefaultCarAnimation extends Renderable2D<LaneBasedGtu>
+        implements ClonableRenderable2DInterface<LaneBasedGtu>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -84,7 +84,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator)
+    public DefaultCarAnimation(final LaneBasedGtu gtu, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         this(gtu, simulator, null);
@@ -98,7 +98,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator, final GtuColorer gtuColorer)
+    public DefaultCarAnimation(final LaneBasedGtu gtu, final OTSSimulatorInterface simulator, final GtuColorer gtuColorer)
             throws NamingException, RemoteException
     {
         super(gtu, simulator);
@@ -136,7 +136,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        final LaneBasedGTU gtu = getSource();
+        final LaneBasedGtu gtu = getSource();
         if (this.rectangle == null)
         {
             // set shapes, this is done in paint() and not the constructor, as the super constructor binds to context causing
@@ -237,7 +237,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<LaneBasedGTU> clone(final LaneBasedGTU newSource,
+    public ClonableRenderable2DInterface<LaneBasedGtu> clone(final LaneBasedGtu newSource,
             final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
@@ -327,7 +327,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
-            final LaneBasedIndividualGTU car = (LaneBasedIndividualGTU) getSource();
+            final LaneBasedIndividualGtu car = (LaneBasedIndividualGtu) getSource();
 
             if (car.isDestroyed())
             {
@@ -355,7 +355,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         public DirectedPoint getLocation()
         {
             // draw always on top, and not upside down.
-            DirectedPoint p = ((LaneBasedIndividualGTU) getSource()).getLocation();
+            DirectedPoint p = ((LaneBasedIndividualGtu) getSource()).getLocation();
             double a = Angle.normalizePi(p.getRotZ());
             if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
             {

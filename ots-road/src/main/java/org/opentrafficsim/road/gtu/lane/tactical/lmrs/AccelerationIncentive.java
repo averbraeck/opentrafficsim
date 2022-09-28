@@ -11,7 +11,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -47,7 +47,7 @@ public interface AccelerationIncentive
      * @throws ParameterException on missing parameter
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
      */
-    void accelerate(SimpleOperationalPlan simplePlan, RelativeLane lane, Length mergeDistance, LaneBasedGTU gtu,
+    void accelerate(SimpleOperationalPlan simplePlan, RelativeLane lane, Length mergeDistance, LaneBasedGtu gtu,
             LanePerception perception, CarFollowingModel carFollowingModel, Speed speed, Parameters params,
             SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException, GtuException;
 
@@ -59,7 +59,7 @@ public interface AccelerationIncentive
      * @param <T> type of lane-based object
      * @return Iterable&lt;T&gt;; iterable with only those lane-based objects that are on the route
      */
-    default <T extends HeadwayLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGTU gtu)
+    default <T extends HeadwayLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGtu gtu)
     {
         Route route = gtu.getStrategicalPlanner().getRoute();
         return new FilteredIterable<>(iterable, new Predicate<T>()

@@ -7,7 +7,7 @@ import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 
 /**
- * Characteristics for a lane base GTU. This class is used to store all characteristics of a (not-yet constructed) LaneBasedGTU.
+ * Characteristics for a lane base GTU. This class is used to store all characteristics of a (not-yet constructed) LaneBasedGtu.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedGTUCharacteristics extends GtuCharacteristics
+public class LaneBasedGtuCharacteristics extends GtuCharacteristics
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -37,7 +37,7 @@ public class LaneBasedGTUCharacteristics extends GtuCharacteristics
 
     /**
      * Construct a new set of lane based GTU characteristics.
-     * @param gtuCharacteristics GTUCharacteristics; characteristics of the super GTU type to be used for the GTU
+     * @param gtuCharacteristics GtuCharacteristics; characteristics of the super GTU type to be used for the GTU
      * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; the strategical planner for the
      *            GTU
      * @param route Route; route
@@ -45,7 +45,7 @@ public class LaneBasedGTUCharacteristics extends GtuCharacteristics
      * @param destination Node; destination
      * @param vehicleModel VehicleModel; vehicle model
      */
-    public LaneBasedGTUCharacteristics(final GtuCharacteristics gtuCharacteristics,
+    public LaneBasedGtuCharacteristics(final GtuCharacteristics gtuCharacteristics,
             final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route,
             final Node origin, final Node destination, final VehicleModel vehicleModel)
     {

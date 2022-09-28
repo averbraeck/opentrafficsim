@@ -95,7 +95,7 @@ public class TemplateGtuType implements Serializable, Generator<GtuCharacteristi
 
     /**
      * Returns the same Characteristics, but pertaining to a different GTU type. This is useful for when the GTU type is used
-     * for other purposes in simulation, where the {@code GTUCharacteristics} should be the same.
+     * for other purposes in simulation, where the {@code GtuCharacteristics} should be the same.
      * @param newGtuType GtuType; the new GTU type.
      * @return Copy of this {@code TemplateGTUType} linked to the new GTU type.
      */

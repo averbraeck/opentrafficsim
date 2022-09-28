@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -62,7 +62,7 @@ public interface GapAcceptance
 
             Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-            for (HeadwayGTU follower : neighbors.getFirstFollowers(lat))
+            for (HeadwayGtu follower : neighbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0() || follower.getDistance().si < 1.0)
                 {
@@ -104,7 +104,7 @@ public interface GapAcceptance
 
             Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-            for (HeadwayGTU follower : neigbors.getFirstFollowers(lat))
+            for (HeadwayGtu follower : neigbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
                 {
@@ -156,7 +156,7 @@ public interface GapAcceptance
         {
             for (
 
-            HeadwayGTU leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
+            HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
             {
                 Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, params,
                         sli, cfm);

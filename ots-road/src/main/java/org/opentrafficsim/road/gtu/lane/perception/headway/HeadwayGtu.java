@@ -19,7 +19,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface HeadwayGTU extends Headway
+public interface HeadwayGtu extends Headway
 {
 
     /**
@@ -65,7 +65,7 @@ public interface HeadwayGTU extends Headway
      * @param acceleration Acceleration; acceleration
      * @return copy with different headway, speed and possibly acceleration
      */
-    HeadwayGTU moved(Length headway, Speed speed, Acceleration acceleration);
+    HeadwayGtu moved(Length headway, Speed speed, Acceleration acceleration);
 
     /**
      * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having a car following model of the

@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerception;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractLanePerception extends AbstractPerception<LaneBasedGTU> implements LanePerception
+public abstract class AbstractLanePerception extends AbstractPerception<LaneBasedGtu> implements LanePerception
 {
 
     /** */
@@ -61,7 +61,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
      * Create a new LanePerception module without mental module.
      * @param gtu LaneBasedGtu; GTU
      */
-    public AbstractLanePerception(final LaneBasedGTU gtu)
+    public AbstractLanePerception(final LaneBasedGtu gtu)
     {
         super(gtu);
         this.mental = null;
@@ -72,7 +72,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
      * @param gtu LaneBasedGtu; GTU
      * @param mental Mental; mental module
      */
-    public AbstractLanePerception(final LaneBasedGTU gtu, final Mental mental)
+    public AbstractLanePerception(final LaneBasedGtu gtu, final Mental mental)
     {
         super(gtu);
         this.mental = mental;
