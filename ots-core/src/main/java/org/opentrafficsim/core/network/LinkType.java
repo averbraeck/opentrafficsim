@@ -1,9 +1,5 @@
 package org.opentrafficsim.core.network;
 
-import java.io.Serializable;
-
-import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.compatibility.Compatibility;
 import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -19,7 +15,7 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LinkType extends GtuCompatibleInfraType<LinkType> implements Serializable, Identifiable, Compatibility<GtuType, LinkType>
+public class LinkType extends GtuCompatibleInfraType<LinkType>
 {
     /** */
     private static final long serialVersionUID = 20140821L;
@@ -190,7 +186,7 @@ public class LinkType extends GtuCompatibleInfraType<LinkType> implements Serial
     public LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
     {
         // TEMP
-        return LongitudinalDirectionality.DIR_BOTH;
+        return LongitudinalDirectionality.DIR_PLUS;
     }
 
     /**
@@ -228,8 +224,8 @@ public class LinkType extends GtuCompatibleInfraType<LinkType> implements Serial
         @Override
         public final LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
         {
-         // TEMP
-            return LongitudinalDirectionality.DIR_BOTH;
+            // TEMP
+            return LongitudinalDirectionality.DIR_PLUS;
         }
 
         /** {@inheritDoc} */
