@@ -415,7 +415,6 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        checkClone((OTSNetwork) network);
     }
 
     /**
@@ -431,20 +430,6 @@ public class OTSNodeTest
             result.add(link);
         }
         return result;
-    }
-
-    /**
-     * Check that cloning the network correctly clones the Nodes.
-     * @param network OTSNetwork; the network
-     * @throws NetworkException if that happens; this test has failed
-     */
-    private void checkClone(final OTSNetwork network) throws NetworkException
-    {
-        OTSSimulatorInterface oldSimulator = MockSimulator.createMock();
-        OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        OTSNetwork clonedNetwork = OTSNetworkUtils.clone(network, "clonedNetwork", newSimulator);
-        assertEquals("Number of nodes should be same", network.getNodeMap().size(), clonedNetwork.getNodeMap().size());
-        assertTrue("Node map should be equal", network.getNodeMap().equals(clonedNetwork.getNodeMap()));
     }
 
 }

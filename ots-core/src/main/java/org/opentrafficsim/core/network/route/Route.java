@@ -9,7 +9,6 @@ import java.util.Set;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
@@ -213,9 +212,9 @@ public class Route implements Serializable, Identifiable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((nodeSet == null) ? 0 : nodeSet.hashCode());
-        result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.nodeSet == null) ? 0 : this.nodeSet.hashCode());
+        result = prime * result + ((this.nodes == null) ? 0 : this.nodes.hashCode());
         return result;
     }
 
@@ -231,26 +230,26 @@ public class Route implements Serializable, Identifiable
         if (getClass() != obj.getClass())
             return false;
         Route other = (Route) obj;
-        if (id == null)
+        if (this.id == null)
         {
             if (other.id != null)
                 return false;
         }
-        else if (!id.equals(other.id))
+        else if (!this.id.equals(other.id))
             return false;
-        if (nodeSet == null)
+        if (this.nodeSet == null)
         {
             if (other.nodeSet != null)
                 return false;
         }
-        else if (!nodeSet.equals(other.nodeSet))
+        else if (!this.nodeSet.equals(other.nodeSet))
             return false;
-        if (nodes == null)
+        if (this.nodes == null)
         {
             if (other.nodes != null)
                 return false;
         }
-        else if (!nodes.equals(other.nodes))
+        else if (!this.nodes.equals(other.nodes))
             return false;
         return true;
     }
@@ -263,20 +262,4 @@ public class Route implements Serializable, Identifiable
         return "Route [id=" + this.id + ", nodes=" + this.nodes + "]";
     }
 
-    /**
-     * Clone the Route.
-     * @param newNetwork Network; the new network
-     * @return a clone of this route
-     * @throws NetworkException in case the cloning fails
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public Route clone(final Network newNetwork) throws NetworkException
-    {
-        Route newRoute = new Route(this.id);
-        for (Node node : this.nodes)
-        {
-            newRoute.addNode(newNetwork.getNode(node.getId()));
-        }
-        return newRoute;
-    }
 }

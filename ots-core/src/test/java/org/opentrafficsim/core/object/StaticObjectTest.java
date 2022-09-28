@@ -100,12 +100,6 @@ public class StaticObjectTest implements EventListenerInterface
         assertEquals("id", id, so2.getId());
         assertEquals("geometry", geometry, so2.getGeometry());
         assertEquals("height", Length.ZERO, so2.getHeight());
-
-        /* The clone method does not check the validity of its arguments. */
-        StaticObject clone = so.clone(null, false);
-        assertEquals("id", id, clone.getId());
-        assertEquals("geometry", geometry, clone.getGeometry());
-        assertEquals("height", height, clone.getHeight());
     }
 
     /**

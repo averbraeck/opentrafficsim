@@ -85,19 +85,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.network.addLink(this);
     }
 
-    /**
-     * Clone a link for a new network.
-     * @param newNetwork Network; the new network to which the clone belongs
-     * @param link OTSLink; the link to clone from
-     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
-     *             or the end node of the link are not registered in the network.
-     */
-    protected OTSLink(final Network newNetwork, final OTSLink link) throws NetworkException
-    {
-        this(newNetwork, link.id, newNetwork.getNode(link.startNode.getId()), newNetwork.getNode(link.endNode.getId()),
-                link.linkType, link.designLine);
-    }
-
     /** {@inheritDoc} */
     @Override
     public final LongitudinalDirectionality getDirectionality(final GtuType gtuType)
@@ -288,18 +275,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         else if (!this.startNode.equals(other.startNode))
             return false;
         return true;
-    }
-
-    /**
-     * Clone the OTSLink for e.g., copying a network.
-     * @param newNetwork Network; the new network to which the clone belongs
-     * @return a clone of this object
-     * @throws NetworkException in case the cloning fails
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public OTSLink clone(final OTSNetwork newNetwork) throws NetworkException
-    {
-        return new OTSLink(newNetwork, this);
     }
 
     /** {@inheritDoc} */

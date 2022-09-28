@@ -8,7 +8,6 @@ import java.util.Map;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -54,31 +53,5 @@ public class CapacityOTSLinkTest
         assertTrue("capacity mathes", initialCapacity.equals(link.getCapacity()));
         link.setCapacity(finalCapacity);
         assertTrue("capacity mathes", finalCapacity.equals(link.getCapacity()));
-
-        OTSNetwork newNetwork = new OTSNetwork("clonedNetworkForCapacityOTSLink", true, MockSimulator.createMock());
-        // Create nodes with matching IDs in the new network
-        new OTSNode(newNetwork, fromNode.getId(), fromPoint);
-        new OTSNode(newNetwork, toNode.getId(), toPoint);
-        OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        CapacityOTSLink clonedLink = new CapacityOTSLink(newNetwork, link);
-        assertTrue("from point matches", fromPoint.equals(clonedLink.getDesignLine().get(0)));
-        assertTrue("to point matches", toPoint.equals(clonedLink.getDesignLine().get(1)));
-        // XXXX is it really intentional that the equals method of Node does NOT check equality of the network field?
-        assertTrue("from node matches", fromNode.equals(clonedLink.getStartNode()));
-        assertTrue("to node matches", toNode.equals(clonedLink.getEndNode()));
-        assertTrue("capacity mathes", finalCapacity.equals(clonedLink.getCapacity()));
-        clonedLink.setCapacity(initialCapacity);
-        assertTrue("capacity mathes", initialCapacity.equals(clonedLink.getCapacity()));
-        newNetwork.removeLink(clonedLink);
-        clonedLink = link.clone(newNetwork);
-        assertTrue("from point matches", fromPoint.equals(clonedLink.getDesignLine().get(0)));
-        assertTrue("to point matches", toPoint.equals(clonedLink.getDesignLine().get(1)));
-        // XXXX is it really intentional that the equals method of Node does NOT check equality of the network field?
-        assertTrue("from node matches", fromNode.equals(clonedLink.getStartNode()));
-        assertTrue("to node matches", toNode.equals(clonedLink.getEndNode()));
-        assertTrue("capacity mathes", finalCapacity.equals(clonedLink.getCapacity()));
-        clonedLink.setCapacity(initialCapacity);
-        assertTrue("capacity mathes", initialCapacity.equals(clonedLink.getCapacity()));
-        assertTrue("toString method returns something with the class name in it", link.toString().contains("CapacityOTSLink"));
     }
 }

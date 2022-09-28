@@ -40,19 +40,6 @@ public class CapacityOTSLink extends OTSLink implements Capacity
         this.capacity = capacity;
     }
 
-    /**
-     * Clone a link for a new network.
-     * @param newNetwork OTSNetwork; the new network to which the clone belongs
-     * @param link CapacityOTSLink; the link to clone from
-     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
-     *             or the end node of the link are not registered in the network.
-     */
-    protected CapacityOTSLink(final Network newNetwork, final CapacityOTSLink link) throws NetworkException
-    {
-        super(newNetwork, link);
-        this.capacity = link.capacity;
-    }
-
     /** {@inheritDoc} */
     @Override
     public final Frequency getCapacity()
@@ -72,14 +59,6 @@ public class CapacityOTSLink extends OTSLink implements Capacity
     public String toString()
     {
         return "CapacityOTSLink [capacity=" + this.capacity + "]";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public CapacityOTSLink clone(final OTSNetwork newNetwork) throws NetworkException
-    {
-        return new CapacityOTSLink(newNetwork, this);
     }
 
 }

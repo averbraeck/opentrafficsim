@@ -12,7 +12,6 @@ import org.djutils.event.EventListenerInterface;
 import org.djutils.event.EventTypeInterface;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -158,10 +157,6 @@ public class OTSLinkTest implements EventListenerInterface
         otherLink = new OTSLink(otherNetwork, "link4", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
                 new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
-        otherNetwork.removeLink(otherLink);
-        OTSSimulatorInterface simulator2 = MockSimulator.createMock();
-        otherLink = link.clone(otherNetwork);
-        assertTrue("link is equal to clone in different network", link.equals(otherLink));
     }
 
     /** {@inheritDoc} */

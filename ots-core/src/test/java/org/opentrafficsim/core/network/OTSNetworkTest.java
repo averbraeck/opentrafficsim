@@ -272,7 +272,6 @@ public class OTSNetworkTest implements EventListenerInterface
         {
             // Ignore expected exception
         }
-        compareNetworkWithClone(network);
         assertEquals("lookup link from node node1 to node node3", link1, network.getLink("node1", "node3"));
         assertEquals("lookup link from node1 to node3", link1, network.getLink(node1, node3));
         assertEquals("lookup link from node node3 to node node1", secondLink, network.getLink("node3", "node1"));
@@ -362,21 +361,6 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("extend bottom", 20 - OTSNode.BOUNDINGRADIUS - yMargin, extent.getMinY(), 0.01);
         assertEquals("extend right", 110 + OTSNode.BOUNDINGRADIUS + xMargin, extent.getMaxX(), 0.01);
         assertEquals("extend top", 220 + OTSNode.BOUNDINGRADIUS + yMargin, extent.getMaxY(), 0.01);
-    }
-
-    /**
-     * Check that the cloned network is a good copy of the original.
-     * @param network OTSNetwork; the original network
-     * @throws NetworkException when that happens; this test has failed
-     */
-    private void compareNetworkWithClone(final OTSNetwork network) throws NetworkException
-    {
-        OTSSimulatorInterface oldSimulator = MockSimulator.createMock();
-        OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        OTSNetwork clone = OTSNetworkUtils.clone(network, "cloned network", newSimulator);
-        assertTrue("nodes match", network.getNodeMap().equals(clone.getNodeMap()));
-        assertTrue("links match", network.getLinkMap().equals(clone.getLinkMap()));
-        // TODO: Checking routes is a bit harder; not done for now
     }
 
     /** {@inheritDoc} */
@@ -495,7 +479,6 @@ public class OTSNetworkTest implements EventListenerInterface
         GtuType junkType = new GtuType("junk", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
         assertEquals("there are no routes from node1 to node2 for badType", 0,
                 network.getRoutesBetween(junkType, node1, node2).size());
-        compareNetworkWithClone(network);
         network.removeRoute(carType, route1);
         assertEquals("list for carType now contains one entry", 1, network.getDefinedRouteMap(carType).size());
         assertEquals("list for bicycleType contains one entry", 1, network.getDefinedRouteMap(bicycleType).size());
@@ -548,12 +531,6 @@ public class OTSNetworkTest implements EventListenerInterface
                 }
             }
         }
-        compareNetworkWithClone(network);
-        // Add another node (that is not connected to any of the existing nodes)
-        // TODO fix OTSNetwork class to throw the documented exception instead of
-        // java.lang IllegalArgumentException: graph must contain the start vertex
-        // Node freeNode = new OTSNode(network, "unconnectedNode", new OTSPoint3D(5, 5, 5));
-        // assertNull(network.getShortestRouteBetween(GtuType.ALL, freeNode, network.getNode("node1")));
     }
 
     /**
@@ -592,7 +569,6 @@ public class OTSNetworkTest implements EventListenerInterface
                 }
             }
         }
-        compareNetworkWithClone(network);
     }
 
     /**
@@ -631,7 +607,6 @@ public class OTSNetworkTest implements EventListenerInterface
                 }
             }
         }
-        compareNetworkWithClone(network);
     }
 
     /**

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
@@ -101,25 +100,12 @@ public class CompleteRoute extends Route
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public CompleteRoute clone(final Network newNetwork) throws NetworkException
-    {
-        CompleteRoute newRoute = new CompleteRoute(getId(), this.gtuType);
-        for (Node node : getNodes())
-        {
-            newRoute.addNode(newNetwork.getNode(node.getId()));
-        }
-        return newRoute;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public int hashCode()
     {
         final int prime = 31;
         int result = super.hashCode(); // BE WARE
-        result = prime * result + ((gtuType == null) ? 0 : gtuType.hashCode());
+        result = prime * result + ((this.gtuType == null) ? 0 : this.gtuType.hashCode());
         return result;
     }
 
@@ -135,12 +121,12 @@ public class CompleteRoute extends Route
         if (getClass() != obj.getClass())
             return false;
         CompleteRoute other = (CompleteRoute) obj;
-        if (gtuType == null)
+        if (this.gtuType == null)
         {
             if (other.gtuType != null)
                 return false;
         }
-        else if (!gtuType.equals(other.gtuType))
+        else if (!this.gtuType.equals(other.gtuType))
             return false;
         return super.equals(other); // BE WARE
     }

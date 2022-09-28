@@ -1,8 +1,6 @@
 package org.opentrafficsim.core.compatibility;
 
 import org.junit.Test;
-import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * Test the classes and interfaces in the compatibility package.

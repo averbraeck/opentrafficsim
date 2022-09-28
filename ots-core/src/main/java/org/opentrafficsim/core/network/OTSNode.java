@@ -418,49 +418,4 @@ public class OTSNode implements Node, Locatable, Serializable
         return true;
     }
 
-    /**
-     * Clone the OTSode for e.g., copying a network.
-     * @param newNetwork Network; the new network to which the clone belongs
-     * @return a clone of this object
-     * @throws NetworkException in case the cloning fails
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone1(final Network newNetwork) throws NetworkException
-    {
-        return new OTSNode(newNetwork, this.id, this.point);
-    }
-
-    /**
-     * Complete the cloning of the OTSode for e.g., copying a network. Call this method after all the links have been
-     * constructed in the new network.
-     * @param newNetwork Network; the new network to which the clone belongs
-     * @return the completed clone
-     * @throws NetworkException in case the cloning fails
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone2(final Network newNetwork) throws NetworkException
-    {
-        OTSNode clone = (OTSNode) newNetwork.getNode(this.id);
-        if (this.connections != null)
-        {
-            Map<GtuType, Map<Link, Set<Link>>> newConnections = new LinkedHashMap<>();
-            for (GtuType gtuType : this.connections.keySet())
-            {
-                Map<Link, Set<Link>> newConnMap = new LinkedHashMap<>();
-                for (Link link : this.connections.get(gtuType).keySet())
-                {
-                    Set<Link> newLinkSet = new LinkedHashSet<>();
-                    for (Link setLink : this.connections.get(gtuType).get(link))
-                    {
-                        newLinkSet.add(newNetwork.getLink(setLink.getId()));
-                    }
-                    newConnMap.put(newNetwork.getLink(link.getId()), newLinkSet);
-                }
-                newConnections.put(gtuType, newConnMap);
-            }
-            clone.connections = newConnections;
-        }
-        return clone;
-    }
-
 }
