@@ -54,8 +54,8 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuTypeDistribution;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -225,30 +225,30 @@ public final class AHFEUtil
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
                 new ContinuousDistDoubleScalar.Rel<>(new DistNormal(streams.get("gtuClass"), 80, 2.5), SpeedUnit.KM_PER_HOUR);
 
-        LaneBasedTemplateGtuType carLeft =
-                new LaneBasedTemplateGtuType(new GtuType("car", network.getGtuType(GtuType.DEFAULTS.CAR)),
+        LaneBasedTemplateGTUType carLeft =
+                new LaneBasedTemplateGTUType(new GtuType("car", network.getGtuType(GtuType.DEFAULTS.CAR)),
                         new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
                         speedCar, strategicalFactory, fixedRouteGeneratorLeft);
-        LaneBasedTemplateGtuType truckLeft =
-                new LaneBasedTemplateGtuType(new GtuType("truck", network.getGtuType(GtuType.DEFAULTS.TRUCK)),
+        LaneBasedTemplateGTUType truckLeft =
+                new LaneBasedTemplateGTUType(new GtuType("truck", network.getGtuType(GtuType.DEFAULTS.TRUCK)),
                         new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                         speedTruck, strategicalFactory, fixedRouteGeneratorLeft);
-        LaneBasedTemplateGtuType carRight =
-                new LaneBasedTemplateGtuType(new GtuType("car", network.getGtuType(GtuType.DEFAULTS.CAR)),
+        LaneBasedTemplateGTUType carRight =
+                new LaneBasedTemplateGTUType(new GtuType("car", network.getGtuType(GtuType.DEFAULTS.CAR)),
                         new ConstantGenerator<>(Length.instantiateSI(4.0)), new ConstantGenerator<>(Length.instantiateSI(2.0)),
                         speedCar, strategicalFactory, fixedRouteGeneratorRight);
-        LaneBasedTemplateGtuType truckRight =
-                new LaneBasedTemplateGtuType(new GtuType("truck", network.getGtuType(GtuType.DEFAULTS.TRUCK)),
+        LaneBasedTemplateGTUType truckRight =
+                new LaneBasedTemplateGTUType(new GtuType("truck", network.getGtuType(GtuType.DEFAULTS.TRUCK)),
                         new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                         speedTruck, strategicalFactory, fixedRouteGeneratorRight);
 
         // GtuTypeGenerator gtuTypeGeneratorLeft = new GtuTypeGenerator(simulator, streams.get("gtuClass"));
         // GtuTypeGenerator gtuTypeGeneratorRight = new GtuTypeGenerator(simulator, streams.get("gtuClass"));
 
-        Distribution<LaneBasedTemplateGtuType> gtuTypeGeneratorLeftLeft = new Distribution<>(streams.get("gtuClass"));
-        Distribution<LaneBasedTemplateGtuType> gtuTypeGeneratorLeftRight = new Distribution<>(streams.get("gtuClass"));
-        Distribution<LaneBasedTemplateGtuType> gtuTypeGeneratorRightLeft = new Distribution<>(streams.get("gtuClass"));
-        Distribution<LaneBasedTemplateGtuType> gtuTypeGeneratorRightRight = new Distribution<>(streams.get("gtuClass"));
+        Distribution<LaneBasedTemplateGTUType> gtuTypeGeneratorLeftLeft = new Distribution<>(streams.get("gtuClass"));
+        Distribution<LaneBasedTemplateGTUType> gtuTypeGeneratorLeftRight = new Distribution<>(streams.get("gtuClass"));
+        Distribution<LaneBasedTemplateGTUType> gtuTypeGeneratorRightLeft = new Distribution<>(streams.get("gtuClass"));
+        Distribution<LaneBasedTemplateGTUType> gtuTypeGeneratorRightRight = new Distribution<>(streams.get("gtuClass"));
         if (truckFraction < 1 - leftFraction)
         {
             double p = truckFraction / (1 - leftFraction);
@@ -339,7 +339,7 @@ public final class AHFEUtil
      * @param idGenerator IdGenerator; the generator for the ID
      * @param simulator OTSSimulatorInterface; the simulator
      * @param network OTSRoadNetwork; the network
-     * @param distribution Distribution&lt;LaneBasedTemplateGtuType&gt;; the type generator for the GTU
+     * @param distribution Distribution&lt;LaneBasedTemplateGTUType&gt;; the type generator for the GTU
      * @param headwayGenerator HeadwayGeneratorDemand; the headway generator for the GTU
      * @param gtuColorer GTUColorer; the GTU colorer for animation
      * @param roomChecker RoomChecker; the checker to see if there is room for the GTU
@@ -354,7 +354,7 @@ public final class AHFEUtil
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
             final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSRoadNetwork network,
-            final Distribution<LaneBasedTemplateGtuType> distribution, final HeadwayGeneratorDemand headwayGenerator,
+            final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
             throws SimRuntimeException, ProbabilityException, GtuException, ParameterException
@@ -363,7 +363,7 @@ public final class AHFEUtil
         // TODO DIR_MINUS
         initialLongitudinalPositions
                 .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
-        LaneBasedTemplateGtuTypeDistribution characteristicsGenerator = new LaneBasedTemplateGtuTypeDistribution(distribution);
+        LaneBasedTemplateGTUTypeDistribution characteristicsGenerator = new LaneBasedTemplateGTUTypeDistribution(distribution);
         new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
                 GeneratorPositions.create(initialLongitudinalPositions, stream), network, simulator, roomChecker, idGenerator);
     }

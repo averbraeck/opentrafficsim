@@ -26,7 +26,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
@@ -64,13 +64,13 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     private static final Length MARGIN = Length.instantiateSI(0.001);
 
     /** Headway GTU type that should be used. */
-    private final HeadwayGtuType headwayGtuType;
+    private final HeadwayGTUType headwayGtuType;
 
     /**
      * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
+     * @param headwayGtuType HeadwayGTUType; type of headway gtu to generate
      */
-    public DirectIntersectionPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
+    public DirectIntersectionPerception(final LanePerception perception, final HeadwayGTUType headwayGtuType)
     {
         super(perception);
         this.headwayGtuType = headwayGtuType;

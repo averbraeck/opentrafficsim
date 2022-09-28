@@ -31,7 +31,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
@@ -88,7 +88,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
         getPerception().addPerceptionCategory(new ToledoPerception(getPerception()));
-        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGtuType.WRAP));
+        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGTUType.WRAP));
     }
 
     /** {@inheritDoc} */

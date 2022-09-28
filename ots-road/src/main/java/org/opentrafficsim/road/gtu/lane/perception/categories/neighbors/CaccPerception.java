@@ -34,7 +34,7 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
     private static final long serialVersionUID = 20190312L;
 
     /** Onboard sensors in the form of a headway GTU type. */
-    private final HeadwayGtuType sensors;
+    private final HeadwayGTUType sensors;
 
     /**
      * Constructor using default sensors with zero delay.
@@ -48,9 +48,9 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
     /**
      * Constructor using specified sensors.
      * @param perception LanePerception; perception
-     * @param sensors HeadwayGtuType; onboard sensor information
+     * @param sensors HeadwayGTUType; onboard sensor information
      */
-    public CaccPerception(final LanePerception perception, final HeadwayGtuType sensors)
+    public CaccPerception(final LanePerception perception, final HeadwayGTUType sensors)
     {
         super(perception);
         this.sensors = sensors;
@@ -115,14 +115,14 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
          * @param initialPosition Length; position on the root record
          * @param maxDistance Length; maximum distance to search
          * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
-         * @param headwayGtuType HeadwayGtuType; type of HeadwayGTU to return
+         * @param headwayGtuType HeadwayGTUType; type of HeadwayGTU to return
          * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
          * @param ignoreIfUpstream boolean; whether to ignore GTU that are partially upstream of a record
          */
         @SuppressWarnings("checkstyle:parameternumber")
         DownstreamNeighboursIterableCACC(final LaneBasedGTU perceivingGtu, final LaneRecord<?> root,
                 final Length initialPosition, final Length maxDistance, final RelativePosition relativePosition,
-                final HeadwayGtuType headwayGtuType, final RelativeLane lane, final boolean ignoreIfUpstream)
+                final HeadwayGTUType headwayGtuType, final RelativeLane lane, final boolean ignoreIfUpstream)
         {
             super(perceivingGtu, root, initialPosition, maxDistance, relativePosition, headwayGtuType, lane, ignoreIfUpstream);
         }

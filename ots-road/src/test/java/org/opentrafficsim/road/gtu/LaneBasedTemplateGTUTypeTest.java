@@ -27,13 +27,12 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TemplateGtuType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGtuType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
@@ -46,26 +45,26 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Test the TemplateGtuType class.
+ * Test the TemplateGTUType class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGtuTypeTest implements UNITS
+public class LaneBasedTemplateGTUTypeTest implements UNITS
 {
     /** The random stream. */
     private StreamInterface stream = new MersenneTwister();
 
     /**
-     * Test construction of a TemplateGtuType and prove that each one uses private fields.
+     * Test construction of a TemplateGTUType and prove that each one uses private fields.
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
     public final void constructorTest() throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGtuTypeTest");
+        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGTUTypeTest");
         OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true, simulator);
         GtuType pcType = network.getGtuType(GtuType.DEFAULTS.CAR);
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
@@ -76,7 +75,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
         OTSModelInterface model = new DummyModelForTemplateGTUTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        LaneBasedTemplateGtuType passengerCar = new LaneBasedTemplateGtuType(pcType, new Generator<Length>()
+        LaneBasedTemplateGTUType passengerCar = new LaneBasedTemplateGTUType(pcType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -106,7 +105,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
-        LaneBasedTemplateGtuType truck = new LaneBasedTemplateGtuType(truckType, new Generator<Length>()
+        LaneBasedTemplateGTUType truck = new LaneBasedTemplateGTUType(truckType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -169,9 +168,9 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     @Test
     public final void compatibleLaneTypeTest() throws Exception
     {
-        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGtuTypeTest");
+        OTSSimulatorInterface simulator = new OTSSimulator("LaneBasedTemplateGTUTypeTest");
         OTSRoadNetwork network = new OTSRoadNetwork("TemplateGTU network", true, simulator);
-        // Create some TemplateGtuTypes
+        // Create some TemplateGTUTypes
         GtuType pc = network.getGtuType(GtuType.DEFAULTS.CAR);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
@@ -233,11 +232,11 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
 
         // Create some LaneTypes
         GtuCompatibility<LaneType> noTrucks = new GtuCompatibility<>((LaneType) null);
-        noTrucks.addAllowedGtuType(passengerCar.getGtuType(), LongitudinalDirectionality.DIR_BOTH);
+        noTrucks.addCompatibleGtuType(passengerCar.getGtuType());
         LaneType trucksForbidden = new LaneType("No Trucks", network.getLaneType(LaneType.DEFAULTS.FREEWAY), noTrucks, network);
 
         GtuCompatibility<LaneType> truckOnly = new GtuCompatibility<>((LaneType) null);
-        truckOnly.addAllowedGtuType(truck.getGtuType(), LongitudinalDirectionality.DIR_BOTH);
+        truckOnly.addCompatibleGtuType(truck.getGtuType());
         LaneType trucksOnly = new LaneType("Trucks Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), truckOnly, network);
 
         GtuCompatibility<LaneType> bicyclesOnly = new GtuCompatibility<>((LaneType) null);
@@ -245,8 +244,8 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new LaneType("Bicycles Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), bicyclesOnly, network);
 
         GtuCompatibility<LaneType> urban = new GtuCompatibility<>((LaneType) null);
-        urban.addAllowedGtuType(passengerCar.getGtuType(), LongitudinalDirectionality.DIR_BOTH);
-        urban.addAllowedGtuType(truck.getGtuType(), LongitudinalDirectionality.DIR_BOTH);
+        urban.addCompatibleGtuType(passengerCar.getGtuType());
+        urban.addCompatibleGtuType(truck.getGtuType());
         LaneType urbanRoad = new LaneType("Urban road - open to all traffic", network.getLaneType(LaneType.DEFAULTS.FREEWAY),
                 urban, network);
 
@@ -262,8 +261,8 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     }
 
     /**
-     * Verify all the values in a TemplateGtuType&lt;String&gt;.
-     * @param templateGtuType TemplateGtuType&lt;String&gt;; the TemplateGtuType
+     * Verify all the values in a TemplateGTUType&lt;String&gt;.
+     * @param templateGtuType TemplateGTUType&lt;String&gt;; the TemplateGTUType
      * @param gtuType String; the expected id
      * @param length Length; the expected length
      * @param width Length; the expected width
@@ -273,7 +272,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
      * @throws GtuException in case of a GTU exception
      * @throws NamingException in case of a naming exception
      */
-    private void verifyFields(final LaneBasedTemplateGtuType templateGtuType, final GtuType gtuType,
+    private void verifyFields(final LaneBasedTemplateGTUType templateGtuType, final GtuType gtuType,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> width,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed)
@@ -327,7 +326,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         @Override
         public Serializable getSourceId()
         {
-            return "LaneBasedTemplateGtuTypeTest.Model";
+            return "LaneBasedTemplateGTUTypeTest.Model";
         }
     }
 

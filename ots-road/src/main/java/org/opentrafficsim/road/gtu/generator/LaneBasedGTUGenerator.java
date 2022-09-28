@@ -56,7 +56,7 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
- * Lane based GTU generator. This generator generates lane based GTUs using a LaneBasedTemplateGtuType. The template is used to
+ * Lane based GTU generator. This generator generates lane based GTUs using a LaneBasedTemplateGTUType. The template is used to
  * generate a set of GTU characteristics at the times implied by the headway generator. These sets are queued until there is
  * sufficient room to construct a GTU at the specified lane locations. The speed of a construction GTU may be reduced to ensure
  * it does not run into its immediate leader GTU.
@@ -190,7 +190,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
 
     /**
      * Generate the characteristics of the next GTU.
-     * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGtuType
+     * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGTUType
      * @throws SimRuntimeException when this method fails to re-schedule itself or the call to the method that tries to place a
      *             GTU on the road
      * @throws ParameterException in case of a parameter problem

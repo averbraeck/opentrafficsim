@@ -8,7 +8,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GtuException;
 
 /**
- * Distribution of LaneBasedTemplateGtuType.
+ * Distribution of LaneBasedTemplateGTUType.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -16,24 +16,24 @@ import org.opentrafficsim.core.gtu.GtuException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGtuTypeDistribution implements LaneBasedGTUCharacteristicsGenerator, Serializable
+public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharacteristicsGenerator, Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160000L;
 
     /** The Distribution of lane based template GTU types. */
-    private final Distribution<LaneBasedTemplateGtuType> distribution;
+    private final Distribution<LaneBasedTemplateGTUType> distribution;
 
     /**
-     * Construct a new LaneBasedTemplateGtuTypeDistribution.
-     * @param distributionOfLanebasedTemplateGtuType Distribution&lt;LaneBasedTemplateGtuType&gt;; the distribution of
-     *            LaneBasedTemplateGtuTypes
+     * Construct a new LaneBasedTemplateGTUTypeDistribution.
+     * @param distributionOfLanebasedTemplateGTUType Distribution&lt;LaneBasedTemplateGTUType&gt;; the distribution of
+     *            LaneBasedTemplateGTUTypes
      */
-    public LaneBasedTemplateGtuTypeDistribution(
-            final Distribution<LaneBasedTemplateGtuType> distributionOfLanebasedTemplateGtuType)
+    public LaneBasedTemplateGTUTypeDistribution(
+            final Distribution<LaneBasedTemplateGTUType> distributionOfLanebasedTemplateGTUType)
     {
-        this.distribution = distributionOfLanebasedTemplateGtuType;
+        this.distribution = distributionOfLanebasedTemplateGTUType;
     }
 
     /** {@inheritDoc} */
@@ -47,7 +47,7 @@ public class LaneBasedTemplateGtuTypeDistribution implements LaneBasedGTUCharact
     @Override
     public final String toString()
     {
-        return "LaneBasedTemplateGtuTypeDistribution [distribution=" + this.distribution + "]";
+        return "LaneBasedTemplateGTUTypeDistribution [distribution=" + this.distribution + "]";
     }
 
 }

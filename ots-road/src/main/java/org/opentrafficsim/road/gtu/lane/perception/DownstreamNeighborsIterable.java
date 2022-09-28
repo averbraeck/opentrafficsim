@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 /**
@@ -49,7 +49,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
     private static final Length RIGHT = Length.instantiateSI(0.000001);
 
     /** Headway GTU type that should be used. */
-    private final HeadwayGtuType headwayGtuType;
+    private final HeadwayGTUType headwayGtuType;
 
     /** Added GTU's so far. */
     private final Set<String> ids = new LinkedHashSet<>();
@@ -70,12 +70,12 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
      * @param initialPosition Length; position on the root record
      * @param maxDistance Length; maximum distance to search
      * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
-     * @param headwayGtuType HeadwayGtuType; type of HeadwayGTU to return
+     * @param headwayGtuType HeadwayGTUType; type of HeadwayGTU to return
      * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
      * @param ignoreIfUpstream boolean; whether to ignore GTU that are partially upstream of a record
      */
     public DownstreamNeighborsIterable(final LaneBasedGTU perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
-            final Length maxDistance, final RelativePosition relativePosition, final HeadwayGtuType headwayGtuType,
+            final Length maxDistance, final RelativePosition relativePosition, final HeadwayGTUType headwayGtuType,
             final RelativeLane lane, final boolean ignoreIfUpstream)
     {
         super(perceivingGtu, root, initialPosition, true, maxDistance, relativePosition, null);

@@ -20,7 +20,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class GtuTypeAssumptions implements Serializable
+public class GTUTypeAssumptions implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160527L;
@@ -154,7 +154,7 @@ public class GtuTypeAssumptions implements Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        GtuTypeAssumptions other = (GtuTypeAssumptions) obj;
+        GTUTypeAssumptions other = (GTUTypeAssumptions) obj;
         if (this.parametersMap == null)
         {
             if (other.parametersMap != null)
@@ -183,7 +183,7 @@ public class GtuTypeAssumptions implements Serializable
     @Override
     public final String toString()
     {
-        return "GtuTypeAssumptions [carFollowingModelMap=" + this.carFollowingModelMap + ", parametersMap=" + this.parametersMap
+        return "GTUTypeAssumptions [carFollowingModelMap=" + this.carFollowingModelMap + ", parametersMap=" + this.parametersMap
                 + ", laneTypeSpeedMap=" + this.laneTypeSpeedMap + "]";
     }
 

@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGtuType extends TemplateGtuType implements LaneBasedGTUCharacteristicsGenerator
+public class LaneBasedTemplateGTUType extends TemplateGtuType implements LaneBasedGTUCharacteristicsGenerator
 {
     /** */
     private static final long serialVersionUID = 20160101L;
@@ -49,7 +49,7 @@ public class LaneBasedTemplateGtuType extends TemplateGtuType implements LaneBas
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedTemplateGtuType(final GtuType gtuType, final Generator<Length> lengthGenerator,
+    public LaneBasedTemplateGTUType(final GtuType gtuType, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final Generator<Route> routeGenerator)
             throws NullPointerException

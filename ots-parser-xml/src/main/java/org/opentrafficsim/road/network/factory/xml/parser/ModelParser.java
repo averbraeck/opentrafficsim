@@ -48,8 +48,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersection
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType.PerceivedHeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType.PerceivedHeadwayGTUType;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSpeed;
@@ -899,10 +899,10 @@ public class ModelParser
     private static PerceptionFactory parsePerception(final PERCEPTIONTYPE perception) throws XmlParserException
     {
         // Headway GTU type
-        HeadwayGtuType headwayGtuType;
+        HeadwayGTUType headwayGtuType;
         if (perception.getHEADWAYGTUTYPE().getWRAP() != null)
         {
-            headwayGtuType = HeadwayGtuType.WRAP;
+            headwayGtuType = HeadwayGTUType.WRAP;
         }
         else if (perception.getHEADWAYGTUTYPE().getPERCEIVED() != null)
         {
@@ -939,18 +939,18 @@ public class ModelParser
                 default:
                     throw new XmlParserException("Anticipation " + perceived.getANTICIPATION() + " is unknown.");
             }
-            headwayGtuType = new PerceivedHeadwayGtuType(estimation, anticipation);
+            headwayGtuType = new PerceivedHeadwayGTUType(estimation, anticipation);
         }
         else
         {
-            throw new XmlParserException("HeadwayGtuType is unknown.");
+            throw new XmlParserException("HeadwayGTUType is unknown.");
         }
 
         // Categories
         List<Constructor<? extends PerceptionCategory>> categoryConstructorsPerception = new ArrayList<>();
         List<Constructor<? extends PerceptionCategory>> categoryConstructorsPerceptionHeadway = new ArrayList<>();
         Class<?>[] perceptionConstructor = new Class[] {LanePerception.class};
-        Class<?>[] perceptionHeadwayConstructor = new Class[] {LanePerception.class, HeadwayGtuType.class};
+        Class<?>[] perceptionHeadwayConstructor = new Class[] {LanePerception.class, HeadwayGTUType.class};
         for (CATEGORY category : perception.getCATEGORY())
         {
             try

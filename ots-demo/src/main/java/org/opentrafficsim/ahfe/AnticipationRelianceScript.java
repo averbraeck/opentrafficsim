@@ -88,7 +88,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType.PerceivedHeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType.PerceivedHeadwayGTUType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.TaskHeadwayCollector;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -675,7 +675,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
             Estimation est = Try.assign(() -> this.estimation.draw(), "Probability exception while drawing estimation.");
             perception.addPerceptionCategory(
-                    new DirectNeighborsPerception(perception, new PerceivedHeadwayGtuType(est, Anticipation.CONSTANT_SPEED)));
+                    new DirectNeighborsPerception(perception, new PerceivedHeadwayGTUType(est, Anticipation.CONSTANT_SPEED)));
             perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
             return perception;
         }

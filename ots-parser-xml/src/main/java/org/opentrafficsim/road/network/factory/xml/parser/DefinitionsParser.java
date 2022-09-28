@@ -142,7 +142,7 @@ public final class DefinitionsParser
                             throw new XmlParserException("LinkType " + linkTag.getID() + ".compatibility: GtuType "
                                     + compTag.getGTUTYPE() + " not found");
                         }
-                        compatibility.addAllowedGtuType(gtuType,
+                        compatibility.addCompatibleGtuType(gtuType,
                                 LongitudinalDirectionality.valueOf(compTag.getDIRECTION().toString()));
                     }
                     LinkType parent = otsNetwork.getLinkType(linkTag.getPARENT());
@@ -193,7 +193,7 @@ public final class DefinitionsParser
                             throw new XmlParserException("LaneType " + laneTag.getID() + ".compatibility: GtuType "
                                     + compTag.getGTUTYPE() + " not found");
                         }
-                        compatibility.addAllowedGtuType(gtuType,
+                        compatibility.addCompatibleGtuType(gtuType,
                                 LongitudinalDirectionality.valueOf(compTag.getDIRECTION().toString()));
                     }
                     if (laneTag.getPARENT() != null)

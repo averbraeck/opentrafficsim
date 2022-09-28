@@ -114,7 +114,7 @@ public final class OTSRoadNetworkUtils
         {
             if (linkType.getParent() != null)
             {
-                new LinkType(linkType.getId(), linkType.getParent(), new GtuCompatibility<>(linkType.getCompatibility()),
+                new LinkType(linkType.getId(), linkType.getParent(), new GtuCompatibility<>(linkType.getGtuCompatibility()),
                         newNetwork);
             }
         }
@@ -124,7 +124,7 @@ public final class OTSRoadNetworkUtils
         {
             if (laneType.getParent() != null)
             {
-                new LaneType(laneType.getId(), laneType.getParent(), new GtuCompatibility<>(laneType.getCompatibility()),
+                new LaneType(laneType.getId(), laneType.getParent(), new GtuCompatibility<>(laneType.getGtuCompatibility()),
                         newNetwork);
             }
         }

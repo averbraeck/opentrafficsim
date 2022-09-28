@@ -23,7 +23,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
@@ -101,7 +101,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
     public AbstractDelayedNeighborsPerception(final LanePerception perception)
     {
         super(perception);
-        this.direct = new DirectNeighborsPerception(perception, HeadwayGtuType.COPY);
+        this.direct = new DirectNeighborsPerception(perception, HeadwayGTUType.COPY);
     }
 
     /** {@inheritDoc} */

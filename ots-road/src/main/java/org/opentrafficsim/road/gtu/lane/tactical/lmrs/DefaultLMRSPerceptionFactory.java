@@ -13,7 +13,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTraffi
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGTUType;
 
 /**
  * Perception factory with EgoPerception, InfrastructurePerception, NeighborsPerception and IntersectionPerception.
@@ -35,9 +35,9 @@ public class DefaultLMRSPerceptionFactory implements PerceptionFactory
         LanePerception perception = new CategoricalLanePerception(gtu);
         perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
         perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
-        perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
+        perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGTUType.WRAP));
         perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
-        perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGtuType.WRAP));
+        perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGTUType.WRAP));
         return perception;
     }
 

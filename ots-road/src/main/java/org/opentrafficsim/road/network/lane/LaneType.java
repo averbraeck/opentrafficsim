@@ -1,11 +1,8 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.io.Serializable;
-
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.core.compatibility.Compatibility;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
+import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -23,13 +20,10 @@ import org.opentrafficsim.road.network.RoadNetwork;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class LaneType extends HierarchicalType<LaneType> implements Serializable, Compatibility<GtuType, LaneType>
+public class LaneType extends GtuCompatibleInfraType<LaneType>
 {
     /** */
     private static final long serialVersionUID = 20140821L;
-
-    /** The compatibility of GTUs with this lane type. */
-    private final GtuCompatibility<LaneType> compatibility;
 
     /** the network to which the LinkType belongs. */
     private final RoadNetwork network;
@@ -107,7 +101,6 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
         super(id);
         Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
         Throw.whenNull(network, "network cannot be null for LaneType with id = %s", id);
-        this.compatibility = new GtuCompatibility<>(compatibility);
         this.network = network;
         this.network.addLaneType(this);
     }
@@ -128,7 +121,6 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
         super(id, parent);
         Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
         Throw.whenNull(parent, "parent cannot be null for LaneType with id = %s", id);
-        this.compatibility = new GtuCompatibility<>(compatibility);
         this.network = network;
         this.network.addLaneType(this);
     }
@@ -142,7 +134,6 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     private LaneType(final String id, final boolean inverted, final RoadNetwork network)
     {
         super(id);
-        this.compatibility = null;
         this.network = network;
         this.network.addLaneType(this);
     }
@@ -175,14 +166,6 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     }
 
     /**
-     * @return the gtu compatibility for this LaneType
-     */
-    public GtuCompatibility<LaneType> getCompatibility()
-    {
-        return this.compatibility;
-    }
-
-    /**
      * @return the network to which the LinkType belongs
      */
     public RoadNetwork getNetwork()
@@ -197,12 +180,12 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
      *            line of the Link)
      * @return boolean; true if this LaneType permits GTU type in the given direction
      */
-    @Override
+    @Deprecated
     public final Boolean isCompatible(final GtuType gtuType, final GTUDirectionality direction)
     {
         // OTS-338
         // return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GtuType.ALL);
-        return getDirectionality(gtuType).permits(direction);
+        return isCompatible(gtuType);
     }
 
     /**
@@ -210,31 +193,11 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
      * @param gtuType GtuType; the GTU type
      * @return LongitudinalDirectionality; the permitted directions of the GTU type on this Lane
      */
+    @Deprecated
     public final LongitudinalDirectionality getDirectionality(final GtuType gtuType)
     {
-        LongitudinalDirectionality result = this.compatibility.getDirectionality(gtuType, true);
-        if (null == this.compatibility)
-        {
-            return result.invert();
-        }
-        return result;
-    }
-
-    /**
-     * Add GTU type to compatibility.
-     * @param gtuType GtuType; the GTU type to add
-     * @param direction LongitudinalDirectionality; permitted direction of movement
-     */
-    public final void addGtuCompatability(final GtuType gtuType, final LongitudinalDirectionality direction)
-    {
-        if (null == this.compatibility)
-        {
-            getParent().addGtuCompatability(gtuType, direction.invert());
-        }
-        else
-        {
-            this.compatibility.addAllowedGtuType(gtuType, direction);
-        }
+        // TEMP
+        return LongitudinalDirectionality.DIR_BOTH;
     }
 
     /** {@inheritDoc} */
@@ -242,62 +205,19 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "LaneType [id=" + this.getId() + ", compatibilitySet=" + this.compatibility + "]";
+        return "LaneType [id=" + this.getId() + ", compatibilitySet=" + getGtuCompatibility() + "]";
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((this.compatibility == null) ? 0 : this.compatibility.hashCode());
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public boolean equals(final Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (!super.equals(obj))
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        LaneType other = (LaneType) obj;
-        if (this.compatibility == null)
-        {
-            if (other.compatibility != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.compatibility.equals(other.compatibility))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * TEMP.
+     * @param gtuType X
+     * @param tryParentsOfGtuType X
+     * @return X
+     */
+    @Deprecated
     public final LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
     {
-        LongitudinalDirectionality result = this.compatibility.getDirectionality(gtuType, tryParentsOfGtuType);
-        if (null == this.compatibility)
-        {
-            return result.invert();
-        }
-        return result;
+        return LongitudinalDirectionality.DIR_BOTH;
     }
 
 }

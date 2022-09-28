@@ -45,27 +45,27 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     protected static final ParameterTypeLength LOOKBACK = ParameterTypes.LOOKBACK;
 
     /** Headway GTU type that should be used. */
-    private final HeadwayGtuType headwayGtuType;
+    private final HeadwayGTUType headwayGtuType;
 
     /** Headway GTU type that should be used to assess gaps. */
-    private final HeadwayGtuType headwayGtuTypeGap;
+    private final HeadwayGTUType headwayGtuTypeGap;
 
     /**
      * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
+     * @param headwayGtuType HeadwayGTUType; type of headway gtu to generate
      */
-    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
+    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGTUType headwayGtuType)
     {
         this(perception, headwayGtuType, headwayGtuType);
     }
 
     /**
      * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
-     * @param headwayGtuTypeGap HeadwayGtuType; type of headway gtu to assess gaps
+     * @param headwayGtuType HeadwayGTUType; type of headway gtu to generate
+     * @param headwayGtuTypeGap HeadwayGTUType; type of headway gtu to assess gaps
      */
-    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType,
-            final HeadwayGtuType headwayGtuTypeGap)
+    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGTUType headwayGtuType,
+            final HeadwayGTUType headwayGtuTypeGap)
     {
         super(perception);
         this.headwayGtuType = headwayGtuType;

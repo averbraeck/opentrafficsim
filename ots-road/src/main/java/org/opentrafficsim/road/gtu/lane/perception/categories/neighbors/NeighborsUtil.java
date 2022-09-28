@@ -212,12 +212,12 @@ public final class NeighborsUtil
      * Translation from a set of {@code DistanceGTU}'s, to a sorted set of {@code HeadwayGTU}'s. This bridges the gap between a
      * raw network search, and the perceived result.
      * @param base SortedSet&lt;DistanceGTU&gt;; base set of GTU's at distance
-     * @param headwayGtuType HeadwayGtuType; headway type for perceived GTU's
+     * @param headwayGtuType HeadwayGTUType; headway type for perceived GTU's
      * @param perceivingGtu LaneBasedGtu; perceiving GTU
      * @param downstream boolean; whether the GTU's are downstream
      * @return SortedSet&lt;HeadwayGTU&gt;; set of perceived GTU's
      */
-    public static SortedSet<HeadwayGTU> perceive(final SortedSet<DistanceGTU> base, final HeadwayGtuType headwayGtuType,
+    public static SortedSet<HeadwayGTU> perceive(final SortedSet<DistanceGTU> base, final HeadwayGTUType headwayGtuType,
             final LaneBasedGTU perceivingGtu, final boolean downstream)
     {
         return new SortedNeighborsSet(base, headwayGtuType, perceivingGtu, downstream);
@@ -299,7 +299,7 @@ public final class NeighborsUtil
         private final SortedSet<DistanceGTU> base;
 
         /** Headway type for perceived GTU's. */
-        private final HeadwayGtuType headwayGtuType;
+        private final HeadwayGTUType headwayGtuType;
 
         /** Perceiving GTU. */
         private final LaneBasedGTU perceivingGtu;
@@ -313,11 +313,11 @@ public final class NeighborsUtil
         /**
          * Constructor.
          * @param base SortedSet&lt;DistanceGTU&gt;; base set of GTU's at distance
-         * @param headwayGtuType HeadwayGtuType; headway type for perceived GTU's
+         * @param headwayGtuType HeadwayGTUType; headway type for perceived GTU's
          * @param perceivingGtu LaneBasedGtu; perceiving GTU
          * @param downstream boolean; whether the GTU's are downstream
          */
-        SortedNeighborsSet(final SortedSet<DistanceGTU> base, final HeadwayGtuType headwayGtuType,
+        SortedNeighborsSet(final SortedSet<DistanceGTU> base, final HeadwayGTUType headwayGtuType,
                 final LaneBasedGTU perceivingGtu, final boolean downstream)
         {
             this.base = base;
