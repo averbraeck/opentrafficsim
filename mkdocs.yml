@@ -22,6 +22,7 @@ nav:
     - Preface: 01-technical/preface.md
     - Current developments: 01-technical/developments.md
     - Install ots for developers: 01-technical/installation-developers.md
+    - Git branching and merging: 01-technical/branch-merge-developer.md
     - Install ots for modelers: 01-technical/installation-modelers.md
     - OTS compile information: https://opentrafficsim.org/docs/latest
     - ots-base Javadoc APIs: https://opentrafficsim.org/docs/latest/ots-base/apidocs
