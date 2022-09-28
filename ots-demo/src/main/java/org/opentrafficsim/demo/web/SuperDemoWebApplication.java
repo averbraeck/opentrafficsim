@@ -53,7 +53,6 @@ import picocli.CommandLine.Option;
  * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
  * <p>
  * The DSOL project is distributed under a BSD-style license.<br>
- * @version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class SuperDemoWebApplication implements Checkable

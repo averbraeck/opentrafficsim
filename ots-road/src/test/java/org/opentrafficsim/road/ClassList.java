@@ -22,7 +22,6 @@ import java.util.zip.ZipFile;
  * <p>
  * Copyright (c) 2006 by stoughto! TODO replace this by something that is provably free code.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 8, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */

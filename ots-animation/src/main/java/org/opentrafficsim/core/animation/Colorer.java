@@ -3,7 +3,7 @@ package org.opentrafficsim.core.animation;
 import java.awt.Color;
 
 /**
- * Colorer is the generic interface for anything that can get a static or dynamic color in an animation within OTS. 
+ * Colorer is the generic interface for anything that can get a static or dynamic color in an animation within OTS.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

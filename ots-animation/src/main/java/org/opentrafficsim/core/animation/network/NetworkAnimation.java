@@ -13,7 +13,7 @@ import org.opentrafficsim.core.animation.DrawingInfo;
 import org.opentrafficsim.core.network.Network;
 
 /**
- * NetworkAnimation stores the relations between drawable objects and their drawing info. 
+ * NetworkAnimation stores the relations between drawable objects and their drawing info.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
