@@ -139,7 +139,7 @@ import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
  * Parser of the {@code MODEL} tags. Returns a map of strategical planner factories by model ID for use in demand parsing.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 29, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -170,8 +170,7 @@ public class ModelParser
     @SuppressWarnings("unchecked")
     public static <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>, K> Map<String, ParameterFactory> parseParameters(
             final OTSRoadNetwork otsNetwork, final List<MODELTYPE> models, final InputParameters inputParameters,
-            final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamMap)
-            throws XmlParserException
+            final Map<String, ParameterType<?>> parameterTypes, final StreamInformation streamMap) throws XmlParserException
     {
         Map<String, ParameterFactory> map = new LinkedHashMap<>();
         for (MODELTYPE model : models)
@@ -383,8 +382,7 @@ public class ModelParser
                 // default
                 try
                 {
-                    tacticalPlannerFactory = new LMRSFactory(
-                            new IDMPlusFactory(streamInformation.getStream("generation")),
+                    tacticalPlannerFactory = new LMRSFactory(new IDMPlusFactory(streamInformation.getStream("generation")),
                             new DefaultLMRSPerceptionFactory());
                 }
                 catch (GTUException exception)
@@ -688,13 +686,15 @@ public class ModelParser
         CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory;
         if (carFollowingModel.getIDM() != null)
         {
-            carFollowingModelFactory =
-                    parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDM(), (headway, speed) -> new IDM(headway, speed));
+            carFollowingModelFactory = parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDM(), (
+                    headway, speed
+            ) -> new IDM(headway, speed));
         }
         else if (carFollowingModel.getIDMPLUS() != null)
         {
-            carFollowingModelFactory = parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDMPLUS(),
-                    (headway, speed) -> new IDMPlus(headway, speed));
+            carFollowingModelFactory = parseCarFollowingModelHeadwaySpeed(carFollowingModel.getIDMPLUS(), (
+                    headway, speed
+            ) -> new IDMPlus(headway, speed));
         }
         else
         {
@@ -709,7 +709,9 @@ public class ModelParser
      * function:
      * 
      * <pre>
-     * (headway, speed) -&gt; new MyCarFollowingModel(headway, speed)
+     * (
+     *         headway, speed
+     * ) -&gt; new MyCarFollowingModel(headway, speed)
      * </pre>
      * 
      * @param carFollowingModelHeadwaySpeed CARFOLLOWINGMODELHEADWAYSPEEDTYPE; information about desired headway and speed model

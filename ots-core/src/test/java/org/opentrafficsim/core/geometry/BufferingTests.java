@@ -19,11 +19,11 @@ public class BufferingTests
     @Test
     public void testVariousBufferings() throws OTSGeometryException
     {
-        OTSLine3D referenceLine = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(10, 20, 0), new OTSPoint3D(20, 20, 0),
-                new OTSPoint3D(30, 30, 0), new OTSPoint3D(30, 40, 0) });
-        for (String implementation : new String[] { "JTS", "PK", "main" })
+        OTSLine3D referenceLine = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(10, 20, 0), new OTSPoint3D(20, 20, 0),
+                new OTSPoint3D(30, 30, 0), new OTSPoint3D(30, 40, 0)});
+        for (String implementation : new String[] {"JTS", "PK", "main"})
         {
-            for (double offset : new double[] { 0, 1, 3, -2 })
+            for (double offset : new double[] {0, 1, 3, -2})
             {
                 OTSLine3D offsetLine;
                 switch (implementation)
@@ -133,10 +133,10 @@ public class BufferingTests
     public void fractionalOffsetLineTest() throws OTSGeometryException
     {
         System.out.println("Hier komt ie");
-        OTSLine3D referenceLine = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(10, 20, 0), new OTSPoint3D(20, 20, 0),
-                new OTSPoint3D(30, 30, 0), new OTSPoint3D(30, 40, 0) });
-        double[] relativeFractions = new double[] { 0.1, 0.2, 0.3, 0.4, 0.8 };
-        double[] offsets = new double[] { 2, 3, -2, 4, 5 };
+        OTSLine3D referenceLine = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(10, 20, 0), new OTSPoint3D(20, 20, 0),
+                new OTSPoint3D(30, 30, 0), new OTSPoint3D(30, 40, 0)});
+        double[] relativeFractions = new double[] {0.1, 0.2, 0.3, 0.4, 0.8};
+        double[] offsets = new double[] {2, 3, -2, 4, 5};
         try
         {
             referenceLine.offsetLine(null, offsets);
@@ -169,7 +169,7 @@ public class BufferingTests
 
         try
         {
-            referenceLine.offsetLine(new double[] { 0.5 }, new double[] { 2 });
+            referenceLine.offsetLine(new double[] {0.5}, new double[] {2});
             fail("offsetLine with too few fractions should have thrown an exception");
         }
         catch (OTSGeometryException oge)
@@ -193,7 +193,7 @@ public class BufferingTests
         // new OTSPoint3D(-579.253, 60.177, 1.568)});
         // double offset = 4.83899987;
         // System.out.println(OTSBufferingOLD.offsetGeometryOLD(line, offset));
-        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(-579.253, 60.157, 4.710),
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(-579.253, 60.157, 4.710),
                 new OTSPoint3D(-579.253, 60.144, 4.712), new OTSPoint3D(-579.253, 60.144, 0.000),
                 new OTSPoint3D(-579.251, 60.044, 0.000), new OTSPoint3D(-579.246, 59.944, 0.000),
                 new OTSPoint3D(-579.236, 59.845, 0.000), new OTSPoint3D(-579.223, 59.746, 0.000),
@@ -216,7 +216,7 @@ public class BufferingTests
                 new OTSPoint3D(-577.060, 57.538, 0.000), new OTSPoint3D(-576.962, 57.523, 0.000),
                 new OTSPoint3D(-576.862, 57.512, 0.000), new OTSPoint3D(-576.763, 57.504, 0.000),
                 new OTSPoint3D(-576.663, 57.500, 0.000), new OTSPoint3D(-576.623, 57.500, 6.278),
-                new OTSPoint3D(-576.610, 57.500, 6.280), new OTSPoint3D(-567.499, 57.473, 6.280) });
+                new OTSPoint3D(-576.610, 57.500, 6.280), new OTSPoint3D(-567.499, 57.473, 6.280)});
         System.out.println(line.toExcel());
         System.out.println(OTSBufferingJTS.offsetLine(line, -1.831));
     }

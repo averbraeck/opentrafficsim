@@ -48,14 +48,12 @@ import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DSOLException;
 
-
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Dec 06, 2016 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 06, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -249,8 +247,9 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                     }
                 }
                 String controllerName = "Not so simple TrafCOD controller";
-                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/resources/conflictAndControl/Intersection12Dir.tfc"),
-                        this.simulator, this.controllerDisplayPanel, null, null);
+                this.trafCOD = new TrafCOD(controllerName,
+                        URLResource.getResource("/resources/conflictAndControl/Intersection12Dir.tfc"), this.simulator,
+                        this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);

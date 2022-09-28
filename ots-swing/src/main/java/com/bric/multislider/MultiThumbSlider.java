@@ -207,7 +207,7 @@ public class MultiThumbSlider<T> extends JComponent
                 Class<?>[] types = constructors[a].getParameterTypes();
                 if (types.length == 1 && types[0].equals(MultiThumbSlider.class))
                 {
-                    MultiThumbSliderUI<T> ui = (MultiThumbSliderUI<T>) constructors[a].newInstance(new Object[]{this});
+                    MultiThumbSliderUI<T> ui = (MultiThumbSliderUI<T>) constructors[a].newInstance(new Object[] {this});
                     setUI(ui);
                     return;
                 }
@@ -352,7 +352,7 @@ public class MultiThumbSlider<T> extends JComponent
     public T createValueForInsertion(float pos)
     {
         throw new NullPointerException(
-            "this method is undefined. Either auto-adding should be disabled, or this method needs to be overridden to return a value");
+                "this method is undefined. Either auto-adding should be disabled, or this method needs to be overridden to return a value");
     }
 
     /**
@@ -596,18 +596,18 @@ public class MultiThumbSlider<T> extends JComponent
     {
         if (values.length != thumbPositions.length)
             throw new IllegalArgumentException("there number of positions (" + thumbPositions.length
-                + ") must equal the number of values (" + values.length + ")");
+                    + ") must equal the number of values (" + values.length + ")");
 
         for (int a = 0; a < values.length; a++)
         {
             if (values[a] == null)
                 throw new NullPointerException();
             if (a > 0 && thumbPositions[a] < thumbPositions[a - 1])
-                throw new IllegalArgumentException("the thumb positions must be ascending order ("
-                    + toString(thumbPositions) + ")");
+                throw new IllegalArgumentException(
+                        "the thumb positions must be ascending order (" + toString(thumbPositions) + ")");
             if (thumbPositions[a] < 0 || thumbPositions[a] > 1)
-                throw new IllegalArgumentException("illegal thumb value " + thumbPositions[a]
-                    + " (must be between zero and one)");
+                throw new IllegalArgumentException(
+                        "illegal thumb value " + thumbPositions[a] + " (must be between zero and one)");
         }
 
         // don't clone arrays and fire off events if

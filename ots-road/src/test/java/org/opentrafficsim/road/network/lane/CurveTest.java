@@ -34,7 +34,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * Verify that GTUs register and unregister at the correct times and locations when following a curve.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 15, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -64,8 +64,8 @@ public class CurveTest
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         OTSRoadNode origin = new OTSRoadNode(network, "origin", new OTSPoint3D(10, 10, 0), Direction.ZERO);
         OTSRoadNode curveStart = new OTSRoadNode(network, "curveStart", new OTSPoint3D(100, 10, 0), Direction.ZERO);
-        OTSRoadNode curveEnd = new OTSRoadNode(network, "curveEnd", new OTSPoint3D(150, 60, 0), 
-                new Direction(90, DirectionUnit.EAST_DEGREE));
+        OTSRoadNode curveEnd =
+                new OTSRoadNode(network, "curveEnd", new OTSPoint3D(150, 60, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
         OTSRoadNode destination = new OTSRoadNode(network, "destination", new OTSPoint3D(150, 150, 0),
                 new Direction(90, DirectionUnit.EAST_DEGREE));
         Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
@@ -89,10 +89,11 @@ public class CurveTest
                 System.out.println("lane " + set[lane] + " length is " + set[lane].getLength()
                         + " time for reference to get to end " + timeAtEnd);
             }
-            LaneBasedIndividualGTU car = CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
-                    simulator,
-                    new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(25, DurationUnit.SI)),
-                    new FixedLaneChangeModel(null), (OTSRoadNetwork) network);
+            LaneBasedIndividualGTU car =
+                    CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed, simulator,
+                            new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI),
+                                    new Duration(25, DurationUnit.SI)),
+                            new FixedLaneChangeModel(null), (OTSRoadNetwork) network);
             printEventList(simulator);
             System.out.println("STEP");
             simulator.step();

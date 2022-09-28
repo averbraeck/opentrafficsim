@@ -47,7 +47,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * Simplest contour plots demonstration.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2019-01-06 01:35:05 +0100 (Sun, 06 Jan 2019) $, @version $Revision: 4831 $, by $Author: averbraeck $,
  * initial version 12 nov. 2014 <br>
@@ -102,8 +102,8 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
             if (NetworksParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800,
-                    600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 NetworksSwing app = new NetworksSwing("Networks", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();
@@ -149,7 +149,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
             }
             GraphPath.initRecording(sampler, path);
             SwingPlot plot = new SwingPlot(new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), updateInterval,
-                simulator, sampler.getSamplerData(), path));
+                    simulator, sampler.getSamplerData(), path));
             charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
 

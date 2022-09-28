@@ -37,7 +37,7 @@ import nl.tudelft.simulation.language.DSOLException;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 06, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -172,8 +172,9 @@ public class TrafCODDemo2_Generators extends OTSSimulationApplication<TrafCODMod
                         false);
 
                 String controllerName = "TrafCOD_complex";
-                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/resources/TrafCODDemo2/Intersection12Dir.tfc"),
-                        getSimulator(), this.controllerDisplayPanel, null, null);
+                this.trafCOD =
+                        new TrafCOD(controllerName, URLResource.getResource("/resources/TrafCODDemo2/Intersection12Dir.tfc"),
+                                getSimulator(), this.controllerDisplayPanel, null, null);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);

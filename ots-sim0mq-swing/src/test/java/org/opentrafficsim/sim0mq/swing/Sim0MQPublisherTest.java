@@ -36,7 +36,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * Unit tests. This requires half of OTS in the imports because it sets up a simulation and runs that for a couple of seconds.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2020-02-13 11:08:16 +0100 (Thu, 13 Feb 2020) $, @version $Revision: 6383 $, by $Author: pknoppers $,
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -129,7 +129,7 @@ public class Sim0MQPublisherTest
         waitAndVerifyAckNack(receivedMessages, 1.0, badCommand, conversationId, false, "Don't know how to handle message:");
 
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] {new Time(10, TimeUnit.BASE_SECOND)}));
         waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false, "No network loaded");
 
         badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
@@ -205,7 +205,7 @@ public class Sim0MQPublisherTest
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] {new Time(10, TimeUnit.BASE_SECOND)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         int conversationIdForSubscribeToAdd = ++conversationId; // We need that to unsubscribe later
@@ -218,7 +218,7 @@ public class Sim0MQPublisherTest
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] { new Time(20, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] {new Time(20, TimeUnit.BASE_SECOND)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
@@ -231,15 +231,15 @@ public class Sim0MQPublisherTest
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTU move|UNSUBSCRIBE_FROM_CHANGE", conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] { new Time(30, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] {new Time(30, TimeUnit.BASE_SECOND)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|GET_ADDRESS_META_DATA", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] { new Time(60, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] {new Time(60, TimeUnit.BASE_SECOND)}));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] { new Time(70, TimeUnit.BASE_SECOND) }));
+                ++conversationId, new Object[] {new Time(70, TimeUnit.BASE_SECOND)}));
         waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
         waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false,
                 "Simulation is already at end of simulation time");
@@ -449,5 +449,5 @@ public class Sim0MQPublisherTest
 
     /** The test network. */
     private static String networkXML;
-    
+
 }

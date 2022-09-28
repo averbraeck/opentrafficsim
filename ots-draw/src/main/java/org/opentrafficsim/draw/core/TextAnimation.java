@@ -28,7 +28,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * Display a text for another Locatable object.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Dec 11, 2016 <br>
@@ -460,7 +460,7 @@ public abstract class TextAnimation implements Locatable, Serializable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
      * initial version Dec 11, 2016 <br>
@@ -480,8 +480,7 @@ public abstract class TextAnimation implements Locatable, Serializable
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        AnimationImpl(final Locatable source, final OTSSimulatorInterface simulator)
-                throws NamingException, RemoteException
+        AnimationImpl(final Locatable source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
         {
             super(source, simulator);
         }

@@ -28,8 +28,8 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * <p>
  * <style>table,th,td {border:1px solid grey; border-style:solid; text-align:left; border-collapse: collapse;}</style>
  * <h2>NEW</h2>
- * <table style="width:800px;"><caption>&nbsp;</caption>
- * <thead>
+ * <table style="width:800px;">
+ * <caption>&nbsp;</caption> <thead>
  * <tr>
  * <th style="width:25%;">Variable</th>
  * <th style="width:15%;">Type</th>
@@ -160,8 +160,8 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * </p>
  * <p>
  * <h2>CHANGE</h2>
- * <table style="width:800px;"><caption>&nbsp;</caption>
- * <thead>
+ * <table style="width:800px;">
+ * <caption>&nbsp;</caption> <thead>
  * <tr>
  * <th style="width:25%;">Variable</th>
  * <th style="width:15%;">Type</th>
@@ -218,8 +218,8 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * </p>
  * <p>
  * <h2>DELETE</h2>
- * <table style="width:800px;"><caption>&nbsp;</caption>
- * <thead>
+ * <table style="width:800px;">
+ * <caption>&nbsp;</caption> <thead>
  * <tr>
  * <th style="width:25%;">Variable</th>
  * <th style="width:15%;">Type</th>
@@ -241,7 +241,7 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * </p>
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 16, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

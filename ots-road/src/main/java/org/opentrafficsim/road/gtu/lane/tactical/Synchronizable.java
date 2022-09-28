@@ -4,7 +4,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
  * Interface for tactical planners that can return synchronization information for visualization.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 feb. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -25,7 +25,7 @@ public interface Synchronizable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 feb. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -45,7 +45,7 @@ public interface Synchronizable
 
         /** Subject vehicle is cooperating for a lane change of another GTU. */
         COOPERATING;
-        
+
         /**
          * Returns whether this is NONE.
          * @return boolean; whether this is NONE
@@ -54,7 +54,7 @@ public interface Synchronizable
         {
             return this == NONE;
         }
-        
+
         /**
          * Returns whether this is SYNCHRONIZING.
          * @return boolean; whether this is SYNCHRONIZING
@@ -63,7 +63,7 @@ public interface Synchronizable
         {
             return this == SYNCHRONIZING;
         }
-        
+
         /**
          * Returns whether this is INDICATING.
          * @return boolean; whether this is INDICATING
@@ -72,7 +72,7 @@ public interface Synchronizable
         {
             return this == INDICATING;
         }
-        
+
         /**
          * Returns whether this is COOPERATING.
          * @return boolean; whether this is COOPERATING

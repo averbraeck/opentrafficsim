@@ -18,7 +18,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 27 jan. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -32,7 +32,8 @@ public class AccelerationSpeedLimitTransition implements AccelerationIncentive
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGTU gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
-            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException
+            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
+            throws OperationalPlanException, ParameterException
     {
         SpeedLimitProspect slp = perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane);
         simplePlan.minimizeAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(params, speed, slp, carFollowingModel));

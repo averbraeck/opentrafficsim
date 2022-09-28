@@ -14,7 +14,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * Headway generation based on {@code Arrivals}.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 13 dec. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -164,8 +164,8 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
     @Override
     public String toString()
     {
-        return "ArrivalsHeadwayGenerator [arrivals=" + this.arrivals + ", simulator=" + this.simulator + ", stream=" + this.stream
-                + ", distribution=" + this.distribution + ", first=" + this.first + "]";
+        return "ArrivalsHeadwayGenerator [arrivals=" + this.arrivals + ", simulator=" + this.simulator + ", stream="
+                + this.stream + ", distribution=" + this.distribution + ", first=" + this.first + "]";
     }
 
     /**
@@ -173,7 +173,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 5 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

@@ -24,10 +24,10 @@ public class FundamentalDiagramModel extends AbstractOTSModel
 
     /** */
     private static final long serialVersionUID = 20200516L;
-    
+
     /** The network. */
     private OTSRoadNetwork network;
-    
+
     /**
      * @param simulator OTSSimulatorInterface; the simulator to use
      */
@@ -58,4 +58,3 @@ public class FundamentalDiagramModel extends AbstractOTSModel
     }
 
 }
-

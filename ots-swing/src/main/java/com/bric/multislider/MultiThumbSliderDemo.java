@@ -60,19 +60,19 @@ public class MultiThumbSliderDemo extends JPanel
 
     JRadioButton removalOffButton = new JRadioButton("Not Allowed");
 
-    MultiThumbSlider<Character> slider1 = new MultiThumbSlider<Character>(MultiThumbSlider.HORIZONTAL, new float[]{0f,
-            .5f, .75f, 1f}, new Character[]{'A', 'B', 'C', 'D'});
+    MultiThumbSlider<Character> slider1 = new MultiThumbSlider<Character>(MultiThumbSlider.HORIZONTAL,
+            new float[] {0f, .5f, .75f, 1f}, new Character[] {'A', 'B', 'C', 'D'});
 
-    MultiThumbSlider<Character> slider2 = new MultiThumbSlider<Character>(MultiThumbSlider.VERTICAL, new float[]{0f,
-            .75f}, new Character[]{'X', 'Y'});
+    MultiThumbSlider<Character> slider2 =
+            new MultiThumbSlider<Character>(MultiThumbSlider.VERTICAL, new float[] {0f, .75f}, new Character[] {'X', 'Y'});
 
-    MultiThumbSlider<Character> slider3 = new MultiThumbSlider<Character>(MultiThumbSlider.VERTICAL, new float[]{0f,
-            .4f, .75f}, new Character[]{'X', 'Y', 'Z'});
+    MultiThumbSlider<Character> slider3 = new MultiThumbSlider<Character>(MultiThumbSlider.VERTICAL,
+            new float[] {0f, .4f, .75f}, new Character[] {'X', 'Y', 'Z'});
 
-    MultiThumbSlider<Character> slider4 = new MultiThumbSlider<Character>(MultiThumbSlider.HORIZONTAL, new float[]{0f,
-            .4f}, new Character[]{'X', 'Y'});
+    MultiThumbSlider<Character> slider4 =
+            new MultiThumbSlider<Character>(MultiThumbSlider.HORIZONTAL, new float[] {0f, .4f}, new Character[] {'X', 'Y'});
 
-    MultiThumbSlider<?>[] sliders = new MultiThumbSlider<?>[]{this.slider1, this.slider2, this.slider3, this.slider4};
+    MultiThumbSlider<?>[] sliders = new MultiThumbSlider<?>[] {this.slider1, this.slider2, this.slider3, this.slider4};
 
     public MultiThumbSliderDemo()
     {
@@ -265,8 +265,8 @@ public class MultiThumbSliderDemo extends JPanel
                     for (MultiThumbSlider<?> s : MultiThumbSliderDemo.this.sliders)
                     {
                         Class t = (Class) MultiThumbSliderDemo.this.uiComboBox.getSelectedItem();
-                        Constructor constructor = t.getConstructor(new Class[]{MultiThumbSlider.class});
-                        s.setUI((MultiThumbSliderUI) constructor.newInstance(new Object[]{s}));
+                        Constructor constructor = t.getConstructor(new Class[] {MultiThumbSlider.class});
+                        s.setUI((MultiThumbSliderUI) constructor.newInstance(new Object[] {s}));
                     }
                     Window w = SwingUtilities.getWindowAncestor(MultiThumbSliderDemo.this);
                     if (w != null)

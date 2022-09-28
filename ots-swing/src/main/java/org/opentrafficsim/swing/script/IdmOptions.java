@@ -18,7 +18,7 @@ import picocli.CommandLine.Option;
  * {@code CliUtil.changeOptionDefault(...)}.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 aug. 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -29,7 +29,7 @@ public class IdmOptions
 {
 
     /** Maximum acceleration of cars. */
-    @Option(names = "--aCar", description = "Maximum acceleration of cars.",  defaultValue = "1.25m/s^2")
+    @Option(names = "--aCar", description = "Maximum acceleration of cars.", defaultValue = "1.25m/s^2")
     private Acceleration aCar;
 
     /** Maximum acceleration of trucks. */

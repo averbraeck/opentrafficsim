@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
  * Demand.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 25 mei 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -175,9 +175,11 @@ public class DemandTag implements Serializable
             // time vector
             if (tag.demandType.equals(DemandType.TIMED_FACTORS) || tag.demandType.equals(DemandType.TIMED_FREQUENCIES))
             {
-                tag.timeVector = Try.assign(
-                        () -> DoubleVector.instantiate(timeList.stream().mapToDouble(d -> d).toArray(), TimeUnit.DEFAULT, StorageType.DENSE),
-                        "Unexpected exception while converting list of time values to an array.");
+                tag.timeVector =
+                        Try.assign(
+                                () -> DoubleVector.instantiate(timeList.stream().mapToDouble(d -> d).toArray(),
+                                        TimeUnit.DEFAULT, StorageType.DENSE),
+                                "Unexpected exception while converting list of time values to an array.");
             }
             // factor or demand vector
             if (tag.demandType.equals(DemandType.TIMED_FACTORS) || tag.demandType.equals(DemandType.FACTORS))
@@ -186,9 +188,11 @@ public class DemandTag implements Serializable
             }
             else if (tag.demandType.equals(DemandType.TIMED_FREQUENCIES) || tag.demandType.equals(DemandType.FREQUENCIES))
             {
-                tag.demandVector = Try.assign(
-                        () -> DoubleVector.instantiate(valueList.stream().mapToDouble(d -> d).toArray(), UNIT, StorageType.DENSE),
-                        "Unexpected exception while converting list of time values to an array.");
+                tag.demandVector =
+                        Try.assign(
+                                () -> DoubleVector.instantiate(valueList.stream().mapToDouble(d -> d).toArray(), UNIT,
+                                        StorageType.DENSE),
+                                "Unexpected exception while converting list of time values to an array.");
             }
 
             parser.demand.get(() -> new LinkedHashSet<>(), tag.origin, tag.destination).add(tag);
@@ -222,7 +226,7 @@ public class DemandTag implements Serializable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 25 mei 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

@@ -12,10 +12,9 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
  * Permitted longitudinal driving directions.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version Oct 15, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version Oct 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
@@ -23,11 +22,11 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 public enum LongitudinalDirectionality
 {
     /** Direction the same as the direction of the graph, increasing fractional position when driving in this direction. */
-    DIR_PLUS(new GTUDirectionality[] { GTUDirectionality.DIR_PLUS }),
+    DIR_PLUS(new GTUDirectionality[] {GTUDirectionality.DIR_PLUS}),
     /** Direction opposite to the direction of the graph, decreasing fractional position when driving in this direction. */
-    DIR_MINUS(new GTUDirectionality[] { GTUDirectionality.DIR_MINUS }),
+    DIR_MINUS(new GTUDirectionality[] {GTUDirectionality.DIR_MINUS}),
     /** Bidirectional. */
-    DIR_BOTH(new GTUDirectionality[] { GTUDirectionality.DIR_PLUS, GTUDirectionality.DIR_MINUS }),
+    DIR_BOTH(new GTUDirectionality[] {GTUDirectionality.DIR_PLUS, GTUDirectionality.DIR_MINUS}),
     /** No traffic possible. */
     DIR_NONE(new GTUDirectionality[] {});
 

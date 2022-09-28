@@ -23,11 +23,11 @@ import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
 /**
- * OTSNetworkAnimationUtils can make a deep clone of a network, including animation, and can destroy the animation. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * OTSNetworkAnimationUtils can make a deep clone of a network, including animation, and can destroy the animation.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public final class OTSNetworkAnimationUtils
@@ -48,9 +48,8 @@ public final class OTSNetworkAnimationUtils
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static OTSNetwork clone(final OTSNetwork network, final String newId,
-            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
+    public static OTSNetwork clone(final OTSNetwork network, final String newId, final OTSSimulatorInterface oldSimulator,
+            final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         OTSNetwork newNetwork = OTSNetworkUtils.clone(network, newId, newSimulator);
 
@@ -81,8 +80,7 @@ public final class OTSNetworkAnimationUtils
      * @param oldSource Locatable; the old source object that might have one or more animation objects attached to it
      * @param newSource T; the new source object to attach the cloned animation objects to
      * @param oldSimulator OTSSimulatorInterface; the old simulator when the old objects can be found
-     * @param newSimulator OTSSimulatorInterface; the new simulator where the new simulation objects need to be
-     *            registered
+     * @param newSimulator OTSSimulatorInterface; the new simulator where the new simulation objects need to be registered
      * @param <T> locatable type
      */
     @SuppressWarnings("checkstyle:designforextension")

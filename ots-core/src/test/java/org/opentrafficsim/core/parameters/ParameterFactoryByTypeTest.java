@@ -16,7 +16,7 @@ import org.opentrafficsim.core.parameters.ParameterFactoryByType.Correlation;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 9 apr. 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -98,35 +98,35 @@ public final class ParameterFactoryByTypeTest
         testParameterValue(parameterFactory, B, vehicle, 3.0 * 2.0 + 0.5);
         testParameterValue(parameterFactory, B, car, 5.0 * 2.0 + 0.5);
         testParameterValue(parameterFactory, B, truck, 6.0 * 2.0 + 0.5);
-        
+
         addCorrelation(parameterFactory, roadUser, 3.0);
         testParameterValue(parameterFactory, B, roadUser, 2.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, bicycle, 4.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, vehicle, 3.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, car, 5.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, truck, 6.0 * 3.0 + 0.5);
-        
+
         addCorrelation(parameterFactory, vehicle, 4.0);
         testParameterValue(parameterFactory, B, roadUser, 2.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, bicycle, 4.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, vehicle, 3.0 * 4.0 + 0.5);
         testParameterValue(parameterFactory, B, car, 5.0 * 4.0 + 0.5);
         testParameterValue(parameterFactory, B, truck, 6.0 * 4.0 + 0.5);
-        
+
         addCorrelation(parameterFactory, bicycle, 5.0);
         testParameterValue(parameterFactory, B, roadUser, 2.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, bicycle, 4.0 * 5.0 + 0.5);
         testParameterValue(parameterFactory, B, vehicle, 3.0 * 4.0 + 0.5);
         testParameterValue(parameterFactory, B, car, 5.0 * 4.0 + 0.5);
         testParameterValue(parameterFactory, B, truck, 6.0 * 4.0 + 0.5);
-        
+
         addCorrelation(parameterFactory, car, 6.0);
         testParameterValue(parameterFactory, B, roadUser, 2.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, bicycle, 4.0 * 5.0 + 0.5);
         testParameterValue(parameterFactory, B, vehicle, 3.0 * 4.0 + 0.5);
         testParameterValue(parameterFactory, B, car, 5.0 * 6.0 + 0.5);
         testParameterValue(parameterFactory, B, truck, 6.0 * 4.0 + 0.5);
-        
+
         addCorrelation(parameterFactory, truck, 7.0);
         testParameterValue(parameterFactory, B, roadUser, 2.0 * 3.0 + 0.5);
         testParameterValue(parameterFactory, B, bicycle, 4.0 * 5.0 + 0.5);
@@ -150,14 +150,15 @@ public final class ParameterFactoryByTypeTest
         parameterFactory.setValues(parameters, gtuType);
         assertEquals("Parameter does not have the correct value.", parameters.getParameter(parameterType), value);
     }
-    
+
     /**
      * Adds a correlation B = A * factor + 0.5.
      * @param parameterFactory ParameterFactoryByType; parameter factory
      * @param gtuType GTUType; GTU type
      * @param factor double; factor
      */
-    private static void addCorrelation(final ParameterFactoryByType parameterFactory, final GTUType gtuType, final double factor)
+    private static void addCorrelation(final ParameterFactoryByType parameterFactory, final GTUType gtuType,
+            final double factor)
     {
         Correlation<Double, Double> correlation = new Correlation<Double, Double>()
         {

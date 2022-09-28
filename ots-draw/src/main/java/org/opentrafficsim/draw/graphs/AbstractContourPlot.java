@@ -23,7 +23,7 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
  * classes only need to specify a few plot specific variables and functionalities.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 4 okt. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -66,7 +66,8 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool,
             final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
     {
-        super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSamplerData(), dataPool.getPath(), dataPool.getDelay());
+        super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSamplerData(), dataPool.getPath(),
+                dataPool.getDelay());
         dataPool.registerContourPlot(this);
         this.dataPool = dataPool;
         this.paintScale = paintScale;
@@ -189,8 +190,8 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         this.blockRenderer.setInterpolate(interpolate);
         this.dataPool.timeAxis.setInterpolate(interpolate); // XXX: AV added 16-5-2020
         this.dataPool.spaceAxis.setInterpolate(interpolate); // XXX: AV added 16-5-2020
-    } 
-    
+    }
+
     /**
      * Returns the data pool for sub classes.
      * @return ContourDataSource; data pool for subclasses

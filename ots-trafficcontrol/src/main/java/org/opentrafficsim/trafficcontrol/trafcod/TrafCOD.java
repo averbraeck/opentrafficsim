@@ -51,7 +51,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * that must be evaluated repeatedly (until no more changes occurr) every time step. The time step size is 0.1 seconds.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 5, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -2198,8 +2198,8 @@ class Variable implements EventListenerInterface
 
     /**
      * Retrieve the traffic lights controlled by this variable.
-     * @return Set&lt;TrafficLight&gt;; the traffic lights controlled by this variable, or null when this variable has no traffic
-     *         lights
+     * @return Set&lt;TrafficLight&gt;; the traffic lights controlled by this variable, or null when this variable has no
+     *         traffic lights
      */
     public Set<TrafficLight> getTrafficLights()
     {

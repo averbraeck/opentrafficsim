@@ -20,7 +20,7 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 2, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -351,7 +351,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 11 aug. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -424,8 +424,8 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
             Throw.whenNull(endWidth, "End width may not be null.");
             try
             {
-                return new Width(new double[] { 0.0, 1.0 },
-                        DoubleVector.instantiate(new Length[] { startWidth, endWidth }, LengthUnit.SI, StorageType.DENSE));
+                return new Width(new double[] {0.0, 1.0},
+                        DoubleVector.instantiate(new Length[] {startWidth, endWidth}, LengthUnit.SI, StorageType.DENSE));
             }
             catch (ValueRuntimeException exception)
             {

@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTURealCopy;
  * Whether a GTU needs to be wrapped, or information should be copied for later and unaltered use.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 mrt. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -88,8 +88,8 @@ public interface HeadwayGtuType
      * @throws GTUException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    default HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu, final Length distance,
-            final boolean downstream) throws GTUException, ParameterException
+    default HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+            final Length distance, final boolean downstream) throws GTUException, ParameterException
     {
         if (distance.ge0())
         {
@@ -158,7 +158,7 @@ public interface HeadwayGtuType
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 apr. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

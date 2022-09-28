@@ -20,7 +20,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
  * GUI with simulator, console, control panel, status bar, etc.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2018-10-11 22:54:04 +0200 (Thu, 11 Oct 2018) $, @version $Revision: 4696 $, by $Author: averbraeck $,
  * initial version Jun 18, 2015 <br>
@@ -59,8 +59,7 @@ public class OTSSimulationPanel extends JPanel
      * @param otsModel OTSModelInterface; the model with its properties.
      * @throws RemoteException when communications to a remote machine fails
      */
-    public OTSSimulationPanel(final OTSSimulatorInterface simulator, final OTSModelInterface otsModel)
-            throws RemoteException
+    public OTSSimulationPanel(final OTSSimulatorInterface simulator, final OTSModelInterface otsModel) throws RemoteException
     {
         this.simulator = simulator;
         this.otsModel = otsModel;
@@ -170,7 +169,7 @@ public class OTSSimulationPanel extends JPanel
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision: 4696 $, $LastChangedDate: 2018-10-11 22:54:04 +0200 (Thu, 11 Oct 2018) $, by $Author: averbraeck $,
      *          initial version 6 feb. 2018 <br>

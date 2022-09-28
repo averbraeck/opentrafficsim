@@ -62,7 +62,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * Test the TrafficLightSensor class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 7, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -93,8 +93,8 @@ public class TrafficLightSensorTest implements EventListenerInterface
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
-            OTSRoadNode node = new OTSRoadNode(network, "node" + nodeNumber, new OTSPoint3D(cumulativeLength, 0, 0), 
-                    Direction.ZERO);
+            OTSRoadNode node =
+                    new OTSRoadNode(network, "node" + nodeNumber, new OTSPoint3D(cumulativeLength, 0, 0), Direction.ZERO);
             if (null != prevNode)
             {
                 LongitudinalDirectionality direction = lengths[nodeNumber - 1] > 0 ? LongitudinalDirectionality.DIR_PLUS
@@ -160,7 +160,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
     public final void trafficLightSensorTest()
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException, GTUException
     {
-        double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900}, };
+        double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900},};
         for (double[] lengthList : lengthLists)
         {
             for (int pos = 50; pos < 130; pos++)

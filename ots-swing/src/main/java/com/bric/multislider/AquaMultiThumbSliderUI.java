@@ -76,15 +76,13 @@ public class AquaMultiThumbSliderUI<T> extends DefaultMultiThumbSliderUI<T>
         GradientPaint gradient;
         if (slider.getOrientation() == SwingConstants.HORIZONTAL)
         {
-            gradient =
-                    new GradientPaint(new Point(trackRect.x, trackRect.y), UPPER_GRAY, new Point(trackRect.x,
-                            trackRect.y + trackRect.height), LOWER_GRAY);
+            gradient = new GradientPaint(new Point(trackRect.x, trackRect.y), UPPER_GRAY,
+                    new Point(trackRect.x, trackRect.y + trackRect.height), LOWER_GRAY);
         }
         else
         {
-            gradient =
-                    new GradientPaint(new Point(trackRect.x, trackRect.y), UPPER_GRAY, new Point(trackRect.x
-                            + trackRect.width, trackRect.y), LOWER_GRAY);
+            gradient = new GradientPaint(new Point(trackRect.x, trackRect.y), UPPER_GRAY,
+                    new Point(trackRect.x + trackRect.width, trackRect.y), LOWER_GRAY);
         }
         g.setPaint(gradient);
         g.fill(trackShape);
@@ -138,10 +136,9 @@ public class AquaMultiThumbSliderUI<T> extends DefaultMultiThumbSliderUI<T>
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        Paint fill =
-                new LinearGradientPaint(new Point2D.Double(0, thumbBounds.getMinY()), new Point2D.Double(0,
-                        thumbBounds.getMaxY()), new float[]{0, .5f, .501f, 1}, new Color[]{new Color(0xFFFFFF),
-                        new Color(0xF4F4F4), new Color(0xECECEC), new Color(0xEDEDED)});
+        Paint fill = new LinearGradientPaint(new Point2D.Double(0, thumbBounds.getMinY()),
+                new Point2D.Double(0, thumbBounds.getMaxY()), new float[] {0, .5f, .501f, 1},
+                new Color[] {new Color(0xFFFFFF), new Color(0xF4F4F4), new Color(0xECECEC), new Color(0xEDEDED)});
         g.setPaint(fill);
         g.fill(outline);
 

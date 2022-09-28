@@ -16,7 +16,7 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * Test the DirectedLinkPosition class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Feb 24, 2020 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -38,7 +38,7 @@ public class DirectedLinkPositionTest
                 new OTSLine3D(nodeA.getPoint(), nodeB.getPoint()));
         double linkLength = link.getLength().si;
         // Apparently (reading the source), DirectedLinkPosition is not restricted to the length-range of the link
-        for (double fraction : new double[] { -10, 0, 0.1, 0.5, 0.9, 1.0, 11.0 })
+        for (double fraction : new double[] {-10, 0, 0.1, 0.5, 0.9, 1.0, 11.0})
         {
             Length length = new Length(fraction * linkLength, LengthUnit.METER);
             DirectedLinkPosition dlp = new DirectedLinkPosition(link, length, GTUDirectionality.DIR_PLUS);

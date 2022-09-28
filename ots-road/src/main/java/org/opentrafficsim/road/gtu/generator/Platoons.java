@@ -45,7 +45,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * {@code ofGtuType()} or {@code ofCategory()} respectively.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 sep. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -113,8 +113,7 @@ public abstract class Platoons<T>
      */
     @SuppressWarnings("synthetic-access")
     public static Platoons<Category> ofCategory(final GTUCharacteristicsGeneratorOD characteristics,
-            final OTSSimulatorInterface simulator, final StreamInterface stream,
-            final Set<LaneDirection> position)
+            final OTSSimulatorInterface simulator, final StreamInterface stream, final Set<LaneDirection> position)
     {
         return new Platoons<Category>(simulator, position)
         {
@@ -146,8 +145,7 @@ public abstract class Platoons<T>
      */
     @SuppressWarnings("synthetic-access")
     public static Platoons<GTUType> ofGtuType(final LaneBasedGTUCharacteristicsGenerator characteristics,
-            final OTSSimulatorInterface simulator, final StreamInterface stream,
-            final Set<LaneDirection> position)
+            final OTSSimulatorInterface simulator, final StreamInterface stream, final Set<LaneDirection> position)
     {
         return new Platoons<GTUType>(simulator, position)
         {
@@ -377,7 +375,7 @@ public abstract class Platoons<T>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 sep. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

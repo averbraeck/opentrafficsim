@@ -5,7 +5,7 @@ package org.opentrafficsim.sim0mq.publisher;
  * <p>
  * Copyright (c) 2021-2020=1 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
  * <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -31,5 +31,5 @@ public interface IncomingDataHandler
      * @return String; null on success, nonNull on failure to handle the data
      */
     String handleIncomingData(Object[] decodedMessage);
-    
+
 }

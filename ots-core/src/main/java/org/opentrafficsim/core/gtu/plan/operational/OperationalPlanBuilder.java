@@ -24,7 +24,7 @@ import org.opentrafficsim.core.math.Solver;
  * TODO plan with a constant speed.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Nov 15, 2015 <br>
@@ -69,7 +69,8 @@ public final class OperationalPlanBuilder
     /**
      * Build a plan with a path and a given start speed to try to reach a provided end speed, exactly at the provided
      * <code>endTime</code>. The acceleration (and deceleration) are capped by maxAcceleration and maxDeceleration. Therefore,
-     * there is no guarantee that the end speed is actually reached by this plan. <p>
+     * there is no guarantee that the end speed is actually reached by this plan.
+     * <p>
      * TODO: rename this method buildConstantAccelerationPlan.
      * @param gtu GTU; the GTU for debugging purposes
      * @param path OTSLine3D; the path to drive (provides the length)
@@ -209,9 +210,9 @@ public final class OperationalPlanBuilder
                         // we cannot reach the end speed in the given distance with the given deceleration
                         // Duration duration = new Duration(abc(deceleration.si / 2, startSpeed.si, -length.si),
                         // DurationUnit.SI);
-                        Duration duration =
-                                new Duration(Solver.firstSolutionAfter(0, maximumDeceleration.si / 2, startSpeed.si, -length.si),
-                                        DurationUnit.SI);
+                        Duration duration = new Duration(
+                                Solver.firstSolutionAfter(0, maximumDeceleration.si / 2, startSpeed.si, -length.si),
+                                DurationUnit.SI);
                         segmentList.add(new OperationalPlan.AccelerationSegment(duration, maximumDeceleration));
                     }
                     else

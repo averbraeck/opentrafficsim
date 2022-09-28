@@ -5,7 +5,7 @@ package org.opentrafficsim.core.gtu;
  * are <code>DIR_PLUS</code> and <code>DIR_MINUS</code>.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-11-11 13:25:26 +0100 (Wed, 11 Nov 2015) $, @version $Revision: 1548 $, by $Author: averbraeck $,
  * initial version Nov 11, 2015 <br>

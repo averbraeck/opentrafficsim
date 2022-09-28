@@ -41,7 +41,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * Plot of trajectories along a path.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 13 okt. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -115,7 +115,9 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         setChart(createChart());
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new GraphUpdater<>("Trajectories worker", Thread.currentThread(), (t) ->
+        this.graphUpdater = new GraphUpdater<>("Trajectories worker", Thread.currentThread(), (
+                t
+        ) ->
         {
             for (Section<KpiLaneDirection> section : path.getSections())
             {
@@ -324,7 +326,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -438,7 +440,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

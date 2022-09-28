@@ -92,7 +92,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical axis.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2019-01-06 01:35:05 +0100 (Sun, 06 Jan 2019) $, @version $Revision: 4831 $, by $Author: averbraeck $,
  * initial version ug 1, 2014 <br>
@@ -470,7 +470,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        OTSRoadNode end = new OTSRoadNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z), 
+        OTSRoadNode end = new OTSRoadNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z),
                 Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
         for (Lane lane : lanes)

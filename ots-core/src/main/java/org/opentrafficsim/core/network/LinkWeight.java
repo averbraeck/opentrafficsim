@@ -4,7 +4,7 @@ package org.opentrafficsim.core.network;
  * Interface to determine a link weight.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 20 aug. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -36,8 +36,8 @@ public interface LinkWeight
     LinkWeight LENGTH_NO_CONNECTORS = new LinkWeight()
     {
         /**
-         * Length that should encourage Dijkstra to not include links that have this length. On the other hand, this value 
-         * (when on an unavoidable link) should not cause underflow problems.
+         * Length that should encourage Dijkstra to not include links that have this length. On the other hand, this value (when
+         * on an unavoidable link) should not cause underflow problems.
          */
         static final double PROHIBITIVE_CONNECTOR_LENGTH = 1000000;
 

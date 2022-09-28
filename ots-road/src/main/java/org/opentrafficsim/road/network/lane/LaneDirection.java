@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * Combines a Lane with its GTUDirectionality.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Mar 30, 2016 <br>
@@ -168,28 +168,28 @@ public class LaneDirection implements Serializable
                 out.add(new LaneDirection(l, dir));
             }
         }
-//        if (out.size() == 0)
-//        {
-//            gtu.getSimulator().getLogger().always().warn(
-//                    "Could not find a next segment for GTU \"{}\" on lane {}, on route {}; LinkDirection is {}, {}",
-//                    gtu.getId(), this.lane, next.keySet(), ld.getLink().getId(), ld.getDirection());
-//            gtu.getSimulator().getLogger().always().warn(gtu.getStrategicalPlanner().getRoute());
-//            for (Lane l : next.keySet())
-//            {
-//                GTUDirectionality dir = next.get(l);
-//                gtu.getSimulator().getLogger().always().info("examining l={}, dir={}", l, dir);
-//                if (!l.getParentLink().equals(ld.getLink()))
-//                {
-//                    gtu.getSimulator().getLogger().always()
-//                            .info("not including lane {} with direction {} because \"parent link does not match\"", l, dir);
-//                }
-//                if (!dir.equals(ld.getDirection()))
-//                {
-//                    gtu.getSimulator().getLogger().always()
-//                            .info("not including lane {} with direction {} because direction does not match", l, dir);
-//                }
-//            }
-//        }
+        // if (out.size() == 0)
+        // {
+        // gtu.getSimulator().getLogger().always().warn(
+        // "Could not find a next segment for GTU \"{}\" on lane {}, on route {}; LinkDirection is {}, {}",
+        // gtu.getId(), this.lane, next.keySet(), ld.getLink().getId(), ld.getDirection());
+        // gtu.getSimulator().getLogger().always().warn(gtu.getStrategicalPlanner().getRoute());
+        // for (Lane l : next.keySet())
+        // {
+        // GTUDirectionality dir = next.get(l);
+        // gtu.getSimulator().getLogger().always().info("examining l={}, dir={}", l, dir);
+        // if (!l.getParentLink().equals(ld.getLink()))
+        // {
+        // gtu.getSimulator().getLogger().always()
+        // .info("not including lane {} with direction {} because \"parent link does not match\"", l, dir);
+        // }
+        // if (!dir.equals(ld.getDirection()))
+        // {
+        // gtu.getSimulator().getLogger().always()
+        // .info("not including lane {} with direction {} because direction does not match", l, dir);
+        // }
+        // }
+        // }
         return out;
     }
 

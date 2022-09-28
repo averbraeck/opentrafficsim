@@ -19,7 +19,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
  * initial version Sep 13, 2014 <br>
@@ -48,8 +48,8 @@ public class StaticObjectAnimation extends Renderable2D<StaticObject> implements
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
-    public StaticObjectAnimation(final StaticObject source, final OTSSimulatorInterface simulator,
-            final float width, final Color color, final boolean fill) throws NamingException, RemoteException
+    public StaticObjectAnimation(final StaticObject source, final OTSSimulatorInterface simulator, final float width,
+            final Color color, final boolean fill) throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;

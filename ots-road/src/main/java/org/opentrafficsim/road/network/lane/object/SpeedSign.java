@@ -15,7 +15,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * Speed sign.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 20 apr. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -58,15 +58,15 @@ public class SpeedSign extends AbstractLaneBasedObject
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed,
-            final GTUType gtuType, final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final GTUType gtuType,
+            final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         super(id, lane, direction, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
         this.speed = speed;
         this.gtuType = gtuType;
         this.startTimeOfDay = startTimeOfDay;
         this.endTimeOfDay = endTimeOfDay;
-        
+
         init();
     }
 
@@ -82,8 +82,8 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed,
-            final GTUType gtuType) throws NetworkException
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed, final GTUType gtuType)
+            throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed, gtuType, Duration.ZERO, ENDOFDAY);
     }
@@ -120,8 +120,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed)
-            throws NetworkException
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed) throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed,
                 lane.getNetwork().getGtuType(GTUType.DEFAULTS.VEHICLE), Duration.ZERO, ENDOFDAY);
@@ -149,8 +148,8 @@ public class SpeedSign extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
-            final OTSSimulatorInterface newSimulator) throws NetworkException
+    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
+            throws NetworkException
     {
         return new SpeedSign(getId(), (Lane) newCSE, getDirection(), getLongitudinalPosition(), newSimulator, this.speed,
                 this.gtuType, this.startTimeOfDay, this.endTimeOfDay);

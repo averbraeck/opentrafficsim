@@ -48,7 +48,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * TODO driving with negative speeds (backward driving) is not yet supported.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Nov 15, 2015 <br>
@@ -645,7 +645,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             time = gtu.getOperationalPlan().getEndTime();
         }
         SimEventInterface<Duration> event = gtu.getSimulator().scheduleEventAbsTime(time, (short) 6, gtu, gtu,
-                "finalizeLaneChange", new Object[] { laneChangeDirection });
+                "finalizeLaneChange", new Object[] {laneChangeDirection});
         gtu.setFinalizeLaneChangeEvent(event);
     }
 

@@ -28,7 +28,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * route information are adjusted for the specific position of the GTU.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 7 nov. 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -39,8 +39,8 @@ public class DefaultRouteSystem implements RouteSystem
 {
 
     /** Cache. */
-    private MultiKeyMap<LaneChangeInfoSet> cache = new MultiKeyMap<>(Lane.class, GTUDirectionality.class, Route.class,
-        GTUType.class);
+    private MultiKeyMap<LaneChangeInfoSet> cache =
+            new MultiKeyMap<>(Lane.class, GTUDirectionality.class, Route.class, GTUType.class);
 
     /** {@inheritDoc} */
     @Override
@@ -48,18 +48,12 @@ public class DefaultRouteSystem implements RouteSystem
             final Route route, final GTUType gtuType, final Length distance)
     {
         /*
-        // obtain set
-        LaneChangeInfoSet set = this.cache.get(() -> determineSet(position, route, gtuType, distance), position.getLane(),
-            position.getGtuDirection(), route, gtuType);
-        // check if previous search was far enough
-        if (set.suppliesDistance(distance))
-        {
-            // far enough, return info with distances adjusted to GTU position
-            Length pos = position.getGtuDirection().isPlus() ? position.getPosition() : position.getLane().getLength().minus(
-                position.getPosition());
-            return set.getAdjustedSet(pos, distance);
-        }
-        */
+         * // obtain set LaneChangeInfoSet set = this.cache.get(() -> determineSet(position, route, gtuType, distance),
+         * position.getLane(), position.getGtuDirection(), route, gtuType); // check if previous search was far enough if
+         * (set.suppliesDistance(distance)) { // far enough, return info with distances adjusted to GTU position Length pos =
+         * position.getGtuDirection().isPlus() ? position.getPosition() : position.getLane().getLength().minus(
+         * position.getPosition()); return set.getAdjustedSet(pos, distance); }
+         */
         // previously calculated set does not have sufficient length, clear and recalculate
         this.cache.clear(position.getLane(), position.getGtuDirection(), route, gtuType);
         return getLaneChangeInfo(position, front, route, gtuType, distance);
@@ -82,19 +76,18 @@ public class DefaultRouteSystem implements RouteSystem
 
         Map<LaneRecord, LaneChangeInfo> currentSet = new LinkedHashMap<>();
         Map<LaneRecord, LaneChangeInfo> nextSet = new LinkedHashMap<>();
-        Length startDistance = (position.getGtuDirection().isPlus() ? position.getPosition() : position.getLane().getLength()
-            .minus(position.getPosition())).plus(front).neg();
+        Length startDistance = (position.getGtuDirection().isPlus() ? position.getPosition()
+                : position.getLane().getLength().minus(position.getPosition())).plus(front).neg();
         LaneRecord record = new LaneRecord(startDistance, position.getLane(), position.getGtuDirection());
         Length remainingDistance = position.getLane().getLength().minus(startDistance);
-        currentSet.put(record, new LaneChangeInfo(0, remainingDistance, record.isDeadEnd(gtuType),
-            LateralDirectionality.NONE));
+        currentSet.put(record, new LaneChangeInfo(0, remainingDistance, record.isDeadEnd(gtuType), LateralDirectionality.NONE));
 
         while (!currentSet.isEmpty())
         {
             // move lateral
             nextSet.putAll(currentSet);
             for (LateralDirectionality lat : new LateralDirectionality[] {LateralDirectionality.LEFT,
-                LateralDirectionality.RIGHT})
+                    LateralDirectionality.RIGHT})
             {
                 for (LaneRecord laneRecord : currentSet.keySet())
                 {
@@ -103,7 +96,7 @@ public class DefaultRouteSystem implements RouteSystem
                     {
                         LaneChangeInfo info = currentSet.get(laneRecord);
                         LaneChangeInfo adjInfo = new LaneChangeInfo(info.getNumberOfLaneChanges() + 1, remainingDistance,
-                            laneRecord.isDeadEnd(gtuType), lat);
+                                laneRecord.isDeadEnd(gtuType), lat);
                         nextSet.put(laneRecord, adjInfo);
                     }
                 }
@@ -118,7 +111,7 @@ public class DefaultRouteSystem implements RouteSystem
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version Feb 11, 2020 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -170,8 +163,8 @@ public class DefaultRouteSystem implements RouteSystem
                 Length adjustedDistance = info.getRemainingDistance().minus(position);
                 if (adjustedDistance.le(distance))
                 {
-                    adjustedSet.add(new LaneChangeInfo(info.getNumberOfLaneChanges(), adjustedDistance, info.deadEnd(), info
-                        .getLateralDirectionality()));
+                    adjustedSet.add(new LaneChangeInfo(info.getNumberOfLaneChanges(), adjustedDistance, info.deadEnd(),
+                            info.getLateralDirectionality()));
                 }
                 else
                 {
@@ -189,7 +182,7 @@ public class DefaultRouteSystem implements RouteSystem
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 13 feb. 2020 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -264,7 +257,7 @@ public class DefaultRouteSystem implements RouteSystem
                 if (route.indexOf(to) == route.indexOf(from) + 1)
                 {
                     LaneRecord record = new LaneRecord(this.getStartDistance().plus(this.lane.getLength()), entry.getKey(),
-                        entry.getValue());
+                            entry.getValue());
                     record.prev = this;
                     set.add(record);
                 }
@@ -294,7 +287,7 @@ public class DefaultRouteSystem implements RouteSystem
                 this.left = adjacent(gtuType, LateralDirectionality.LEFT);
                 this.determinedLeft = true;
                 if (this.left.lane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, this.left.direction)
-                    .contains(this.lane))
+                        .contains(this.lane))
                 {
                     this.left.right = this;
                 }
@@ -316,7 +309,7 @@ public class DefaultRouteSystem implements RouteSystem
                 this.right = adjacent(gtuType, LateralDirectionality.RIGHT);
                 this.determinedRight = true;
                 if (this.right.lane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, this.right.direction)
-                    .contains(this.lane))
+                        .contains(this.lane))
                 {
                     this.right.left = this;
                 }
@@ -336,7 +329,7 @@ public class DefaultRouteSystem implements RouteSystem
         {
             Set<Lane> set = this.lane.accessibleAdjacentLanesLegal(lat, gtuType, this.direction);
             Throw.when(set.size() > 1, GTUException.class,
-                "Default route system found multiple adjacent lanes, which is not supported.");
+                    "Default route system found multiple adjacent lanes, which is not supported.");
             if (set.size() == 1)
             {
                 return new LaneRecord(this.startDistance, set.iterator().next(), this.direction);

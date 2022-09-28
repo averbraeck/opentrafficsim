@@ -43,7 +43,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * traffic over the lanes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 dec. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -201,10 +201,10 @@ public final class GeneratorPositions implements Locatable
                 @Override
                 public int compare(final Lane lane1, final Lane lane2)
                 {
-                    Length lat1 = linkDirection.getDirection().isPlus() ? lane1.getDesignLineOffsetAtBegin() : lane1
-                        .getDesignLineOffsetAtEnd().neg();
-                    Length lat2 = linkDirection.getDirection().isPlus() ? lane2.getDesignLineOffsetAtBegin() : lane2
-                        .getDesignLineOffsetAtEnd().neg();
+                    Length lat1 = linkDirection.getDirection().isPlus() ? lane1.getDesignLineOffsetAtBegin()
+                            : lane1.getDesignLineOffsetAtEnd().neg();
+                    Length lat2 = linkDirection.getDirection().isPlus() ? lane2.getDesignLineOffsetAtBegin()
+                            : lane2.getDesignLineOffsetAtEnd().neg();
                     return lat1.compareTo(lat2);
                 }
             });
@@ -215,7 +215,7 @@ public final class GeneratorPositions implements Locatable
                 Set<DirectedLanePosition> set = new LinkedHashSet<>();
                 set.add(lanePosition);
                 lanePositions.add(new GeneratorLanePosition(lanes.indexOf(lanePosition.getLane()) + 1, set,
-                    (CrossSectionLink) linkDirection.getLink()));
+                        (CrossSectionLink) linkDirection.getLink()));
             }
             // create the GeneratorLinkPosition
             CrossSectionLink link = (CrossSectionLink) linkDirection.getLink();
@@ -227,8 +227,8 @@ public final class GeneratorPositions implements Locatable
             {
                 Double weight = linkWeights.get(link);
                 Throw.whenNull(weight, "Using link weights for GTU generation, but no weight for link %s is defined.", link);
-                linkPositions.add(new GeneratorLinkPosition(lanePositions, link, stream, laneBiases, weight, viaNodes.get(
-                    link)));
+                linkPositions
+                        .add(new GeneratorLinkPosition(lanePositions, link, stream, laneBiases, weight, viaNodes.get(link)));
             }
         }
 
@@ -300,7 +300,7 @@ public final class GeneratorPositions implements Locatable
             }
         }
         Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GTUType %s.",
-            gtuType);
+                gtuType);
         return speedLimit;
     }
 
@@ -309,7 +309,7 @@ public final class GeneratorPositions implements Locatable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -399,7 +399,7 @@ public final class GeneratorPositions implements Locatable
         public String toString()
         {
             return "GeneratorLanePosition [laneNumber=" + this.laneNumber + ", position=" + this.position + ", link="
-                + this.link + "]";
+                    + this.link + "]";
         }
 
     }
@@ -409,7 +409,7 @@ public final class GeneratorPositions implements Locatable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -552,7 +552,7 @@ public final class GeneratorPositions implements Locatable
                             int laneNum = lanePosition.getLaneNumber();
                             int unplacedTemplates = unplaced == null ? 0 : unplaced.getOrDefault(laneNum, 0);
                             double w = this.laneBiases.getBias(type).calculateWeight(laneNum, getNumberOfLanes(gtuType),
-                                unplacedTemplates, desiredSpeed);
+                                    unplacedTemplates, desiredSpeed);
                             map.put(lanePosition, w);
                         }
                         type = type.getParent();
@@ -612,7 +612,7 @@ public final class GeneratorPositions implements Locatable
                 }
             }
             Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GTUType %s.",
-                gtuType);
+                    gtuType);
             return speedLimit;
         }
 
@@ -623,7 +623,7 @@ public final class GeneratorPositions implements Locatable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -680,7 +680,7 @@ public final class GeneratorPositions implements Locatable
                     {
                         // this uses a shortest-path algorithm with caching
                         Route r = RouteGeneratorOD.getDefaultRouteSupplier(stream).getRoute(glp.getViaNode(), destination,
-                            gtuType);
+                                gtuType);
                         if (r != null)
                         {
                             map.put(glp, glp.getWeight(gtuType));
@@ -709,7 +709,7 @@ public final class GeneratorPositions implements Locatable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -770,7 +770,7 @@ public final class GeneratorPositions implements Locatable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -829,7 +829,7 @@ public final class GeneratorPositions implements Locatable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -1022,7 +1022,7 @@ public final class GeneratorPositions implements Locatable
         public String toString()
         {
             return "Bias [roadPosition=" + this.roadPosition + ", bias=" + this.bias + ", stickyLanes=" + this.stickyLanes
-                + "]";
+                    + "]";
         }
 
     }
@@ -1032,7 +1032,7 @@ public final class GeneratorPositions implements Locatable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 jan. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -1054,7 +1054,7 @@ public final class GeneratorPositions implements Locatable
          * <p>
          * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
          * reserved. <br>
-         * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+         * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
          * <p>
          * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 jan. 2018 <br>
          * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -1074,7 +1074,7 @@ public final class GeneratorPositions implements Locatable
             public ByValue(final double value)
             {
                 Throw.when(value < 0.0 || value > 1.0, IllegalArgumentException.class,
-                    "Road position value should be in the range [0...1].");
+                        "Road position value should be in the range [0...1].");
                 this.value = value;
             }
 
@@ -1128,7 +1128,7 @@ public final class GeneratorPositions implements Locatable
          * <p>
          * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
          * reserved. <br>
-         * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+         * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
          * <p>
          * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 jan. 2018 <br>
          * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -1152,7 +1152,7 @@ public final class GeneratorPositions implements Locatable
             public BySpeed(final Speed leftSpeed, final Speed rightSpeed)
             {
                 Throw.when(leftSpeed.eq(rightSpeed), IllegalArgumentException.class,
-                    "Left speed and right speed may not be equal. Use LaneBias.NONE.");
+                        "Left speed and right speed may not be equal. Use LaneBias.NONE.");
                 this.leftSpeed = leftSpeed;
                 this.rightSpeed = rightSpeed;
             }
@@ -1162,7 +1162,7 @@ public final class GeneratorPositions implements Locatable
             public double getValue(final Speed desiredSpeed)
             {
                 Throw.whenNull(desiredSpeed,
-                    "Peeked desired speed from a strategical planner factory is null, while a lane bias depends on desired speed.");
+                        "Peeked desired speed from a strategical planner factory is null, while a lane bias depends on desired speed.");
                 double value = (desiredSpeed.si - this.rightSpeed.si) / (this.leftSpeed.si - this.rightSpeed.si);
                 return value < 0.0 ? 0.0 : (value > 1.0 ? 1.0 : value);
             }

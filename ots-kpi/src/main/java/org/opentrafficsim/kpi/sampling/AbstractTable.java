@@ -21,13 +21,13 @@ public abstract class AbstractTable implements Table
 
     /** Id. */
     private final String id;
-    
+
     /** Description. */
     private final String description;
-    
+
     /** Columns. */
     private final ImmutableList<Column<?>> columns;
-    
+
     /**
      * Constructor.
      * @param id String; id
@@ -42,7 +42,7 @@ public abstract class AbstractTable implements Table
         this.description = description;
         this.columns = new ImmutableArrayList<>(columns);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public ImmutableList<Column<?>> getColumns()
@@ -63,5 +63,5 @@ public abstract class AbstractTable implements Table
     {
         return this.description;
     }
-    
+
 }

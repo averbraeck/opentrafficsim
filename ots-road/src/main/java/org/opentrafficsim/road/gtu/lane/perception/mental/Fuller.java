@@ -36,7 +36,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager.SummativeT
  * 2011. p. 13-26
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 apr. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -190,7 +190,7 @@ public class Fuller implements Mental
         // e) perception errors from situational awareness are included in the perception step
         // f) reaction time from situational awareness are included in the perception step
     }
-    
+
     /**
      * Returns the anticipation reliance of the given task id.
      * @param taskId taskId; task id to return the anticipation reliance for.
@@ -198,9 +198,9 @@ public class Fuller implements Mental
      */
     public double getAnticipationReliance(final String taskId)
     {
-         return this.anticipationReliances.getOrDefault(taskId, Double.NaN);
+        return this.anticipationReliances.getOrDefault(taskId, Double.NaN);
     }
-    
+
     /**
      * Returns the demand of the given task id.
      * @param taskId taskId; task id to return the demand for.
@@ -208,7 +208,7 @@ public class Fuller implements Mental
      */
     public double getTaskDemand(final String taskId)
     {
-         return this.taskDemands.getOrDefault(taskId, Double.NaN);
+        return this.taskDemands.getOrDefault(taskId, Double.NaN);
     }
 
     /** {@inheritDoc} */
@@ -223,7 +223,7 @@ public class Fuller implements Mental
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 apr. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

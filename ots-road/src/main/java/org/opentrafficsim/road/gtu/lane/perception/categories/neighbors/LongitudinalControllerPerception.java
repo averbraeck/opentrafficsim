@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
  * Perception category for longitudinal control such as ACC and CACC.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 12, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -28,7 +28,7 @@ public interface LongitudinalControllerPerception extends PerceptionCategory<Lan
     /** Sensor range parameter. */
     ParameterTypeLength RANGE =
             new ParameterTypeLength("range", "Sensor range", Length.instantiateSI(200), NumericConstraint.POSITIVE);
-    
+
     /** Sensor delay parameter. */
     ParameterTypeDuration DELAY =
             new ParameterTypeDuration("delay", "Sensor delay", Duration.instantiateSI(0.2), NumericConstraint.POSITIVE);

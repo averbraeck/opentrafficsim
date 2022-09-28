@@ -8,7 +8,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 5, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -25,14 +25,14 @@ public interface InputParameters
      * @return all object instances of the given class, for which parameters have been defined
      */
     <T> Set<T> getObjects(Class<T> clazz);
-    
+
     /**
      * Returns all defined parameters for the given object. For example a specific {@code GTUType}.
      * @param object Object; the object
      * @return all defined parameters for the given object
      */
     Map<String, InputParameter<?, ?>> getInputParameters(Object object);
-    
+
     /**
      * Returns a specific defined parameter for the given object. For example parameter "a" for a specific {@code GTUType}.
      * @param object Object; the object
@@ -40,5 +40,5 @@ public interface InputParameters
      * @return specific defined parameter for the given object
      */
     InputParameter<?, ?> getInputParameter(Object object, String id);
-    
+
 }

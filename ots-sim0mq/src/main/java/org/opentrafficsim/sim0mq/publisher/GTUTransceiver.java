@@ -18,7 +18,7 @@ import org.sim0mq.Sim0MQException;
  * Transceiver for GTU data.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -40,7 +40,7 @@ public class GTUTransceiver extends AbstractEventTransceiver
     public GTUTransceiver(final OTSNetwork network, final GTUIdTransceiver gtuIdSource)
     {
         super("GTU transceiver", new MetaData("GTU id", "GTU id",
-                new ObjectDescriptor[] { new ObjectDescriptor("GTU id", "GTU id", String.class) }), GTU.MOVE_EVENT);
+                new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class)}), GTU.MOVE_EVENT);
         this.network = network;
         this.gtuIdSource = gtuIdSource;
     }
@@ -84,9 +84,9 @@ public class GTUTransceiver extends AbstractEventTransceiver
             return null;
         }
         OrientedPoint3d gtuPosition = (OrientedPoint3d) gtu.getLocation();
-        return new Object[] { gtu.getId(), gtu.getGTUType().getId(),
+        return new Object[] {gtu.getId(), gtu.getGTUType().getId(),
                 new OTSPoint3D(gtuPosition).doubleVector(PositionUnit.METER),
-                new Direction(gtuPosition.getDirZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration() };
+                new Direction(gtuPosition.getDirZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration()};
     }
 
     /** {@inheritDoc} */

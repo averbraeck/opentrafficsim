@@ -40,10 +40,9 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * constraints on solutions that the tactical plans have to comply with.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version May 15, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -224,11 +223,11 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      */
     TimedEventType INIT_EVENT = new TimedEventType("GTU.INIT",
             new MetaData("GTU init", "GTU id, initial position and size",
-                    new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
+                    new ObjectDescriptor[] {new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("initial position", "initial position", PositionVector.class),
                             new ObjectDescriptor("initial direction", "initial direction", Direction.class),
                             new ObjectDescriptor("Length", "Length", Length.class),
-                            new ObjectDescriptor("Width", "Width", Length.class) }));
+                            new ObjectDescriptor("Width", "Width", Length.class)}));
 
     /**
      * The event type for pub/sub indicating a move. <br>
@@ -236,12 +235,12 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      */
     TimedEventType MOVE_EVENT = new TimedEventType("GTU.MOVE",
             new MetaData("GTU move", "GTU id, position, speed, acceleration, odometer",
-                    new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
+                    new ObjectDescriptor[] {new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", PositionVector.class),
                             new ObjectDescriptor("direction", "direction", Direction.class),
                             new ObjectDescriptor("speed", "speed", Speed.class),
                             new ObjectDescriptor("acceleration", "acceleration", Acceleration.class),
-                            new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class) }));
+                            new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class)}));
 
     /**
      * The event type for pub/sub indicating destruction of the GTU. <br>
@@ -249,9 +248,9 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      */
     TimedEventType DESTROY_EVENT = new TimedEventType("GTU.DESTROY",
             new MetaData("GTU destroy", "GTU id, final position, final odometer",
-                    new ObjectDescriptor[] { new ObjectDescriptor("Id", "GTU Id", String.class),
+                    new ObjectDescriptor[] {new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", PositionVector.class),
                             new ObjectDescriptor("direction", "direction", Direction.class),
-                            new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class) }));
+                            new ObjectDescriptor("Odometer", "Total distance travelled since incarnation", Length.class)}));
 
 }

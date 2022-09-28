@@ -26,7 +26,7 @@ import nl.tudelft.simulation.language.d3.CartesianPoint;
  * units, i.e. in meters. A distance between two points is therefore also in meters.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-07-16 10:20:53 +0200 (Thu, 16 Jul 2015) $, @version $Revision: 1124 $, by $Author: pknoppers $,
  * initial version Jul 22, 2015 <br>
@@ -568,9 +568,9 @@ public class OTSPoint3D implements Locatable, Serializable
     public <U extends Unit<U>, S extends DoubleScalarInterface<U, S>,
             V extends DoubleVectorInterface<U, S, V>> V doubleVector(final U unit)
     {
-        return DoubleVector.instantiate(new double[] { this.x, this.y, this.z }, unit, StorageType.DENSE);
+        return DoubleVector.instantiate(new double[] {this.x, this.y, this.z}, unit, StorageType.DENSE);
     }
-    
+
     /**
      * Construct a Direction from the rotZ component of a DirectedPoint.
      * @param directedPoint DirectedPoint; the DirectedPoint
@@ -611,7 +611,7 @@ public class OTSPoint3D implements Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)

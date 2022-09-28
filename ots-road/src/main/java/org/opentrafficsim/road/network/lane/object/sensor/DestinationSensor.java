@@ -17,7 +17,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-08-12 16:37:45 +0200 (Wed, 12 Aug 2015) $, @version $Revision: 1240 $, by $Author: averbraeck $,
  * initial version an 30, 2015 <br>
@@ -75,7 +75,8 @@ public class DestinationSensor extends AbstractSensor
         }
         catch (NetworkException exception)
         {
-            getSimulator().getLogger().always().error(exception, "Error destroying GTU: {} at destination sensor: {}", gtu, toString());
+            getSimulator().getLogger().always().error(exception, "Error destroying GTU: {} at destination sensor: {}", gtu,
+                    toString());
         }
     }
 

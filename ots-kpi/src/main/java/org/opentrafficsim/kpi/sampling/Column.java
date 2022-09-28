@@ -18,14 +18,14 @@ public interface Column<T> extends Identifiable
 
     /**
      * Returns the column description.
-     * @return String; column description   
+     * @return String; column description
      */
     String getDescription();
-    
+
     /**
      * Returns the type of the values in the column.
      * @return Class&lt;?&gt;; type of the values in the column
      */
     Class<T> getValueType();
-    
+
 }

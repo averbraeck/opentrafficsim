@@ -218,10 +218,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         LaneType laneType = network.getLaneType(LaneType.DEFAULTS.FREEWAY);
         Speed speedLim = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
 
-        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, linkType, sim, policy).leftToRight(3.0, laneWidth, laneType,
-            speedLim).addLanes(Permeable.BOTH, Permeable.BOTH).getLanes();
-        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, linkType, sim, policy).leftToRight(2.0, laneWidth, laneType,
-            speedLim).addLanes(Permeable.BOTH).getLanes();
+        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, linkType, sim, policy)
+                .leftToRight(3.0, laneWidth, laneType, speedLim).addLanes(Permeable.BOTH, Permeable.BOTH).getLanes();
+        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, linkType, sim, policy)
+                .leftToRight(2.0, laneWidth, laneType, speedLim).addLanes(Permeable.BOTH).getLanes();
 
         // Generator
         // inter-arrival time generator
@@ -239,8 +239,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // GTU characteristics generator
         CarFollowingModelFactory<IDMPlus> carFollowingModelFactory = new IDMPlusFactory(stream);
         PerceptionFactory perceptionFactory = new DefaultLMRSPerceptionFactory();
-        LaneBasedTacticalPlannerFactory<LMRS> tacticalPlannerFactory = new LMRSFactory(carFollowingModelFactory,
-            perceptionFactory);
+        LaneBasedTacticalPlannerFactory<LMRS> tacticalPlannerFactory =
+                new LMRSFactory(carFollowingModelFactory, perceptionFactory);
         DistNormal fSpeed = new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0);
         ParameterFactory parametersFactory = new ParameterFactory()
         {
@@ -271,7 +271,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 @SuppressWarnings("synthetic-access")
                 GTUType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;
                 return new LaneBasedGTUCharacteristics(GTUType.defaultCharacteristics(gtuType, network, stream),
-                    laneBasedStrategicalPlannerFactory, null, nodeA, nodeC, VehicleModel.MINMAX);
+                        laneBasedStrategicalPlannerFactory, null, nodeA, nodeC, VehicleModel.MINMAX);
             }
         };
         // generator positions
@@ -290,7 +290,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         IdGenerator idGenerator = new IdGenerator("");
         // generator
         LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator("generator", interarrivelTimeGenerator,
-            laneBasedGTUCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
+                laneBasedGTUCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
         generator.setErrorHandler(GTUErrorHandler.DELETE);
         generator.setInstantaneousLaneChange(true);
         generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));
@@ -346,8 +346,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                FundamentalDiagramDemo.this.absoluteCrossSection1 = (String) ((JComboBox<String>) e.getSource())
-                    .getSelectedItem();
+                FundamentalDiagramDemo.this.absoluteCrossSection1 =
+                        (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
                 createFundamentalDiagramsForCrossSections();
             }
         });
@@ -369,8 +369,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                FundamentalDiagramDemo.this.absoluteCrossSection2 = (String) ((JComboBox<String>) e.getSource())
-                    .getSelectedItem();
+                FundamentalDiagramDemo.this.absoluteCrossSection2 =
+                        (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
                 createFundamentalDiagramsForCrossSections();
             }
         });
@@ -386,8 +386,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                FundamentalDiagramDemo.this.absoluteCrossSection3 = (String) ((JComboBox<String>) e.getSource())
-                    .getSelectedItem();
+                FundamentalDiagramDemo.this.absoluteCrossSection3 =
+                        (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
                 createFundamentalDiagramsForCrossSections();
             }
         });
@@ -544,15 +544,15 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                     DirectInfrastructurePerception infra;
                     try
                     {
-                        infra = (DirectInfrastructurePerception) gtu.getTacticalPlanner().getPerception().getPerceptionCategory(
-                            InfrastructurePerception.class);
+                        infra = (DirectInfrastructurePerception) gtu.getTacticalPlanner().getPerception()
+                                .getPerceptionCategory(InfrastructurePerception.class);
                         // hack to reset the perceived speed limit cache
                         Field field = DirectInfrastructurePerception.class.getDeclaredField("root");
                         field.setAccessible(true);
                         field.set(infra, null);
                     }
                     catch (OperationalPlanException | NoSuchFieldException | SecurityException | IllegalArgumentException
-                        | IllegalAccessException exception)
+                            | IllegalAccessException exception)
                     {
                         System.err.println("Unable to update perceived speed limit.");
                     }
@@ -564,7 +564,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // Initiate graphs
         clearDataAndGraphs();
     }
-    
+
     /**
      * Response when settings were changed that affect the shape of the theoretical fundamental diagram, i.e. the FD line.
      */
@@ -610,8 +610,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 lanePosition = Length.instantiateSI(i);
                 linkId = "OriginLane-drop";
             }
-            DirectedLinkPosition linkPosition = new DirectedLinkPosition(getNetwork().getLink(linkId), lanePosition,
-                GTUDirectionality.DIR_PLUS);
+            DirectedLinkPosition linkPosition =
+                    new DirectedLinkPosition(getNetwork().getLink(linkId), lanePosition, GTUDirectionality.DIR_PLUS);
             GraphCrossSection<KpiLaneDirection> crossSection;
             try
             {
@@ -638,7 +638,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         }
         GraphPath<KpiLaneDirection> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
         TrajectoryPlot trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), getSimulator(),
-            this.sampler.getSamplerData(), path);
+                this.sampler.getSamplerData(), path);
         trajectoryPlot.updateFixedDomainRange(true);
         SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(trajectoryPlot)
         {
@@ -721,18 +721,18 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
         // because "Aggregate" and "Theoretical" looks ugly in the legend, we set the actual location as legend label
         source.setAggregateName(this.absoluteCrossSection1);
-        
+
         // create the fundamental diagrams
-        FundamentalDiagram fdPlota = new FundamentalDiagram("Density-speed", Quantity.DENSITY, Quantity.SPEED, getSimulator(),
-            source, this.fdLine);
-        FundamentalDiagram fdPlotb = new FundamentalDiagram("Density-flow", Quantity.DENSITY, Quantity.FLOW, getSimulator(),
-            source, this.fdLine);
-        FundamentalDiagram fdPlotc = new FundamentalDiagram("Flow-speed", Quantity.FLOW, Quantity.SPEED, getSimulator(), source,
-            this.fdLine);
-        
+        FundamentalDiagram fdPlota =
+                new FundamentalDiagram("Density-speed", Quantity.DENSITY, Quantity.SPEED, getSimulator(), source, this.fdLine);
+        FundamentalDiagram fdPlotb =
+                new FundamentalDiagram("Density-flow", Quantity.DENSITY, Quantity.FLOW, getSimulator(), source, this.fdLine);
+        FundamentalDiagram fdPlotc =
+                new FundamentalDiagram("Flow-speed", Quantity.FLOW, Quantity.SPEED, getSimulator(), source, this.fdLine);
+
         // recalculate over past data
         source.recalculate(getSimulator().getSimulatorAbsTime());
-        
+
         // store graphs so changes to setting may affect the graphs
         this.funamentalDiagrams.clear();
         this.funamentalDiagrams.add(fdPlota);
@@ -763,7 +763,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             fdc.setBackground(color);
             this.trajectoryPanel.setBackground(color);
         }
-        
+
         // reorganize panels
         fda.getParent().getParent().validate();
 
@@ -797,7 +797,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             // disable
         }
     }
-    
+
     /**
      * Fundamental diagram line class based on local settings.
      */
@@ -834,8 +834,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             meanSpeed.add(truckSpeed, FundamentalDiagramDemo.this.truckFraction);
 
             // mean of lengths
-            double meanLength = 4.19 * (1.0 - FundamentalDiagramDemo.this.truckFraction) + 12.0
-                * FundamentalDiagramDemo.this.truckFraction;
+            double meanLength =
+                    4.19 * (1.0 - FundamentalDiagramDemo.this.truckFraction) + 12.0 * FundamentalDiagramDemo.this.truckFraction;
 
             // calculate triangular FD parameters
             double vMax = meanSpeed.getMean();

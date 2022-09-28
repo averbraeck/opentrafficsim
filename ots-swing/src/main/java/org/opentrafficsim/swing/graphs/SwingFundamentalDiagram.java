@@ -55,8 +55,8 @@ public class SwingFundamentalDiagram extends SwingPlot
     @Override
     protected ChartMouseListener getChartMouseListener()
     {
-        ChartMouseListener toggle = !getPlot().hasLineFD() && getPlot().getSource().getNumberOfSeries() < 2 ? null : GraphUtil
-            .getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
+        ChartMouseListener toggle = !getPlot().hasLineFD() && getPlot().getSource().getNumberOfSeries() < 2 ? null
+                : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
         return new ChartMouseListener()
         {
             /** {@inheritDoc} */
@@ -83,9 +83,9 @@ public class SwingFundamentalDiagram extends SwingPlot
                     int series = itemEntity.getSeriesIndex();
                     for (int i = 0; i < getPlot().getItemCount(series) - 1; i++)
                     {
-                        XYLineAnnotation annotation = new XYLineAnnotation(getPlot().getXValue(series, i), getPlot().getYValue(
-                            series, i), getPlot().getXValue(series, i + 1), getPlot().getYValue(series, i + 1), new BasicStroke(
-                                1.0f), Color.WHITE);
+                        XYLineAnnotation annotation = new XYLineAnnotation(getPlot().getXValue(series, i),
+                                getPlot().getYValue(series, i), getPlot().getXValue(series, i + 1),
+                                getPlot().getYValue(series, i + 1), new BasicStroke(1.0f), Color.WHITE);
                         getPlot().getChart().getXYPlot().addAnnotation(annotation);
                     }
                 }
@@ -148,8 +148,9 @@ public class SwingFundamentalDiagram extends SwingPlot
                             else
                             {
                                 // upper left quadrant, can't use TOP_LEFT as text will be under mouse pointer
-                                if ((range.getUpperBound() - y) / (range.getUpperBound() - range.getLowerBound()) < (x - domain
-                                    .getLowerBound()) / (domain.getUpperBound() - domain.getLowerBound()))
+                                if ((range.getUpperBound() - y)
+                                        / (range.getUpperBound() - range.getLowerBound()) < (x - domain.getLowerBound())
+                                                / (domain.getUpperBound() - domain.getLowerBound()))
                                 {
                                     // closer to top (at least relatively) so move text down
                                     anchor = TextAnchor.TOP_RIGHT;
@@ -214,8 +215,8 @@ public class SwingFundamentalDiagram extends SwingPlot
                 public void actionPerformed(final ActionEvent e)
                 {
 
-                    if ((int) (.5 + getPlot().getSource().getAggregationPeriod().si / getPlot().getSource()
-                        .getUpdateInterval().si) != f)
+                    if ((int) (.5 + getPlot().getSource().getAggregationPeriod().si
+                            / getPlot().getSource().getUpdateInterval().si) != f)
                     {
                         Duration interval = Duration.instantiateSI(getPlot().getSource().getAggregationPeriod().si / f);
                         for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
@@ -262,8 +263,8 @@ public class SwingFundamentalDiagram extends SwingPlot
                 {
                     if (getPlot().getSource().getAggregationPeriod().si != t)
                     {
-                        int n = (int) (0.5 + getPlot().getSource().getAggregationPeriod().si / getPlot().getSource()
-                            .getUpdateInterval().si);
+                        int n = (int) (0.5 + getPlot().getSource().getAggregationPeriod().si
+                                / getPlot().getSource().getUpdateInterval().si);
                         Duration period = Duration.instantiateSI(t);
                         Duration interval = period.divide(n);
                         for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
@@ -272,8 +273,8 @@ public class SwingFundamentalDiagram extends SwingPlot
                         }
                         // add half an interval to avoid any rounding issues
                         getPlot().getSource().setAggregationPeriod(period);
-                        getPlot().getSource().setUpdateInterval(period.divide(n), getPlot().getUpdateTime().plus(period.divide(
-                            n).times(0.5)));
+                        getPlot().getSource().setUpdateInterval(period.divide(n),
+                                getPlot().getUpdateTime().plus(period.divide(n).times(0.5)));
                         for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
                         {
                             diagram.getChart().getXYPlot().zoomDomainAxes(0.0, null, null);

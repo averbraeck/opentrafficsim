@@ -24,7 +24,7 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationInterface;
  * Test the OTSReplication class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Feb 13, 2020 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -47,8 +47,7 @@ public class OTSReplicationTest
         OTSModel model = new OTSModel(simulator);
         OTSReplication replication = new OTSReplication(id, startTime, warmupPeriod, runLength);
         assertEquals("startTime can be retrieved", startTime, replication.getStartTimeAbs());
-        assertEquals("warmupPeriod can be retrieved", warmupPeriod,
-                replication.getWarmupPeriod());
+        assertEquals("warmupPeriod can be retrieved", warmupPeriod, replication.getWarmupPeriod());
         assertEquals("runLength can be retrieved", runLength, replication.getRunLength());
         simulator.initialize(model, replication);
         int listenerCount = simulator.numberOfListeners(ReplicationInterface.END_REPLICATION_EVENT);

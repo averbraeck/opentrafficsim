@@ -59,7 +59,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * Utility to create vehicle generators on a network from an OD.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 nov. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -127,7 +127,7 @@ public final class ODApplier
         Throw.whenNull(odOptions, "OD options may not be null.");
         OTSSimulatorInterface simulator = network.getSimulator();
         Throw.when(!simulator.getSimulatorTime().eq0(), SimRuntimeException.class,
-            "Method ODApplier.applyOD() should be invoked at simulation time 0.");
+                "Method ODApplier.applyOD() should be invoked at simulation time 0.");
 
         // TODO sinks? white extension links?
         for (Node destination : od.getDestinations())
@@ -146,8 +146,8 @@ public final class ODApplier
             stream = simulator.getModel().getStream("default");
             if (stream == null)
             {
-                System.out.println(
-                    "Using locally created stream (not from the simulator) for vehicle generation, with seed 1.");
+                System.out
+                        .println("Using locally created stream (not from the simulator) for vehicle generation, with seed 1.");
                 stream = new MersenneTwister(1L);
             }
             else
@@ -177,12 +177,11 @@ public final class ODApplier
                 LinkType linkType = getLinkTypeFromNode(origin);
                 if (markovian)
                 {
-                    MarkovCorrelation<GTUType, Frequency> correlation = odOptions.get(ODOptions.MARKOV, null, origin,
-                        linkType);
+                    MarkovCorrelation<GTUType, Frequency> correlation = odOptions.get(ODOptions.MARKOV, null, origin, linkType);
                     if (correlation != null)
                     {
                         Throw.when(!od.getCategorization().entails(GTUType.class), IllegalArgumentException.class,
-                            "Markov correlation can only be used on OD categorization entailing GTU type.");
+                                "Markov correlation can only be used on OD categorization entailing GTU type.");
                         markovChain = new MarkovChain(correlation);
                     }
                 }
@@ -216,13 +215,13 @@ public final class ODApplier
                                 markovChain = null;
                                 if (markovian)
                                 {
-                                    MarkovCorrelation<GTUType, Frequency> correlation = odOptions.get(ODOptions.MARKOV, lane,
-                                        origin, lane.getParentLink().getLinkType());
+                                    MarkovCorrelation<GTUType, Frequency> correlation =
+                                            odOptions.get(ODOptions.MARKOV, lane, origin, lane.getParentLink().getLinkType());
                                     if (correlation != null)
                                     {
                                         Throw.when(!od.getCategorization().entails(GTUType.class),
-                                            IllegalArgumentException.class,
-                                            "Markov correlation can only be used on OD categorization entailing GTU type.");
+                                                IllegalArgumentException.class,
+                                                "Markov correlation can only be used on OD categorization entailing GTU type.");
                                         markovChain = new MarkovChain(correlation); // 1 for each generator
                                     }
                                 }
@@ -230,8 +229,8 @@ public final class ODApplier
                                 rootNode.addChild(destinationNode);
                             }
                         }
-                        DemandNode<Category, ?> categoryNode = new DemandNode<>(category, od.getDemandPattern(origin,
-                            destination, category));
+                        DemandNode<Category, ?> categoryNode =
+                                new DemandNode<>(category, od.getDemandPattern(origin, destination, category));
                         if (markovian)
                         {
                             destinationNode.addLeaf(categoryNode, category.get(GTUType.class));
@@ -246,7 +245,7 @@ public final class ODApplier
 
             // Step 2: gather DirectedLanePositions for each generator pertaining to each DemandNode<...>
             Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<DirectedLanePosition>> initialPositions =
-                new LinkedHashMap<>();
+                    new LinkedHashMap<>();
             Map<CrossSectionLink, Double> linkWeights = null;
             Map<CrossSectionLink, Node> viaNodes = null;
             if (laneBased)
@@ -258,8 +257,8 @@ public final class ODApplier
                     try
                     {
                         initialPosition.add(lane.getParentLink().getStartNode().equals(demandNode.getObject())
-                            ? new DirectedLanePosition(lane, Length.ZERO, GTUDirectionality.DIR_PLUS)
-                            : new DirectedLanePosition(lane, lane.getLength(), GTUDirectionality.DIR_MINUS));
+                                ? new DirectedLanePosition(lane, Length.ZERO, GTUDirectionality.DIR_PLUS)
+                                : new DirectedLanePosition(lane, lane.getLength(), GTUDirectionality.DIR_MINUS));
                     }
                     catch (GTUException ge)
                     {
@@ -291,8 +290,7 @@ public final class ODApplier
                             {
                                 if (connectedLink instanceof CrossSectionLink)
                                 {
-                                    if (link instanceof CrossSectionLink && ((CrossSectionLink) link)
-                                        .getDemandWeight() != null)
+                                    if (link instanceof CrossSectionLink && ((CrossSectionLink) link).getDemandWeight() != null)
                                     {
                                         if (linkWeights == null)
                                         {
@@ -300,8 +298,8 @@ public final class ODApplier
                                             viaNodes = new LinkedHashMap<>();
                                         }
                                         // store weight under connected link, as this
-                                        linkWeights.put(((CrossSectionLink) connectedLink), ((CrossSectionLink) link)
-                                            .getDemandWeight() / served);
+                                        linkWeights.put(((CrossSectionLink) connectedLink),
+                                                ((CrossSectionLink) link).getDemandWeight() / served);
                                         viaNodes.put((CrossSectionLink) connectedLink, connectedNode);
                                     }
                                     setDirectedLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
@@ -351,19 +349,19 @@ public final class ODApplier
                     linkType = getLinkTypeFromNode(o);
                 }
                 HeadwayDistribution randomization = odOptions.get(ODOptions.HEADWAY_DIST, lane, o, linkType);
-                ArrivalsHeadwayGenerator headwayGenerator = new ArrivalsHeadwayGenerator(root, simulator, stream,
-                    randomization);
-                GTUCharacteristicsGeneratorODWrapper characteristicsGenerator = new GTUCharacteristicsGeneratorODWrapper(
-                    root, simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType), stream);
+                ArrivalsHeadwayGenerator headwayGenerator =
+                        new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
+                GTUCharacteristicsGeneratorODWrapper characteristicsGenerator = new GTUCharacteristicsGeneratorODWrapper(root,
+                        simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType), stream);
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
                 LaneBiases biases = odOptions.get(ODOptions.getLaneBiasOption(network), lane, o, linkType);
                 // and finally, the generator
                 try
                 {
-                    LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator(id, headwayGenerator,
-                        characteristicsGenerator, GeneratorPositions.create(initialPosition, stream, biases, linkWeights,
-                            viaNodes), network, simulator, roomChecker, idGenerator);
+                    LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
+                            GeneratorPositions.create(initialPosition, stream, biases, linkWeights, viaNodes), network,
+                            simulator, roomChecker, idGenerator);
                     generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC_DIST, lane, o, linkType));
                     generator.setInstantaneousLaneChange(odOptions.get(ODOptions.INSTANT_LC, lane, o, linkType));
                     generator.setErrorHandler(odOptions.get(ODOptions.ERROR_HANDLER, lane, o, linkType));
@@ -529,7 +527,9 @@ public final class ODApplier
                 }
                 return c;
             }
-        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (
+                e1, e2
+        ) -> e1, LinkedHashMap::new));
     }
 
     /**
@@ -552,9 +552,9 @@ public final class ODApplier
             }
             try
             {
-                positionSet.add(lane.getParentLink().getStartNode().equals(node) ? new DirectedLanePosition(lane,
-                    Length.ZERO, GTUDirectionality.DIR_PLUS) : new DirectedLanePosition(lane, lane.getLength(),
-                        GTUDirectionality.DIR_MINUS));
+                positionSet.add(lane.getParentLink().getStartNode().equals(node)
+                        ? new DirectedLanePosition(lane, Length.ZERO, GTUDirectionality.DIR_PLUS)
+                        : new DirectedLanePosition(lane, lane.getLength(), GTUDirectionality.DIR_MINUS));
             }
             catch (GTUException ge)
             {
@@ -577,7 +577,7 @@ public final class ODApplier
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 1 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -657,7 +657,7 @@ public final class ODApplier
         public void addLeaf(final K child, final GTUType gtuType)
         {
             Throw.when(this.gtuTypes == null, IllegalStateException.class,
-                "Adding leaf with GTUType in not possible on a non-Markov node.");
+                    "Adding leaf with GTUType in not possible on a non-Markov node.");
             addChild(child);
             this.gtuTypesPerChild.put(child, gtuType);
             if (!this.gtuTypes.contains(gtuType))
@@ -784,8 +784,8 @@ public final class ODApplier
         public String toString()
         {
             return "DemandNode [object=" + this.object + ", stream=" + this.stream + ", children=" + this.children
-                + ", demandPattern=" + this.demandPattern + ", gtuTypes=" + this.gtuTypes + ", gtuTypeCounts="
-                + this.gtuTypeCounts + ", gtuTypesPerChild=" + this.gtuTypesPerChild + ", markov=" + this.markov + "]";
+                    + ", demandPattern=" + this.demandPattern + ", gtuTypes=" + this.gtuTypes + ", gtuTypeCounts="
+                    + this.gtuTypeCounts + ", gtuTypesPerChild=" + this.gtuTypesPerChild + ", markov=" + this.markov + "]";
         }
 
     }
@@ -830,7 +830,7 @@ public final class ODApplier
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 7 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -859,8 +859,8 @@ public final class ODApplier
          * @param randomStream StreamInterface; stream for random numbers
          */
         GTUCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OTSSimulatorInterface simulator,
-                final GTUCharacteristicsGeneratorOD characteristicsGenerator, final StreamInterface randomStream)
+                final OTSSimulatorInterface simulator, final GTUCharacteristicsGeneratorOD characteristicsGenerator,
+                final StreamInterface randomStream)
         {
             this.root = root;
             this.simulator = simulator;
@@ -888,8 +888,8 @@ public final class ODApplier
         public String toString()
         {
             return "GTUCharacteristicsGeneratorODWrapper [root=" + this.root + ", simulator=" + this.simulator
-                + ", characteristicsGenerator=" + this.characteristicsGenerator + ", randomStream=" + this.randomStream
-                + "]";
+                    + ", characteristicsGenerator=" + this.characteristicsGenerator + ", randomStream=" + this.randomStream
+                    + "]";
         }
 
     }
@@ -899,7 +899,7 @@ public final class ODApplier
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 dec. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

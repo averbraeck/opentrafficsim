@@ -49,7 +49,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * Test the TemplateGTUType class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
  * initial version 15 jan. 2015 <br>
@@ -138,7 +138,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 2, 2016 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -237,13 +237,11 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         // Create some LaneTypes
         GTUCompatibility<LaneType> noTrucks = new GTUCompatibility<>((LaneType) null);
         noTrucks.addAllowedGTUType(passengerCar.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
-        LaneType trucksForbidden =
-                new LaneType("No Trucks", network.getLaneType(LaneType.DEFAULTS.FREEWAY), noTrucks, network);
+        LaneType trucksForbidden = new LaneType("No Trucks", network.getLaneType(LaneType.DEFAULTS.FREEWAY), noTrucks, network);
 
         GTUCompatibility<LaneType> truckOnly = new GTUCompatibility<>((LaneType) null);
         truckOnly.addAllowedGTUType(truck.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
-        LaneType trucksOnly =
-                new LaneType("Trucks Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), truckOnly, network);
+        LaneType trucksOnly = new LaneType("Trucks Only", network.getLaneType(LaneType.DEFAULTS.FREEWAY), truckOnly, network);
 
         GTUCompatibility<LaneType> bicyclesOnly = new GTUCompatibility<>((LaneType) null);
         LaneType bicycleLane =
@@ -252,8 +250,8 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         GTUCompatibility<LaneType> urban = new GTUCompatibility<>((LaneType) null);
         urban.addAllowedGTUType(passengerCar.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
         urban.addAllowedGTUType(truck.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
-        LaneType urbanRoad = new LaneType("Urban road - open to all traffic",
-                network.getLaneType(LaneType.DEFAULTS.FREEWAY), urban, network);
+        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", network.getLaneType(LaneType.DEFAULTS.FREEWAY),
+                urban, network);
 
         // Now we test all combinations
         // TODO assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));
@@ -297,7 +295,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
      * initial version 4 jan. 2015 <br>

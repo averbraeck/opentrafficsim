@@ -56,7 +56,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * generation until there is enough room.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 1401 $, $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, by $Author: averbraeck $,
  *          initial version Feb 2, 2015 <br>
@@ -146,9 +146,8 @@ public abstract class AbstractGTUGeneratorOld extends EventProducer implements S
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTUGeneratorOld(final String name, final OTSSimulatorInterface simulator,
-            final GTUType gtuType, final Class<?> gtuClass,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
+    public AbstractGTUGeneratorOld(final String name, final OTSSimulatorInterface simulator, final GTUType gtuType,
+            final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,

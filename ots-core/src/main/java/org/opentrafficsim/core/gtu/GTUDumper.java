@@ -16,7 +16,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * GTUDUmper; create a text file with the locations, directions and speeds of all GTUs at regular intervals.
  * <p>
  * Copyright (c) 2019-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version July 5, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -71,8 +71,8 @@ public class GTUDumper
      *            appended to the file name. The file type will be .txt
      * @throws SimRuntimeException when scheduling the first dump time fails
      */
-    public GTUDumper(final Time firstDumpTime, final Duration interval, final OTSNetwork network,
-            final String fileNamePrefix) throws SimRuntimeException
+    public GTUDumper(final Time firstDumpTime, final Duration interval, final OTSNetwork network, final String fileNamePrefix)
+            throws SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null");
         this.simulator = network.getSimulator();
@@ -92,7 +92,8 @@ public class GTUDumper
     @Override
     public String toString()
     {
-        return "GTUDumper [interval=" + this.interval + ", network=" + this.network + ", fileNamePrefix=" + this.fileNamePrefix + "]";
+        return "GTUDumper [interval=" + this.interval + ", network=" + this.network + ", fileNamePrefix=" + this.fileNamePrefix
+                + "]";
     }
 
 }

@@ -66,7 +66,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * Test the various distribution classes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 13, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -108,7 +108,7 @@ public class DistributionsTest
     public final void testConstructors() throws ClassNotFoundException
     {
         AbsoluteLinearUnit<?, ?>[] absoluteUnits = {DirectionUnit.DEFAULT, PositionUnit.DEFAULT, AbsoluteTemperatureUnit.KELVIN,
-                TimeUnit.DEFAULT/*, AbsJunkUnit.DEFAULT*/};
+                TimeUnit.DEFAULT/* , AbsJunkUnit.DEFAULT */};
         Unit<?>[] relativeUnits = {AccelerationUnit.SI, AngleUnit.SI, SolidAngleUnit.SI, AreaUnit.SI, DensityUnit.SI,
                 DimensionlessUnit.SI, ElectricalChargeUnit.SI, ElectricalCurrentUnit.SI, ElectricalPotentialUnit.SI,
                 ElectricalResistanceUnit.SI, EnergyUnit.SI, FlowMassUnit.SI, FlowVolumeUnit.SI, ForceUnit.SI, FrequencyUnit.SI,
@@ -116,7 +116,7 @@ public class DistributionsTest
                 TemperatureUnit.SI, DurationUnit.SI, TorqueUnit.SI, VolumeUnit.SI, AbsorbedDoseUnit.SI,
                 AmountOfSubstanceUnit.SI, CatalyticActivityUnit.SI, ElectricalCapacitanceUnit.SI, ElectricalConductanceUnit.SI,
                 ElectricalInductanceUnit.SI, EquivalentDoseUnit.SI, IlluminanceUnit.SI, LuminousFluxUnit.SI,
-                LuminousIntensityUnit.SI, MagneticFluxDensityUnit.SI, MagneticFluxUnit.SI /*, JunkUnit.SI */};
+                LuminousIntensityUnit.SI, MagneticFluxDensityUnit.SI, MagneticFluxUnit.SI /* , JunkUnit.SI */};
 
         StreamInterface stream = new MersenneTwister(1L);
         DistContinuous distCont = new DistContinuous(stream)

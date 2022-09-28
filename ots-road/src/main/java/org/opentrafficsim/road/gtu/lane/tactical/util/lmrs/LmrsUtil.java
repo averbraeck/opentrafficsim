@@ -46,7 +46,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 26, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -98,7 +98,7 @@ public final class LmrsUtil implements LmrsParameters
      * @throws ParameterException parameter exception
      * @throws OperationalPlanException operational plan exception
      */
-    @SuppressWarnings({ "checkstyle:parameternumber", "checkstyle:methodlength" })
+    @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
     public static SimpleOperationalPlan determinePlan(final LaneBasedGTU gtu, final Time startTime,
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
             final LanePerception perception, final Iterable<MandatoryIncentive> mandatoryIncentives,

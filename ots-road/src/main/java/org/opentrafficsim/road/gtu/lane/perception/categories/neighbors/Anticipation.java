@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Speed;
  * Form of anticipation.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 feb. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -46,8 +46,7 @@ public interface Anticipation
             // upstream neighbor approaches when faster
             Length distance = downstream
                     ? neighborTriplet.getHeadway().plus(neighborTriplet.getSpeed().times(duration)).minus(traveledDistance)
-                    : neighborTriplet.getHeadway().minus(neighborTriplet.getSpeed().times(duration))
-                            .plus(traveledDistance);
+                    : neighborTriplet.getHeadway().minus(neighborTriplet.getSpeed().times(duration)).plus(traveledDistance);
             return new NeighborTriplet(distance, neighborTriplet.getSpeed(), neighborTriplet.getAcceleration());
         }
 

@@ -15,7 +15,7 @@ import org.opentrafficsim.core.gtu.GTUType;
  * Test constructor and methods of the LinkType class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 2, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -29,7 +29,7 @@ public class LinkTypeTest
      * Test the constructor and methods of the LinkType class.
      */
     @Test
-    @SuppressWarnings({ "unlikely-arg-type" })
+    @SuppressWarnings({"unlikely-arg-type"})
     public final void testLinkType()
     {
         OTSNetwork network = new OTSNetwork("test", true, new OTSSimulator("Simulator for LinkTypeTest"));
@@ -81,7 +81,7 @@ public class LinkTypeTest
         assertTrue("waterwayType2 is equal to the first", waterwayType.equals(waterWayType2));
         assertFalse("road is not of type NONE", roadLinkType.isOfType(LinkType.DEFAULTS.NONE));
         assertFalse("road is not of type NONE (alterative way to test)", roadLinkType.isNone());
-        // TODO how the hell can you obtain a linkType that will return true to isNone() ? 
+        // TODO how the hell can you obtain a linkType that will return true to isNone() ?
         // assertTrue("???", LinkType.DEFAULTS.NONE.isNone());
         assertFalse("waterWayType2 is not a road", waterWayType2.isRoad());
         // TODO next one fails - what is wrong?
@@ -109,11 +109,11 @@ public class LinkTypeTest
         LinkType reverseWaterway = waterwayType.reverse();
         // Reverse of DIR_BOTH should be DIR_BOTH
         // The next two tests fail.
-//        assertEquals("Reverse of DIR_BOTH is DIR_BOTH", LongitudinalDirectionality.DIR_BOTH,
-//                reverseWaterway.getDirectionality(catamaran, true));
-//        assertEquals("Directionality of waterwayType for catamaran is DIR_BOTH", LongitudinalDirectionality.DIR_BOTH,
-//                reverseWaterway.getCompatibility().getDirectionality(catamaran, true));
-        
+        // assertEquals("Reverse of DIR_BOTH is DIR_BOTH", LongitudinalDirectionality.DIR_BOTH,
+        // reverseWaterway.getDirectionality(catamaran, true));
+        // assertEquals("Directionality of waterwayType for catamaran is DIR_BOTH", LongitudinalDirectionality.DIR_BOTH,
+        // reverseWaterway.getCompatibility().getDirectionality(catamaran, true));
+
     }
 
 }

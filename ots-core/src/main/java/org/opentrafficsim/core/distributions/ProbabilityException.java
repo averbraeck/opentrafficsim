@@ -5,7 +5,7 @@ package org.opentrafficsim.core.distributions;
  * set of probabilities or frequencies that adds up to 0 causes this exception when the draw method is called.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 1, 2016 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>

@@ -31,7 +31,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2018-10-11 22:54:04 +0200 (Thu, 11 Oct 2018) $, @version $Revision: 4696 $, by $Author: averbraeck $,
  * initial version Oct 17, 2014 <br>
@@ -57,8 +57,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
      * @throws RemoteException on communication failure
      */
     @SuppressWarnings("unchecked")
-    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator)
-            throws NamingException, RemoteException
+    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
     {
         super(new ElevatedNode(node), simulator);
         // Figure out the relevance of this node
@@ -174,7 +173,7 @@ public class NodeAnimation extends Renderable2D<NodeAnimation.ElevatedNode>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * $LastChangedDate: 2018-10-11 22:54:04 +0200 (Thu, 11 Oct 2018) $, @version $Revision: 4696 $, by $Author: averbraeck $,
      * initial version Dec 11, 2016 <br>

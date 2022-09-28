@@ -45,7 +45,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * <a href="http://victorknoop.eu/research/papers/Erratum_LMRS.pdf">here</a>.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -104,19 +104,19 @@ public class LMRS extends AbstractIncentivesTacticalPlanner implements DesireBas
         double dSync = params.getParameterOrNull(LmrsParameters.DSYNC);
         if (this.laneChange.isChangingLane())
         {
-            lanes = new RelativeLane[] { RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu()) };
+            lanes = new RelativeLane[] {RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu())};
         }
         else if (dLeft >= dSync && dLeft >= dRight)
         {
-            lanes = new RelativeLane[] { RelativeLane.CURRENT, RelativeLane.LEFT };
+            lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.LEFT};
         }
         else if (dRight >= dSync)
         {
-            lanes = new RelativeLane[] { RelativeLane.CURRENT, RelativeLane.RIGHT };
+            lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.RIGHT};
         }
         else
         {
-            lanes = new RelativeLane[] { RelativeLane.CURRENT };
+            lanes = new RelativeLane[] {RelativeLane.CURRENT};
         }
         for (RelativeLane lane : lanes)
         {

@@ -21,7 +21,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * href=https://en.wikipedia.org/wiki/Intelligent_driver_model>https://en.wikipedia.org/wiki/Intelligent_driver_model</a>
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 22, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -87,10 +87,10 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /**
      * Determination of car-following acceleration, possibly based on multiple leaders. This implementation calculates the IDM
-     * free term, which is returned if there are no leaders. If there are leaders <code>combineInteractionTerm()</code> is invoked
-     * to combine the free term with some implementation specific interaction term. The IDM free term is limited by a
-     * deceleration of <code>B0</code> for cases where the current speed is above the desired speed. This method can be overridden
-     * if the free term needs to be redefined.
+     * free term, which is returned if there are no leaders. If there are leaders <code>combineInteractionTerm()</code> is
+     * invoked to combine the free term with some implementation specific interaction term. The IDM free term is limited by a
+     * deceleration of <code>B0</code> for cases where the current speed is above the desired speed. This method can be
+     * overridden if the free term needs to be redefined.
      * @param parameters Parameters; Parameters.
      * @param speed Speed; Current speed.
      * @param desiredSpeed Speed; Desired speed.
@@ -117,7 +117,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             return Acceleration.instantiateSI(aFree);
         }
         // return combined acceleration
-        return combineInteractionTerm(Acceleration.instantiateSI(aFree), parameters, speed, desiredSpeed, desiredHeadway, leaders);
+        return combineInteractionTerm(Acceleration.instantiateSI(aFree), parameters, speed, desiredSpeed, desiredHeadway,
+                leaders);
     }
 
     /**

@@ -50,7 +50,7 @@ import picocli.CommandLine.Option;
  * Remotely control OTS using Sim0MQ messages.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 4, 2020 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -70,7 +70,7 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
     public static class Options implements Checkable
     {
         /** The IP port. */
-        @Option(names = { "-p", "--port" }, description = "Internet port to use", defaultValue = "8888")
+        @Option(names = {"-p", "--port"}, description = "Internet port to use", defaultValue = "8888")
         private int port;
 
         /**
@@ -83,7 +83,7 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
         }
 
         /** The host name. */
-        @Option(names = { "-H", "--host" }, description = "Internet host to use", defaultValue = "localhost")
+        @Option(names = {"-H", "--host"}, description = "Internet host to use", defaultValue = "localhost")
         private String host;
 
         /**
@@ -428,7 +428,7 @@ public class Sim0MQRemoteControllerNew extends JFrame implements WindowListener,
             }
             return "????";
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public void run()

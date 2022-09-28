@@ -59,7 +59,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * Test the Lane class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-16 19:20:07 +0200 (Wed, 16 Sep 2015) $, @version $Revision: 1405 $, by $Author: averbraeck $,
  * initial version 21 jan. 2015 <br>
@@ -85,9 +85,8 @@ public class LaneTest implements UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[2];
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        CrossSectionLink link =
-                new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, network.getLinkType(LinkType.DEFAULTS.FREEWAY),
-                        new OTSLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo,
+                network.getLinkType(LinkType.DEFAULTS.FREEWAY), new OTSLine3D(coordinates), LaneKeepingPolicy.KEEPRIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
@@ -339,7 +338,7 @@ public class LaneTest implements UNITS
             assertEquals("Object at position d is the expected one", d < length / 2 ? lbo1 : lbo2, objectsAtD.get(0));
         }
 
-        for (double fraction : new double[] { -0.5, 0, 0.2, 0.5, 0.9, 1.0, 2 })
+        for (double fraction : new double[] {-0.5, 0, 0.2, 0.5, 0.9, 1.0, 2})
         {
             double positionSI = length * fraction;
             double fractionSI = lane.fractionSI(positionSI);
@@ -547,8 +546,8 @@ public class LaneTest implements UNITS
         @Override
         public String toString()
         {
-            return "MockLaneBasedObject [mockLaneBasedObject=" + this.mockLaneBasedObject + ", id=" + this.id + ", position=" + this.position
-                    + "]";
+            return "MockLaneBasedObject [mockLaneBasedObject=" + this.mockLaneBasedObject + ", id=" + this.id + ", position="
+                    + this.position + "]";
         }
 
     }
@@ -638,9 +637,9 @@ public class LaneTest implements UNITS
     @Test
     public final void contourTest() throws Exception
     {
-        final int[] startPositions = { 0, 1, -1, 20, -20 };
-        final double[] angles = { 0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
-                Math.PI * 1.01, Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2) };
+        final int[] startPositions = {0, 1, -1, 20, -20};
+        final double[] angles = {0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
+                Math.PI * 1.01, Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2)};
         int laneNum = 0;
         for (int xStart : startPositions)
         {
@@ -670,13 +669,13 @@ public class LaneTest implements UNITS
                     OTSLine3D line = new OTSLine3D(coordinates);
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end,
                             network.getLinkType(LinkType.DEFAULTS.ROAD), line, LaneKeepingPolicy.KEEPRIGHT);
-                    final int[] lateralOffsets = { -10, -3, -1, 0, 1, 3, 10 };
+                    final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {
                         for (int endLateralOffset : lateralOffsets)
                         {
                             int startWidth = 4; // This one is not varied
-                            for (int endWidth : new int[] { 2, 4, 6 })
+                            for (int endWidth : new int[] {2, 4, 6})
                             {
                                 // Now we can construct a Lane
                                 // FIXME what overtaking conditions do we want to test in this unit test?

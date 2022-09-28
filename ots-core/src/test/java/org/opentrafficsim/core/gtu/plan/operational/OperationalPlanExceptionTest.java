@@ -70,13 +70,14 @@ public class OperationalPlanExceptionTest
             fail("Right exception not thrown");
         }
 
-        for (boolean suppression : new boolean[] { false, true })
+        for (boolean suppression : new boolean[] {false, true})
         {
-            for (boolean writableStackTrace : new boolean[] { false, true })
+            for (boolean writableStackTrace : new boolean[] {false, true})
             {
                 try
                 {
-                    throw new OperationalPlanException("abc", new IllegalArgumentException("def"), suppression, writableStackTrace);
+                    throw new OperationalPlanException("abc", new IllegalArgumentException("def"), suppression,
+                            writableStackTrace);
                 }
                 catch (OperationalPlanException e)
                 {

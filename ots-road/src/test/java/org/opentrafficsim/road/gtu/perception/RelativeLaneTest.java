@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
  * Test the RelativeLane class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -69,8 +69,8 @@ public class RelativeLaneTest
         }
 
         // TODO Wait for Wouter to indicate whether numLanes == 0 is really permitted when lat != LateralDirectionality.NONE
-        for (LateralDirectionality ld : new LateralDirectionality[] { LateralDirectionality.LEFT, LateralDirectionality.NONE,
-                LateralDirectionality.RIGHT })
+        for (LateralDirectionality ld : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.NONE,
+                LateralDirectionality.RIGHT})
         {
             // TODO fix if 0 is only permitted for LateralDirectionality.NONE
             int startAt = ld == LateralDirectionality.NONE ? 0 : 1;

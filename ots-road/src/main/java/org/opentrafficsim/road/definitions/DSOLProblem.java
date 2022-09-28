@@ -37,7 +37,7 @@ public class DSOLProblem
         DSOLProblem dsolProblem = new DSOLProblem();
         dsolProblem.execute();
     }
-    
+
     /**
      * Demonstrate the problem.
      * @throws NamingException ...
@@ -49,8 +49,8 @@ public class DSOLProblem
         OTSModelInterface model = new DummyModel(this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
         Time eventTime = this.simulator.getSimulatorAbsTime().plus(new Duration(10, DurationUnit.SECOND));
-        SimEvent<Duration> se = new SimEvent<>(new Duration(eventTime.minus(this.simulator.getStartTimeAbs())),
-                this, this, "move", new Object[] {});
+        SimEvent<Duration> se = new SimEvent<>(new Duration(eventTime.minus(this.simulator.getStartTimeAbs())), this, this,
+                "move", new Object[] {});
         this.simulator.scheduleEvent(se);
         double step = 0.01d;
         for (int i = 0;; i++)
@@ -91,7 +91,7 @@ public class DSOLProblem
             }
         }
     }
-    
+
     /**
      * The event.
      */
@@ -105,7 +105,7 @@ public class DSOLProblem
  * Dummy OTSModelInterface.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
  * initial version 4 jan. 2015 <br>
@@ -146,4 +146,3 @@ class DummyModel extends AbstractOTSModel
     }
 
 }
-

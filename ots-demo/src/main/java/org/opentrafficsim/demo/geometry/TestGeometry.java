@@ -30,10 +30,9 @@ import nl.tudelft.simulation.language.DSOLException;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version Oct 16, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version Oct 16, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class TestGeometry extends DSOLApplication implements UNITS
@@ -65,8 +64,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
         OTSModelInterface model = new TestModel(simulator);
         OTSReplication replication = new OTSReplication("rep1", Time.ZERO, Duration.ZERO, new Duration(1800.0, SECOND));
         simulator.initialize(model, replication);
-        DSOLPanel panel =
-                new DSOLPanel(new RealTimeControlPanel<Duration, OTSAnimator>(model, simulator));
+        DSOLPanel panel = new DSOLPanel(new RealTimeControlPanel<Duration, OTSAnimator>(model, simulator));
 
         Rectangle2D extent = new Rectangle2D.Double(-50, -50, 200, 50);
         Dimension size = new Dimension(1024, 768);

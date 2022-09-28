@@ -16,13 +16,13 @@ public class SimpleColumn<T> implements Column<T>
 
     /** Id. */
     private final String id;
-    
+
     /** Description. */
     private final String description;
-    
+
     /** Value type. */
     private final Class<T> valueType;
-    
+
     /**
      * Constructor.
      * @param id String; id
@@ -62,6 +62,6 @@ public class SimpleColumn<T> implements Column<T>
     public String toString()
     {
         return "SimpleColumn [id=" + id + ", description=" + description + ", valueType=" + valueType + "]";
-    } 
+    }
 
 }

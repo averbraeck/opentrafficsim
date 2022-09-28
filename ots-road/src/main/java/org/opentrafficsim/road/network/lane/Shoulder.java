@@ -10,7 +10,7 @@ import org.opentrafficsim.core.network.NetworkException;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-03 13:38:01 +0200 (Thu, 03 Sep 2015) $, @version $Revision: 1378 $, by $Author: averbraeck $,
  * initial version Aug 19, 2014 <br>
@@ -96,8 +96,8 @@ public class Shoulder extends CrossSectionElement
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Shoulder(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
-            final Shoulder cse) throws NetworkException
+    protected Shoulder(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final Shoulder cse)
+            throws NetworkException
     {
         super(newParentLink, newSimulator, cse);
     }

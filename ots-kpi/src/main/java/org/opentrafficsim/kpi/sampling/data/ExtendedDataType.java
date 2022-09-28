@@ -18,7 +18,7 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * and {@code <S>} is the storage type by which the data is gathered, e.g. {@code List<Double>} or {@code float[]}.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 11 okt. 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -34,7 +34,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
 
     /** Id. */
     private final String id;
-    
+
     /** Type of value. */
     private final Class<T> type;
 
@@ -57,7 +57,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
     {
         return this.id;
     }
-    
+
     /**
      * Returns the type.
      * @return the type
@@ -127,7 +127,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
      * @return formatted value
      */
     public abstract String formatValue(String format, T value);
-    
+
     /**
      * Parses a stored string representation to original type.
      * @param string String; stored string representation

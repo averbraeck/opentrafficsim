@@ -6,11 +6,11 @@ import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
 
 /**
- * FractionAdapter to convert fractions as a number between 0.0 and 1.0, or as a percentage between 0% and 100%. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * FractionAdapter to convert fractions as a number between 0.0 and 1.0, or as a percentage between 0% and 100%.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public class FractionAdapter extends XmlAdapter<String, Double>

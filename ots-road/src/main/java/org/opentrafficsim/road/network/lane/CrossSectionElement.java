@@ -31,7 +31,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * Cross section elements are used to compose a CrossSectionLink.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
  * initial version Aug 19, 2014 <br>
@@ -116,8 +116,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         OTSLine3D proposedCenterLine = null;
         if (this.crossSectionSlices.size() <= 2)
         {
-            proposedCenterLine = fixTightInnerCurve(new double[] { 0.0, 1.0 },
-                    new double[] { getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI() });
+            proposedCenterLine = fixTightInnerCurve(new double[] {0.0, 1.0},
+                    new double[] {getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI()});
         }
         else
         {
@@ -342,8 +342,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CrossSectionElement(final CrossSectionLink newCrossSectionLink,
-            final OTSSimulatorInterface newSimulator, final CrossSectionElement cse) throws NetworkException
+    protected CrossSectionElement(final CrossSectionLink newCrossSectionLink, final OTSSimulatorInterface newSimulator,
+            final CrossSectionElement cse) throws NetworkException
     {
         this.id = cse.id;
         this.parentLink = newCrossSectionLink;
@@ -368,8 +368,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length lateralOffset,
             final Length width) throws OTSGeometryException, NetworkException
     {
-        this(parentLink, id,
-                Arrays.asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffset, width) }));
+        this(parentLink, id, Arrays.asList(new CrossSectionSlice[] {new CrossSectionSlice(Length.ZERO, lateralOffset, width)}));
     }
 
     /**
@@ -719,7 +718,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
     public boolean equals(final Object obj)
     {

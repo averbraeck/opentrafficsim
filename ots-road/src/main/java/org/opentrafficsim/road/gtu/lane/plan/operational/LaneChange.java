@@ -40,7 +40,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * request a path using {@code getPath()} for each step of the tactical planner.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 26, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -384,7 +384,7 @@ public class LaneChange implements Serializable
             try
             {
                 gtu.getSimulator().scheduleEventNow(gtu, BUILDER, "scheduleLaneChangeFinalization",
-                        new Object[] { gtu, Length.min(planDistance, path.getLength()), laneChangeDirection });
+                        new Object[] {gtu, Length.min(planDistance, path.getLength()), laneChangeDirection});
             }
             catch (SimRuntimeException exception)
             {
@@ -545,9 +545,9 @@ public class LaneChange implements Serializable
         {
             t = Math.min(egoSpeed.si / -egoAcceleration.si, t);
         }
-        Length requiredDistance =
-                Length.max(Length.instantiateSI(egoSpeed.si * t + .5 * egoAcceleration.si * t * t), this.minimumLaneChangeDistance)
-                        .plus(s0);
+        Length requiredDistance = Length
+                .max(Length.instantiateSI(egoSpeed.si * t + .5 * egoAcceleration.si * t * t), this.minimumLaneChangeDistance)
+                .plus(s0);
         return availableDistance.gt(requiredDistance);
     }
 
@@ -563,7 +563,7 @@ public class LaneChange implements Serializable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 apr. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -667,7 +667,7 @@ public class LaneChange implements Serializable
          * <p>
          * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
          * reserved. <br>
-         * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+         * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
          * <p>
          * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 apr. 2018 <br>
          * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -790,7 +790,7 @@ public class LaneChange implements Serializable
          * <p>
          * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
          * reserved. <br>
-         * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+         * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
          * <p>
          * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 3, 2019 <br>
          * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -815,7 +815,7 @@ public class LaneChange implements Serializable
                 dy = fromLine.get(0).getLocation().y - toLine.get(0).getLocation().y;
                 double distFromTo = Math.sqrt(dx * dx + dy * dy);
                 double startLateralFraction = distFromLoc / distFromTo;
-                // Location is not on path in z-direction, so using .distance() create bugs 
+                // Location is not on path in z-direction, so using .distance() create bugs
                 // PK: added test for NaN (which occurs when fromLine and toLine start on top of each other.
                 if (Double.isNaN(startLateralFraction) || startLateralFraction > 1.0)
                 {

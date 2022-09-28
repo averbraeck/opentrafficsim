@@ -29,7 +29,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * Utility for tactical planners to implement more precise (in terms of physics) vehicle control.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 jan. 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -40,8 +40,8 @@ public final class Steering
 {
 
     /** Time step parameter. */
-    static final ParameterTypeDuration DT =
-            new ParameterTypeDuration("DTS", "Steering update time step", Duration.instantiateSI(0.01), NumericConstraint.POSITIVE);
+    static final ParameterTypeDuration DT = new ParameterTypeDuration("DTS", "Steering update time step",
+            Duration.instantiateSI(0.01), NumericConstraint.POSITIVE);
 
     /** Front tire cornering stiffness. */
     static final ParameterTypeDouble C_FRONT = new ParameterTypeDouble("C_FRONT", "Front tire cornering stiffness", 80000);
@@ -162,7 +162,7 @@ public final class Steering
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 jan. 2019 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -274,7 +274,7 @@ public final class Steering
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 jan. 2019 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -323,7 +323,7 @@ public final class Steering
          * <p>
          * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
          * reserved. <br>
-         * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+         * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
          * <p>
          * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 jan. 2019 <br>
          * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

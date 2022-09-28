@@ -25,9 +25,9 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
 /**
- * This class features an efficient and accurate <code>getBounds()</code> method. The <code>java.awt.Shape</code> API
- * clearly states that the <code>Shape.getBounds2D()</code> method may return a rectangle larger than the bounds of the
- * actual shape, so here I present a method to get the bounds without resorting to the very-accurate-but-very-slow
+ * This class features an efficient and accurate <code>getBounds()</code> method. The <code>java.awt.Shape</code> API clearly
+ * states that the <code>Shape.getBounds2D()</code> method may return a rectangle larger than the bounds of the actual shape, so
+ * here I present a method to get the bounds without resorting to the very-accurate-but-very-slow
  * <code>java.awt.geom.Area</code> class.
  */
 public class ShapeBounds
@@ -85,13 +85,12 @@ public class ShapeBounds
      * @param shape the shape you want the bounds of. This method throws a NullPointerException if this is null.
      * @param transform if this is non-null, then this method returns the bounds of <code>shape</code> as seen through
      *            <code>t</code>.
-     * @param r if this is non-null, then the result is stored in this rectangle. This is useful when you need to call
-     *            this method repeatedly without allocating a lot of memory.
+     * @param r if this is non-null, then the result is stored in this rectangle. This is useful when you need to call this
+     *            method repeatedly without allocating a lot of memory.
      * @return the bounds of <code>shape</code>, as seen through <code>transform</code>.
      * @throws EmptyPathException if the shape argument is empty.
      */
-    public static Rectangle2D getBounds(Shape shape, AffineTransform transform, Rectangle2D r)
-            throws EmptyPathException
+    public static Rectangle2D getBounds(Shape shape, AffineTransform transform, Rectangle2D r) throws EmptyPathException
     {
         PathIterator i = shape.getPathIterator(transform);
         return getBounds(i, r);
@@ -100,8 +99,8 @@ public class ShapeBounds
     /**
      * This calculates the precise bounds of a shape.
      * @param shape the shape you want the bounds of. This method throws a NullPointerException if this is null.
-     * @param r if this is non-null, then the result is stored in this rectangle. This is useful when you need to call
-     *            this method repeatedly without allocating a lot of memory.
+     * @param r if this is non-null, then the result is stored in this rectangle. This is useful when you need to call this
+     *            method repeatedly without allocating a lot of memory.
      * @return the bounds of <code>shape</code>.
      * @throws EmptyPathException if the shape argument is empty.
      */
@@ -123,8 +122,8 @@ public class ShapeBounds
     /**
      * This calculates the precise bounds of a shape.
      * @param i the shape you want the bounds of. This method throws a NullPointerException if this is null.
-     * @param r if this is non-null, then the result is stored in this rectangle. This is useful when you need to call
-     *            this method repeatedly without allocating a lot of memory.
+     * @param r if this is non-null, then the result is stored in this rectangle. This is useful when you need to call this
+     *            method repeatedly without allocating a lot of memory.
      * @return the bounds of <code>i</code>.
      */
     public static Rectangle2D getBounds(PathIterator i, Rectangle2D r)
@@ -165,7 +164,7 @@ public class ShapeBounds
             {
                 if (bounds == null)
                 {
-                    bounds = new float[]{lastX, lastY, lastX, lastY};
+                    bounds = new float[] {lastX, lastY, lastX, lastY};
                 }
                 else
                 {

@@ -88,7 +88,7 @@ import picocli.CommandLine.Option;
  * Sim0MQ controlled OTS
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 18, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -108,7 +108,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
 
     /** The port number of the listening socket. */
     private final int port;
-    
+
     /** Communication channel to the master. */
     private final MasterCommunication masterCommunication = new MasterCommunication();
 
@@ -123,9 +123,9 @@ public class Sim0MQControlledOTS implements EventListenerInterface
         this.port = port;
         this.masterCommunication.start();
     }
-    
+
     /**
-     * Thread that handles ALL reads and writes on the socket to the master. 
+     * Thread that handles ALL reads and writes on the socket to the master.
      */
     class MasterCommunication extends Thread
     {
@@ -170,7 +170,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                 }
             }
             */
-            ///*-
+            /// *-
             ZMQ.Poller poller = Sim0MQControlledOTS.this.zContext.createPoller(2);
             poller.register(remoteControllerSocket, ZMQ.Poller.POLLIN);
             poller.register(resultQueue, ZMQ.Poller.POLLIN);
@@ -192,7 +192,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                     System.err.println("Outgoing result handed over to remoteControllerSocket");
                 }
             }
-            //*/
+            // */
         }
     }
 
@@ -204,7 +204,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
     public static class Options implements Checkable
     {
         /** The IP port. */
-        @Option(names = { "-p", "--port" }, description = "Internet port to use", defaultValue = "8888")
+        @Option(names = {"-p", "--port"}, description = "Internet port to use", defaultValue = "8888")
         private int port;
 
         /**
@@ -405,8 +405,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                     if (count > 1000) // 10 seconds
                                     {
                                         System.out.println("SIMULATOR DOES NOT STOP. TIME = " + simulator.getSimulatorTime());
-                                        Iterator<SimEventInterface<Duration>> elIt =
-                                                simulator.getEventList().iterator();
+                                        Iterator<SimEventInterface<Duration>> elIt = simulator.getEventList().iterator();
                                         while (elIt.hasNext())
                                         {
                                             System.out.println("EVENTLIST: " + elIt.next());
@@ -451,9 +450,9 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                                     try
                                     {
                                         DirectedPoint gtuPosition = gtu.getLocation();
-                                        Object[] gtuData = new Object[] { gtu.getId(), gtu.getGTUType().getId(), gtuPosition.x,
+                                        Object[] gtuData = new Object[] {gtu.getId(), gtu.getGTUType().getId(), gtuPosition.x,
                                                 gtuPosition.y, gtuPosition.z, gtuPosition.getRotZ(), gtu.getSpeed(),
-                                                gtu.getAcceleration() };
+                                                gtu.getAcceleration()};
                                         sendToMaster(Sim0MQMessage.encodeUTF8(true, 0, "slave_XXXXX", "master", "GTUPOSITION",
                                                 0, gtuData));
                                     }
@@ -468,7 +467,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
                             break;
 
                         default:
-                            
+
                             System.out.println("Don't know how to handle message:");
                             System.out.println(Sim0MQMessage.print(message));
                             result = "Unimplemented command " + command;
@@ -502,7 +501,7 @@ public class Sim0MQControlledOTS implements EventListenerInterface
 
     /** In memory sockets to talk to the multiplexer. */
     private Map<Long, ZMQ.Socket> socketMap = new LinkedHashMap<>();
-    
+
     /**
      * Safe - synchronized - portal to send a message to the remote controller.
      * @param data byte[]; the data to send
@@ -517,9 +516,8 @@ public class Sim0MQControlledOTS implements EventListenerInterface
             Object[] messageFields = Sim0MQMessage.decode(data).createObjectArray();
             Object[] newMessageFields = Arrays.copyOfRange(messageFields, 8, messageFields.length);
             number = this.packetsSent.addAndGet(1);
-            fixedData =
-                    Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number),
-                            messageFields[4], messageFields[5], messageFields[6], newMessageFields);
+            fixedData = Sim0MQMessage.encodeUTF8(true, messageFields[2], String.format("slave_%05d", number), messageFields[4],
+                    messageFields[5], messageFields[6], newMessageFields);
             System.err.println("Prepared message " + number + ", type is " + messageFields[5]);
         }
         catch (Sim0MQException | SerializationException e)
@@ -553,13 +551,13 @@ public class Sim0MQControlledOTS implements EventListenerInterface
             }
         }
         System.out.println("pre send");
-        
-//        ZMQ.Socket socket = this.zContext.createSocket(SocketType.PUSH);
-//        socket.setHWM(100000);
-//        socket.connect("inproc://results");
+
+        // ZMQ.Socket socket = this.zContext.createSocket(SocketType.PUSH);
+        // socket.setHWM(100000);
+        // socket.connect("inproc://results");
         socket.send(fixedData, 0);
-        //        socket.close();
-        //System.out.println("post send");
+        // socket.close();
+        // System.out.println("post send");
     }
 
     /** {@inheritDoc} */

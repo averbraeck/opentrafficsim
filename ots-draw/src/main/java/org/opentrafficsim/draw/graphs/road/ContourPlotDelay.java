@@ -39,7 +39,7 @@ import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
  * hours gives 50 * 2 * 3 = 300h of delay.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 okt. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -82,8 +82,8 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
 
         /** {@inheritDoc} */
         @Override
-        public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup<?>> trajectories, final List<
-                Length> xFrom, final List<Length> xTo, final Time tFrom, final Time tTo)
+        public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup<?>> trajectories,
+                final List<Length> xFrom, final List<Length> xTo, final Time tFrom, final Time tTo)
         {
             double sumActualTime = 0.0;
             double sumRefTime = 0.0;
@@ -140,11 +140,11 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;GtuData&gt;; data pool
      */
-    public ContourPlotDelay(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<
-            GtuData> dataPool)
+    public ContourPlotDelay(final String caption, final OTSSimulatorInterface simulator,
+            final ContourDataSource<GtuData> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
-            "delay %.1f /km");
+                "delay %.1f /km");
     }
 
     /**

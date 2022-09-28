@@ -18,7 +18,7 @@ import org.sim0mq.Sim0MQException;
  * Transceiver for Node data.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -41,12 +41,12 @@ public class NodeTransceiver extends AbstractTransceiver
     {
         super("Node transceiver",
                 new MetaData("Node id", "Node id",
-                        new ObjectDescriptor[] { new ObjectDescriptor("Node id", "Node id", String.class) }),
+                        new ObjectDescriptor[] {new ObjectDescriptor("Node id", "Node id", String.class)}),
                 new MetaData("Node data", "Node id, position, direction, number of Links",
-                        new ObjectDescriptor[] { new ObjectDescriptor("Node id", "Node id", String.class),
+                        new ObjectDescriptor[] {new ObjectDescriptor("Node id", "Node id", String.class),
                                 new ObjectDescriptor("Position", "Position", PositionVector.class),
                                 new ObjectDescriptor("Direction", "Direction", Direction.class),
-                                new ObjectDescriptor("Number of links", "Number of links", Integer.class) }));
+                                new ObjectDescriptor("Number of links", "Number of links", Integer.class)}));
         this.network = network;
         this.nodeIdSource = nodeIdSource;
     }
@@ -68,8 +68,8 @@ public class NodeTransceiver extends AbstractTransceiver
             returnWrapper.nack("Network does not contain a node with id " + address[0]);
             return null;
         }
-        return new Object[] { node.getId(), node.getPoint().doubleVector(PositionUnit.METER),
-                OTSPoint3D.direction(node.getLocation(), DirectionUnit.EAST_RADIAN), node.getLinks().size() };
+        return new Object[] {node.getId(), node.getPoint().doubleVector(PositionUnit.METER),
+                OTSPoint3D.direction(node.getLocation(), DirectionUnit.EAST_RADIAN), node.getLinks().size()};
     }
 
     /** {@inheritDoc} */

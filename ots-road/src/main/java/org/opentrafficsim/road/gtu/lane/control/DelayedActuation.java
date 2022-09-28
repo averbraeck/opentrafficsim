@@ -11,7 +11,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * control, which follow different vehicle capability semantics.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 12, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -33,8 +33,8 @@ public interface DelayedActuation
     };
 
     /** Parameter for actuation delay. */
-    ParameterTypeDuration TAU =
-            new ParameterTypeDuration("tau_actuation", "Actuation delay", Duration.instantiateSI(0.1), NumericConstraint.POSITIVE);
+    ParameterTypeDuration TAU = new ParameterTypeDuration("tau_actuation", "Actuation delay", Duration.instantiateSI(0.1),
+            NumericConstraint.POSITIVE);
 
     /** Tau delayed actuation. */
     DelayedActuation TAUDELAYED = new DelayedActuation()

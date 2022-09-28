@@ -62,7 +62,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * Test some very basic properties of lane change models.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-16 19:20:07 +0200 (Wed, 16 Sep 2015) $, @version $Revision: 1405 $, by $Author: averbraeck $,
  * initial version 14 nov. 2014 <br>
@@ -81,7 +81,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     public LaneChangeModelTest()
     {
         super(new OTSSimulator("LaneChangeModelTest"));
-        this.network  = new OTSRoadNetwork("lane change model test network", true, getSimulator());
+        this.network = new OTSRoadNetwork("lane change model test network", true, getSimulator());
     }
 
     /**
@@ -103,8 +103,8 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
-        OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
-                new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0) };
+        OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
+                new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OTSLine3D line = new OTSLine3D(coordinates);
         CrossSectionLink link = new CrossSectionLink(network, name, from, to, network.getLinkType(LinkType.DEFAULTS.ROAD), line,
                 LaneKeepingPolicy.KEEPRIGHT);
@@ -280,9 +280,8 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
             // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
             // new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d),
             // laneChangeModel);
-            LaneBasedIndividualGTU otherCar =
-                    new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
-                            new Speed(150, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
+            LaneBasedIndividualGTU otherCar = new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, vehicleLength,
+                    new Length(2, METER), new Speed(150, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, otherCar), otherCar);
             otherCar.setParameters(parameters);

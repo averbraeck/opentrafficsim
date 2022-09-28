@@ -27,7 +27,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 27 jan. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -57,10 +57,10 @@ public class AccelerationBusStop implements AccelerationIncentive
         }
         BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
         Time now = gtu.getSimulator().getSimulatorAbsTime();
-        Iterable<HeadwayBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
-        {
-            return busStop.getDistance().gt(mergeDistance);
-        });
+        Iterable<HeadwayBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (
+                busStop
+        ) ->
+        { return busStop.getDistance().gt(mergeDistance); });
         for (HeadwayBusStop stop : it)
         {
             String busStopId = stop.getId();

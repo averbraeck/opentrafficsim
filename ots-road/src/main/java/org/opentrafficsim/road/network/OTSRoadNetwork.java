@@ -16,11 +16,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.routesystem.RouteSystem;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 /**
- * OTSRoadNetwork adds a number of methods to the Network class that are specific for roads, such as the LaneTypes. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * OTSRoadNetwork adds a number of methods to the Network class that are specific for roads, such as the LaneTypes.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
@@ -30,7 +30,7 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
 
     /** LaneTypes registered for this network. */
     private Map<String, LaneType> laneTypeMap = new LinkedHashMap<>();
-    
+
     /** Route system. */
     private RouteSystem routeSystem;
 
@@ -48,7 +48,7 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
             addDefaultLaneTypes();
         }
         // TODO: not null once the route system works
-        this.routeSystem = null; //new DefaultRouteSystem();
+        this.routeSystem = null; // new DefaultRouteSystem();
     }
 
     /** {@inheritDoc} */
@@ -116,7 +116,7 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
     {
         return new ImmutableHashMap<>(this.laneTypeMap, Immutable.WRAP);
     }
-    
+
     /**
      * Sets the route system.
      * @param routeSystem RouteSystem; route system
@@ -126,7 +126,7 @@ public class OTSRoadNetwork extends OTSNetwork implements RoadNetwork
         Throw.whenNull(routeSystem, "Route system may not be null.");
         this.routeSystem = routeSystem;
     }
-    
+
     /**
      * Returns the route system.
      * @return RouteSystem; route system

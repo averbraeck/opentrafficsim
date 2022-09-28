@@ -13,7 +13,7 @@ import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
  * Interface with LMRS parameters.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 apr. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -90,15 +90,14 @@ public interface LmrsParameters
     ParameterTypeDouble DLC = new ParameterTypeDouble("dLaneChange", "Desire of current lane change", 0.0);
 
     /** Anticipation speed difference at full lane change desired. */
-    ParameterTypeSpeed VGAIN =
-            new ParameterTypeSpeed("vGain", "Anticipation speed difference at full lane change desire",
-                    new Speed(69.6, SpeedUnit.KM_PER_HOUR), ConstraintInterface.POSITIVE);
+    ParameterTypeSpeed VGAIN = new ParameterTypeSpeed("vGain", "Anticipation speed difference at full lane change desire",
+            new Speed(69.6, SpeedUnit.KM_PER_HOUR), ConstraintInterface.POSITIVE);
 
     /** Courtesy parameter. */
     ParameterTypeDouble COURTESY = new ParameterTypeDouble("courtesy", "Courtesy level for courtesy lane changes", 1.0);
 
     /** Socio-speed sensitivity parameter. */
-    ParameterTypeDouble SOCIO = new ParameterTypeDouble("socio", "Sensitivity level for speed of others",
-            1.0, ConstraintInterface.UNITINTERVAL);
+    ParameterTypeDouble SOCIO =
+            new ParameterTypeDouble("socio", "Sensitivity level for speed of others", 1.0, ConstraintInterface.UNITINTERVAL);
 
 }

@@ -18,7 +18,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * Test the classes and interfaces in the compatibility package.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -63,7 +63,7 @@ public class CompatibilityTest
     /**
      * Test the class.
      */
-    @SuppressWarnings({ "unlikely-arg-type" })
+    @SuppressWarnings({"unlikely-arg-type"})
     @Test
     public void testClass()
     {
@@ -150,7 +150,7 @@ public class CompatibilityTest
                 LongitudinalDirectionality.DIR_BOTH);
         assertNull("Not directly compatible with PEDESTRIAN",
                 compatibility.getDirectionality(network.getGtuType(GTUType.DEFAULTS.PEDESTRIAN), false));
-        
+
         // TODO Test isCompatibleWith method (OR remove that method from the class; it is never used).
     }
 

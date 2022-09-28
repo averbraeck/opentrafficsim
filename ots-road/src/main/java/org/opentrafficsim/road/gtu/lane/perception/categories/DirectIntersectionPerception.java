@@ -45,7 +45,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
  * Perceives traffic lights and intersection conflicts.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 22, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -224,10 +224,10 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                         OTSLine3D line2 = otherLane.getCenterLine();
                         double dStart = line1.getLocation(pos1a).distance(line2.getLocation(pos2a));
                         double dEnd = line1.getLocation(pos1b).distance(line2.getLocation(pos2b));
-                        Length startWidth =
-                                Length.instantiateSI(dStart + .5 * thisLane.getWidth(pos1a).si + .5 * otherLane.getWidth(pos2a).si);
-                        Length endWidth =
-                                Length.instantiateSI(dEnd + .5 * thisLane.getWidth(pos1b).si + .5 * otherLane.getWidth(pos2b).si);
+                        Length startWidth = Length
+                                .instantiateSI(dStart + .5 * thisLane.getWidth(pos1a).si + .5 * otherLane.getWidth(pos2a).si);
+                        Length endWidth = Length
+                                .instantiateSI(dEnd + .5 * thisLane.getWidth(pos1b).si + .5 * otherLane.getWidth(pos2b).si);
 
                         headwayConflict = new HeadwayConflict(conflictType, conflictPriority, conflictRuleType, id, distance,
                                 length, conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs,

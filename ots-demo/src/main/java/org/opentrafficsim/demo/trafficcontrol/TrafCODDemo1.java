@@ -44,7 +44,7 @@ import nl.tudelft.simulation.language.DSOLException;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 18, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -173,7 +173,7 @@ public class TrafCODDemo1 extends OTSSimulationApplication<TrafCODModel>
                 OTS ots = XmlNetworkLaneParser.parseXML(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
                 XmlNetworkLaneParser.build(ots, this.network, false);
 
-                //String controllerName = "TrafCOD_simple";
+                // String controllerName = "TrafCOD_simple";
                 List<CONTROL> trafficControllerList = ots.getCONTROL();
                 Throw.when(trafficControllerList.size() != 1, NetworkException.class,
                         "OTS contains wrong number of traffic controllers (should be 1, got %1)", trafficControllerList.size());

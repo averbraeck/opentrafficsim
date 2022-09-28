@@ -14,7 +14,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * Longitudinal road stripes; simple constructors.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-03 13:38:01 +0200 (Thu, 03 Sep 2015) $, @version $Revision: 1378 $, by $Author: averbraeck $,
  * initial version Oct 25, 2014 <br>
@@ -146,8 +146,8 @@ public class Stripe extends RoadMarkerAlong
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Stripe(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
-            final Stripe cse) throws NetworkException
+    protected Stripe(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final Stripe cse)
+            throws NetworkException
     {
         super(newParentLink, newSimulator, cse);
     }
@@ -191,8 +191,7 @@ public class Stripe extends RoadMarkerAlong
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Stripe clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
+    public Stripe clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         return new Stripe(newParentLink, newSimulator, this);
     }

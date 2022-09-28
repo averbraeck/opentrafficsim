@@ -38,7 +38,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * traffic sensor does <b>not</b> report the total number of GTUs within the area; only whether that number is zero or non-zero.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 27, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -71,7 +71,7 @@ public class TrafficLightSensor extends EventProducer
 
     /** The lanes that the detector (partly) covers. */
     private final Set<Lane> lanes = new LinkedHashSet<>();
-    
+
     /** The OTS network. */
     private final OTSNetwork network;
 

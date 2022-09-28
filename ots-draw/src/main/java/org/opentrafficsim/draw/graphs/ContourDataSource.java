@@ -39,7 +39,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * By default the source contains traveled time and traveled distance per cell.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 5 okt. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -55,13 +55,13 @@ public class ContourDataSource<G extends GtuDataInterface>
     // *************************
 
     /** Space granularity values. */
-    protected static final double[] DEFAULT_SPACE_GRANULARITIES = { 10, 20, 50, 100, 200, 500, 1000 };
+    protected static final double[] DEFAULT_SPACE_GRANULARITIES = {10, 20, 50, 100, 200, 500, 1000};
 
     /** Index of the initial space granularity. */
     protected static final int DEFAULT_SPACE_GRANULARITY_INDEX = 3;
 
     /** Time granularity values. */
-    protected static final double[] DEFAULT_TIME_GRANULARITIES = { 1, 2, 5, 10, 20, 30, 60, 120, 300, 600 };
+    protected static final double[] DEFAULT_TIME_GRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
 
     /** Index of the initial time granularity. */
     protected static final int DEFAULT_TIME_GRANULARITY_INDEX = 3;
@@ -233,7 +233,9 @@ public class ContourDataSource<G extends GtuDataInterface>
         this.vc = Speed.min(path.getSpeedLimit().times(VC_FACRTOR), MAX_C_FREE);
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new GraphUpdater<>("Contour Data Source worker", Thread.currentThread(), (t) -> update(t));
+        this.graphUpdater = new GraphUpdater<>("Contour Data Source worker", Thread.currentThread(), (
+                t
+        ) -> update(t));
     }
 
     // ************************************
@@ -504,7 +506,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * last part that falls within the kernel.
      * @param t Time; time up to which to show data
      */
-    @SuppressWarnings({ "synthetic-access", "methodlength" })
+    @SuppressWarnings({"synthetic-access", "methodlength"})
     private void update(final Time t)
     {
         Throw.when(this.plots.isEmpty(), IllegalStateException.class, "ContourDataSource is used, but not by a contour plot!");
@@ -804,7 +806,9 @@ public class ContourDataSource<G extends GtuDataInterface>
             }
 
             // notify changes for every time slice
-            this.plots.forEach((plot) -> plot.notifyPlotChange());
+            this.plots.forEach((
+                    plot
+            ) -> plot.notifyPlotChange());
         }
 
         // smooth all data that is as old as our kernel includes (or all data on a redo)
@@ -829,7 +833,9 @@ public class ContourDataSource<G extends GtuDataInterface>
                     overwriteSmoothed(this.additionalData.get(contourDataType), nFromEgtf,
                             filter.getSI(contourDataType.getQuantity()));
                 }
-                this.plots.forEach((plot) -> plot.notifyPlotChange());
+                this.plots.forEach((
+                        plot
+                ) -> plot.notifyPlotChange());
             }
         }
     }
@@ -990,7 +996,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -1034,7 +1040,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -1206,7 +1212,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

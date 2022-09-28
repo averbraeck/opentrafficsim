@@ -15,7 +15,7 @@ import org.sim0mq.Sim0MQException;
  * Transceiver for Link data.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -38,11 +38,11 @@ public class LinkTransceiver extends AbstractTransceiver
     {
         super("Link transceiver",
                 new MetaData("Link id", "Link id",
-                        new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Link id", String.class) }),
+                        new ObjectDescriptor[] {new ObjectDescriptor("Link id", "Link id", String.class)}),
                 new MetaData("Link data",
                         "Link id, type, start node id, end node id, design line size, gtu count, cross section "
                                 + "element count",
-                        new ObjectDescriptor[] { new ObjectDescriptor("Link id", "link id", String.class),
+                        new ObjectDescriptor[] {new ObjectDescriptor("Link id", "link id", String.class),
                                 new ObjectDescriptor("LinkType id", "Link type", String.class),
                                 new ObjectDescriptor("Start node id", "Start node id", String.class),
                                 new ObjectDescriptor("End node id", "End node id", String.class),
@@ -50,7 +50,7 @@ public class LinkTransceiver extends AbstractTransceiver
                                         Integer.class),
                                 new ObjectDescriptor("GTU count", "Total number of GTUs on the link", Integer.class),
                                 new ObjectDescriptor("CrossSectionElement count",
-                                        "Number of cross section elements on the link", Integer.class) }));
+                                        "Number of cross section elements on the link", Integer.class)}));
         this.network = network;
         this.linkIdSource = linkIdSource;
     }
@@ -72,9 +72,9 @@ public class LinkTransceiver extends AbstractTransceiver
             returnWrapper.nack("Network does not contain a link with id " + address[0]);
             return null;
         }
-        return new Object[] { link.getId(), link.getLinkType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
+        return new Object[] {link.getId(), link.getLinkType().getId(), link.getStartNode().getId(), link.getEndNode().getId(),
                 link instanceof OTSLink ? ((OTSLink) link).getDesignLine().size() : 0, link.getGTUCount(),
-                link instanceof CrossSectionLink ? ((CrossSectionLink) link).getCrossSectionElementList().size() : 0 };
+                link instanceof CrossSectionLink ? ((CrossSectionLink) link).getCrossSectionElementList().size() : 0};
     }
 
     /** {@inheritDoc} */

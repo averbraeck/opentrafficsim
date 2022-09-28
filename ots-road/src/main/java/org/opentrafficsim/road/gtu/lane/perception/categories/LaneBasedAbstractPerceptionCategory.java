@@ -16,7 +16,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * Super class for perception categories that use a {@code LaneBasedGTU} and that use lazy evaluation.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 29, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -125,8 +125,12 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
      */
     private Object contextualKey(final Object key, final Object context)
     {
-        Map<Object, Object> map = this.contextualKeyMap.computeIfAbsent(key, (k) -> new LinkedHashMap<>());
-        return map.computeIfAbsent(key, (k) -> new Object());
+        Map<Object, Object> map = this.contextualKeyMap.computeIfAbsent(key, (
+                k
+        ) -> new LinkedHashMap<>());
+        return map.computeIfAbsent(key, (
+                k
+        ) -> new Object());
     }
 
     /**
@@ -179,16 +183,22 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
     private Object contextualKey(final Object key, final Object... context)
     {
         // get layer of highest level, the key level
-        Map<Object, Object> map = this.contextualKeyMap.computeIfAbsent(key, (k) -> new LinkedHashMap<>());
+        Map<Object, Object> map = this.contextualKeyMap.computeIfAbsent(key, (
+                k
+        ) -> new LinkedHashMap<>());
         for (int i = 0; i < context.length; i++)
         {
             if (i == context.length - 1)
             {
                 // deepest layer, i.e. a leaf, we need to return an Object as key
-                return map.computeIfAbsent(key, (k) -> new Object());
+                return map.computeIfAbsent(key, (
+                        k
+                ) -> new Object());
             }
             // intermediate layer, we need to obtain the next layer's map
-            map = (Map<Object, Object>) map.computeIfAbsent(context[i], (k) -> new LinkedHashMap<>());
+            map = (Map<Object, Object>) map.computeIfAbsent(context[i], (
+                    k
+            ) -> new LinkedHashMap<>());
         }
         throw new RuntimeException("Unexpected exception while obtaining contextual key for specific perceived info.");
     }

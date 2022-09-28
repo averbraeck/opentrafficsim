@@ -78,10 +78,9 @@ import nl.tudelft.simulation.language.DSOLException;
  * Tests that GTUs correctly transfer themselves onto the next lane and that the graph samplers handle this situation.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version 30 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version 30 jan. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -134,8 +133,8 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800,
-                    600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 SequentialLanes app = new SequentialLanes("SequentialLanes", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();
@@ -176,8 +175,8 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
 
-        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler
-            .getSamplerData(), path));
+        plot = new SwingTrajectoryPlot(
+                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler.getSamplerData(), path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));
@@ -200,10 +199,9 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$,
-     * initial version 0 jan. 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$, initial version 0 jan. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     static class SequentialModel extends AbstractOTSModel implements UNITS
@@ -302,8 +300,8 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 ArrayList<CrossSectionLink> links = new ArrayList<>();
                 OTSLine3D l01 = new OTSLine3D(n0.getPoint(), n1.getPoint());
                 OTSLine3D l12 = LaneFactory.makeBezier(n0, n1, n2, n3);
-                OTSLine3D l23 = minus ? new OTSLine3D(n3.getPoint(), n2.getPoint()) : new OTSLine3D(n2.getPoint(), n3
-                    .getPoint());
+                OTSLine3D l23 =
+                        minus ? new OTSLine3D(n3.getPoint(), n2.getPoint()) : new OTSLine3D(n2.getPoint(), n3.getPoint());
                 OTSLine3D l34 = LaneFactory.makeBezier(n2, n3, n4, n5);
                 OTSLine3D l45 = new OTSLine3D(n4.getPoint(), n5.getPoint());
                 OTSLine3D[] lines = new OTSLine3D[] {l01, l12, l23, l34, l45};
@@ -317,7 +315,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                     // LongitudinalDirectionality direction = line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS
                     // : LongitudinalDirectionality.DIR_PLUS;
                     Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, line.getPoints(), 1,
-                        laneType, this.speedLimit, this.simulator);
+                            laneType, this.speedLimit, this.simulator);
                     if (i == this.nodes.size() - 1)
                     {
                         new SinkSensor(lanes[0], new Length(100.0, METER), Compatible.EVERYTHING, this.simulator);
@@ -334,10 +332,10 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
                 this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
-                this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(
-                    new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
-                this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(
-                    new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                        new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                        new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
                 // 1500 [veh / hour] == 2.4s headway
                 this.headway = new Duration(3600.0 / 1500.0, SECOND);
@@ -346,7 +344,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 this.simulator.scheduleEventAbsTime(Time.ZERO, this, this, "generateCar", null);
             }
             catch (NamingException | NetworkException | OTSGeometryException | ParameterException | InputParameterException
-                | GTUException exception)
+                    | GTUException exception)
             {
                 exception.printStackTrace();
             }
@@ -384,17 +382,18 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
             {
                 boolean generateTruck = this.stream.nextDouble() > this.carProbability;
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.network.getGtuType(
-                    GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength
-                        .times(0.5), this.simulator, this.network);
+                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
+                        this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
+                        new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
                 gtu.setNoLaneChangeDistance(Length.ZERO);
                 gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
                 gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
 
                 // strategical planner
-                LaneBasedStrategicalPlanner strategicalPlanner = generateTruck ? this.strategicalPlannerGeneratorTrucks.create(
-                    gtu, null, null, null) : this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                        generateTruck ? this.strategicalPlannerGeneratorTrucks.create(gtu, null, null, null)
+                                : this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
 
                 Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(20, METER);

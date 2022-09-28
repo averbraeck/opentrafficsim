@@ -24,10 +24,9 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * (LaneBased)GTU with GTUType CAR can travel over lanes that have a LaneType that has the GTUType CAR in the compatibility set.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Dec 31, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 31, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -215,33 +214,33 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
                 {
                     // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
                     template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(4.19)),
-                        new ConstantGenerator<>(Length.instantiateSI(1.7)), new ConstantGenerator<>(new Speed(180,
-                            SpeedUnit.KM_PER_HOUR)));
+                            new ConstantGenerator<>(Length.instantiateSI(1.7)),
+                            new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
                 }
                 else if (type.equals(network.getGtuType(DEFAULTS.TRUCK)))
                 {
                     // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
                     template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
-                        new ConstantGenerator<>(Length.instantiateSI(2.55)), new ContinuousDistSpeed(new DistNormal(
-                            randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
+                            new ConstantGenerator<>(Length.instantiateSI(2.55)),
+                            new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
                 }
                 else if (type.equals(network.getGtuType(DEFAULTS.BUS)))
                 {
                     template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(12.0)),
-                        new ConstantGenerator<>(Length.instantiateSI(2.55)), new ConstantGenerator<>(new Speed(90,
-                            SpeedUnit.KM_PER_HOUR)));
+                            new ConstantGenerator<>(Length.instantiateSI(2.55)),
+                            new ConstantGenerator<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
                 }
                 else if (type.equals(network.getGtuType(DEFAULTS.VAN)))
                 {
                     template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
-                        new ConstantGenerator<>(Length.instantiateSI(2.4)), new ConstantGenerator<>(new Speed(180,
-                            SpeedUnit.KM_PER_HOUR)));
+                            new ConstantGenerator<>(Length.instantiateSI(2.4)),
+                            new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
                 }
                 else if (type.equals(network.getGtuType(DEFAULTS.EMERGENCY_VEHICLE)))
                 {
                     template = new TemplateGTUType(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
-                        new ConstantGenerator<>(Length.instantiateSI(2.55)), new ConstantGenerator<>(new Speed(180,
-                            SpeedUnit.KM_PER_HOUR)));
+                            new ConstantGenerator<>(Length.instantiateSI(2.55)),
+                            new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
                 }
                 else
                 {

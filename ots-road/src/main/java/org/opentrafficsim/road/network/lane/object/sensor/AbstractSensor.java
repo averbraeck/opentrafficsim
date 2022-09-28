@@ -20,7 +20,7 @@ import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
  * initial version Dec 31, 2014 <br>
@@ -57,8 +57,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator,
-            final OTSLine3D geometry, final Length elevation, final Compatible detectedGTUTypes) throws NetworkException
+            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final OTSLine3D geometry,
+            final Length elevation, final Compatible detectedGTUTypes) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
         Throw.when(simulator == null, NullPointerException.class, "simulator is null");
@@ -67,9 +67,9 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
         this.positionType = positionType;
         this.simulator = simulator;
         this.detectedGTUTypes = detectedGTUTypes;
-        
+
         init();
-        
+
         getLane().addSensor(this); // Implements OTS-218
     }
 
@@ -87,8 +87,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator,
-            final OTSLine3D geometry, final Compatible detectedGTUTypes) throws NetworkException
+            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final OTSLine3D geometry,
+            final Compatible detectedGTUTypes) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, geometry, DEFAULT_SENSOR_ELEVATION, detectedGTUTypes);
     }
@@ -107,8 +107,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator,
-            final Compatible detectedGTUTypes) throws NetworkException
+            final RelativePosition.TYPE positionType, final OTSSimulatorInterface simulator, final Compatible detectedGTUTypes)
+            throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition, 0.9),
                 detectedGTUTypes);
@@ -144,7 +144,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     @Override
     public final void trigger(final LaneBasedGTU gtu)
     {
-        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType },
+        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] {getId(), this, gtu, this.positionType},
                 getSimulator().getSimulatorTime());
         triggerResponse(gtu);
     }
@@ -185,7 +185,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
     @Override
     public boolean equals(final Object obj)
     {

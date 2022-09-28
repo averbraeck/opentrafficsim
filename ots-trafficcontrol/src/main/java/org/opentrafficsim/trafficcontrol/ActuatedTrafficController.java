@@ -5,7 +5,7 @@ import java.awt.Container;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 21 feb. 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -21,7 +21,7 @@ public interface ActuatedTrafficController extends TrafficController
      * @param detectingGTU boolean;
      */
     void updateDetector(String detectorId, boolean detectingGTU);
-    
+
     /**
      * Retrieve the Swing (for now) container in which the controller displays its current state.
      * @return Container; the display of the current state; may return null!

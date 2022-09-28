@@ -17,10 +17,9 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * Test the methods and fields in the GTUType class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version 15 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version 15 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class GTUTypeTest
@@ -52,18 +51,18 @@ public class GTUTypeTest
         StreamInterface randomStream = new MersenneTwister();
         GTUType car = network.getGtuType(DEFAULTS.CAR);
         String message = "Exception while deriving default GTU characteristics";
-        GTUCharacteristics characteristicsCar1 = Try.assign(() -> GTUType.defaultCharacteristics(car, network, randomStream),
-            message);
-        GTUCharacteristics characteristicsCar2 = Try.assign(() -> GTUType.defaultCharacteristics(car, network, randomStream),
-            message);
+        GTUCharacteristics characteristicsCar1 =
+                Try.assign(() -> GTUType.defaultCharacteristics(car, network, randomStream), message);
+        GTUCharacteristics characteristicsCar2 =
+                Try.assign(() -> GTUType.defaultCharacteristics(car, network, randomStream), message);
         GTUType spaceCar = new GTUType("spaceCar", car);
-        GTUCharacteristics characteristicsSpaceCar1 = Try.assign(() -> GTUType.defaultCharacteristics(spaceCar, network,
-            randomStream), message);
-        GTUCharacteristics characteristicsSpaceCar2 = Try.assign(() -> GTUType.defaultCharacteristics(spaceCar, network,
-            randomStream), message);
+        GTUCharacteristics characteristicsSpaceCar1 =
+                Try.assign(() -> GTUType.defaultCharacteristics(spaceCar, network, randomStream), message);
+        GTUCharacteristics characteristicsSpaceCar2 =
+                Try.assign(() -> GTUType.defaultCharacteristics(spaceCar, network, randomStream), message);
         GTUType truck = network.getGtuType(DEFAULTS.TRUCK);
-        GTUCharacteristics characteristicsTruck = Try.assign(() -> GTUType.defaultCharacteristics(truck, network,
-            randomStream), message);
+        GTUCharacteristics characteristicsTruck =
+                Try.assign(() -> GTUType.defaultCharacteristics(truck, network, randomStream), message);
 
         // Note: we can only compare characteristics that we know are not distributed for the used GTU type CAR.
         message = "Default characteristics of DEFAULTS and derived GTUType should be equal.";
@@ -73,7 +72,7 @@ public class GTUTypeTest
         assertEquals(message, characteristicsCar1.getWidth(), characteristicsCar2.getWidth());
         assertEquals(message, characteristicsCar1.getWidth(), characteristicsSpaceCar1.getWidth());
         assertEquals(message, characteristicsCar1.getWidth(), characteristicsSpaceCar2.getWidth());
-        
+
         message = "Default characteristics of distinct DEFAULTS GTUType should not be equal.";
         assertNotEquals(message, characteristicsCar1.getLength(), characteristicsTruck.getLength());
         assertNotEquals(message, characteristicsCar1.getWidth(), characteristicsTruck.getWidth());

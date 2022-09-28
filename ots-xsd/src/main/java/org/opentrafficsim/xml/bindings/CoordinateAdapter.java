@@ -1,6 +1,5 @@
 package org.opentrafficsim.xml.bindings;
 
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.djutils.draw.point.Point3d;
@@ -10,11 +9,11 @@ import org.djutils.logger.CategoryLogger;
 /**
  * CoordinateAdapter converts between the XML String for a coordinate and a Point3d. Because the ots-xsd project is not
  * dependent on ots-core, Point3d is chosen instead of OTSPoint3D to store the (x, y, z) information. The marshal function
- * returns a 2D-coordinate in case the z-value is zero. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * returns a 2D-coordinate in case the z-value is zero.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public class CoordinateAdapter extends XmlAdapter<String, Point3d>

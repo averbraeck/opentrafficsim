@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * Set the default animation toggles for the animation panel.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Dec 11, 2016 <br>
@@ -114,8 +114,8 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
         panel.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines",
-                false, false);
+        panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png",
+                "Show/hide lane center lines", false, false);
         panel.addToggleAnimationButtonIcon("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
         panel.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
                 false);
@@ -154,8 +154,8 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("Lane", Lane.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
         panel.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines",
-                false, false);
+        panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png",
+                "Show/hide lane center lines", false, false);
         panel.addToggleAnimationButtonIcon("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
         panel.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
                 false);

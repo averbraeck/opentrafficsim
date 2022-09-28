@@ -8,7 +8,7 @@ import java.util.Locale;
  * Peter Knoppers' attempt to implement offsetLine.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 1, 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -275,7 +275,7 @@ public final class OTSOffsetLinePK
                                     System.out.println("#Not adding segment, but replacing end of last segment");
                                     tempPoints.remove(tempPoints.size() - 1);
                                     segmentFrom = tempPoints.get(tempPoints.size() - 1);
-                                    tempPoints.remove(tempPoints.size() - 1); 
+                                    tempPoints.remove(tempPoints.size() - 1);
                                 }
                             }
                         }
@@ -374,7 +374,7 @@ public final class OTSOffsetLinePK
         }
         return null;
     }
-    
+
     /**
      * Set or clear the debugging flag.
      * @param newValue boolean; new value for the debugging flag
@@ -383,5 +383,5 @@ public final class OTSOffsetLinePK
     {
         debugOffsetLine = newValue;
     }
-    
+
 }

@@ -17,7 +17,7 @@ import org.sim0mq.Sim0MQException;
  * Transceiver for CrossSectionElement data.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -35,8 +35,8 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
     public CrossSectionElementTransceiver(final OTSNetwork network)
     {
         super("CrossSectionElement transceiver", new MetaData("Cross section element", "Cross section element",
-                new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Link id", String.class),
-                        new ObjectDescriptor("CrossSectionElement rank", "Rank of cross section element", Integer.class) }),
+                new ObjectDescriptor[] {new ObjectDescriptor("Link id", "Link id", String.class),
+                        new ObjectDescriptor("CrossSectionElement rank", "Rank of cross section element", Integer.class)}),
                 new MetaData("Cross section element data", "Cross section element data", new ObjectDescriptor[] {
                         new ObjectDescriptor("CrossSectionElement id", "CrossSectionElement id", String.class),
                         new ObjectDescriptor("Sub type", "cross section element sub type", String.class),
@@ -45,7 +45,7 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
                         new ObjectDescriptor("Begin offset", "Lateral offset at begin", Length.class),
                         new ObjectDescriptor("Begin width", "Width at begin", Length.class),
                         new ObjectDescriptor("End offset", "Lateral offset at end", Length.class),
-                        new ObjectDescriptor("End width", "Width at end", Length.class) }));
+                        new ObjectDescriptor("End width", "Width at end", Length.class)}));
         this.network = network;
     }
 
@@ -81,8 +81,8 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
             return null;
         }
         CrossSectionElement cse = cseList.get(rank);
-        return new Object[] { cse.getId(), cse.getClass().getName(), cse.getLength(), cse.getWidth(0),
-                cse.getDesignLineOffsetAtBegin(), cse.getWidth(1.0), cse.getDesignLineOffsetAtEnd() };
+        return new Object[] {cse.getId(), cse.getClass().getName(), cse.getLength(), cse.getWidth(0),
+                cse.getDesignLineOffsetAtBegin(), cse.getWidth(1.0), cse.getDesignLineOffsetAtEnd()};
     }
 
     /** {@inheritDoc} */

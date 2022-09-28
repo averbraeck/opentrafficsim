@@ -15,7 +15,7 @@ import org.sim0mq.Sim0MQException;
  * Transceiver for the ids of the GTUs on a link.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -34,10 +34,10 @@ public class LinkGTUIdTransceiver extends AbstractTransceiver
     {
         super("Link GTU id transceiver",
                 new MetaData("Link id", "Link id",
-                        new ObjectDescriptor[] { new ObjectDescriptor("Link id", "Link id", String.class) }),
+                        new ObjectDescriptor[] {new ObjectDescriptor("Link id", "Link id", String.class)}),
                 new MetaData("String array with all Link ids", "String array with all Link ids",
-                        new ObjectDescriptor[] { new ObjectDescriptor("String array",
-                                "String array filled with all currently valid Link ids", String[].class) }));
+                        new ObjectDescriptor[] {new ObjectDescriptor("String array",
+                                "String array filled with all currently valid Link ids", String[].class)}));
         Throw.whenNull(network, "Network may not be null");
         this.network = network;
     }

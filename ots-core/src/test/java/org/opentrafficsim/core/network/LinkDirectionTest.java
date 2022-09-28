@@ -14,7 +14,7 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * Test the LinkDirection class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 2, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -34,8 +34,7 @@ public class LinkDirectionTest
     {
         OTSPoint3D fromPoint = new OTSPoint3D(100, 200, 300);
         OTSPoint3D toPoint = new OTSPoint3D(1000, 2000, 330);
-        OTSNetwork network =
-                new OTSNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
+        OTSNetwork network = new OTSNetwork("testNetworkForCapacityOTSLink", true, MockSimulator.createMock());
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = network.getLinkType(LinkType.DEFAULTS.ROAD);

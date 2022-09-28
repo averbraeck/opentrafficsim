@@ -29,7 +29,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * Draw road stripes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
  * initial version Oct 17, 2014 <br>
@@ -226,7 +226,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
      * All rights reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      */
     public enum TYPE
     {
@@ -252,8 +252,8 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<Stripe> clone(final Stripe newSource,
-            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
+    public ClonableRenderable2DInterface<Stripe> clone(final Stripe newSource, final OTSSimulatorInterface newSimulator)
+            throws NamingException, RemoteException
     {
         try
         {

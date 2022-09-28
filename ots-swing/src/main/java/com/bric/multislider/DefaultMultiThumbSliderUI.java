@@ -166,11 +166,13 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
         int k = (int) (10 + this.FOCUS_PADDING + .5);
         if (this.slider.getOrientation() == MultiThumbSlider.HORIZONTAL)
         {
-            return new Rectangle(k, this.slider.getHeight() / 2 - this.DEPTH / 2, this.slider.getWidth() - 2 * k - 1, this.DEPTH);
+            return new Rectangle(k, this.slider.getHeight() / 2 - this.DEPTH / 2, this.slider.getWidth() - 2 * k - 1,
+                    this.DEPTH);
         }
         else
         {
-            return new Rectangle(this.slider.getWidth() / 2 - this.DEPTH / 2, k, this.DEPTH, this.slider.getHeight() - 2 * k - 1);
+            return new Rectangle(this.slider.getWidth() / 2 - this.DEPTH / 2, k, this.DEPTH,
+                    this.slider.getHeight() - 2 * k - 1);
         }
     }
 
@@ -181,10 +183,11 @@ public class DefaultMultiThumbSliderUI<T> extends MultiThumbSliderUI<T>
         int z = 3;
         if (this.slider.getOrientation() == MultiThumbSlider.VERTICAL)
         {
-            return new RoundRectangle2D.Float(this.trackRect.x, this.trackRect.y - z, this.trackRect.width, this.trackRect.height + 2 * z,
-                    k, k);
+            return new RoundRectangle2D.Float(this.trackRect.x, this.trackRect.y - z, this.trackRect.width,
+                    this.trackRect.height + 2 * z, k, k);
         }
-        return new RoundRectangle2D.Float(this.trackRect.x - z, this.trackRect.y, this.trackRect.width + 2 * z, this.trackRect.height, k, k);
+        return new RoundRectangle2D.Float(this.trackRect.x - z, this.trackRect.y, this.trackRect.width + 2 * z,
+                this.trackRect.height, k, k);
     }
 
     @Override

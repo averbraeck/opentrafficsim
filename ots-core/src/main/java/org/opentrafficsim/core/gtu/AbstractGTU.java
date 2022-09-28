@@ -40,7 +40,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * Implements the basic functionalities of any GTU: the ability to move on 3D-space according to a plan.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -315,19 +315,18 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                 double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
                 DirectedPoint p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
-                this.nextMoveEvent = new SimEvent<Duration>(
-                        new Duration(tNext - getSimulator().getStartTimeAbs().si, DurationUnit.SI), this, this,
-                        "move", new Object[] {p});
+                this.nextMoveEvent =
+                        new SimEvent<Duration>(new Duration(tNext - getSimulator().getStartTimeAbs().si, DurationUnit.SI), this,
+                                this, "move", new Object[] {p});
                 ALIGN_COUNT++;
             }
             else
             {
                 // schedule the next move at the end of the current operational plan
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-                this.nextMoveEvent = new SimEvent<>(
-                        now.plus(newOperationalPlan.getTotalDuration())
-                                .minus(getSimulator().getStartTimeAbs()),
-                        this, this, "move", new Object[] {newOperationalPlan.getEndLocation()});
+                this.nextMoveEvent =
+                        new SimEvent<>(now.plus(newOperationalPlan.getTotalDuration()).minus(getSimulator().getStartTimeAbs()),
+                                this, this, "move", new Object[] {newOperationalPlan.getEndLocation()});
             }
             this.simulator.scheduleEvent(this.nextMoveEvent);
             fireTimedEvent(GTU.MOVE_EVENT,

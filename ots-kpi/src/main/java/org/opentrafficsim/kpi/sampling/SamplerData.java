@@ -242,8 +242,8 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
                             {
                                 try
                                 {
-                                    str.append(extendedDataType.formatValue(format, castValue(extendedData, extendedDataType,
-                                        i)));
+                                    str.append(
+                                            extendedDataType.formatValue(format, castValue(extendedData, extendedDataType, i)));
                                 }
                                 catch (SamplingException exception)
                                 {
@@ -303,8 +303,8 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
      * @param <S> storage type
      */
     @SuppressWarnings("unchecked")
-    private <T, O, S> T castValue(final Map<ExtendedDataType<?, ?, ?, ?>, Object> extendedData, final ExtendedDataType<?, ?, ?,
-            ?> extendedDataType, final int i) throws SamplingException
+    private <T, O, S> T castValue(final Map<ExtendedDataType<?, ?, ?, ?>, Object> extendedData,
+            final ExtendedDataType<?, ?, ?, ?> extendedDataType, final int i) throws SamplingException
     {
         // is only called on value directly taken from an ExtendedDataType within range of trajectory
         ExtendedDataType<T, O, S, ?> edt = (ExtendedDataType<T, O, S, ?>) extendedDataType;
@@ -316,7 +316,7 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mei 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -369,43 +369,22 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
             final Set<FilterDataType<?>> metaDataTypes)
     {
         /*
-        @SuppressWarnings("rawtypes")
-        SamplerData samplerData = new SamplerData();
-
-        // "traj#,linkId,laneId&dir,gtuId,t,x,v,a" meta data types, extended data types
-
-        // we can use the default meta data types: cross section, destination, origin, route and GTU type
-
-        Getter<NodeData> nodes = new Getter<NodeData>((id) -> new NodeData(id));
-        Getter<GtuTypeData> gtuTypes = new Getter<GtuTypeData>((id) -> new GtuTypeData(id));
-        Getter<RouteData> routes = new Getter<RouteData>((id) -> new RouteData(id));
-        Getter<LinkData> links = new Getter<LinkData>((id) -> new LinkData(id));
-        BiGetter<LinkData, LaneData> lanes = new BiGetter<LinkData, LaneData>((id, link) -> new LaneData(id, link));
-        BiGetter<LaneData, KpiLaneDirection> laneDirections = new BiGetter<LaneData, KpiLaneDirection>((dir,
-                lane) -> new KpiLaneDirection(lane, dir.equals("+") ? KpiGtuDirectionality.DIR_PLUS
-                        : KpiGtuDirectionality.DIR_MINUS));
-        @SuppressWarnings("rawtypes")
-        Function<KpiLaneDirection, TrajectoryGroup> groupFunction = (laneDir) -> new TrajectoryGroup(Time.ZERO, laneDir);
-
-        String id = null;
-        if (!gtus.containsKey(id))
-        {
-            // NOTE: USE SEPARATE IDS HERE
-            gtus.put(id, new GtuData(id, nodeSupplier.apply(id), nodeSupplier.apply(id), gtuTypeSupplier.apply(id),
-                routeSupplier.apply(id)));
-        }
-        GtuData gtuData = gtus.get(id);
-
-        Trajectory<?> trajectory = new Trajectory(gtuData, metaData, extendedDataTypes, kpiLaneDirection);
-
-        // TODO: set data from outside
-        trajectory.add(position, speed, acceleration, time, gtu);
-
-        KpiLaneDirection laneDir = null;
-        ((TrajectoryGroup) samplerData.trajectories.computeIfAbsent(laneDir, groupFunction)).addTrajectory(trajectory);
-
-        return samplerData;
-        */
+         * @SuppressWarnings("rawtypes") SamplerData samplerData = new SamplerData(); // "traj#,linkId,laneId&dir,gtuId,t,x,v,a"
+         * meta data types, extended data types // we can use the default meta data types: cross section, destination, origin,
+         * route and GTU type Getter<NodeData> nodes = new Getter<NodeData>((id) -> new NodeData(id)); Getter<GtuTypeData>
+         * gtuTypes = new Getter<GtuTypeData>((id) -> new GtuTypeData(id)); Getter<RouteData> routes = new
+         * Getter<RouteData>((id) -> new RouteData(id)); Getter<LinkData> links = new Getter<LinkData>((id) -> new
+         * LinkData(id)); BiGetter<LinkData, LaneData> lanes = new BiGetter<LinkData, LaneData>((id, link) -> new LaneData(id,
+         * link)); BiGetter<LaneData, KpiLaneDirection> laneDirections = new BiGetter<LaneData, KpiLaneDirection>((dir, lane) ->
+         * new KpiLaneDirection(lane, dir.equals("+") ? KpiGtuDirectionality.DIR_PLUS : KpiGtuDirectionality.DIR_MINUS));
+         * @SuppressWarnings("rawtypes") Function<KpiLaneDirection, TrajectoryGroup> groupFunction = (laneDir) -> new
+         * TrajectoryGroup(Time.ZERO, laneDir); String id = null; if (!gtus.containsKey(id)) { // NOTE: USE SEPARATE IDS HERE
+         * gtus.put(id, new GtuData(id, nodeSupplier.apply(id), nodeSupplier.apply(id), gtuTypeSupplier.apply(id),
+         * routeSupplier.apply(id))); } GtuData gtuData = gtus.get(id); Trajectory<?> trajectory = new Trajectory(gtuData,
+         * metaData, extendedDataTypes, kpiLaneDirection); // TODO: set data from outside trajectory.add(position, speed,
+         * acceleration, time, gtu); KpiLaneDirection laneDir = null; ((TrajectoryGroup)
+         * samplerData.trajectories.computeIfAbsent(laneDir, groupFunction)).addTrajectory(trajectory); return samplerData;
+         */
         return null;
     }
 
@@ -441,8 +420,8 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
 
         return new Iterator<Record>()
         {
-            private Iterator<Trajectory<G>> trajectoryIterator = laneIterator.hasNext() ? SamplerData.this.trajectories.get(
-                laneIterator.next()).iterator() : null;
+            private Iterator<Trajectory<G>> trajectoryIterator =
+                    laneIterator.hasNext() ? SamplerData.this.trajectories.get(laneIterator.next()).iterator() : null;
 
             private Trajectory<G> trajectory = this.trajectoryIterator != null && this.trajectoryIterator.hasNext()
                     ? this.trajectoryIterator.next() : null;

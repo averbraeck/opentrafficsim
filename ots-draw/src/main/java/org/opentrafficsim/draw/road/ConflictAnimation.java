@@ -22,7 +22,7 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictType;
  * Animate a conflict.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 7 dec. 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -53,11 +53,11 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         Conflict conflict = this.getSource();
-//        if ((!conflict.getLane().toString().equals("Lane FORWARD1 of 6077_J8854"))
-//                && (!conflict.getOtherConflict().getLane().toString().equals("Lane FORWARD1 of 6077_J8854")))
-//        {
-//            return;
-//        }
+        // if ((!conflict.getLane().toString().equals("Lane FORWARD1 of 6077_J8854"))
+        // && (!conflict.getOtherConflict().getLane().toString().equals("Lane FORWARD1 of 6077_J8854")))
+        // {
+        // return;
+        // }
         Color fillColor;
         switch (conflict.conflictPriority())
         {
@@ -89,12 +89,12 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
         if (conflict.getConflictType().equals(ConflictType.CROSSING))
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-                    new float[] { factor * 1.0f, factor * 2.0f }, 0.0f);
+                    new float[] {factor * 1.0f, factor * 2.0f}, 0.0f);
         }
         else
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
-                    new float[] { factor * 1.0f, factor * 0.95f, factor * 0.1f, factor * 0.95f }, 0.0f);
+                    new float[] {factor * 1.0f, factor * 0.95f, factor * 0.1f, factor * 0.95f}, 0.0f);
         }
         graphics.setStroke(stroke);
         AffineTransform saveAT = graphics.getTransform();

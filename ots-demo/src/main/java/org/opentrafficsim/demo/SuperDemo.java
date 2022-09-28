@@ -33,11 +33,11 @@ import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 /**
- * SuperDemo.java. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * SuperDemo.java.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public class SuperDemo extends JFrame
@@ -80,12 +80,12 @@ public class SuperDemo extends JFrame
                 "Creating fundamental diagrams for a straight road.\n"));
         this.demos.add(new Demo("ShortMerge", ShortMerge.class, "Short merge on a highway, followed by a destination split,\n"
                 + "forcing cars to change lanes in a relative short distance."));
-        this.demos.add(new Demo("TJunction", TJunctionDemo.class, "Complex crossing traffic on a T-junction with\n"
-                + "automated conflict resolution."));
-        this.demos.add(new Demo("TurboRoundabout", TurboRoundaboutDemo.class, "Turbo Roundabout without traffic lights,\n"
-                + "conflict resolution is fully automated."));
-        this.demos.add(new Demo("BusStreet", BusStreetDemo.class, "Interaction between bus traffic and normal road traffic,\n"
-                + "several types of bus stops and busses."));
+        this.demos.add(new Demo("TJunction", TJunctionDemo.class,
+                "Complex crossing traffic on a T-junction with\n" + "automated conflict resolution."));
+        this.demos.add(new Demo("TurboRoundabout", TurboRoundaboutDemo.class,
+                "Turbo Roundabout without traffic lights,\n" + "conflict resolution is fully automated."));
+        this.demos.add(new Demo("BusStreet", BusStreetDemo.class,
+                "Interaction between bus traffic and normal road traffic,\n" + "several types of bus stops and busses."));
         this.demos.add(new Demo("Networks", NetworksSwing.class,
                 "A number of different networks with merging and splitting,\n" + "forcing cars to change lanes and to merge."));
         this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,

@@ -56,7 +56,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * Test the methods that the classes that implement GTUFollowingModel have in common.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
  * initial version 27 feb. 2015 <br>
@@ -118,8 +118,8 @@ public class GTUFollowingModelTest implements UNITS
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         Parameters parameters = DefaultTestParameters.create();
         maxHeadway = parameters.getParameter(ParameterTypes.LOOKAHEAD);
-        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("12345", carType, length, width, maxSpeed,
-                length.times(0.5), simulator, network);
+        LaneBasedIndividualGTU gtu =
+                new LaneBasedIndividualGTU("12345", carType, length, width, maxSpeed, length.times(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
         gtu.setParameters(parameters);
@@ -167,8 +167,8 @@ public class GTUFollowingModelTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions50 = new LinkedHashSet<>(1);
         initialLongitudinalPositions50
                 .add(new DirectedLanePosition(lane, initialPosition.plus(headway50m), GTUDirectionality.DIR_PLUS));
-        LaneBasedIndividualGTU gtu50m = new LaneBasedIndividualGTU("100050", carType, length, width, maxSpeed,
-                length.times(0.5), simulator, network);
+        LaneBasedIndividualGTU gtu50m =
+                new LaneBasedIndividualGTU("100050", carType, length, width, maxSpeed, length.times(0.5), simulator, network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu50m), gtu50m);
         gtu50m.setParameters(parameters);
@@ -198,8 +198,8 @@ public class GTUFollowingModelTest implements UNITS
         Map<Lane, Length> initialLongitudinalPositions100 = new LinkedHashMap<>();
         Length headway100m = new Length(100, METER);
         initialLongitudinalPositions100.put(lane, initialPosition.plus(headway100m));
-        LaneBasedIndividualGTU gtu100m = new LaneBasedIndividualGTU("100100", carType, length, width, maxSpeed,
-                length.times(0.5), simulator, network);
+        LaneBasedIndividualGTU gtu100m =
+                new LaneBasedIndividualGTU("100100", carType, length, width, maxSpeed, length.times(0.5), simulator, network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu100m), gtu100m);
         gtu100m.setParameters(parameters);
@@ -259,8 +259,8 @@ public class GTUFollowingModelTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositionsMinus75 = new LinkedHashSet<>(1);
         initialLongitudinalPositionsMinus75
                 .add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus75m), GTUDirectionality.DIR_PLUS));
-        LaneBasedIndividualGTU gtuMinus75m = new LaneBasedIndividualGTU("100075", carType, length, width, maxSpeed,
-                length.times(0.5), simulator, network);
+        LaneBasedIndividualGTU gtuMinus75m =
+                new LaneBasedIndividualGTU("100075", carType, length, width, maxSpeed, length.times(0.5), simulator, network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtuMinus75m), gtuMinus75m);
         gtuMinus75m.setParameters(parameters);
@@ -281,8 +281,8 @@ public class GTUFollowingModelTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositionsMinus200 = new LinkedHashSet<>(1);
         initialLongitudinalPositionsMinus200
                 .add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus200m), GTUDirectionality.DIR_PLUS));
-        LaneBasedIndividualGTU gtuMinus200m = new LaneBasedIndividualGTU("100200", carType, length, width, maxSpeed,
-                length.times(0.5), simulator, network);
+        LaneBasedIndividualGTU gtuMinus200m =
+                new LaneBasedIndividualGTU("100200", carType, length, width, maxSpeed, length.times(0.5), simulator, network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtuMinus200m), gtuMinus200m);
         gtuMinus200m.setParameters(parameters);

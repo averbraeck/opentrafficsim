@@ -13,7 +13,7 @@ import org.sim0mq.Sim0MQException;
  * Common code for id transceivers that use an empty address.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -32,8 +32,8 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
     public AbstractIdTransceiver(final OTSNetwork network, final String id)
     {
         super(id, new MetaData("No address", "empty address", new ObjectDescriptor[0]),
-                new MetaData("No address", "empty address", new ObjectDescriptor[] { new ObjectDescriptor("String array",
-                        "String array filled with all currently valid GTU ids", String[].class) }));
+                new MetaData("No address", "empty address", new ObjectDescriptor[] {new ObjectDescriptor("String array",
+                        "String array filled with all currently valid GTU ids", String[].class)}));
         Throw.whenNull(network, "Network may not be null");
         this.network = network;
     }

@@ -35,7 +35,7 @@ import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
  * positions and boundaries.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Sep 21, 2016 <br>
@@ -479,7 +479,7 @@ public final class Trajectory<G extends GtuDataInterface>
     public <O, S> O getExtendedData(final ExtendedDataType<?, O, S, ?> extendedDataType) throws SamplingException
     {
         Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
-            "Extended data type %s is not in the trajectory.", extendedDataType);
+                "Extended data type %s is not in the trajectory.", extendedDataType);
         return extendedDataType.convert((S) this.extendedData.get(extendedDataType), this.size);
     }
 
@@ -555,7 +555,7 @@ public final class Trajectory<G extends GtuDataInterface>
         Length length0 = this.kpiLaneDirection.getPositionInDirection(startPosition);
         Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
         Throw.when(length0.gt(length1), IllegalArgumentException.class,
-            "Start position should be smaller than end position in the direction of travel");
+                "Start position should be smaller than end position in the direction of travel");
         if (this.size == 0)
         {
             return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
@@ -601,7 +601,7 @@ public final class Trajectory<G extends GtuDataInterface>
         Length length0 = this.kpiLaneDirection.getPositionInDirection(startPosition);
         Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
         Throw.when(length0.gt(length1), IllegalArgumentException.class,
-            "Start position should be smaller than end position in the direction of travel");
+                "Start position should be smaller than end position in the direction of travel");
         Throw.whenNull(startTime, "Start time may not be null");
         Throw.whenNull(endTime, "End time may not be null");
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
@@ -821,9 +821,10 @@ public final class Trajectory<G extends GtuDataInterface>
                 {
                     if (nBefore == 1)
                     {
-                        toList = edt.setValue(toList, j, ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(edt
-                            .getStorageValue(fromList, bounds.from), edt.getStorageValue(fromList, bounds.from + 1),
-                            bounds.fFrom));
+                        toList = edt.setValue(toList, j,
+                                ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
+                                        edt.getStorageValue(fromList, bounds.from),
+                                        edt.getStorageValue(fromList, bounds.from + 1), bounds.fFrom));
                         j++;
                     }
                     for (int i = bounds.from + 1; i <= bounds.to; i++)
@@ -833,8 +834,10 @@ public final class Trajectory<G extends GtuDataInterface>
                     }
                     if (nAfter == 1)
                     {
-                        toList = edt.setValue(toList, j, ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(edt
-                            .getStorageValue(fromList, bounds.to), edt.getStorageValue(fromList, bounds.to + 1), bounds.fTo));
+                        toList = edt.setValue(toList, j,
+                                ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
+                                        edt.getStorageValue(fromList, bounds.to), edt.getStorageValue(fromList, bounds.to + 1),
+                                        bounds.fTo));
                     }
                 }
                 catch (SamplingException se)
@@ -912,7 +915,7 @@ public final class Trajectory<G extends GtuDataInterface>
         if (this.size > 0)
         {
             return "Trajectory [size=" + this.size + ", x={" + this.x[0] + "..." + this.x[this.size - 1] + "}, t={" + this.t[0]
-                + "..." + this.t[this.size - 1] + "}, metaData=" + this.metaData + ", gtuId=" + this.gtuId + "]";
+                    + "..." + this.t[this.size - 1] + "}, metaData=" + this.metaData + ", gtuId=" + this.gtuId + "]";
         }
         return "Trajectory [size=" + this.size + ", x={}, t={}, metaData=" + this.metaData + ", gtuId=" + this.gtuId + "]";
     }
@@ -921,7 +924,7 @@ public final class Trajectory<G extends GtuDataInterface>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -978,7 +981,7 @@ public final class Trajectory<G extends GtuDataInterface>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 okt. 2016 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -1012,15 +1015,15 @@ public final class Trajectory<G extends GtuDataInterface>
         Boundaries(final int from, final double fFrom, final int to, final double fTo)
         {
             Throw.when(from < 0 || from > Trajectory.this.size() - 1, IllegalArgumentException.class,
-                "Argument from (%d) is out of bounds.", from);
+                    "Argument from (%d) is out of bounds.", from);
             Throw.when(fFrom < 0 || fFrom > 1, IllegalArgumentException.class, "Argument fFrom (%f) is out of bounds.", fFrom);
             Throw.when(from == Trajectory.this.size() && fFrom > 0, IllegalArgumentException.class,
-                "Arguments from (%d) and fFrom (%f) are out of bounds.", from, fFrom);
+                    "Arguments from (%d) and fFrom (%f) are out of bounds.", from, fFrom);
             Throw.when(to < 0 || to >= Trajectory.this.size(), IllegalArgumentException.class,
-                "Argument to (%d) is out of bounds.", to);
+                    "Argument to (%d) is out of bounds.", to);
             Throw.when(fTo < 0 || fTo > 1, IllegalArgumentException.class, "Argument fTo (%f) is out of bounds.", fTo);
             Throw.when(to == Trajectory.this.size() && fTo > 0, IllegalArgumentException.class,
-                "Arguments to (%d) and fTo (%f) are out of bounds.", to, fTo);
+                    "Arguments to (%d) and fTo (%f) are out of bounds.", to, fTo);
             this.from = from;
             this.fFrom = fFrom;
             this.to = to;
@@ -1033,8 +1036,9 @@ public final class Trajectory<G extends GtuDataInterface>
          */
         public Boundaries intersect(final Boundaries boundaries)
         {
-            if (this.to < boundaries.from || boundaries.to < this.from || this.to == boundaries.from
-                && this.fTo < boundaries.fFrom || boundaries.to == this.from && boundaries.fTo < this.fFrom)
+            if (this.to < boundaries.from || boundaries.to < this.from
+                    || this.to == boundaries.from && this.fTo < boundaries.fFrom
+                    || boundaries.to == this.from && boundaries.fTo < this.fFrom)
             {
                 return new Boundaries(0, 0.0, 0, 0.0); // no overlap
             }
@@ -1079,7 +1083,7 @@ public final class Trajectory<G extends GtuDataInterface>
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 5 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

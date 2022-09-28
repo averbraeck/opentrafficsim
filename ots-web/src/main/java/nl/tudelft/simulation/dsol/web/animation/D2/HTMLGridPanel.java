@@ -594,7 +594,8 @@ public class HTMLGridPanel implements ImageObserver
 
     /** {@inheritDoc} */
     @Override
-    public boolean imageUpdate(final Image img, final int infoflags, final int x, final int y, final int width, final int height)
+    public boolean imageUpdate(final Image img, final int infoflags, final int x, final int y, final int width,
+            final int height)
     {
         return false;
     }

@@ -12,7 +12,7 @@ import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
  * Extended data type for length values.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 21 mrt. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -53,7 +53,7 @@ public abstract class ExtendedDataTypeLength<G extends GtuDataInterface>
     {
         return FloatLength.interpolate(value0, value1, (float) f);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public FloatLength parseValue(final String string)

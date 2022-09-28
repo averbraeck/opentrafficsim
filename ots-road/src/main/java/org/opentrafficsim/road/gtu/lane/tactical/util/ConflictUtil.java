@@ -54,7 +54,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * This class implements default behavior for intersection conflicts for use in tactical planners.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 3, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -116,9 +116,9 @@ public final class ConflictUtil
 
     /**
      * Approach conflicts by applying appropriate acceleration (or deceleration). The model may yield for a vehicle even while
-     * having priority. Such a 'yield plan' is remembered in <code>YieldPlans</code>. By forwarding the same <code>YieldPlans</code> for
-     * a GTU consistency of such plans is provided. If any conflict is not accepted to pass, stopping before a more upstream
-     * conflict is applied if there not sufficient stopping length in between conflicts.
+     * having priority. Such a 'yield plan' is remembered in <code>YieldPlans</code>. By forwarding the same
+     * <code>YieldPlans</code> for a GTU consistency of such plans is provided. If any conflict is not accepted to pass,
+     * stopping before a more upstream conflict is applied if there not sufficient stopping length in between conflicts.
      * @param parameters Parameters; parameters
      * @param conflicts PerceptionCollectable&lt;HeadwayConflict,Conflict&gt;; set of conflicts to approach
      * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leading vehicles
@@ -645,7 +645,7 @@ public final class ConflictUtil
      * @return whether to stop for this conflict
      * @throws ParameterException if a parameter is not defined
      */
-    @SuppressWarnings({ "checkstyle:parameternumber", "checkstyle:methodlength" })
+    @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
     public static boolean stopForGiveWayConflict(final HeadwayConflict conflict,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Acceleration acceleration,
             final Length vehicleLength, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
@@ -983,7 +983,7 @@ public final class ConflictUtil
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 7, 2016 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -1163,7 +1163,7 @@ public final class ConflictUtil
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 30, 2016 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

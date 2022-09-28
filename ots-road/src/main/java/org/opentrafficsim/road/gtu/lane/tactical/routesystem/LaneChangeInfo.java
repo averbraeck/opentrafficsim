@@ -8,7 +8,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * Lane change info.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 7 nov. 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -17,19 +17,19 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  */
 public class LaneChangeInfo implements Comparable<LaneChangeInfo>
 {
-    
+
     /** Required number of lane changes. */
     private final int n;
-    
+
     /** Remaining distance. */
     private final Length remainingDistance;
-    
+
     /** Whether the need to change lane comes from a dead-end. */
     private final boolean deadEnd;
 
     /** Lateral directionality of required lane changes. */
     private final LateralDirectionality lat;
-    
+
     /**
      * Constructor.
      * @param n int; required number of lane changes
@@ -55,7 +55,7 @@ public class LaneChangeInfo implements Comparable<LaneChangeInfo>
     {
         return this.n;
     }
-    
+
     /**
      * Return the remaining distance.
      * @return Length; remaining distance
@@ -64,7 +64,7 @@ public class LaneChangeInfo implements Comparable<LaneChangeInfo>
     {
         return this.remainingDistance;
     }
-    
+
     /**
      * Returns whether the need to change lane comes from a dead-end.
      * @return boolean; whether the need to change lane comes from a dead-end
@@ -73,7 +73,7 @@ public class LaneChangeInfo implements Comparable<LaneChangeInfo>
     {
         return this.deadEnd;
     }
-    
+
     /**
      * Returns the lateral directionality of the required lane changes.
      * @return LateralDirectionality; lateral directionality of the required lane changes
@@ -97,5 +97,5 @@ public class LaneChangeInfo implements Comparable<LaneChangeInfo>
         }
         return this.remainingDistance.compareTo(o.remainingDistance);
     }
-    
+
 }

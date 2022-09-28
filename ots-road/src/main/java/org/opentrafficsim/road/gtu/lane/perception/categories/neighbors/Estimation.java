@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalA
  * Estimation of neighbor headway, speed and acceleration.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 apr. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -128,7 +128,7 @@ public interface Estimation
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 31 jan. 2019 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -157,8 +157,8 @@ public interface Estimation
             double factor = 1.0 + this.sign * (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
                     - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
             Length headway = getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when).times(factor);
-            Speed speed = getEgoSpeed(perceivingGtu)
-                    .plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when).times(factor));
+            Speed speed =
+                    getEgoSpeed(perceivingGtu).plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when).times(factor));
             Acceleration acceleration = perceivedGtu.getAcceleration(when);
             return new NeighborTriplet(headway, speed, acceleration);
         }

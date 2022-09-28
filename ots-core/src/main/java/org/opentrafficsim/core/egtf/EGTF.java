@@ -63,7 +63,7 @@ import java.util.stream.IntStream;
  * </ul>
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 okt. 2018 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -173,7 +173,9 @@ public class EGTF
             throw new IllegalStateException(
                     "Obtaining a (new) data source after data has been added without a data source is not allowed.");
         }
-        return this.dataSources.computeIfAbsent(name, (key) -> new DataSource(key));
+        return this.dataSources.computeIfAbsent(name, (
+                key
+        ) -> new DataSource(key));
     }
 
     /**
@@ -357,8 +359,9 @@ public class EGTF
             this.defaultDataSource = new DataSource("default");
             this.defaultDataStreams = new LinkedHashMap<>();
         }
-        return this.defaultDataStreams.computeIfAbsent(quantity,
-                (key) -> this.defaultDataSource.addStreamSI(quantity, 1.0, 1.0));
+        return this.defaultDataStreams.computeIfAbsent(quantity, (
+                key
+        ) -> this.defaultDataSource.addStreamSI(quantity, 1.0, 1.0));
     }
 
     /**
@@ -368,7 +371,9 @@ public class EGTF
      */
     private SortedMap<Double, Map<DataStream<?>, Double>> getSpatialData(final double location)
     {
-        return this.data.computeIfAbsent(location, (key) -> new TreeMap<>());
+        return this.data.computeIfAbsent(location, (
+                key
+        ) -> new TreeMap<>());
     }
 
     /**
@@ -381,7 +386,9 @@ public class EGTF
     private Map<DataStream<?>, Double> getSpacioTemporalData(final Map<Double, Map<DataStream<?>, Double>> spatialData,
             final double time)
     {
-        return spatialData.computeIfAbsent(time, (key) -> new LinkedHashMap<>());
+        return spatialData.computeIfAbsent(time, (
+                key
+        ) -> new LinkedHashMap<>());
     }
 
     // **********************
@@ -597,8 +604,9 @@ public class EGTF
                             if (map.containsKey(stream.getQuantity()) || stream.getQuantity().isSpeed())
                             {
                                 double v = vEntry.getValue();
-                                DualWeightedMean zCongFreeOfStream =
-                                        zCongFree.computeIfAbsent(stream, (key) -> new DualWeightedMean());
+                                DualWeightedMean zCongFreeOfStream = zCongFree.computeIfAbsent(stream, (
+                                        key
+                                ) -> new DualWeightedMean());
                                 zCongFreeOfStream.addCong(v, phiCong);
                                 zCongFreeOfStream.addFree(v, phiFree);
                             }
@@ -786,10 +794,12 @@ public class EGTF
                         {
                             if (map.containsKey(timeEntry.getKey().getQuantity()) || timeEntry.getKey().getQuantity().isSpeed())
                             {
-                                dataSum.computeIfAbsent(timeEntry.getKey(),
-                                        (key) -> new double[location.length][time.length])[i][j] += timeEntry.getValue();
-                                dataCount.computeIfAbsent(timeEntry.getKey(),
-                                        (key) -> new double[location.length][time.length])[i][j]++;
+                                dataSum.computeIfAbsent(timeEntry.getKey(), (
+                                        key
+                                ) -> new double[location.length][time.length])[i][j] += timeEntry.getValue();
+                                dataCount.computeIfAbsent(timeEntry.getKey(), (
+                                        key
+                                ) -> new double[location.length][time.length])[i][j]++;
                             }
                         }
                     }

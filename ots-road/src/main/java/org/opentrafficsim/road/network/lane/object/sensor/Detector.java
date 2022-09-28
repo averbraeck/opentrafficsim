@@ -39,7 +39,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * Detector, measuring a dynamic set of measurements.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 5 mrt. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -55,7 +55,7 @@ public class Detector extends AbstractSensor
     /** Trigger event. Payload: [Id of LaneBasedGTU]. */
     public static final TimedEventType DETECTOR_TRIGGERED = new TimedEventType("DUAL_LOOP_DETECTOR.TRIGGER",
             new MetaData("Dual loop detector triggered", "Dual loop detector triggered",
-                    new ObjectDescriptor[] { new ObjectDescriptor("Id of GTU", "Id of GTU", String.class) }));
+                    new ObjectDescriptor[] {new ObjectDescriptor("Id of GTU", "Id of GTU", String.class)}));
 
     /** Aggregation event. Payload: [Frequency, measurement, ...]/ */
     public static final TimedEventType DETECTOR_AGGREGATE =
@@ -316,8 +316,8 @@ public class Detector extends AbstractSensor
      * @param simulator OTSSimulatorInterface; simulator
      * @throws NetworkException on network exception
      */
-    public Detector(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSSimulatorInterface simulator) throws NetworkException
+    public Detector(final String id, final Lane lane, final Length longitudinalPosition, final OTSSimulatorInterface simulator)
+            throws NetworkException
     {
         // Note: length not important for flow and mean speed
         this(id, lane, longitudinalPosition, Length.ZERO, simulator, Duration.instantiateSI(60.0), MEAN_SPEED);
@@ -335,14 +335,15 @@ public class Detector extends AbstractSensor
      * @throws NetworkException on network exception
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
-            final OTSSimulatorInterface simulator, final Duration aggregation,
-            final DetectorMeasurement<?, ?>... measurements) throws NetworkException
+            final OTSSimulatorInterface simulator, final Duration aggregation, final DetectorMeasurement<?, ?>... measurements)
+            throws NetworkException
     {
         super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, compatible);
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.aggregation = aggregation;
-        Try.execute(() -> simulator.scheduleEventAbsTime(Time.instantiateSI(aggregation.si), this, this, "aggregate", null), "");
+        Try.execute(() -> simulator.scheduleEventAbsTime(Time.instantiateSI(aggregation.si), this, this, "aggregate", null),
+                "");
         for (DetectorMeasurement<?, ?> measurement : measurements)
         {
             this.cumulDataMap.put(measurement, measurement.identity());
@@ -418,7 +419,7 @@ public class Detector extends AbstractSensor
         {
             accumulate(measurement, gtu, true);
         }
-        this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] { gtu.getId() }, getSimulator().getSimulatorTime());
+        this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] {gtu.getId()}, getSimulator().getSimulatorTime());
     }
 
     /**
@@ -725,7 +726,7 @@ public class Detector extends AbstractSensor
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mei 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -746,7 +747,7 @@ public class Detector extends AbstractSensor
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 mrt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -818,7 +819,7 @@ public class Detector extends AbstractSensor
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 mrt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -936,7 +937,7 @@ public class Detector extends AbstractSensor
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 mrt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

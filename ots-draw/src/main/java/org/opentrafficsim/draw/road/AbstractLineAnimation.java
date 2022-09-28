@@ -17,7 +17,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
  * Abstract class for objects that draw a line perpendicular on the lane.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 25 jan. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -43,8 +43,8 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends R
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public AbstractLineAnimation(final T source, final OTSSimulatorInterface simulator, final double length,
-            final Length width) throws NamingException, RemoteException
+    public AbstractLineAnimation(final T source, final OTSSimulatorInterface simulator, final double length, final Length width)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.halfLength = .5 * length * source.getLane().getWidth(0.0).getSI();

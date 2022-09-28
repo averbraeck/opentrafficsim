@@ -24,7 +24,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
  * Test the OperationalPlan and OperationalPlanBuilder classes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 15, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -227,10 +227,10 @@ public class OperationalPlanTest
     {
         OTSLine3D path = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0));
         Time startTime = Time.valueOf("100 s");
-        for (double startSpeedDouble : new double[] { 0, 10, 20, 30 })
+        for (double startSpeedDouble : new double[] {0, 10, 20, 30})
         {
             Speed startSpeed = Speed.instantiateSI(startSpeedDouble);
-            for (double endSpeedDouble : new double[] { 0, 10, 20, 30 })
+            for (double endSpeedDouble : new double[] {0, 10, 20, 30})
             {
                 Speed endSpeed = Speed.instantiateSI(endSpeedDouble);
                 if (startSpeedDouble == 0 && endSpeedDouble == 0)
@@ -320,7 +320,7 @@ public class OperationalPlanTest
                 Speed.instantiateSI(10), Acceleration.ONE, Acceleration.ONE.neg());
         assertEquals("deceleration is limited", Acceleration.ONE.neg(), op.getAcceleration(startTime));
     }
-    
+
     /**
      * Test the stop plan builder.
      * @throws OperationalPlanException when that happens uncaught; this test has failed
@@ -332,7 +332,7 @@ public class OperationalPlanTest
         OTSLine3D path = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0));
         Time startTime = Time.valueOf("100 s");
         Acceleration deceleration = Acceleration.instantiateSI(-4);
-        for (double startSpeedDouble : new double[] { 10, 20, 30 })
+        for (double startSpeedDouble : new double[] {10, 20, 30})
         {
             Speed startSpeed = Speed.instantiateSI(startSpeedDouble);
             OperationalPlan sp = OperationalPlanBuilder.buildStopPlan(null, path, startTime, startSpeed, deceleration);
@@ -343,7 +343,7 @@ public class OperationalPlanTest
             assertTrue("length of path was reduced", reducedPath.getLengthSI() < path.getLengthSI());
         }
         Speed startSpeed = Speed.instantiateSI(100);
-        path = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 0, 0));        
+        path = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(100, 0, 0));
         OperationalPlan sp = OperationalPlanBuilder.buildStopPlan(null, path, startTime, startSpeed, deceleration);
         assertEquals("entire path is returned", path, sp.getPath());
         assertTrue("speed at end is larger than zero", sp.getEndSpeed().si > 0);

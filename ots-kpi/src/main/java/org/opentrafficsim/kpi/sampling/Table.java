@@ -15,7 +15,7 @@ import org.opentrafficsim.base.Identifiable;
  */
 public interface Table extends Iterable<Record>, Identifiable
 {
-    
+
     /**
      * Returns the description.
      * @return description

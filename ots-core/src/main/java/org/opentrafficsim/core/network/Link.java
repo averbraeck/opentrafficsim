@@ -21,10 +21,9 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * Link as a connection between two Nodes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version Aug 19, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version Aug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -97,7 +96,7 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
 
     @Override
     Bounds getBounds();
-    
+
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the link. <br>
      * Payload: Object[] {String gtuId, int count_after_addition}
@@ -105,7 +104,7 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
     TimedEventType GTU_ADD_EVENT = new TimedEventType("LINK.GTU.ADD",
             new MetaData("GTU entered link", "GTU added to link", new ObjectDescriptor[] {
                     new ObjectDescriptor("GTU id", "GTU id", String.class),
-                    new ObjectDescriptor("Number of GTUs in link", "Resulting number of GTUs in link", Integer.class) }));
+                    new ObjectDescriptor("Number of GTUs in link", "Resulting number of GTUs in link", Integer.class)}));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the link. <br>
@@ -114,6 +113,6 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
     TimedEventType GTU_REMOVE_EVENT = new TimedEventType("LINK.GTU.REMOVE",
             new MetaData("GTU exited link", "GTU removed from link", new ObjectDescriptor[] {
                     new ObjectDescriptor("GTU id", "GTU id", String.class),
-                    new ObjectDescriptor("Number of GTUs in link", "Resulting number of GTUs in link", Integer.class) }));
+                    new ObjectDescriptor("Number of GTUs in link", "Resulting number of GTUs in link", Integer.class)}));
 
 }

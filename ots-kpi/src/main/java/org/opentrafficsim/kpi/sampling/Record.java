@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.sampling;
 
 /**
- * Consistent set of values corresponding to columns. 
+ * Consistent set of values corresponding to columns.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -12,7 +12,7 @@ package org.opentrafficsim.kpi.sampling;
  */
 public interface Record
 {
-    
+
     /**
      * Returns the column value of this record.
      * @param column Column&lt;T&gt;; column
@@ -20,7 +20,7 @@ public interface Record
      * @return the column value in this record
      */
     <T> T getValue(Column<T> column);
-    
+
     /**
      * Returns the column value of this record.
      * @param id String; column id

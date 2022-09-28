@@ -19,7 +19,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 27 jan. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -40,10 +40,10 @@ public class AccelerationTrafficLights implements AccelerationIncentive
                 perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane);
         if (!lane.isCurrent() && mergeDistance.gt0())
         {
-            it = new FilteredIterable<>(it, (trafficLight) ->
-            {
-                return trafficLight.getDistance().gt(mergeDistance);
-            });
+            it = new FilteredIterable<>(it, (
+                    trafficLight
+            ) ->
+            { return trafficLight.getDistance().gt(mergeDistance); });
         }
         it = onRoute(it, gtu);
         simplePlan.minimizeAcceleration(

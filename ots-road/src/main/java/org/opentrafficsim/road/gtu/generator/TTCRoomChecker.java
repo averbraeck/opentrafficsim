@@ -25,7 +25,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
  * where 'value' is a given value in the constructor.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 17 nov. 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -67,15 +67,14 @@ public class TTCRoomChecker implements RoomChecker
                 speed = Speed.min(speed, dlp.getLane().getSpeedLimit(characteristics.getGTUType()));
             }
         }
-        if ((speed.le(leader.getSpeed()) || leader.getDistance().divide(speed.minus(leader.getSpeed())).gt(this.ttc))
-                && leader.getDistance()
-                        .gt(speed.times(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
+        if ((speed.le(leader.getSpeed()) || leader.getDistance().divide(speed.minus(leader.getSpeed())).gt(this.ttc)) && leader
+                .getDistance().gt(speed.times(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
         {
             return new Placement(speed, initialPosition);
         }
         return Placement.NO;
     }
-    
+
     /**
      * Returns the TTC value.
      * @return Duration; TTC value

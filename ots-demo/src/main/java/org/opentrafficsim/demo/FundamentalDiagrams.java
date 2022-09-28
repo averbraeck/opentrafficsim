@@ -70,10 +70,9 @@ import nl.tudelft.simulation.language.DSOLException;
  * Demonstrate the FundamentalDiagram plot.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version 17 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDiagramPlotsModel> implements UNITS
@@ -102,7 +101,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
     protected void addTabs()
     {
         Try.execute(() -> addStatisticsTabs(getModel().getSimulator()), RuntimeException.class,
-            "Exception while setting up the statistics tabs.");
+                "Exception while setting up the statistics tabs.");
     }
 
     /**
@@ -127,8 +126,8 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800,
-                    600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 FundamentalDiagrams app = new FundamentalDiagrams("FundamentalDiagrams", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();
@@ -142,7 +141,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             }
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException | OTSSimulationException
-            | DSOLException exception)
+                | DSOLException exception)
         {
             exception.printStackTrace();
         }
@@ -166,9 +165,12 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             try
             {
                 graph = new SwingFundamentalDiagram(new FundamentalDiagram(name, Quantity.DENSITY, Quantity.FLOW, simulator,
-                    FundamentalDiagram.sourceFromSampler(sampler, GraphLaneUtil.createCrossSection(name,
-                        new DirectedLanePosition(getModel().getLane(), detectorLocation, GTUDirectionality.DIR_PLUS)), false,
-                        Duration.instantiateSI(60.0), false), null));
+                        FundamentalDiagram.sourceFromSampler(sampler,
+                                GraphLaneUtil.createCrossSection(name,
+                                        new DirectedLanePosition(getModel().getLane(), detectorLocation,
+                                                GTUDirectionality.DIR_PLUS)),
+                                false, Duration.instantiateSI(60.0), false),
+                        null));
             }
             catch (NetworkException | GTUException exception)
             {
@@ -188,10 +190,9 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$,
-     * initial version ug 1, 2014 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$, initial version ug 1, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     static class FundamentalDiagramPlotsModel extends AbstractOTSModel implements UNITS
@@ -257,29 +258,29 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             try
             {
                 OTSRoadNode from = new OTSRoadNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0),
-                    Direction.ZERO);
-                OTSRoadNode to = new OTSRoadNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0),
-                    Direction.ZERO);
-                OTSRoadNode end = new OTSRoadNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0,
-                    0), Direction.ZERO);
+                        Direction.ZERO);
+                OTSRoadNode to =
+                        new OTSRoadNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0), Direction.ZERO);
+                OTSRoadNode end = new OTSRoadNode(this.network, "End",
+                        new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0), Direction.ZERO);
                 LaneType laneType = this.network.getLaneType(LaneType.DEFAULTS.TWO_WAY_LANE);
-                this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit,
-                    this.simulator);
+                this.lane =
+                        LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
                 CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, this.simulator);
                 // No overtaking, single lane
-                Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
-                    .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                    this.speedLimit);
+                Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
+                        this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
+                        this.speedLimit);
                 new SinkSensor(sinkLane, new Length(10.0, METER), Compatible.EVERYTHING, this.simulator);
 
                 this.carProbability = (double) getInputParameter("generic.carProbability");
                 this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
                 this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
-                this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(
-                    new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
-                this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(
-                    new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                        new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                        new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
                 // 1500 [veh / hour] == 2.4s headway
                 this.headway = new Duration(3600.0 / 1500.0, SECOND);
@@ -287,8 +288,8 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
                 this.simulator.scheduleEventAbsTime(Time.ZERO, this, this, "generateCar", null);
 
-                this.block = new SimpleTrafficLight(this.lane.getId() + "_TL", this.lane, new Length(new Length(4000.0,
-                    LengthUnit.METER)), this.simulator);
+                this.block = new SimpleTrafficLight(this.lane.getId() + "_TL", this.lane,
+                        new Length(new Length(4000.0, LengthUnit.METER)), this.simulator);
                 this.block.setTrafficLightColor(TrafficLightColor.GREEN);
 
                 // Create a block at t = 5 minutes
@@ -297,7 +298,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
             }
             catch (SimRuntimeException | NetworkException | GTUException | OTSGeometryException | ParameterException
-                | InputParameterException exception)
+                    | InputParameterException exception)
             {
                 exception.printStackTrace();
             }
@@ -328,17 +329,18 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
             {
                 boolean generateTruck = this.stream.nextDouble() > this.carProbability;
                 Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.network.getGtuType(
-                    GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength
-                        .times(0.5), this.simulator, this.network);
+                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated),
+                        this.network.getGtuType(GTUType.DEFAULTS.CAR), vehicleLength, new Length(1.8, METER),
+                        new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.simulator, this.network);
                 gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
                 gtu.setNoLaneChangeDistance(Length.ZERO);
                 gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
                 gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
 
                 // strategical planner
-                LaneBasedStrategicalPlanner strategicalPlanner = generateTruck ? this.strategicalPlannerGeneratorTrucks.create(
-                    gtu, null, null, null) : this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                        generateTruck ? this.strategicalPlannerGeneratorTrucks.create(gtu, null, null, null)
+                                : this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
 
                 Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(20, METER);

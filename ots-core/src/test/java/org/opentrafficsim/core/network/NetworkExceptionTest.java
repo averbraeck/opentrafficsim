@@ -70,9 +70,9 @@ public class NetworkExceptionTest
             fail("Right exception not thrown");
         }
 
-        for (boolean suppression : new boolean[] { false, true })
+        for (boolean suppression : new boolean[] {false, true})
         {
-            for (boolean writableStackTrace : new boolean[] { false, true })
+            for (boolean writableStackTrace : new boolean[] {false, true})
             {
                 try
                 {

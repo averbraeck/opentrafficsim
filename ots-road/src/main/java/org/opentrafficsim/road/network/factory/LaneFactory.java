@@ -37,7 +37,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-16 19:20:07 +0200 (Wed, 16 Sep 2015) $, @version $Revision: 1405 $, by $Author: averbraeck $,
  * initial version 30 okt. 2014 <br>
@@ -277,8 +277,7 @@ public final class LaneFactory
                 {
                     startOffset = lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().times(0.5));
                 }
-                if (endOffset == null
-                        || lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().times(0.5)).lt(endOffset))
+                if (endOffset == null || lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().times(0.5)).lt(endOffset))
                 {
                     endOffset = lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().times(0.5));
                 }
@@ -314,7 +313,7 @@ public final class LaneFactory
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public static CrossSectionLink makeLink(final OTSRoadNetwork network, final String name, final OTSRoadNode from, 
+    public static CrossSectionLink makeLink(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
             final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final OTSSimulatorInterface simulator)
             throws OTSGeometryException, NetworkException
     {
@@ -436,8 +435,8 @@ public final class LaneFactory
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from, 
-            final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, 
+    public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
+            final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
             final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OTSSimulatorInterface simulator)
             throws NetworkException, OTSGeometryException
     {
@@ -475,9 +474,10 @@ public final class LaneFactory
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from, final OTSRoadNode to,
-            final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType, final Speed speedLimit,
-            final OTSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
+    public static Lane[] makeMultiLane(final OTSRoadNetwork network, final String name, final OTSRoadNode from,
+            final OTSRoadNode to, final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType,
+            final Speed speedLimit, final OTSSimulatorInterface simulator)
+            throws NamingException, NetworkException, OTSGeometryException
     {
         return makeMultiLane(network, name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator);
     }
@@ -504,8 +504,8 @@ public final class LaneFactory
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane[] makeMultiLaneBezier(final OTSRoadNetwork network, final String name, final OTSRoadNode n1, 
-            final OTSRoadNode n2, final OTSRoadNode n3, final OTSRoadNode n4, final int laneCount, final int laneOffsetAtStart, 
+    public static Lane[] makeMultiLaneBezier(final OTSRoadNetwork network, final String name, final OTSRoadNode n1,
+            final OTSRoadNode n2, final OTSRoadNode n3, final OTSRoadNode n4, final int laneCount, final int laneOffsetAtStart,
             final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit, final OTSSimulatorInterface simulator)
             throws NamingException, NetworkException, OTSGeometryException
     {

@@ -13,7 +13,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
  * Build various operational plans and print them.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -27,6 +27,7 @@ public final class OperationalPlanDemo
     {
         // Do not instantiate.
     }
+
     /**
      * Test.
      * @param args String[]; args for main
@@ -35,7 +36,7 @@ public final class OperationalPlanDemo
      */
     public static void main(final String[] args) throws OperationalPlanException, OTSGeometryException
     {
-        OTSLine3D path1 = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100.0, 0.0) });
+        OTSLine3D path1 = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100.0, 0.0)});
 
         // go from 0 to 10 m/s over entire distance. This should take 20 sec with a=0.5 m/s2.
         OperationalPlan plan1 = OperationalPlanBuilder.buildGradualAccelerationPlan(null, path1, Time.ZERO, Speed.ZERO,

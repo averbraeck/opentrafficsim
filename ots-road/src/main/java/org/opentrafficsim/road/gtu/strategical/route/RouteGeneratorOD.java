@@ -24,7 +24,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * destination and GTU type as input.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 mrt. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -158,7 +158,7 @@ public interface RouteGeneratorOD
                 }
                 System.out.println("Selected via node(s) " + viaNodes);
             }
-            // XXX make silent, as the higher level method should draw another destination if the route does not exist 
+            // XXX make silent, as the higher level method should draw another destination if the route does not exist
             return this.shortestRouteCache.get(
                     () -> Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes),
                             "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes),

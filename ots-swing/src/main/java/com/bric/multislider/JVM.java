@@ -24,15 +24,15 @@ import java.security.AccessControlException;
 /**
  * Static methods relating to the JVM environment.
  * <P>
- * Instead of burying a constant like "isQuartz" in its most relevant class (such as OptimizedGraphics2D), it should be
- * stored here so if other classes need to access it they don't necessary have to
+ * Instead of burying a constant like "isQuartz" in its most relevant class (such as OptimizedGraphics2D), it should be stored
+ * here so if other classes need to access it they don't necessary have to
  */
 public class JVM
 {
 
     /**
-     * Prints basic information about this session's JVM: the OS name &amp; version, the Java version, and (on Mac)
-     * whether Quartz is being used.
+     * Prints basic information about this session's JVM: the OS name &amp; version, the Java version, and (on Mac) whether
+     * Quartz is being used.
      */
     public static void printProfile()
     {
@@ -40,8 +40,8 @@ public class JVM
     }
 
     /**
-     * Gets basic information about this session's JVM: the OS name &amp; version, the Java version, and (on Mac)
-     * whether Quartz is being used.
+     * Gets basic information about this session's JVM: the OS name &amp; version, the Java version, and (on Mac) whether Quartz
+     * is being used.
      * @return profile
      */
     public static String getProfile()
@@ -96,8 +96,8 @@ public class JVM
     public static final boolean isVistaOrWindows7 = isVista || isWindows7;
 
     /**
-     * If on a Mac: whether Quartz is the rendering pipeline. In applets this may throw a security exception; if this
-     * cannot be ascertained we assume it is false.
+     * If on a Mac: whether Quartz is the rendering pipeline. In applets this may throw a security exception; if this cannot be
+     * ascertained we assume it is false.
      */
     public static final boolean usingQuartz = isUsingQuartz();
 
@@ -106,8 +106,8 @@ public class JVM
         try
         {
             return isMac
-                    && ((javaVersion > 0 && javaVersion < 1.4f) || (System.getProperty("apple.awt.graphics.UseQuartz") != null && System
-                            .getProperty("apple.awt.graphics.UseQuartz").toString().equals("true")));
+                    && ((javaVersion > 0 && javaVersion < 1.4f) || (System.getProperty("apple.awt.graphics.UseQuartz") != null
+                            && System.getProperty("apple.awt.graphics.UseQuartz").toString().equals("true")));
         }
         catch (AccessControlException e)
         {
@@ -117,11 +117,11 @@ public class JVM
     }
 
     /**
-     * This converts the system property "java.version" to a float value. This drops rightmost digits until a legitimate
-     * float can be parsed. <BR>
+     * This converts the system property "java.version" to a float value. This drops rightmost digits until a legitimate float
+     * can be parsed. <BR>
      * For example, this converts "1.6.0_05" to "1.6". <BR>
-     * This value is cached as the system property "java.major.version". Although technically this value is a String, it
-     * will always be parseable as a float.
+     * This value is cached as the system property "java.major.version". Although technically this value is a String, it will
+     * always be parseable as a float.
      * @return major java version such as 1.6
      * @throws AccessControlException this may be thrown in unsigned applets! Beware!
      */
@@ -172,8 +172,8 @@ public class JVM
         {
             if (catchSecurityException)
             {
-                System.err
-                        .println("this exception was ignored without incident, but it means we can't determine the major java version:");
+                System.err.println(
+                        "this exception was ignored without incident, but it means we can't determine the major java version:");
                 t.printStackTrace();
                 return -1;
             }

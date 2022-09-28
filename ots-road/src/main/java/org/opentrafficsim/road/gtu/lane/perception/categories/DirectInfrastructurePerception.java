@@ -36,7 +36,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * time.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 14, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -58,12 +58,14 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     private Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new LinkedHashMap<>();
 
     /** Legal Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<
-            LaneChangePossibility>>> legalLaneChangePossibility = new LinkedHashMap<>();
+    private final Map<RelativeLane,
+            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility =
+                    new LinkedHashMap<>();
 
     /** Physical Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<
-            LaneChangePossibility>>> physicalLaneChangePossibility = new LinkedHashMap<>();
+    private final Map<RelativeLane,
+            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
+                    new LinkedHashMap<>();
 
     /** Cross-section. */
     private TimeStampedObject<SortedSet<RelativeLane>> crossSection;
@@ -104,10 +106,12 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         this.speedLimitProspect.keySet().retainAll(cs);
         // only if required
         LaneStructureRecord newRoot = getPerception().getLaneStructure().getRootRecord();
-        if (this.root == null || !newRoot.equals(this.root) || !this.lanes.equals(getPerception().getGtu().positions(
-            RelativePosition.REFERENCE_POSITION).keySet()) || !Objects.equals(this.route, getPerception().getGtu()
-                .getStrategicalPlanner().getRoute()) || this.cutOff.stream().filter((record) -> !record.isCutOffEnd())
-                    .count() > 0)
+        if (this.root == null || !newRoot.equals(this.root)
+                || !this.lanes.equals(getPerception().getGtu().positions(RelativePosition.REFERENCE_POSITION).keySet())
+                || !Objects.equals(this.route, getPerception().getGtu().getStrategicalPlanner().getRoute())
+                || this.cutOff.stream().filter((
+                        record
+                ) -> !record.isCutOffEnd()).count() > 0)
         {
             this.cutOff.clear();
             this.root = newRoot;
@@ -147,8 +151,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     @Override
     public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GTUException, ParameterException
     {
-        if (this.infrastructureLaneChangeInfo.containsKey(lane) && this.infrastructureLaneChangeInfo.get(lane).getTimestamp()
-            .equals(getTimestamp()))
+        if (this.infrastructureLaneChangeInfo.containsKey(lane)
+                && this.infrastructureLaneChangeInfo.get(lane).getTimestamp().equals(getTimestamp()))
         {
             // already done at this time
             return;
@@ -175,8 +179,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new LinkedHashMap<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new LinkedHashMap<>();
         RelativePosition front = getPerception().getGtu().getFront();
-        currentSet.put(record, new InfrastructureLaneChangeInfo(0, record, front, record.isDeadEnd(),
-            LateralDirectionality.NONE));
+        currentSet.put(record,
+                new InfrastructureLaneChangeInfo(0, record, front, record.isDeadEnd(), LateralDirectionality.NONE));
         while (!currentSet.isEmpty())
         {
             // move lateral
@@ -185,8 +189,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             {
                 while (laneRecord.legalLeft() && !nextSet.containsKey(laneRecord.getLeft()))
                 {
-                    InfrastructureLaneChangeInfo info = nextSet.get(laneRecord).left(laneRecord.getLeft(), front, laneRecord
-                        .getLeft().isDeadEnd());
+                    InfrastructureLaneChangeInfo info =
+                            nextSet.get(laneRecord).left(laneRecord.getLeft(), front, laneRecord.getLeft().isDeadEnd());
                     nextSet.put(laneRecord.getLeft(), info);
                     laneRecord = laneRecord.getLeft();
                 }
@@ -195,8 +199,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             {
                 while (laneRecord.legalRight() && !nextSet.containsKey(laneRecord.getRight()))
                 {
-                    InfrastructureLaneChangeInfo info = nextSet.get(laneRecord).right(laneRecord.getRight(), front, laneRecord
-                        .getRight().isDeadEnd());
+                    InfrastructureLaneChangeInfo info =
+                            nextSet.get(laneRecord).right(laneRecord.getRight(), front, laneRecord.getRight().isDeadEnd());
                     nextSet.put(laneRecord.getRight(), info);
                     laneRecord = laneRecord.getRight();
                 }
@@ -220,9 +224,9 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                             if (next.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
                             {
                                 InfrastructureLaneChangeInfo prev = currentSet.get(laneRecord);
-                                InfrastructureLaneChangeInfo info = new InfrastructureLaneChangeInfo(prev
-                                    .getRequiredNumberOfLaneChanges(), next, front, next.isDeadEnd(), prev
-                                        .getLateralDirectionality());
+                                InfrastructureLaneChangeInfo info =
+                                        new InfrastructureLaneChangeInfo(prev.getRequiredNumberOfLaneChanges(), next, front,
+                                                next.isDeadEnd(), prev.getLateralDirectionality());
                                 nextSet.put(next, info);
                             }
                         }
@@ -233,7 +237,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                     }
                     // take best ok
                     if (bestOk == null || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestOk
-                        .getRequiredNumberOfLaneChanges())
+                            .getRequiredNumberOfLaneChanges())
                     {
                         bestOk = currentSet.get(laneRecord);
                     }
@@ -243,7 +247,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                     // take best not ok
                     deadEnd = deadEnd || currentSet.get(laneRecord).isDeadEnd();
                     if (bestNotOk == null || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestNotOk
-                        .getRequiredNumberOfLaneChanges())
+                            .getRequiredNumberOfLaneChanges())
                     {
                         bestNotOk = currentSet.get(laneRecord);
                     }
@@ -356,7 +360,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             if (!slp.containsAddSource(laneObj))
             {
                 slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getGTUType()),
-                    laneObj);
+                        laneObj);
             }
         }
         catch (NetworkException exception)
@@ -408,14 +412,14 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
         // check tail
         Length tail = getPerception().getGtu().getRear().getDx();
-        while (record != null && record.getStartDistance().gt(tail) && !record.getPrev().isEmpty() && ((lat.isLeft() && record
-            .possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
+        while (record != null && record.getStartDistance().gt(tail) && !record.getPrev().isEmpty()
+                && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
         {
             if (record.getPrev().size() > 1)
             {
                 // assume not possible at a merge
-                possibilityMap.get(lane).put(lat, new TimeStampedObject<>(new LaneChangePossibility(record.getPrev().get(0),
-                    tail, true), getTimestamp()));
+                possibilityMap.get(lane).put(lat, new TimeStampedObject<>(
+                        new LaneChangePossibility(record.getPrev().get(0), tail, true), getTimestamp()));
                 return;
             }
             else if (record.getPrev().isEmpty())
@@ -427,8 +431,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             if ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(legal)))
             {
                 // this lane prevents a lane change for the tail
-                possibilityMap.get(lane).put(lat, new TimeStampedObject<>(new LaneChangePossibility(record, tail, true),
-                    getTimestamp()));
+                possibilityMap.get(lane).put(lat,
+                        new TimeStampedObject<>(new LaneChangePossibility(record, tail, true), getTimestamp()));
                 return;
             }
         }
@@ -440,8 +444,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         if ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal)))
         {
             dx = getPerception().getGtu().getFront().getDx();
-            while (record != null && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(
-                legal))))
+            while (record != null
+                    && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
             {
                 // TODO: splits
                 prevRecord = record;
@@ -451,16 +455,16 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         else
         {
             dx = getPerception().getGtu().getRear().getDx();
-            while (record != null && ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(
-                legal))))
+            while (record != null
+                    && ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(legal))))
             {
                 // TODO: splits
                 prevRecord = record;
                 record = record.getNext().isEmpty() ? null : record.getNext().get(0);
             }
         }
-        possibilityMap.get(lane).put(lat, new TimeStampedObject<>(new LaneChangePossibility(prevRecord, dx, true),
-            getTimestamp()));
+        possibilityMap.get(lane).put(lat,
+                new TimeStampedObject<>(new LaneChangePossibility(prevRecord, dx, true), getTimestamp()));
     }
 
     /**
@@ -470,7 +474,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     private void checkLaneIsInCrossSection(final RelativeLane lane) throws GTUException
     {
         Throw.when(!getCrossSection().contains(lane), GTUException.class,
-            "The requeasted lane %s is not in the most recent cross section.", lane);
+                "The requeasted lane %s is not in the most recent cross section.", lane);
     }
 
     /** {@inheritDoc} */
@@ -482,8 +486,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             // already done at this time
             return;
         }
-        this.crossSection = new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(),
-            getTimestamp());
+        this.crossSection =
+                new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp());
     }
 
     /** {@inheritDoc} */
@@ -612,7 +616,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 feb. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -651,8 +655,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         final Length getDistance(final LateralDirectionality lat)
         {
             double d = this.record.getStartDistance().si + this.record.getLane().getLength().si - this.dx;
-            if ((lat.isLeft() && this.record.possibleLeft(this.legal)) || (lat.isRight() && this.record.possibleRight(
-                this.legal)))
+            if ((lat.isLeft() && this.record.possibleLeft(this.legal))
+                    || (lat.isRight() && this.record.possibleRight(this.legal)))
             {
                 return Length.instantiateSI(d); // possible over d
             }

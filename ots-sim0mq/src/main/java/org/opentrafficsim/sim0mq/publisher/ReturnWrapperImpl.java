@@ -136,8 +136,9 @@ public class ReturnWrapperImpl implements ReturnWrapper
     @Override
     public String toString()
     {
-        return "ReturnWrapper [federationId=" + this.federationId + ", returnAddress=" + this.returnAddress + ", ourAddress=" + this.ourAddress
-                + ", messageTypeId=" + this.messageTypeId + ", messageId=" + this.messageId + ", replyCount=" + this.replyCount + "]";
+        return "ReturnWrapper [federationId=" + this.federationId + ", returnAddress=" + this.returnAddress + ", ourAddress="
+                + this.ourAddress + ", messageTypeId=" + this.messageTypeId + ", messageId=" + this.messageId + ", replyCount="
+                + this.replyCount + "]";
     }
 
     /** {@inheritDoc} */

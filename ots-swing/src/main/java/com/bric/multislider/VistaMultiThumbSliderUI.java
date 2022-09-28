@@ -71,11 +71,11 @@ public class VistaMultiThumbSliderUI<T> extends DefaultMultiThumbSliderUI<T>
         g.setPaint(new Color(0, 0, 0, 96/* PK 16 */));
         g.drawLine(this.trackRect.x, this.trackRect.y, this.trackRect.x + this.trackRect.width, this.trackRect.y);
         g.drawLine(this.trackRect.x, this.trackRect.y, this.trackRect.x, this.trackRect.y + this.trackRect.height);
-        g.drawLine(this.trackRect.x + this.trackRect.width, this.trackRect.y, this.trackRect.x + this.trackRect.width, this.trackRect.y
-                + this.trackRect.height);
+        g.drawLine(this.trackRect.x + this.trackRect.width, this.trackRect.y, this.trackRect.x + this.trackRect.width,
+                this.trackRect.y + this.trackRect.height);
         g.setPaint(new Color(255, 255, 255, 16));
-        g.drawLine(this.trackRect.x, this.trackRect.y + this.trackRect.height, this.trackRect.x + this.trackRect.width, this.trackRect.y
-                + this.trackRect.height);
+        g.drawLine(this.trackRect.x, this.trackRect.y + this.trackRect.height, this.trackRect.x + this.trackRect.width,
+                this.trackRect.y + this.trackRect.height);
 
         paintTrackHighlight(g);
 
@@ -111,18 +111,16 @@ public class VistaMultiThumbSliderUI<T> extends DefaultMultiThumbSliderUI<T>
         Paint strokePaint;
         if (this.mouseIsDown && thumbIndex == this.slider.getSelectedThumb())
         {
-            fill =
-                    new LinearGradientPaint(new Point2D.Double(0, thumbBounds.getMinY()), new Point2D.Double(0,
-                            thumbBounds.getMaxY()), new float[]{0, .55f, .5501f, 1}, new Color[]{new Color(0xe5f4fc),
-                            new Color(0x9dd5f3), new Color(0x6cbbe5), new Color(0x50a1cc)});
+            fill = new LinearGradientPaint(new Point2D.Double(0, thumbBounds.getMinY()),
+                    new Point2D.Double(0, thumbBounds.getMaxY()), new float[] {0, .55f, .5501f, 1},
+                    new Color[] {new Color(0xe5f4fc), new Color(0x9dd5f3), new Color(0x6cbbe5), new Color(0x50a1cc)});
             strokePaint = new Color(0x2c628b);
         }
         else
         {
-            fill =
-                    new LinearGradientPaint(new Point2D.Double(0, thumbBounds.getMinY()), new Point2D.Double(0,
-                            thumbBounds.getMaxY()), new float[]{0, .55f, .5501f, 1}, new Color[]{
-                            tween(new Color(0xf2f2f2), new Color(0xe9f6fd), selected),
+            fill = new LinearGradientPaint(new Point2D.Double(0, thumbBounds.getMinY()),
+                    new Point2D.Double(0, thumbBounds.getMaxY()), new float[] {0, .55f, .5501f, 1},
+                    new Color[] {tween(new Color(0xf2f2f2), new Color(0xe9f6fd), selected),
                             tween(new Color(0xebebeb), new Color(0xd8effc), selected),
                             tween(new Color(0xdbdbdb), new Color(0xbde6fd), selected),
                             tween(new Color(0xd7d7d7), new Color(0xaedef8), selected)});

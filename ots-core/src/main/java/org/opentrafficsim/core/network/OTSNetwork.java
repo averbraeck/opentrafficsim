@@ -35,10 +35,9 @@ import org.opentrafficsim.core.perception.PerceivableContext;
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version Jul 22, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version Jul 22, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
@@ -77,7 +76,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** GTUs registered in this network. */
     private Map<String, GTU> gtuMap = Collections.synchronizedMap(new LinkedHashMap<>());
-    
+
     /** The DSOL simulator engine. */
     private final OTSSimulatorInterface simulator;
 
@@ -573,9 +572,9 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             this.routeMap.put(gtuType, new LinkedHashMap<String, Route>());
         }
         this.routeMap.get(gtuType).put(route.getId(), route);
-        fireTimedEvent(Network.ROUTE_ADD_EVENT, new Object[] { gtuType.getId(), route.getId() },
+        fireTimedEvent(Network.ROUTE_ADD_EVENT, new Object[] {gtuType.getId(), route.getId()},
                 getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_ROUTE_ADD_EVENT, new Object[] { gtuType, route }, getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.ANIMATION_ROUTE_ADD_EVENT, new Object[] {gtuType, route}, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -586,10 +585,9 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("Route " + route + " for GTUType " + gtuType + " not registered in network " + this.id);
         }
-        fireTimedEvent(Network.ROUTE_REMOVE_EVENT, new Object[] { gtuType.getId(), route.getId() },
+        fireTimedEvent(Network.ROUTE_REMOVE_EVENT, new Object[] {gtuType.getId(), route.getId()},
                 getSimulator().getSimulatorTime());
-        fireTimedEvent(Network.ANIMATION_ROUTE_REMOVE_EVENT, new Object[] { gtuType, route },
-                getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.ANIMATION_ROUTE_REMOVE_EVENT, new Object[] {gtuType, route}, getSimulator().getSimulatorTime());
         this.routeMap.get(gtuType).remove(route.getId());
     }
 
@@ -784,11 +782,11 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
                 // dijkstra.getPath(from, to);
                 return null;
             }
-//            System.out.println("Dijkstra generated path:");
-//            for (LinkEdge<Link> link : path.getEdgeList())
-//            {
-//                System.out.println((link.getLink().getLinkType().isConnector() ? "CONNECTOR " : "          ") + link);
-//            }
+            // System.out.println("Dijkstra generated path:");
+            // for (LinkEdge<Link> link : path.getEdgeList())
+            // {
+            // System.out.println((link.getLink().getLinkType().isConnector() ? "CONNECTOR " : " ") + link);
+            // }
             for (LinkEdge<Link> linkEdge : path.getEdgeList())
             {
                 if (!linkEdge.getLink().getEndNode().equals(route.destinationNode())

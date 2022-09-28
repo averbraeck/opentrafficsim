@@ -50,7 +50,7 @@ public class ListTable extends AbstractTable
             this.idNumbers.put(column.getId(), index);
         }
         Throw.when(getNumberOfColumns() != this.idNumbers.size(), IllegalArgumentException.class,
-            "Duplicate column ids are not allowed.");
+                "Duplicate column ids are not allowed.");
     }
 
     /**
@@ -87,7 +87,7 @@ public class ListTable extends AbstractTable
     }
 
     /**
-     * Adds a record to the table. 
+     * Adds a record to the table.
      * @param data Map&lt;String, Object&gt;; data with values given per column
      * @throws IllegalArgumentException when the size or data types in the data map do not comply to the columns
      */
@@ -95,7 +95,7 @@ public class ListTable extends AbstractTable
     {
         Throw.whenNull(data, "Data may not be null.");
         Throw.when(data.size() != getNumberOfColumns(), IllegalArgumentException.class,
-            "Number of data columns doesn't match number of table columns.");
+                "Number of data columns doesn't match number of table columns.");
         Object[] dataObjects = new Object[getNumberOfColumns()];
         for (int index = 0; index < getColumns().size(); index++)
         {
@@ -103,15 +103,15 @@ public class ListTable extends AbstractTable
             Throw.when(!data.containsKey(column), IllegalArgumentException.class, "Missing data for column %s", column.getId());
             Object value = data.get(column);
             Throw.when(!column.getValueType().isAssignableFrom(value.getClass()), IllegalArgumentException.class,
-                "Data value for column %s is not of type %s, but of type %s.", column.getId(), column.getValueType(), value
-                    .getClass());
+                    "Data value for column %s is not of type %s, but of type %s.", column.getId(), column.getValueType(),
+                    value.getClass());
             dataObjects[index] = value;
         }
         this.records.add(new ListRecord(dataObjects));
     }
 
     /**
-     * Adds a record to the table. 
+     * Adds a record to the table.
      * @param data Map&lt;String, Object&gt;; data with values given per column id
      * @throws IllegalArgumentException when the size or data types in the data map do not comply to the columns
      */
@@ -119,18 +119,18 @@ public class ListTable extends AbstractTable
     {
         Throw.whenNull(data, "Data may not be null.");
         Throw.when(data.size() != getNumberOfColumns(), IllegalArgumentException.class,
-            "Number of data columns doesn't match number of table columns.");
+                "Number of data columns doesn't match number of table columns.");
         Object[] dataObjects = new Object[getNumberOfColumns()];
         for (int index = 0; index < getColumns().size(); index++)
         {
             Column<?> column = getColumns().get(index);
-            Throw.when(!data.containsKey(column.getId()), IllegalArgumentException.class, "Missing data for column %s", column
-                .getId());
+            Throw.when(!data.containsKey(column.getId()), IllegalArgumentException.class, "Missing data for column %s",
+                    column.getId());
             Object value = data.get(column.getId());
             Class<?> dataClass = value.getClass();
             Throw.when(!column.getValueType().isAssignableFrom(dataClass), IllegalArgumentException.class,
-                "Data value for column %s is not of type %s, but of type %s.", column.getId(), column.getValueType(),
-                dataClass);
+                    "Data value for column %s is not of type %s, but of type %s.", column.getId(), column.getValueType(),
+                    dataClass);
             dataObjects[index] = value;
         }
         this.records.add(new ListRecord(dataObjects));
@@ -146,15 +146,15 @@ public class ListTable extends AbstractTable
     {
         Throw.whenNull(data, "Data may not be null.");
         Throw.when(data.length != getNumberOfColumns(), IllegalArgumentException.class,
-            "Number of data columns doesn't match number of table columns.");
+                "Number of data columns doesn't match number of table columns.");
         Object[] dataObjects = new Object[getNumberOfColumns()];
         for (int index = 0; index < getColumns().size(); index++)
         {
             Column<?> column = getColumns().get(index);
             Class<?> dataClass = data[index].getClass();
             Throw.when(!column.getValueType().isAssignableFrom(dataClass), IllegalArgumentException.class,
-                "Data value for column %s is not of type %s, but of type %s.", column.getId(), column.getValueType(),
-                dataClass);
+                    "Data value for column %s is not of type %s, but of type %s.", column.getId(), column.getValueType(),
+                    dataClass);
             dataObjects[index] = data[index];
         }
         this.records.add(new ListRecord(dataObjects));

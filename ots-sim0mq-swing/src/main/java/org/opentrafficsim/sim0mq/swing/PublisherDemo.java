@@ -28,7 +28,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * Experiment with the Sim0MQPublisher.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -71,8 +71,7 @@ public final class PublisherDemo
 
         int conversationId = 100; // Number the commands starting with something that is very different from 0
         String badCommand = "THIS_IS_NOT_A_SUPPORTED_COMMAND";
-        sendCommand(publisherControlSocket,
-                Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, conversationId++));
+        sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", badCommand, conversationId++));
         for (int attempt = 0; attempt < 100; attempt++)
         {
             if (receivedMessages.size() > 0)
@@ -94,8 +93,8 @@ public final class PublisherDemo
             }
             System.out.println("Got expected response to unsupported command");
         }
-        
-        // FIXME: This is of course not the intention... 
+
+        // FIXME: This is of course not the intention...
         // FIXME: make the network available as a resource...
         String xml = new String(Files
                 .readAllBytes(Paths.get("C:/Users/pknoppers/Java/ots-demo/src/main/resources/TrafCODDemo2/TrafCODDemo2.xml")));
@@ -103,13 +102,11 @@ public final class PublisherDemo
                 conversationId++, xml, new Duration(3600, DurationUnit.SECOND), Duration.ZERO, 123456L));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "|GET_CURRENT", conversationId++));
-        
-        
-        
+
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] { new Time(10, TimeUnit.BASE_SECOND) }));
+                conversationId++, new Object[] {new Time(10, TimeUnit.BASE_SECOND)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         int conversationIdForSubscribeToAdd = conversationId++; // We need that to unsubscribe later
@@ -121,7 +118,7 @@ public final class PublisherDemo
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] { new Time(20, TimeUnit.BASE_SECOND) }));
+                conversationId++, new Object[] {new Time(20, TimeUnit.BASE_SECOND)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         // unsubscribe from GTU ADD events using saved conversationId
@@ -130,7 +127,7 @@ public final class PublisherDemo
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTU move|UNSUBSCRIBE_FROM_CHANGE", conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] { new Time(30, TimeUnit.BASE_SECOND) }));
+                conversationId++, new Object[] {new Time(30, TimeUnit.BASE_SECOND)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
@@ -176,7 +173,7 @@ public final class PublisherDemo
     {
         /** The ZContext needed to create the socket. */
         private final ZContext zContext;
-        
+
         /** Storage for the received messages. */
         private final List<byte[]> storage;
 

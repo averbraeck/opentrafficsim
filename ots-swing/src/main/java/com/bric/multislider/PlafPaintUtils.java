@@ -42,15 +42,15 @@ public class PlafPaintUtils
 {
 
     /** Four shades of white, each with increasing opacity. */
-    final static Color[] whites = new Color[]{new Color(255, 255, 255, 50), new Color(255, 255, 255, 100),
-            new Color(255, 255, 255, 150)};
+    final static Color[] whites =
+            new Color[] {new Color(255, 255, 255, 50), new Color(255, 255, 255, 100), new Color(255, 255, 255, 150)};
 
     /** Four shades of black, each with increasing opacity. */
-    final static Color[] blacks = new Color[]{new Color(0, 0, 0, 50), new Color(0, 0, 0, 100), new Color(0, 0, 0, 150)};
+    final static Color[] blacks = new Color[] {new Color(0, 0, 0, 50), new Color(0, 0, 0, 100), new Color(0, 0, 0, 150)};
 
     /**
-     * @return the color used to indicate when a component has focus. By default this uses the color (64,113,167), but
-     *         you can override this by calling: <BR>
+     * @return the color used to indicate when a component has focus. By default this uses the color (64,113,167), but you can
+     *         override this by calling: <BR>
      *         <code>UIManager.put("focusRing",customColor);</code>
      */
     public static Color getFocusRingColor()
@@ -65,8 +65,8 @@ public class PlafPaintUtils
     }
 
     /**
-     * Paints 3 different strokes around a shape to indicate focus. The widest stroke is the most transparent, so this
-     * achieves a nice "glow" effect.
+     * Paints 3 different strokes around a shape to indicate focus. The widest stroke is the most transparent, so this achieves
+     * a nice "glow" effect.
      * <P>
      * The catch is that you have to render this underneath the shape, and the shape should be filled completely.
      * @param g the graphics to paint to
@@ -79,8 +79,8 @@ public class PlafPaintUtils
     }
 
     /**
-     * Paints 3 different strokes around a shape to indicate focus. The widest stroke is the most transparent, so this
-     * achieves a nice "glow" effect.
+     * Paints 3 different strokes around a shape to indicate focus. The widest stroke is the most transparent, so this achieves
+     * a nice "glow" effect.
      * <P>
      * The catch is that you have to render this underneath the shape, and the shape should be filled completely.
      * @param g the graphics to paint to
@@ -89,20 +89,18 @@ public class PlafPaintUtils
      * @param focusColor the color of the focus ring to paint
      * @param changeRenderingHints if true then the rendering hints will be modified, if false they will be left in tact
      */
-    public static void paintFocus(Graphics2D g, Shape shape, int pixelSize, Color focusColor,
-            boolean changeRenderingHints)
+    public static void paintFocus(Graphics2D g, Shape shape, int pixelSize, Color focusColor, boolean changeRenderingHints)
     {
         g = (Graphics2D) g.create();
         try
         {
-            Color[] focusArray =
-                    new Color[]{
-                            new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(),
-                                    235 * focusColor.getAlpha() / 255),
-                            new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(),
-                                    130 * focusColor.getAlpha() / 255),
-                            new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(),
-                                    80 * focusColor.getAlpha() / 255)};
+            Color[] focusArray = new Color[] {
+                    new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(),
+                            235 * focusColor.getAlpha() / 255),
+                    new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(),
+                            130 * focusColor.getAlpha() / 255),
+                    new Color(focusColor.getRed(), focusColor.getGreen(), focusColor.getBlue(),
+                            80 * focusColor.getAlpha() / 255)};
             if (changeRenderingHints)
             {
                 if (JVM.usingQuartz)
@@ -235,7 +233,7 @@ public class PlafPaintUtils
         return paint;
     }
 
-    /** 
+    /**
      * Tweens between the two arguments.
      * @param c1 color 1
      * @param c2 color 2

@@ -24,7 +24,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
  * A CrossSectionLink is a link with lanes where GTUs can possibly switch between lanes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-16 19:20:07 +0200 (Wed, 16 Sep 2015) $, @version $Revision: 1405 $, by $Author: averbraeck $,
  * initial version Aug 19, 2014 <br>
@@ -66,10 +66,10 @@ public class CrossSectionLink extends OTSLink implements Serializable
      */
     public static final TimedEventType LANE_ADD_EVENT = new TimedEventType("LINK.LANE.ADD",
             new MetaData("Lane data", "Lane data",
-                    new ObjectDescriptor[] { new ObjectDescriptor("Network id", "Network id", String.class),
+                    new ObjectDescriptor[] {new ObjectDescriptor("Network id", "Network id", String.class),
                             new ObjectDescriptor("Link id", "Link id", String.class),
                             new ObjectDescriptor("Lane id", "Lane id", String.class),
-                            new ObjectDescriptor("Lane number", "Lane number", Integer.class) }));
+                            new ObjectDescriptor("Lane number", "Lane number", Integer.class)}));
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a Lane from a CrossSectionLink. <br>
@@ -78,10 +78,10 @@ public class CrossSectionLink extends OTSLink implements Serializable
      */
     public static final TimedEventType LANE_REMOVE_EVENT = new TimedEventType("LINK.LANE.REMOVE",
             new MetaData("Lane data", "Lane data",
-                    new ObjectDescriptor[] { new ObjectDescriptor("Network id", "Network id", String.class),
+                    new ObjectDescriptor[] {new ObjectDescriptor("Network id", "Network id", String.class),
                             new ObjectDescriptor("Link id", "Link id", String.class),
                             new ObjectDescriptor("Lane id", "Lane id", String.class),
-                            new ObjectDescriptor("Lane number", "Lane number", Integer.class) }));
+                            new ObjectDescriptor("Lane number", "Lane number", Integer.class)}));
 
     /**
      * Construction of a cross section link.
@@ -140,7 +140,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         if (cse instanceof Lane)
         {
             this.lanes.add((Lane) cse);
-            fireTimedEvent(LANE_ADD_EVENT, new Object[] { getNetwork().getId(), getId(), cse.getId(), this.lanes.indexOf(cse) },
+            fireTimedEvent(LANE_ADD_EVENT, new Object[] {getNetwork().getId(), getId(), cse.getId(), this.lanes.indexOf(cse)},
                     getSimulator().getSimulatorTime());
         }
     }
@@ -329,7 +329,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 dec. 2016 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

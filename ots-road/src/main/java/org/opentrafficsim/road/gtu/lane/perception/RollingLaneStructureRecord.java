@@ -27,7 +27,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * driving direction of the GTU that owns this structure.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Feb 21, 2016 <br>
@@ -41,8 +41,8 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /** Cache of allows route information. */
     // TODO clear on network change, with an event listener?
-    private static MultiKeyMap<Boolean> allowsRouteCache = new MultiKeyMap<>(Lane.class, Route.class, GTUType.class,
-        Boolean.class);
+    private static MultiKeyMap<Boolean> allowsRouteCache =
+            new MultiKeyMap<>(Lane.class, Route.class, GTUType.class, Boolean.class);
 
     /** The lane of the LSR. */
     private final Lane lane;
@@ -183,16 +183,16 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     @Override
     public final Node getFromNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode() : this.lane.getParentLink()
-            .getEndNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode()
+                : this.lane.getParentLink().getEndNode();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Node getToNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode() : this.lane.getParentLink()
-            .getStartNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode()
+                : this.lane.getParentLink().getStartNode();
     }
 
     /**
@@ -287,7 +287,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     private boolean allowsRoute(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
     {
         return allowsRouteCache.get(() -> Try.assign(() -> allowsRoute0(route, gtuType, end), "no destination"), this.lane,
-            route, gtuType, end);
+                route, gtuType, end);
     }
 
     /**
@@ -340,9 +340,10 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
                         {
                             if (link.getLinkType().isConnector())
                             {
-                                if ((link.getStartNode().equals(laneRecord.getToNode()) && link.getEndNode().equals(route
-                                    .destinationNode())) || (link.getEndNode().equals(laneRecord.getToNode()) && link
-                                        .getStartNode().equals(route.destinationNode())))
+                                if ((link.getStartNode().equals(laneRecord.getToNode())
+                                        && link.getEndNode().equals(route.destinationNode()))
+                                        || (link.getEndNode().equals(laneRecord.getToNode())
+                                                && link.getStartNode().equals(route.destinationNode())))
                                 {
                                     return true;
                                 }
@@ -441,8 +442,8 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
         // move downstream until we are at the route
         for (LaneStructureRecord record : getNext())
         {
-            boolean leadsTo = ((RollingLaneStructureRecord) record).leadsToRoute(route, gtuType, original == null ? this
-                    : original);
+            boolean leadsTo =
+                    ((RollingLaneStructureRecord) record).leadsToRoute(route, gtuType, original == null ? this : original);
             if (leadsTo)
             {
                 return true;
@@ -467,7 +468,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     {
         this.left = leftRecord;
         this.mayChangeLeft = getLane().accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, this.gtuDirectionality)
-            .contains(leftRecord.getLane());
+                .contains(leftRecord.getLane());
         if (getLane().getFullId().equals("1023.FORWARD3") && !this.mayChangeLeft)
         {
             System.out.println("Lane 1023.FORWARD3 allows left:" + this.mayChangeLeft);
@@ -503,8 +504,9 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     public final void setRight(final RollingLaneStructureRecord rightRecord, final GTUType gtuType)
     {
         this.right = rightRecord;
-        this.mayChangeRight = getLane().accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType,
-            this.gtuDirectionality).contains(rightRecord.getLane());
+        this.mayChangeRight =
+                getLane().accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, this.gtuDirectionality)
+                        .contains(rightRecord.getLane());
     }
 
     /** {@inheritDoc} */
@@ -544,7 +546,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     public final void addNext(final RollingLaneStructureRecord next) throws GTUException
     {
         Throw.when(this.cutOffEnd != null, GTUException.class,
-            "Cannot add next records to a record that was cut-off at the end.");
+                "Cannot add next records to a record that was cut-off at the end.");
         this.nextList.add(next);
     }
 
@@ -571,7 +573,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     public final void addPrev(final RollingLaneStructureRecord prev) throws GTUException
     {
         Throw.when(this.cutOffStart != null, GTUException.class,
-            "Cannot add previous records to a record that was cut-off at the start.");
+                "Cannot add previous records to a record that was cut-off at the start.");
         this.prevList.add(prev);
     }
 
@@ -583,7 +585,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     public final void setCutOffEnd(final Length cutOffEnd) throws GTUException
     {
         Throw.when(!this.nextList.isEmpty(), GTUException.class,
-            "Setting lane record with cut-off end, but there are next records.");
+                "Setting lane record with cut-off end, but there are next records.");
         this.cutOffEnd = cutOffEnd;
     }
 
@@ -595,7 +597,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     public final void setCutOffStart(final Length cutOffStart) throws GTUException
     {
         Throw.when(!this.prevList.isEmpty(), GTUException.class,
-            "Setting lane record with cut-off start, but there are previous records.");
+                "Setting lane record with cut-off start, but there are previous records.");
         this.cutOffStart = cutOffStart;
     }
 
@@ -721,7 +723,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 jan. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -763,8 +765,8 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
             public Length calculateStartDistance(final RollingLaneStructureRecord startDistanceSource,
                     final RollingLaneStructureRecord self, final double fractionalPosition)
             {
-                return startDistanceSource.getStartDistance().plus(startDistanceSource.getLane().getLength()).minus(self
-                    .getLane().getLength());
+                return startDistanceSource.getStartDistance().plus(startDistanceSource.getLane().getLength())
+                        .minus(self.getLane().getLength());
             }
         },
 

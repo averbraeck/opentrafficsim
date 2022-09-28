@@ -24,7 +24,7 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequence;
  * Test the OTSShape class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 9, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -112,7 +112,7 @@ public class OTSShapeTest
         assertTrue("toString result contains class name", s.toString().contains("OTSShape"));
         path.closePath();
         OTSShape s2 = new OTSShape(path);
-        // System.out.println("s:  " + s);
+        // System.out.println("s: " + s);
         // System.out.println("s2: " + s2);
         assertNotEquals("shape from closed path is not equal to shape from unclosed path", s, s2);
         assertEquals("Size of shape from closed path is one longer than size of shape from unclosed path", s.size() + 1,

@@ -19,7 +19,7 @@ import org.opentrafficsim.kpi.sampling.meta.MetaData;
  * Sampler is the highest level organizer for sampling.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 22, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -109,12 +109,12 @@ public abstract class Sampler<G extends GtuDataInterface>
             firstPossibleDataTime = now();
         }
         Throw.when(spaceTimeRegion.getStartTime().lt(firstPossibleDataTime), IllegalStateException.class,
-            "Space time region with start time %s is defined while data is available from %s onwards.", spaceTimeRegion
-                .getStartTime(), firstPossibleDataTime);
+                "Space time region with start time %s is defined while data is available from %s onwards.",
+                spaceTimeRegion.getStartTime(), firstPossibleDataTime);
         if (this.samplerData.contains(spaceTimeRegion.getLaneDirection()))
         {
-            this.endTimes.put(spaceTimeRegion.getLaneDirection(), Time.max(this.endTimes.get(spaceTimeRegion
-                .getLaneDirection()), spaceTimeRegion.getEndTime()));
+            this.endTimes.put(spaceTimeRegion.getLaneDirection(),
+                    Time.max(this.endTimes.get(spaceTimeRegion.getLaneDirection()), spaceTimeRegion.getEndTime()));
         }
         else
         {

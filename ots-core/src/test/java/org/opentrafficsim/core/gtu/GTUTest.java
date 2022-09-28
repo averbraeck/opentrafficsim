@@ -45,7 +45,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * Test the AbstractGTU class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 11, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -184,7 +184,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             new TestGTU("IdOfGTU", null, simulator, perceivableContext);
@@ -194,7 +194,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             new TestGTU("IdOfGTU", gtuType1, null, perceivableContext);
@@ -204,7 +204,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             new TestGTU("IdOfGTU", gtuType1, simulator, null);
@@ -214,7 +214,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         IdGenerator idGenerator = new IdGenerator("baseName");
         assertTrue("The toString method returns something descriptive", idGenerator.toString().startsWith("IdGenerator"));
         int lastBeforeId = Integer.parseInt(idGenerator.nextId().substring(8));
@@ -230,7 +230,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         Speed initialSpeed = new Speed(10, SpeedUnit.KM_PER_HOUR);
         try
         {
@@ -241,7 +241,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         // FIXME should the next one not ge a GTUException?
         try
         {
@@ -252,7 +252,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             gtu.init(strategicalPlanner, new DirectedPoint(Double.NaN, 20, 30), initialSpeed);
@@ -262,7 +262,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             gtu.init(strategicalPlanner, new DirectedPoint(10, Double.NaN, 30), initialSpeed);
@@ -272,7 +272,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             gtu.init(strategicalPlanner, new DirectedPoint(10, 20, Double.NaN), initialSpeed);
@@ -282,7 +282,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         try
         {
             gtu.init(strategicalPlanner, initialLocation, null);
@@ -292,7 +292,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         // The null pointer returned by the strategical planner will cause a NullPointerException
         // FIXME should probably explicitly throw an exception for a misbehaving strategical planner
         try
@@ -304,7 +304,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         this.gtuOfStrategicalPlanner = firstGTU;
         try
         {
@@ -315,7 +315,7 @@ public class GTUTest
         {
             // Ignore expected exception
         }
-        
+
         this.gtuOfStrategicalPlanner = gtu;
         // FIXME should the AbstractGTU not complain more directly about a null returned by
         // strategicalPlanner.generateTacticalPlanner()?

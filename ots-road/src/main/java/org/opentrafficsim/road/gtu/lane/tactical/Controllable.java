@@ -1,10 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
 /**
- * Interface for tactical planners to return the control state for visualization. 
+ * Interface for tactical planners to return the control state for visualization.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 1, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -13,18 +13,19 @@ package org.opentrafficsim.road.gtu.lane.tactical;
  */
 public interface Controllable
 {
-    
+
     /**
      * Returns the control state.
      * @return State; control state
      */
     State getControlState();
-    
+
     /**
      * Control state.
      * <p>
-     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 1, 2019 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -33,16 +34,16 @@ public interface Controllable
      */
     enum State
     {
-        
+
         /** GTU has no control. */
         NONE,
-        
+
         /** Control is disabled. */
         DISABLED,
-        
+
         /** Control is enabled. */
         ENABLED;
-        
+
         /**
          * Returns whether this is NONE.
          * @return boolean; whether this is NONE
@@ -51,7 +52,7 @@ public interface Controllable
         {
             return this.equals(NONE);
         }
-        
+
         /**
          * Returns whether this is DISABLED.
          * @return boolean; whether this is DISABLED
@@ -60,7 +61,7 @@ public interface Controllable
         {
             return this.equals(DISABLED);
         }
-        
+
         /**
          * Returns whether this is ENABLED.
          * @return boolean; whether this is ENABLED
@@ -69,7 +70,7 @@ public interface Controllable
         {
             return this.equals(ENABLED);
         }
-        
+
     }
-    
+
 }

@@ -17,11 +17,11 @@ import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 /**
- * OTSRoadNetworkCloner makes a deep clone of a network. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * OTSRoadNetworkCloner makes a deep clone of a network.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public final class OTSRoadNetworkUtils
@@ -43,8 +43,7 @@ public final class OTSRoadNetworkUtils
      */
     @SuppressWarnings("checkstyle:designforextension")
     public static OTSRoadNetwork clone(final OTSRoadNetwork network, final String newId,
-            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
-            throws NetworkException
+            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
         OTSRoadNetwork newNetwork = new OTSRoadNetwork(newId, false, newSimulator);
 

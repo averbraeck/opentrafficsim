@@ -30,7 +30,7 @@ import org.opentrafficsim.core.network.route.Route;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 3, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -458,8 +458,7 @@ public class OTSNetworkTest implements EventListenerInterface
         {
             // Ignore expected exception
         }
-        Network otherNetwork =
-                new OTSNetwork("other Route map test network", true, MockSimulator.createMock());
+        Network otherNetwork = new OTSNetwork("other Route map test network", true, MockSimulator.createMock());
         Node badNode = new OTSNode(otherNetwork, "nodeInOtherNetwork", new OTSPoint3D(100, 200, 0));
         List<Node> badNodeList = new ArrayList<>();
         badNodeList.add(node1);
@@ -519,8 +518,7 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testShortestPathBiDirectional() throws NetworkException, OTSGeometryException
     {
-        OTSNetwork network =
-                new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
+        OTSNetwork network = new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_BOTH);
         int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode / 2; skip++)
@@ -567,8 +565,7 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testShortestPathClockWise() throws NetworkException, OTSGeometryException
     {
-        OTSNetwork network =
-                new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
+        OTSNetwork network = new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_PLUS);
         int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode; skip++)
@@ -607,8 +604,7 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testShortestPathAntiClockWise() throws NetworkException, OTSGeometryException
     {
-        OTSNetwork network =
-                new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
+        OTSNetwork network = new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_MINUS);
         int maxNode = nodes.size();
         for (int skip = 1; skip < maxNode; skip++)
@@ -647,8 +643,7 @@ public class OTSNetworkTest implements EventListenerInterface
     @Test
     public final void testShortestPathWithIntermediateNodes() throws NetworkException, OTSGeometryException
     {
-        OTSNetwork network =
-                new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
+        OTSNetwork network = new OTSNetwork("shortest path test network", true, MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network, LongitudinalDirectionality.DIR_BOTH, 5);
         int maxNode = nodes.size();
         for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)
@@ -728,8 +723,8 @@ public class OTSNetworkTest implements EventListenerInterface
                         {
                             assertEquals("node i should match", expectedPath.get(i), route.getNode(i));
                         }
-                        route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE),
-                                fromNode, toNode, viaNodes);
+                        route = network.getShortestRouteBetween(network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode,
+                                viaNodes);
                         CompleteRoute routeWithExplicitLengthAsWeight = network.getShortestRouteBetween(
                                 network.getGtuType(GTUType.DEFAULTS.VEHICLE), fromNode, toNode, viaNodes, LinkWeight.LENGTH);
                         assertEquals("route with explicit weight should be same as route", route,

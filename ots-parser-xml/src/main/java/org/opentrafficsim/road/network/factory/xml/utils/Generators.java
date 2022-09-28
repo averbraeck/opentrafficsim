@@ -29,11 +29,11 @@ import org.opentrafficsim.xml.generated.TIMEDISTTYPE;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 
 /**
- * Generators based on distribution tags for typed scalars. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * Generators based on distribution tags for typed scalars.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public final class Generators
@@ -53,8 +53,8 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Length> makeLengthGenerator(final StreamInformation streamMap,
-            final LENGTHDISTTYPE lengthDist) throws XmlParserException
+    public static Generator<Length> makeLengthGenerator(final StreamInformation streamMap, final LENGTHDISTTYPE lengthDist)
+            throws XmlParserException
     {
         try
         {
@@ -201,8 +201,8 @@ public final class Generators
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    public static Generator<Speed> makeSpeedGenerator(final StreamInformation streamMap,
-            final SPEEDDISTTYPE speedDist) throws XmlParserException
+    public static Generator<Speed> makeSpeedGenerator(final StreamInformation streamMap, final SPEEDDISTTYPE speedDist)
+            throws XmlParserException
     {
         try
         {

@@ -10,7 +10,7 @@ import org.junit.Test;
  * Test the methods in the LateralDirectionality enum.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 2, 2017 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -26,7 +26,7 @@ public class LateralDirectionalityTest
         LateralDirectionality left = LateralDirectionality.LEFT;
         LateralDirectionality right = LateralDirectionality.RIGHT;
         LateralDirectionality none = LateralDirectionality.NONE;
-        
+
         assertTrue("left is left", left.isLeft());
         assertTrue("right is right", right.isRight());
         assertFalse("left is not right", left.isRight());
@@ -36,7 +36,7 @@ public class LateralDirectionalityTest
         assertFalse("left is not none", left.isNone());
         assertFalse("right is not none", right.isNone());
         assertTrue("none is none", none.isNone());
-        
+
         assertEquals("flip of left is right", right, left.flip());
         assertEquals("flip of right is left", left, right.flip());
         assertEquals("flip of none is none", none, none.flip());

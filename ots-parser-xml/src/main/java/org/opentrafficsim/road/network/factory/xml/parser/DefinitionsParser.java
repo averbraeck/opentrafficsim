@@ -33,11 +33,11 @@ import org.opentrafficsim.xml.generated.SPEEDLIMIT;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 
 /**
- * DefinitionParser parses the XML nodes of the DEFINITIONS tag: GTUTYPE, GTUTEMPLATE, LINKTYPE, LANETYPE and ROADLAYOUT. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * DefinitionParser parses the XML nodes of the DEFINITIONS tag: GTUTYPE, GTUTEMPLATE, LINKTYPE, LANETYPE and ROADLAYOUT.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public final class DefinitionsParser
@@ -55,7 +55,7 @@ public final class DefinitionsParser
      * @param overwriteDefaults overwrite default definitions in otsNetwork or not
      * @param roadLayoutMap temporary storage for the road layouts
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
-     * @param streamInformation map with stream information 
+     * @param streamInformation map with stream information
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
      * @throws XmlParserException on parsing error
      */
@@ -230,8 +230,7 @@ public final class DefinitionsParser
      */
     public static void parseGtuTemplates(final DEFINITIONS definitions, final OTSRoadNetwork otsNetwork,
             final boolean overwriteDefaults, final Map<String, GTUTEMPLATE> gtuTemplates,
-            final StreamInformation streamInformation)
-            throws XmlParserException
+            final StreamInformation streamInformation) throws XmlParserException
     {
         for (GTUTEMPLATES templateTypes : ParseUtil.getObjectsOfType(definitions.getIncludeAndGTUTYPESAndGTUTEMPLATES(),
                 GTUTEMPLATES.class))

@@ -22,11 +22,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Converter.java. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * Converter.java.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public class Converter
@@ -84,8 +84,7 @@ public class Converter
             List<Node> networkRouteList = nodesOfType(xmlNodeList, "ROUTE");
 
             pw.println("  </NETWORK>\n" + "  <NETWORKDEMAND>");
-            
-            
+
             pw.println("  </NETWORKDEMAND>\n" + "\n" + "  <SCENARIO></SCENARIO>\n" + "\n" + "  <RUN>\n"
                     + "    <RUNLENGTH>1h</RUNLENGTH>\n" + "    <RANDOMSTREAMS>\n" + "      <RANDOMSTREAM ID=\"default\">\n"
                     + "        <REPLICATION ID=\"1\" SEED=\"1\" />\n" + "      </RANDOMSTREAM>\n"

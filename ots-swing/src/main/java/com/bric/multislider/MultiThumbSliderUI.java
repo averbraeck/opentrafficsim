@@ -82,8 +82,10 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
     /**
      * A thumb shape.
      */
-    public static enum Thumb {
-        Circle() {
+    public static enum Thumb
+    {
+        Circle()
+        {
             @Override
             public Shape getShape(float width, float height, boolean leftEdge, boolean rightEdge)
             {
@@ -91,7 +93,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                 return e;
             }
         },
-        Triangle() {
+        Triangle()
+        {
             @Override
             public Shape getShape(float width, float height, boolean leftEdge, boolean rightEdge)
             {
@@ -133,7 +136,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                 return p;
             }
         },
-        Rectangle() {
+        Rectangle()
+        {
             @Override
             public Shape getShape(float width, float height, boolean leftEdge, boolean rightEdge)
             {
@@ -151,7 +155,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                 }
             }
         },
-        Hourglass() {
+        Hourglass()
+        {
             @Override
             public Shape getShape(float width, float height, boolean leftEdge, boolean rightEdge)
             {
@@ -206,8 +211,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
          * @param rightEdge true if this is the right-most thumb.
          * @return the shape of this thumb.
          */
-        public Shape getShape(MultiThumbSliderUI<?> sliderUI, float x, float y, int width, int height,
-                boolean leftEdge, boolean rightEdge)
+        public Shape getShape(MultiThumbSliderUI<?> sliderUI, float x, float y, int width, int height, boolean leftEdge,
+                boolean rightEdge)
         {
 
             // TODO: reinstate leftEdge and rightEdge once bug related to nudging
@@ -236,20 +241,18 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
     protected MultiThumbSlider<T> slider;
 
     /**
-     * The maximum width returned by <code>getMaximumSize()</code>. (or if the slider is vertical, this is the maximum
-     * height.)
+     * The maximum width returned by <code>getMaximumSize()</code>. (or if the slider is vertical, this is the maximum height.)
      */
     int MAX_LENGTH = 300;
 
     /**
-     * The minimum width returned by <code>getMinimumSize()</code>. (or if the slider is vertical, this is the minimum
-     * height.)
+     * The minimum width returned by <code>getMinimumSize()</code>. (or if the slider is vertical, this is the minimum height.)
      */
     int MIN_LENGTH = 50;
 
     /**
-     * The maximum width returned by <code>getPreferredSize()</code>. (or if the slider is vertical, this is the
-     * preferred height.)
+     * The maximum width returned by <code>getPreferredSize()</code>. (or if the slider is vertical, this is the preferred
+     * height.)
      */
     int PREF_LENGTH = 140;
 
@@ -259,8 +262,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
     int DEPTH = 15;
 
     /**
-     * The pixel position of the thumbs. This may be x or y coordinates, depending on whether this slider is horizontal
-     * or vertical
+     * The pixel position of the thumbs. This may be x or y coordinates, depending on whether this slider is horizontal or
+     * vertical
      */
     int[] thumbPositions = new int[0];
 
@@ -328,8 +331,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
     protected abstract int getPreferredComponentDepth();
 
     /**
-     * This records the positions/values of each thumb. This is used when the mouse is pressed, so as the mouse is
-     * dragged values can get replaced and rearranged freely. (Including removing and adding thumbs)
+     * This records the positions/values of each thumb. This is used when the mouse is pressed, so as the mouse is dragged
+     * values can get replaced and rearranged freely. (Including removing and adding thumbs)
      */
     class State
     {
@@ -462,9 +465,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                             float alternative;
 
                             int maxWidth = Math.max(getThumbSize(a).width, getThumbSize(thumbIndex).width);
-                            float trackSize =
-                                    MultiThumbSliderUI.this.slider.getOrientation() == SwingConstants.HORIZONTAL ? MultiThumbSliderUI.this.trackRect.width
-                                            : MultiThumbSliderUI.this.trackRect.height;
+                            float trackSize = MultiThumbSliderUI.this.slider.getOrientation() == SwingConstants.HORIZONTAL
+                                    ? MultiThumbSliderUI.this.trackRect.width : MultiThumbSliderUI.this.trackRect.height;
                             newPosition = Math.max(0, Math.min(1, newPosition));
                             // offset is measured in pixels
                             for (int offset = 0; offset < 4 * maxWidth; offset++)
@@ -498,9 +500,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                             float alternative;
 
                             int maxWidth = Math.max(getThumbSize(a).width, getThumbSize(thumbIndex).width);
-                            float trackSize =
-                                    MultiThumbSliderUI.this.slider.getOrientation() == SwingConstants.HORIZONTAL ? MultiThumbSliderUI.this.trackRect.width
-                                            : MultiThumbSliderUI.this.trackRect.height;
+                            float trackSize = MultiThumbSliderUI.this.slider.getOrientation() == SwingConstants.HORIZONTAL
+                                    ? MultiThumbSliderUI.this.trackRect.width : MultiThumbSliderUI.this.trackRect.height;
                             // offset is measured in pixels
                             for (int offset = 0; offset < 2 * maxWidth; offset++)
                             {
@@ -580,23 +581,19 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                             {
                                 setPosition(this.thumbIndex, 1, false);
                             }
-                            else if (processedThumbs.add(neighbors[0])
-                                    && (newPosition < State.this.positions[neighbors[0]] || Math.abs(State.this.positions[neighbors[0]]
-                                            - newPosition) < span - .0001))
+                            else if (processedThumbs.add(neighbors[0]) && (newPosition < State.this.positions[neighbors[0]]
+                                    || Math.abs(State.this.positions[neighbors[0]] - newPosition) < span - .0001))
                             {
-                                NudgeRequest dependsOn =
-                                        new NudgeRequest(neighbors[0], State.this.positions[neighbors[0]], (newPosition - span)
-                                                - State.this.positions[neighbors[0]]);
+                                NudgeRequest dependsOn = new NudgeRequest(neighbors[0], State.this.positions[neighbors[0]],
+                                        (newPosition - span) - State.this.positions[neighbors[0]]);
                                 dependsOn.process();
                                 setPosition(this.thumbIndex, State.this.positions[dependsOn.thumbIndex] + span, false);
                             }
-                            else if (processedThumbs.add(neighbors[1])
-                                    && (newPosition > State.this.positions[neighbors[1]] || Math.abs(State.this.positions[neighbors[1]]
-                                            - newPosition) < span - .0001))
+                            else if (processedThumbs.add(neighbors[1]) && (newPosition > State.this.positions[neighbors[1]]
+                                    || Math.abs(State.this.positions[neighbors[1]] - newPosition) < span - .0001))
                             {
-                                NudgeRequest dependsOn =
-                                        new NudgeRequest(neighbors[1], State.this.positions[neighbors[1]], (newPosition + span)
-                                                - State.this.positions[neighbors[1]]);
+                                NudgeRequest dependsOn = new NudgeRequest(neighbors[1], State.this.positions[neighbors[1]],
+                                        (newPosition + span) - State.this.positions[neighbors[1]]);
                                 dependsOn.process();
                                 setPosition(this.thumbIndex, State.this.positions[dependsOn.thumbIndex] - span, false);
                             }
@@ -620,8 +617,7 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
         }
 
         /**
-         * Return the left (lesser) neighbor and the right (greater) neighbor. Either index may be -1 if it is not
-         * available.
+         * Return the left (lesser) neighbor and the right (greater) neighbor. Either index may be -1 if it is not available.
          * @param thumbIndex the index of the thumb to examine.
          * @return the left (lesser) neighbor and the right (greater) neighbor.
          */
@@ -655,7 +651,7 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                     }
                 }
             }
-            return new int[]{leftNeighbor, rightNeighbor};
+            return new int[] {leftNeighbor, rightNeighbor};
         }
     }
 
@@ -679,7 +675,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                             {
                                 if (MultiThumbSliderUI.this.thumbIndications[a] < 1)
                                 {
-                                    MultiThumbSliderUI.this.thumbIndications[a] = Math.min(1, MultiThumbSliderUI.this.thumbIndications[a] + .025f);
+                                    MultiThumbSliderUI.this.thumbIndications[a] =
+                                            Math.min(1, MultiThumbSliderUI.this.thumbIndications[a] + .025f);
                                     finished = false;
                                 }
                             }
@@ -687,7 +684,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                             {
                                 if (MultiThumbSliderUI.this.thumbIndications[a] > 0)
                                 {
-                                    MultiThumbSliderUI.this.thumbIndications[a] = Math.max(0, MultiThumbSliderUI.this.thumbIndications[a] - .025f);
+                                    MultiThumbSliderUI.this.thumbIndications[a] =
+                                            Math.max(0, MultiThumbSliderUI.this.thumbIndications[a] - .025f);
                                     finished = false;
                                 }
                             }
@@ -870,7 +868,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
     private int getIndex(MouseEvent e)
     {
         int v;
-        Rectangle2D shapeSum = new Rectangle2D.Double(this.trackRect.x, this.trackRect.y, this.trackRect.width, this.trackRect.height);
+        Rectangle2D shapeSum =
+                new Rectangle2D.Double(this.trackRect.x, this.trackRect.y, this.trackRect.width, this.trackRect.height);
         for (int a = 0; a < this.slider.getThumbCount(); a++)
         {
             shapeSum.add(ShapeBounds.getBounds(getThumbShape(a)));
@@ -975,9 +974,9 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
     /**
      * Create the shape used to render a specific thumb.
      * @param thumbIndex the index of the thumb to render.
-     * @param center an optional center to focus the thumb around. If this is null then the current (real) center is
-     *            used, but this can be supplied manually to consider possible shapes and visual size constraints based
-     *            on the current collision policy.
+     * @param center an optional center to focus the thumb around. If this is null then the current (real) center is used, but
+     *            this can be supplied manually to consider possible shapes and visual size constraints based on the current
+     *            collision policy.
      * @return the shape used to render a specific thumb.
      * @see #getThumbCenter(int)
      * @see #getThumb(int)
@@ -1013,8 +1012,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
     public Point2D getThumbCenter(float position)
     {
         /*
-         * I'm on the fence about whether to document this as allowing null or not. Does this occur in the wild? If so:
-         * is this more an internal error than something we need to document/allow for?
+         * I'm on the fence about whether to document this as allowing null or not. Does this occur in the wild? If so: is this
+         * more an internal error than something we need to document/allow for?
          */
         if (position < 0 || position > 1)
             return null;
@@ -1052,8 +1051,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
     }
 
     /**
-     * Return the Thumb option used to render a specific thumb. The default implementation here consults the client
-     * property MultiThumbSliderUI.THUMB_SHAPE_PROPERTY, and returns Circle by default.
+     * Return the Thumb option used to render a specific thumb. The default implementation here consults the client property
+     * MultiThumbSliderUI.THUMB_SHAPE_PROPERTY, and returns Circle by default.
      * @param thumbIndex the index of the thumb to render.
      * @return the Thumb option used to render a specific thumb.
      */
@@ -1228,14 +1227,14 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
         Object[] c = state.values;
 
         /**
-         * Don't let the user position a thumb outside of [0,1] if there are only 2 colors: colors outside [0,1] are
-         * deleted, and we can't delete colors so we get less than 2.
+         * Don't let the user position a thumb outside of [0,1] if there are only 2 colors: colors outside [0,1] are deleted,
+         * and we can't delete colors so we get less than 2.
          */
         if (p.length <= this.slider.getMinimumThumbnailCount() || (!this.slider.isThumbRemovalAllowed()))
         {
             /**
-             * Since the user can only manipulate 1 thumb at a time, only 1 thumb should be outside the domain of [0,1].
-             * So we *don't* have to reorganize c when we change p
+             * Since the user can only manipulate 1 thumb at a time, only 1 thumb should be outside the domain of [0,1]. So we
+             * *don't* have to reorganize c when we change p
              */
             for (int a = 0; a < p.length; a++)
             {
@@ -1288,7 +1287,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
         public void focusLost(FocusEvent e)
         {
             Component c = (Component) e.getSource();
-            if (getProperty(MultiThumbSliderUI.this.slider, "MultiThumbSlider.indicateComponent", "false").toString().equals("true"))
+            if (getProperty(MultiThumbSliderUI.this.slider, "MultiThumbSlider.indicateComponent", "false").toString()
+                    .equals("true"))
             {
                 MultiThumbSliderUI.this.slider.setSelectedThumb(-1);
             }
@@ -1307,7 +1307,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                     direction *= -1;
                 if (MultiThumbSliderUI.this.slider.isInverted())
                     direction *= -1;
-                MultiThumbSliderUI.this.slider.setSelectedThumb((direction == 1) ? 0 : MultiThumbSliderUI.this.slider.getThumbCount() - 1);
+                MultiThumbSliderUI.this.slider
+                        .setSelectedThumb((direction == 1) ? 0 : MultiThumbSliderUI.this.slider.getThumbCount() - 1);
             }
             updateIndication();
             c.repaint();
@@ -1365,8 +1366,7 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
             int i = MultiThumbSliderUI.this.slider.getSelectedThumb();
             int code = e.getKeyCode();
             int orientation = MultiThumbSliderUI.this.slider.getOrientation();
-            if (i != -1 && (code == KeyEvent.VK_RIGHT || code == KeyEvent.VK_LEFT)
-                    && orientation == MultiThumbSlider.HORIZONTAL
+            if (i != -1 && (code == KeyEvent.VK_RIGHT || code == KeyEvent.VK_LEFT) && orientation == MultiThumbSlider.HORIZONTAL
                     && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
             {
                 // insert a new thumb
@@ -1384,8 +1384,7 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                 e.consume();
                 return;
             }
-            else if (i != -1 && (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN)
-                    && orientation == MultiThumbSlider.VERTICAL
+            else if (i != -1 && (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN) && orientation == MultiThumbSlider.VERTICAL
                     && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
             {
                 // insert a new thumb
@@ -1406,9 +1405,10 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
             else if (code == KeyEvent.VK_DOWN && orientation == MultiThumbSlider.HORIZONTAL && i != -1)
             {
                 // popup up!
-                int x =
-                        MultiThumbSliderUI.this.slider.isInverted() ? (int) (MultiThumbSliderUI.this.trackRect.x + MultiThumbSliderUI.this.trackRect.width
-                                * (1 - MultiThumbSliderUI.this.slider.getThumbPositions()[i])) : (int) (MultiThumbSliderUI.this.trackRect.x + MultiThumbSliderUI.this.trackRect.width
+                int x = MultiThumbSliderUI.this.slider.isInverted()
+                        ? (int) (MultiThumbSliderUI.this.trackRect.x + MultiThumbSliderUI.this.trackRect.width
+                                * (1 - MultiThumbSliderUI.this.slider.getThumbPositions()[i]))
+                        : (int) (MultiThumbSliderUI.this.trackRect.x + MultiThumbSliderUI.this.trackRect.width
                                 * MultiThumbSliderUI.this.slider.getThumbPositions()[i]);
                 int y = MultiThumbSliderUI.this.trackRect.y + MultiThumbSliderUI.this.trackRect.height;
                 if (MultiThumbSliderUI.this.slider.doPopup(x, y))
@@ -1420,9 +1420,11 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
             else if (code == KeyEvent.VK_RIGHT && orientation == MultiThumbSlider.VERTICAL && i != -1)
             {
                 // popup up!
-                int y =
-                        MultiThumbSliderUI.this.slider.isInverted() ? (int) (MultiThumbSliderUI.this.trackRect.y + MultiThumbSliderUI.this.trackRect.height * MultiThumbSliderUI.this.slider.getThumbPositions()[i])
-                                : (int) (MultiThumbSliderUI.this.trackRect.y + MultiThumbSliderUI.this.trackRect.height * (1 - MultiThumbSliderUI.this.slider.getThumbPositions()[i]));
+                int y = MultiThumbSliderUI.this.slider.isInverted()
+                        ? (int) (MultiThumbSliderUI.this.trackRect.y + MultiThumbSliderUI.this.trackRect.height
+                                * MultiThumbSliderUI.this.slider.getThumbPositions()[i])
+                        : (int) (MultiThumbSliderUI.this.trackRect.y + MultiThumbSliderUI.this.trackRect.height
+                                * (1 - MultiThumbSliderUI.this.slider.getThumbPositions()[i]));
                 int x = MultiThumbSliderUI.this.trackRect.x + MultiThumbSliderUI.this.trackRect.width;
                 if (MultiThumbSliderUI.this.slider.doPopup(x, y))
                 {
@@ -1445,7 +1447,8 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
                 }
                 else if (code == KeyEvent.VK_DELETE || code == KeyEvent.VK_BACK_SPACE)
                 {
-                    if (MultiThumbSliderUI.this.slider.getThumbCount() > MultiThumbSliderUI.this.slider.getMinimumThumbnailCount() && MultiThumbSliderUI.this.slider.isThumbRemovalAllowed())
+                    if (MultiThumbSliderUI.this.slider.getThumbCount() > MultiThumbSliderUI.this.slider
+                            .getMinimumThumbnailCount() && MultiThumbSliderUI.this.slider.isThumbRemovalAllowed())
                     {
                         MultiThumbSliderUI.this.slider.removeThumb(i);
                         e.consume();

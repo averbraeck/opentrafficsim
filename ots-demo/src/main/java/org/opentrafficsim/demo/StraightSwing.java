@@ -39,7 +39,7 @@ import nl.tudelft.simulation.language.DSOLException;
  * Simplest contour plots demonstration.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2019-01-06 01:35:05 +0100 (Sun, 06 Jan 2019) $, @version $Revision: 4831 $, by $Author: averbraeck $,
  * initial version 12 nov. 2014 <br>
@@ -92,8 +92,8 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(1500.0), otsModel);
-                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800,
-                    600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 StraightSwing app = new StraightSwing("Straight", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();
@@ -134,8 +134,8 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
 
-        plot = new SwingTrajectoryPlot(new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler
-            .getSamplerData(), path));
+        plot = new SwingTrajectoryPlot(
+                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), simulator, sampler.getSamplerData(), path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", simulator, dataPool));

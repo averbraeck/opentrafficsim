@@ -81,7 +81,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical axis.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2019-01-06 01:35:05 +0100 (Sun, 06 Jan 2019) $, @version $Revision: 4831 $, by $Author: averbraeck $,
  * initial version ug 1, 2014 <br>
@@ -131,8 +131,7 @@ public class StraightModel extends AbstractOTSModel implements UNITS
     {
         try
         {
-            OTSRoadNode from =
-                    new OTSRoadNode(this.network, "From", new OTSPoint3D(0.0, 0, 0), Direction.ZERO);
+            OTSRoadNode from = new OTSRoadNode(this.network, "From", new OTSPoint3D(0.0, 0, 0), Direction.ZERO);
             OTSRoadNode to =
                     new OTSRoadNode(this.network, "To", new OTSPoint3D(this.maximumDistance.getSI(), 0, 0), Direction.ZERO);
             OTSRoadNode end = new OTSRoadNode(this.network, "End", new OTSPoint3D(this.maximumDistance.getSI() + 50.0, 0, 0),
@@ -245,7 +244,7 @@ public class StraightModel extends AbstractOTSModel implements UNITS
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 29 jan. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>

@@ -27,7 +27,7 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
  * {@code BusStop}.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 jan. 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -63,7 +63,7 @@ public class BusStop extends AbstractLaneBasedObject
         super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
                 LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
         this.name = name;
-        
+
         init();
     }
 
@@ -189,8 +189,8 @@ public class BusStop extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
-            final OTSSimulatorInterface newSimulator) throws NetworkException
+    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator)
+            throws NetworkException
     {
         BusStop busStop = new BusStop(getId(), (Lane) newCSE, getLongitudinalPosition(), this.name, newSimulator);
         busStop.setLines(this.lines);

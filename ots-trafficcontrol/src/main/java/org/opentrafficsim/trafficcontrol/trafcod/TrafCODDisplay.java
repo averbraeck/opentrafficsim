@@ -35,7 +35,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
  * Display the current state of a TrafCOD machine.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 15, 2016 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -194,7 +194,7 @@ interface TrafCODObject
  */
 class DetectorImage implements TrafCODObject, EventListenerInterface
 {
-    /** ...  */
+    /** ... */
     private static final long serialVersionUID = 20200313L;
 
     /** The TrafCOD display. */
@@ -295,7 +295,7 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
  */
 class TrafficLightImage implements TrafficLight, TrafCODObject
 {
-    /** ...  */
+    /** ... */
     private static final long serialVersionUID = 20200313L;
 
     /** The TrafCOD display. */
@@ -402,6 +402,7 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
     {
         return null;
     }
+
     /** {@inheritDoc} */
     @Override
     public Serializable getSourceId() throws RemoteException
@@ -432,7 +433,6 @@ class TrafficLightImage implements TrafficLight, TrafCODObject
     {
         return false;
     }
-
 
     /** {@inheritDoc} */
     @Override

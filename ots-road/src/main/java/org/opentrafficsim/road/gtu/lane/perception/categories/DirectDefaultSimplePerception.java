@@ -43,7 +43,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 /**
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 22, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -786,15 +786,15 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     {
         if (gtu.getTurnIndicatorStatus().isLeft())
         {
-            return new GTUStatus[] { GTUStatus.LEFT_TURNINDICATOR };
+            return new GTUStatus[] {GTUStatus.LEFT_TURNINDICATOR};
         }
         if (gtu.getTurnIndicatorStatus().isRight())
         {
-            return new GTUStatus[] { GTUStatus.RIGHT_TURNINDICATOR };
+            return new GTUStatus[] {GTUStatus.RIGHT_TURNINDICATOR};
         }
         if (gtu.getTurnIndicatorStatus().isHazard())
         {
-            return new GTUStatus[] { GTUStatus.EMERGENCY_LIGHTS };
+            return new GTUStatus[] {GTUStatus.EMERGENCY_LIGHTS};
         }
         return new GTUStatus[0];
     }

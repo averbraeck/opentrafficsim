@@ -12,7 +12,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.Detector;
  * Super class for feed-forward controller. This class contains some helper methods for sub-classes.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 29, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -76,7 +76,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
     {
         return totalFlow().divide(this.detectors.size());
     }
-    
+
     /**
      * Returns the total flow over the detectors.
      * @return Frequency; total flow over the detectors

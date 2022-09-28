@@ -41,7 +41,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * Fundamental diagram from various sources.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 okt. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -101,7 +101,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     {
         super(simulator, caption, source.getUpdateInterval(), source.getDelay());
         Throw.when(domainQuantity.equals(rangeQuantity), IllegalArgumentException.class,
-            "Domain and range quantity should not be equal.");
+                "Domain and range quantity should not be equal.");
         this.fdLine = fdLine;
         this.setDomainQuantity(domainQuantity);
         this.setRangeQuantity(rangeQuantity);
@@ -127,7 +127,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         setLowerRangeBound(0.0);
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new GraphUpdater<>("Fundamental diagram worker", Thread.currentThread(), (t) ->
+        this.graphUpdater = new GraphUpdater<>("Fundamental diagram worker", Thread.currentThread(), (
+                t
+        ) ->
         {
             if (this.getSource() != null)
             {
@@ -301,9 +303,10 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     @Override
     public String getStatusLabel(final double domainValue, final double rangeValue)
     {
-        return this.getDomainQuantity().format(domainValue) + ", " + this.getRangeQuantity().format(rangeValue) + ", " + this
-            .getOtherQuantity().format(this.getDomainQuantity().computeOther(this.getRangeQuantity(), domainValue, rangeValue))
-            + this.getTimeInfo();
+        return this.getDomainQuantity().format(domainValue) + ", " + this.getRangeQuantity().format(rangeValue) + ", "
+                + this.getOtherQuantity()
+                        .format(this.getDomainQuantity().computeOther(this.getRangeQuantity(), domainValue, rangeValue))
+                + this.getTimeInfo();
     }
 
     /**
@@ -311,7 +314,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 16 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -457,7 +460,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * <p>
      * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 16 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -677,8 +680,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Fundamental diagram source based on a cross section.
      * @param <S> underlying source type
      */
-    private static class CrossSectionSamplerFdSource<S extends GraphCrossSection<? extends KpiLaneDirection>> extends
-        AbstractSpaceSamplerFdSource<S>
+    private static class CrossSectionSamplerFdSource<S extends GraphCrossSection<? extends KpiLaneDirection>>
+            extends AbstractSpaceSamplerFdSource<S>
     {
         /** Harmonic mean. */
         private final boolean harmonic;
@@ -744,8 +747,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Fundamental diagram source based on a path. Density, speed and flow over the entire path are calculated per lane.
      * @param <S> underlying source type
      */
-    private static class PathSamplerFdSource<S extends GraphPath<? extends KpiLaneDirection>> extends
-        AbstractSpaceSamplerFdSource<S>
+    private static class PathSamplerFdSource<S extends GraphPath<? extends KpiLaneDirection>>
+            extends AbstractSpaceSamplerFdSource<S>
     {
         /**
          * Constructor.
@@ -797,8 +800,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * Abstract class that deals with updating and recalculating the fundamental diagram.
      * @param <S> underlying source type
      */
-    private abstract static class AbstractSpaceSamplerFdSource<S extends AbstractGraphSpace<? extends KpiLaneDirection>> extends
-        AbstractFdSource
+    private abstract static class AbstractSpaceSamplerFdSource<S extends AbstractGraphSpace<? extends KpiLaneDirection>>
+            extends AbstractFdSource
     {
         /** Period number of last calculated period. */
         private int periodNumber = -1;
@@ -859,8 +862,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             // create and register kpi lane directions
             for (KpiLaneDirection laneDirection : space)
             {
-                sampler.registerSpaceTimeRegion(new SpaceTimeRegion(laneDirection, Length.ZERO, laneDirection.getLaneData()
-                    .getLength(), sampler.now(), Time.instantiateSI(Double.MAX_VALUE)));
+                sampler.registerSpaceTimeRegion(new SpaceTimeRegion(laneDirection, Length.ZERO,
+                        laneDirection.getLaneData().getLength(), sampler.now(), Time.instantiateSI(Double.MAX_VALUE)));
 
                 // info per kpi lane direction
                 this.lastConsecutivelyAssignedTrajectories.put(laneDirection, -1);
@@ -946,10 +949,11 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                         }
                         AbstractSpaceSamplerFdSource.this.lastUpdateTime = null; // so the increaseTime call is not skipped
                         while ((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
-                            + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si <= time.si)
+                                + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si <= time.si)
                         {
-                            increaseTime(Time.instantiateSI((AbstractSpaceSamplerFdSource.this.periodNumber + 1)
-                                * getUpdateInterval().si + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si));
+                            increaseTime(Time
+                                    .instantiateSI((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
+                                            + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si));
                             // TODO: if multiple plots are coupled to the same source, other plots are not invalidated
                             // TODO: change of aggregation period / update freq, is not updated in the GUI on other plots
                             // for (FundamentalDiagram diagram : getDiagrams())
@@ -1035,7 +1039,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                                 {
                                     double[] measurements = new double[2];
                                     getMeasurements(trajectory, startTime, time, lane.getLaneData().getLength(), series,
-                                        measurements);
+                                            measurements);
                                     first += measurements[0];
                                     second += measurements[1];
                                 }
@@ -1124,7 +1128,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                 return Double.NaN;
             }
             return getVehicleCount(this.firstMeasurement[series][item], this.secondMeasurement[series][item])
-                / this.aggregationPeriod.si;
+                    / this.aggregationPeriod.si;
         }
 
         /** {@inheritDoc} */
@@ -1211,7 +1215,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         MultiFdSource(final Map<String, FdSource> sources)
         {
             Throw.when(sources == null || sources.size() == 0, IllegalArgumentException.class,
-                "At least 1 source is required.");
+                    "At least 1 source is required.");
             this.sources = new FdSource[sources.size()];
             this.sourceNames = new String[sources.size()];
             int index = 0;
@@ -1318,8 +1322,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         public String getName(final int series)
         {
             int[] ss = getSourceAndSeries(series);
-            return this.sourceNames[ss[0]] + (this.sources[ss[0]].isAggregate() ? "" : ": " + this.sources[ss[0]].getName(
-                ss[1]));
+            return this.sourceNames[ss[0]]
+                    + (this.sources[ss[0]].isAggregate() ? "" : ": " + this.sources[ss[0]].getName(ss[1]));
         }
 
         /** {@inheritDoc} */
@@ -1394,9 +1398,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     public String toString()
     {
         return "FundamentalDiagram [source=" + this.getSource() + ", domainQuantity=" + this.getDomainQuantity()
-            + ", rangeQuantity=" + this.getRangeQuantity() + ", otherQuantity=" + this.getOtherQuantity() + ", seriesLabels="
-            + this.seriesLabels + ", graphUpdater=" + this.graphUpdater + ", timeInfo=" + this.getTimeInfo() + ", legend="
-            + this.legend + ", laneVisible=" + this.laneVisible + "]";
+                + ", rangeQuantity=" + this.getRangeQuantity() + ", otherQuantity=" + this.getOtherQuantity()
+                + ", seriesLabels=" + this.seriesLabels + ", graphUpdater=" + this.graphUpdater + ", timeInfo="
+                + this.getTimeInfo() + ", legend=" + this.legend + ", laneVisible=" + this.laneVisible + "]";
     }
 
     /**

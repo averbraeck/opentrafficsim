@@ -33,7 +33,7 @@ import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
  * is D. The further categorization is defined by an array of {@code Class}'s that define the categorization.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 15, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -92,7 +92,7 @@ public class ODMatrix implements Serializable, Identifiable
             final Categorization categorization, final TimeVector globalTimeVector, final Interpolation globalInterpolation)
     {
         Throw.whenNull(id, "Id may not be null.");
-        Throw.whenNull(origins, "Origins may not be null."); 
+        Throw.whenNull(origins, "Origins may not be null.");
         Throw.when(origins.contains(null), NullPointerException.class, "Origin may not contain null.");
         Throw.whenNull(destinations, "Destination may not be null.");
         Throw.when(destinations.contains(null), NullPointerException.class, "Destination may not contain null.");
@@ -580,8 +580,9 @@ public class ODMatrix implements Serializable, Identifiable
                         - timeVector.get(i).getInUnit(TimeUnit.BASE_HOUR));
             }
             // last value can remain zero as initialized
-            putDemandVector(origin, destination, category, DoubleVector.instantiate(flow, FrequencyUnit.PER_HOUR, StorageType.DENSE),
-                    timeVector, Interpolation.STEPWISE);
+            putDemandVector(origin, destination, category,
+                    DoubleVector.instantiate(flow, FrequencyUnit.PER_HOUR, StorageType.DENSE), timeVector,
+                    Interpolation.STEPWISE);
         }
         catch (ValueRuntimeException exception)
         {
@@ -691,8 +692,8 @@ public class ODMatrix implements Serializable, Identifiable
             Throw.when(dem[periodIndex] < -additionalDemand, UnsupportedOperationException.class,
                     "Demand may not become negative.");
             dem[periodIndex] += additionalDemand;
-            putDemandVector(origin, destination, category, DoubleVector.instantiate(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE),
-                    time, Interpolation.STEPWISE);
+            putDemandVector(origin, destination, category,
+                    DoubleVector.instantiate(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE), time, Interpolation.STEPWISE);
         }
         catch (ValueRuntimeException exception)
         {

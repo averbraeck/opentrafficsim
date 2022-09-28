@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * The OTS search panel.
  * <p>
  * Copyright (c) 2020-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2018-10-11 22:54:04 +0200 (Thu, 11 Oct 2018) $, @version $Revision: 4696 $, by $Author: averbraeck $,
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -60,7 +60,7 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.add(new JLabel("    ")); // insert some white space in the GUI
         this.add(new JLabel(OTSControlPanel.loadIcon("/View.png")));
-        ObjectKind<?>[] objectKinds = new ObjectKind[] { new ObjectKind<GTU>("GTU")
+        ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<GTU>("GTU")
         {
             @Override
             GTU searchNetwork(final OTSNetwork network, final String id)
@@ -81,10 +81,10 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
             {
                 return network.getLink(id);
             }
-        } };
+        }};
         this.typeToSearch = new JComboBox<ObjectKind<?>>(objectKinds);
         this.add(this.typeToSearch);
-        
+
         /** Text field with appearance control. */
         class AppearanceControlTextField extends JTextField implements AppearanceControl
         {
@@ -112,7 +112,7 @@ public class OTSSearchPanel extends JPanel implements ActionListener, FocusListe
                 return "AppearanceControlLabel []";
             }
         }
-        
+
         this.idTextField = new AppearanceControlTextField();
         this.idTextField.setPreferredSize(new Dimension(100, 0));
         this.add(this.idTextField);

@@ -45,11 +45,11 @@ import org.opentrafficsim.xml.generated.RESPONSIVECONTROLTYPE.SENSOR.SINGLELANE;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
- * NodeParser takes care of parsing the CONTROL tags for the Traffic Lights in the XML network. <br>
- * <br>
- * Copyright (c) 2003-2022 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
- * source code and binary code of this software is proprietary information of Delft University of Technology.
+ * NodeParser takes care of parsing the CONTROL tags for the Traffic Lights in the XML network.
+ * <p>
+ * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
 public final class ControlParser
@@ -160,8 +160,7 @@ public final class ControlParser
                 List<String> displayObjectLocations = null == objectLocationsString
                         ? TrafCOD.loadTextFromURL(new URL(trafCod.getCONSOLE().getCOORDINATESFILE()))
                         : Arrays.asList(objectLocationsString.split("\n"));
-                TrafCOD trafCOD =
-                        new TrafCOD(controllerName, program, simulator, backgroundImage, displayObjectLocations);
+                TrafCOD trafCOD = new TrafCOD(controllerName, program, simulator, backgroundImage, displayObjectLocations);
                 otsNetwork.addInvisibleObject(trafCOD);
                 // this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 // this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);

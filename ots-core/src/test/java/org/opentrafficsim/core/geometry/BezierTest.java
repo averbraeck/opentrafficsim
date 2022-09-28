@@ -9,7 +9,7 @@ import org.junit.Test;
  * Test the B&eacute;zier class.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jan 2, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -59,7 +59,7 @@ public class BezierTest
         {
             for (double shape : new double[] {0.5, 1.0, 2.0})
             {
-                for (boolean weighted : new boolean[] { false, true })
+                for (boolean weighted : new boolean[] {false, true})
                 {
                     DirectedPoint start = new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, -Math.PI / 2, 0);
                     DirectedPoint end = new DirectedPoint(to.x, to.y, to.z, Math.PI, 0, -Math.PI / 2);
@@ -107,5 +107,5 @@ public class BezierTest
             }
         }
     }
-    
+
 }

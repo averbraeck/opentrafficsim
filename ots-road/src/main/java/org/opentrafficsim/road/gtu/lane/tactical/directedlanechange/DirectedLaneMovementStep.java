@@ -9,7 +9,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
  * Acceleration, lane change decision and time until when this movement is committed.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision: 1155 $, $LastChangedDate: 2015-07-26 01:01:13 +0200 (Sun, 26 Jul 2015) $, by $Author: averbraeck $,
  *          initial version 6 feb. 2015 <br>
@@ -26,7 +26,8 @@ public class DirectedLaneMovementStep implements Serializable
 
     /**
      * Lane change. This has one of the following values:
-     * <table ><caption>&nbsp;</caption>
+     * <table >
+     * <caption>&nbsp;</caption>
      * <tr>
      * <td>null:</td>
      * <td>Stay in the current lane</td>
@@ -47,7 +48,8 @@ public class DirectedLaneMovementStep implements Serializable
      * Construct a new LaneChangeModelResult.
      * @param accelerationStep AccelerationStep; the acceleration and duration of validity of this result.
      * @param direction LateralDirectionality; this has one of the values:
-     *            <table ><caption>&nbsp;</caption>
+     *            <table >
+     *            <caption>&nbsp;</caption>
      *            <tr>
      *            <td>null:</td>
      *            <td>Stay in the current lane</td>
@@ -78,7 +80,8 @@ public class DirectedLaneMovementStep implements Serializable
 
     /**
      * @return laneChange. This has one of the values:
-     *         <table ><caption>&nbsp;</caption>
+     *         <table >
+     *         <caption>&nbsp;</caption>
      *         <tr>
      *         <td>null:</td>
      *         <td>Stay in the current lane</td>

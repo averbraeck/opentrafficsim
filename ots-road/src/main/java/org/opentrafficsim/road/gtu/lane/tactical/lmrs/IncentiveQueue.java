@@ -30,7 +30,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * Incentive to join the shortest queue near intersection.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 2, 2019 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -95,13 +95,12 @@ public class IncentiveQueue implements VoluntaryIncentive
         }
         return new Desire(dLeft, dRight);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return "IncentiveQueue";
     }
-
 
 }
