@@ -1,6 +1,6 @@
 # Branching and Merging in Eclipse and GitHub
 
-## 1 Make a branch n GitHub to take care of local changes
+## 1 Make a branch in GitHub to take care of local changes
 
 The branch ensures that working on a temporary inconsistent code base Is not a problem since it is isolated from the main branch (or the stable branch) that users may check out. 
 Go to the project and select "branches". The number of existing / active branches is given:
@@ -23,7 +23,7 @@ Once the branch is created, it will be shown in GitHub:
 
 
 
-## 2 Pull the branch to Eclipse
+## 2 Pull the branch into Eclipse
 
 In Eclipse, use "Fetch from origin" (either via the toolbar, or via the Team menu on the main project):
 
