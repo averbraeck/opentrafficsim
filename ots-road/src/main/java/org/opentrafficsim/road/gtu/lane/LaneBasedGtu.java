@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -11,6 +12,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.event.EventType;
 import org.djutils.event.TimedEventType;
+import org.djutils.exceptions.Try;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.geometry.DirectedPoint;
@@ -25,6 +28,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
@@ -90,6 +94,20 @@ public interface LaneBasedGtu extends Gtu
      */
     void setFinalizeLaneChangeEvent(SimEventInterface<Duration> event);
 
+    /**
+     * Returns the next lane and direction for a given lane and direction to stay on the route.
+     * @param laneDirection LaneDirection; the lane and direction for which we want to know the next LaneDirection
+     * @return LaneDirection; next lane and direction, {@code null} if none
+     */
+    LaneDirection getNextLaneForRoute(LaneDirection laneDirection);
+    
+    /**
+     * Returns a set of {@code LaneDirection}s that can be followed considering the route.
+     * @param laneDirection LaneDirection; the lane and direction for which we want to know the next LaneDirections
+     * @return set of {@code LaneDirection}s that can be followed considering the route
+     */
+    Set<LaneDirection> getNextLanesForRoute(LaneDirection laneDirection);
+    
     /**
      * Get projected length on the lane.
      * @param lane Lane; lane to project the vehicle on

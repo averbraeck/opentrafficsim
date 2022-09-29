@@ -1,18 +1,13 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Try;
-import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.LinkDirection;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
@@ -102,93 +97,6 @@ public class LaneDirection implements Serializable
             f = 1.0 - f;
         }
         return f;
-    }
-
-    /**
-     * Returns the next lane and direction.
-     * @param gtu LaneBasedGtu; gtu
-     * @return LaneDirection; next lane and direction, {@code null} if none
-     */
-    public final LaneDirection getNextLaneDirection(final LaneBasedGtu gtu)
-    {
-        ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGtuType());
-        if (next.isEmpty())
-        {
-            return null;
-        }
-        // ask strategical planner
-        Set<LaneDirection> set = getNextForRoute(gtu);
-        if (set.size() == 1)
-        {
-            return set.iterator().next();
-        }
-        // check if the GTU is registered on any
-        for (LaneDirection l : set)
-        {
-            if (l.getLane().getGtuList().contains(gtu))
-            {
-                return l;
-            }
-        }
-        // ask tactical planner
-        return Try.assign(() -> gtu.getTacticalPlanner().chooseLaneAtSplit(this, set),
-                "Could not find suitable lane at split after lane %s in %s of link %s for GTU %s.", this.lane.getId(),
-                this.direction, this.lane.getParentLink().getId(), gtu.getId());
-    }
-
-    /**
-     * Returns a set of {@code LaneDirection}'s that can be followed considering the route.
-     * @param gtu LaneBasedGtu; GTU
-     * @return set of {@code LaneDirection}'s that can be followed considering the route
-     */
-    public Set<LaneDirection> getNextForRoute(final LaneBasedGtu gtu)
-    {
-        ImmutableMap<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGtuType());
-        if (next.isEmpty())
-        {
-            return null;
-        }
-        LinkDirection ld;
-        try
-        {
-            ld = gtu.getStrategicalPlanner().nextLinkDirection(this.lane.getParentLink(), this.direction, gtu.getGtuType());
-        }
-        catch (NetworkException exception)
-        {
-            throw new RuntimeException("Strategical planner experiences exception on network.", exception);
-        }
-        Set<LaneDirection> out = new LinkedHashSet<>();
-        for (Lane l : next.keySet())
-        {
-            GTUDirectionality dir = next.get(l);
-            if (l.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
-            {
-                out.add(new LaneDirection(l, dir));
-            }
-        }
-        // if (out.size() == 0)
-        // {
-        // gtu.getSimulator().getLogger().always().warn(
-        // "Could not find a next segment for GTU \"{}\" on lane {}, on route {}; LinkDirection is {}, {}",
-        // gtu.getId(), this.lane, next.keySet(), ld.getLink().getId(), ld.getDirection());
-        // gtu.getSimulator().getLogger().always().warn(gtu.getStrategicalPlanner().getRoute());
-        // for (Lane l : next.keySet())
-        // {
-        // GTUDirectionality dir = next.get(l);
-        // gtu.getSimulator().getLogger().always().info("examining l={}, dir={}", l, dir);
-        // if (!l.getParentLink().equals(ld.getLink()))
-        // {
-        // gtu.getSimulator().getLogger().always()
-        // .info("not including lane {} with direction {} because \"parent link does not match\"", l, dir);
-        // }
-        // if (!dir.equals(ld.getDirection()))
-        // {
-        // gtu.getSimulator().getLogger().always()
-        // .info("not including lane {} with direction {} because direction does not match", l, dir);
-        // }
-        // }
-        // }
-        return out;
     }
 
     /**

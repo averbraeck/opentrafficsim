@@ -914,7 +914,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
 
                     // in case there are multiple lanes on the same link after a lane split, we need to choose one
                     LaneDirection nextLaneDirection =
-                            new LaneDirection(record.getLane(), record.getDirection()).getNextLaneDirection(this.containingGtu);
+                            this.containingGtu.getNextLaneForRoute(new LaneDirection(record.getLane(), record.getDirection()));
 
                     record.clearCutOffEnd();
                     iterator.remove(); // can remove from edge, no algorithm needs it anymore in the downstream edge
@@ -1223,7 +1223,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
             else if (!record.getNext().isEmpty())
             {
                 LaneDirection laneDir =
-                        new LaneDirection(record.getLane(), record.getDirection()).getNextLaneDirection(this.containingGtu);
+                        this.containingGtu.getNextLaneForRoute(new LaneDirection(record.getLane(), record.getDirection()));
                 if (laneDir == null)
                 {
                     record = null;

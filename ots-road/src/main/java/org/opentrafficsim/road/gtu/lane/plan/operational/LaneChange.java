@@ -271,11 +271,11 @@ public class LaneChange implements Serializable
             LaneDirection nextFromLane;
             if (!favoured)
             {
-                nextFromLane = fromLane.getNextLaneDirection(gtu);
+                nextFromLane = gtu.getNextLaneForRoute(fromLane);
             }
             else
             {
-                Set<LaneDirection> nexts = fromLane.getNextForRoute(gtu);
+                Set<LaneDirection> nexts = gtu.getNextLanesForRoute(fromLane);
                 if (nexts != null && !nexts.isEmpty())
                 {
                     Iterator<LaneDirection> it = nexts.iterator();
@@ -406,7 +406,7 @@ public class LaneChange implements Serializable
                 // add further lanes
                 while (toLane != null && requiredLength > 0.0)
                 {
-                    toLane = toLane.getNextLaneDirection(gtu);
+                    toLane = gtu.getNextLaneForRoute(toLane);
                     if (toLane != null) // let's hope we will move on to a sink
                     {
                         OTSLine3D remainder = toLane.getDirection().isPlus() ? toLane.getLane().getCenterLine()

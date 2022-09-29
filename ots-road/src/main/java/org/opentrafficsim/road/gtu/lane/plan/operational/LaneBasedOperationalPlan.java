@@ -145,7 +145,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
         // move to next lane while projection fails
         while (Double.isNaN(f))
         {
-            LaneDirection nextLane = lane.getNextLaneDirection(gtu);
+            LaneDirection nextLane = gtu.getNextLaneForRoute(lane);
             Direction nextDir = Direction.instantiateSI(nextLane == null ? getRotZAtFraction(lane, false)
                     : .5 * getRotZAtFraction(lane, false) + .5 * getRotZAtFraction(nextLane, true));
             f = lane.getLane().getCenterLine().projectFractional(prevDir, nextDir, point.x, point.y, FractionalFallback.NaN);

@@ -46,6 +46,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
@@ -517,7 +518,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
             }
             if (passed != null)
             {
-                LaneDirection next = lane.getNextLaneDirection(this);
+                LaneDirection next = getNextLaneForRoute(lane);
                 Length nextPos = next.getDirection().isPlus() ? passed.minus(getFront().getDx())
                         : next.getLength().minus(passed).plus(getFront().getDx());
                 enterLaneRecursive(next, nextPos, 1);
@@ -808,7 +809,7 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
         CrossSection lastCrossSection = this.crossSections.get(this.crossSections.size() - 1);
         LaneDirection laneDirection =
                 new LaneDirection(lastCrossSection.getLanes().get(this.referenceLaneIndex), lastCrossSection.getDirection());
-        LaneDirection nextLaneDirection = laneDirection.getNextLaneDirection(this);
+        LaneDirection nextLaneDirection = getNextLaneForRoute(laneDirection);
         if (nextLaneDirection == null)
         {
             forceLaneChangeFinalization();
@@ -1023,6 +1024,69 @@ public abstract class AbstractLaneBasedGtu2 extends AbstractGtu implements LaneB
                     .plus(eventMargin);
         }
         return getOperationalPlan().getTotalLength().plus(eventMargin);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LaneDirection getNextLaneForRoute(final LaneDirection laneDirection)
+    {
+        ImmutableMap<Lane, GTUDirectionality> next =
+                laneDirection.getLane().downstreamLanes(laneDirection.getDirection(), getGtuType());
+        if (next.isEmpty())
+        {
+            return null;
+        }
+        // ask strategical planner
+        Set<LaneDirection> set = getNextLanesForRoute(laneDirection);
+        if (set.size() == 1)
+        {
+            return set.iterator().next();
+        }
+        // check if the GTU is registered on any
+        for (LaneDirection l : set)
+        {
+            if (l.getLane().getGtuList().contains(this))
+            {
+                return l;
+            }
+        }
+        // ask tactical planner
+        return Try.assign(() -> getTacticalPlanner().chooseLaneAtSplit(laneDirection, set),
+                "Could not find suitable lane at split after lane %s in %s of link %s for GTU %s.",
+                laneDirection.getLane().getId(), laneDirection.getDirection(), laneDirection.getLane().getParentLink().getId(),
+                getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<LaneDirection> getNextLanesForRoute(final LaneDirection laneDirection)
+    {
+        ImmutableMap<Lane, GTUDirectionality> next =
+                laneDirection.getLane().downstreamLanes(laneDirection.getDirection(), getGtuType());
+        if (next.isEmpty())
+        {
+            return null;
+        }
+        LinkDirection ld;
+        try
+        {
+            ld = getStrategicalPlanner().nextLinkDirection(laneDirection.getLane().getParentLink(),
+                    laneDirection.getDirection(), getGtuType());
+        }
+        catch (NetworkException exception)
+        {
+            throw new RuntimeException("Strategical planner experiences exception on network.", exception);
+        }
+        Set<LaneDirection> out = new LinkedHashSet<>();
+        for (Lane l : next.keySet())
+        {
+            GTUDirectionality dir = next.get(l);
+            if (l.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
+            {
+                out.add(new LaneDirection(l, dir));
+            }
+        }
+        return out;
     }
 
     /**

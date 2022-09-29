@@ -43,6 +43,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
@@ -572,7 +573,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
             }
             if (passed != null)
             {
-                LaneDirection next = lane.getNextLaneDirection(this);
+                LaneDirection next = getNextLaneForRoute(lane);
                 if (!this.currentLanes.containsKey(next.getLane()))
                 {
                     Length nextPos = next.getDirection().isPlus() ? passed.minus(getFront().getDx())
@@ -871,6 +872,69 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
 
     /** {@inheritDoc} */
     @Override
+    public final LaneDirection getNextLaneForRoute(final LaneDirection laneDirection)
+    {
+        ImmutableMap<Lane, GTUDirectionality> next =
+                laneDirection.getLane().downstreamLanes(laneDirection.getDirection(), getGtuType());
+        if (next.isEmpty())
+        {
+            return null;
+        }
+        // ask strategical planner
+        Set<LaneDirection> set = getNextLanesForRoute(laneDirection);
+        if (set.size() == 1)
+        {
+            return set.iterator().next();
+        }
+        // check if the GTU is registered on any
+        for (LaneDirection l : set)
+        {
+            if (l.getLane().getGtuList().contains(this))
+            {
+                return l;
+            }
+        }
+        // ask tactical planner
+        return Try.assign(() -> getTacticalPlanner().chooseLaneAtSplit(laneDirection, set),
+                "Could not find suitable lane at split after lane %s in %s of link %s for GTU %s.",
+                laneDirection.getLane().getId(), laneDirection.getDirection(), laneDirection.getLane().getParentLink().getId(),
+                getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<LaneDirection> getNextLanesForRoute(final LaneDirection laneDirection)
+    {
+        ImmutableMap<Lane, GTUDirectionality> next =
+                laneDirection.getLane().downstreamLanes(laneDirection.getDirection(), getGtuType());
+        if (next.isEmpty())
+        {
+            return null;
+        }
+        LinkDirection ld;
+        try
+        {
+            ld = getStrategicalPlanner().nextLinkDirection(laneDirection.getLane().getParentLink(),
+                    laneDirection.getDirection(), getGtuType());
+        }
+        catch (NetworkException exception)
+        {
+            throw new RuntimeException("Strategical planner experiences exception on network.", exception);
+        }
+        Set<LaneDirection> out = new LinkedHashSet<>();
+        for (Lane l : next.keySet())
+        {
+            GTUDirectionality dir = next.get(l);
+            if (l.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
+            {
+                out.add(new LaneDirection(l, dir));
+            }
+        }
+        return out;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final Map<Lane, Length> positions(final RelativePosition relativePosition) throws GtuException
     {
         return positions(relativePosition, getSimulator().getSimulatorAbsTime());
@@ -1134,7 +1198,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
         nextLanes.retainAll(otherLanesToConsider); // as we delete here
         if (!upstream && nextLanes.size() > 1)
         {
-            LaneDirection laneDir = new LaneDirection(lane, getDirection(lane)).getNextLaneDirection(this);
+            LaneDirection laneDir = getNextLaneForRoute(new LaneDirection(lane, getDirection(lane)));
             if (nextLanes.contains(laneDir.getLane()))
             {
                 nextLanes.clear();
@@ -1322,7 +1386,7 @@ public abstract class AbstractLaneBasedGtu extends AbstractGtu implements LaneBa
             DirectedPoint end = null;
             if (laneDir.isPlus() ? nextFrontPosSI > lane.getLength().si : nextFrontPosSI < 0.0)
             {
-                LaneDirection next = new LaneDirection(lane, laneDir).getNextLaneDirection(this);
+                LaneDirection next = getNextLaneForRoute(new LaneDirection(lane, laneDir));
                 if (null == next)
                 {
                     // A sink should delete the GTU, or a lane change should end, before reaching the end of the lane

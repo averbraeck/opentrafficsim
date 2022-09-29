@@ -350,7 +350,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 {
                     CategoryLogger.always().warn("About to die: GTU {} has null from value", gtu.getId());
                 }
-                from = from.getNextLaneDirection(gtu);
+                from = gtu.getNextLaneForRoute(from);
                 if (from == null)
                 {
                     // check sink sensor

@@ -108,7 +108,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
         LaneDirection best = null;
         for (LaneDirection lane : lanes)
         {
-            LaneDirection next = lane.getNextLaneDirection(getGtu());
+            LaneDirection next = getGtu().getNextLaneForRoute(lane);
             if (next != null)
             {
                 Length okDistance = okDistance(next, lane.getLength(), route,
@@ -143,7 +143,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
         {
             return maxDistance;
         }
-        LaneDirection next = lane.getNextLaneDirection(getGtu());
+        LaneDirection next = getGtu().getNextLaneForRoute(lane);
         if (next == null)
         {
             Node endNode = lane.getDirection().isPlus() ? lane.getLane().getParentLink().getEndNode()
