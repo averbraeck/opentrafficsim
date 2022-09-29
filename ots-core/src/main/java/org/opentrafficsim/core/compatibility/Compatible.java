@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.compatibility;
 
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 
 /**
@@ -24,7 +23,7 @@ public interface Compatible
     Compatible EVERYTHING = new Compatible()
     {
         @Override
-        public boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
+        public boolean isCompatible(final GtuType gtuType)
         {
             return true;
         }
@@ -35,9 +34,9 @@ public interface Compatible
     Compatible PLUS = new Compatible()
     {
         @Override
-        public boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
+        public boolean isCompatible(final GtuType gtuType)
         {
-            return directionality.isPlus();
+            return true;
         }
     };
 
@@ -46,9 +45,9 @@ public interface Compatible
     Compatible MINUS = new Compatible()
     {
         @Override
-        public boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
+        public boolean isCompatible(final GtuType gtuType)
         {
-            return directionality.isMinus();
+            return false;
         }
     };
 
@@ -56,12 +55,10 @@ public interface Compatible
      * Test if a GtuType is handled by the infrastructure in the given direction. For Lane and Link, <cite>handled</cite> means
      * that GTUs of this type can travel over this infrastructure in the direction. For Sensors it means that the sensor will
      * detect GTUs that travel over it in the given direction.
-     * @param gtuType GtuType; the type of the GTU
-     * @param directionality GTUDirectionality; the direction of the GTU with respect to the design direction of the
-     *            infrastructure
+     * @param gtuType GtuType; the type of the GTU infrastructure
      * @return boolean; true if the GTU is handled by the infrastructure in the given direction
      */
     @Deprecated
-    boolean isCompatible(GtuType gtuType, GTUDirectionality directionality);
+    boolean isCompatible(GtuType gtuType);
 
 }
