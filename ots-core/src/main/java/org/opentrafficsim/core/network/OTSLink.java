@@ -12,7 +12,6 @@ import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -83,13 +82,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.network.addLink(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final LongitudinalDirectionality getDirectionality(final GtuType gtuType)
-    {
-        return this.getLinkType().getDirectionality(gtuType, true);
     }
 
     /** {@inheritDoc} */
