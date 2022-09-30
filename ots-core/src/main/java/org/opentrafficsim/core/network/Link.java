@@ -13,7 +13,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -56,17 +55,6 @@ public interface Link extends Locatable, Serializable, Identifiable, Drawable
 
     /** @return length of the link. */
     Length getLength();
-
-    /**
-     * This method returns the directionality of the link for a GTU type. It might be that the link is FORWARD (from start node
-     * to end node) for the GTU type CAR, but BOTH for the GTU type BICYCLE (i.e., bicycles can also go from end node to start
-     * node). If there is no entry for the given GTU Type, the values of GtuType.ALL will be returned. If this entry is not
-     * present, LongitudinalDirectionality.NONE will be returned.
-     * @param gtuType GtuType; the GTU type to request the directionality for
-     * @return the longitudinal directionality of the link (FORWARD, BACKWARD, BOTH or NONE) for the given GTU type. NONE will
-     *         be returned if no directionality is given.
-     */
-    LongitudinalDirectionality getDirectionality(GtuType gtuType);
 
     /**
      * Add a GTU to this link (e.g., for statistical purposes, or for a model on macro level). It is safe to add a GTU again. No
