@@ -1,8 +1,6 @@
 package org.opentrafficsim.core.network;
 
 import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * Link type to indicate compatibility with GTU types. The id of a LinkType should be unique within a simulation. This is,
@@ -19,9 +17,6 @@ public class LinkType extends GtuCompatibleInfraType<LinkType>
 {
     /** */
     private static final long serialVersionUID = 20140821L;
-
-    /** Reversed link type. */
-    private LinkType reversed = null;
 
     /** the network to which the LinkType belongs. */
     private final Network network;
@@ -98,30 +93,6 @@ public class LinkType extends GtuCompatibleInfraType<LinkType>
     }
 
     /**
-     * Temp method for compatibility
-     * @param gtuType X
-     * @param directionality X
-     * @return X
-     */
-    public Boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
-    {
-        return isCompatible(gtuType);
-    }
-
-    /**
-     * Returns a link type with directionality reversed.
-     * @return LinkType; link type with directionality reversed
-     */
-    public final LinkType reverse()
-    {
-        if (this.reversed == null)
-        {
-            this.reversed = new ReversedLinkType(this);
-        }
-        return this.reversed;
-    }
-
-    /**
      * @return whether this is {@code NONE}
      */
     public final boolean isNone()
@@ -175,73 +146,6 @@ public class LinkType extends GtuCompatibleInfraType<LinkType>
     public String toString()
     {
         return "LinkType [id=" + getId() + ", compatibilitySet=" + getGtuCompatibility() + "]";
-    }
-
-    /**
-     * TEMP.
-     * @param gtuType X
-     * @param tryParentsOfGtuType X
-     * @return X
-     */
-    public LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
-    {
-        // TEMP
-        return LongitudinalDirectionality.DIR_PLUS;
-    }
-
-    /**
-     * Reversed version of an original and wrapped link type.
-     * <p>
-     * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
-     */
-    private class ReversedLinkType extends LinkType
-    {
-
-        /** */
-        private static final long serialVersionUID = 20180824L;
-
-        /** Original link type. */
-        private final LinkType original;
-
-        /**
-         * Constructor.
-         * @param original LinkType; the original type (may not be null)
-         */
-        ReversedLinkType(final LinkType original)
-        {
-            super(original.getId() + "_rev", null == original.getParent() ? null : original.getParent().reverse(),
-                    original.getNetwork());
-            this.original = original;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final LongitudinalDirectionality getDirectionality(final GtuType gtuType, final boolean tryParentsOfGtuType)
-        {
-            // TEMP
-            return LongitudinalDirectionality.DIR_PLUS;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Boolean isCompatible(final GtuType gtuType, final GTUDirectionality directionality)
-        {
-            return this.original.isCompatible(gtuType, directionality.flip());
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "ReversedLinkType [original=" + this.original + "]";
-        }
-
     }
 
 }
