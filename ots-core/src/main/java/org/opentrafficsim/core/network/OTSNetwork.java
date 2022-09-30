@@ -192,46 +192,22 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             if (node.isCentroid())
             {
+                boolean in = false;
+                boolean out = false;
                 for (Link link : node.getLinks())
                 {
-                    if (link.getDirectionality(gtuType).isBoth())
+                    if (link.getEndNode().equals(node))
                     {
-                        continue;
+                        in = true;
                     }
-                    if (link.getDirectionality(gtuType).isForward())
+                    else if (link.getStartNode().equals(node))
                     {
-                        boolean found = false;
-                        for (Link reverseLink : link.getEndNode().getLinks())
-                        {
-                            if (reverseLink.getDirectionality(gtuType).isBackward() && reverseLink.getEndNode().equals(node))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found)
-                        {
-                            centroidList.add(node);
-                            break;
-                        }
+                        out = true;
                     }
-                    else if (link.getDirectionality(gtuType).isBackward())
-                    {
-                        boolean found = false;
-                        for (Link reverseLink : link.getStartNode().getLinks())
-                        {
-                            if (reverseLink.getDirectionality(gtuType).isForward() && reverseLink.getStartNode().equals(node))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found)
-                        {
-                            centroidList.add(node);
-                            break;
-                        }
-                    }
+                }
+                if ((in && !out) || (out && !in))
+                {
+                    centroidList.add(node);
                 }
             }
         }
@@ -694,19 +670,9 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         for (Link link : this.linkMap.values())
         {
             // determine if the link is accessible for the GtuType , and in which direction(s)
-            LongitudinalDirectionality directionality = link.getDirectionality(gtuType);
-            if (directionality.isForwardOrBoth())
-            {
-                LinkEdge<Link> linkEdge = new LinkEdge<>(link);
-                graph.addEdge(link.getStartNode(), link.getEndNode(), linkEdge);
-                graph.setEdgeWeight(linkEdge, linkWeight.getWeight(link));
-            }
-            if (directionality.isBackwardOrBoth())
-            {
-                LinkEdge<Link> linkEdge = new LinkEdge<>(link);
-                graph.addEdge(link.getEndNode(), link.getStartNode(), linkEdge);
-                graph.setEdgeWeight(linkEdge, linkWeight.getWeight(link));
-            }
+            LinkEdge<Link> linkEdge = new LinkEdge<>(link);
+            graph.addEdge(link.getStartNode(), link.getEndNode(), linkEdge);
+            graph.setEdgeWeight(linkEdge, linkWeight.getWeight(link));
         }
         return graph;
     }
