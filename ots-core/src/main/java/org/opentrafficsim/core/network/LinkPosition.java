@@ -1,11 +1,13 @@
 package org.opentrafficsim.core.network;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 
 /**
- * Directed link position.
+ * Class that stores a link combined with a position on that link.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -14,38 +16,59 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class DirectedLinkPosition extends LinkDirection
+public class LinkPosition implements Serializable
 {
-
     /** */
     private static final long serialVersionUID = 20181022L;
 
-    /** The fractional position (between 0.0 and 1.0) of the reference point on the lane. */
+    /** the link. */
+    private final Link link;
+    
+    /** The fractional position (between 0.0 and 1.0) of the reference point on the link. */
     private final double fractionalLongitudinalPosition;
 
     /**
+     * Create a link combined with a position on that link.
      * @param link Link; the link
      * @param fractionalLongitudinalPosition double; fractional position
-     * @param direction GTUDirectionality; the direction on the link, with or against the design line
      */
-    public DirectedLinkPosition(final Link link, final double fractionalLongitudinalPosition, final GTUDirectionality direction)
+    public LinkPosition(final Link link, final double fractionalLongitudinalPosition)
     {
-        super(link, direction);
+        this.link = link;
         this.fractionalLongitudinalPosition = fractionalLongitudinalPosition;
     }
 
     /**
+     * Create a link combined with a position on that link.
      * @param link Link; the link
      * @param position Length; position
-     * @param direction GTUDirectionality; the direction on the link, with or against the design line
      */
-    public DirectedLinkPosition(final Link link, final Length position, final GTUDirectionality direction)
+    public LinkPosition(final Link link, final Length position)
     {
-        this(link, position.si / link.getLength().si, direction);
+        this(link, position.si / link.getLength().si);
     }
 
     /**
-     * @return fractionalLongitudinalPosition.
+     * Return the link.
+     * @return Link; the link
+     */
+    public Link getLink()
+    {
+        return this.link;
+    }
+
+    /**
+     * Return the length of the link.
+     * @return Length; the length of the link
+     */
+    public Length getLinkLength()
+    {
+        return this.link.getLength();
+    }
+    
+    /**
+     * Return the fractional position on the link.
+     * @return the fractional longitudinal position on the link.
      */
     public final double getFractionalLongitudinalPosition()
     {
@@ -53,18 +76,42 @@ public class DirectedLinkPosition extends LinkDirection
     }
 
     /**
-     * @return position as a length as a traveled length on this link.
+     * Return the position on the link as a Length.
+     * @return position as a length on this link.
      */
     public final Length getLongitudinalPosition()
     {
-        return new Length(getLink().getLength().getSI() * getFractionalLongitudinalPosition(), LengthUnit.METER);
+        return new Length(this.link.getLength().getSI() * getFractionalLongitudinalPosition(), LengthUnit.METER);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.fractionalLongitudinalPosition, this.link);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:needbraces")
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LinkPosition other = (LinkPosition) obj;
+        return Double.doubleToLongBits(this.fractionalLongitudinalPosition) == Double
+                .doubleToLongBits(other.fractionalLongitudinalPosition) && Objects.equals(this.link, other.link);
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString()
     {
-        return "DirectedLinkPosition [link=" + getLink() + ", direction=" + getDirection() + ", fractionalLongitudinalPosition="
+        return "DirectedLinkPosition [link=" + this.link + ", fractionalLongitudinalPosition="
                 + this.fractionalLongitudinalPosition + "]";
     }
 
