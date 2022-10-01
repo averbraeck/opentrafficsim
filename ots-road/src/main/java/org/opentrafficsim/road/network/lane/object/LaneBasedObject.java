@@ -7,7 +7,6 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -25,9 +24,6 @@ public interface LaneBasedObject extends ObjectInterface
 {
     /** @return The lane for which this is a sensor. */
     Lane getLane();
-
-    /** @return Longitudinal direction. */
-    LongitudinalDirectionality getDirection();
 
     /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     Length getLongitudinalPosition();

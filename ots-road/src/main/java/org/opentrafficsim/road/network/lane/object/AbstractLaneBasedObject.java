@@ -4,7 +4,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -32,44 +31,11 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     /** The lane for which this is a sensor. */
     private final Lane lane;
 
-    /** The direction in which this is valid. */
-    private final LongitudinalDirectionality direction;
-
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     private final Length longitudinalPosition;
 
     /** The DirectedPoint that indicates the location on the lane. */
     private final DirectedPoint location;
-
-    /**
-     * Construct a new AbstractLanebasedObject with the required fields.
-     * @param id String; the id of the new object
-     * @param lane Lane; The lane on which the new object resides. If the new object is a Sensor; it is automatically registered
-     *            on the lane
-     * @param direction LongitudinalDirectionality; the directionality in which this is valid.
-     * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
-     *            line of the lane
-     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
-     * @param height Length; the height of the object, in case it is a 3D object
-     * @throws NetworkException when the position on the lane is out of bounds
-     */
-    protected AbstractLaneBasedObject(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSLine3D geometry, final Length height) throws NetworkException
-    {
-        super(id, geometry, height);
-
-        Throw.whenNull(lane, "lane is null");
-        Throw.whenNull(direction, "Longitudinal direction is null");
-        Throw.whenNull(longitudinalPosition, "longitudinal position is null");
-        Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLengthSI(),
-                NetworkException.class, "Position of the object on the lane is out of bounds");
-
-        this.lane = lane;
-        this.direction = direction;
-        this.longitudinalPosition = longitudinalPosition;
-        DirectedPoint p = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
-        this.location = new DirectedPoint(p.x, p.y, p.z + 0.01, p.getRotX(), p.getRotY(), p.getRotZ());
-    }
 
     /**
      * Construct a new AbstractLanebasedObject with the required fields.
@@ -85,23 +51,17 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
             final OTSLine3D geometry, final Length height) throws NetworkException
     {
-        this(id, lane, LongitudinalDirectionality.DIR_BOTH, longitudinalPosition, geometry, height);
-    }
+        super(id, geometry, height);
 
-    /**
-     * Construct a new LaneBasedObject with the required fields.
-     * @param id String; the id of the new AbstractLaneBasedObject
-     * @param lane Lane; The lane for which this is a sensor
-     * @param direction LongitudinalDirectionality; the directionality in which this is valid.
-     * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
-     *            line of the lane
-     * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
-     * @throws NetworkException when the position on the lane is out of bounds
-     */
-    protected AbstractLaneBasedObject(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSLine3D geometry) throws NetworkException
-    {
-        this(id, lane, direction, longitudinalPosition, geometry, Length.ZERO);
+        Throw.whenNull(lane, "lane is null");
+        Throw.whenNull(longitudinalPosition, "longitudinal position is null");
+        Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLengthSI(),
+                NetworkException.class, "Position of the object on the lane is out of bounds");
+
+        this.lane = lane;
+        this.longitudinalPosition = longitudinalPosition;
+        DirectedPoint p = lane.getCenterLine().getLocationExtended(this.longitudinalPosition);
+        this.location = new DirectedPoint(p.x, p.y, p.z + 0.01, p.getRotX(), p.getRotY(), p.getRotZ());
     }
 
     /**
@@ -144,13 +104,6 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     public final Lane getLane()
     {
         return this.lane;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final LongitudinalDirectionality getDirection()
-    {
-        return this.direction;
     }
 
     /** {@inheritDoc} */

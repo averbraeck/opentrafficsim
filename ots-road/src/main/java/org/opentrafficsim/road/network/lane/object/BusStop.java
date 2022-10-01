@@ -7,12 +7,9 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashSet;
-import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
@@ -58,8 +55,7 @@ public class BusStop extends AbstractLaneBasedObject
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
             final OTSSimulatorInterface simulator) throws NetworkException
     {
-        super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
-                LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
         this.name = name;
 
         init();
@@ -95,11 +91,10 @@ public class BusStop extends AbstractLaneBasedObject
             this.conflicts = new LinkedHashSet<>();
             Lane lane = getLane();
             // conflict forces only plus or minus as direction
-            GTUDirectionality dir = getDirection().isForward() ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
             Length position = getLongitudinalPosition();
             while (lane != null)
             {
-                List<LaneBasedObject> objects = lane.getObjectAhead(position, dir);
+                List<LaneBasedObject> objects = lane.getObjectAhead(position);
                 while (objects != null)
                 {
                     for (LaneBasedObject object : objects)
@@ -113,19 +108,17 @@ public class BusStop extends AbstractLaneBasedObject
                             }
                         }
                     }
-                    objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition(), dir);
+                    objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition());
                 }
-                ImmutableMap<Lane, GTUDirectionality> downstreamLanes =
-                        lane.downstreamLanes(dir, lane.getNetwork().getGtuType(GtuType.DEFAULTS.BUS));
+                Set<Lane> downstreamLanes = lane.nextLanes(lane.getNetwork().getGtuType(GtuType.DEFAULTS.BUS));
                 int numLanes = 0;
-                for (Lane nextLane : downstreamLanes.keySet())
+                for (Lane nextLane : downstreamLanes)
                 {
                     if (nextLane.getParentLink().getPriority().isBusStop())
                     {
                         numLanes++;
                         lane = nextLane;
-                        dir = downstreamLanes.get(lane);
-                        position = dir.isPlus() ? Length.ZERO : lane.getLength();
+                        position = Length.ZERO;
                     }
                 }
                 if (numLanes != 1)
