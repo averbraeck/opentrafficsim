@@ -14,7 +14,7 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
+public interface LaneStructureRecord extends LaneRecordInterface<LaneStructureRecord>
 {
 
     /**

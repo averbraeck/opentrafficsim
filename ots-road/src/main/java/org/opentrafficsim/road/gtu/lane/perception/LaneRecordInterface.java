@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.lane.perception;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -17,7 +16,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>\
  * @param <R> lane record type
  */
-public interface LaneRecord<R extends LaneRecord<R>>
+public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
 {
 
     /**
@@ -45,12 +44,6 @@ public interface LaneRecord<R extends LaneRecord<R>>
     Length getLength();
 
     /**
-     * Returns the direction of travel.
-     * @return GTUDirectionality; direction of travel
-     */
-    GTUDirectionality getDirection();
-
-    /**
      * Returns the lane.
      * @return Lane lane;
      */
@@ -64,8 +57,7 @@ public interface LaneRecord<R extends LaneRecord<R>>
      */
     default Length getDistanceToPosition(final Length position)
     {
-        return Length
-                .instantiateSI(getStartDistance().si + (getDirection().isPlus() ? position.si : getLength().si - position.si));
+        return Length.instantiateSI(getStartDistance().si + position.si);
     }
 
     /**

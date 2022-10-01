@@ -2,10 +2,9 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.immutablecollections.ImmutableMap;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -22,14 +21,11 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
  */
-public class LaneDirectionRecord implements LaneRecord<LaneDirectionRecord>
+public class LaneRecord implements LaneRecordInterface<LaneRecord>
 {
 
     /** Lane. */
     private final Lane lane;
-
-    /** Direction of travel. */
-    private final GTUDirectionality dir;
 
     /** Distance to start. */
     private final Length startDistance;
@@ -38,38 +34,36 @@ public class LaneDirectionRecord implements LaneRecord<LaneDirectionRecord>
     private final GtuType gtuType;
 
     /** Stored next lanes. */
-    private List<LaneDirectionRecord> next;
+    private List<LaneRecord> next;
 
     /** Stored prev lanes. */
-    private List<LaneDirectionRecord> prev;
+    private List<LaneRecord> prev;
 
     /**
      * Constructor.
      * @param lane Lane; lane
-     * @param dir GTUDirectionality; direction of travel
      * @param startDistance Length; distance to start
      * @param gtuType GtuType; GTU type
      */
-    public LaneDirectionRecord(final Lane lane, final GTUDirectionality dir, final Length startDistance, final GtuType gtuType)
+    public LaneRecord(final Lane lane, final Length startDistance, final GtuType gtuType)
     {
         this.lane = lane;
-        this.dir = dir;
         this.startDistance = startDistance;
         this.gtuType = gtuType;
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<LaneDirectionRecord> getNext()
+    public List<LaneRecord> getNext()
     {
         if (this.next == null)
         {
-            ImmutableMap<Lane, GTUDirectionality> map = this.lane.downstreamLanes(this.dir, this.gtuType);
+            Set<Lane> set = this.lane.nextLanes(this.gtuType);
             this.next = new ArrayList<>();
             Length distance = this.startDistance.plus(getLength());
-            for (Lane down : map.keySet())
+            for (Lane down : set)
             {
-                this.next.add(new LaneDirectionRecord(down, map.get(down), distance, this.gtuType));
+                this.next.add(new LaneRecord(down, distance, this.gtuType));
             }
         }
         return this.next;
@@ -77,15 +71,15 @@ public class LaneDirectionRecord implements LaneRecord<LaneDirectionRecord>
 
     /** {@inheritDoc} */
     @Override
-    public List<LaneDirectionRecord> getPrev()
+    public List<LaneRecord> getPrev()
     {
         if (this.prev == null)
         {
-            ImmutableMap<Lane, GTUDirectionality> map = this.lane.upstreamLanes(this.dir, this.gtuType);
+            Set<Lane> set = this.lane.prevLanes(this.gtuType);
             this.prev = new ArrayList<>();
-            for (Lane up : map.keySet())
+            for (Lane up : set)
             {
-                this.prev.add(new LaneDirectionRecord(up, map.get(up), this.startDistance.minus(up.getLength()), this.gtuType));
+                this.prev.add(new LaneRecord(up, this.startDistance.minus(up.getLength()), this.gtuType));
             }
         }
         return this.prev;
@@ -103,13 +97,6 @@ public class LaneDirectionRecord implements LaneRecord<LaneDirectionRecord>
     public Length getLength()
     {
         return this.lane.getLength();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GTUDirectionality getDirection()
-    {
-        return this.dir;
     }
 
     /** {@inheritDoc} */
