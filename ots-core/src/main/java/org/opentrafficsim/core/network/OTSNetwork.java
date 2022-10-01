@@ -696,12 +696,12 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         for (LinkEdge<Link> link : path.getEdgeList())
         {
             if (!link.getLink().getEndNode().equals(route.destinationNode())
-                    && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
+                    && route.destinationNode().isConnectedTo(gtuType, link.getLink().getEndNode()))
             {
                 route.addNode(link.getLink().getEndNode());
             }
             else if (!link.getLink().getStartNode().equals(route.destinationNode())
-                    && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
+                    && route.destinationNode().isConnectedTo(gtuType, link.getLink().getStartNode()))
             {
                 route.addNode(link.getLink().getStartNode());
             }
@@ -755,12 +755,12 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             for (LinkEdge<Link> linkEdge : path.getEdgeList())
             {
                 if (!linkEdge.getLink().getEndNode().equals(route.destinationNode())
-                        && route.destinationNode().isDirectionallyConnectedTo(gtuType, linkEdge.getLink().getEndNode()))
+                        && route.destinationNode().isConnectedTo(gtuType, linkEdge.getLink().getEndNode()))
                 {
                     route.addNode(linkEdge.getLink().getEndNode());
                 }
                 else if (!linkEdge.getLink().getStartNode().equals(route.destinationNode())
-                        && route.destinationNode().isDirectionallyConnectedTo(gtuType, linkEdge.getLink().getStartNode()))
+                        && route.destinationNode().isConnectedTo(gtuType, linkEdge.getLink().getStartNode()))
                 {
                     route.addNode(linkEdge.getLink().getStartNode());
                 }
