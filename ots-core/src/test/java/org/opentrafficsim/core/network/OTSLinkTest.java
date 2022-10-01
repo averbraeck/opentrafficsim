@@ -65,29 +65,6 @@ public class OTSLinkTest implements EventListenerInterface
         OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
         // directionalityMap is currently empty
-        assertEquals("directionality for network.getGtuType(GtuType.DEFAULTS.VEHICLE) is DIR_NONE",
-                LongitudinalDirectionality.DIR_NONE, link.getDirectionality(network.getGtuType(GtuType.DEFAULTS.VEHICLE)));
-        GtuType carType = new GtuType("car", network.getGtuType(GtuType.DEFAULTS.VEHICLE));
-        compatibility.addCompatibleGtuType(carType);
-        linkType = new LinkType("myLinkType2", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
-        link = new OTSLink(network, "link2", startNode, endNode, linkType, designLine);
-        assertEquals("directionality for carType is DIR_MINUS", LongitudinalDirectionality.DIR_MINUS,
-                link.getDirectionality(carType));
-        GtuType bicycle = new GtuType("bicycle", network.getGtuType(GtuType.DEFAULTS.BICYCLE));
-        assertEquals("directionality for bicycle is DIR_NONE", LongitudinalDirectionality.DIR_NONE,
-                link.getDirectionality(bicycle));
-        compatibility.addCompatibleGtuType(network.getGtuType(GtuType.DEFAULTS.BICYCLE));
-        linkType = new LinkType("myLinkType3", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
-        link = new OTSLink(network, "link3", startNode, endNode, linkType, designLine);
-        assertEquals("directionality for bicycle is now DIR_PLUS", LongitudinalDirectionality.DIR_PLUS,
-                link.getDirectionality(bicycle));
-        compatibility.addIncompatibleGtuType(carType);
-        linkType = new LinkType("myLinkType4", network.getLinkType(LinkType.DEFAULTS.ROAD), network);
-        link = new OTSLink(network, "link4", startNode, endNode, linkType, designLine);
-        assertEquals("directionality for bicycle is now DIR_PLUS", LongitudinalDirectionality.DIR_PLUS,
-                link.getDirectionality(network.getGtuType(GtuType.DEFAULTS.BICYCLE)));
-        assertEquals("directionality for bicycle is now DIR_PLUS", LongitudinalDirectionality.DIR_NONE,
-                link.getDirectionality(carType));
         assertEquals("The link contains no GTUs", 0, link.getGTUCount());
         assertEquals("The link contains zero GTUs", 0, link.getGTUs().size());
 

@@ -32,7 +32,6 @@ import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -87,22 +86,19 @@ public class GtuTest
             }
 
             @Override
-            public Node nextNode(final Link link, final GTUDirectionality direction, final GtuType gtuType)
-                    throws NetworkException
+            public Node nextNode(final Link link, final GtuType gtuType) throws NetworkException
             {
                 return null;
             }
 
             @Override
-            public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GtuType gtuType)
-                    throws NetworkException
+            public Link nextLink(final Node node, final Link previousLink, final GtuType gtuType) throws NetworkException
             {
                 return null;
             }
 
             @Override
-            public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GtuType gtuType)
-                    throws NetworkException
+            public Link nextLink(final Link link, final GtuType gtuType) throws NetworkException
             {
                 return null;
             }

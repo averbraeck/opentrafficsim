@@ -43,8 +43,6 @@ public class CapacityOTSLinkTest
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
-        Map<GtuType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(network.getGtuType(GtuType.DEFAULTS.VEHICLE), LongitudinalDirectionality.DIR_PLUS);
         CapacityOTSLink link = new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, initialCapacity);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
