@@ -8,7 +8,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -75,20 +74,7 @@ public interface AccelerationIncentive
                 OTSLink link = t.getLane().getParentLink();
                 if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
                 {
-                    LongitudinalDirectionality dir = link.getDirectionality(gtu.getGtuType());
-                    if (dir.isNone())
-                    {
-                        return false;
-                    }
-                    if (dir.isBoth())
-                    {
-                        return Math.abs(route.indexOf(link.getStartNode()) - route.indexOf(link.getEndNode())) == 1;
-                    }
-                    if (dir.isForward())
-                    {
-                        return route.indexOf(link.getEndNode()) - route.indexOf(link.getStartNode()) == 1;
-                    }
-                    return route.indexOf(link.getStartNode()) - route.indexOf(link.getEndNode()) == 1;
+                    return route.indexOf(link.getEndNode()) - route.indexOf(link.getStartNode()) == 1;
                 }
                 return false;
             }

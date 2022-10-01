@@ -23,7 +23,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.geometry.DirectedPoint;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -222,7 +221,7 @@ public class LaneBasedGtuFollowingDirectedChangeTacticalPlanner extends Abstract
                     {
                         DirectedPoint newLocation = changeLane(laneBasedGTU, direction);
                         lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway, this.laneAfterLaneChange,
-                                this.posAfterLaneChange, laneBasedGTU.getDirection(this.laneAfterLaneChange));
+                                this.posAfterLaneChange);
                         return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                     }
                     else
@@ -318,7 +317,7 @@ public class LaneBasedGtuFollowingDirectedChangeTacticalPlanner extends Abstract
                         {
                             DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.LEFT);
                             lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway, this.laneAfterLaneChange,
-                                    this.posAfterLaneChange, laneBasedGTU.getDirection(this.laneAfterLaneChange));
+                                    this.posAfterLaneChange);
                             return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                         }
                     }
@@ -365,7 +364,7 @@ public class LaneBasedGtuFollowingDirectedChangeTacticalPlanner extends Abstract
                         {
                             DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.RIGHT);
                             lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway, this.laneAfterLaneChange,
-                                    this.posAfterLaneChange, laneBasedGTU.getDirection(this.laneAfterLaneChange));
+                                    this.posAfterLaneChange);
                             return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                         }
                     }
@@ -469,14 +468,7 @@ public class LaneBasedGtuFollowingDirectedChangeTacticalPlanner extends Abstract
                     {
                         double deltaOffset =
                                 correctLane.getDesignLineOffsetAtBegin().si - currentLane.getDesignLineOffsetAtBegin().si;
-                        if (laneBasedGTU.getDirection(currentLane).equals(GTUDirectionality.DIR_PLUS))
-                        {
-                            return deltaOffset > 0 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
-                        }
-                        else
-                        {
-                            return deltaOffset < 0 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
-                        }
+                        return deltaOffset > 0 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
                     }
                 }
             }
@@ -519,8 +511,8 @@ public class LaneBasedGtuFollowingDirectedChangeTacticalPlanner extends Abstract
         for (Lane lane : positions.keySet())
         {
             Length pos = positions.get(lane);
-            if (pos.si > 0.0 && pos.si < lane.getLength().si && lane
-                    .accessibleAdjacentLanesLegal(direction, getGtu().getGtuType(), getGtu().getDirection(lane)).isEmpty())
+            if (pos.si > 0.0 && pos.si < lane.getLength().si
+                    && lane.accessibleAdjacentLanesLegal(direction, getGtu().getGtuType()).isEmpty())
             {
                 return false;
             }

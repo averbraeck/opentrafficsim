@@ -9,17 +9,14 @@ import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.immutablecollections.ImmutableMap.ImmutableEntry;
 import org.djutils.multikeymap.MultiKeyMap;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * Default route system. This system stores a set for each combination of a {@code Lane}, {@code GTUDirectionality},
@@ -38,13 +35,12 @@ public class DefaultRouteSystem implements RouteSystem
 {
 
     /** Cache. */
-    private MultiKeyMap<LaneChangeInfoSet> cache =
-            new MultiKeyMap<>(Lane.class, GTUDirectionality.class, Route.class, GtuType.class);
+    private MultiKeyMap<LaneChangeInfoSet> cache = new MultiKeyMap<>(Lane.class, Route.class, GtuType.class);
 
     /** {@inheritDoc} */
     @Override
-    public SortedSet<LaneChangeInfo> getLaneChangeInfo(final DirectedLanePosition position, final Length front,
-            final Route route, final GtuType gtuType, final Length distance)
+    public SortedSet<LaneChangeInfo> getLaneChangeInfo(final LanePosition position, final Length front, final Route route,
+            final GtuType gtuType, final Length distance)
     {
         /*
          * // obtain set LaneChangeInfoSet set = this.cache.get(() -> determineSet(position, route, gtuType, distance),
@@ -54,7 +50,7 @@ public class DefaultRouteSystem implements RouteSystem
          * position.getPosition()); return set.getAdjustedSet(pos, distance); }
          */
         // previously calculated set does not have sufficient length, clear and recalculate
-        this.cache.clear(position.getLane(), position.getGtuDirection(), route, gtuType);
+        this.cache.clear(position.getLane(), route, gtuType);
         return getLaneChangeInfo(position, front, route, gtuType, distance);
     }
 
@@ -68,16 +64,15 @@ public class DefaultRouteSystem implements RouteSystem
      * @return SortedSet&lt;LaneChangeInfo&gt;; lane change information
      * @throws GtuException in case of multiple adjacent lanes
      */
-    private LaneChangeInfoSet determineSet(final DirectedLanePosition position, final Length front, final Route route,
+    private LaneChangeInfoSet determineSet(final LanePosition position, final Length front, final Route route,
             final GtuType gtuType, final Length distance) throws GtuException
     {
         // the search can stop as soon as all lanes are reachable on a link that starts beyond 'distance' of the end of the lane
 
         Map<LaneRecord, LaneChangeInfo> currentSet = new LinkedHashMap<>();
         Map<LaneRecord, LaneChangeInfo> nextSet = new LinkedHashMap<>();
-        Length startDistance = (position.getGtuDirection().isPlus() ? position.getPosition()
-                : position.getLane().getLength().minus(position.getPosition())).plus(front).neg();
-        LaneRecord record = new LaneRecord(startDistance, position.getLane(), position.getGtuDirection());
+        Length startDistance = (position.getPosition()).plus(front).neg();
+        LaneRecord record = new LaneRecord(startDistance, position.getLane());
         Length remainingDistance = position.getLane().getLength().minus(startDistance);
         currentSet.put(record, new LaneChangeInfo(0, remainingDistance, record.isDeadEnd(gtuType), LateralDirectionality.NONE));
 
@@ -113,9 +108,9 @@ public class DefaultRouteSystem implements RouteSystem
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-         * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
-         */
+     */
     private class LaneChangeInfoSet
     {
 
@@ -193,9 +188,6 @@ public class DefaultRouteSystem implements RouteSystem
         /** Lane. */
         private final Lane lane;
 
-        /** Direction of travel. */
-        private final GTUDirectionality direction;
-
         /** Previous record. */
         private LaneRecord prev;
 
@@ -214,13 +206,11 @@ public class DefaultRouteSystem implements RouteSystem
         /**
          * @param startDistance Length; start distance
          * @param lane Lane; lane
-         * @param direction GTUDirectionality; direction of travel
          */
-        LaneRecord(final Length startDistance, final Lane lane, final GTUDirectionality direction)
+        LaneRecord(final Length startDistance, final Lane lane)
         {
             this.startDistance = startDistance;
             this.lane = lane;
-            this.direction = direction;
         }
 
         /**
@@ -233,26 +223,15 @@ public class DefaultRouteSystem implements RouteSystem
         public Set<LaneRecord> next(final Route route, final GtuType gtuType)
         {
             Set<LaneRecord> set = new LinkedHashSet<>();
-            ImmutableMap<Lane, GTUDirectionality> lanes = this.lane.downstreamLanes(this.direction, gtuType);
-            for (ImmutableEntry<Lane, GTUDirectionality> entry : lanes.entrySet())
+            Set<Lane> lanes = this.lane.nextLanes(gtuType);
+            for (Lane lane : lanes)
             {
                 // check route
-                Node from;
-                Node to;
-                if (entry.getValue().isPlus())
-                {
-                    from = entry.getKey().getParentLink().getStartNode();
-                    to = entry.getKey().getParentLink().getEndNode();
-                }
-                else
-                {
-                    from = entry.getKey().getParentLink().getEndNode();
-                    to = entry.getKey().getParentLink().getStartNode();
-                }
+                Node from = lane.getParentLink().getStartNode();
+                Node to = lane.getParentLink().getEndNode();
                 if (route.indexOf(to) == route.indexOf(from) + 1)
                 {
-                    LaneRecord record = new LaneRecord(this.getStartDistance().plus(this.lane.getLength()), entry.getKey(),
-                            entry.getValue());
+                    LaneRecord record = new LaneRecord(this.getStartDistance().plus(this.lane.getLength()), lane);
                     record.prev = this;
                     set.add(record);
                 }
@@ -281,8 +260,7 @@ public class DefaultRouteSystem implements RouteSystem
             {
                 this.left = adjacent(gtuType, LateralDirectionality.LEFT);
                 this.determinedLeft = true;
-                if (this.left.lane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, this.left.direction)
-                        .contains(this.lane))
+                if (this.left.lane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).contains(this.lane))
                 {
                     this.left.right = this;
                 }
@@ -303,8 +281,7 @@ public class DefaultRouteSystem implements RouteSystem
             {
                 this.right = adjacent(gtuType, LateralDirectionality.RIGHT);
                 this.determinedRight = true;
-                if (this.right.lane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, this.right.direction)
-                        .contains(this.lane))
+                if (this.right.lane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).contains(this.lane))
                 {
                     this.right.left = this;
                 }
@@ -322,12 +299,12 @@ public class DefaultRouteSystem implements RouteSystem
          */
         private LaneRecord adjacent(final GtuType gtuType, final LateralDirectionality lat) throws GtuException
         {
-            Set<Lane> set = this.lane.accessibleAdjacentLanesLegal(lat, gtuType, this.direction);
+            Set<Lane> set = this.lane.accessibleAdjacentLanesLegal(lat, gtuType);
             Throw.when(set.size() > 1, GtuException.class,
                     "Default route system found multiple adjacent lanes, which is not supported.");
             if (set.size() == 1)
             {
-                return new LaneRecord(this.startDistance, set.iterator().next(), this.direction);
+                return new LaneRecord(this.startDistance, set.iterator().next());
             }
             return null;
         }
@@ -348,7 +325,7 @@ public class DefaultRouteSystem implements RouteSystem
          */
         public boolean isDeadEnd(final GtuType gtuType)
         {
-            return this.lane.downstreamLanes(this.direction, gtuType).isEmpty();
+            return this.lane.nextLanes(gtuType).isEmpty();
         }
 
     }

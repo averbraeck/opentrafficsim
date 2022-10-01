@@ -5,7 +5,7 @@ import java.util.SortedSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * A route system supplies information on the number of lane changes and distance within which this has to be performed.
@@ -31,7 +31,7 @@ public interface RouteSystem
      * @param distance Length; distance over which required lane changes are desired to be known
      * @return SortedSet&lt;LaneChangeInfo&gt;; lane change information
      */
-    SortedSet<LaneChangeInfo> getLaneChangeInfo(DirectedLanePosition position, Length front, Route route, GtuType gtuType,
+    SortedSet<LaneChangeInfo> getLaneChangeInfo(LanePosition position, Length front, Route route, GtuType gtuType,
             Length distance);
 
     // public void clearCache();

@@ -18,7 +18,6 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
 
 /**
  * <p>
@@ -39,12 +38,12 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
 
     /**
      * Selects a lane from a possible set. This set contains all viable lanes in to which a lanes splits.
-     * @param from LaneDirection; lane we come from
-     * @param lanes Set&lt;LaneDirection&gt;; set of lane directions possible
-     * @return LaneDirection; preferred lane direction
+     * @param from Lane; lane we come from
+     * @param lanes Set&lt;Lane&gt;; set of lanes possible
+     * @return Lane; preferred lane
      * @throws ParameterException in case of a missing parameter
      */
-    default LaneDirection chooseLaneAtSplit(final LaneDirection from, final Set<LaneDirection> lanes) throws ParameterException
+    default Lane chooseLaneAtSplit(final Lane from, final Set<Lane> lanes) throws ParameterException
     {
         if (getGtu().getOperationalPlan() instanceof LaneBasedOperationalPlan
                 && ((LaneBasedOperationalPlan) getGtu().getOperationalPlan()).isDeviative())
@@ -53,16 +52,15 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
             LateralDirectionality forceSide = LateralDirectionality.NONE;
             try
             {
-                Set<Lane> leftLanes = from.getLane().accessibleAdjacentLanesPhysical(LateralDirectionality.LEFT,
-                        getGtu().getGtuType(), from.getDirection());
+                Set<Lane> leftLanes = from.accessibleAdjacentLanesPhysical(LateralDirectionality.LEFT, getGtu().getGtuType());
                 if (!Collections.disjoint(getGtu().positions(getGtu().getReference()).keySet(), leftLanes))
                 {
                     forceSide = LateralDirectionality.LEFT;
                 }
                 else
                 {
-                    Set<Lane> rightLanes = from.getLane().accessibleAdjacentLanesPhysical(LateralDirectionality.RIGHT,
-                            getGtu().getGtuType(), from.getDirection());
+                    Set<Lane> rightLanes =
+                            from.accessibleAdjacentLanesPhysical(LateralDirectionality.RIGHT, getGtu().getGtuType());
                     if (!Collections.disjoint(getGtu().positions(getGtu().getReference()).keySet(), rightLanes))
                     {
                         forceSide = LateralDirectionality.RIGHT;
@@ -82,11 +80,11 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
                 }
                 else
                 {
-                    Iterator<LaneDirection> iter = lanes.iterator();
-                    LaneDirection next = iter.next();
+                    Iterator<Lane> iter = lanes.iterator();
+                    Lane next = iter.next();
                     while (iter.hasNext())
                     {
-                        LaneDirection candidate = iter.next();
+                        Lane candidate = iter.next();
                         next = LaneBasedTacticalPlanner.mostOnSide(next, candidate, forceSide);
                     }
                     return next;
@@ -97,18 +95,18 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
         if (route == null)
         {
             // select right-most lane
-            LaneDirection rightMost = null;
-            for (LaneDirection lane : lanes)
+            Lane rightMost = null;
+            for (Lane lane : lanes)
             {
                 rightMost = rightMost == null ? lane : mostOnSide(rightMost, lane, LateralDirectionality.RIGHT);
             }
             return rightMost;
         }
         Length maxDistance = Length.NEGATIVE_INFINITY;
-        LaneDirection best = null;
-        for (LaneDirection lane : lanes)
+        Lane best = null;
+        for (Lane lane : lanes)
         {
-            LaneDirection next = getGtu().getNextLaneForRoute(lane);
+            Lane next = getGtu().getNextLaneForRoute(lane);
             if (next != null)
             {
                 Length okDistance = okDistance(next, lane.getLength(), route,
@@ -137,19 +135,18 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
      * @return Length; distance from this lane onwards where the route can be followed
      */
     // TODO private when we use java 9
-    default Length okDistance(final LaneDirection lane, final Length distance, final Route route, final Length maxDistance)
+    default Length okDistance(final Lane lane, final Length distance, final Route route, final Length maxDistance)
     {
         if (distance.gt(maxDistance))
         {
             return maxDistance;
         }
-        LaneDirection next = getGtu().getNextLaneForRoute(lane);
+        Lane next = getGtu().getNextLaneForRoute(lane);
         if (next == null)
         {
-            Node endNode = lane.getDirection().isPlus() ? lane.getLane().getParentLink().getEndNode()
-                    : lane.getLane().getParentLink().getStartNode();
+            Node endNode = lane.getParentLink().getEndNode();
             Set<Link> links = endNode.getLinks().toSet();
-            links.remove(lane.getLane().getParentLink());
+            links.remove(lane.getParentLink());
             if (route.contains(endNode) && (links.isEmpty() || links.iterator().next().getLinkType().isConnector()))
             {
                 // dead-end link, must be destination
@@ -163,17 +160,15 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
 
     /**
      * Returns the right-most of two lanes.
-     * @param lane1 LaneDirection; lane 1
-     * @param lane2 LaneDirection; lane 2
+     * @param lane1 Lane; lane 1
+     * @param lane2 Lane; lane 2
      * @param lat LateralDirectionality; lateral side
-     * @return LaneDirection; right-most of two lanes
+     * @return Lane; right-most of two lanes
      */
-    static LaneDirection mostOnSide(final LaneDirection lane1, final LaneDirection lane2, final LateralDirectionality lat)
+    static Lane mostOnSide(final Lane lane1, final Lane lane2, final LateralDirectionality lat)
     {
-        Length offset1 = lane1.getLane().getDesignLineOffsetAtBegin().plus(lane1.getLane().getDesignLineOffsetAtEnd());
-        offset1 = lane1.getDirection().isPlus() ? offset1 : offset1.neg();
-        Length offset2 = lane2.getLane().getDesignLineOffsetAtBegin().plus(lane2.getLane().getDesignLineOffsetAtEnd());
-        offset2 = lane2.getDirection().isPlus() ? offset2 : offset2.neg();
+        Length offset1 = lane1.getDesignLineOffsetAtBegin().plus(lane1.getDesignLineOffsetAtEnd());
+        Length offset2 = lane2.getDesignLineOffsetAtBegin().plus(lane2.getDesignLineOffsetAtEnd());
         if (lat.isLeft())
         {
             return offset1.gt(offset2) ? lane1 : lane2;
