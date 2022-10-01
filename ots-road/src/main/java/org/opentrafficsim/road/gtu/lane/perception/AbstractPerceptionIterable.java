@@ -36,7 +36,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 {
 
     /** Root record. */
-    private final LaneRecord<?> root;
+    private final LaneRecordInterface<?> root;
 
     /** Initial position. */
     private final Length initialPosition;
@@ -63,8 +63,9 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
      * @param route Route; route of the GTU, may be {@code null}
      */
-    public AbstractPerceptionIterable(final LaneBasedGtu perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
-            final boolean downstream, final Length maxDistance, final RelativePosition relativePosition, final Route route)
+    public AbstractPerceptionIterable(final LaneBasedGtu perceivingGtu, final LaneRecordInterface<?> root,
+            final Length initialPosition, final boolean downstream, final Length maxDistance,
+            final RelativePosition relativePosition, final Route route)
     {
         super(perceivingGtu);
         this.root = root;
@@ -102,7 +103,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * @return next object(s) on the lane or {@code null} if none
      * @throws GtuException on any exception in the process
      */
-    protected abstract Entry getNext(LaneRecord<?> record, Length position, C counter) throws GtuException;
+    protected abstract Entry getNext(LaneRecordInterface<?> record, Length position, C counter) throws GtuException;
 
     /**
      * Returns the distance to the object. The position fed in to this method is directly taken from an {@code Entry} returned
@@ -112,7 +113,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * @param position Length; position of the object on the lane
      * @return Length; distance to the object
      */
-    protected abstract Length getDistance(U object, LaneRecord<?> record, Length position);
+    protected abstract Length getDistance(U object, LaneRecordInterface<?> record, Length position);
 
     /**
      * Returns the longitudinal length of the relevant relative position such that distances to this points can be calculated.
@@ -140,22 +141,22 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
     {
 
         /** Map containing the objects found per branch. */
-        private SortedMap<PrimaryIteratorEntry, LaneRecord<?>> map;
+        private SortedMap<PrimaryIteratorEntry, LaneRecordInterface<?>> map;
 
         /** Position per record where the search was halted. */
-        private Map<LaneRecord<?>, Length> positions = new LinkedHashMap<>();
+        private Map<LaneRecordInterface<?>, Length> positions = new LinkedHashMap<>();
 
         /** Items returned to prevent duplicates. */
         private Set<U> returnedItems = new LinkedHashSet<>();
 
         /** Sets of remaining objects at the same location. */
-        private Map<LaneRecord<?>, Queue<PrimaryIteratorEntry>> queues = new LinkedHashMap<>();
+        private Map<LaneRecordInterface<?>, Queue<PrimaryIteratorEntry>> queues = new LinkedHashMap<>();
 
         /** Counter objects per lane. */
-        private Map<LaneRecord<?>, C> counters = new LinkedHashMap<>();
+        private Map<LaneRecordInterface<?>, C> counters = new LinkedHashMap<>();
 
         /** Record regarding a postponed call to {@code getNext()}. */
-        private LaneRecord<?> postponedRecord = null;
+        private LaneRecordInterface<?> postponedRecord = null;
 
         /** Position regarding a postponed call to {@code getNext()}. */
         private Length postponedPosition = null;
@@ -187,7 +188,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
             // get and remove next
             PrimaryIteratorEntry nextEntry = this.map.firstKey();
             U next = nextEntry.getObject();
-            LaneRecord<?> record = this.map.get(nextEntry);
+            LaneRecordInterface<?> record = this.map.get(nextEntry);
             this.map.remove(nextEntry);
 
             // see if we can obtain the next from a queue
@@ -256,7 +257,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
          * @param position Length; position
          */
         @SuppressWarnings("synthetic-access")
-        private void prepareNext(final LaneRecord<?> record, final Length position)
+        private void prepareNext(final LaneRecordInterface<?> record, final Length position)
         {
             Entry next = Try.assign(() -> AbstractPerceptionIterable.this.getNext(record, position, this.counters.get(record)),
                     "Exception while deriving next object.");
@@ -270,7 +271,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
                 {
                     if (AbstractPerceptionIterable.this.downstream)
                     {
-                        for (LaneRecord<?> nextRecord : record.getNext())
+                        for (LaneRecordInterface<?> nextRecord : record.getNext())
                         {
                             if (isOnRoute(nextRecord))
                             {
@@ -280,7 +281,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
                     }
                     else
                     {
-                        for (LaneRecord<?> nextRecord : record.getPrev())
+                        for (LaneRecordInterface<?> nextRecord : record.getPrev())
                         {
                             if (isOnRoute(nextRecord))
                             {
@@ -341,7 +342,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * @param record LaneRecord&lt;?&gt;; record
      * @return boolean; whether the record is on the route
      */
-    final boolean isOnRoute(final LaneRecord<?> record)
+    final boolean isOnRoute(final LaneRecordInterface<?> record)
     {
         if (this.route == null)
         {
@@ -350,16 +351,8 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         Link link = record.getLane().getParentLink();
         int from;
         int to;
-        if (record.getDirection().isPlus())
-        {
-            from = this.route.indexOf(link.getStartNode());
-            to = this.route.indexOf(link.getEndNode());
-        }
-        else
-        {
-            from = this.route.indexOf(link.getEndNode());
-            to = this.route.indexOf(link.getStartNode());
-        }
+        from = this.route.indexOf(link.getStartNode());
+        to = this.route.indexOf(link.getEndNode());
         return from != -1 && to != -1 && to - from == 1;
     }
 

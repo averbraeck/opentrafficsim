@@ -74,9 +74,9 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
      * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
      * @param ignoreIfUpstream boolean; whether to ignore GTU that are partially upstream of a record
      */
-    public DownstreamNeighborsIterable(final LaneBasedGtu perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
-            final Length maxDistance, final RelativePosition relativePosition, final HeadwayGtuType headwayGtuType,
-            final RelativeLane lane, final boolean ignoreIfUpstream)
+    public DownstreamNeighborsIterable(final LaneBasedGtu perceivingGtu, final LaneRecordInterface<?> root,
+            final Length initialPosition, final Length maxDistance, final RelativePosition relativePosition,
+            final HeadwayGtuType headwayGtuType, final RelativeLane lane, final boolean ignoreIfUpstream)
     {
         super(perceivingGtu, root, initialPosition, true, maxDistance, relativePosition, null);
         this.headwayGtuType = headwayGtuType;
@@ -90,16 +90,16 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
 
     /** {@inheritDoc} */
     @Override
-    protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
+    protected Entry getNext(final LaneRecordInterface<?> record, final Length position, final Integer counter)
+            throws GtuException
     {
         int n;
         LaneBasedGtu next;
         Length pos;
-        boolean plus = record.getDirection().isPlus();
         if (counter == null)
         {
-            Length searchPos = (plus ? position.plus(this.margin) : position.minus(this.margin));
-            next = record.getLane().getGtuAhead(searchPos, record.getDirection(), RelativePosition.FRONT,
+            Length searchPos = position.plus(this.margin);
+            next = record.getLane().getGtuAhead(searchPos, RelativePosition.FRONT,
                     record.getLane().getParentLink().getSimulator().getSimulatorAbsTime());
             if (next == null)
             {
@@ -111,21 +111,21 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
             if (this.ids.contains(next.getId()))
             {
                 // rear still on previous lane; it is found there, get next gtu
-                pos = plus ? pos.plus(next.getLength()) : pos.minus(next.getLength());
+                pos = pos.plus(next.getLength());
                 return getNext(record, pos, n);
             }
             if (this.ignoreIfUpstream)
             {
-                if (plus ? pos.si < 0.0 : pos.si > record.getLane().getLength().si)
+                if (pos.si < 0.0)
                 {
-                    pos = plus ? pos.plus(next.getLength()) : pos.minus(next.getLength());
+                    pos = pos.plus(next.getLength());
                     return getNext(record, pos, n);
                 }
             }
         }
         else
         {
-            n = plus ? counter + 1 : counter - 1;
+            n = counter + 1;
             if (n < 0 || n >= record.getLane().numberOfGtus())
             {
                 return null;
@@ -135,7 +135,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
             if (this.ids.contains(next.getId()))
             {
                 // skip self
-                pos = plus ? pos.plus(next.getLength()) : pos.minus(next.getLength());
+                pos = pos.plus(next.getLength());
                 return getNext(record, pos, n);
             }
         }
@@ -144,7 +144,7 @@ public class DownstreamNeighborsIterable extends AbstractPerceptionIterable<Head
 
     /** {@inheritDoc} */
     @Override
-    protected Length getDistance(final LaneBasedGtu object, final LaneRecord<?> record, final Length position)
+    protected Length getDistance(final LaneBasedGtu object, final LaneRecordInterface<?> record, final Length position)
     {
         return record.getDistanceToPosition(position).minus(getDx());
     }

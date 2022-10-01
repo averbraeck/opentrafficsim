@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -44,9 +43,6 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /** The lane of the LSR. */
     private final Lane lane;
-
-    /** The direction in which we process this lane. */
-    private final GTUDirectionality gtuDirectionality;
 
     /** The left LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
     private RollingLaneStructureRecord left;
@@ -93,15 +89,13 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     /**
      * Constructor.
      * @param lane Lane; lane
-     * @param direction GTUDirectionality; direction of travel for the GTU
      * @param startDistanceSource RollingLaneStructureRecord; record on which the start distance is based
      * @param recordLink RecordLink; link type to source
      */
-    public RollingLaneStructureRecord(final Lane lane, final GTUDirectionality direction,
-            final RollingLaneStructureRecord startDistanceSource, final RecordLink recordLink)
+    public RollingLaneStructureRecord(final Lane lane, final RollingLaneStructureRecord startDistanceSource,
+            final RecordLink recordLink)
     {
         this.lane = lane;
-        this.gtuDirectionality = direction;
         this.source = startDistanceSource;
         this.sourceLink = recordLink;
         if (startDistanceSource != null)
@@ -112,13 +106,11 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /**
      * @param lane Lane; the lane of the LSR
-     * @param direction GTUDirectionality; the direction on which we process this lane
-     * @param startDistance Length; distance to start of the record, negative for backwards
+     * @param startDistance Length; distance to start of the record
      */
-    public RollingLaneStructureRecord(final Lane lane, final GTUDirectionality direction, final Length startDistance)
+    public RollingLaneStructureRecord(final Lane lane, final Length startDistance)
     {
         this.lane = lane;
-        this.gtuDirectionality = direction;
         this.startDistance = startDistance;
 
         this.source = null;
@@ -181,16 +173,14 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     @Override
     public final Node getFromNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode()
-                : this.lane.getParentLink().getEndNode();
+        return this.lane.getParentLink().getStartNode();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Node getToNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode()
-                : this.lane.getParentLink().getStartNode();
+        return this.lane.getParentLink().getEndNode();
     }
 
     /**
@@ -398,10 +388,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
             LaneStructureRecord nextRecord = nextSet.iterator().next();
             for (Lane l : nextRecord.getLane().getParentLink().getLanes())
             {
-                if (l.getLaneType().getDirectionality(gtuType).getDirectionalities().contains(nextRecord.getDirection()))
-                {
-                    nLanesOnNextLink++;
-                }
+                nLanesOnNextLink++;
             }
             if (nextSet.size() == nLanesOnNextLink)
             {
@@ -465,8 +452,8 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     public final void setLeft(final RollingLaneStructureRecord leftRecord, final GtuType gtuType)
     {
         this.left = leftRecord;
-        this.mayChangeLeft = getLane().accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, this.gtuDirectionality)
-                .contains(leftRecord.getLane());
+        this.mayChangeLeft =
+                getLane().accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).contains(leftRecord.getLane());
         if (getLane().getFullId().equals("1023.FORWARD3") && !this.mayChangeLeft)
         {
             System.out.println("Lane 1023.FORWARD3 allows left:" + this.mayChangeLeft);
@@ -503,8 +490,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     {
         this.right = rightRecord;
         this.mayChangeRight =
-                getLane().accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, this.gtuDirectionality)
-                        .contains(rightRecord.getLane());
+                getLane().accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).contains(rightRecord.getLane());
     }
 
     /** {@inheritDoc} */
@@ -663,13 +649,6 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /** {@inheritDoc} */
     @Override
-    public final GTUDirectionality getDirection()
-    {
-        return this.gtuDirectionality;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final Length getStartDistance()
     {
         return this.startDistance;
@@ -713,7 +692,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
         {
             s = "?";
         }
-        return "LaneStructureRecord [lane=" + this.lane + " (" + s + "), direction=" + this.gtuDirectionality + "]";
+        return "LaneStructureRecord [lane=" + this.lane + " (" + s + ")]";
     }
 
     /**

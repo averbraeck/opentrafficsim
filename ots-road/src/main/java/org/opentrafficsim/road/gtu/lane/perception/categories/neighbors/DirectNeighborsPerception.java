@@ -205,8 +205,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             }
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos = record.getStartDistance().neg();
-            pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
-                    : pos.minus(getGtu().getFront().getDx());
+            pos = pos.plus(getGtu().getFront().getDx());
             boolean ignoreIfUpstream = true;
             return new DownstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
                     getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, lane,
@@ -243,8 +242,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos;
             pos = record.getStartDistance().neg();
-            pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
-                    : pos.minus(getGtu().getFront().getDx());
+            pos = pos.plus(getGtu().getFront().getDx());
             return new UpstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
                     getGtu().getParameters().getParameter(LOOKBACK), getGtu().getRear(), this.headwayGtuType, lane);
         }

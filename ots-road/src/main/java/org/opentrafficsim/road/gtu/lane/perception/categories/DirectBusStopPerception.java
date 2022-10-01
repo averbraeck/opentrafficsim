@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.LaneRecord;
+import org.opentrafficsim.road.gtu.lane.perception.LaneRecordInterface;
 import org.opentrafficsim.road.gtu.lane.perception.MultiLanePerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -62,10 +62,9 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
             MultiLanePerceptionIterable<HeadwayBusStop, BusStop> stops = new MultiLanePerceptionIterable<>(getGtu());
             for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
             {
-                LaneRecord<?> record = getPerception().getLaneStructure().getFirstRecord(lane);
+                LaneRecordInterface<?> record = getPerception().getLaneStructure().getFirstRecord(lane);
                 Length pos = record.getStartDistance().neg();
-                pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
-                        : pos.minus(getGtu().getFront().getDx());
+                pos = pos.plus(getGtu().getFront().getDx());
                 AbstractPerceptionIterable<HeadwayBusStop, BusStop,
                         ?> it = new LaneBasedObjectIterable<HeadwayBusStop, BusStop>(getGtu(), BusStop.class, record,
                                 Length.max(Length.ZERO, pos), true, getGtu().getParameters().getParameter(LOOKAHEAD),

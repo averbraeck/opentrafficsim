@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.perception.AbstractPerception;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * The perception module of a GTU based on lanes. It is responsible for perceiving (sensing) the environment of the GTU, which
@@ -100,7 +100,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
                 upMerge = upMerge.neg();
                 this.laneStructure = new RollingLaneStructure(lookAhead, down, up, lookAhead, upMerge, getGtu());
             }
-            DirectedLanePosition dlp;
+            LanePosition dlp;
             try
             {
                 dlp = getGtu().getReferencePosition();

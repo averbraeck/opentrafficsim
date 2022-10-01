@@ -9,7 +9,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.control.ControlTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.LaneRecord;
+import org.opentrafficsim.road.gtu.lane.perception.LaneRecordInterface;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -79,8 +79,7 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
         {
             LaneStructureRecord record = getPerception().getLaneStructure().getRootRecord();
             Length pos = record.getStartDistance().neg();
-            pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
-                    : pos.minus(getGtu().getFront().getDx());
+            pos = pos.plus(getGtu().getFront().getDx());
             boolean ignoreIfUpstream = true;
             return new DownstreamNeighboursIterableACC(getGtu(), record, Length.max(Length.ZERO, pos),
                     ((ControlTacticalPlanner) getGtu().getTacticalPlanner()).getSettings()
@@ -119,7 +118,7 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
          * @param ignoreIfUpstream boolean; whether to ignore GTU that are partially upstream of a record
          */
         @SuppressWarnings("checkstyle:parameternumber")
-        DownstreamNeighboursIterableACC(final LaneBasedGtu perceivingGtu, final LaneRecord<?> root,
+        DownstreamNeighboursIterableACC(final LaneBasedGtu perceivingGtu, final LaneRecordInterface<?> root,
                 final Length initialPosition, final Length maxDistance, final RelativePosition relativePosition,
                 final HeadwayGtuType headwayGtuType, final RelativeLane lane, final boolean ignoreIfUpstream)
         {
@@ -128,7 +127,8 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
 
         /** {@inheritDoc} */
         @Override
-        protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
+        protected Entry getNext(final LaneRecordInterface<?> record, final Length position, final Integer counter)
+                throws GtuException
         {
             Entry next;
             do

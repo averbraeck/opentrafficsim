@@ -6,7 +6,6 @@ import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -16,7 +15,6 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -88,8 +86,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             Route route = getPerception().getGtu().getStrategicalPlanner().getRoute();
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos = record.getStartDistance().neg();
-            pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
-                    : pos.minus(getGtu().getFront().getDx());
+            pos = pos.plus(getGtu().getFront().getDx());
             return new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight>(getGtu(), TrafficLight.class, record,
                     Length.max(Length.ZERO, pos), true, getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
                     route)
@@ -138,14 +135,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             List<LaneBasedObject> laneObjs;
             if (record.isDownstreamBranch())
             {
-                if (record.getDirection().isPlus())
-                {
-                    laneObjs = record.getLane().getLaneBasedObjects(Length.max(Length.ZERO, pos), record.getLane().getLength());
-                }
-                else
-                {
-                    laneObjs = record.getLane().getLaneBasedObjects(Length.ZERO, pos);
-                }
+                laneObjs = record.getLane().getLaneBasedObjects(Length.max(Length.ZERO, pos), record.getLane().getLength());
             }
             else
             {
@@ -157,9 +147,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 if (object instanceof ConflictEnd)
                 {
                     Conflict c = ((ConflictEnd) object).getConflict();
-                    Length cPos = record.getDirection().isPlus() ? c.getLongitudinalPosition().minus(MARGIN)
-                            : c.getLongitudinalPosition().plus(MARGIN);
-                    pos = record.getDirection().isPlus() ? Length.min(pos, cPos) : Length.max(pos, cPos);
+                    Length cPos = c.getLongitudinalPosition().minus(MARGIN);
+                    pos = Length.min(pos, cPos);
                 }
             }
             return new LaneBasedObjectIterable<HeadwayConflict, Conflict>(getGtu(), Conflict.class, record,
@@ -195,9 +184,6 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                         throw new RuntimeException("GTU type not available on conflicting lane.", exception);
                     }
 
-                    LongitudinalDirectionality otherDir = otherConflict.getDirection();
-                    Throw.when(otherDir.isBoth(), UnsupportedOperationException.class,
-                            "Conflicts on lanes with direction BOTH are not supported.");
                     // TODO limit 'conflictingVisibility' to first upstream traffic light, so GTU's behind it are ignored
 
                     HeadwayConflict headwayConflict;

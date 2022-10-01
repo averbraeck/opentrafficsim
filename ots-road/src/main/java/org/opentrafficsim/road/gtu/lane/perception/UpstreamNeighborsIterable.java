@@ -46,9 +46,9 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
      * @param headwayGtuType HeadwayGtuType; type of HeadwayGtu to return
      * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
      */
-    public UpstreamNeighborsIterable(final LaneBasedGtu perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
-            final Length maxDistance, final RelativePosition relativePosition, final HeadwayGtuType headwayGtuType,
-            final RelativeLane lane)
+    public UpstreamNeighborsIterable(final LaneBasedGtu perceivingGtu, final LaneRecordInterface<?> root,
+            final Length initialPosition, final Length maxDistance, final RelativePosition relativePosition,
+            final HeadwayGtuType headwayGtuType, final RelativeLane lane)
     {
         super(perceivingGtu, root, initialPosition, false, maxDistance, relativePosition, null);
         this.headwayGtuType = headwayGtuType;
@@ -57,22 +57,22 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
 
     /** {@inheritDoc} */
     @Override
-    protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
+    protected Entry getNext(final LaneRecordInterface<?> record, final Length position, final Integer counter)
+            throws GtuException
     {
         int n;
         LaneBasedGtu next;
         Length pos;
-        boolean plus = record.getDirection().isPlus();
         if (counter == null)
         {
-            if (plus ? position.ge(record.getLane().getLength()) : position.eq0())
+            if (position.ge(record.getLane().getLength()))
             {
-                next = record.getLane().getLastGtu(record.getDirection());
+                next = record.getLane().getLastGtu();
             }
             else
             {
-                Length searchPos = (plus ? position.plus(this.margin) : position.minus(this.margin));
-                next = record.getLane().getGtuBehind(searchPos, record.getDirection(), RelativePosition.FRONT,
+                Length searchPos = position.plus(this.margin);
+                next = record.getLane().getGtuBehind(searchPos, RelativePosition.FRONT,
                         record.getLane().getParentLink().getSimulator().getSimulatorAbsTime());
             }
             if (next == null)
@@ -85,13 +85,13 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
             if (this.getGtu() != null && next.getId().equals(this.getGtu().getId()))
             {
                 // ignore self
-                pos = plus ? pos.minus(next.getLength()) : pos.plus(next.getLength());
+                pos = pos.minus(next.getLength());
                 return getNext(record, pos, n);
             }
         }
         else
         {
-            n = plus ? counter - 1 : counter + 1;
+            n = counter - 1;
             if (n < 0 || n >= record.getLane().numberOfGtus())
             {
                 return null;
@@ -104,7 +104,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
 
     /** {@inheritDoc} */
     @Override
-    protected Length getDistance(final LaneBasedGtu object, final LaneRecord<?> record, final Length position)
+    protected Length getDistance(final LaneBasedGtu object, final LaneRecordInterface<?> record, final Length position)
     {
         return record.getDistanceToPosition(position).neg().plus(getDx());
     }
