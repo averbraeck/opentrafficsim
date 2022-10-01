@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.Sampler;
 
 /**
@@ -31,10 +31,10 @@ public abstract class Sim0MQSampler extends Sampler
     private Time lastTimestamp = Time.ZERO;
 
     /** The recording start times per KpiLaneDirection. */
-    private final Map<KpiLaneDirection, Time> startRecordingMap = new LinkedHashMap<>();
+    private final Map<KpiLane, Time> startRecordingMap = new LinkedHashMap<>();
 
     /** The recording stop times per KpiLaneDirection. */
-    private final Map<KpiLaneDirection, Time> stopRecordingMap = new LinkedHashMap<>();
+    private final Map<KpiLane, Time> stopRecordingMap = new LinkedHashMap<>();
 
     /** the nodes. */
     protected final Map<String, NodeData> nodes = new LinkedHashMap<>();
@@ -49,7 +49,7 @@ public abstract class Sim0MQSampler extends Sampler
     protected final Map<String, GtuData> gtus = new LinkedHashMap<>();
 
     /** last lane of gtus. */
-    protected final Map<String, KpiLaneDirection> lastLanes = new LinkedHashMap<>();
+    protected final Map<String, KpiLane> lastLanes = new LinkedHashMap<>();
 
     /** the default gtu type (for now). */
     // protected final GtuTypeData defaultGtuType;
