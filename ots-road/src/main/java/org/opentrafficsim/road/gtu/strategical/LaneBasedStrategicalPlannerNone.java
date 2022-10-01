@@ -3,10 +3,8 @@ package org.opentrafficsim.road.gtu.strategical;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -52,16 +50,14 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /** {@inheritDoc} */
     @Override
-    public final Node nextNode(final Link link, final GTUDirectionality direction, final GtuType gtuType)
-            throws NetworkException
+    public final Node nextNode(final Link link, final GtuType gtuType) throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GtuType gtuType)
-            throws NetworkException
+    public final Link nextLink(final Link link, final GtuType gtuType) throws NetworkException
     {
         return null;
     }
@@ -75,8 +71,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /** {@inheritDoc} */
     @Override
-    public final LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GtuType gtuType)
-            throws NetworkException
+    public final Link nextLink(final Node node, final Link previousLink, final GtuType gtuType) throws NetworkException
     {
         return null;
     }

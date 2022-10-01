@@ -195,8 +195,7 @@ public class SplitFraction
         boolean fractionAdded = false;
         for (Link link : this.node.getLinks())
         {
-            if ((link.getStartNode().equals(this.node) && link.getDirectionality(gtuType).isForwardOrBoth())
-                    || (link.getEndNode().equals(this.node) && link.getDirectionality(gtuType).isBackwardOrBoth()))
+            if ((link.getStartNode().equals(this.node)))
             {
                 if (link instanceof CrossSectionLink)
                 {

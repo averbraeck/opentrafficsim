@@ -8,7 +8,6 @@ import java.util.Map;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
@@ -80,6 +79,7 @@ public interface RouteGeneratorOD
             this.stream = stream;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Route getRoute(final Node origin, final Node destination, final GtuType gtuType)
         {
@@ -90,14 +90,12 @@ public interface RouteGeneratorOD
             boolean directLinkExists = false;
             for (Link link : destination.getLinks())
             {
-                GTUDirectionality direction =
-                        link.getEndNode().equals(destination) ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
-                if (link.getLinkType().isConnector() && link.getDirectionality(gtuType).permits(direction)
+                if (link.getLinkType().isConnector() 
                         && link instanceof CrossSectionLink && ((CrossSectionLink) link).getDemandWeight() != null)
                 {
                     // Verify there is a route from origin to this link
                     List<Node> testViaNode = new ArrayList<>();
-                    Node linkEntryNode = direction.isPlus() ? link.getStartNode() : link.getEndNode();
+                    Node linkEntryNode = link.getStartNode();
                     testViaNode.add(linkEntryNode);
                     try
                     {
@@ -118,8 +116,7 @@ public interface RouteGeneratorOD
                         e.printStackTrace();
                     }
                 }
-                if (link.getDirectionality(gtuType).permits(direction)
-                        && (link.getStartNode().equals(origin) || link.getEndNode().equals(origin)))
+                if (link.getStartNode().equals(origin) || link.getEndNode().equals(origin))
                 {
                     directLinkExists = true;
                 }
