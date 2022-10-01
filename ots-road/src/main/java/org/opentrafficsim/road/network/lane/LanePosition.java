@@ -6,12 +6,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.network.LinkDirection;
 
 /**
- * Store one position, direction and lane of a GTU.
+ * Store one position and lane of a GTU.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -19,7 +17,7 @@ import org.opentrafficsim.core.network.LinkDirection;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class DirectedLanePosition implements Serializable
+public class LanePosition implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20151111L;
@@ -30,29 +28,18 @@ public class DirectedLanePosition implements Serializable
     /** The position on the lane, relative to the cross section link (design line). */
     private final Length position;
 
-    /** The direction the vehicle is driving to -- either in the direction of the design line, or against it. */
-    private final GTUDirectionality gtuDirection;
-
-    /** Link direction. */
-    private LinkDirection linkDirection = null;
-
     /**
      * Construct a new DirectedLanePosition.
      * @param lane Lane; the lane for the position
-     * @param position Length; the position on the lane, relative to the cross section link (design line)
-     * @param gtuDirection GTUDirectionality; the direction the vehicle is driving to -- either in the direction of the design
-     *            line, or against it
+     * @param position Length; the position on the lane, relative to the cross section link (design line) line, or against it
      * @throws GtuException when preconditions fail
      */
-    public DirectedLanePosition(final Lane lane, final Length position, final GTUDirectionality gtuDirection)
-            throws GtuException
+    public LanePosition(final Lane lane, final Length position) throws GtuException
     {
         Throw.when(lane == null, GtuException.class, "lane is null");
         Throw.when(position == null, GtuException.class, "position is null");
-        Throw.when(gtuDirection == null, GtuException.class, "gtuDirection is null");
         this.lane = lane;
         this.position = position;
-        this.gtuDirection = gtuDirection;
     }
 
     /**
@@ -74,16 +61,6 @@ public class DirectedLanePosition implements Serializable
     }
 
     /**
-     * Retrieve the gtuDirection.
-     * @return GTUDirectionality; gtuDirection the direction the vehicle is driving to -- either in the direction of the design
-     *         line, or against it
-     */
-    public final GTUDirectionality getGtuDirection()
-    {
-        return this.gtuDirection;
-    }
-
-    /**
      * Retrieve the location and direction of the GTU on the lane.
      * @return DirectedPoint; the location and direction of the GTU on the lane
      */
@@ -93,34 +70,7 @@ public class DirectedLanePosition implements Serializable
         OTSLine3D centerLine = this.lane.getCenterLine();
         double centerLineLength = centerLine.getLengthSI();
         double fraction = this.position.si / centerLineLength;
-        DirectedPoint p = centerLine.getLocationFractionExtended(fraction);
-        if (this.gtuDirection.equals(GTUDirectionality.DIR_PLUS))
-        {
-            return p;
-        }
-        return new DirectedPoint(p.x, p.y, p.z, p.getRotX(), p.getRotY(), p.getRotZ() + Math.PI);
-    }
-
-    /**
-     * Returns the lane direction in the direction of this lane direction.
-     * @return lane direction in the direction of this lane direction
-     */
-    public final LaneDirection getLaneDirection()
-    {
-        return new LaneDirection(this.lane, this.gtuDirection);
-    }
-
-    /**
-     * Returns the link direction in the direction of this lane direction.
-     * @return link direction in the direction of this lane direction
-     */
-    public final LinkDirection getLinkDirection()
-    {
-        if (this.linkDirection == null)
-        {
-            this.linkDirection = new LinkDirection(this.lane.getParentLink(), this.gtuDirection);
-        }
-        return this.linkDirection;
+        return centerLine.getLocationFractionExtended(fraction);
     }
 
     /** {@inheritDoc} */
@@ -129,7 +79,6 @@ public class DirectedLanePosition implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.gtuDirection == null) ? 0 : this.gtuDirection.hashCode());
         result = prime * result + ((this.lane == null) ? 0 : this.lane.hashCode());
         result = prime * result + ((this.position == null) ? 0 : this.position.hashCode());
         return result;
@@ -146,9 +95,7 @@ public class DirectedLanePosition implements Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DirectedLanePosition other = (DirectedLanePosition) obj;
-        if (this.gtuDirection != other.gtuDirection)
-            return false;
+        LanePosition other = (LanePosition) obj;
         if (this.lane == null)
         {
             if (other.lane != null)
@@ -170,8 +117,7 @@ public class DirectedLanePosition implements Serializable
     @Override
     public final String toString()
     {
-        return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + ", gtuDirection=" + this.gtuDirection
-                + "]";
+        return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + "]";
     }
 
 }
