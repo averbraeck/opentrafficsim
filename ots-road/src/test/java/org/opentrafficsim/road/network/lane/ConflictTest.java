@@ -160,8 +160,8 @@ public class ConflictTest implements EventListenerInterface
         // That was a lot of code - just to prepare things to call generateConflictPair ...
         Conflict.generateConflictPair(ConflictType.CROSSING, new DefaultConflictRule(), false, laneA,
                 new Length(conflictStart.x, LengthUnit.SI), new Length(conflictEnd.x - conflictStart.x, LengthUnit.SI),
-                GTUDirectionality.DIR_PLUS, geometry1, bicycles, laneB, conflictBStart, conflictBLength,
-                GTUDirectionality.DIR_PLUS, geometry2, cars, simulator);
+                geometry1, bicycles, laneB, conflictBStart, conflictBLength, geometry2,
+                cars, simulator);
 
         // Check that two conflicts have been created
         assertEquals("one conflict on lane A", 1, laneA.getLaneBasedObjects().size());

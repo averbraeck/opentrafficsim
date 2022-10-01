@@ -1,10 +1,10 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
+import java.util.Set;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -63,27 +63,23 @@ public class BusStopConflictRule implements ConflictRule
         // find bus and determine if it has priority
         // conflict forces that LongitudinalDirection is DIR_PLUS or DIR_MINUS
         Lane lane = busConflict.getLane();
-        GTUDirectionality dir =
-                busConflict.getDirection().isForward() ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
         Length pos = busConflict.getLongitudinalPosition();
         LaneBasedGtu gtu = null;
         try
         {
             while (gtu == null && lane != null)
             {
-                gtu = lane.getGtuBehind(pos, dir, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
+                gtu = lane.getGtuBehind(pos, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
                 if (gtu == null)
                 {
-                    ImmutableMap<Lane, GTUDirectionality> map =
-                            lane.upstreamLanes(dir, lane.getNetwork().getGtuType(GtuType.DEFAULTS.BUS));
-                    if (map.size() == 1)
+                    Set<Lane> set = lane.prevLanes(lane.getNetwork().getGtuType(GtuType.DEFAULTS.BUS));
+                    if (set.size() == 1)
                     {
-                        lane = map.keySet().iterator().next();
+                        lane = set.iterator().next();
                         // only on bus stop
                         if (lane.getParentLink().getPriority().isBusStop())
                         {
-                            dir = map.get(lane);
-                            pos = dir.isPlus() ? lane.getLength() : Length.ZERO;
+                            pos = lane.getLength();
                         }
                         else
                         {

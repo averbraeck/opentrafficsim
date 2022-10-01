@@ -20,19 +20,17 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
-import org.opentrafficsim.road.gtu.lane.perception.LaneDirectionRecord;
 import org.opentrafficsim.road.gtu.lane.perception.LaneRecord;
+import org.opentrafficsim.road.gtu.lane.perception.LaneRecordInterface;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
@@ -79,12 +77,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /** The length of the conflict along the lane centerline. */
     private final Length length;
 
-    /** GTU direction. */
-    private final GTUDirectionality direction;
-
-    /** Simulator for animation and timed events. */
-    private final OTSSimulatorInterface simulator;
-
     /** GTU type. */
     private final GtuType gtuType;
 
@@ -97,15 +89,12 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /** Maximum maximum search distance. */
     private Length maxMaxTrafficLightDistance;
 
-    /** Lock object for cloning a pair of conflicts. */
-    private final Object cloneLock;
-
     /////////////////////////////////////////////////////////////////
     // Properties regarding upstream and downstream GTUs provision //
     /////////////////////////////////////////////////////////////////
 
     /** Root for GTU search. */
-    private final LaneDirectionRecord root;
+    private final LaneRecord root;
 
     /** Position on the root. */
     private final Length rootPosition;
@@ -150,44 +139,32 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param lane Lane; lane where this conflict starts
      * @param longitudinalPosition Length; position of start of conflict on lane
      * @param length Length; length of the conflict along the lane centerline
-     * @param direction GTUDirectionality; GTU direction
      * @param geometry OTSLine3D; geometry of conflict
-     * @param conflictRule ConflictRule; conflict rule, i.e. determines priority, give way, stop or all-stop
      * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
-     * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
-     * @param permitted boolean; whether the conflict is permitted in traffic light control
+     * @param conflictRule ConflictRule; conflict rule, i.e. determines priority, give way, stop or all-stop
      * @param gtuType GtuType; GTU type
-     * @param cloneLock Object; lock object for cloning a pair of conflicts
+     * @param permitted boolean; whether the conflict is permitted in traffic light control
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final GTUDirectionality direction,
-            final OTSLine3D geometry, final ConflictType conflictType, final ConflictRule conflictRule,
-            final OTSSimulatorInterface simulator, final GtuType gtuType, final boolean permitted, final Object cloneLock)
+    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final OTSLine3D geometry,
+            final ConflictType conflictType, final ConflictRule conflictRule, final GtuType gtuType, final boolean permitted)
             throws NetworkException
     {
-        super(UUID.randomUUID().toString(), lane, Throw.whenNull(direction, "Direction may not be null.").isPlus()
-                ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS, longitudinalPosition, geometry);
+        super(UUID.randomUUID().toString(), lane, longitudinalPosition, geometry);
         this.length = length;
-        this.direction = direction;
         this.conflictType = conflictType;
         this.conflictRule = conflictRule;
-        this.simulator = simulator;
         this.gtuType = gtuType;
         this.permitted = permitted;
-        this.cloneLock = cloneLock;
 
         // Create conflict end
         if (conflictType.equals(ConflictType.SPLIT) || conflictType.equals(ConflictType.MERGE))
         {
-            Length position =
-                    conflictType.equals(ConflictType.SPLIT) ? (direction.isPlus() ? length : lane.getLength().minus(length))
-                            : (direction.isPlus() ? lane.getLength() : Length.ZERO);
+            Length position = conflictType.equals(ConflictType.SPLIT) ? length : lane.getLength();
             try
             {
-                new ConflictEnd(this, lane,
-                        direction.isPlus() ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS,
-                        position);
+                new ConflictEnd(this, lane, position);
             }
             catch (OTSGeometryException exception)
             {
@@ -197,8 +174,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         }
 
         // Lane record for GTU provision
-        this.rootPosition = direction.isPlus() ? longitudinalPosition : lane.getLength().minus(longitudinalPosition);
-        this.root = new LaneDirectionRecord(lane, direction, this.rootPosition.neg(), gtuType);
+        this.rootPosition = longitudinalPosition;
+        this.root = new LaneRecord(lane, this.rootPosition.neg(), gtuType);
     }
 
     /**
@@ -254,10 +231,9 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                     this.maxUpstreamVisibility, RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT)
             {
                 /** {@inheritDoc} */
-                @SuppressWarnings("synthetic-access")
                 @Override
                 protected AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>.Entry getNext(
-                        final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
+                        final LaneRecordInterface<?> record, final Length position, final Integer counter) throws GtuException
                 {
                     AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>.Entry entry =
                             super.getNext(record, position, counter);
@@ -306,10 +282,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT, ignoreIfUpstream)
                     {
                         /** {@inheritDoc} */
-                        @SuppressWarnings("synthetic-access")
                         @Override
                         protected AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>.Entry getNext(
-                                final LaneRecord<?> record, final Length position, final Integer counter) throws GtuException
+                                final LaneRecordInterface<?> record, final Length position, final Integer counter)
+                                throws GtuException
                         {
                             AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer>.Entry entry =
                                     super.getNext(record, position, counter);
@@ -451,13 +427,11 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param lane1 Lane; lane of conflict 1
      * @param longitudinalPosition1 Length; longitudinal position of conflict 1
      * @param length1 Length; {@code Length} of conflict 1
-     * @param direction1 GTUDirectionality; GTU direction of conflict 1
      * @param geometry1 OTSLine3D; geometry of conflict 1
      * @param gtuType1 GtuType; gtu type of conflict 1
      * @param lane2 Lane; lane of conflict 2
      * @param longitudinalPosition2 Length; longitudinal position of conflict 2
      * @param length2 Length; {@code Length} of conflict 2
-     * @param direction2 GTUDirectionality; GTU direction of conflict 2
      * @param geometry2 OTSLine3D; geometry of conflict 2
      * @param gtuType2 GtuType; gtu type of conflict 2
      * @param simulator OTSSimulatorInterface; the simulator for animation and timed events
@@ -466,19 +440,18 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final ConflictRule conflictRule,
             final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
-            final GTUDirectionality direction1, final OTSLine3D geometry1, final GtuType gtuType1, final Lane lane2,
-            final Length longitudinalPosition2, final Length length2, final GTUDirectionality direction2,
-            final OTSLine3D geometry2, final GtuType gtuType2, final OTSSimulatorInterface simulator) throws NetworkException
+            final OTSLine3D geometry1, final GtuType gtuType1, final Lane lane2, final Length longitudinalPosition2,
+            final Length length2, final OTSLine3D geometry2, final GtuType gtuType2, final OTSSimulatorInterface simulator)
+            throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
 
-        Object cloneLock = new Object();
-        Conflict conf1 = new Conflict(lane1, longitudinalPosition1, length1, direction1, geometry1, conflictType, conflictRule,
-                simulator, gtuType1, permitted, cloneLock);
+        Conflict conf1 =
+                new Conflict(lane1, longitudinalPosition1, length1, geometry1, conflictType, conflictRule, gtuType1, permitted);
         conf1.init(); // fire events and register on lane
-        Conflict conf2 = new Conflict(lane2, longitudinalPosition2, length2, direction2, geometry2, conflictType, conflictRule,
-                simulator, gtuType2, permitted, cloneLock);
+        Conflict conf2 =
+                new Conflict(lane2, longitudinalPosition2, length2, geometry2, conflictType, conflictRule, gtuType2, permitted);
         conf2.init(); // fire events and register on lane
         conf1.otherConflict = conf2;
         conf2.otherConflict = conf1;
@@ -515,16 +488,15 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
          * Construct a new ConflictEnd object.
          * @param conflict Conflict; conflict at start of conflict area
          * @param lane Lane; lane
-         * @param direction LongitudinalDirectionality; driving direction (from the conflict to the new ConflictEnd)
          * @param longitudinalPosition Length; position along the lane of the end of the conflict
          * @throws NetworkException on network exception
          * @throws OTSGeometryException does not happen
          */
-        ConflictEnd(final Conflict conflict, final Lane lane, final LongitudinalDirectionality direction,
-                final Length longitudinalPosition) throws NetworkException, OTSGeometryException
+        ConflictEnd(final Conflict conflict, final Lane lane, final Length longitudinalPosition)
+                throws NetworkException, OTSGeometryException
         {
             // FIXME: the OTSLine3D object should be shared by all ConflictEnd objects (removing OTSGeometryException)
-            super(conflict.getId() + "End", lane, direction, longitudinalPosition,
+            super(conflict.getId() + "End", lane, longitudinalPosition,
                     new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(1, 0, 0)));
             this.conflict = conflict;
         }
@@ -692,7 +664,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             {
                 Length overlapRear = dist;
                 Length overlap = getLength(); // start with conflict length
-                @SuppressWarnings("synthetic-access")
                 Lane lane = downstream ? Conflict.this.downstreamLanes.get(perceivedGtu)
                         : Conflict.this.upstreamLanes.get(perceivedGtu);
                 Length overlapFront = dist.plus(perceivedGtu.getProjectedLength(lane)).minus(getLength());
@@ -788,7 +759,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 private PrimaryIteratorEntry next;
 
                 /** {@inheritDoc} */
-                @SuppressWarnings("synthetic-access")
                 @Override
                 public boolean hasNext()
                 {

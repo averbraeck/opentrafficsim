@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
@@ -13,15 +14,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.djutils.immutablecollections.ImmutableIterator;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.immutablecollections.ImmutableMap.ImmutableEntry;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -169,56 +167,50 @@ public final class ConflictBuilderParallel
                 lastReported = combinationsDone / 1000000;
             }
             Lane lane1 = lanes.get(i);
-            for (GTUDirectionality dir1 : lane1.getLaneType().getDirectionality(gtuType).getDirectionalities())
+            Set<Lane> down1 = lane1.nextLanes(gtuType);
+            Set<Lane> up1 = lane1.prevLanes(gtuType);
+
+            for (int j = i + 1; j < lanes.size(); j++)
             {
-                ImmutableMap<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
-                ImmutableMap<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
-
-                for (int j = i + 1; j < lanes.size(); j++)
+                Lane lane2 = lanes.get(j);
+                if (ignoreList.contains(lane1, lane2))
                 {
-                    Lane lane2 = lanes.get(j);
-                    if (ignoreList.contains(lane1, lane2))
+                    continue;
+                }
+                // Quick contour check, skip if non-overlapping envelopes
+                try
+                {
+                    if (!lane1.getContour().intersects(lane2.getContour()))
                     {
                         continue;
-                    }
-                    // Quick contour check, skip if non-overlapping envelopes
-                    try
-                    {
-                        if (!lane1.getContour().intersects(lane2.getContour()))
-                        {
-                            continue;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        System.err.println("Contour problem - lane1 = [" + lane1.getFullId() + "], lane2 = ["
-                                + lane2.getFullId() + "]; skipped");
-                        continue;
-                    }
-
-                    boolean permitted = permittedList.contains(lane1, lane2);
-
-                    for (GTUDirectionality dir2 : lane2.getLaneType().getDirectionality(gtuType).getDirectionalities())
-                    {
-                        while (numberOfJobs.get() > maxqueue) // keep max maxqueue jobs in the pool
-                        {
-                            try
-                            {
-                                Thread.sleep(0, 10);
-                            }
-                            catch (InterruptedException exception)
-                            {
-                                // ignore
-                            }
-                        }
-                        numberOfJobs.incrementAndGet();
-                        ImmutableMap<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
-                        ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
-                        ConflictBuilderRecord cbr = new ConflictBuilderRecord(lane1, dir1, down1, up1, lane2, dir2, down2, up2,
-                                gtuType, permitted, simulator, widthGenerator, leftEdges, rightEdges);
-                        executor.execute(new CbrTask(numberOfJobs, cbr));
                     }
                 }
+                catch (Exception e)
+                {
+                    System.err.println("Contour problem - lane1 = [" + lane1.getFullId() + "], lane2 = [" + lane2.getFullId()
+                            + "]; skipped");
+                    continue;
+                }
+
+                boolean permitted = permittedList.contains(lane1, lane2);
+
+                while (numberOfJobs.get() > maxqueue) // keep max maxqueue jobs in the pool
+                {
+                    try
+                    {
+                        Thread.sleep(0, 10);
+                    }
+                    catch (InterruptedException exception)
+                    {
+                        // ignore
+                    }
+                }
+                numberOfJobs.incrementAndGet();
+                Set<Lane> down2 = lane2.nextLanes(gtuType);
+                Set<Lane> up2 = lane2.prevLanes(gtuType);
+                ConflictBuilderRecord cbr = new ConflictBuilderRecord(lane1, down1, up1, lane2, down2, up2, gtuType, permitted,
+                        simulator, widthGenerator, leftEdges, rightEdges);
+                executor.execute(new CbrTask(numberOfJobs, cbr));
             }
         }
 
@@ -302,78 +294,71 @@ public final class ConflictBuilderParallel
                 lastReported = combinationsDone / 1000000;
             }
             Lane lane1 = lanes.get(i);
-            for (GTUDirectionality dir1 : lane1.getLaneType().getDirectionality(gtuType).getDirectionalities())
+            Set<Lane> down1 = lane1.nextLanes(gtuType);
+            Set<Lane> up1 = lane1.prevLanes(gtuType);
+
+            while (numberOfJobs.get() > maxqueue) // keep max maxqueue jobs in the pool
             {
-                ImmutableMap<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
-                ImmutableMap<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
-
-                while (numberOfJobs.get() > maxqueue) // keep max maxqueue jobs in the pool
+                try
                 {
-                    try
-                    {
-                        Thread.sleep(0, 10);
-                    }
-                    catch (InterruptedException exception)
-                    {
-                        // ignore
-                    }
+                    Thread.sleep(0, 10);
                 }
-                numberOfJobs.incrementAndGet();
-                final int starti = i;
-
-                // START JOB
-
-                executor.execute(new Runnable()
+                catch (InterruptedException exception)
                 {
-                    @Override
-                    public void run()
+                    // ignore
+                }
+            }
+            numberOfJobs.incrementAndGet();
+            final int starti = i;
+
+            // START JOB
+
+            executor.execute(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    for (int j = starti + 1; j < lanes.size(); j++)
                     {
-                        for (int j = starti + 1; j < lanes.size(); j++)
+                        Lane lane2 = lanes.get(j);
+                        if (ignoreList.contains(lane1, lane2))
                         {
-                            Lane lane2 = lanes.get(j);
-                            if (ignoreList.contains(lane1, lane2))
+                            continue;
+                        }
+                        // Quick contour check, skip if non-overlapping envelopes
+                        try
+                        {
+                            if (!lane1.getContour().intersects(lane2.getContour()))
                             {
                                 continue;
-                            }
-                            // Quick contour check, skip if non-overlapping envelopes
-                            try
-                            {
-                                if (!lane1.getContour().intersects(lane2.getContour()))
-                                {
-                                    continue;
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                System.err.println("Contour problem - lane1 = [" + lane1.getFullId() + "], lane2 = ["
-                                        + lane2.getFullId() + "]; skipped");
-                                continue;
-                            }
-
-                            boolean permitted = permittedList.contains(lane1, lane2);
-
-                            for (GTUDirectionality dir2 : lane2.getLaneType().getDirectionality(gtuType).getDirectionalities())
-                            {
-                                ImmutableMap<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
-                                ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
-
-                                try
-                                {
-                                    buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted,
-                                            simulator, widthGenerator, leftEdges, rightEdges);
-                                }
-                                catch (NetworkException | OTSGeometryException ne)
-                                {
-                                    simulator.getLogger().always().error(ne,
-                                            "Conflict build with bad combination of types / rules.");
-                                }
                             }
                         }
-                    }
-                });
+                        catch (Exception e)
+                        {
+                            System.err.println("Contour problem - lane1 = [" + lane1.getFullId() + "], lane2 = ["
+                                    + lane2.getFullId() + "]; skipped");
+                            continue;
+                        }
 
-                // END JOB
-            }
+                        boolean permitted = permittedList.contains(lane1, lane2);
+
+                        Set<Lane> down2 = lane2.nextLanes(gtuType);
+                        Set<Lane> up2 = lane2.prevLanes(gtuType);
+
+                        try
+                        {
+                            buildConflicts(lane1, down1, up1, lane2, down2, up2, gtuType, permitted, simulator, widthGenerator,
+                                    leftEdges, rightEdges);
+                        }
+                        catch (NetworkException | OTSGeometryException ne)
+                        {
+                            simulator.getLogger().always().error(ne, "Conflict build with bad combination of types / rules.");
+                        }
+                    }
+                }
+            });
+
+            // END JOB
         }
 
         System.out.println("WAITING FOR LAST " + maxqueue + " JOBS");
@@ -455,8 +440,8 @@ public final class ConflictBuilderParallel
         // See if conflict needs to be build, and build if so
         try
         {
-            buildConflicts(cbr.lane1, cbr.dir1, cbr.down1, cbr.up1, cbr.lane2, cbr.dir2, cbr.down2, cbr.up2, cbr.gtuType,
-                    cbr.permitted, cbr.simulator, cbr.widthGenerator, cbr.leftEdges, cbr.rightEdges);
+            buildConflicts(cbr.lane1, cbr.down1, cbr.up1, cbr.lane2, cbr.down2, cbr.up2, cbr.gtuType, cbr.permitted,
+                    cbr.simulator, cbr.widthGenerator, cbr.leftEdges, cbr.rightEdges);
         }
         catch (NetworkException | OTSGeometryException ne)
         {
@@ -467,28 +452,23 @@ public final class ConflictBuilderParallel
     /**
      * Build conflict on single lane pair. Connecting lanes are determined.
      * @param lane1 Lane; lane 1
-     * @param dir1 GTUDirectionality; gtu direction 1
      * @param lane2 Lane; lane 2
-     * @param dir2 GTUDirectionality; gtu direction 2
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static void buildConflicts(final Lane lane1, final GTUDirectionality dir1, final Lane lane2,
-            final GTUDirectionality dir2, final GtuType gtuType, final OTSSimulatorInterface simulator,
-            final WidthGenerator widthGenerator) throws OTSGeometryException
+    public static void buildConflicts(final Lane lane1, final Lane lane2, final GtuType gtuType,
+            final OTSSimulatorInterface simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
     {
-        buildConflicts(lane1, dir1, lane2, dir2, gtuType, simulator, widthGenerator, false);
+        buildConflicts(lane1, lane2, gtuType, simulator, widthGenerator, false);
     }
 
     /**
      * Build conflict on single lane pair. Connecting lanes are determined.
      * @param lane1 Lane; lane 1
-     * @param dir1 GTUDirectionality; gtu direction 1
      * @param lane2 Lane; lane 2
-     * @param dir2 GTUDirectionality; gtu direction 2
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
      * @param widthGenerator WidthGenerator; width generator
@@ -496,17 +476,17 @@ public final class ConflictBuilderParallel
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static void buildConflicts(final Lane lane1, final GTUDirectionality dir1, final Lane lane2,
-            final GTUDirectionality dir2, final GtuType gtuType, final OTSSimulatorInterface simulator,
-            final WidthGenerator widthGenerator, final boolean permitted) throws OTSGeometryException
+    public static void buildConflicts(final Lane lane1, final Lane lane2, final GtuType gtuType,
+            final OTSSimulatorInterface simulator, final WidthGenerator widthGenerator, final boolean permitted)
+            throws OTSGeometryException
     {
-        ImmutableMap<Lane, GTUDirectionality> down1 = lane1.downstreamLanes(dir1, gtuType);
-        ImmutableMap<Lane, GTUDirectionality> up1 = lane1.upstreamLanes(dir1, gtuType);
-        ImmutableMap<Lane, GTUDirectionality> down2 = lane2.downstreamLanes(dir2, gtuType);
-        ImmutableMap<Lane, GTUDirectionality> up2 = lane2.upstreamLanes(dir2, gtuType);
+        Set<Lane> down1 = lane1.nextLanes(gtuType);
+        Set<Lane> up1 = lane1.prevLanes(gtuType);
+        Set<Lane> down2 = lane2.nextLanes(gtuType);
+        Set<Lane> up2 = lane2.prevLanes(gtuType);
         try
         {
-            buildConflicts(lane1, dir1, down1, up1, lane2, dir2, down2, up2, gtuType, permitted, simulator, widthGenerator,
+            buildConflicts(lane1, down1, up1, lane2, down2, up2, gtuType, permitted, simulator, widthGenerator,
                     new LinkedHashMap<>(), new LinkedHashMap<>());
         }
         catch (NetworkException ne)
@@ -518,11 +498,9 @@ public final class ConflictBuilderParallel
     /**
      * Build conflicts on single lane pair.
      * @param lane1 Lane; lane 1
-     * @param dir1 GTUDirectionality; gtu direction 1
      * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
      * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
      * @param lane2 Lane; lane 2
-     * @param dir2 GTUDirectionality; gtu direction 2
      * @param down2 Map&lt;Lane,GTUDirectionality&gt;; downstream lane 2
      * @param up2 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 2
      * @param gtuType GtuType; gtu type
@@ -535,10 +513,8 @@ public final class ConflictBuilderParallel
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
-    static void buildConflicts(final Lane lane1, final GTUDirectionality dir1,
-            final ImmutableMap<Lane, GTUDirectionality> down1, final ImmutableMap<Lane, GTUDirectionality> up1,
-            final Lane lane2, final GTUDirectionality dir2, final ImmutableMap<Lane, GTUDirectionality> down2,
-            final ImmutableMap<Lane, GTUDirectionality> up2, final GtuType gtuType, final boolean permitted,
+    static void buildConflicts(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
+            final Set<Lane> down2, final Set<Lane> up2, final GtuType gtuType, final boolean permitted,
             final OTSSimulatorInterface simulator, final WidthGenerator widthGenerator, final Map<Lane, OTSLine3D> leftEdges,
             final Map<Lane, OTSLine3D> rightEdges) throws OTSGeometryException, NetworkException
     {
@@ -597,15 +573,15 @@ public final class ConflictBuilderParallel
         intersections.addAll(Intersection.getIntersectionList(right1, right2, 3));
 
         // Create merge
-        ImmutableIterator<ImmutableEntry<Lane, GTUDirectionality>> iterator1 = down1.entrySet().iterator();
-        ImmutableIterator<ImmutableEntry<Lane, GTUDirectionality>> iterator2 = down2.entrySet().iterator();
+        Iterator<Lane> iterator1 = down1.iterator();
+        Iterator<Lane> iterator2 = down2.iterator();
         boolean merge = false;
         while (iterator1.hasNext() && !merge)
         {
-            ImmutableEntry<Lane, GTUDirectionality> next1 = iterator1.next();
+            Lane next1 = iterator1.next();
             while (iterator2.hasNext() && !merge)
             {
-                ImmutableEntry<Lane, GTUDirectionality> next2 = iterator2.next();
+                Lane next2 = iterator2.next();
                 if (next1.equals(next2))
                 {
                     // Same downstream lane, so a merge
@@ -636,8 +612,7 @@ public final class ConflictBuilderParallel
                         fraction2 = 0;
                     }
                     // Build conflict
-                    buildMergeConflict(lane1, dir1, fraction1, lane2, dir2, fraction2, gtuType, simulator, widthGenerator,
-                            permitted);
+                    buildMergeConflict(lane1, fraction1, lane2, fraction2, gtuType, simulator, widthGenerator, permitted);
                     // Skip loop for efficiency, and do not create multiple merges in case of multiple same downstream lanes
                     merge = true;
                 }
@@ -645,15 +620,15 @@ public final class ConflictBuilderParallel
         }
 
         // Create split
-        iterator1 = up1.entrySet().iterator();
-        iterator2 = up2.entrySet().iterator();
+        iterator1 = up1.iterator();
+        iterator2 = up2.iterator();
         boolean split = false;
         while (iterator1.hasNext() && !split)
         {
-            ImmutableEntry<Lane, GTUDirectionality> prev1 = iterator1.next();
+            Lane prev1 = iterator1.next();
             while (iterator2.hasNext() && !split)
             {
-                ImmutableEntry<Lane, GTUDirectionality> prev2 = iterator2.next();
+                Lane prev2 = iterator2.next();
                 if (prev1.equals(prev2))
                 {
                     // Same upstream lane, so a split
@@ -690,7 +665,7 @@ public final class ConflictBuilderParallel
                         fraction2 = 1;
                     }
                     // Build conflict
-                    buildSplitConflict(lane1, dir1, fraction1, lane2, dir2, fraction2, gtuType, simulator, widthGenerator);
+                    buildSplitConflict(lane1, fraction1, lane2, fraction2, gtuType, simulator, widthGenerator);
                     // Skip loop for efficiency, and do not create multiple splits in case of multiple same upstream lanes
                     split = true;
                 }
@@ -721,18 +696,12 @@ public final class ConflictBuilderParallel
                 if ((crossed[0] && crossed[1] && crossed[2] && crossed[3])
                         || (!crossed[0] && !crossed[1] && !crossed[2] && !crossed[3]))
                 {
-                    if (dir2.isMinus())
-                    {
-                        double f2Temp = f2Start;
-                        f2Start = f2End;
-                        f2End = f2Temp;
-                    }
                     if (Double.isNaN(f1Start) || Double.isNaN(f2Start) || Double.isNaN(f2End))
                     {
                         simulator.getLogger().always().warn("NOT YET Fixing fractions of crossing conflict");
                     }
-                    buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start, f2End,
-                            gtuType, simulator, widthGenerator, permitted);
+                    buildCrossingConflict(lane1, f1Start, intersection.getFraction1(), lane2, f2Start, f2End, gtuType,
+                            simulator, widthGenerator, permitted);
                     f1Start = Double.NaN;
                     f2Start = Double.NaN;
                     f2End = Double.NaN;
@@ -745,10 +714,8 @@ public final class ConflictBuilderParallel
     /**
      * Build a merge conflict.
      * @param lane1 Lane; lane 1
-     * @param dir1 GTUDirectionality; gtu direction 1
      * @param f1start double; start fraction 1
      * @param lane2 Lane; lane 2
-     * @param dir2 GTUDirectionality; gtu direction 2
      * @param f2start double; start fraction 2
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
@@ -758,15 +725,14 @@ public final class ConflictBuilderParallel
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static void buildMergeConflict(final Lane lane1, final GTUDirectionality dir1, final double f1start,
-            final Lane lane2, final GTUDirectionality dir2, final double f2start, final GtuType gtuType,
-            final OTSSimulatorInterface simulator, final WidthGenerator widthGenerator, final boolean permitted)
-            throws NetworkException, OTSGeometryException
+    private static void buildMergeConflict(final Lane lane1, final double f1start, final Lane lane2, final double f2start,
+            final GtuType gtuType, final OTSSimulatorInterface simulator, final WidthGenerator widthGenerator,
+            final boolean permitted) throws NetworkException, OTSGeometryException
     {
 
         // Determine lane end from direction
-        double f1end = dir1.isPlus() ? 1.0 : 0.0;
-        double f2end = dir2.isPlus() ? 1.0 : 0.0;
+        double f1end = 1.0;
+        double f2end = 1.0;
 
         // Get locations and length
         Length longitudinalPosition1 = lane1.getLength().times(f1start);
@@ -792,8 +758,8 @@ public final class ConflictBuilderParallel
         }
 
         // Make conflict
-        Conflict.generateConflictPair(ConflictType.MERGE, conflictRule, permitted, lane1, longitudinalPosition1, length1, dir1,
-                geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+        Conflict.generateConflictPair(ConflictType.MERGE, conflictRule, permitted, lane1, longitudinalPosition1, length1,
+                geometry1, gtuType, lane2, longitudinalPosition2, length2, geometry2, gtuType, simulator);
 
         numberMergeConflicts.incrementAndGet();
     }
@@ -801,10 +767,8 @@ public final class ConflictBuilderParallel
     /**
      * Build a split conflict.
      * @param lane1 Lane; lane 1
-     * @param dir1 GTUDirectionality; gtu direction 1
      * @param f1end double; end fraction 1
      * @param lane2 Lane; lane 2
-     * @param dir2 GTUDirectionality; gtu direction 2
      * @param f2end double; end fraction 2
      * @param gtuType GtuType; gtu type
      * @param simulator OTSSimulatorInterface; simulator
@@ -813,14 +777,14 @@ public final class ConflictBuilderParallel
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static void buildSplitConflict(final Lane lane1, final GTUDirectionality dir1, final double f1end, final Lane lane2,
-            final GTUDirectionality dir2, final double f2end, final GtuType gtuType, final OTSSimulatorInterface simulator,
-            final WidthGenerator widthGenerator) throws NetworkException, OTSGeometryException
+    private static void buildSplitConflict(final Lane lane1, final double f1end, final Lane lane2, final double f2end,
+            final GtuType gtuType, final OTSSimulatorInterface simulator, final WidthGenerator widthGenerator)
+            throws NetworkException, OTSGeometryException
     {
 
         // Determine lane start from direction
-        double f1start = dir1.isPlus() ? 0.0 : 1.0;
-        double f2start = dir2.isPlus() ? 0.0 : 1.0;
+        double f1start = 0.0;
+        double f2start = 0.0;
 
         // Get locations and length
         Length longitudinalPosition1 = lane1.getLength().times(f1start);
@@ -834,7 +798,7 @@ public final class ConflictBuilderParallel
 
         // Make conflict
         Conflict.generateConflictPair(ConflictType.SPLIT, new SplitConflictRule(), false, lane1, longitudinalPosition1, length1,
-                dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+                geometry1, gtuType, lane2, longitudinalPosition2, length2, geometry2, gtuType, simulator);
 
         numberSplitConflicts.incrementAndGet();
     }
@@ -842,11 +806,9 @@ public final class ConflictBuilderParallel
     /**
      * Build a crossing conflict.
      * @param lane1 Lane; lane 1
-     * @param dir1 GTUDirectionality; gtu direction 1
      * @param f1start double; start fraction 1
      * @param f1end double; end fraction 1
      * @param lane2 Lane; lane 2
-     * @param dir2 GTUDirectionality; gtu direction 2
      * @param f2start double; start fraction 2
      * @param f2end double; end fraction 2
      * @param gtuType GtuType; gtu type
@@ -857,17 +819,16 @@ public final class ConflictBuilderParallel
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static void buildCrossingConflict(final Lane lane1, final GTUDirectionality dir1, final double f1start,
-            final double f1end, final Lane lane2, final GTUDirectionality dir2, final double f2start, final double f2end,
-            final GtuType gtuType, final OTSSimulatorInterface simulator, final WidthGenerator widthGenerator,
-            final boolean permitted) throws NetworkException, OTSGeometryException
+    private static void buildCrossingConflict(final Lane lane1, final double f1start, final double f1end, final Lane lane2,
+            final double f2start, final double f2end, final GtuType gtuType, final OTSSimulatorInterface simulator,
+            final WidthGenerator widthGenerator, final boolean permitted) throws NetworkException, OTSGeometryException
     {
 
         // Fractions may be in opposite direction, for the start location this needs to be correct
         // Note: for geometry (real order, not considering direction) and length (absolute value) this does not matter
         double f1startDirected;
         double f2startDirected;
-        if ((dir1.isPlus() && f1end < f1start) || (dir1.isMinus() && f1end > f1start))
+        if (f1end < f1start)
         {
             f1startDirected = f1end;
         }
@@ -875,7 +836,7 @@ public final class ConflictBuilderParallel
         {
             f1startDirected = f1start;
         }
-        if ((dir2.isPlus() && f2end < f2start) || (dir2.isMinus() && f2end > f2start))
+        if (f2end < f2start)
         {
             f2startDirected = f2end;
         }
@@ -909,7 +870,7 @@ public final class ConflictBuilderParallel
 
         // Make conflict
         Conflict.generateConflictPair(ConflictType.CROSSING, conflictRule, permitted, lane1, longitudinalPosition1, length1,
-                dir1, geometry1, gtuType, lane2, longitudinalPosition2, length2, dir2, geometry2, gtuType, simulator);
+                geometry1, gtuType, lane2, longitudinalPosition2, length2, geometry2, gtuType, simulator);
 
         numberCrossConflicts.incrementAndGet();
     }
@@ -1258,25 +1219,19 @@ public final class ConflictBuilderParallel
         final Lane lane1;
 
         /** */
-        final GTUDirectionality dir1;
+        final Set<Lane> down1;
 
         /** */
-        final ImmutableMap<Lane, GTUDirectionality> down1;
-
-        /** */
-        final ImmutableMap<Lane, GTUDirectionality> up1;
+        final Set<Lane> up1;
 
         /** */
         final Lane lane2;
 
         /** */
-        final GTUDirectionality dir2;
+        final Set<Lane> down2;
 
         /** */
-        final ImmutableMap<Lane, GTUDirectionality> down2;
-
-        /** */
-        final ImmutableMap<Lane, GTUDirectionality> up2;
+        final Set<Lane> up2;
 
         /** */
         final GtuType gtuType;
@@ -1299,11 +1254,9 @@ public final class ConflictBuilderParallel
         /**
          * Stores conflicts about a single lane pair.
          * @param lane1 Lane; lane 1
-         * @param dir1 GTUDirectionality; gtu direction 1
          * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
          * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
          * @param lane2 Lane; lane 2
-         * @param dir2 GTUDirectionality; gtu direction 2
          * @param down2 Map&lt;Lane,GTUDirectionality&gt;; downstream lane 2
          * @param up2 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 2
          * @param gtuType GtuType; gtu type
@@ -1314,19 +1267,15 @@ public final class ConflictBuilderParallel
          * @param rightEdges Map&lt;Lane, OTSLine3D&gt;; cache of right edge lines
          */
         @SuppressWarnings("checkstyle:parameternumber")
-        ConflictBuilderRecord(final Lane lane1, final GTUDirectionality dir1, final ImmutableMap<Lane, GTUDirectionality> down1,
-                final ImmutableMap<Lane, GTUDirectionality> up1, final Lane lane2, final GTUDirectionality dir2,
-                final ImmutableMap<Lane, GTUDirectionality> down2, final ImmutableMap<Lane, GTUDirectionality> up2,
-                final GtuType gtuType, final boolean permitted, final OTSSimulatorInterface simulator,
-                final WidthGenerator widthGenerator, final Map<Lane, OTSLine3D> leftEdges,
-                final Map<Lane, OTSLine3D> rightEdges)
+        ConflictBuilderRecord(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
+                final Set<Lane> down2, final Set<Lane> up2, final GtuType gtuType, final boolean permitted,
+                final OTSSimulatorInterface simulator, final WidthGenerator widthGenerator,
+                final Map<Lane, OTSLine3D> leftEdges, final Map<Lane, OTSLine3D> rightEdges)
         {
             this.lane1 = lane1;
-            this.dir1 = dir1;
             this.down1 = down1;
             this.up1 = up1;
             this.lane2 = lane2;
-            this.dir2 = dir2;
             this.down2 = down2;
             this.up2 = up2;
             this.gtuType = gtuType;
