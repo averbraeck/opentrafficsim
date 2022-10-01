@@ -160,15 +160,13 @@ public class OTSNode implements Node, Locatable, Serializable
                     "addConnection: outgoing link " + outgoingLink + " for node " + this + " not in links set");
         }
 
-        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getDirectionality(gtuType).isForwardOrBoth()
-                || incomingLink.getStartNode().equals(this) && incomingLink.getDirectionality(gtuType).isBackwardOrBoth()))
+        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getLinkType().isCompatible(gtuType)))
         {
             throw new NetworkException("addConnection: incoming link " + incomingLink + " not connected to node " + this
                     + " for GTU type " + gtuType);
         }
 
-        if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getDirectionality(gtuType).isForwardOrBoth()
-                || outgoingLink.getEndNode().equals(this) && outgoingLink.getDirectionality(gtuType).isBackwardOrBoth()))
+        if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getLinkType().isCompatible(gtuType)))
         {
             throw new NetworkException("addConnection: outgoing link " + outgoingLink + " not connected to node " + this
                     + " for GTU type " + gtuType);
@@ -220,8 +218,7 @@ public class OTSNode implements Node, Locatable, Serializable
                     "addConnections: outgoing links " + outgoingLinks + " for node " + this + " not all in links set");
         }
 
-        if (!((incomingLink.getEndNode().equals(this) && incomingLink.getDirectionality(gtuType).isForwardOrBoth())
-                || (incomingLink.getStartNode().equals(this) && incomingLink.getDirectionality(gtuType).isBackwardOrBoth())))
+        if (!(incomingLink.getEndNode().equals(this) && incomingLink.getLinkType().isCompatible(gtuType)))
         {
             throw new NetworkException("addConnections: incoming link " + incomingLink + " not connected to node " + this
                     + " for GTU type " + gtuType);
@@ -229,8 +226,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
         for (Link outgoingLink : outgoingLinks)
         {
-            if (!((outgoingLink.getStartNode().equals(this) && outgoingLink.getDirectionality(gtuType).isForwardOrBoth())
-                    || (outgoingLink.getEndNode().equals(this) && outgoingLink.getDirectionality(gtuType).isBackwardOrBoth())))
+            if (!(outgoingLink.getStartNode().equals(this) && outgoingLink.getLinkType().isCompatible(gtuType)))
             {
                 throw new NetworkException("addConnections: outgoing link " + outgoingLink + " not connected to node " + this
                         + " for GTU type " + gtuType);
@@ -279,8 +275,7 @@ public class OTSNode implements Node, Locatable, Serializable
             throw new NetworkException("nextLinks: incoming link " + prevLink + " for node " + this + " not in links set");
         }
 
-        if (!(prevLink.getEndNode().equals(this) && prevLink.getDirectionality(gtuType).isForwardOrBoth()
-                || prevLink.getStartNode().equals(this) && prevLink.getDirectionality(gtuType).isBackwardOrBoth()))
+        if (!(prevLink.getEndNode().equals(this) && prevLink.getLinkType().isCompatible(gtuType)))
         {
             throw new NetworkException(
                     "nextLinks: incoming link " + prevLink + " not connected to node " + this + " for GTU type " + gtuType);
@@ -306,8 +301,7 @@ public class OTSNode implements Node, Locatable, Serializable
         // ----------------------------- defensive copy of the connections for the gtuType
         for (Link link : getLinks())
         {
-            if ((link.getStartNode().equals(this) && link.getDirectionality(gtuType).isForwardOrBoth())
-                    || (link.getEndNode().equals(this) && link.getDirectionality(gtuType).isBackwardOrBoth()))
+            if ((link.getStartNode().equals(this) && link.getLinkType().isCompatible(gtuType)))
             {
                 if (!link.equals(prevLink)) // no U-turn
                 {
@@ -323,15 +317,11 @@ public class OTSNode implements Node, Locatable, Serializable
      * {@inheritDoc}
      */
     @Override
-    public final boolean isDirectionallyConnectedTo(final GtuType gtuType, final Node toNode)
+    public final boolean isConnectedTo(final GtuType gtuType, final Node toNode)
     {
         for (Link link : getLinks())
         {
-            if (toNode.equals(link.getEndNode()) && link.getDirectionality(gtuType).isForwardOrBoth())
-            {
-                return true;
-            }
-            if (toNode.equals(link.getStartNode()) && link.getDirectionality(gtuType).isBackwardOrBoth())
+            if (toNode.equals(link.getEndNode()) && link.getLinkType().isCompatible(gtuType))
             {
                 return true;
             }

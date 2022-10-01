@@ -67,15 +67,13 @@ public interface Node extends Locatable, Serializable, Identifiable, Drawable
     Set<Link> nextLinks(GtuType gtuType, Link prevLink) throws NetworkException;
 
     /**
-     * Check if the current node is linked to the given Node in the specified direction for the given GtuType. This can mean
-     * there is a Link from this node to toNode, and the LongitudinalDirectionality for the Link between this node and toNode is
-     * FORWARD or BOTH; or there is a Link from toNode to this node, and the LongitudinalDirectionality for the Link between
-     * toNode and this node is BACKWARD or BOTH for the provided GtuType.
+     * Check if the current node is linked to the given Node for the given GtuType. This means
+     * there is a direct Link from this node to toNode for the provided GtuType.
      * @param gtuType GtuType; the GTU type to check the connection for.
      * @param toNode Node; the to node
-     * @return whether two nodes are linked in the specified direction.
+     * @return whether two nodes are linked for the GTU type.
      */
-    boolean isDirectionallyConnectedTo(GtuType gtuType, Node toNode);
+    boolean isConnectedTo(GtuType gtuType, Node toNode);
 
     /**
      * Checks whether the node has only connector links going in and/or out, and no other links.
