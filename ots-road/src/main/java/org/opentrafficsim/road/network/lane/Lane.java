@@ -1347,7 +1347,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param laneChangeDirection LateralDirectionality; lane change direction
      * @return Lane; adjacent lane, {@code null} if none
      */
-    public final Lane getAdjacentLaneDirection(final LateralDirectionality laneChangeDirection, final LaneBasedGtu gtu)
+    public final Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final LaneBasedGtu gtu)
     {
         Set<Lane> adjLanes = accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getGtuType());
         if (!adjLanes.isEmpty())
