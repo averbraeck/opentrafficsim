@@ -18,7 +18,6 @@ import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
@@ -44,8 +43,8 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Generators;
 import org.opentrafficsim.road.network.factory.xml.utils.Transformer;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.xml.generated.GENERATOR;
 import org.opentrafficsim.xml.generated.GTUTEMPLATE;
@@ -350,9 +349,8 @@ public final class GeneratorSinkParser
                 // TODO: remove this hack for testing
                 Length position = Length.instantiateSI(5.0); // Transformer.parseLengthBeginEnd(generatorTag.getPOSITION(),
                 // lane.getLength());
-                GTUDirectionality direction = GTUDirectionality.valueOf(generatorTag.getDIRECTION());
-                Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
-                initialLongitudinalPositions.add(new DirectedLanePosition(lane, position, direction));
+                Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
+                initialLongitudinalPositions.add(new LanePosition(lane, position));
 
                 IdGenerator idGenerator = new IdGenerator(lane.getFullId());
 
@@ -385,7 +383,7 @@ public final class GeneratorSinkParser
             CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(sinkTag.getLINK());
             Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLANE());
             Length position = Transformer.parseLengthBeginEnd(sinkTag.getPOSITION(), lane.getLength());
-            new SinkSensor(lane, position, GTUDirectionality.valueOf(sinkTag.getDIRECTION()), simulator);
+            new SinkSensor(lane, position, simulator);
         }
     }
 
