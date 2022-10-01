@@ -1342,6 +1342,22 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * Returns one adjacent lane.
+     * @param gtu LaneBasedGtu; gtu
+     * @param laneChangeDirection LateralDirectionality; lane change direction
+     * @return Lane; adjacent lane, {@code null} if none
+     */
+    public final Lane getAdjacentLaneDirection(final LateralDirectionality laneChangeDirection, final LaneBasedGtu gtu)
+    {
+        Set<Lane> adjLanes = accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getGtuType());
+        if (!adjLanes.isEmpty())
+        {
+            return adjLanes.iterator().next();
+        }
+        return null;
+    }
+
+    /**
      * Get the speed limit of this lane, which can differ per GTU type. E.g., cars might be allowed to drive 120 km/h and trucks
      * 90 km/h.
      * @param gtuType GtuType; the GTU type to provide the speed limit for
