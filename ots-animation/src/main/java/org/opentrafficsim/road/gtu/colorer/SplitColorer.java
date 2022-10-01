@@ -11,11 +11,10 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * <p>
@@ -63,7 +62,7 @@ public class SplitColorer implements GtuColorer
             return UNKNOWN;
         }
         LaneBasedGtu laneGtu = (LaneBasedGtu) gtu;
-        DirectedLanePosition refPos;
+        LanePosition refPos;
         try
         {
             refPos = laneGtu.getReferencePosition();
@@ -73,7 +72,7 @@ public class SplitColorer implements GtuColorer
         {
             return UNKNOWN;
         }
-        LinkDirection linkDir = refPos.getLinkDirection();
+        Link link = refPos.getLane().getParentLink();
         Route route = laneGtu.getStrategicalPlanner().getRoute();
         if (route == null)
         {
@@ -87,12 +86,11 @@ public class SplitColorer implements GtuColorer
         {
             try
             {
-                preLink = linkDir.getLink();
-                nextLinks = linkDir.getNodeTo().nextLinks(gtu.getGtuType(), linkDir.getLink());
+                preLink = link;
+                nextLinks = link.getEndNode().nextLinks(gtu.getGtuType(), link);
                 if (!nextLinks.isEmpty())
                 {
-                    linkDir = laneGtu.getStrategicalPlanner().nextLinkDirection(preLink, linkDir.getDirection(),
-                            gtu.getGtuType());
+                    link = laneGtu.getStrategicalPlanner().nextLink(preLink, gtu.getGtuType());
                 }
             }
             catch (NetworkException exception)
@@ -112,16 +110,13 @@ public class SplitColorer implements GtuColorer
         // split, sort next links
         try
         {
-            double preAngle =
-                    linkDir.getDirection().isPlus() ? linkDir.getLink().getDesignLine().getLocationFraction(1.0).getRotZ()
-                            : linkDir.getLink().getDesignLine().getLocationFraction(0.0).getRotZ() - Math.PI;
-            OTSPoint3D pre = linkDir.getDirection().isPlus() ? linkDir.getLink().getDesignLine().getLast()
-                    : linkDir.getLink().getDesignLine().getFirst();
+            double preAngle = link.getDesignLine().getLocationFraction(1.0).getRotZ();
+            OTSPoint3D pre = link.getDesignLine().getLast();
             List<Double> angles = new ArrayList<>();
             List<Link> links = new ArrayList<>();
             for (Link nextLink : nextLinks)
             {
-                double angle = getAngle(pre, nextLink.getStartNode().equals(linkDir.getNodeFrom())
+                double angle = getAngle(pre, nextLink.getStartNode().equals(link.getStartNode())
                         ? nextLink.getDesignLine().get(1) : nextLink.getDesignLine().get(nextLink.getDesignLine().size() - 2));
                 angle -= preAngle; // difference with from
                 while (angle < -Math.PI)
@@ -155,7 +150,7 @@ public class SplitColorer implements GtuColorer
                     }
                 }
             }
-            int index = links.indexOf(linkDir.getLink());
+            int index = links.indexOf(link);
             if (index == 0)
             {
                 return RIGHT;
