@@ -21,7 +21,6 @@ import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
@@ -74,12 +73,6 @@ public class TrafficLightSensor extends EventProducer
     /** The OTS network. */
     private final OTSNetwork network;
 
-    /** Which side of the position of flank sensor A is the TrafficLightSensor. */
-    private final GTUDirectionality directionalityA;
-
-    /** Which side of the position of flank sensor B is the TrafficLightSensor. */
-    private final GTUDirectionality directionalityB;
-
     /** Design line of the sensor. */
     private final OTSLine3D path;
 
@@ -122,18 +115,6 @@ public class TrafficLightSensor extends EventProducer
         {
             lane.addListener(this, Lane.GTU_ADD_EVENT);
             lane.addListener(this, Lane.GTU_REMOVE_EVENT);
-        }
-        if (laneA.equals(laneB))
-        {
-            this.directionalityA = positionA.le(positionB) ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
-            this.directionalityB = this.directionalityA;
-        }
-        else
-        {
-            this.directionalityA = findDirectionality(laneA, intermediateLanes);
-            this.directionalityB = GTUDirectionality.DIR_PLUS == findDirectionality(laneB, intermediateLanes)
-                    ? GTUDirectionality.DIR_MINUS : GTUDirectionality.DIR_PLUS;
-            // System.out.println("Directionality on B is " + this.directionalityB);
         }
         List<OTSPoint3D> outLine = new ArrayList<>();
         outLine.add(fixElevation(this.entryA.getGeometry().getCentroid()));
@@ -189,46 +170,6 @@ public class TrafficLightSensor extends EventProducer
     private OTSPoint3D fixElevation(final OTSPoint3D point)
     {
         return new OTSPoint3D(point.x, point.y, point.z + SingleSensor.DEFAULT_SENSOR_ELEVATION.si);
-    }
-
-    /**
-     * Figure out which part of a lane is covered by the TrafficLightSensor.
-     * @param lane Lane; the lane
-     * @param intermediateLanes List&lt;Lane&gt;; TODO
-     * @return GTUDirectionality; DIR_PLUS if the detector covers the section with higher longitudinal position; DIR_MINUS if
-     *         the detector covers the section with lower longitudinal position
-     * @throws NetworkException if the lane is not connected to any of the lanes in this.lanes
-     */
-    private GTUDirectionality findDirectionality(final Lane lane, final List<Lane> intermediateLanes) throws NetworkException
-    {
-        Node startNode = lane.getParentLink().getStartNode();
-        Node endNode = lane.getParentLink().getEndNode();
-        for (Lane otherLane : intermediateLanes)
-        {
-            if (lane.equals(otherLane))
-            {
-                continue;
-            }
-            Node intermediateNode = otherLane.getParentLink().getStartNode();
-            if (intermediateNode == startNode)
-            {
-                return GTUDirectionality.DIR_MINUS;
-            }
-            if (intermediateNode == endNode)
-            {
-                return GTUDirectionality.DIR_PLUS;
-            }
-            intermediateNode = otherLane.getParentLink().getEndNode();
-            if (intermediateNode == startNode)
-            {
-                return GTUDirectionality.DIR_MINUS;
-            }
-            if (intermediateNode == endNode)
-            {
-                return GTUDirectionality.DIR_PLUS;
-            }
-        }
-        throw new NetworkException("lane " + lane + " is not connected to any intermediate lane or the other lane");
     }
 
     /**
@@ -327,109 +268,32 @@ public class TrafficLightSensor extends EventProducer
                         return;
                     }
                     // The GTU is on the A lane and/or the B lane; in this case the driving direction matters
-                    GTUDirectionality drivingDirection = gtu.getDirection(remainingLane);
                     if (this.entryA.getLane().equals(this.entryB.getLane()))
                     {
                         // A lane equals B lane; does the active part of the GTU cover the detector?
-                        // TODO: not handling backwards driving GTU
-                        if (GTUDirectionality.DIR_PLUS == drivingDirection)
+                        if (frontPosition.ge(this.entryA.getLongitudinalPosition())
+                                && rearPosition.lt(this.exitB.getLongitudinalPosition()))
                         {
-                            // GTU is driving in direction of increasing longitudinal distance
-                            if (this.directionalityA == GTUDirectionality.DIR_PLUS)
-                            {
-                                if (frontPosition.ge(this.entryA.getLongitudinalPosition())
-                                        && rearPosition.lt(this.exitB.getLongitudinalPosition()))
-                                {
-                                    addGTU(gtu);
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                if (frontPosition.le(this.entryB.getLongitudinalPosition())
-                                        && rearPosition.gt(this.exitA.getLongitudinalPosition()))
-                                {
-                                    addGTU(gtu);
-                                    return;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // GTU is driving in direction of decreasing longitudinal distance
-                            if (this.directionalityA == GTUDirectionality.DIR_MINUS)
-                            {
-                                if (frontPosition.le(this.entryB.getLongitudinalPosition())
-                                        && rearPosition.gt(this.entryA.getLongitudinalPosition()))
-                                {
-                                    addGTU(gtu);
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                if (frontPosition.le(this.entryB.getLongitudinalPosition())
-                                        && rearPosition.gt(this.exitA.getLongitudinalPosition()))
-                                {
-                                    addGTU(gtu);
-                                    return;
-                                }
-                            }
+                            addGTU(gtu);
+                            return;
                         }
                     }
                     else
                     // Lane A is not equal to lane B; the GTU is on of these
                     {
                         Length detectionPosition;
-                        GTUDirectionality detectorDirectionality;
                         if (this.entryA.getLane() == remainingLane)
                         {
                             detectionPosition = this.entryA.getLongitudinalPosition();
-                            detectorDirectionality = this.directionalityA;
                         }
                         else
                         {
                             detectionPosition = this.entryB.getLongitudinalPosition();
-                            detectorDirectionality = this.directionalityB;
                         }
-                        if (GTUDirectionality.DIR_PLUS == drivingDirection)
+                        if (frontPosition.ge(detectionPosition))
                         {
-                            if (GTUDirectionality.DIR_PLUS == detectorDirectionality)
-                            {
-                                if (frontPosition.ge(detectionPosition))
-                                {
-                                    addGTU(gtu);
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                if (rearPosition.le(detectionPosition))
-                                {
-                                    addGTU(gtu);
-                                    return;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // GTU is driving in direction of decreasing longitudinal distance
-                            if (GTUDirectionality.DIR_PLUS == detectorDirectionality)
-                            {
-                                if (rearPosition.ge(detectionPosition))
-                                {
-                                    addGTU(gtu);
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                if (frontPosition.le(detectionPosition))
-                                {
-                                    addGTU(gtu);
-                                    return;
-                                }
-                            }
+                            addGTU(gtu);
+                            return;
                         }
                     }
                 }
@@ -482,35 +346,15 @@ public class TrafficLightSensor extends EventProducer
      */
     public final void signalDetection(final FlankSensor sensor, final LaneBasedGtu gtu)
     {
-        GTUDirectionality gtuDirection = null;
-        try
-        {
-            gtuDirection = gtu.getDirection(sensor.getLane());
-        }
-        catch (GtuException exception)
-        {
-            exception.printStackTrace();
-        }
-        // String source =
-        // this.entryA == sensor ? "entryA" : this.entryB == sensor ? "entryB" : this.exitA == sensor ? "exitA"
-        // : this.exitB == sensor ? "exitB" : "???";
-        // System.out.println("Time " + sensor.getSimulator().getSimulatorTime() + ": " + this.id + " " + source
-        // + " triggered on " + gtu + " driving direction is " + gtuDirection);
-        if (this.entryA == sensor && gtuDirection == this.directionalityA
-                || this.entryB == sensor && gtuDirection != this.directionalityB)
+        if (this.entryA == sensor || this.entryB == sensor)
         {
             addGTU(gtu);
         }
-        else if (this.exitA == sensor && gtuDirection != this.directionalityA
-                || this.exitB == sensor && gtuDirection == this.directionalityB)
+        else if (this.exitA == sensor || this.exitB == sensor)
         // Some exit sensor has triggered
         {
             removeGTU(gtu);
         }
-        // else
-        // {
-        // // System.out.println("Ignoring event (GTU is driving in wrong direction)");
-        // }
     }
 
     /** {@inheritDoc} */
@@ -565,8 +409,7 @@ public class TrafficLightSensor extends EventProducer
     {
         return "TrafficLightSensor [id=" + this.id + ", entryA=" + this.entryA + ", exitA=" + this.exitA + ", entryB="
                 + this.entryB + ", exitB=" + this.exitB + ", currentGTUs=" + this.currentGTUs + ", lanes=" + this.lanes
-                + ", directionalityA=" + this.directionalityA + ", directionalityB=" + this.directionalityB + ", path="
-                + this.path + "]";
+                + ", path=" + this.path + "]";
     }
 
     /** {@inheritDoc} */
