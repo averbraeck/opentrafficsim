@@ -8,16 +8,14 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.djutils.immutablecollections.ImmutableMap;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * This class places GTU's behind the leader at the desired headway (i.e. CF, car-following) and the speed of the leader, but no
@@ -37,10 +35,10 @@ public class CFRoomChecker implements RoomChecker
     /** {@inheritDoc} */
     @Override
     public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
-            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GtuException
+            final Duration since, final Set<LanePosition> initialPosition) throws NetworkException, GtuException
     {
         Speed speedLimit = null;
-        for (DirectedLanePosition lane : initialPosition)
+        for (LanePosition lane : initialPosition)
         {
             try
             {
@@ -93,7 +91,7 @@ public class CFRoomChecker implements RoomChecker
         }
         move = Length.min(move, since.times(generationSpeed)); // max distance the GTU would have moved until now
         // move this distance
-        Set<DirectedLanePosition> generationPosition;
+        Set<LanePosition> generationPosition;
         if (move.eq0() || initialPosition.size() != 1)
         {
             generationPosition = initialPosition;
@@ -101,15 +99,14 @@ public class CFRoomChecker implements RoomChecker
         else
         {
             generationPosition = new LinkedHashSet<>();
-            for (DirectedLanePosition dirPos : initialPosition)
+            for (LanePosition lanePos : initialPosition)
             {
-                Lane lane = dirPos.getLane();
-                GTUDirectionality dir = dirPos.getGtuDirection();
-                Length position = dirPos.getPosition();
-                Length canMove = dir.isPlus() ? lane.getLength().minus(position) : position;
+                Lane lane = lanePos.getLane();
+                Length position = lanePos.getPosition();
+                Length canMove = lane.getLength().minus(position);
                 while (canMove.lt(move))
                 {
-                    ImmutableMap<Lane, GTUDirectionality> down = lane.downstreamLanes(dir, characteristics.getGtuType());
+                    Set<Lane> down = lane.nextLanes(characteristics.getGtuType());
                     if (down.size() != 1)
                     {
                         // split or dead-end, fall back to original position
@@ -118,14 +115,13 @@ public class CFRoomChecker implements RoomChecker
                     else
                     {
                         move = move.minus(canMove);
-                        lane = down.keySet().iterator().next();
-                        dir = down.get(lane);
-                        position = dir.isPlus() ? Length.ZERO : lane.getLength();
+                        lane = down.iterator().next();
+                        position = Length.ZERO;
                         canMove = lane.getLength();
                     }
                 }
-                position = dir.isPlus() ? position.plus(move) : position.minus(move);
-                generationPosition.add(new DirectedLanePosition(lane, position, dir));
+                position = position.plus(move);
+                generationPosition.add(new LanePosition(lane, position));
             }
         }
         return new Placement(generationSpeed, generationPosition);

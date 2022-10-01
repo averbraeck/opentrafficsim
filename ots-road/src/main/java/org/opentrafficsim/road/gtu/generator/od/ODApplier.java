@@ -21,7 +21,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -46,8 +45,8 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.sensor.DestinationSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.Sensor;
 
@@ -243,7 +242,7 @@ public final class ODApplier
             }
 
             // Step 2: gather DirectedLanePositions for each generator pertaining to each DemandNode<...>
-            Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<DirectedLanePosition>> initialPositions =
+            Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<LanePosition>> initialPositions =
                     new LinkedHashMap<>();
             Map<CrossSectionLink, Double> linkWeights = null;
             Map<CrossSectionLink, Node> viaNodes = null;
@@ -252,12 +251,11 @@ public final class ODApplier
                 for (Lane lane : originNodePerLane.keySet())
                 {
                     DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = originNodePerLane.get(lane);
-                    Set<DirectedLanePosition> initialPosition = new LinkedHashSet<>();
+                    Set<LanePosition> initialPosition = new LinkedHashSet<>();
                     try
                     {
                         initialPosition.add(lane.getParentLink().getStartNode().equals(demandNode.getObject())
-                                ? new DirectedLanePosition(lane, Length.ZERO, GTUDirectionality.DIR_PLUS)
-                                : new DirectedLanePosition(lane, lane.getLength(), GTUDirectionality.DIR_MINUS));
+                                ? new LanePosition(lane, Length.ZERO) : new LanePosition(lane, lane.getLength()));
                     }
                     catch (GtuException ge)
                     {
@@ -268,7 +266,7 @@ public final class ODApplier
             }
             else
             {
-                Set<DirectedLanePosition> positionSet = new LinkedHashSet<>();
+                Set<LanePosition> positionSet = new LinkedHashSet<>();
                 for (Link link : origin.getLinks())
                 {
                     if (link.getLinkType().isConnector())
@@ -319,7 +317,7 @@ public final class ODApplier
             Map<Node, Integer> originGeneratorCounts = new LinkedHashMap<>();
             for (DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root : initialPositions.keySet())
             {
-                Set<DirectedLanePosition> initialPosition = initialPositions.get(root);
+                Set<LanePosition> initialPosition = initialPositions.get(root);
                 // id
                 Node o = root.getObject();
                 String id = o.getId();
@@ -431,11 +429,11 @@ public final class ODApplier
                         {
                             if (link.getEndNode().equals(destination))
                             {
-                                new DestinationSensor(lane, lane.getLength(), GTUDirectionality.DIR_PLUS, simulator);
+                                new DestinationSensor(lane, lane.getLength(), simulator);
                             }
                             else if (link.getStartNode().equals(destination))
                             {
-                                new DestinationSensor(lane, Length.ZERO, GTUDirectionality.DIR_MINUS, simulator);
+                                new DestinationSensor(lane, Length.ZERO, simulator);
                             }
                         }
                     }
@@ -504,23 +502,23 @@ public final class ODApplier
      * @param <V> value type (implemented for cleaner code only)
      * @return Map; sorted map
      */
-    private static <K, V extends Set<DirectedLanePosition>> Map<K, V> sortByValue(final Map<K, V> map)
+    private static <K, V extends Set<LanePosition>> Map<K, V> sortByValue(final Map<K, V> map)
     {
         return map.entrySet().stream().sorted(new Comparator<Map.Entry<K, V>>()
         {
             @Override
             public int compare(final Entry<K, V> o1, final Entry<K, V> o2)
             {
-                DirectedLanePosition lanePos1 = o1.getValue().iterator().next();
+                LanePosition lanePos1 = o1.getValue().iterator().next();
                 String linkId1 = lanePos1.getLane().getParentLink().getId();
-                DirectedLanePosition lanePos2 = o2.getValue().iterator().next();
+                LanePosition lanePos2 = o2.getValue().iterator().next();
                 String linkId2 = lanePos2.getLane().getParentLink().getId();
                 int c = linkId1.compareToIgnoreCase(linkId2);
                 if (c == 0)
                 {
-                    Length pos1 = lanePos1.getGtuDirection().isPlus() ? Length.ZERO : lanePos1.getLane().getLength();
+                    Length pos1 = Length.ZERO;
                     Length lat1 = lanePos1.getLane().getLateralCenterPosition(pos1);
-                    Length pos2 = lanePos2.getGtuDirection().isPlus() ? Length.ZERO : lanePos2.getLane().getLength();
+                    Length pos2 = Length.ZERO;
                     Length lat2 = lanePos2.getLane().getLateralCenterPosition(pos2);
                     return lat1.compareTo(lat2);
                 }
@@ -539,7 +537,7 @@ public final class ODApplier
      * @param positionSet Set&lt;DirectedLanePosition&gt;; set to add position to
      */
     private static void setDirectedLanePosition(final CrossSectionLink link, final Node node,
-            final Set<DirectedLanePosition> positionSet)
+            final Set<LanePosition> positionSet)
     {
         for (Lane lane : link.getLanes())
         {
@@ -551,9 +549,8 @@ public final class ODApplier
             }
             try
             {
-                positionSet.add(lane.getParentLink().getStartNode().equals(node)
-                        ? new DirectedLanePosition(lane, Length.ZERO, GTUDirectionality.DIR_PLUS)
-                        : new DirectedLanePosition(lane, lane.getLength(), GTUDirectionality.DIR_MINUS));
+                positionSet.add(lane.getParentLink().getStartNode().equals(node) ? new LanePosition(lane, Length.ZERO)
+                        : new LanePosition(lane, lane.getLength()));
             }
             catch (GtuException ge)
             {

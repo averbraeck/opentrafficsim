@@ -24,7 +24,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bounds;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -43,8 +42,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -99,9 +98,6 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
     /** Position on the lane, relative to the design line of the link. */
     private final Length position;
 
-    /** The direction in which the GTU has to be generated; DIR_PLUS or DIR_MINUS. */
-    private final GTUDirectionality direction;
-
     /** The lane-based strategical planner factory to use. */
     private final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory;
 
@@ -135,8 +131,6 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
      * @param endTime Time; end time of generation
      * @param lane Lane; the lane to generate the GTU on
      * @param position Length; position on the lane, relative to the design line of the link
-     * @param direction GTUDirectionality; the direction on the lane in which the GTU has to be generated (DIR_PLUS, or
-     *            DIR_MINUS)
      * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends LaneBasedStrategicalPlanner&gt;; the
      *            lane-based strategical planner factory to use
      * @param routeGenerator Generator&lt;Route&gt;; route generator
@@ -147,7 +141,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
     public AbstractGtuGeneratorOld(final String name, final OTSSimulatorInterface simulator, final GtuType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
-            final Time startTime, final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
+            final Time startTime, final Time endTime, final Lane lane, final Length position,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
             final Generator<Route> routeGenerator, final OTSRoadNetwork network) throws SimRuntimeException
     {
@@ -161,7 +155,6 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
         this.endTime = endTime;
         this.lane = lane;
         this.position = position;
-        this.direction = direction;
         this.strategicalPlannerFactory = strategicalPlannerFactory;
         this.routeGenerator = routeGenerator;
         this.network = network;
@@ -210,8 +203,8 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
             carBuilder.setMaximumSpeed(getMaximumSpeedDist().draw());
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());
             carBuilder.setSimulator(getSimulator());
-            Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-            initialLongitudinalPositions.add(new DirectedLanePosition(this.lane, this.position, this.direction));
+            Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+            initialLongitudinalPositions.add(new LanePosition(this.lane, this.position));
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setNetwork(this.network);
             carBuilder.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
@@ -258,7 +251,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
      */
     protected final boolean enoughSpace(final LaneBasedIndividualCarBuilder carBuilder) throws NetworkException, GtuException
     {
-        DirectedLanePosition directedLanePosition = carBuilder.getInitialLongitudinalPositions().iterator().next();
+        LanePosition directedLanePosition = carBuilder.getInitialLongitudinalPositions().iterator().next();
         Lane generatorLane = directedLanePosition.getLane();
         double genPosSI = directedLanePosition.getPosition().getSI();
         // GTUDirectionality direction = directedLanePosition.getGtuDirection();
@@ -324,8 +317,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
             final double maxDistanceSI, final Time when) throws GtuException
     {
         // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS WRONG.
-        LaneBasedGtu otherGTU = theLane.getGtuAhead(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
-                RelativePosition.REAR, when);
+        LaneBasedGtu otherGTU = theLane.getGtuAhead(new Length(lanePositionSI, LengthUnit.METER), RelativePosition.REAR, when);
         if (otherGTU != null)
         {
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getRear(), when).getSI() - lanePositionSI;
@@ -344,7 +336,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
             if (theLane.nextLanes(this.gtuType).size() > 0)
             {
                 Headway foundMaxGTUDistanceSI = new HeadwayDistance(Double.MAX_VALUE);
-                for (Lane nextLane : theLane.nextLanes(this.gtuType).keySet())
+                for (Lane nextLane : theLane.nextLanes(this.gtuType))
                 {
                     // TODO Only follow links on the Route if there is a "real" Route
                     // if (routeNavigator.getRoute() == null || routeNavigator.getRoute().size() == 0 /* XXXXX STUB dummy route
@@ -384,8 +376,8 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
             final double maxDistanceSI, final Time when) throws GtuException
     {
         // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS WRONG.
-        LaneBasedGtu otherGTU = theLane.getGtuBehind(new Length(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
-                RelativePosition.FRONT, when);
+        LaneBasedGtu otherGTU =
+                theLane.getGtuBehind(new Length(lanePositionSI, LengthUnit.METER), RelativePosition.FRONT, when);
         if (otherGTU != null)
         {
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getFront(), when).getSI() - lanePositionSI;
@@ -404,7 +396,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
             if (theLane.prevLanes(this.gtuType).size() > 0)
             {
                 Headway foundMaxGTUDistanceSI = new HeadwayDistance(Double.MAX_VALUE);
-                for (Lane prevLane : theLane.prevLanes(this.gtuType).keySet())
+                for (Lane prevLane : theLane.prevLanes(this.gtuType))
                 {
                     // TODO Only follow links on the Route if there is a "real" Route
                     // if (routeNavigator.getRoute() == null || routeNavigator.getRoute().size() == 0 /* XXXXX STUB dummy route
@@ -441,15 +433,7 @@ public abstract class AbstractGtuGeneratorOld extends EventProducer implements S
         Time when = getSimulator().getSimulatorAbsTime();
         Headway foundMaxGTUDistanceSI = new HeadwayDistance(Double.MAX_VALUE);
         // search for the closest GTU on all current lanes we are registered on.
-        Headway closest;
-        if (this.direction.equals(GTUDirectionality.DIR_PLUS))
-        {
-            closest = headwayRecursiveForwardSI(this.lane, 0.0, 0.0, maxDistanceSI, when);
-        }
-        else
-        {
-            closest = headwayRecursiveBackwardSI(this.lane, generatorLane.getLength().getSI(), 0.0, maxDistanceSI, when);
-        }
+        Headway closest = headwayRecursiveForwardSI(this.lane, 0.0, 0.0, maxDistanceSI, when);
         if (closest.getDistance().si < maxDistanceSI && closest.getDistance().si < foundMaxGTUDistanceSI.getDistance().si)
         {
             foundMaxGTUDistanceSI = closest;

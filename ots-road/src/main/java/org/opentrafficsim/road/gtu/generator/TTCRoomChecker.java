@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * Room checker based on time-to-collision. The room is considered ok if:
@@ -49,7 +49,7 @@ public class TTCRoomChecker implements RoomChecker
     /** {@inheritDoc} */
     @Override
     public final Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
-            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GtuException
+            final Duration since, final Set<LanePosition> initialPosition) throws NetworkException, GtuException
     {
         Speed speedLimit = initialPosition.iterator().next().getLane().getSpeedLimit(characteristics.getGtuType());
         Speed desiredSpeedProxy = Speed.min(characteristics.getMaximumSpeed(), speedLimit);
@@ -59,9 +59,9 @@ public class TTCRoomChecker implements RoomChecker
         }
         HeadwayGtu leader = leaders.first();
         Speed speed = Speed.min(leader.getSpeed(), desiredSpeedProxy);
-        for (DirectedLanePosition dlp : initialPosition)
+        for (LanePosition dlp : initialPosition)
         {
-            if (dlp.getLane().getLaneType().isCompatible(characteristics.getGtuType(), dlp.getGtuDirection()))
+            if (dlp.getLane().getLaneType().isCompatible(characteristics.getGtuType()))
             {
                 speed = Speed.min(speed, dlp.getLane().getSpeedLimit(characteristics.getGtuType()));
             }
