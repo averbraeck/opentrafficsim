@@ -24,7 +24,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * Augments the AbstractLaneBasedIndividualGTU with a LaneBasedIndividualCarBuilder and animation support
@@ -194,7 +194,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
         private GtuType gtuType = null;
 
         /** The initial positions of the car on one or more lanes. */
-        private Set<DirectedLanePosition> initialLongitudinalPositions = null;
+        private Set<LanePosition> initialLongitudinalPositions = null;
 
         /** The initial speed of the car on the lane. */
         private Speed initialSpeed = null;
@@ -248,7 +248,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setInitialLongitudinalPositions(
-                final Set<DirectedLanePosition> initialLongitudinalPositions)
+                final Set<LanePosition> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -363,7 +363,7 @@ public class LaneBasedIndividualGtu extends AbstractLaneBasedIndividualGtu
         /**
          * @return initialLongitudinalPositions.
          */
-        public final Set<DirectedLanePosition> getInitialLongitudinalPositions()
+        public final Set<LanePosition> getInitialLongitudinalPositions()
         {
             return this.initialLongitudinalPositions;
         }
