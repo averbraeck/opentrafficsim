@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.network.sampling.data;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
@@ -10,14 +8,12 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.FloatDuration;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.sampling.GtuData;
 
 /**
@@ -48,33 +44,31 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
         LaneBasedGtu gtuObj = gtu.getGtu();
         try
         {
-            DirectedLanePosition ref = gtuObj.getReferencePosition();
-            Map<Lane, GTUDirectionality> map = new LinkedHashMap<>();
-            Set<LaneDirection> visited = new LinkedHashSet<>();
-            map.put(ref.getLane(), ref.getGtuDirection());
+            LanePosition ref = gtuObj.getReferencePosition();
+            Set<Lane> set = new LinkedHashSet<>();
+            Set<Lane> visited = new LinkedHashSet<>();
+            set.add(ref.getLane());
             Length pos = ref.getPosition();
             Length cumulDist = Length.ZERO; // from start of lane
             Time now = gtuObj.getSimulator().getSimulatorAbsTime();
             LaneBasedGtu next = null;
-            while (map.size() == 1)
+            while (set.size() == 1)
             {
-                Lane lane = map.keySet().iterator().next();
-                GTUDirectionality dir = map.get(lane);
+                Lane lane = set.iterator().next();
                 if (cumulDist.gt0())
                 {
-                    pos = dir.isPlus() ? Length.ZERO : lane.getLength();
+                    pos = Length.ZERO;
                 }
-                next = lane.getGtuAhead(pos, dir, RelativePosition.REAR, now);
+                next = lane.getGtuAhead(pos, RelativePosition.REAR, now);
                 if (next == null)
                 {
-                    LaneDirection laneDir = new LaneDirection(lane, map.get(lane));
-                    if (visited.contains(laneDir))
+                    if (visited.contains(lane))
                     {
                         break;
                     }
-                    visited.add(laneDir);
+                    visited.add(lane);
                     cumulDist = cumulDist.plus(lane.getLength());
-                    map = lane.downstreamLanes(dir, gtuObj.getGtuType()).toMap();
+                    set = new LinkedHashSet<>(lane.nextLanes(gtuObj.getGtuType()));
                 }
                 else
                 {
