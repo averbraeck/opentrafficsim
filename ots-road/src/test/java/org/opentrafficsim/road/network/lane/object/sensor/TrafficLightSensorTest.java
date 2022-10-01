@@ -31,12 +31,10 @@ import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGtu;
@@ -51,8 +49,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
@@ -96,15 +94,12 @@ public class TrafficLightSensorTest implements EventListenerInterface
                     new OTSRoadNode(network, "node" + nodeNumber, new OTSPoint3D(cumulativeLength, 0, 0), Direction.ZERO);
             if (null != prevNode)
             {
-                LongitudinalDirectionality direction = lengths[nodeNumber - 1] > 0 ? LongitudinalDirectionality.DIR_PLUS
-                        : LongitudinalDirectionality.DIR_MINUS;
-                OTSRoadNode fromNode = LongitudinalDirectionality.DIR_PLUS == direction ? prevNode : node;
-                OTSRoadNode toNode = LongitudinalDirectionality.DIR_PLUS == direction ? node : prevNode;
-                int laneOffset = LongitudinalDirectionality.DIR_PLUS == direction ? 0 : -1;
+                OTSRoadNode fromNode = prevNode;
+                OTSRoadNode toNode = node;
+                int laneOffset = 0;
                 result[nodeNumber - 1] = LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1,
                         laneOffset, laneOffset, laneType, speedLimit, simulator)[0];
-                System.out.println("Created lane with center line " + result[nodeNumber - 1].getCenterLine()
-                        + ", directionality " + direction);
+                System.out.println("Created lane with center line " + result[nodeNumber - 1].getCenterLine());
             }
             if (nodeNumber < lengths.length)
             {
@@ -115,7 +110,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
         // put a sink at halfway point of last lane
         Lane lastLane = result[lengths.length - 1];
         Length sinkPosition = new Length(lengths[lengths.length - 1] > 0 ? lastLane.getLength().si - 10 : 10, LengthUnit.METER);
-        new SinkSensor(lastLane, sinkPosition, GTUDirectionality.DIR_PLUS, simulator);
+        new SinkSensor(lastLane, sinkPosition, simulator);
         return result;
     }
 
@@ -126,7 +121,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * @return DirectedLanePosition
      * @throws GtuException should not happen; if it does; the test has failed
      */
-    private DirectedLanePosition findLaneAndPosition(final Lane[] lanes, final Length position) throws GtuException
+    private LanePosition findLaneAndPosition(final Lane[] lanes, final Length position) throws GtuException
     {
         Length remainingLength = position;
         for (Lane lane : lanes)
@@ -139,8 +134,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 {
                     remainingLength = lane.getLength().minus(remainingLength);
                 }
-                return new DirectedLanePosition(lane, remainingLength,
-                        reverse ? GTUDirectionality.DIR_MINUS : GTUDirectionality.DIR_PLUS);
+                return new LanePosition(lane, remainingLength);
             }
             remainingLength = remainingLength.minus(lane.getLength());
         }
@@ -172,8 +166,8 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 OTSRoadNetwork network = (OTSRoadNetwork) lanes[0].getParentLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);
                 Length b = new Length(120, LengthUnit.METER);
-                DirectedLanePosition pA = findLaneAndPosition(lanes, a);
-                DirectedLanePosition pB = findLaneAndPosition(lanes, b);
+                LanePosition pA = findLaneAndPosition(lanes, a);
+                LanePosition pB = findLaneAndPosition(lanes, b);
                 String sensorId = "D123";
                 TYPE entryPosition = RelativePosition.FRONT;
                 TYPE exitPosition = RelativePosition.REAR;
@@ -214,11 +208,10 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
                 LaneBasedGtu gtu = new LaneBasedIndividualGtu("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed,
                         gtuLength.times(0.5), simulator, network);
-                Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+                Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(pos, LengthUnit.METER);
-                DirectedLanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
-                initialLongitudinalPositions.add(new DirectedLanePosition(gtuPosition.getLane(), gtuPosition.getPosition(),
-                        gtuPosition.getGtuDirection()));
+                LanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
+                initialLongitudinalPositions.add(new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition()));
                 Parameters parameters = DefaultTestParameters.create();
                 LaneChangeModel laneChangeModel = new Egoistic();
                 GtuFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(
