@@ -19,15 +19,14 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -134,9 +133,9 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
         Duration updateInterval = Duration.instantiateSI(10.0);
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
-            List<LaneDirection> start = new ArrayList<>();
-            start.add(new LaneDirection(getModel().getPath(graphIndex).get(0), GTUDirectionality.DIR_PLUS));
-            GraphPath<KpiLaneDirection> path;
+            List<Lane> start = new ArrayList<>();
+            start.add(getModel().getPath(graphIndex).get(0));
+            GraphPath<KpiLane> path;
             try
             {
                 path = GraphLaneUtil.createPath("name", start.get(0));

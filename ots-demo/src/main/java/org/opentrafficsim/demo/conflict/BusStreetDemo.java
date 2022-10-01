@@ -35,7 +35,6 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -73,8 +72,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -245,9 +244,9 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         {
             Lane lane = ((CrossSectionLink) this.network.getLink("AB")).getLanes().get(0);
             String id = lane.getId();
-            Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
+            Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions
-                    .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
+                    .add(new LanePosition(lane, new Length(10.0, LengthUnit.SI)));
             Generator<Duration> headwayGenerator =
                     new HeadwayGenerator(new Frequency(800, FrequencyUnit.PER_HOUR), this.simulator);
             LaneBasedGtuCharacteristicsGenerator characteristicsGenerator =

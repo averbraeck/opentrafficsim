@@ -27,7 +27,6 @@ import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -46,8 +45,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -167,8 +166,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                 graph = new SwingFundamentalDiagram(new FundamentalDiagram(name, Quantity.DENSITY, Quantity.FLOW, simulator,
                         FundamentalDiagram.sourceFromSampler(sampler,
                                 GraphLaneUtil.createCrossSection(name,
-                                        new DirectedLanePosition(getModel().getLane(), detectorLocation,
-                                                GTUDirectionality.DIR_PLUS)),
+                                        new LanePosition(getModel().getLane(), detectorLocation)),
                                 false, Duration.instantiateSI(60.0), false),
                         null));
             }
@@ -342,9 +340,9 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
                         generateTruck ? this.strategicalPlannerGeneratorTrucks.create(gtu, null, null, null)
                                 : this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
 
-                Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+                Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(20, METER);
-                initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
+                initialPositions.add(new LanePosition(this.lane, initialPosition));
                 Speed initialSpeed = new Speed(100.0, KM_PER_HOUR);
                 gtu.init(strategicalPlanner, initialPositions, initialSpeed);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

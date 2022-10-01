@@ -37,7 +37,6 @@ import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
@@ -85,11 +84,10 @@ import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -359,10 +357,10 @@ public final class AHFEUtil
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
             throws SimRuntimeException, ProbabilityException, GtuException, ParameterException
     {
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
+        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
         // TODO DIR_MINUS
         initialLongitudinalPositions
-                .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
+                .add(new LanePosition(lane, new Length(10.0, LengthUnit.SI)));
         LaneBasedTemplateGtuTypeDistribution characteristicsGenerator = new LaneBasedTemplateGtuTypeDistribution(distribution);
         new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
                 GeneratorPositions.create(initialLongitudinalPositions, stream), network, simulator, roomChecker, idGenerator);

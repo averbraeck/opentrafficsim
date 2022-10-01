@@ -38,11 +38,9 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
@@ -88,8 +86,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -403,8 +401,8 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
             makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, colorer,
                     roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
 
-            new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.instantiateSI(10),
-                    this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));
+            new SpeedSign("sign1", getLane(linkA, "FORWARD1"), Length.instantiateSI(10), this.getSimulator(),
+                    new Speed(130.0, SpeedUnit.KM_PER_HOUR));
 
         }
 
@@ -444,10 +442,10 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
                 final StreamInterface stream) throws SimRuntimeException, ProbabilityException, GtuException, ParameterException
         {
 
-            Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
+            Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             // TODO DIR_MINUS
             initialLongitudinalPositions
-                    .add(new DirectedLanePosition(lane, new Length(5.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
+                    .add(new LanePosition(lane, new Length(5.0, LengthUnit.SI)));
             LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
                     new LaneBasedTemplateGtuTypeDistribution(distribution);
             new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,

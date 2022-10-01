@@ -47,15 +47,14 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.GtuType.DEFAULTS;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.DirectedLinkPosition;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -67,7 +66,7 @@ import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
@@ -91,9 +90,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
@@ -275,10 +273,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
         };
         // generator positions
-        Set<DirectedLanePosition> initialPosition = new LinkedHashSet<>();
+        Set<LanePosition> initialPosition = new LinkedHashSet<>();
         for (Lane lane : lanesAB)
         {
-            initialPosition.add(new DirectedLanePosition(lane, Length.ZERO, GTUDirectionality.DIR_PLUS));
+            initialPosition.add(new LanePosition(lane, Length.ZERO));
         }
         LaneBiases biases = new LaneBiases();
         biases.addBias(car, LaneBias.bySpeed(new Speed(130.0, SpeedUnit.KM_PER_HOUR), new Speed(70.0, SpeedUnit.KM_PER_HOUR)));
@@ -298,7 +296,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // Sinks
         for (Lane lane : lanesBC)
         {
-            new SinkSensor(lane, lane.getLength(), GTUDirectionality.DIR_PLUS, sim);
+            new SinkSensor(lane, lane.getLength(), sim);
         }
 
         return network;
@@ -610,9 +608,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 lanePosition = Length.instantiateSI(i);
                 linkId = "OriginLane-drop";
             }
-            DirectedLinkPosition linkPosition =
-                    new DirectedLinkPosition(getNetwork().getLink(linkId), lanePosition, GTUDirectionality.DIR_PLUS);
-            GraphCrossSection<KpiLaneDirection> crossSection;
+            LinkPosition linkPosition = new LinkPosition(getNetwork().getLink(linkId), lanePosition);
+            GraphCrossSection<KpiLane> crossSection;
             try
             {
                 crossSection = GraphLaneUtil.createCrossSection(names, linkPosition);
@@ -631,12 +628,12 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         names.add("Left lane");
         names.add("Middle lane");
         names.add("Right lane");
-        List<LaneDirection> firstLanes = new ArrayList<>();
+        List<Lane> firstLanes = new ArrayList<>();
         for (Lane lane : ((CrossSectionLink) getNetwork().getLink("OriginLane-drop")).getLanes())
         {
-            firstLanes.add(new LaneDirection(lane, GTUDirectionality.DIR_PLUS));
+            firstLanes.add(lane);
         }
-        GraphPath<KpiLaneDirection> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
+        GraphPath<KpiLane> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
         TrajectoryPlot trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), getSimulator(),
                 this.sampler.getSamplerData(), path);
         trajectoryPlot.updateFixedDomainRange(true);

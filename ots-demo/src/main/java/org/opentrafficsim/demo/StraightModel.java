@@ -29,7 +29,6 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -52,8 +51,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -175,9 +174,9 @@ public class StraightModel extends AbstractOTSModel implements UNITS
             gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
             Generator<Duration> headwayGenerator = new HeadwayGenerator(new Frequency(1500.0, PER_HOUR));
-            Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
+            Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions
-                    .add(new DirectedLanePosition(this.lane, new Length(5.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
+                    .add(new LanePosition(this.lane, new Length(5.0, LengthUnit.SI)));
             LaneBasedTemplateGtuTypeDistribution characteristicsGenerator =
                     new LaneBasedTemplateGtuTypeDistribution(gtuTypeDistribution);
             new LaneBasedGtuGenerator("Generator", headwayGenerator, characteristicsGenerator,

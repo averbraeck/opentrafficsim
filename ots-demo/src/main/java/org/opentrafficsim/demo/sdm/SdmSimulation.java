@@ -34,7 +34,6 @@ import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -44,8 +43,7 @@ import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -74,7 +72,6 @@ import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
@@ -376,7 +373,7 @@ public class SdmSimulation extends AbstractSimulationScript
             Time end = new Time(1.05, TimeUnit.BASE_HOUR);
             for (Lane lane : allLanes)
             {
-                KpiLaneDirection kpiLane = new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
+                KpiLane kpiLane = new KpiLane(new LaneData(lane));
                 SpaceTimeRegion region = new SpaceTimeRegion(kpiLane, Length.ZERO, lane.getLength(), start, end);
                 this.regions.add(region);
                 this.sampler.registerSpaceTimeRegion(region);
@@ -398,18 +395,14 @@ public class SdmSimulation extends AbstractSimulationScript
         try
         {
             TablePanel charts = new TablePanel(2, 2);
-            GraphPath<KpiLaneDirection> path1 = GraphLaneUtil.createPath("Left road, left lane",
-                    new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("AD")).getCrossSectionElement("Lane 1"),
-                            GTUDirectionality.DIR_PLUS));
-            GraphPath<KpiLaneDirection> path2 = GraphLaneUtil.createPath("Left road, right lane",
-                    new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("AD")).getCrossSectionElement("Lane 2"),
-                            GTUDirectionality.DIR_PLUS));
-            GraphPath<KpiLaneDirection> path3 = GraphLaneUtil.createPath("Right road, left lane",
-                    new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 1"),
-                            GTUDirectionality.DIR_PLUS));
-            GraphPath<KpiLaneDirection> path4 = GraphLaneUtil.createPath("Right road, right lane",
-                    new LaneDirection((Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 2"),
-                            GTUDirectionality.DIR_PLUS));
+            GraphPath<KpiLane> path1 = GraphLaneUtil.createPath("Left road, left lane",
+                    (Lane) ((CrossSectionLink) this.network.getLink("AD")).getCrossSectionElement("Lane 1"));
+            GraphPath<KpiLane> path2 = GraphLaneUtil.createPath("Left road, right lane",
+                    (Lane) ((CrossSectionLink) this.network.getLink("AD")).getCrossSectionElement("Lane 2"));
+            GraphPath<KpiLane> path3 = GraphLaneUtil.createPath("Right road, left lane",
+                    (Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 1"));
+            GraphPath<KpiLane> path4 = GraphLaneUtil.createPath("Right road, right lane",
+                    (Lane) ((CrossSectionLink) this.network.getLink("BC")).getCrossSectionElement("Lane 2"));
             GraphPath.initRecording(this.sampler, path1);
             GraphPath.initRecording(this.sampler, path2);
             GraphPath.initRecording(this.sampler, path3);

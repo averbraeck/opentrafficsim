@@ -57,8 +57,7 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeNumber;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
@@ -430,7 +429,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             Length start = laneData.getLength().times(startDistance.si / linkData.getLength().si);
             Length end = laneData.getLength().times(endDistance.si / linkData.getLength().si);
             this.sampler
-                    .registerSpaceTimeRegion(new SpaceTimeRegion(new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS),
+                    .registerSpaceTimeRegion(new SpaceTimeRegion(new KpiLane(laneData),
                             start, end, getStartTime().plus(getWarmupTime()), getStartTime().plus(getSimulationTime())));
         }
     }

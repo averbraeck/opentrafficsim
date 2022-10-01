@@ -17,8 +17,7 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.network.DirectedLinkPosition;
+import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
@@ -32,9 +31,9 @@ import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
@@ -294,17 +293,17 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
      */
     protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
     {
-        GraphPath<KpiLaneDirection> path01;
-        GraphPath<KpiLaneDirection> path0;
-        GraphPath<KpiLaneDirection> path1;
+        GraphPath<KpiLane> path01;
+        GraphPath<KpiLane> path0;
+        GraphPath<KpiLane> path1;
         try
         {
             List<String> names = new ArrayList<>();
             names.add("Left lane");
             names.add("Right lane");
-            List<LaneDirection> start = new ArrayList<>();
-            start.add(new LaneDirection(getModel().getPath(0).get(0), GTUDirectionality.DIR_PLUS));
-            start.add(new LaneDirection(getModel().getPath(1).get(0), GTUDirectionality.DIR_PLUS));
+            List<Lane> start = new ArrayList<>();
+            start.add(getModel().getPath(0).get(0));
+            start.add(getModel().getPath(1).get(0));
             path01 = GraphLaneUtil.createPath(names, start);
             path0 = GraphLaneUtil.createPath(names.get(0), start.get(0));
             path1 = GraphLaneUtil.createPath(names.get(1), start.get(1));
@@ -322,7 +321,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         Duration updateInterval = Duration.instantiateSI(10.0);
 
         SwingPlot plot = null;
-        GraphPath<KpiLaneDirection> path = null;
+        GraphPath<KpiLane> path = null;
         ContourDataSource<?> dataPool = null;
 
         TablePanel trajectoryChart = new TablePanel(2, 2);
@@ -330,7 +329,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
                 new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler.getSamplerData(), path01));
         trajectoryChart.setCell(plot.getContentPane(), 0, 0);
 
-        List<KpiLaneDirection> lanes = new ArrayList<>();
+        List<KpiLane> lanes = new ArrayList<>();
         List<Length> positions = new ArrayList<>();
         lanes.add(path01.get(0).getSource(0));
         lanes.add(path1.get(0).getSource(0));
@@ -339,9 +338,8 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
         List<String> names = new ArrayList<>();
         names.add("Left lane");
         names.add("Right lane");
-        DirectedLinkPosition linkPosition =
-                new DirectedLinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0, GTUDirectionality.DIR_PLUS);
-        GraphCrossSection<KpiLaneDirection> crossSection;
+        LinkPosition linkPosition = new LinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0);
+        GraphCrossSection<KpiLane> crossSection;
         try
         {
             crossSection = GraphLaneUtil.createCrossSection(names, linkPosition);

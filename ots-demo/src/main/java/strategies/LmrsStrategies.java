@@ -80,8 +80,7 @@ import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
-import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
@@ -145,8 +144,8 @@ import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe;
@@ -918,7 +917,7 @@ public class LmrsStrategies implements EventListenerInterface
         private void addLaneToSampler(final Lane lane)
         {
             LmrsStrategies.this.sampler.registerSpaceTimeRegion(
-                    new SpaceTimeRegion(new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS), Length.ZERO,
+                    new SpaceTimeRegion(new KpiLane(new LaneData(lane)), Length.ZERO,
                             lane.getLength(), Time.instantiateSI(300), SIMTIME));
         }
 
@@ -951,7 +950,7 @@ public class LmrsStrategies implements EventListenerInterface
             Object[] payload = (Object[]) event.getContent();
             Gtu gtu = this.network.getGTU((String) payload[0]);
             LateralDirectionality dir = (LateralDirectionality) payload[1];
-            DirectedLanePosition from = (DirectedLanePosition) payload[2];
+            LanePosition from = (LanePosition) payload[2];
             DesireBased desire = (DesireBased) gtu.getTacticalPlanner();
             Double dMax = Double.NEGATIVE_INFINITY;
             String cause = "Unknown";

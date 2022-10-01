@@ -34,7 +34,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -60,8 +59,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -316,7 +315,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
                     {
                         throw new NetworkException("This network should not have lane merge points");
                     }
-                    lane = lane.prevLanes(car).keySet().iterator().next();
+                    lane = lane.prevLanes(car).iterator().next();
                 }
                 // Follow forward
                 while (true)
@@ -331,7 +330,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
                     {
                         throw new NetworkException("This network should not have lane split points");
                     }
-                    lane = lane.nextLanes(car).keySet().iterator().next();
+                    lane = lane.nextLanes(car).iterator().next();
                 }
             }
         }
@@ -375,8 +374,8 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     {
         Distribution<LaneBasedTemplateGtuType> distribution = new Distribution<>(this.stream);
         Length initialPosition = new Length(16, METER);
-        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+        Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
+        initialPositions.add(new LanePosition(lane, initialPosition));
 
         LaneBasedTemplateGtuType template = makeTemplate(this.stream, lane,
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 3, 6), METER),
@@ -423,7 +422,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
-            final Set<DirectedLanePosition> initialPositions,
+            final Set<LanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GtuException
     {
         return new LaneBasedTemplateGtuType(this.network.getGtuType(GtuType.DEFAULTS.CAR), new Generator<Length>()

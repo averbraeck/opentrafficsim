@@ -27,7 +27,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -41,7 +40,7 @@ import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
@@ -52,9 +51,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -159,10 +157,10 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
      */
     protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
     {
-        GraphPath<KpiLaneDirection> path;
+        GraphPath<KpiLane> path;
         try
         {
-            path = GraphLaneUtil.createPath("Lane", new LaneDirection(getModel().getPath().get(0), GTUDirectionality.DIR_PLUS));
+            path = GraphLaneUtil.createPath("Lane", getModel().getPath().get(0));
         }
         catch (NetworkException exception)
         {
@@ -395,9 +393,9 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                         generateTruck ? this.strategicalPlannerGeneratorTrucks.create(gtu, null, null, null)
                                 : this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
 
-                Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+                Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(20, METER);
-                initialPositions.add(new DirectedLanePosition(this.initialLane, initialPosition, GTUDirectionality.DIR_PLUS));
+                initialPositions.add(new LanePosition(this.initialLane, initialPosition));
                 Speed initialSpeed = new Speed(100.0, KM_PER_HOUR);
                 gtu.init(strategicalPlanner, initialPositions, initialSpeed);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

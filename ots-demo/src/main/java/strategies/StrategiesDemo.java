@@ -1,6 +1,5 @@
 package strategies;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -49,7 +48,6 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
@@ -95,8 +93,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
@@ -392,8 +390,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                         }
                         else
                         {
-                            Lane nextLane =
-                                    l.nextLanes(getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE)).keySet().iterator().next();
+                            Lane nextLane = l.nextLanes(getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE)).iterator().next();
                             if (nextLane.numberOfGtus() == 0)
                             {
                                 continue;
@@ -418,8 +415,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                                 if (pos.gt(l.getLength()))
                                 {
                                     pos = pos.minus(l.getLength());
-                                    lane = l.nextLanes(getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE)).keySet().iterator()
-                                            .next();
+                                    lane = l.nextLanes(getNetwork().getGtuType(GtuType.DEFAULTS.VEHICLE)).iterator().next();
                                 }
                                 else
                                 {
@@ -658,19 +654,19 @@ public class StrategiesDemo extends AbstractSimulationScript
         LaneBasedStrategicalPlanner strategicalPlanner = this.factories.get(gtuType).create(gtu, null, null, null);
 
         // init
-        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(lane, pos, GTUDirectionality.DIR_PLUS));
+        Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
+        initialPositions.add(new LanePosition(lane, pos));
         if (pos.plus(gtu.getFront().getDx()).gt(lane.getLength()))
         {
-            Lane nextLane = lane.nextLanes(gtuType).keySet().iterator().next();
+            Lane nextLane = lane.nextLanes(gtuType).iterator().next();
             Length nextPos = pos.minus(lane.getLength());
-            initialPositions.add(new DirectedLanePosition(nextLane, nextPos, GTUDirectionality.DIR_PLUS));
+            initialPositions.add(new LanePosition(nextLane, nextPos));
         }
         if (pos.plus(gtu.getRear().getDx()).lt0())
         {
-            Lane prevLane = lane.prevLanes(gtuType).keySet().iterator().next();
+            Lane prevLane = lane.prevLanes(gtuType).iterator().next();
             Length prevPos = prevLane.getLength().plus(pos.plus(gtu.getRear().getDx()));
-            initialPositions.add(new DirectedLanePosition(prevLane, prevPos, GTUDirectionality.DIR_PLUS));
+            initialPositions.add(new LanePosition(prevLane, prevPos));
         }
         gtu.init(strategicalPlanner, initialPositions, initialSpeed);
 

@@ -42,7 +42,6 @@ import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.DirectedPoint;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -291,7 +290,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         for (Lane lane : lanesCD)
         {
-            new SinkSensor(lane, lane.getLength().minus(Length.instantiateSI(50)), GTUDirectionality.DIR_PLUS, sim);
+            new SinkSensor(lane, lane.getLength().minus(Length.instantiateSI(50)), sim);
         }
         // detectors
         Duration agg = Duration.instantiateSI(60.0);

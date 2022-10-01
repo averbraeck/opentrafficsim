@@ -31,8 +31,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGtu;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
@@ -536,7 +535,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
                 Length start = laneData.getLength().times(startDistance.si / linkData.getLength().si);
                 Length end = laneData.getLength().times(endDistance.si / linkData.getLength().si);
                 this.sampler.registerSpaceTimeRegion(new SpaceTimeRegion(
-                        new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS), start, end, WARMUP, SIMEND));
+                        new KpiLane(laneData), start, end, WARMUP, SIMEND));
             }
         }
 

@@ -30,7 +30,6 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -54,8 +53,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
@@ -277,8 +276,8 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
     {
         Distribution<LaneBasedTemplateGtuType> distribution = new Distribution<>(this.stream);
         Length initialPosition = new Length(16, METER);
-        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+        Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
+        initialPositions.add(new LanePosition(lane, initialPosition));
 
         LaneBasedTemplateGtuType template = makeTemplate(this.stream, lane,
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 3, 6), METER),
@@ -326,7 +325,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
-            final Set<DirectedLanePosition> initialPositions,
+            final Set<LanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory,
             final Generator<Route> routeGenerator) throws GtuException
     {

@@ -43,7 +43,6 @@ import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -64,8 +63,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
@@ -290,9 +289,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 laneType, speedLimit, simulator);
 
         // Create the reference vehicle
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions
-                .add(new DirectedLanePosition(lanes[mergeRight ? 0 : 1], new Length(0, METER), GTUDirectionality.DIR_PLUS));
+                .add(new LanePosition(lanes[mergeRight ? 0 : 1], new Length(0, METER)));
 
         this.carFollowingModel = new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
@@ -374,8 +373,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             throws NamingException, NetworkException, SimRuntimeException, GtuException, OTSGeometryException,
             ParameterException, OperationalPlanException
     {
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(otherCarLane, otherCarPosition, GTUDirectionality.DIR_PLUS));
+        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new LanePosition(otherCarLane, otherCarPosition));
         LaneBasedIndividualGtu otherCar =
                 new LaneBasedIndividualGtu("otherCar", referenceCar.getGtuType(), new Length(4, METER), new Length(2, METER),
                         new Speed(150, KM_PER_HOUR), Length.instantiateSI(2.0), referenceCar.getSimulator(), this.network);
