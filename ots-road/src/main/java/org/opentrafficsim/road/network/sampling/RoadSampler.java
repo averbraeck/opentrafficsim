@@ -19,11 +19,9 @@ import org.djutils.event.TimedEvent;
 import org.djutils.event.ref.ReferenceType;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
-import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.KpiLane;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
@@ -31,7 +29,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -62,10 +59,10 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     private final Duration samplingInterval;
 
     /** Registration of sampling events of each GTU per lane, if interval based. */
-    private final Map<String, Map<LaneDirection, SimEventInterface<Duration>>> eventPerGtu = new LinkedHashMap<>();
+    private final Map<String, Map<Lane, SimEventInterface<Duration>>> eventPerGtu = new LinkedHashMap<>();
 
     /** List of lane the sampler is listening to for each GTU. Usually 1, could be 2 during a trajectory transition. */
-    private final Map<String, Set<LaneDirection>> listenersPerGtu = new LinkedHashMap<>();
+    private final Map<String, Set<Lane>> listenersPerGtu = new LinkedHashMap<>();
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
@@ -137,11 +134,11 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleStartRecording(final Time time, final KpiLaneDirection kpiLaneDirection)
+    public final void scheduleStartRecording(final Time time, final KpiLane kpiLane)
     {
         try
         {
-            this.simulator.scheduleEventAbsTime(time, this, this, "startRecording", new Object[] {kpiLaneDirection});
+            this.simulator.scheduleEventAbsTime(time, this, this, "startRecording", new Object[] {kpiLane});
         }
         catch (SimRuntimeException exception)
         {
@@ -151,11 +148,11 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /** {@inheritDoc} */
     @Override
-    public final void scheduleStopRecording(final Time time, final KpiLaneDirection kpiLaneDirection)
+    public final void scheduleStopRecording(final Time time, final KpiLane kpiLane)
     {
         try
         {
-            this.simulator.scheduleEventAbsTime(time, this, this, "stopRecording", new Object[] {kpiLaneDirection});
+            this.simulator.scheduleEventAbsTime(time, this, this, "stopRecording", new Object[] {kpiLane});
         }
         catch (SimRuntimeException exception)
         {
@@ -165,9 +162,9 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /** {@inheritDoc} */
     @Override
-    public final void initRecording(final KpiLaneDirection kpiLaneDirection)
+    public final void initRecording(final KpiLane kpiLane)
     {
-        Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
+        Lane lane = ((LaneData) kpiLane.getLaneData()).getLane();
         lane.addListener(this, Lane.GTU_ADD_EVENT, ReferenceType.WEAK);
         lane.addListener(this, Lane.GTU_REMOVE_EVENT, ReferenceType.WEAK);
         int count = 1;
@@ -175,18 +172,12 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
         {
             try
             {
-                if (sameDirection(kpiLaneDirection.getKpiDirection(), gtu.getDirection(lane)))
-                {
-                    // Payload: Object[] {String gtuId, gtu, int count_after_addition}
-                    // notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
-                    // gtu.getSimulator().getSimulatorTime()));
-                    // Payload: Object[] {String gtuId, int count_after_addition}
-                    notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] {gtu.getId(), count},
-                            gtu.getSimulator().getSimulatorTime()));
-                }
+                // Payload: Object[] {String gtuId, int count_after_addition}
+                notify(new TimedEvent<>(Lane.GTU_ADD_EVENT, lane, new Object[] {gtu.getId(), count},
+                        gtu.getSimulator().getSimulatorTime()));
                 count++;
             }
-            catch (RemoteException | GtuException exception)
+            catch (Exception exception)
             {
                 throw new RuntimeException("Position cannot be obtained for GTU that is registered on a lane", exception);
             }
@@ -195,52 +186,11 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /** {@inheritDoc} */
     @Override
-    public final void finalizeRecording(final KpiLaneDirection kpiLaneDirection)
+    public final void finalizeRecording(final KpiLane kpiLane)
     {
-        Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
+        Lane lane = ((LaneData) kpiLane.getLaneData()).getLane();
         lane.removeListener(this, Lane.GTU_ADD_EVENT);
         lane.removeListener(this, Lane.GTU_REMOVE_EVENT);
-        // Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
-        // int count = 0;
-        // List<LaneBasedGtu> currentGtus = new ArrayList<>();
-        // try
-        // {
-        // for (LaneBasedGtu gtu : lane.getGtuList())
-        // {
-        // DirectedLanePosition dlp = gtu.getReferencePosition();
-        // if (dlp.getLane().equals(lane) && sameDirection(kpiLaneDirection.getKpiDirection(), dlp.getGtuDirection()))
-        // {
-        // currentGtus.add(gtu);
-        // count++;
-        // }
-        // }
-        // for (LaneBasedGtu gtu : currentGtus)
-        // {
-        // // Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position}
-        // notify(new TimedEvent<>(Lane.GTU_REMOVE_EVENT, lane, new Object[] { gtu.getId(), gtu, count },
-        // gtu.getSimulator().getSimulatorTime()));
-        // count--;
-        // }
-        // }
-        // catch (RemoteException | GTUException exception)
-        // {
-        // throw new RuntimeException("Position cannot be obtained for GTU that is registered on a lane", exception);
-        // }
-    }
-
-    /**
-     * Compares a {@link KpiGtuDirectionality} and a {@link GTUDirectionality}.
-     * @param kpiGtuDirectionality KpiGtuDirectionality; kpi gtu direction
-     * @param gtuDirectionality GTUDirectionality; gtu direction
-     * @return whether both are in the same direction
-     */
-    private boolean sameDirection(final KpiGtuDirectionality kpiGtuDirectionality, final GTUDirectionality gtuDirectionality)
-    {
-        if (kpiGtuDirectionality.equals(KpiGtuDirectionality.DIR_PLUS))
-        {
-            return gtuDirectionality.equals(GTUDirectionality.DIR_PLUS);
-        }
-        return gtuDirectionality.equals(GTUDirectionality.DIR_MINUS);
     }
 
     /** {@inheritDoc} */
@@ -256,7 +206,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             CrossSectionLink link = (CrossSectionLink) this.network.getLink(payload[7].toString());
             Lane lane = (Lane) link.getCrossSectionElement(payload[8].toString());
             LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(payload[0].toString());
-            KpiLaneDirection laneDirection = new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
+            KpiLane laneDirection = new KpiLane(new LaneData(lane));
             processGtuMoveEvent(laneDirection, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(),
                     new GtuData(gtu));
         }
@@ -266,10 +216,10 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             // Assumes that the lane itself is the sourceId
             Lane lane = (Lane) event.getSourceId();
             // TODO GTUDirectionality from Lane.GTU_ADD_EVENT
-            KpiLaneDirection laneDirection = new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
+            KpiLane laneDirection = new KpiLane(new LaneData(lane));
             if (!getSamplerData().contains(laneDirection))
             {
-                // we are not sampling this LaneDirection
+                // we are not sampling this Lane
                 return;
             }
             Object[] payload = (Object[]) event.getContent();
@@ -288,10 +238,9 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
             processGtuAddEvent(laneDirection, position, speed, acceleration, now(), new GtuData(gtu));
-            LaneDirection lDirection = new LaneDirection(lane, GTUDirectionality.DIR_PLUS);
             if (isIntervalBased())
             {
-                scheduleSamplingEvent(gtu, lDirection);
+                scheduleSamplingEvent(gtu, lane);
             }
             else
             {
@@ -299,7 +248,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
                 {
                     this.listenersPerGtu.put(gtu.getId(), new LinkedHashSet<>());
                 }
-                this.listenersPerGtu.get(gtu.getId()).add(lDirection);
+                this.listenersPerGtu.get(gtu.getId()).add(lane);
                 gtu.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
             }
         }
@@ -309,25 +258,24 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             // Assumes that the lane itself is the sourceId
             Lane lane = (Lane) event.getSourceId();
             // TODO GTUDirectionality from Lane.GTU_REMOVE_EVENT
-            KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
+            KpiLane kpiLane = new KpiLane(new LaneData(lane));
             Object[] payload = (Object[]) event.getContent();
             LaneBasedGtu gtu = (LaneBasedGtu) payload[1];
             Length position = (Length) payload[3];
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
-            processGtuRemoveEvent(kpiLaneDirection, position, speed, acceleration, now(), new GtuData(gtu));
-            LaneDirection lDirection = new LaneDirection(lane, GTUDirectionality.DIR_PLUS);
+            processGtuRemoveEvent(kpiLane, position, speed, acceleration, now(), new GtuData(gtu));
             if (isIntervalBased())
             {
                 String gtuId = (String) payload[0];
 
                 if (this.eventPerGtu.get(gtuId) != null)
                 {
-                    if (this.eventPerGtu.get(gtuId).containsKey(lDirection))
+                    if (this.eventPerGtu.get(gtuId).containsKey(lane))
                     {
-                        this.simulator.cancelEvent(this.eventPerGtu.get(gtuId).get(lDirection));
+                        this.simulator.cancelEvent(this.eventPerGtu.get(gtuId).get(lane));
                     }
-                    this.eventPerGtu.get(gtuId).remove(lDirection);
+                    this.eventPerGtu.get(gtuId).remove(lane);
                     if (this.eventPerGtu.get(gtuId).isEmpty())
                     {
                         this.eventPerGtu.remove(gtuId);
@@ -337,7 +285,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
             else
             {
                 // Should not remove if just added on other lane
-                this.listenersPerGtu.get(gtu.getId()).remove(lDirection);
+                this.listenersPerGtu.get(gtu.getId()).remove(lane);
                 if (this.listenersPerGtu.get(gtu.getId()).isEmpty())
                 {
                     this.listenersPerGtu.remove(gtu.getId());
@@ -359,16 +307,16 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     /**
      * Schedules a sampling event for the given gtu on the given lane for the sampling interval from the current time.
      * @param gtu LaneBasedGtu; gtu to sample
-     * @param laneDirection LaneDirection; lane direction where the gtu is at
+     * @param lane Lane; lane where the gtu is at
      */
-    private void scheduleSamplingEvent(final LaneBasedGtu gtu, final LaneDirection laneDirection)
+    private void scheduleSamplingEvent(final LaneBasedGtu gtu, final Lane lane)
     {
         SimEventInterface<Duration> simEvent;
         try
         {
             // this.simulator.scheduleEvent(simEvent);
             simEvent = this.simulator.scheduleEventRel(this.samplingInterval, this, this, "notifySample",
-                    new Object[] {gtu, laneDirection});
+                    new Object[] {gtu, lane});
         }
         catch (SimRuntimeException exception)
         {
@@ -378,32 +326,30 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
         String gtuId = gtu.getId();
         if (!this.eventPerGtu.containsKey(gtuId))
         {
-            Map<LaneDirection, SimEventInterface<Duration>> map = new LinkedHashMap<>();
+            Map<Lane, SimEventInterface<Duration>> map = new LinkedHashMap<>();
             this.eventPerGtu.put(gtuId, map);
         }
-        this.eventPerGtu.get(gtuId).put(laneDirection, simEvent);
+        this.eventPerGtu.get(gtuId).put(lane, simEvent);
     }
 
     /**
      * Samples a gtu and schedules the next sampling event.
      * @param gtu LaneBasedGtu; gtu to sample
-     * @param laneDirection LaneDirection; lane direction where the gtu is at
+     * @param lane Lane; lane direction where the gtu is at
      */
-    public final void notifySample(final LaneBasedGtu gtu, final LaneDirection laneDirection)
+    public final void notifySample(final LaneBasedGtu gtu, final Lane lane)
     {
-        KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(new LaneData(laneDirection.getLane()),
-                laneDirection.getDirection().isPlus() ? KpiGtuDirectionality.DIR_PLUS : KpiGtuDirectionality.DIR_MINUS);
+        KpiLane kpiLane = new KpiLane(new LaneData(lane));
         try
         {
-            this.processGtuMoveEvent(kpiLaneDirection,
-                    gtu.position(laneDirection.getLane(), RelativePosition.REFERENCE_POSITION), gtu.getSpeed(),
+            this.processGtuMoveEvent(kpiLane, gtu.position(lane, RelativePosition.REFERENCE_POSITION), gtu.getSpeed(),
                     gtu.getAcceleration(), now(), new GtuData(gtu));
         }
         catch (GtuException exception)
         {
             throw new RuntimeException("Requesting position on lane, but the GTU is not on the lane.", exception);
         }
-        scheduleSamplingEvent(gtu, laneDirection);
+        scheduleSamplingEvent(gtu, lane);
     }
 
     /** {@inheritDoc} */
