@@ -2,12 +2,10 @@ package org.opentrafficsim.core.gtu.plan.strategical;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -70,25 +68,23 @@ public interface StrategicalPlanner
     /**
      * Determine the next node in a network based on a current Link we are on.
      * @param link Link; the link we are on
-     * @param direction GTUDirectionality; the direction the GTU is driving on the link
      * @param gtuType GtuType; the GtuType to determine the next node for
      * @return Node; the next node in the route AFTER the current link
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
-    Node nextNode(Link link, GTUDirectionality direction, GtuType gtuType) throws NetworkException;
+    Node nextNode(Link link, GtuType gtuType) throws NetworkException;
 
     /**
      * Determine the next link and driving direction (with or against the design line) in a network based on a current Link we
      * are on.
      * @param link Link; the link we are on
-     * @param direction GTUDirectionality; the direction the GTU is driving on the link
      * @param gtuType GtuType; the GtuType to determine the next node for
      * @return LinkDirection; the next link and GTU direction in the route AFTER the current link
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
-    LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GtuType gtuType) throws NetworkException;
+    Link nextLink(Link link, GtuType gtuType) throws NetworkException;
 
     /**
      * Determine the next node in a network based on a given node.
@@ -110,6 +106,6 @@ public interface StrategicalPlanner
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
-    LinkDirection nextLinkDirection(Node node, Link previousLink, GtuType gtuType) throws NetworkException;
+    Link nextLink(Node node, Link previousLink, GtuType gtuType) throws NetworkException;
 
 }
