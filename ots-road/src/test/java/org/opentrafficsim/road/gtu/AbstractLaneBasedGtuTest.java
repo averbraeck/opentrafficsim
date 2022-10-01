@@ -28,7 +28,6 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -45,8 +44,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
@@ -91,12 +90,12 @@ public class AbstractLaneBasedGtuTest implements UNITS
         OTSRoadNode nodeBTo = new OTSRoadNode(network, "BTo", new OTSPoint3D(1000, 0, 0), Direction.ZERO);
         Lane[] lanesGroupB = LaneFactory.makeMultiLane(network, "B", nodeBFrom, nodeBTo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
+        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
 
         Length positionA = new Length(100, METER);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lanesGroupA[1], positionA, GTUDirectionality.DIR_PLUS));
+        initialLongitudinalPositions.add(new LanePosition(lanesGroupA[1], positionA));
         Length positionB = new Length(90, METER);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lanesGroupB[1], positionB, GTUDirectionality.DIR_PLUS));
+        initialLongitudinalPositions.add(new LanePosition(lanesGroupB[1], positionB));
         // A Car needs a CarFollowingModel
         Acceleration acceleration = new Acceleration(2, METER_PER_SECOND_2);
         Duration validFor = new Duration(10, SECOND);

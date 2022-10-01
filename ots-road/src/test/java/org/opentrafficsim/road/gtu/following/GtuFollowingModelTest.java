@@ -28,7 +28,6 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.road.DefaultTestParameters;
@@ -46,8 +45,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -111,8 +110,8 @@ public class GtuFollowingModelTest implements UNITS
         Length initialPosition = new Length(1234.567, METER);
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new LanePosition(lane, initialPosition));
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         Parameters parameters = DefaultTestParameters.create();
         maxHeadway = parameters.getParameter(ParameterTypes.LOOKAHEAD);
@@ -162,9 +161,9 @@ public class GtuFollowingModelTest implements UNITS
             // Ignore
         }
         Length headway50m = new Length(50, METER);
-        Set<DirectedLanePosition> initialLongitudinalPositions50 = new LinkedHashSet<>(1);
+        Set<LanePosition> initialLongitudinalPositions50 = new LinkedHashSet<>(1);
         initialLongitudinalPositions50
-                .add(new DirectedLanePosition(lane, initialPosition.plus(headway50m), GTUDirectionality.DIR_PLUS));
+                .add(new LanePosition(lane, initialPosition.plus(headway50m)));
         LaneBasedIndividualGtu gtu50m =
                 new LaneBasedIndividualGtu("100050", carType, length, width, maxSpeed, length.times(0.5), simulator, network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
@@ -254,9 +253,9 @@ public class GtuFollowingModelTest implements UNITS
         otherGTUs.add(hwgtu100m);
         // Follower at 75m
         Length headwayMinus75m = new Length(-75, METER);
-        Set<DirectedLanePosition> initialLongitudinalPositionsMinus75 = new LinkedHashSet<>(1);
+        Set<LanePosition> initialLongitudinalPositionsMinus75 = new LinkedHashSet<>(1);
         initialLongitudinalPositionsMinus75
-                .add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus75m), GTUDirectionality.DIR_PLUS));
+                .add(new LanePosition(lane, initialPosition.plus(headwayMinus75m)));
         LaneBasedIndividualGtu gtuMinus75m =
                 new LaneBasedIndividualGtu("100075", carType, length, width, maxSpeed, length.times(0.5), simulator, network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
@@ -276,9 +275,9 @@ public class GtuFollowingModelTest implements UNITS
                 a100.getAcceleration(), a75.getAcceleration(), expectedValidUntil);
         // Another follower at 200m
         Length headwayMinus200m = new Length(-200, METER);
-        Set<DirectedLanePosition> initialLongitudinalPositionsMinus200 = new LinkedHashSet<>(1);
+        Set<LanePosition> initialLongitudinalPositionsMinus200 = new LinkedHashSet<>(1);
         initialLongitudinalPositionsMinus200
-                .add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus200m), GTUDirectionality.DIR_PLUS));
+                .add(new LanePosition(lane, initialPosition.plus(headwayMinus200m)));
         LaneBasedIndividualGtu gtuMinus200m =
                 new LaneBasedIndividualGtu("100200", carType, length, width, maxSpeed, length.times(0.5), simulator, network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(

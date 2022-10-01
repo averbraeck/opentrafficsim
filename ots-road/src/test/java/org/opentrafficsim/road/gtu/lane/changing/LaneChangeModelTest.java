@@ -29,7 +29,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -50,8 +49,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -179,17 +178,17 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes
         assertEquals("Leftmost lane should not have accessible adjacent lanes on the LEFT side", 0,
-                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, GTUDirectionality.DIR_PLUS).size());
+                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size());
         assertEquals("Leftmost lane should have one accessible adjacent lane on the RIGHT side", 1,
-                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, GTUDirectionality.DIR_PLUS).size());
+                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size());
         assertEquals("Rightmost lane should have one accessible adjacent lane on the LEFT side", 1,
-                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, GTUDirectionality.DIR_PLUS).size());
+                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType).size());
         assertEquals("Rightmost lane should not have accessible adjacent lanes on the RIGHT side", 0,
-                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, GTUDirectionality.DIR_PLUS).size());
+                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size());
 
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions
-                .add(new DirectedLanePosition(lanes[1], new Length(100, METER), GTUDirectionality.DIR_PLUS));
+                .add(new LanePosition(lanes[1], new Length(100, METER)));
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         ParameterSet parameters = DefaultTestParameters.create();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
@@ -224,9 +223,9 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         Length collisionEnd = reference.plus(vehicleLength);
         for (double pos = collisionStart.getSI() + 0.01; pos < collisionEnd.getSI() - 0.01; pos += 0.1)
         {
-            Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
+            Set<LanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
             otherLongitudinalPositions
-                    .add(new DirectedLanePosition(lanes[1], new Length(pos, METER), GTUDirectionality.DIR_PLUS));
+                    .add(new LanePosition(lanes[1], new Length(pos, METER)));
 
             parameters = DefaultTestParameters.create();
             // parameters = new BehavioralCharacteristics();
@@ -261,9 +260,9 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
         }
         for (double pos = 0; pos < 180; pos += 5) // beyond 180m, a GTU gets a plan beyond the 200m long network
         {
-            Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
+            Set<LanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
             otherLongitudinalPositions
-                    .add(new DirectedLanePosition(lanes[1], new Length(pos, METER), GTUDirectionality.DIR_PLUS));
+                    .add(new LanePosition(lanes[1], new Length(pos, METER)));
 
             parameters = new ParameterSet();
             parameters.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
