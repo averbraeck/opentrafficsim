@@ -44,7 +44,7 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
      * @param relativePosition RelativePosition; relative position
      * @param route Route; route of the GTU, may be {@code null}
      */
-    public LaneBasedObjectIterable(final LaneBasedGtu perceivingGtu, final Class<L> clazz, final LaneRecord<?> root,
+    public LaneBasedObjectIterable(final LaneBasedGtu perceivingGtu, final Class<L> clazz, final LaneRecordInterface<?> root,
             final Length initialPosition, final boolean downstream, final Length maxDistance,
             final RelativePosition relativePosition, final Route route)
     {
@@ -55,7 +55,7 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
-    protected Entry getNext(final LaneRecord<?> record, final Length position, final Boolean counter)
+    protected Entry getNext(final LaneRecordInterface<?> record, final Length position, final Boolean counter)
     {
         List<LaneBasedObject> list;
         if (isDownstream())
@@ -65,13 +65,13 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
                 return null;
             }
             Length pos = position.eq0() && counter == null ? MARGIN.neg() : position;
-            list = record.getLane().getObjectAhead(pos, record.getDirection());
+            list = record.getLane().getObjectAhead(pos);
         }
         else
         {
             Length pos = position.eq(record.getLane().getLength()) && counter == null
                     ? record.getLane().getLength().plus(MARGIN) : position;
-            list = record.getLane().getObjectBehind(pos, record.getDirection());
+            list = record.getLane().getObjectBehind(pos);
         }
         while (list != null)
         {
@@ -95,11 +95,11 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
             }
             if (isDownstream())
             {
-                list = record.getLane().getObjectAhead(pos, record.getDirection());
+                list = record.getLane().getObjectAhead(pos);
             }
             else
             {
-                list = record.getLane().getObjectBehind(pos, record.getDirection());
+                list = record.getLane().getObjectBehind(pos);
             }
         }
         return null;
@@ -107,7 +107,7 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
 
     /** {@inheritDoc} */
     @Override
-    protected final Length getDistance(final L object, final LaneRecord<?> record, final Length position)
+    protected final Length getDistance(final L object, final LaneRecordInterface<?> record, final Length position)
     {
         return isDownstream() ? record.getDistanceToPosition(position).minus(getDx())
                 : record.getDistanceToPosition(position).neg().plus(getDx());
