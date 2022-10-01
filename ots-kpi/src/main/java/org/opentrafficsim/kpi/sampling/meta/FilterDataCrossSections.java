@@ -7,7 +7,7 @@ import java.util.Set;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.CrossSection;
-import org.opentrafficsim.kpi.sampling.KpiDirectedLanePosition;
+import org.opentrafficsim.kpi.sampling.KpiLanePosition;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -46,13 +46,12 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection>
         StringBuilder str = new StringBuilder();
         str.append("[");
         String delimiter = "";
-        for (KpiDirectedLanePosition kpiDirectedLanePosition : value.getDirectedLanePositions())
+        for (KpiLanePosition kpiLanePosition : value.getLanePositions())
         {
             str.append(delimiter);
             delimiter = "|";
-            str.append(kpiDirectedLanePosition.getLaneData().getId());
-            str.append(kpiDirectedLanePosition.getKpiGtuDirection().isPlus() ? "+" : "-");
-            str.append(String.format(format, kpiDirectedLanePosition.getPosition().si));
+            str.append(kpiLanePosition.getLaneData().getId());
+            str.append(String.format(format, kpiLanePosition.getPosition().si));
         }
         str.append("]");
         return str.toString();
@@ -77,16 +76,14 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection>
             {
                 CrossSection crossSection = crossSectionIterator.next();
                 // Loop over lanes in cross section
-                Iterator<KpiDirectedLanePosition> directedLanePositionIterator = crossSection.getIterator();
-                while (directedLanePositionIterator.hasNext())
+                Iterator<KpiLanePosition> lanePositionIterator = crossSection.getIterator();
+                while (lanePositionIterator.hasNext())
                 {
-                    KpiDirectedLanePosition directedLanePosition = directedLanePositionIterator.next();
-                    // If Trajectories is of same lane and direction, check position
-                    if (trajectoryGroup.getLaneDirection().getLaneData().equals(directedLanePosition.getLaneData())
-                            && trajectoryGroup.getLaneDirection().getKpiDirection()
-                                    .equals(directedLanePosition.getKpiGtuDirection()))
+                    KpiLanePosition lanePosition = lanePositionIterator.next();
+                    // If Trajectories is of same lane, check position
+                    if (trajectoryGroup.getKpiLane().getLaneData().equals(lanePosition.getLaneData()))
                     {
-                        double position = directedLanePosition.getPosition().si;
+                        double position = lanePosition.getPosition().si;
                         float[] x = trajectoryAcceptList.getTrajectory(i).getX();
                         double xStart = x[0];
                         double xEnd = x[x.length - 1];

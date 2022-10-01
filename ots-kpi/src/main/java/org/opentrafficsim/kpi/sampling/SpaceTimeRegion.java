@@ -17,7 +17,7 @@ public class SpaceTimeRegion
 {
 
     /** Lane direction. */
-    private final KpiLaneDirection laneDirection;
+    private final KpiLane laneDirection;
 
     /** Start position. */
     private final Length startPosition;
@@ -39,7 +39,7 @@ public class SpaceTimeRegion
      * @param endTime Time; end time
      * @throws IllegalArgumentException if start time is larger than end time
      */
-    public SpaceTimeRegion(final KpiLaneDirection laneDirection, final Length startPosition, final Length endPosition,
+    public SpaceTimeRegion(final KpiLane laneDirection, final Length startPosition, final Length endPosition,
             final Time startTime, final Time endTime)
     {
         Throw.whenNull(startPosition, "Start position may not be null.");
@@ -59,7 +59,7 @@ public class SpaceTimeRegion
     /**
      * @return laneDirection.
      */
-    public final KpiLaneDirection getLaneDirection()
+    public final KpiLane getLaneDirection()
     {
         return this.laneDirection;
     }

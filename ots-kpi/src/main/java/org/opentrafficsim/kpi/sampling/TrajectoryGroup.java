@@ -33,7 +33,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     private final Length endPosition;
 
     /** Direction for which the trajectories have been sampled. */
-    private final KpiLaneDirection laneDirection;
+    private final KpiLane lane;
 
     /** Trajectories. */
     private final List<Trajectory<G>> trajectories = new ArrayList<>();
@@ -43,7 +43,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
      * @param startTime Time; start time of trajectories
      * @param laneDirection KpiLaneDirection; lane direction
      */
-    public TrajectoryGroup(final Time startTime, final KpiLaneDirection laneDirection)
+    public TrajectoryGroup(final Time startTime, final KpiLane laneDirection)
     {
         this(startTime, Length.ZERO, laneDirection == null ? null : laneDirection.getLaneData().getLength(), laneDirection);
     }
@@ -52,24 +52,22 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
      * @param startTime Time; start time of trajectory group
      * @param startPosition Length; start position
      * @param endPosition Length; end position
-     * @param laneDirection KpiLaneDirection; lane direction
+     * @param lane KpiLane; the lane
      */
     public TrajectoryGroup(final Time startTime, final Length startPosition, final Length endPosition,
-            final KpiLaneDirection laneDirection)
+            final KpiLane lane)
     {
         Throw.whenNull(startTime, "Start time may not be null.");
         // keep before position check; prevents "End position may not be null" due to missing direction in other constructor
-        Throw.whenNull(laneDirection, "Lane direction time may not be null.");
+        Throw.whenNull(lane, "Lane direction time may not be null.");
         Throw.whenNull(startPosition, "Start position may not be null");
         Throw.whenNull(endPosition, "End position may not be null");
-        Length length0 = laneDirection.getPositionInDirection(startPosition);
-        Length length1 = laneDirection.getPositionInDirection(endPosition);
-        Throw.when(length0.gt(length1), IllegalArgumentException.class,
+        Throw.when(startPosition.gt(endPosition), IllegalArgumentException.class,
                 "Start position should be smaller than end position in the direction of travel");
         this.startTime = startTime;
         this.startPosition = startPosition;
         this.endPosition = endPosition;
-        this.laneDirection = laneDirection;
+        this.lane = lane;
     }
 
     /**
@@ -137,7 +135,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     {
         Length minLenght = Length.max(x0, this.startPosition);
         Length maxLenght = Length.min(x1, this.endPosition);
-        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime, minLenght, maxLenght, this.laneDirection);
+        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime, minLenght, maxLenght, this.lane);
         for (Trajectory<G> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(x0, x1));
@@ -153,7 +151,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
      */
     public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Time t0, final Time t1)
     {
-        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
+        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.lane);
         for (Trajectory<G> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(t0, t1));
@@ -172,7 +170,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1, final Time t0,
             final Time t1)
     {
-        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
+        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.lane);
         for (Trajectory<G> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(x0, x1, t0, t1));
@@ -181,12 +179,12 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     }
 
     /**
-     * Returns the lane direction.
-     * @return lane direction
+     * Returns the lane.
+     * @return lane
      */
-    public final KpiLaneDirection getLaneDirection()
+    public final KpiLane getKpiLane()
     {
-        return this.laneDirection;
+        return this.lane;
     }
 
     /** {@inheritDoc} */
@@ -195,7 +193,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.laneDirection == null) ? 0 : this.laneDirection.hashCode());
+        result = prime * result + ((this.lane == null) ? 0 : this.lane.hashCode());
         result = prime * result + ((this.endPosition == null) ? 0 : this.endPosition.hashCode());
         result = prime * result + ((this.startPosition == null) ? 0 : this.startPosition.hashCode());
         result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
@@ -220,14 +218,14 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
             return false;
         }
         TrajectoryGroup<?> other = (TrajectoryGroup<?>) obj;
-        if (this.laneDirection == null)
+        if (this.lane == null)
         {
-            if (other.laneDirection != null)
+            if (other.lane != null)
             {
                 return false;
             }
         }
-        else if (!this.laneDirection.equals(other.laneDirection))
+        else if (!this.lane.equals(other.lane))
         {
             return false;
         }
@@ -283,7 +281,7 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
     public final String toString()
     {
         return "TrajectoryGroup [startTime=" + this.startTime + ", minLength=" + this.startPosition + ", maxLength="
-                + this.endPosition + ", laneDirection=" + this.laneDirection + ", collected "
+                + this.endPosition + ", laneDirection=" + this.lane + ", collected "
                 + (this.trajectories == null ? "null" : this.trajectories.size()) + " trajectories]";
     }
 

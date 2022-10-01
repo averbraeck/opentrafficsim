@@ -230,17 +230,15 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     /**
      * Defines a region in space and time for which this query is valid. All lanes in the link are included.
      * @param link LinkDataInterface; link
-     * @param direction KpiGtuDirectionality; direction
      * @param startPosition Length; start position
      * @param endPosition Length; end position
      * @param startTime Time; start time
      * @param endTime Time; end time
      */
-    public void addSpaceTimeRegionLink(final LinkDataInterface link, final KpiGtuDirectionality direction,
-            final Length startPosition, final Length endPosition, final Time startTime, final Time endTime)
+    public void addSpaceTimeRegionLink(final LinkDataInterface link, final Length startPosition, final Length endPosition,
+            final Time startTime, final Time endTime)
     {
         Throw.whenNull(link, "Link may not be null.");
-        Throw.whenNull(direction, "Direction may not be null.");
         Throw.whenNull(startPosition, "Start position may not be null.");
         Throw.whenNull(endPosition, "End position may not be null.");
         Throw.whenNull(startTime, "Start time may not be null.");
@@ -252,7 +250,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         {
             Length x0 = new Length(lane.getLength().si * startPosition.si / link.getLength().si, LengthUnit.SI);
             Length x1 = new Length(lane.getLength().si * endPosition.si / link.getLength().si, LengthUnit.SI);
-            addSpaceTimeRegion(new KpiLaneDirection(lane, direction), x0, x1, startTime, endTime);
+            addSpaceTimeRegion(new KpiLane(lane), x0, x1, startTime, endTime);
         }
     }
 
@@ -264,7 +262,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
      * @param startTime Time; start time
      * @param endTime Time; end time
      */
-    public void addSpaceTimeRegion(final KpiLaneDirection laneDirection, final Length startPosition, final Length endPosition,
+    public void addSpaceTimeRegion(final KpiLane laneDirection, final Length startPosition, final Length endPosition,
             final Time startTime, final Time endTime)
     {
         Throw.whenNull(laneDirection, "Lane direction may not be null.");
@@ -384,7 +382,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
         List<TrajectoryGroup<G>> out = new ArrayList<>();
         for (TrajectoryGroup<G> full : trajectoryGroupList)
         {
-            TrajectoryGroup<G> filtered = new TrajectoryGroup<>(full.getStartTime(), full.getLaneDirection());
+            TrajectoryGroup<G> filtered = new TrajectoryGroup<>(full.getStartTime(), full.getKpiLane());
             for (Trajectory<G> trajectory : full.getTrajectories())
             {
                 String gtuId = trajectory.getGtuId();

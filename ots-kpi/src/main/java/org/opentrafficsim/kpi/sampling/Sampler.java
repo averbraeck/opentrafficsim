@@ -39,10 +39,10 @@ public abstract class Sampler<G extends GtuDataInterface>
     private final Set<FilterDataType<?>> filterDataTypes;
 
     /** Registration of current trajectories of each GTU per lane. */
-    private final Map<String, Map<KpiLaneDirection, Trajectory<G>>> trajectoryPerGtu = new LinkedHashMap<>();
+    private final Map<String, Map<KpiLane, Trajectory<G>>> trajectoryPerGtu = new LinkedHashMap<>();
 
     /** End times of active samplings. */
-    private final Map<KpiLaneDirection, Time> endTimes = new LinkedHashMap<>();
+    private final Map<KpiLane, Time> endTimes = new LinkedHashMap<>();
 
     /** Space time regions. */
     private Set<SpaceTimeRegion> spaceTimeRegions = new LinkedHashSet<>();
@@ -135,20 +135,20 @@ public abstract class Sampler<G extends GtuDataInterface>
      * @param time Time; time to start recording
      * @param kpiLaneDirection KpiLaneDirection; lane-direction to start recording
      */
-    public abstract void scheduleStartRecording(Time time, KpiLaneDirection kpiLaneDirection);
+    public abstract void scheduleStartRecording(Time time, KpiLane kpiLaneDirection);
 
     /**
      * Schedules the stop of recording for a given lane-direction.
      * @param time Time; time to stop recording
      * @param kpiLaneDirection KpiLaneDirection; lane-direction to stop recording
      */
-    public abstract void scheduleStopRecording(Time time, KpiLaneDirection kpiLaneDirection);
+    public abstract void scheduleStopRecording(Time time, KpiLane kpiLaneDirection);
 
     /**
      * Start recording at the given time (which should be the current time) on the given lane direction.
      * @param kpiLaneDirection KpiLaneDirection; lane direction
      */
-    public final void startRecording(final KpiLaneDirection kpiLaneDirection)
+    public final void startRecording(final KpiLane kpiLaneDirection)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         if (this.samplerData.contains(kpiLaneDirection))
@@ -163,13 +163,13 @@ public abstract class Sampler<G extends GtuDataInterface>
      * Adds listeners to start recording.
      * @param kpiLaneDirection KpiLaneDirection; lane direction to initialize recording for
      */
-    public abstract void initRecording(KpiLaneDirection kpiLaneDirection);
+    public abstract void initRecording(KpiLane kpiLaneDirection);
 
     /**
      * Stop recording at given lane direction.
      * @param kpiLaneDirection KpiLaneDirection; lane direction
      */
-    public final void stopRecording(final KpiLaneDirection kpiLaneDirection)
+    public final void stopRecording(final KpiLane kpiLaneDirection)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         if (!this.samplerData.contains(kpiLaneDirection) || this.endTimes.get(kpiLaneDirection).gt(now()))
@@ -183,7 +183,7 @@ public abstract class Sampler<G extends GtuDataInterface>
      * Remove listeners to stop recording.
      * @param kpiLaneDirection KpiLaneDirection; lane direction to finalize recording for
      */
-    public abstract void finalizeRecording(KpiLaneDirection kpiLaneDirection);
+    public abstract void finalizeRecording(KpiLane kpiLaneDirection);
 
     /**
      * Creates a trajectory with the current snapshot of a GTU.
@@ -194,7 +194,7 @@ public abstract class Sampler<G extends GtuDataInterface>
      * @param time Time; current time
      * @param gtu G; gtu
      */
-    public final void processGtuAddEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
+    public final void processGtuAddEvent(final KpiLane kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
@@ -212,7 +212,7 @@ public abstract class Sampler<G extends GtuDataInterface>
         Trajectory<G> trajectory = new Trajectory<>(gtu, makeMetaData(gtu), this.extendedDataTypes, kpiLaneDirection);
         if (!this.trajectoryPerGtu.containsKey(gtuId))
         {
-            Map<KpiLaneDirection, Trajectory<G>> map = new LinkedHashMap<>();
+            Map<KpiLane, Trajectory<G>> map = new LinkedHashMap<>();
             this.trajectoryPerGtu.put(gtuId, map);
         }
         this.trajectoryPerGtu.get(gtuId).put(kpiLaneDirection, trajectory);
@@ -230,7 +230,7 @@ public abstract class Sampler<G extends GtuDataInterface>
      * @param time Time; current time
      * @param gtu G; gtu
      */
-    public final void processGtuMoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
+    public final void processGtuMoveEvent(final KpiLane kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
@@ -255,7 +255,7 @@ public abstract class Sampler<G extends GtuDataInterface>
      * @param time Time; current time
      * @param gtu G; gtu
      */
-    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
+    public final void processGtuRemoveEvent(final KpiLane kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
         processGtuMoveEvent(kpiLaneDirection, position, speed, acceleration, time, gtu);
@@ -267,7 +267,7 @@ public abstract class Sampler<G extends GtuDataInterface>
      * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
      * @param gtu G; gtu
      */
-    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final G gtu)
+    public final void processGtuRemoveEvent(final KpiLane kpiLaneDirection, final G gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         Throw.whenNull(gtu, "GtuDataInterface may not be null.");

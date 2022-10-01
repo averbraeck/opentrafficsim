@@ -7,7 +7,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 
 /**
- * Store one position, direction and lane of a GTU.
+ * Store one position and lane of a GTU.
  * <p>
  * Copyright (c) 2013-2022 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -15,7 +15,7 @@ import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
-public class KpiDirectedLanePosition implements Serializable
+public class KpiLanePosition implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20151111L;
@@ -26,24 +26,17 @@ public class KpiDirectedLanePosition implements Serializable
     /** The position on the lane, relative to the cross section link (design line). */
     private final Length position;
 
-    /** The direction the vehicle is driving to -- either in the direction of the design line, or against it. */
-    private final KpiGtuDirectionality gtuDirection;
-
     /**
-     * Construct a new DirectedLanePosition.
+     * Construct a new KpiLanePosition.
      * @param lane LaneDataInterface; the lane for the position
      * @param position Length; the position on the lane, relative to the cross section link (design line)
-     * @param gtuDirection KpiGtuDirectionality; the direction the vehicle is driving to -- either in the direction of the
-     *            design line, or against it
      */
-    public KpiDirectedLanePosition(final LaneDataInterface lane, final Length position, final KpiGtuDirectionality gtuDirection)
+    public KpiLanePosition(final LaneDataInterface lane, final Length position)
     {
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(position, "position is null");
-        Throw.whenNull(gtuDirection, "gtuDirection is null");
         this.lane = lane;
         this.position = position;
-        this.gtuDirection = gtuDirection;
     }
 
     /**
@@ -64,23 +57,12 @@ public class KpiDirectedLanePosition implements Serializable
         return this.position;
     }
 
-    /**
-     * Retrieve the gtuDirection.
-     * @return KpiGtuDirectionality; gtuDirection the direction the vehicle is driving to -- either in the direction of the
-     *         design line, or against it
-     */
-    public final KpiGtuDirectionality getKpiGtuDirection()
-    {
-        return this.gtuDirection;
-    }
-
     /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.gtuDirection == null) ? 0 : this.gtuDirection.hashCode());
         result = prime * result + ((this.lane == null) ? 0 : this.lane.hashCode());
         result = prime * result + ((this.position == null) ? 0 : this.position.hashCode());
         return result;
@@ -88,6 +70,7 @@ public class KpiDirectedLanePosition implements Serializable
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -96,9 +79,7 @@ public class KpiDirectedLanePosition implements Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        KpiDirectedLanePosition other = (KpiDirectedLanePosition) obj;
-        if (this.gtuDirection != other.gtuDirection)
-            return false;
+        KpiLanePosition other = (KpiLanePosition) obj;
         if (this.lane == null)
         {
             if (other.lane != null)
@@ -120,8 +101,7 @@ public class KpiDirectedLanePosition implements Serializable
     @Override
     public String toString()
     {
-        return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + ", gtuDirection=" + this.gtuDirection
-                + "]";
+        return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + "]";
     }
 
 }

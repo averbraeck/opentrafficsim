@@ -14,7 +14,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
@@ -22,7 +21,6 @@ import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
 import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
 import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
-import org.opentrafficsim.kpi.sampling.ListTable.ListRecord;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
 
@@ -53,14 +51,14 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
     }
 
     /** Map with all sampling data. */
-    private final Map<KpiLaneDirection, TrajectoryGroup<G>> trajectories = new LinkedHashMap<>();
+    private final Map<KpiLane, TrajectoryGroup<G>> trajectories = new LinkedHashMap<>();
 
     /**
      * Stores a trajectory group with the lane direction.
      * @param kpiLaneDirection KpiLaneDirection; lane direction
      * @param trajectoryGroup trajectory group for given lane direction
      */
-    protected final void putTrajectoryGroup(final KpiLaneDirection kpiLaneDirection, final TrajectoryGroup<G> trajectoryGroup)
+    protected final void putTrajectoryGroup(final KpiLane kpiLaneDirection, final TrajectoryGroup<G> trajectoryGroup)
     {
         this.trajectories.put(kpiLaneDirection, trajectoryGroup);
     }
@@ -69,7 +67,7 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
      * Returns the set of lane directions.
      * @return Set&lt;KpiLaneDirection&gt;; lane directions
      */
-    public final Set<KpiLaneDirection> getLaneDirections()
+    public final Set<KpiLane> getLaneDirections()
     {
         return this.trajectories.keySet();
     }
@@ -79,7 +77,7 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
      * @param kpiLaneDirection KpiLaneDirection; lane direction
      * @return whether there is data for the give lane direction
      */
-    public final boolean contains(final KpiLaneDirection kpiLaneDirection)
+    public final boolean contains(final KpiLane kpiLaneDirection)
     {
         return this.trajectories.containsKey(kpiLaneDirection);
     }
@@ -89,7 +87,7 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
      * @param kpiLaneDirection KpiLaneDirection; lane direction
      * @return trajectory group of given lane direction, {@code null} if none
      */
-    public final TrajectoryGroup<G> getTrajectoryGroup(final KpiLaneDirection kpiLaneDirection)
+    public final TrajectoryGroup<G> getTrajectoryGroup(final KpiLane kpiLaneDirection)
     {
         return this.trajectories.get(kpiLaneDirection);
     }
@@ -206,10 +204,9 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
                         str.append(",");
                         if (!compression.equals(CompressionMethod.OMIT_DUPLICATE_INFO) || i == 0)
                         {
-                            str.append(group.getLaneDirection().getLaneData().getLinkData().getId());
+                            str.append(group.getKpiLane().getLaneData().getLinkData().getId());
                             str.append(",");
-                            str.append(group.getLaneDirection().getLaneData().getId());
-                            str.append(group.getLaneDirection().getKpiDirection().isPlus() ? "+" : "-");
+                            str.append(group.getKpiLane().getLaneData().getId());
                             str.append(",");
                             str.append(trajectory.getGtuId());
                             str.append(",");
@@ -415,7 +412,7 @@ public class SamplerData<G extends GtuDataInterface> extends AbstractTable
         // TODO: gathering the extended and filter data types should be done here, these are within the trajectories, and upon
         // file loading, this should be mimicked
 
-        Iterator<KpiLaneDirection> laneIterator = this.trajectories.keySet().iterator();
+        Iterator<KpiLane> laneIterator = this.trajectories.keySet().iterator();
 
         return new Iterator<Record>()
         {

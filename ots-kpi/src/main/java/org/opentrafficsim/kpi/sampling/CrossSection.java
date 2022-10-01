@@ -28,36 +28,32 @@ public class CrossSection implements Serializable
     private static final long serialVersionUID = 20160929L;
 
     /** Set of lane locations. */
-    private final Set<KpiDirectedLanePosition> directedLanePositions;
+    private final Set<KpiLanePosition> lanePositions;
 
     /**
-     * Constructor with set of directed lane positions.
-     * @param directedLanePositions Set&lt;KpiDirectedLanePosition&gt;; set of lane locations
+     * Constructor with set of lane positions.
+     * @param lanePositions Set&lt;KpiDirectedLanePosition&gt;; set of lane locations
      */
-    public CrossSection(final Set<KpiDirectedLanePosition> directedLanePositions)
+    public CrossSection(final Set<KpiLanePosition> lanePositions)
     {
-        Throw.whenNull(directedLanePositions, "Directed lane positions may not be null.");
-        this.directedLanePositions = new LinkedHashSet<>(directedLanePositions);
+        Throw.whenNull(lanePositions, "Lane positions may not be null.");
+        this.lanePositions = new LinkedHashSet<>(lanePositions);
     }
 
     /**
-     * Constructor with link and direction.
+     * Constructor with link and fraction.
      * @param link LinkDataInterface; link
-     * @param direction KpiGtuDirectionality; direction
      * @param fraction double; fraction on link
      * @throws SamplingException if an input is null
      */
-    public CrossSection(final LinkDataInterface link, final KpiGtuDirectionality direction, final double fraction)
-            throws SamplingException
+    public CrossSection(final LinkDataInterface link, final double fraction) throws SamplingException
     {
         Throw.whenNull(link, "Link lane positions may not be null.");
-        Throw.whenNull(direction, "Direction may not be null.");
-        this.directedLanePositions = new LinkedHashSet<>();
+        this.lanePositions = new LinkedHashSet<>();
         for (LaneDataInterface lane : link.getLaneDatas())
         {
-            KpiDirectedLanePosition directedLanePosition =
-                    new KpiDirectedLanePosition(lane, lane.getLength().times(fraction), direction);
-            this.directedLanePositions.add(directedLanePosition);
+            KpiLanePosition lanePosition = new KpiLanePosition(lane, lane.getLength().times(fraction));
+            this.lanePositions.add(lanePosition);
         }
     }
 
@@ -66,23 +62,23 @@ public class CrossSection implements Serializable
      */
     public final int size()
     {
-        return this.directedLanePositions.size();
+        return this.lanePositions.size();
     }
 
     /**
-     * @return safe copy of directed lane positions
+     * @return safe copy of lane positions
      */
-    public final Set<KpiDirectedLanePosition> getDirectedLanePositions()
+    public final Set<KpiLanePosition> getLanePositions()
     {
-        return new LinkedHashSet<>(this.directedLanePositions);
+        return new LinkedHashSet<>(this.lanePositions);
     }
 
     /**
-     * @return iterator over directed lane positions
+     * @return iterator over lane positions
      */
-    public final Iterator<KpiDirectedLanePosition> getIterator()
+    public final Iterator<KpiLanePosition> getIterator()
     {
-        return new ImmutableIterator<>(this.directedLanePositions.iterator());
+        return new ImmutableIterator<>(this.lanePositions.iterator());
     }
 
     /** {@inheritDoc} */
@@ -90,7 +86,7 @@ public class CrossSection implements Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "CrossSection [directedLanePositions=" + this.directedLanePositions + "]";
+        return "CrossSection [lanePositions=" + this.lanePositions + "]";
     }
 
 }

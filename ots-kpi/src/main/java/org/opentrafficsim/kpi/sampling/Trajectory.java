@@ -25,8 +25,8 @@ import org.djunits.value.vfloat.vector.base.FloatVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
-import org.opentrafficsim.kpi.sampling.meta.MetaData;
 import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
+import org.opentrafficsim.kpi.sampling.meta.MetaData;
 
 /**
  * Contains position, speed, acceleration and time data of a GTU, over some section. Position is relative to the start of the
@@ -76,19 +76,19 @@ public final class Trajectory<G extends GtuDataInterface>
     /** Map of array data types and their values. */
     private final Map<ExtendedDataType<?, ?, ?, G>, Object> extendedData = new LinkedHashMap<>();
 
-    /** Direction of travel. */
-    private final KpiLaneDirection kpiLaneDirection;
+    /** Lane of travel. */
+    private final KpiLane kpiLane;
 
     /**
      * @param gtu GtuDataInterface; GTU of this trajectory, only the id is stored.
      * @param metaData MetaData; meta data
      * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
-     * @param kpiLaneDirection KpiLaneDirection; direction of travel
+     * @param kpiLane KpiLane; lane of travel
      */
     public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?, G>> extendedData,
-            final KpiLaneDirection kpiLaneDirection)
+            final KpiLane kpiLane)
     {
-        this(gtu == null ? null : gtu.getId(), metaData, extendedData, kpiLaneDirection);
+        this(gtu == null ? null : gtu.getId(), metaData, extendedData, kpiLane);
     }
 
     /**
@@ -96,22 +96,22 @@ public final class Trajectory<G extends GtuDataInterface>
      * @param gtuId String; GTU id
      * @param metaData MetaData; meta data
      * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
-     * @param kpiLaneDirection KpiLaneDirection; direction of travel
+     * @param kpiLane KpiLane; lane of travel
      */
     private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?, G>> extendedData,
-            final KpiLaneDirection kpiLaneDirection)
+            final KpiLane kpiLane)
     {
         Throw.whenNull(gtuId, "GTU may not be null.");
         Throw.whenNull(metaData, "Meta data may not be null.");
         Throw.whenNull(extendedData, "Extended data may not be null.");
-        Throw.whenNull(kpiLaneDirection, "Lane direction may not be null.");
+        Throw.whenNull(kpiLane, "Lane direction may not be null.");
         this.gtuId = gtuId;
         this.metaData = new MetaData(metaData);
         for (ExtendedDataType<?, ?, ?, G> dataType : extendedData)
         {
             this.extendedData.put(dataType, dataType.initializeStorage());
         }
-        this.kpiLaneDirection = kpiLaneDirection;
+        this.kpiLane = kpiLane;
     }
 
     /**
@@ -154,7 +154,7 @@ public final class Trajectory<G extends GtuDataInterface>
             this.a = Arrays.copyOf(this.a, cap);
             this.t = Arrays.copyOf(this.t, cap);
         }
-        this.x[this.size] = (float) this.kpiLaneDirection.getPositionInDirection(position).si;
+        this.x[this.size] = (float) position.si;
         this.v[this.size] = (float) speed.si;
         this.a[this.size] = (float) acceleration.si;
         this.t[this.size] = (float) time.si;
@@ -499,7 +499,6 @@ public final class Trajectory<G extends GtuDataInterface>
      * @param endTime Time; end time
      * @return space-time view of this trajectory
      */
-    @SuppressWarnings("synthetic-access")
     public SpaceTimeView getSpaceTimeView(final Length startPosition, final Length endPosition, final Time startTime,
             final Time endTime)
     {
@@ -507,9 +506,7 @@ public final class Trajectory<G extends GtuDataInterface>
         {
             return new SpaceTimeView(Length.ZERO, Duration.ZERO);
         }
-        Length length0 = this.kpiLaneDirection.getPositionInDirection(startPosition);
-        Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
-        Boundaries bounds = spaceBoundaries(length0, length1).intersect(timeBoundaries(startTime, endTime));
+        Boundaries bounds = spaceBoundaries(startPosition, endPosition).intersect(timeBoundaries(startTime, endTime));
         double xFrom;
         double tFrom;
         if (bounds.fFrom > 0.0)
@@ -550,15 +547,13 @@ public final class Trajectory<G extends GtuDataInterface>
     {
         Throw.whenNull(startPosition, "Start position may not be null");
         Throw.whenNull(endPosition, "End position may not be null");
-        Length length0 = this.kpiLaneDirection.getPositionInDirection(startPosition);
-        Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
-        Throw.when(length0.gt(length1), IllegalArgumentException.class,
+        Throw.when(startPosition.gt(endPosition), IllegalArgumentException.class,
                 "Start position should be smaller than end position in the direction of travel");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
+            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLane);
         }
-        return subSet(spaceBoundaries(length0, length1));
+        return subSet(spaceBoundaries(startPosition, endPosition));
     }
 
     /**
@@ -576,7 +571,7 @@ public final class Trajectory<G extends GtuDataInterface>
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
+            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLane);
         }
         return subSet(timeBoundaries(startTime, endTime));
     }
@@ -596,18 +591,16 @@ public final class Trajectory<G extends GtuDataInterface>
         // could use this.subSet(minLength, maxLength).subSet(minTime, maxTime), but that copies twice
         Throw.whenNull(startPosition, "Start position may not be null");
         Throw.whenNull(endPosition, "End position may not be null");
-        Length length0 = this.kpiLaneDirection.getPositionInDirection(startPosition);
-        Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
-        Throw.when(length0.gt(length1), IllegalArgumentException.class,
+        Throw.when(startPosition.gt(endPosition), IllegalArgumentException.class,
                 "Start position should be smaller than end position in the direction of travel");
         Throw.whenNull(startTime, "Start time may not be null");
         Throw.whenNull(endTime, "End time may not be null");
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
+            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLane);
         }
-        return subSet(spaceBoundaries(length0, length1).intersect(timeBoundaries(startTime, endTime)));
+        return subSet(spaceBoundaries(startPosition, endPosition).intersect(timeBoundaries(startTime, endTime)));
     }
 
     /**
@@ -780,7 +773,7 @@ public final class Trajectory<G extends GtuDataInterface>
     @SuppressWarnings("unchecked")
     private <T, S> Trajectory<G> subSet(final Boundaries bounds)
     {
-        Trajectory<G> out = new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
+        Trajectory<G> out = new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLane);
         if (bounds.from < bounds.to) // otherwise empty, no data in the subset
         {
             int nBefore = bounds.fFrom < 1.0 ? 1 : 0;
