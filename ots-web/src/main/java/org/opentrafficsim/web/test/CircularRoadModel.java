@@ -19,7 +19,6 @@ import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -33,8 +32,8 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.OTSRoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.OTSRoadNode;
 
@@ -43,7 +42,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDoubleScalar;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -263,8 +261,8 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         }
 
         // init
-        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+        Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
+        initialPositions.add(new LanePosition(lane, initialPosition));
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         gtu.init(strategicalPlanner, initialPositions, initialSpeed);
     }
